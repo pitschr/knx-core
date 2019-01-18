@@ -1,0 +1,147 @@
+/*
+ * KNX Link - A library for KNX Net/IP communication
+ * Copyright (C) 2019 Pitschmann Christoph
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package li.pitschmann.knx.link.body;
+
+import li.pitschmann.knx.link.body.address.*;
+import li.pitschmann.knx.link.body.cemi.*;
+import li.pitschmann.knx.link.datapoint.*;
+import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.exceptions.*;
+import li.pitschmann.knx.link.header.*;
+import li.pitschmann.utils.*;
+import li.pitschmann.utils.Bytes.*;
+import org.junit.jupiter.api.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+/**
+ * Tests the {@link TunnellingRequestBody}
+ *
+ * @author PITSCHR
+ */
+public class TunnellingRequestBodyTest {
+    // prepare
+    private int channelId;
+    private int sequence;
+    private CEMI cemi;
+
+    @BeforeEach
+    public void before() {
+        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 160);
+        final GroupAddress destinationAddress = GroupAddress.of(9, 4, 7);
+
+        // ACPI data: new byte[]{0x0c, 0x3f}
+        DPT7Value dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.toValue(3135);
+
+        this.channelId = 17;
+        this.sequence = 92;
+        this.cemi = CEMI.create(MessageCode.L_DATA_IND, AdditionalInfo.empty(), controlByte1, controlByte2, sourceAddress, destinationAddress,
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, dptValue);
+    }
+
+    /**
+     * Tests the {@link TunnellingRequestBody#create(int, int, CEMI)} and
+     * {@link TunnellingRequestBody#valueOf(byte[])} methods.
+     *
+     * <pre>
+     * 	KNX/IP
+     * 	    Header
+     * 	        Header Length: 0x06
+     * 	        Protocol Version: 0x10
+     * 	        Service Type Identifier: TUNNELLING_REQUEST (0x0420)
+     * 	        Total Length: 23 octets
+     * 	    Body
+     * 	        Structure Length: 4 octets
+     * 	        Communication Channel ID: 17
+     * 	        Sequence Counter: 92
+     * 	        reserved: 00
+     * 	        cEMI
+     * 	            messagecode: L_Data.ind (0x29)
+     * 	            add information length: 0 octets
+     * 	            Controlfield 1: 0xbc
+     * 	                1... .... = Frametype: 1
+     * 	                ..1. .... = Repeat: 1
+     * 	                ...1 .... = System-Broadcast: 1
+     * 	                .... 11.. = Priority: 0x3
+     * 	                .... ..0. = Acknowledge-Request: 0
+     * 	                .... ...0 = Confirm-Flag: 0
+     * 	            Controlfield 2: 0xe0
+     * 	                1... .... = Destination address type: 1
+     * 	                .110 .... = Hop count: 6
+     * 	                .... 0000 = Extended Frame Format: 0x0
+     * 	            Source Address 1.0.160
+     * 	            Destination Address 9/4/7 or 9/1031
+     * 		        NPDU length: 3 octets
+     * 		        00.. .... = TPCI: UDT (Unnumbered Data Packet) (0x0)
+     * 		        .... ..00  10.. .... = APCI: A_GroupValue_Write (0x0002)
+     * 		        data: 0c3f
+     * </pre>
+     */
+    @Test
+    public void validCases() {
+        // create()
+        final TunnellingRequestBody body = TunnellingRequestBody.create(this.channelId, this.sequence, this.cemi);
+        assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
+        assertThat(body.getLength()).isEqualTo(4);
+        assertThat(body.getChannelId()).isEqualTo(this.channelId);
+        assertThat(body.getSequence()).isEqualTo(this.sequence);
+        assertThat(body.getCEMI().getRawData()).containsExactly(this.cemi.getRawData());
+
+        // compare raw data of create() with valueOf()
+        final TunnellingRequestBody bodyByBytes = TunnellingRequestBody.valueOf(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
+                (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f});
+        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+
+        // toString
+        assertThat(body).hasToString(String.format(
+                "TunnellingRequestBody{length=4 (0x04), channelId=17 (0x11), sequence=92 (0x5C), cemi=%s, rawData=0x04 11 5C 00 29 00 BC E0 10 A0 4C 07 03 00 80 0C 3F}",
+                this.cemi.toString(false)));
+    }
+
+    /**
+     * Tests {@link TunnellingRequestBody} with invalid arguments
+     */
+    @Test
+    public void invalidCases() {
+        // null
+        assertThatThrownBy(() -> TunnellingRequestBody.create(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
+                .hasMessageContaining("cemi");
+
+        // invalid size
+        assertThatThrownBy(() -> TunnellingRequestBody.create(this.channelId, -1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessageContaining("sequence");
+        assertThatThrownBy(() -> TunnellingRequestBody.create(this.channelId, 0xFF + 1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessageContaining("sequence");
+        assertThatThrownBy(() -> TunnellingRequestBody.create(-1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessageContaining("channelId");
+        assertThatThrownBy(() -> TunnellingRequestBody.create(0xFF + 1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessageContaining("channelId");
+
+        // invalid raw data length
+        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(Bytes.fillByteArray(new byte[20], new byte[]{0x05}, FillDirection.LEFT_TO_RIGHT)))
+                .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData[0]");
+    }
+}

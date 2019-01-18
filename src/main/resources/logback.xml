@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console Logging (WARN or higher) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date [%-5level] [%logger{40}] - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!-- File Logging (DEBUG or higher) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>knx.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>knx.log.%d.gz</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%-5level] [%thread] [%logger:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Logging (DEBUG or higher) -->
+    <appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>knx-audit.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>knx-audit.log.%d.gz</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %mdc{TYPE} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Logging (DEBUG or higher) -->
+    <appender name="STATISTIC" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>knx-statistic.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>knx-statistic.log.%d.gz</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--
+    Log Levels: ALL < TRACE < DEBUG < INFO < WARN < ERROR < OFF
+    -->
+    <logger name="li.pitschmann.knx.main" level="DEBUG"/>
+    <!--
+    <logger name="li.pitschmann.utils" level="WARN" />
+    <logger name="li.pitschmann.knx.link" level="TRACE" />
+    <logger name="li.pitschmann.knx.link.KnxMain" level="DEBUG" />
+    <logger name="li.pitschmann.knx.link.communication.task" level="TRACE" />
+    <logger name="li.pitschmann.knx.link.datapoint.DPT20" level="DEBUG" />
+
+    <logger name="li.pitschmann.knx.main" level="DEBUG" />
+    <logger name="li.pitschmann.knx.link.communication.Communicator" level="DEBUG" />
+    <logger name="li.pitschmann.knx.link.datapoint.DataPointTypeRegistry" level="ALL" />
+      -->
+    <logger name="li.pitschmann.knx.link.plugin.experimental.AuditTextPlugin" level="INFO" additivity="false">
+        <appender-ref ref="AUDIT"/>
+    </logger>
+    <logger name="li.pitschmann.knx.link.plugin.experimental.StatisticPlugin" level="INFO" additivity="false">
+        <appender-ref ref="STATISTIC"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
