@@ -67,7 +67,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .setting("timeout.alive.connectionstate", "60000") //
                 .build();
 
-        try (DefaultKnxClient client = new DefaultKnxClient(config)) {
+        try (final KnxClient client = new DefaultKnxClient(config)) {
             LOG.debug("========================================================================");
             LOG.debug("MONITORING for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
             LOG.debug("========================================================================");

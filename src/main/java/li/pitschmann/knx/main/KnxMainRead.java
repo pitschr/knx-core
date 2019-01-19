@@ -56,7 +56,7 @@ public class KnxMainRead extends AbstractKnxMain {
 
         // start KNX communication
         LOG.trace("START");
-        try (DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
+        try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
             Sleeper.seconds(1);
             LOG.debug("========================================================================");
             LOG.debug("READ ACK: {}", client.readRequest(groupAddress));

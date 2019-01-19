@@ -1,6 +1,10 @@
-# KNXClient
+# KNX Link
 
-A simple, reactive KNX Client to communicate with your KNX Net/IP router.
+A library for the KNX Net/IP communication with your KNX Net/IP router.
+
+This library is indented to allow you writing your own application communicating with your KNX network. 
+It also contains few main classes for a basic understanding how the KNX communication can be done in 
+programmatically way. See examples below.
 
 ## Known limitations
 
@@ -19,7 +23,7 @@ A simple, reactive KNX Client to communicate with your KNX Net/IP router.
 
 ## Examples
 
-This project is more intended for developers which are interested in KNX communication.
+This project is more intended for developers which are interested in KNX communication. 
 However, it contains ready-to-use main classes to get a quick start.
 
 ### Sending a WRITE frame to your KNX Net/IP router
@@ -41,9 +45,12 @@ is equivalent to
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -r 192.168.1.16 -ga 1/2/100 -dpt 1.001 -c on off
 ````
 
-and will perform *DPT1 - Switch (DPT 1.001)* actions on group address ``1/2/100`` - connected to a KNX switch actuator to switch ``on`` and then switch ``off`` a lamp. For demo purposes the delay between commands is hardcoded with 2 seconds.
+and will perform *DPT1 - Switch (DPT 1.001)* actions on group address ``1/2/100`` - connected to a 
+KNX switch actuator to switch ``on`` and then switch ``off`` a lamp. For demo purposes the delay 
+between commands is hardcoded with 2 seconds.
 
-Given command ``on off on off`` would perform the lamp to switch ``on``, ``off``, ``on`` and then ``off`` with a delay of 2 seconds between each command.
+Given command ``on off on off`` would perform the lamp to switch ``on``, ``off``, ``on`` and then 
+``off`` with a delay of 2 seconds between each command.
  
 ## Sending a READ frame to your KNX Net/IP router
 
@@ -58,8 +65,120 @@ Given example
 ````
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -n 10
 ````
- will send a *READ* request frame to KNX Net/IP router on group address ``1/2/100`` at first to get the most recent status of group address. Afterwards it will poll up to ``50`` times to get the most recent status of the group address. All data requests of all group addresses that is sent by KNX Net/IP router will be fetched by the KNX client internally.
+ will send a *READ* request frame to KNX Net/IP router on group address ``1/2/100`` at first to get the 
+ most recent status of group address. Afterwards it will poll up to ``10`` times with a hardcoded 
+ interval of ``1`` second to get the most recent status of the group address. All data requests of 
+ all group addresses that is sent by KNX Net/IP router will be fetched by the KNX client internally.
 
 
 ## Start monitoring the KNX Net/IP router
 
+**Class:** ``li.pitschmann.knx.main.KnxMainMonitoring``
+
+**Arguments**
+* ``-r`` the IP-Address of your KNX Net/IP router (default: ``192.168.1.16``) 
+* ``-t`` the time in seconds how long the monitoring should run (default: ``Long#MAX_VALUE``)
+
+Given example
+````
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -t 3600
+````
+will monitor the traffic of KNX Net/IP router on default ``192.168.1.16`` for one hour (``3600`` seconds). 
+After one hour a disconnect frame will be sent by the KNX client to the router and application will exit.
+
+## How to implement
+
+**Assumptions**
+* The IP-Address of your KNX Net/IP router is ``192.168.0.10``
+
+````
+// Create KNX client and start communication with your KNX Net/IP router
+try (final KnxClient client = new DefaultKnxClient("192.168.0.10)) {
+    // do your stuff you want to do ...
+} catch (final Throwable t) {
+    // catch all throwable you want to handle here (optional)
+} finally {
+    // do final actions (optional)
+}
+````
+
+### Examples
+
+#### Common goal
+
+You want to switch ``on`` a lamp on KNX group address ``1/2/3`` and switch ``off`` after three seconds.
+
+#### Solution with boolean
+
+* boolean ``true`` => translated to ``0x01`` and sent to KNX Net/IP router
+* boolean ``false`` => translated to ``0x00`` and sent to KNX Net/IP router
+
+````java
+public class KnxMain {
+    private static final String ROUTER_IP_ADDRESS = "192.168.0.10";
+    private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
+    
+    public static void main(final String[] args) {     
+        try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
+            // switch on (boolean: true)
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(true));
+            // wait 3 seconds
+            Thread.sleep(3000);
+            // switch off (boolean: false)
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(false));
+        } catch (final InterruptedException ie) {
+            // do something ...
+        }
+    }
+}
+````
+
+#### Approach with byte
+
+* byte ``0x01`` (``0000 0001``) => validates if ``0x01`` is compatible with ``DPT1#SWITCH`` and sent to KNX Net/IP router
+* byte ``0x00`` (``0000 0000``) => validates if ``0x00`` is compatible with ``DPT1#SWITCH`` and sent to KNX Net/IP router
+
+````java
+public class KnxMain {
+    private static final String ROUTER_IP_ADDRESS = "192.168.0.10";
+    private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
+    
+    public static void main(final String[] args) {     
+        try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
+            // switch on (byte: 0000 0001)
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new byte[]{ 0x01 }));
+            // wait 3 seconds
+            Thread.sleep(3000);
+            // switch off (byte: 0000 0000)
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new byte[]{ 0x00 }));
+        } catch (final InterruptedException ie) {
+            // do something ...
+        }
+    }
+}
+````
+
+#### Solution with human-friendly text
+
+* text ``on`` => validates if ``on`` is compatible with ``DPT1#SWITCH``, translated to ``0x01`` and sent to KNX Net/IP router
+* text ``off`` => validates if ``off`` is compatible with ``DPT1#SWITCH``, translated to ``0x00`` and sent to KNX Net/IP router
+
+````java
+public class KnxMain {
+    private static final String ROUTER_IP_ADDRESS = "192.168.0.10";
+    private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
+    
+    public static void main(final String[] args) {     
+        try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
+            // switch on (will be parsed using DPT1#SWITCH)
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new String[]{"on"}));
+            // wait 3 seconds
+            Thread.sleep(3000);
+            // switch off (will be parsed using DPT1#SWITCH)
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new String[]{"off"}));
+        } catch (final InterruptedException ie) {
+            // do something ...
+        }
+    }
+}
+````
