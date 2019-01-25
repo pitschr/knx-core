@@ -20,26 +20,33 @@ package li.pitschmann.knx.main;
 
 import li.pitschmann.knx.link.body.address.*;
 import li.pitschmann.knx.link.communication.*;
+import li.pitschmann.knx.link.datapoint.*;
 import li.pitschmann.utils.*;
 import org.slf4j.*;
 
 import java.net.*;
+import java.util.concurrent.*;
 
 /**
- * Demo class how to send a read request to a KNX group address.
+ * Demo class how to read a DPT1.SWITCH value from a KNX group address and inverse the value
+ * <p/>
+ * <u>Example:</u><br/>
+ * When lamp is <strong>on</strong>, then lamp will be switched <strong>off</strong>.<br/>
+ * When lamp is <strong>off</strong>, then lamp will be switched <strong>on</strong>.<br/>
+ * <p/>
+ * To use it, make sure that you have proper KNX flag (communication, read and write) set for given group address.
+ *
  * <ul>
  * <li>1st argument is the address of KNX Net/IP router; default value "192.168.1.16"</li>
  * <li>2nd argument is the address of KNX group; default value "1/2/100"</li>
- * <li>Subsequent arguments are ignored.</li>
  * </ul>
  *
  * @author PITSCHR
  */
-public class KnxMainRead extends AbstractKnxMain {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxMainRead.class);
+public class KnxMainReadAndWrite extends AbstractKnxMain {
+    private static final Logger LOG = LoggerFactory.getLogger(KnxMainReadAndWrite.class);
     private static final InetAddress DEFAULT_ROUTER_IP = Networker.getByAddress("192.168.1.16");
     private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
-    private static final int DEFAULT_LOOPS = 50;
 
     public static void main(final String[] args) {
         // 1st Argument: Get Router Address
@@ -48,27 +55,29 @@ public class KnxMainRead extends AbstractKnxMain {
 
         // 2nd Argument: Get Group Address
         final GroupAddress groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, AbstractKnxMain::parseGroupAddress);
-        LOG.debug("Group Address: {}", groupAddress);
+        LOG.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
 
-        // 3rd Argument: Number of requests for Group Address
-        final int loops = getParameterValue(args, "-n", DEFAULT_LOOPS, Integer::valueOf);
-        LOG.debug("Loops: {}", loops);
-
-        // start KNX communication
-        LOG.trace("START");
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
-            Sleeper.seconds(1);
-            LOG.debug("========================================================================");
+            // send read status to group address
+            // otherwise the KNX client has no status about the group address yet
             LOG.debug("READ ACK: {}", client.readRequest(groupAddress));
-            for (int i = 0; i < loops; i++) {
-                Sleeper.seconds(1);
-                LOG.debug("STATUS ({}/{}) on (3-level: {}, 2-level: {}): {}", i + 1, loops, groupAddress.getAddress(), groupAddress.getAddressLevel2(), ByteFormatter.formatHexAsString(client.getStatusPool().getStatusFor(groupAddress).getApciData()));
-            }
-            LOG.debug("========================================================================");
+
+            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+
+            // read lamp status
+            final var lampStatus = client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue();
+            LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
+
+            // send write request with inverse boolean value (true->false, false->true)
+            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus));
+
+            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+
+            LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());
         } catch (final Throwable t) {
             LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
-        } finally {
-            LOG.trace("FINALLY");
         }
     }
 }

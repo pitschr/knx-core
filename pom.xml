@@ -147,7 +147,10 @@
             </plugin>
 
 
-            <!-- Creates a JAR file with all dependencies (one fat JAR) The main class will be: li.pitschmann.knx.main.KnxMainMonitoring -->
+            <!--
+            Creates a JAR file with all dependencies (one fat JAR)
+            The main class will be: li.pitschmann.knx.main.KnxMainMonitoringWithPlugins
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

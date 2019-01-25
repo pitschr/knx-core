@@ -24,10 +24,12 @@ import li.pitschmann.knx.link.body.address.*;
 import li.pitschmann.knx.link.body.cemi.*;
 import li.pitschmann.knx.link.datapoint.*;
 import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.utils.*;
 import org.slf4j.*;
 
 import javax.annotation.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * KNX Status Pool covering all current statuses of KNX group addresses.
@@ -60,14 +62,58 @@ public final class KnxStatusPool {
     }
 
     /**
-     * Returns the current status for given {@link KnxAddress}
+     * Returns if the status for given {@link KnxAddress} is up to date immediately
      *
-     * @param address
+     * @param address {@link KnxAddress} for which the status should be returned
+     * @return {@code true} if status is up to date, otherwise {@code false} (not up to date)
+     */
+    public boolean isUpdated(final @Nonnull KnxAddress address) {
+        Preconditions.checkNotNull(address);
+        final var knxStatus = this.statusMap.get(address);
+        return knxStatus != null && !knxStatus.isDirty();
+    }
+
+    /**
+     * Returns if the status for given {@link KnxAddress} is or becomes up to date up to given {@code duration} and {@code unit}
+     *
+     * @param address {@link KnxAddress} for which the status should be returned
+     * @param duration duration of time unit
+     * @param unit time unit
+     * @return {@code true} if status is up to date, otherwise {@code false} when not being up to date within given time
+     */
+    public boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
+        Preconditions.checkNotNull(unit);
+        final var end = System.currentTimeMillis() + unit.toMillis(duration);
+        var valid = false;
+        do {
+            valid = isUpdated(address);
+        } while (!valid && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
+        return valid;
+    }
+
+    /**
+     * Marks the status for given {@link KnxAddress} as dirty (not up to date)
+     *
+     * @param address {@link KnxAddress} for which the status should be marked as dirty
+     */
+    public void setDirty(final @Nonnull KnxAddress address) {
+        Preconditions.checkNotNull(address);
+        final var knxStatus = this.statusMap.get(address);
+        if (knxStatus != null) {
+            knxStatus.setDirty(true);
+        }
+    }
+
+    /**
+     * Returns the current status for given {@link KnxAddress}. May return the invalidated status.
+     *
+     * @param address {@link KnxAddress} for which the status should be returned
      * @return {@link KnxStatusData} or {@code null} if no status was found for given address
      */
     public @Nullable
-    KnxStatusData getStatusFor(final KnxAddress address) {
-        final KnxStatusData statusData = this.statusMap.get(address);
+    KnxStatusData getStatusFor(final @Nonnull KnxAddress address) {
+        Preconditions.checkNotNull(address);
+        final var statusData = this.statusMap.get(address);
         if (statusData == null) {
             LOG.warn("No KNX status data found for address: {}", address);
         }
@@ -83,7 +129,7 @@ public final class KnxStatusPool {
      */
     public @Nullable
     <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId) {
-        final KnxStatusData statusData = this.getStatusFor(address);
+        final var statusData = this.getStatusFor(address);
         if (statusData != null) {
             @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
             return dataPointValue;
@@ -100,7 +146,7 @@ public final class KnxStatusPool {
      */
     public @Nullable
     <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt) {
-        final KnxStatusData statusData = this.getStatusFor(address);
+        final var statusData = this.getStatusFor(address);
         if (statusData != null) {
             return dpt.toValue(statusData.getApciData());
         }

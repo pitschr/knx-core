@@ -159,11 +159,16 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
     public final <T extends ResponseBody> T sendAndWait(final RequestBody requestBody, final long msTimeout) {
-        final KnxEventPool eventPool = this.getInternalClient().getEventPool();
+        final KnxEventPool eventPool = this.internalClient.getEventPool();
 
         // add request body to event pool
         eventPool.add(requestBody);
         LOG.trace("{}: Request Body added to event pool.", id);
+
+        // mark as dirty
+        if (requestBody instanceof TunnellingRequestBody) {
+            this.internalClient.getStatusPool().setDirty(((TunnellingRequestBody) requestBody).getCEMI().getDestinationAddress());
+        }
 
         int attempts = 1;
         int totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)

@@ -102,13 +102,10 @@ try (final KnxClient client = new DefaultKnxClient("192.168.0.10)) {
 }
 ````
 
-### Examples
-
-#### Common goal
-
+### Example #1
 You want to switch ``on`` a lamp on KNX group address ``1/2/3`` and switch ``off`` after three seconds.
 
-#### Solution with boolean
+#### Solution: Switch on/off lamp with boolean values
 
 * boolean ``true`` => translated to ``0x01`` and sent to KNX Net/IP router
 * boolean ``false`` => translated to ``0x00`` and sent to KNX Net/IP router
@@ -133,7 +130,7 @@ public class KnxMain {
 }
 ````
 
-#### Approach with byte
+#### Solution: Switch on/off lamp with byte values
 
 * byte ``0x01`` (``0000 0001``) => validates if ``0x01`` is compatible with ``DPT1#SWITCH`` and sent to KNX Net/IP router
 * byte ``0x00`` (``0000 0000``) => validates if ``0x00`` is compatible with ``DPT1#SWITCH`` and sent to KNX Net/IP router
@@ -146,11 +143,11 @@ public class KnxMain {
     public static void main(final String[] args) {     
         try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
             // switch on (byte: 0000 0001)
-            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new byte[]{ 0x01 }));
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue((byte)0x01));
             // wait 3 seconds
             Thread.sleep(3000);
             // switch off (byte: 0000 0000)
-            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new byte[]{ 0x00 }));
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue((byte)0x00));
         } catch (final InterruptedException ie) {
             // do something ...
         }
@@ -158,7 +155,7 @@ public class KnxMain {
 }
 ````
 
-#### Solution with human-friendly text
+#### Solution: Switch on/off lamp with human-friendly texts
 
 * text ``on`` => validates if ``on`` is compatible with ``DPT1#SWITCH``, translated to ``0x01`` and sent to KNX Net/IP router
 * text ``off`` => validates if ``off`` is compatible with ``DPT1#SWITCH``, translated to ``0x00`` and sent to KNX Net/IP router
@@ -171,11 +168,53 @@ public class KnxMain {
     public static void main(final String[] args) {     
         try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
             // switch on (will be parsed using DPT1#SWITCH)
-            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new String[]{"on"}));
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue("on"));
             // wait 3 seconds
             Thread.sleep(3000);
             // switch off (will be parsed using DPT1#SWITCH)
-            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(new String[]{"off"}));
+            client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue("off"));
+        } catch (final InterruptedException ie) {
+            // do something ...
+        }
+    }
+}
+````
+
+### Example #2
+You want to inverse the value of a lamp (``DPT1#SWITCH``)
+
+* When lamp is ``on``, then lamp will be switched ``off``
+* When lamp is ``off``, then lamp will be switched ``on``
+
+To use it, make sure that you have proper KNX flag (communication, read and write) set for given group address.
+ 
+#### Implementation
+
+````java
+public class KnxMain {
+    private static final String ROUTER_IP_ADDRESS = "192.168.0.10";
+    private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
+    
+    public static void main(final String[] args) {     
+        try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
+            // send read status to group address
+            // otherwise the KNX client has no status about the group address yet
+            LOG.debug("READ ACK: {}", client.readRequest(groupAddress));
+
+            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+
+            // read lamp status
+            final var lampStatus = client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue();
+            LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
+
+            // send write request with inverse boolean value (true->false, false->true)
+            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus));
+
+            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+
+            LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());
         } catch (final InterruptedException ie) {
             // do something ...
         }

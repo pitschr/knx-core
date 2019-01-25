@@ -24,6 +24,8 @@ import li.pitschmann.knx.link.datapoint.*;
 import li.pitschmann.knx.link.datapoint.value.*;
 import org.junit.jupiter.api.*;
 
+import java.util.concurrent.*;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.*;
 public class KnxStatusPoolTest {
     private static final IndividualAddress ADDRESS = IndividualAddress.of(1, 2, 3);
     private static final IndividualAddress ADDRESS_2 = IndividualAddress.of(2, 3, 4);
+    private static final IndividualAddress ADDRESS_3 = IndividualAddress.of(3, 4, 5);
 
     /**
      * Test {@link KnxStatusPool#updateStatus(CEMI)} and {@link KnxStatusPool#getStatusFor(KnxAddress)}.
@@ -74,8 +77,6 @@ public class KnxStatusPoolTest {
         when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
         when(cemi.getApciData()).thenReturn(new byte[]{0x00});
 
-        // not found
-        assertThat(pool.getStatusFor(null)).isNull();
         // not found because not known to status pool (IndividualAddress != GroupAddress)
         assertThat(pool.getStatusFor(GroupAddress.of(1, 2, 3))).isNull();
     }
@@ -116,8 +117,8 @@ public class KnxStatusPoolTest {
         assertThat(pool.getValue(ADDRESS, DPT1.SWITCH).getBooleanValue()).isTrue();
 
         // Scenario 3: unknown address
-        assertThat(pool.<DPT1Value>getValue(null, DPT1.SWITCH.getId())).isNull();
-        assertThat(pool.getValue(null, DPT1.SWITCH)).isNull();
+        assertThat(pool.<DPT1Value>getValue(ADDRESS_3, DPT1.SWITCH.getId())).isNull();
+        assertThat(pool.getValue(ADDRESS_3, DPT1.SWITCH)).isNull();
     }
 
     /**
@@ -151,7 +152,51 @@ public class KnxStatusPoolTest {
         assertThat(pool.getValue(ADDRESS_2, DPT9.TEMPERATURE).getFloatingValue()).isEqualTo(20.78d);
 
         // Scenario 3: unknown address
-        assertThat(pool.<DPT9Value>getValue(null, DPT9.TEMPERATURE.getId())).isNull();
-        assertThat(pool.getValue(null, DPT9.TEMPERATURE)).isNull();
+        assertThat(pool.<DPT9Value>getValue(ADDRESS_3, DPT9.TEMPERATURE.getId())).isNull();
+        assertThat(pool.getValue(ADDRESS_3, DPT9.TEMPERATURE)).isNull();
+    }
+
+    /**
+     * Test {@link KnxStatusPool#isUpdated(KnxAddress, long, TimeUnit)} and
+     * {@link KnxStatusPool#isUpdated(KnxAddress)} indirectly
+     */
+    @Test
+    @DisplayName("Tests if the KNX status data is updated in the status pool")
+    public void testIsUpdated() {
+        // TODO ...
+
+        // test with known and updated status
+
+        // test with known and not updated status
+
+        // test with unknown status
+
+        // test with invalid parameters
+        // address = null
+        // unit = null
+    }
+
+    /**
+     * Test {@link KnxStatusPool#setDirty(KnxAddress)}
+     */
+    @Test
+    @DisplayName("Tests if the KNX status data can be marked as dirty through status pool")
+    public void testSetDirty() {
+        // TODO ...
+
+        // test with known KNX address
+
+        // test with unknown KNX address
+
+        // test with invalid null parameter
+    }
+
+    /**
+     * Test {@link KnxStatusPool#toString()}
+     */
+    @Test
+    @DisplayName("Tests the toString() method")
+    public void testToString() {
+        // TODO ...
     }
 }

@@ -36,6 +36,7 @@ public final class KnxStatusData {
     private KnxAddress sourceAddress;
     private APCI apci;
     private byte[] apciData;
+    private boolean dirty;
 
     /**
      * Creates a new instance of {@link CEMI}
@@ -58,6 +59,7 @@ public final class KnxStatusData {
         this.apci = apci;
         this.apciData = apciData.clone(); // defensive copy
         this.sourceAddress = sourceAddress;
+        this.dirty = false; // reset the dirty flag
     }
 
     /**
@@ -100,10 +102,29 @@ public final class KnxStatusData {
         return this.apciData.clone(); // defensive copy
     }
 
+    /**
+     * Returns if the instance is dirty
+     *
+     * @return Returns {@code true} if it is dirty or {@code false} if it is still false
+     */
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    /**
+     * Sets if the current {@link KnxStatusData} is dirty or it isn't dirty.
+     *
+     * @param dirty dirty flag to be set ({@code true}) or cleared ({@code false})
+     */
+    public void setDirty(final boolean dirty) {
+        this.dirty = dirty;
+    }
+
     @Override
     public String toString() {
         // @formatter:off
         return MoreObjects.toStringHelper(KnxStatusData.class)
+                .add("dirty", this.dirty)
                 .add("timestamp", this.timestamp)
                 .add("sourceAddress", this.sourceAddress)
                 .add("apci", this.apci)
