@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pitschr/knx-link.svg?branch=master)](https://travis-ci.org/pitschr/knx-link)
+
 # KNX Link
 
 A library for the KNX Net/IP communication with your KNX Net/IP router.
