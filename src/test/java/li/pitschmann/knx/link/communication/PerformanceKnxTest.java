@@ -45,7 +45,7 @@ public class PerformanceKnxTest {
      * the system due I/O writing. Alter the log level in /test/resources/logback.xml
      * by setting the root level from to 'INFO'.
      */
-    private static final int TIMES = 1000;
+    private static final int TIMES = 100;
 
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP router with N packets.

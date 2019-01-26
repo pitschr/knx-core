@@ -76,9 +76,9 @@ public final class KnxStatusPool {
     /**
      * Returns if the status for given {@link KnxAddress} is or becomes up to date up to given {@code duration} and {@code unit}
      *
-     * @param address {@link KnxAddress} for which the status should be returned
+     * @param address  {@link KnxAddress} for which the status should be returned
      * @param duration duration of time unit
-     * @param unit time unit
+     * @param unit     time unit
      * @return {@code true} if status is up to date, otherwise {@code false} when not being up to date within given time
      */
     public boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {

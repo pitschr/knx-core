@@ -42,7 +42,7 @@ public abstract class AbstractKnxQueue implements Runnable {
     private final InternalKnxClient internalClient;
     private final SelectableChannel channel;
     private final BlockingQueue<Body> queue = new LinkedBlockingDeque<>();
-    private final AtomicInteger number = new AtomicInteger(); // TODO: remove?
+    private final AtomicInteger number = new AtomicInteger();
 
     /**
      * Constructor for Abstract KNX Queue

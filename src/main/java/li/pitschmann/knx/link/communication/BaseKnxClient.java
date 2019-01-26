@@ -171,13 +171,13 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public <RESPONSE extends ResponseBody> Future<RESPONSE> send(RequestBody requestBody, long timeout) {
+    public <T extends ResponseBody> Future<T> send(RequestBody requestBody, long timeout) {
         return this.clientInternal.send(requestBody, timeout);
     }
 
     @Nullable
     @Override
-    public <RESPONSE extends ResponseBody> RESPONSE sendAndWait(RequestBody requestBody, long timeout) {
+    public <T extends ResponseBody> T sendAndWait(RequestBody requestBody, long timeout) {
         return this.clientInternal.sendAndWait(requestBody, timeout);
     }
 

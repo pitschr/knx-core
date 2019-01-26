@@ -194,7 +194,6 @@ public final class Configuration {
         private final Map<String, String> settings = Maps.newHashMap();
         private InetAddress routerAddress;
         private int routerPort;
-        private String note;
 
         private Builder() {
         }
@@ -218,11 +217,6 @@ public final class Configuration {
 
         public Builder setting(final String key, final String value) {
             this.settings.put(key, value);
-            return this;
-        }
-
-        public Builder note(final String note) {
-            this.note = note;
             return this;
         }
 

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.*;
 import li.pitschmann.knx.link.datapoint.value.*;
 import li.pitschmann.knx.link.exceptions.*;
 
@@ -84,22 +84,22 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
     @Nonnull
-    V toValue(@Nonnull byte[] bytes) throws DataPointTypeIncompatibleBytesException;
+    V toValue(@Nonnull byte[] bytes);
 
     /**
      * Returns a {@link DataPointValue} for specified byte variable array.
      * <p/>
      * It is a wrapper caller of {@link #toValue(byte[])}
      *
-     * @param b first byte to be parsed
+     * @param b         first byte to be parsed
      * @param moreBytes more bytes to be parsed
      * @return data point value
-     * @throws DataPointTypeIncompatibleBytesException
+     * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
     @Nonnull
-    default V toValue(@Nonnull byte b, @Nullable byte... moreBytes) throws DataPointTypeIncompatibleBytesException {
+    default V toValue(final @Nonnull byte b, final byte... moreBytes) {
         if (moreBytes.length == 0) {
-            return toValue(new byte[]{ b });
+            return toValue(new byte[]{b});
         } else {
             byte[] newArray = new byte[moreBytes.length + 1];
             newArray[0] = b;
@@ -119,23 +119,23 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
     @Nonnull
-    V toValue(@Nonnull String[] args) throws DataPointTypeIncompatibleSyntaxException;
+    V toValue(@Nonnull String[] args);
 
     /**
      * Returns a {@link DataPointValue} for specified variable string arguments.
      * <p/>
      * It is a wrapper caller of {@link #toValue(String[])}
      *
-     * @param arg first arguments to be parsed
+     * @param arg      first arguments to be parsed
      * @param moreArgs more arguments to be parsed
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
     @Nonnull
-    default V toValue(@Nonnull String arg, @Nullable String... moreArgs) throws DataPointTypeIncompatibleSyntaxException {
+    default V toValue(final @Nonnull String arg, final String... moreArgs) {
         Preconditions.checkNotNull(arg);
         if (moreArgs.length == 0) {
-            return toValue(new String[]{ arg });
+            return toValue(new String[]{arg});
         } else {
             String[] newArray = new String[moreArgs.length + 1];
             newArray[0] = arg;

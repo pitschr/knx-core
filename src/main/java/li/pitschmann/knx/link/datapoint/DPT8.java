@@ -69,8 +69,8 @@ public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Intege
      * Resolution: ms
      * </pre>
      */
-    @KnxDataPointType(id = "8.002", description = "Delta Time")
-    public static final DPT8 DELTA_TIME_MS = new DPT8("8.002", "Delta Time", -32768, 32767, "ms");
+    @KnxDataPointType(id = "8.002", description = "Delta Time (1ms)")
+    public static final DPT8 DELTA_TIME_MS = new DPT8("8.002", "Delta Time (1ms)", -32768, 32767, "ms");
 
     /**
      * <strong>8.003</strong> Delta Time (milliseconds, resolution 10ms)
@@ -87,8 +87,8 @@ public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Intege
      * Resolution: 10 ms
      * </pre>
      */
-    @KnxDataPointType(id = "8.003", description = "Delta Time")
-    public static final DPT8 DELTA_TIME_10MS = new DPT8("8.003", "Delta Time", -32768, 32767, "ms", v -> v / 100d);
+    @KnxDataPointType(id = "8.003", description = "Delta Time (10ms)")
+    public static final DPT8 DELTA_TIME_10MS = new DPT8("8.003", "Delta Time (10ms)", -32768, 32767, "ms", v -> v / 100d);
 
     /**
      * <strong>8.004</strong> Delta Time (milliseconds, resolution 100ms)
@@ -105,8 +105,8 @@ public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Intege
      * Resolution: 100 ms
      * </pre>
      */
-    @KnxDataPointType(id = "8.004", description = "Delta Time")
-    public static final DPT8 DELTA_TIME_100MS = new DPT8("8.004", "Delta Time", -32768, 32767, "ms", v -> v / 10d);
+    @KnxDataPointType(id = "8.004", description = "Delta Time (100ms)")
+    public static final DPT8 DELTA_TIME_100MS = new DPT8("8.004", "Delta Time (100ms)", -32768, 32767, "ms", v -> v / 10d);
 
     /**
      * <strong>8.005</strong> Delta Time (seconds)
@@ -122,8 +122,8 @@ public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Intege
      * Resolution: 1 s
      * </pre>
      */
-    @KnxDataPointType(id = "8.005", description = "Delta Time")
-    public static final DPT8 DELTA_TIME_SECONDS = new DPT8("8.005", "Delta Time", -32768, 32767, "s");
+    @KnxDataPointType(id = "8.005", description = "Delta Time (s)")
+    public static final DPT8 DELTA_TIME_SECONDS = new DPT8("8.005", "Delta Time (s)", -32768, 32767, "s");
 
     /**
      * <strong>8.006</strong> Delta Time (minutes)
@@ -139,8 +139,8 @@ public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Intege
      * Resolution: 1 min
      * </pre>
      */
-    @KnxDataPointType(id = "8.006", description = "Delta Time")
-    public static final DPT8 DELTA_TIME_MINUTES = new DPT8("8.006", "Delta Time", -32768, 32767, "min");
+    @KnxDataPointType(id = "8.006", description = "Delta Time (min)")
+    public static final DPT8 DELTA_TIME_MINUTES = new DPT8("8.006", "Delta Time (min)", -32768, 32767, "min");
 
     /**
      * <strong>8.007</strong> Delta Time (hours)
@@ -156,8 +156,8 @@ public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Intege
      * Resolution: 1 h
      * </pre>
      */
-    @KnxDataPointType(id = "8.007", description = "Delta Time")
-    public static final DPT8 DELTA_TIME_HOURS = new DPT8("8.007", "Delta Time", -32768, 32767, "h");
+    @KnxDataPointType(id = "8.007", description = "Delta Time (h)")
+    public static final DPT8 DELTA_TIME_HOURS = new DPT8("8.007", "Delta Time (h)", -32768, 32767, "h");
 
     /**
      * <strong>8.010</strong> Percent (V<sup>16</sup>)

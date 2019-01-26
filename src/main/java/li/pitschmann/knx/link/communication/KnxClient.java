@@ -78,7 +78,7 @@ public interface KnxClient extends AutoCloseable {
      * @return a {@link Future} representing pending completion of the task containing either an instance of {@link ResponseBody},
      * or {@code null} if no response was received because of e.g. timeout
      */
-    <RESPONSE extends ResponseBody> Future<RESPONSE> send(final RequestBody requestBody, final long msTimeout);
+    <T extends ResponseBody> Future<T> send(final RequestBody requestBody, final long msTimeout);
 
     /**
      * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected body which
@@ -92,5 +92,5 @@ public interface KnxClient extends AutoCloseable {
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
     @Nullable
-    <RESPONSE extends ResponseBody> RESPONSE sendAndWait(final RequestBody requestBody, final long msTimeout);
+    <T extends ResponseBody> T sendAndWait(final RequestBody requestBody, final long msTimeout);
 }

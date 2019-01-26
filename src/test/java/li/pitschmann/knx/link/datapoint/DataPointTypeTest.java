@@ -18,14 +18,9 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.DPT20.*;
-import li.pitschmann.knx.link.datapoint.value.*;
 import org.assertj.core.api.Assertions;
-import org.junit.experimental.theories.*;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link DataPointType}
@@ -46,7 +41,7 @@ public class DataPointTypeTest {
         // do real call because we want to test the implementation
         Mockito.when(dpt.toValue(Mockito.anyByte())).thenCallRealMethod();
 
-        dpt.toValue((byte)0x01);
+        dpt.toValue((byte) 0x01);
         Mockito.verify(dpt).toValue(captor.capture());
         Assertions.assertThat(captor.getValue()).containsExactly(0x01);
     }
@@ -63,7 +58,7 @@ public class DataPointTypeTest {
         // do real call because we want to test the implementation
         Mockito.when(dpt.toValue(Mockito.anyByte(), Mockito.anyByte(), Mockito.anyByte())).thenCallRealMethod();
 
-        dpt.toValue((byte)0x03, (byte)0x04, (byte)0x05);
+        dpt.toValue((byte) 0x03, (byte) 0x04, (byte) 0x05);
         Mockito.verify(dpt).toValue(captor.capture());
         Assertions.assertThat(captor.getValue()).containsExactly(0x03, 0x04, 0x05);
     }
@@ -94,9 +89,9 @@ public class DataPointTypeTest {
         var dpt = Mockito.mock(DataPointType.class);
 
         // do real call because we want to test the implementation
-        Mockito.when(dpt.toValue((String)Mockito.any())).thenCallRealMethod();
+        Mockito.when(dpt.toValue((String) Mockito.any())).thenCallRealMethod();
 
-        Assertions.assertThatThrownBy(() -> dpt.toValue((String)null)).isInstanceOf(NullPointerException.class);
+        Assertions.assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
     }
 
     /**
