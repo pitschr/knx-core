@@ -27,6 +27,9 @@
         <version.junit-platform-runner>1.3.1</version.junit-platform-runner>
         <version.assertj-core>3.11.1</version.assertj-core>
         <version.mockito-core>2.23.0</version.mockito-core>
+        <!-- Code Coverage -->
+        <version.jacoco-maven-plugin>0.8.2</version.jacoco-maven-plugin>
+        <version.coveralls-maven-plugin>4.3.0</version.coveralls-maven-plugin>
     </properties>
 
     <!-- Dependency Management -->
@@ -145,7 +148,27 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
+            <!--
+            For Code Coverage and submitting to Coveralls
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${version.jacoco-maven-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${version.coveralls-maven-plugin}</version>
+            </plugin>
 
             <!--
             Creates a JAR file with all dependencies (one fat JAR)
