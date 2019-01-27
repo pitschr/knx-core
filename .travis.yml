@@ -13,5 +13,7 @@ branches:
   only:
     - master
 
+script:
+  - mvn test-compile -DskipTests=true -Dmaven.javadoc.skip=true -Dlogback.configurationFile=logback-off.xml -B -V
 after_success:
-  - mvn clean test jacoco:report coveralls:report
+  - mvn jacoco:report coveralls:report -Dlogback.configurationFile=logback-off.xml
