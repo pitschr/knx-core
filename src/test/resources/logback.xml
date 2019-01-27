@@ -11,7 +11,7 @@
     Log Levels: ALL < TRACE < DEBUG < INFO < WARN < ERROR < OFF
      -->
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
