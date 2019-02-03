@@ -18,7 +18,10 @@
 
 package li.pitschmann.utils;
 
+import com.google.common.base.*;
+
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * Class to manage pause a Thread (sleep) or wait for something
@@ -34,7 +37,7 @@ public final class Sleeper {
      * Sleep method to pause the current thread and will suppress the {@link InterruptedException}. {@code duration} is
      * the time in milliseconds
      *
-     * @param duration
+     * @param duration in milliseconds
      * @return {@code true} in case the sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
     public static boolean milliseconds(long duration) {
@@ -53,7 +56,7 @@ public final class Sleeper {
      * Sleep method to pause the current thread and will suppress the {@link InterruptedException}. {@code duration} is
      * the time in seconds.
      *
-     * @param duration
+     * @param duration in seconds
      * @return {@code true} in case the sleep has been interrupted, otherwise {@code false}
      */
     public static boolean seconds(long duration) {
@@ -64,11 +67,35 @@ public final class Sleeper {
      * Sleep method to pause the current thread and will suppress the {@link InterruptedException}. {@code duration} is
      * the time in defined {@code unit}.
      *
-     * @param duration
-     * @param unit
+     * @param duration duration of timeout
+     * @param unit     unit of timeout
      * @return {@code true} in case the sleep has been interrupted, otherwise {@code false}
      */
     public static boolean sleep(long duration, final TimeUnit unit) {
         return milliseconds(unit.toMillis(duration));
+    }
+
+    /**
+     * Sleeps until the {@link Supplier} is meet. But, not longer than timeout.
+     *
+     * @param interval interval check in milliseconds
+     * @param supplier supplier returning {@link Boolean} if the criteria is meet
+     * @param timeout  timeout in milliseconds
+     * @return {@code true} in case the sleep has been interrupted (or timeout expired), otherwise {@code false}
+     */
+    public static boolean milliseconds(long interval, final Supplier<Boolean> supplier, long timeout) {
+        Preconditions.checkArgument(interval < timeout, "Interval cannot be bigger than timeout");
+
+        long end = System.currentTimeMillis() + timeout;
+        do {
+            // return true when criteria is meet
+            if (supplier.get()) {
+                return true;
+            }
+            // return false when sleep has been interrupted or timeout expired
+            else if (!milliseconds(interval) || System.currentTimeMillis() > end) {
+                return false;
+            }
+        } while (true);
     }
 }

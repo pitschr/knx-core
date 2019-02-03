@@ -21,6 +21,7 @@ package li.pitschmann.knx.main;
 import com.google.common.base.*;
 import li.pitschmann.knx.link.*;
 import li.pitschmann.knx.link.communication.*;
+import li.pitschmann.knx.link.plugin.*;
 import li.pitschmann.knx.link.plugin.experimental.*;
 import li.pitschmann.utils.*;
 import org.slf4j.*;
@@ -64,8 +65,8 @@ public class KnxMainMonitoringWithPlugins extends AbstractKnxMain {
 
         final Configuration config = Configuration.create(routerAddress)//
                 .plugin( //
-                        new AuditTextPlugin(), //
-                        new StatisticPlugin(), //
+                        new AuditPlugin(), //
+                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
                         new AuditDatabasePlugin() //
                 ) //
                 .setting("timeout.request.connectionstate", "10000") //

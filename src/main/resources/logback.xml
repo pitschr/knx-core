@@ -30,7 +30,7 @@
             <maxHistory>14</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%date %mdc{TYPE} %msg%n</pattern>
+            <pattern>%date %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -61,10 +61,10 @@
     <logger name="li.pitschmann.knx.link.communication.Communicator" level="DEBUG" />
     <logger name="li.pitschmann.knx.link.datapoint.DataPointTypeRegistry" level="ALL" />
       -->
-    <logger name="li.pitschmann.knx.link.plugin.experimental.AuditTextPlugin" level="INFO" additivity="false">
+    <logger name="li.pitschmann.knx.link.plugin.AuditPlugin" level="INFO" additivity="false">
         <appender-ref ref="AUDIT"/>
     </logger>
-    <logger name="li.pitschmann.knx.link.plugin.experimental.StatisticPlugin" level="INFO" additivity="false">
+    <logger name="li.pitschmann.knx.link.plugin.StatisticPlugin" level="INFO" additivity="false">
         <appender-ref ref="STATISTIC"/>
     </logger>
 

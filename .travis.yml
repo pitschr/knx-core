@@ -9,11 +9,15 @@ cache:
   directories:
     - $HOME/.m2
 
+# Consider only branches below for CI
 branches:
   only:
     - master
 
+# Compiles the /src/main/java and /src/test/java
 script:
   - mvn test-compile compile -B -V
+
+# After compilation start code coverage
 after_success:
   - mvn clean test jacoco:report coveralls:report -Dlogback.configurationFile=logback-off.xml

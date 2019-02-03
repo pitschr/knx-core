@@ -96,7 +96,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
                 .setting("timeout.request.connectionstate", "1000") // 1s instead of 10s
                 .setting("interval.connectionstate", "6000") // 6s instead of 60s
                 .setting("timeout.alive.connectionstate", "12000") // 12s instead of 120s
-        ;
+                ;
     }
 
     public boolean isReady() {
