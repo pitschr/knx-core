@@ -30,7 +30,6 @@ import li.pitschmann.knx.link.plugin.*;
 import li.pitschmann.utils.*;
 import org.slf4j.*;
 
-import javax.annotation.*;
 import java.net.*;
 import java.nio.channels.*;
 import java.util.*;
@@ -295,10 +294,14 @@ public final class InternalKnxClient implements KnxClient {
                 LOG.trace("Control channel is still connected. Send disconnect request.");
                 // create body
                 final DisconnectRequestBody requestBody = DisconnectRequestBody.create(this.channelId, this.controlHPAI);
-                final DisconnectResponseBody responseBody = this.sendAndWait(requestBody, config.getTimeoutDisconnectRequest());
-                if (responseBody != null) {
-                    LOG.debug("Disconnect Response Body retrieved: {}", responseBody);
-                } else {
+                try {
+                    final var responseBody = this.send(requestBody, config.getTimeoutDisconnectRequest()).get();
+                    if (responseBody != null) {
+                        LOG.debug("Disconnect Response Body retrieved: {}", responseBody);
+                    } else {
+                        throw new KnxBodyNotReceivedException(DisconnectResponseBody.class);
+                    }
+                } catch (KnxBodyNotReceivedException | InterruptedException | ExecutionException ex) {
                     LOG.debug("No Disconnect Response Body retrieved. Continue with disconnect.");
                     isOk = false;
                 }
@@ -479,16 +482,21 @@ public final class InternalKnxClient implements KnxClient {
         LOG.trace("Method 'fetchChannelIdFromRouter()' called.");
 
         // create connect request and send it
-        final ConnectionRequestInformation cri = ConnectionRequestInformation.create();
-        final ConnectRequestBody connectRequestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
-        final ConnectResponseBody connectResponseBody = this.sendAndWait(connectRequestBody, config.getTimeoutConnectRequest());
+        final var cri = ConnectionRequestInformation.create();
+        final var connectRequestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
 
-        // check status and return channel id
-        if (connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR) {
-            this.channelId = connectResponseBody.getChannelId();
-            LOG.info("Channel ID received: {}", this.channelId);
-        } else {
-            throw new KnxChannelIdNotReceivedException(connectResponseBody);
+        try {
+            final var connectResponseBody = this.<ConnectResponseBody>send(connectRequestBody, config.getTimeoutConnectRequest()).get();
+            // check status and return channel id
+            if (connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR) {
+                this.channelId = connectResponseBody.getChannelId();
+                LOG.info("Channel ID received: {}", this.channelId);
+            } else {
+                throw new KnxChannelIdNotReceivedException(connectResponseBody);
+            }
+        } catch (final InterruptedException | ExecutionException ex) {
+            LOG.error("Exception during fetch channel id from router", ex);
+            throw new KnxBodyNotReceivedException(ConnectResponseBody.class);
         }
     }
 
@@ -500,17 +508,5 @@ public final class InternalKnxClient implements KnxClient {
     @Override
     public final <T extends ResponseBody> Future<T> send(final RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunciator(requestBody).send(requestBody, msTimeout);
-    }
-
-    @Override
-    public final @Nullable
-    <T extends ResponseBody> T sendAndWait(final RequestBody requestBody, final long msTimeout) {
-        try {
-            final Future<T> future = send(requestBody, msTimeout);
-            return future.get();
-        } catch (final Exception ex) {
-            LOG.warn("Exception thrown during send and wait asynchronously.", ex);
-            return null;
-        }
     }
 }

@@ -72,7 +72,7 @@ public class KnxMainWrite extends AbstractKnxMain {
             for (final String value : values) {
                 DataPointValue<?> dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
                 LOG.debug("========================================================================");
-                LOG.debug("WRITE: {} - {}\nACK: {}", value, dpValue, client.writeRequest(groupAddress, dpValue));
+                LOG.debug("WRITE: {} - {}\nACK: {}", value, dpValue, client.writeRequestAsync(groupAddress, dpValue));
                 Sleeper.seconds(2);
                 LOG.debug("========================================================================");
             }

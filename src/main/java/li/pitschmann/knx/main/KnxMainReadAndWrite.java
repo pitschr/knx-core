@@ -60,7 +60,7 @@ public class KnxMainReadAndWrite extends AbstractKnxMain {
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
             // send read status to group address
             // otherwise the KNX client has no status about the group address yet
-            LOG.debug("READ ACK: {}", client.readRequest(groupAddress));
+            LOG.debug("READ ACK: {}", client.readRequestAsync(groupAddress));
 
             // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
@@ -70,7 +70,7 @@ public class KnxMainReadAndWrite extends AbstractKnxMain {
             LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
             // send write request with inverse boolean value (true->false, false->true)
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus));
+            client.writeRequestAsync(groupAddress, DPT1.SWITCH.toValue(!lampStatus));
 
             // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);

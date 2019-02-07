@@ -21,7 +21,6 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.*;
 import li.pitschmann.knx.link.body.*;
 
-import javax.annotation.*;
 import java.util.concurrent.*;
 
 /**
@@ -79,18 +78,4 @@ public interface KnxClient extends AutoCloseable {
      * or {@code null} if no response was received because of e.g. timeout
      */
     <T extends ResponseBody> Future<T> send(final RequestBody requestBody, final long msTimeout);
-
-    /**
-     * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected body which
-     * is an instance of {@link ResponseBody}.
-     * <p>
-     * The appropriate channel will be chosen by {@link ControlChannelRelated} and {@link DataChannelRelated} marker
-     * interfaces.
-     *
-     * @param requestBody the request body
-     * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
-     * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
-     */
-    @Nullable
-    <T extends ResponseBody> T sendAndWait(final RequestBody requestBody, final long msTimeout);
 }

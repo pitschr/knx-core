@@ -64,7 +64,26 @@ public interface KnxMockServerAction {
             }
             return innerKnxActions;
         } else if (command.contains(",")) {
-            return Arrays.stream(command.split(",")).flatMap(s -> parse(s).stream()).collect(Collectors.toList());
+            if (command.contains("{")) {
+                // bit tricky because "," within "{" and "}" should not be splitted
+                // workaround is just to use another character
+                var sb = new StringBuilder(command.length());
+                boolean withinBracket = false;
+                for (char c : command.toCharArray()) {
+                    var newChar = c;
+                    if (c == '{') {
+                        withinBracket = true;
+                    } else if (c == '}') {
+                        withinBracket = false;
+                    } else if (c == ',' && withinBracket) {
+                        newChar = '|';
+                    }
+                    sb.append(newChar);
+                }
+                return Arrays.stream(sb.toString().split(",")).flatMap(s -> parse(s.replaceAll("\\|", ",")).stream()).collect(Collectors.toList());
+            } else {
+                return Arrays.stream(command.split(",")).flatMap(s -> parse(s).stream()).collect(Collectors.toList());
+            }
         }
         // else: assume it is a send action
         else {

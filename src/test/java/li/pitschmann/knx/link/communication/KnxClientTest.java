@@ -80,7 +80,7 @@ public class KnxClientTest {
         var extensionPlugin = Mockito.mock(ExtensionPlugin.class);
         configBuilder.plugin(extensionPlugin);
 
-        try (final KnxClient client = new DefaultKnxClient(configBuilder.build())) {
+        try (var client = new DefaultKnxClient(configBuilder.build())) {
             // wait for first tunnelling ack body sent by client
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK);
         } catch (final Throwable t) {
@@ -207,10 +207,7 @@ public class KnxClientTest {
 
             // verify if it is returning Illegal Argument Exception
             assertThatThrownBy(() -> client.send(requestBody)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
-
-            // verify if it is returning null (instead of Exception)
-            var responseBody = client.sendAndWait(requestBody, 0); // timeout is not relevant here!
-            assertThat(responseBody).isNull();
+            assertThatThrownBy(() -> client.send(requestBody, 0)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }

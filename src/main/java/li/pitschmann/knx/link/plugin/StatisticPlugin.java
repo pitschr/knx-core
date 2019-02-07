@@ -130,13 +130,13 @@ public final class StatisticPlugin implements ExtensionPlugin {
          * TEXT Statistic Template
          */
         TEXT( "" + //
-            "%n\t%1$s packets received (%2$s)" + //
+            "%n\t%1$s packets received (%2$s bytes)" + //
             "%n\t\t[Description     ] Request: 0, Response: %7$s" + //
             "%n\t\t[Connect         ] Request: 0, Response: %9$s" + //
             "%n\t\t[Connection State] Request: 0, Response: %11$s" + //
             "%n\t\t[Tunnelling      ] Request: %13$s, Response: %15$s" + //
             "%n\t\t[Disconnect      ] Request: %17$s, Response: %19$s" + //
-            "%n\t%3$s packets sent (%4$s)" + //
+            "%n\t%3$s packets sent (%4$s bytes)" + //
             "%n\t\t[Description     ] Request: %8$s, Response: 0" + //
             "%n\t\t[Connect         ] Request: %10$s, Response: 0" + //
             "%n\t\t[Connection State] Request: %12$s, Response: 0" + //

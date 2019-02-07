@@ -25,10 +25,9 @@ import org.junit.jupiter.api.*;
 
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.function.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Test cases for {@link Sleeper} class
@@ -43,42 +42,13 @@ public class SleeperTest {
     @Test
     @DisplayName("Sleep in milliseconds")
     public void testNoInterrupt() {
-        try {
-            testNoInterruptInternal();
-        } catch (final AssertionError error) {
-            if (error.getMessage().contains("(a difference of exactly 10% being considered valid)")) {
-                // give a 2nd try as it may happen that the Thread#sleep(..) is outside of 10% due JUnit parallelism
-                Sleeper.seconds(1);
-                testNoInterruptInternal();
-            } else {
-                // otherwise re-throw the error
-                throw error;
-            }
-        }
-    }
+        // verify the result (expected 'true')
+        assertThat(Sleeper.milliseconds(100)).isTrue();
 
-    private void testNoInterruptInternal() {
-        boolean notInterrupted;
-
-        // repeat 5 times to compare with an average value
-        int repeats = 1;
-        int durationTotal = 0;
-        Stopwatch sw = Stopwatch.createUnstarted();
-        for (int i = 0; i < repeats; i++) {
-            try {
-                sw.start();
-                notInterrupted = Sleeper.milliseconds(100); // wait 100ms
-                durationTotal += sw.elapsed(TimeUnit.MILLISECONDS);
-                sw.reset();
-                assertThat(notInterrupted).isTrue();
-            } catch (Throwable t) {
-                fail("A throwable was thrown for: " + t);
-                throw new AssertionError();
-            }
-        }
-
+        // measure
         // Thread#sleep(..) is not very accurate, so it may be between 90 and 110ms
-        assertThat(durationTotal / repeats).isCloseTo(100, Percentage.withPercentage(10));
+        var elapsedTime = elapsedAverage((startTime) -> Sleeper.milliseconds(100), 3);
+        assertThat(elapsedTime).isCloseTo(100d, Percentage.withPercentage(10));
     }
 
     /**
@@ -87,26 +57,12 @@ public class SleeperTest {
     @Test
     @DisplayName("Sleep in milliseconds with predicates (always true)")
     public void testSleepWithPredicateAlwaysTrue() {
-        // predicate meet immediately
-        try {
-            testSleepWithPredicateAlwaysTrueInternal();
-        } catch (final AssertionError error) {
-            if (error.getMessage().contains("(a difference of exactly 10% being considered valid)")) {
-                // give a 2nd try as it may happen that the Thread#sleep(..) is outside of range due JUnit parallelism
-                Sleeper.seconds(1);
-                testSleepWithPredicateAlwaysTrueInternal();
-            } else {
-                // otherwise re-throw the error
-                throw error;
-            }
-        }
-    }
+        // verify the result (expected 'true')
+        assertThat(Sleeper.milliseconds(10, () -> true, 45)).isTrue();
 
-    private void testSleepWithPredicateAlwaysTrueInternal() {
-        var sw = Stopwatch.createStarted();
-        var notInterrupted = Sleeper.milliseconds(10, () -> true, 100);
-        assertThat(sw.elapsed().toMillis()).isBetween(0L, 10L);
-        assertThat(notInterrupted).isTrue();
+        // predicate meet immediately
+        var elapsedTime = elapsedAverage((startTime) -> Sleeper.milliseconds(10, () -> true, 45), 3);
+        assertThat(elapsedTime).isBetween(0d, 10d);
     }
 
     /**
@@ -116,26 +72,12 @@ public class SleeperTest {
     @Test
     @DisplayName("Sleep in milliseconds with predicates (always false)")
     public void testSleepWithPredicateAlwaysFalse() {
-        // predicate meet immediately
-        try {
-            testSleepWithPredicateAlwaysFalseInternal();
-        } catch (final AssertionError error) {
-            if (error.getMessage().contains("[100L, 110L]")) {
-                // give a 2nd try as it may happen that the Thread#sleep(..) is outside of range due JUnit parallelism
-                Sleeper.seconds(1);
-                testSleepWithPredicateAlwaysFalseInternal();
-            } else {
-                // otherwise re-throw the error
-                throw error;
-            }
-        }
-    }
+        // verify the result (expected 'false' because of timeout)
+        assertThat(Sleeper.milliseconds(10, () -> false, 45)).isFalse();
 
-    private void testSleepWithPredicateAlwaysFalseInternal() {
-        var sw = Stopwatch.createStarted();
-        var notInterrupted = Sleeper.milliseconds(10, () -> false, 100);
-        assertThat(sw.elapsed().toMillis()).isBetween(100L, 110L);
-        assertThat(notInterrupted).isFalse();
+        // predicate meet immediately
+        var elapsedTime = elapsedAverage((startTime) -> Sleeper.milliseconds(10, () -> false, 45), 3);
+        assertThat(elapsedTime).isCloseTo(45, Percentage.withPercentage(20));
     }
 
     /**
@@ -145,27 +87,13 @@ public class SleeperTest {
     @Test
     @DisplayName("Sleep in milliseconds with predicates (true after 50 ms)")
     public void testSleepWithPredicate() {
-        // predicate meet immediately
-        try {
-            testSleepWithPredicateInternal();
-        } catch (final AssertionError error) {
-            if (error.getMessage().contains("[50L, 60L]")) {
-                // give a 2nd try as it may happen that the Thread#sleep(..) is outside of range due JUnit parallelism
-                Sleeper.seconds(1);
-                testSleepWithPredicateInternal();
-            } else {
-                // otherwise re-throw the error
-                throw error;
-            }
-        }
-    }
+        // verify the result (true = not interrupted)
+        var startTime = System.currentTimeMillis();
+        assertThat(Sleeper.milliseconds(10, () -> System.currentTimeMillis() > startTime + 50, 100)).isTrue();
 
-    private void testSleepWithPredicateInternal() {
-        long interruptSleep = System.currentTimeMillis() + 50;
-        var sw = Stopwatch.createStarted();
-        var notInterrupted = Sleeper.milliseconds(10, () -> System.currentTimeMillis() > interruptSleep, 100);
-        assertThat(sw.elapsed().toMillis()).isBetween(50L, 60L);
-        assertThat(notInterrupted).isTrue();
+        // predicate meet immediately
+        var elapsedTime = elapsedAverage((st) -> Sleeper.milliseconds(10, () -> System.currentTimeMillis() > st + 45, 100), 3);
+        assertThat(elapsedTime).isCloseTo(50, Percentage.withPercentage(20));
     }
 
     /**
@@ -205,7 +133,7 @@ public class SleeperTest {
     public void testInterrupt() {
         final SleepTestRunnable sleepRunnable = new SleepTestRunnable();
         final Future<?> future = Executors.newSingleThreadExecutor().submit(sleepRunnable);
-        Sleeper.seconds(1);
+        Sleeper.milliseconds(100);
         future.cancel(true);
 
         assertThat(sleepRunnable.isSleeperNotInterrupted()).isFalse();
@@ -218,6 +146,21 @@ public class SleeperTest {
     @Test
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Sleeper.class);
+    }
+
+    /**
+     * Returns the average of elapsed time in milliseconds
+     *
+     * @param supplier what should be executed/measured
+     * @param times    how many iterations
+     * @return the elapsed average time in milliseconds
+     */
+    private double elapsedAverage(final LongConsumer supplier, final int times) {
+        var sw = Stopwatch.createStarted();
+        for (int i = 0; i < times; i++) {
+            supplier.accept(System.currentTimeMillis());
+        }
+        return sw.elapsed().toMillis() / (double) times;
     }
 
     /**

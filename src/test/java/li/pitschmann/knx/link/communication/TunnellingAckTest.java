@@ -58,7 +58,7 @@ public class TunnellingAckTest {
     public void testReceivingAckOnceTime(final KnxMockServer mockServer) {
         try (final KnxClient client = mockServer.newKnxClient()) {
             // send tunnelling request
-            final TunnellingAckBody ackBody = client.sendAndWait(KnxBody.TUNNELLING_REQUEST_BODY, 500);
+            final var ackBody = client.send(KnxBody.TUNNELLING_REQUEST_BODY, 500).get();
             assertThat(ackBody).isNotNull();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
@@ -105,7 +105,7 @@ public class TunnellingAckTest {
     public void testReceivingAckTwiceTimes(final KnxMockServer mockServer) {
         try (final KnxClient client = mockServer.newKnxClient()) {
             // send tunnelling request
-            final TunnellingAckBody ackBody = client.sendAndWait(KnxBody.TUNNELLING_REQUEST_BODY, 500);
+            final var ackBody = client.send(KnxBody.TUNNELLING_REQUEST_BODY, 500).get();
             assertThat(ackBody).isNotNull();
 
             // wait until Disconnect response arrived KNX mock server
