@@ -18,25 +18,24 @@
 
 package li.pitschmann.knx.main;
 
+import com.google.common.collect.*;
+import li.pitschmann.knx.link.body.*;
 import li.pitschmann.knx.link.body.address.*;
 import li.pitschmann.knx.link.communication.*;
 import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.datapoint.value.*;
 import li.pitschmann.utils.*;
 import org.slf4j.*;
 
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Demo class how to send a specific write request to a KNX group address.
  * <ul>
  * <li>1st argument is the address of KNX Net/IP router; default value "192.168.1.16"</li>
- * <li>2nd argument is the address of KNX group; default value "1/2/100"</li>
- * <li>3rd argument is the DPT of value; default DPT "DPT1.SWITCH"</li>
- * <li>4th argument is the 1st write value; default value "1" (on)</li>
- * <li>5th argument is the 2nd write value; default value "0" (off)</li>
- * <li>Subsequent arguments are values as well; no further default values</li>
+ * <li>2nd argument is the DPT of value; default DPT "DPT1.SWITCH"</li>
+ * <li>3rd...Nth argument are the values</li>
  * </ul>
  *
  * @author PITSCHR
@@ -44,7 +43,10 @@ import java.util.*;
 public class KnxMainWrite extends AbstractKnxMain {
     private static final Logger LOG = LoggerFactory.getLogger(KnxMainWrite.class);
     private static final InetAddress DEFAULT_ROUTER_IP = Networker.getByAddress("192.168.1.16");
-    private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
+    private static final List<GroupAddress> DEFAULT_GROUP_ADDRESSES = Lists.newArrayList( //
+            GroupAddress.of(1, 2, 0), //
+            GroupAddress.of(1, 2, 50)
+    );
     private static final String DEFAULT_DPT = "1.001"; // DPT1.SWITCH
     private static final String[] DEFAULT_VALUES = new String[]{"on", "off"}; // switch on, switch off
 
@@ -53,31 +55,40 @@ public class KnxMainWrite extends AbstractKnxMain {
         final InetAddress routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Networker::getByAddress);
         LOG.debug("Router Address: {}", routerAddress);
 
-        // 2nd Argument: Get Group Address
-        final GroupAddress groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, AbstractKnxMain::parseGroupAddress);
-        LOG.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
-
-        // 3rd Argument: Get DPT
+        // 2nd Argument: Get DPT
         final String dpt = getParameterValue(args, "-dpt", DEFAULT_DPT, String::valueOf);
         LOG.debug("DPT: {}", dpt);
 
-        // 4th..Nth Arguments: Get Values
+        // 3rd..Nth Arguments: Get Values
         final String[] values = getParameterValues(args, "-c", DEFAULT_VALUES, String[]::new);
         LOG.debug("Values: {}", Arrays.toString(values));
 
         // start KNX communication
         LOG.trace("START");
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
+            List<Future<TunnellingAckBody>> ackBodies = Lists.newArrayList();
             Sleeper.seconds(1);
             for (final String value : values) {
-                DataPointValue<?> dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
+                var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
                 LOG.debug("========================================================================");
-                LOG.debug("WRITE: {} - {}\nACK: {}", value, dpValue, client.writeRequestAsync(groupAddress, dpValue));
+                for (final GroupAddress groupAddress : DEFAULT_GROUP_ADDRESSES) {
+                    var future = client.writeRequest(groupAddress, dpValue);
+                    ackBodies.add(future);
+                    LOG.debug("WRITE: {} - {}\nACK: {}", value, dpValue, future);
+                }
                 Sleeper.seconds(2);
                 LOG.debug("========================================================================");
             }
-            KnxStatusData knxStatus = client.getStatusPool().getStatusFor(groupAddress);
-            LOG.debug("Knx Status: {}", knxStatus);
+
+            // wait until completed
+            LOG.debug("WAIT UNTIL COMPLETED");
+
+            for (int i = 0; i < ackBodies.size(); i++) {
+                LOG.debug("DONE: {}", ackBodies.get(i).isDone());
+                LOG.debug("GET : {}", ackBodies.get(i).get());
+            }
+            LOG.debug("Statistic: {}", client.getStatistic());
+            LOG.debug("COMPLETED!");
         } catch (final Throwable t) {
             LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
         } finally {

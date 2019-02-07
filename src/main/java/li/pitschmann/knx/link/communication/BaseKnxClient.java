@@ -60,13 +60,13 @@ public class BaseKnxClient implements KnxClient {
      * @param dataPointValue
      * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP router
      */
-    public Future<TunnellingAckBody> writeRequestAsync(final GroupAddress address, final DataPointValue<?> dataPointValue) {
+    public Future<TunnellingAckBody> writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
         final CEMI cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
         return this.clientInternal.send(TunnellingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
-     * Sends a WRITE request to {@link GroupAddress} with {@code apciData} byte array <strong>asynchronously</strong>.
+     * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
      *
      * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP router. The
      * requested KNX device will send a {@link TunnellingRequestBody} with {@link MessageCode#L_DATA_CON} if write was
@@ -77,7 +77,7 @@ public class BaseKnxClient implements KnxClient {
      * @param apciData
      * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP router
      */
-    public Future<TunnellingAckBody> writeRequestAsync(final GroupAddress address, final byte[] apciData) {
+    public Future<TunnellingAckBody> writeRequest(final GroupAddress address, final byte[] apciData) {
         final CEMI cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
         return this.clientInternal.send(TunnellingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
@@ -93,7 +93,7 @@ public class BaseKnxClient implements KnxClient {
      * @param address
      * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP router
      */
-    public Future<TunnellingAckBody> readRequestAsync(final GroupAddress address) {
+    public Future<TunnellingAckBody> readRequest(final GroupAddress address) {
         final CEMI cemi = CEMI.useDefaultForGroupValueRead(address);
         return this.clientInternal.send(TunnellingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }

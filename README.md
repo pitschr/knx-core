@@ -202,7 +202,7 @@ public class KnxMain {
         try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
             // send read status to group address
             // otherwise the KNX client has no status about the group address yet
-            LOG.debug("READ ACK: {}", client.readRequest(groupAddress));
+            LOG.debug("READ ACK: {}", client.readRequest(groupAddress).get());
 
             // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);

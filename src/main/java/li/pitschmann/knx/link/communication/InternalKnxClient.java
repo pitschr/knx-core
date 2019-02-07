@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import com.google.common.base.*;
 import li.pitschmann.knx.link.*;
 import li.pitschmann.knx.link.body.*;
 import li.pitschmann.knx.link.body.dib.*;
@@ -461,6 +462,7 @@ public final class InternalKnxClient implements KnxClient {
             LOG.debug("Request for description: {}", requestBody);
 
             final DescriptionResponseBody responseBody = communicator.sendAndWait(requestBody, config.getTimeoutDescriptionRequest());
+            // check status
             if (responseBody != null) {
                 LOG.debug("Description response received: {}", responseBody);
                 return responseBody;
@@ -487,16 +489,14 @@ public final class InternalKnxClient implements KnxClient {
 
         try {
             final var connectResponseBody = this.<ConnectResponseBody>send(connectRequestBody, config.getTimeoutConnectRequest()).get();
-            // check status and return channel id
-            if (connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR) {
-                this.channelId = connectResponseBody.getChannelId();
-                LOG.info("Channel ID received: {}", this.channelId);
-            } else {
-                throw new KnxChannelIdNotReceivedException(connectResponseBody);
-            }
-        } catch (final InterruptedException | ExecutionException ex) {
+            // check status
+            Preconditions.checkState(connectResponseBody!=null && connectResponseBody.getStatus()==Status.E_NO_ERROR);
+            // return channel id
+            this.channelId = connectResponseBody.getChannelId();
+            LOG.info("Channel ID received: {}", this.channelId);
+        } catch (final IllegalStateException | InterruptedException | ExecutionException ex) {
             LOG.error("Exception during fetch channel id from router", ex);
-            throw new KnxBodyNotReceivedException(ConnectResponseBody.class);
+            throw new KnxChannelIdNotReceivedException(connectRequestBody);
         }
     }
 

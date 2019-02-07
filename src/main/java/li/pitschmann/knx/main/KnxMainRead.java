@@ -59,7 +59,7 @@ public class KnxMainRead extends AbstractKnxMain {
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
             Sleeper.seconds(1);
             LOG.debug("========================================================================");
-            LOG.debug("READ ACK: {}", client.readRequestAsync(groupAddress).get());
+            LOG.debug("READ ACK: {}", client.readRequest(groupAddress).get());
             for (int i = 0; i < loops; i++) {
                 Sleeper.seconds(1);
                 LOG.debug("STATUS ({}/{}) on (3-level: {}, 2-level: {}): {}", i + 1, loops, groupAddress.getAddress(), groupAddress.getAddressLevel2(), ByteFormatter.formatHexAsString(client.getStatusPool().getStatusFor(groupAddress).getApciData()));

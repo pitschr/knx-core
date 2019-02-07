@@ -23,7 +23,6 @@ import li.pitschmann.knx.link.body.address.*;
 import li.pitschmann.knx.link.datapoint.*;
 import li.pitschmann.knx.link.header.*;
 import li.pitschmann.test.*;
-import li.pitschmann.utils.*;
 import org.junit.jupiter.api.*;
 import org.slf4j.*;
 
@@ -75,10 +74,12 @@ public class BaseKnxClientTest {
                     "WAIT=NEXT," +
                     // ConnectionStateResponseBody
                     KnxBody.CONNECTION_STATE_RESPONSE + "," +
-                    // return four tunnelling acks as we are getting four tunnelling requests
-                    "WAIT=NEXT,06100421000a04070000," +
-                    "WAIT=NEXT,06100421000a04070100," +
-                    "WAIT=NEXT," + KnxBody.TUNNELLING_ACK + "," +
+                    // send three tunnelling acknowledges as we are getting three tunnelling requests
+                    "WAIT=NEXT,06100421000a04070000," + // sequence = 0
+                    "WAIT=NEXT,06100421000a04070100," + // sequence = 1
+                    "WAIT=NEXT,06100421000a04070200," + // sequence = 2
+                    "WAIT=NEXT," + KnxBody.TUNNELLING_ACK + "," + // sequence = 27
+                    // send one tunnelling acknowledge for read request
                     // wait for packet with type 'DisconnectRequestBody'
                     "WAIT=DISCONNECT_REQUEST," +
                     // send DisconnectResponseBody
@@ -89,26 +90,28 @@ public class BaseKnxClientTest {
         var groupAddress = GroupAddress.of(1, 2, 3);
 
         try (var client = (BaseKnxClient) mockServer.newKnxClient()) {
+            // async read request
+            client.readRequest(groupAddress);
             // async write request with DPT
-            client.writeRequestAsync(groupAddress, DPT1.SWITCH.toValue(false)).get();
+            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(false));
             // async write request with APCI data
-            client.writeRequestAsync(groupAddress, new byte[]{0x00}).get();
+            client.writeRequest(groupAddress, new byte[]{0x00});
             // send via body
             client.send(KnxBody.TUNNELLING_REQUEST_BODY);
-            // async read request
-//            client.readRequestAsync(groupAddress).get();
 
+            mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, 4);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
 
         // assert if mock server got right sequences
         var requestBodies = mockServer.getReceivedBodies().stream().filter(b -> b.getServiceType() == ServiceType.TUNNELING_REQUEST).collect(Collectors.toList());
-        assertThat(requestBodies).hasSize(3);
+        assertThat(requestBodies).hasSize(4);
         // first two requests are sequences
         assertThat(((TunnellingRequestBody)requestBodies.get(0)).getSequence()).isEqualTo(0);
         assertThat(((TunnellingRequestBody)requestBodies.get(1)).getSequence()).isEqualTo(1);
+        assertThat(((TunnellingRequestBody)requestBodies.get(2)).getSequence()).isEqualTo(2);
         // last one is sequence (taken sample) = 27
-        assertThat(((TunnellingRequestBody)requestBodies.get(2)).getSequence()).isEqualTo(27);
+        assertThat(((TunnellingRequestBody)requestBodies.get(3)).getSequence()).isEqualTo(27);
     }
 }
