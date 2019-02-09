@@ -30,19 +30,16 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class GroupAddress extends KnxAddress {
-    private final int main;
-    private final int middle;
-    private final int sub;
+    private byte[] address;
 
+    /**
+     * Private Constructor for {@link GroupAddress}
+     *
+     * @param addressRawData
+     */
     private GroupAddress(final byte[] addressRawData) {
         super(addressRawData);
-
-        // byte 0: .xxx x...
-        this.main = (addressRawData[0] & 0x78) >>> 3;
-        // byte 0: .... .xxx
-        this.middle = addressRawData[0] & 0x07;
-        // byte 1: xxxx xxxx
-        this.sub = Bytes.toUnsignedInt(addressRawData[1]);
+        address = getRawData();
     }
 
     /**
@@ -57,32 +54,23 @@ public final class GroupAddress extends KnxAddress {
     }
 
     /**
-     * Returns an instance of {@link GroupAddress} based on 3-level topology
+     * Returns an instance of {@link GroupAddress} based on free-level topology
      *
-     * @param main
-     * @param middle
-     * @param sub
+     * @param address
      * @return immutable {@link GroupAddress}
      */
-    public static GroupAddress of(final int main, final int middle, final int sub) {
-        if (main < 0 || main > 0x0F) {
-            throw new KnxNumberOutOfRangeException("main", 0, 0x0F, middle);
-        } else if (middle < 0 || middle > 0x07) {
-            throw new KnxNumberOutOfRangeException("middle", 0, 0x07, middle);
-        } else if (sub < 0 || sub > 0xFF) {
-            throw new KnxNumberOutOfRangeException("sub", 0, 0xFF, sub);
+    public static GroupAddress of(final int address) {
+        if (address < 1 || address > 0xFFFF) {
+            throw new KnxNumberOutOfRangeException("address", 1, 0xFFFF, address);
         }
 
-        // byte 0: .xxx x...
-        final byte mainAsByte = (byte) ((main & 0x0F) << 3);
-        // byte 0: .... .xxx
-        final byte middleAsByte = (byte) (middle & 0x07);
+        // byte 0: xxxx xxxx
+        final byte byte0 = (byte) (address >>> 8);
         // byte 1: xxxx xxxx
-        final byte subAsByte = (byte) sub;
+        final byte byte1 = (byte) (address & 0xFF);
 
         // create bytes
-        final byte[] bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
-        return of(bytes);
+        return of(new byte[]{byte0, byte1});
     }
 
     /**
@@ -93,18 +81,47 @@ public final class GroupAddress extends KnxAddress {
      * @return immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int sub) {
-        if (main < 0 || main > 0x0F) {
-            throw new KnxNumberOutOfRangeException("main", 0, 0x0F, main);
+        if (main < 0 || main > 0x1F) {
+            throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
         } else if (sub < 0 || sub > 0x7FF) {
             throw new KnxNumberOutOfRangeException("sub", 0, 0x7FF, sub);
         }
 
-        // byte 0: .xxx x...
-        final byte mainAsByte = (byte) ((main & 0x0F) << 3);
+        // byte 0: xxxx x...
+        final byte mainAsByte = (byte) ((main & 0x1F) << 3);
         // byte 0: .... .xxx
         final byte middleAsByte = (byte) ((sub & 0x0700) >>> 8);
         // byte 1: xxxx xxxx
         final byte subAsByte = (byte) (sub & 0x00FF);
+
+        // create bytes
+        final byte[] bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
+        return of(bytes);
+    }
+
+    /**
+     * Returns an instance of {@link GroupAddress} based on 3-level topology
+     *
+     * @param main
+     * @param middle
+     * @param sub
+     * @return immutable {@link GroupAddress}
+     */
+    public static GroupAddress of(final int main, final int middle, final int sub) {
+        if (main < 0 || main > 0x1F) {
+            throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
+        } else if (middle < 0 || middle > 0x07) {
+            throw new KnxNumberOutOfRangeException("middle", 0, 0x07, middle);
+        } else if (sub < 0 || sub > 0xFF) {
+            throw new KnxNumberOutOfRangeException("sub", 0, 0xFF, sub);
+        }
+
+        // byte 0: xxxx x...
+        final byte mainAsByte = (byte) ((main & 0x1F) << 3);
+        // byte 0: .... .xxx
+        final byte middleAsByte = (byte) (middle & 0x07);
+        // byte 1: xxxx xxxx
+        final byte subAsByte = (byte) sub;
 
         // create bytes
         final byte[] bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
@@ -116,13 +133,46 @@ public final class GroupAddress extends KnxAddress {
         return AddressType.GROUP;
     }
 
+    /**
+     * Returns Group pAddress in 3-Level
+     *
+     * @return group address in 3-level
+     */
     @Override
     public String getAddress() {
-        return this.main + "/" + this.middle + "/" + this.sub;
+        return String.valueOf(Bytes.toUnsignedInt(this.address[0], this.address[1]));
     }
 
+    /**
+     * Returns Group Address in 2-Level
+     *
+     * @return group address in 2-level
+     */
     public String getAddressLevel2() {
-        return this.main + "/" + (this.middle << 8 | this.sub);
+        // byte 0: xxxx x...
+        var main = (address[0] & 0xF8) >>> 3;
+        // byte 0: .... .xxx
+        var middle = address[0] & 0x07;
+        // byte 1: xxxx xxxx
+        var sub = Bytes.toUnsignedInt(address[1]);
+
+        return main + "/" + (middle << 8 | sub);
+    }
+
+    /**
+     * Returns Group Address in 3-Level
+     *
+     * @return group address in 3-level
+     */
+    public String getAddressLevel3() {
+        // byte 0: xxxx x...
+        var main = (address[0] & 0xF8) >>> 3;
+        // byte 0: .... .xxx
+        var middle = address[0] & 0x07;
+        // byte 1: xxxx xxxx
+        var sub = Bytes.toUnsignedInt(address[1]);
+
+        return main + "/" + middle + "/" + sub;
     }
 
     @Override
@@ -131,7 +181,8 @@ public final class GroupAddress extends KnxAddress {
         final var h = MoreObjects.toStringHelper(this)
                 .add("addressType", this.getAddressType())
                 .add("address", this.getAddress())
-                .add("address(2-level)", this.getAddressLevel2());
+                .add("address(2-level)", this.getAddressLevel2())
+                .add("address(3-level)", this.getAddressLevel3());
         // @formatter:on
         if (inclRawData) {
             h.add("rawData", this.getRawDataAsHexString());
@@ -145,13 +196,13 @@ public final class GroupAddress extends KnxAddress {
             return true;
         } else if (obj instanceof GroupAddress) {
             final GroupAddress other = (GroupAddress) obj;
-            return this.main == other.main && this.middle == other.middle && this.sub == other.sub;
+            return Objects.equals(this.address[0], other.address[0]) && Objects.equals(this.address[1], other.address[1]);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getAddressType(), this.main, this.middle, this.sub);
+        return Objects.hash(this.getAddressType(), this.address[0], this.address[1]);
     }
 }

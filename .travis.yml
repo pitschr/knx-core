@@ -14,10 +14,6 @@ branches:
   only:
     - master
 
-# Compiles the /src/main/java and /src/test/java
+# Compiles, run test and code coverage
 script:
-  - mvn test-compile compile -B -V
-
-# After compilation start code coverage
-after_success:
   - mvn clean test jacoco:report coveralls:report -Dlogback.configurationFile=logback-off.xml
