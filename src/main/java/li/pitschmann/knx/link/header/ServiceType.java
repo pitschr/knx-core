@@ -18,13 +18,15 @@
 
 package li.pitschmann.knx.link.header;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.dib.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.KnxBytesEnum;
+import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxServiceTypeHasNoResponseIdentifier;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Service Type Identifier used in KNX/IP headers to identify the message frames.

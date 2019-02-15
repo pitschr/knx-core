@@ -18,11 +18,13 @@
 
 package li.pitschmann.test;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Action behavior for the KNX Mock Server

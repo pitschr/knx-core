@@ -18,16 +18,20 @@
 
 package li.pitschmann.knx.link;
 
-import li.pitschmann.knx.link.body.hpai.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.body.hpai.HostProtocol;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.Networker;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.net.*;
-import java.nio.channels.*;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.nio.channels.DatagramChannel;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test case for {@link HPAI}

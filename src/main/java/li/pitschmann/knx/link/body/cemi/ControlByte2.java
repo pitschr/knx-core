@@ -18,11 +18,13 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.AbstractSingleRawData;
+import li.pitschmann.knx.link.body.address.AddressType;
+import li.pitschmann.knx.link.body.address.KnxAddress;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.ByteFormatter;
 
 public final class ControlByte2 extends AbstractSingleRawData {
     private static final int DEFAULT_HOP_COUNT = 6;

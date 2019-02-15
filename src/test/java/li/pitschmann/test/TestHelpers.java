@@ -18,9 +18,9 @@
 
 package li.pitschmann.test;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public final class TestHelpers {
     private TestHelpers() {

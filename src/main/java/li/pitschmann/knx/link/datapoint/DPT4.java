@@ -18,10 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT4Value;
 
-import java.nio.charset.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Data Point Typ 4 for 'Character' (1 Octet)

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.*;
+import li.pitschmann.knx.link.datapoint.DataPointType;
 
 /**
  * Interface for Data Point Value implementations

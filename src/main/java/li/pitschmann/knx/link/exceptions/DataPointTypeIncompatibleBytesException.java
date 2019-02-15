@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.utils.*;
+import li.pitschmann.knx.link.datapoint.DataPointType;
+import li.pitschmann.utils.ByteFormatter;
 
 /**
  * Exception when an incompatible byte array were provided.

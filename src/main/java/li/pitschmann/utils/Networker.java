@@ -18,11 +18,17 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.*;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 
-import java.net.*;
-import java.nio.channels.*;
-import java.util.stream.*;
+import java.net.InetAddress;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+import java.nio.channels.Channel;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.NetworkChannel;
+import java.nio.channels.SocketChannel;
+import java.util.stream.StreamSupport;
 
 /**
  * Network utility class

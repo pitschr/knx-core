@@ -18,13 +18,16 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.*;
-import java.nio.channels.*;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectableChannel;
 
 /**
  * Channel factory to create new channels.

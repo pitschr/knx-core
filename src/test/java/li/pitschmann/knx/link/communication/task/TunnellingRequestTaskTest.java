@@ -18,16 +18,22 @@
 
 package li.pitschmann.knx.link.communication.task;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.body.cemi.*;
-import li.pitschmann.knx.link.communication.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
+import li.pitschmann.knx.link.body.cemi.CEMI;
+import li.pitschmann.knx.link.body.cemi.MessageCode;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.communication.KnxStatusPool;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Flow;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link TunnellingRequestTask}

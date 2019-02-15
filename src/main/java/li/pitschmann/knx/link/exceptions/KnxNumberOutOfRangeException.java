@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.utils.*;
+import li.pitschmann.utils.ByteFormatter;
 
 /**
  * Exception being thrown in case the a number is out of the range.

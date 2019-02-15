@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.datapoint.value.DPT15Value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT15Value;
+import li.pitschmann.knx.link.datapoint.value.DPT15Value.Flags;
 
 /**
  * Data Point Type 15 for 'Access Identification Data' (4 Octets)

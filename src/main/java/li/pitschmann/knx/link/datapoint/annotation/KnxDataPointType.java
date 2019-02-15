@@ -18,7 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * KNX Data Point Type to define the id and description for KNX data point

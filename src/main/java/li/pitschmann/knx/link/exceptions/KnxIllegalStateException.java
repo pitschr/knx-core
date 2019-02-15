@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Exception for KNX/IP specific Illegal State

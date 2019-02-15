@@ -18,11 +18,25 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.value.DPT21Value.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.CEMIServerSupportedFilteringMode;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.ChannelActivation8;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.DeviceControl;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.ForcingSignal;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.ForcingSignalCooling;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.FuelTypeSet;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.GeneralStatus;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.LightingActuatorErrorInfo;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.RadioFrequencyCommunicationModeInfo;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.SecurityReport;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusRoomCoolingController;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusRoomHeatingController;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusSolarDHWController;
+import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusVentilationController;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPT21Value}

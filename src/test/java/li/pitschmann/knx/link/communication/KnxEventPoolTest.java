@@ -18,14 +18,15 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.test.KnxBody;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.time.*;
+import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests the {@link KnxEventPool}

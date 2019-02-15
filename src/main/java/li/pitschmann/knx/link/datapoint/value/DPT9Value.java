@@ -18,10 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.datapoint.DPT9;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 

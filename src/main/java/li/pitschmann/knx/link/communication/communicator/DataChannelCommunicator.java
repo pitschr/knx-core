@@ -18,11 +18,13 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.DataChannelRelated;
+import li.pitschmann.knx.link.communication.ChannelFactory;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
 
-import javax.annotation.*;
-import java.nio.channels.*;
+import javax.annotation.Nonnull;
+import java.nio.channels.SelectableChannel;
 
 /**
  * Communicator for data channel related packets

@@ -18,17 +18,25 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.slf4j.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointTypeEnum;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointValueEnum;
+import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
+import li.pitschmann.knx.link.exceptions.KnxDataPointTypeNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.*;
-import java.math.*;
-import java.util.*;
-import java.util.stream.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Registry for all data point types to serving all.

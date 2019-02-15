@@ -18,18 +18,24 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.slf4j.*;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.*;
-import java.io.*;
-import java.nio.channels.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.channels.SelectableChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Abstract KNX Queue for KNX packets
@@ -119,7 +125,7 @@ public abstract class AbstractKnxQueue implements Runnable {
      * Returns a new instance of {@link Selector} that listens on the given {@link SelectableChannel}
      *
      * @return newly created selector with interest ops taken from {@link #interestOps()}
-     * @throws IOException          - if IO exception happened while performing the action method
+     * @throws IOException - if IO exception happened while performing the action method
      */
     public final Selector openSelector() throws IOException {
         var selector = Selector.open();

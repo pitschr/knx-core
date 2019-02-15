@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import li.pitschmann.knx.link.exceptions.*;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 
 /**
  * IP Current Config DIB to specify DIB for type {@link DescriptionType#IP_CURRENT_CONFIG}

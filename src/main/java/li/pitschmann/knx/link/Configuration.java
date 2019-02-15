@@ -18,15 +18,21 @@
 
 package li.pitschmann.knx.link;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import li.pitschmann.knx.link.plugin.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.utils.Networker;
 
-import java.net.*;
-import java.util.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
 /**
  * KNX specific configurations like KNX Net/IP router address. This class can be created once time only! A change

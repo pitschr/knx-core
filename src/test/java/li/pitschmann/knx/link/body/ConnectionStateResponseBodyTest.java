@@ -18,11 +18,14 @@
 
 package li.pitschmann.knx.link.body;
 
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.link.header.ServiceType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests the {@link ConnectionStateResponseBody}

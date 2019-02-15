@@ -18,12 +18,17 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.datapoint.value.DPT1Value;
+import li.pitschmann.knx.link.datapoint.value.DPT2Value;
+import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests for {@link AbstractDataPointType}

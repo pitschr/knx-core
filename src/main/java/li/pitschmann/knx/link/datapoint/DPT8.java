@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT8Value;
 
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * Data Point Type 8 for '2-Octet Signed Value' (2 Octets)

@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link;
 
-import li.pitschmann.knx.link.exceptions.*;
+import li.pitschmann.knx.link.exceptions.KnxException;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * This class represents a raw data of KNX/IP and is immutable.

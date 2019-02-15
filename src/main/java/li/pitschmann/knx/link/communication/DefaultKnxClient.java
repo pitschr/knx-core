@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.*;
+import li.pitschmann.knx.link.Configuration;
 
-import java.net.*;
+import java.net.InetAddress;
 
 /**
  * Default KNX client implementation

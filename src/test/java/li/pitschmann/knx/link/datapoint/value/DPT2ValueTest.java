@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.DPT2;
+import li.pitschmann.utils.ByteFormatter;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test {@link DPT2Value}

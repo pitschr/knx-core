@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.body.address;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.Bytes;
 
 import java.util.Objects;
 

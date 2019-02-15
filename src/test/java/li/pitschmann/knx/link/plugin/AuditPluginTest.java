@@ -18,13 +18,14 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.test.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.test.MemoryAppender;
+import li.pitschmann.test.MemoryLog;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Test {@link AuditPlugin}

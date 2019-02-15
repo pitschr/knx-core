@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.datapoint.DPT4;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.utils.ByteFormatter;
 
-import java.nio.*;
-import java.nio.charset.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.util.Objects;
 
 /**

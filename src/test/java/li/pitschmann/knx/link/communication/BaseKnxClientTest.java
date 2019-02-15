@@ -18,17 +18,21 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.datapoint.DPT1;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.test.KnxBody;
+import li.pitschmann.test.KnxMockServer;
+import li.pitschmann.test.KnxTest;
+import org.junit.jupiter.api.DisplayName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test for {@link InternalKnxClient}
@@ -108,10 +112,10 @@ public class BaseKnxClientTest {
         var requestBodies = mockServer.getReceivedBodies().stream().filter(b -> b.getServiceType() == ServiceType.TUNNELING_REQUEST).collect(Collectors.toList());
         assertThat(requestBodies).hasSize(4);
         // first two requests are sequences
-        assertThat(((TunnellingRequestBody)requestBodies.get(0)).getSequence()).isEqualTo(0);
-        assertThat(((TunnellingRequestBody)requestBodies.get(1)).getSequence()).isEqualTo(1);
-        assertThat(((TunnellingRequestBody)requestBodies.get(2)).getSequence()).isEqualTo(2);
+        assertThat(((TunnellingRequestBody) requestBodies.get(0)).getSequence()).isEqualTo(0);
+        assertThat(((TunnellingRequestBody) requestBodies.get(1)).getSequence()).isEqualTo(1);
+        assertThat(((TunnellingRequestBody) requestBodies.get(2)).getSequence()).isEqualTo(2);
         // last one is sequence (taken sample) = 27
-        assertThat(((TunnellingRequestBody)requestBodies.get(3)).getSequence()).isEqualTo(27);
+        assertThat(((TunnellingRequestBody) requestBodies.get(3)).getSequence()).isEqualTo(27);
     }
 }

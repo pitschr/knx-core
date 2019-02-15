@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link;
 
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class for {@link AbstractSingleRawData}

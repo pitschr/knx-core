@@ -18,13 +18,15 @@
 
 package li.pitschmann.knx.link.enums;
 
-import li.pitschmann.knx.link.body.dib.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxServiceTypeHasNoResponseIdentifier;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Bytes;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
     @Override

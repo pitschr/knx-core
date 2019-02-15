@@ -18,10 +18,11 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test case for {@link ControlByte1}

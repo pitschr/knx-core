@@ -18,8 +18,9 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.value.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link AbstractDataPointType} extended class with range and unit

@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT2Value;
 
 /**
  * Data Point Type 2 for 'Controlled Boolean' (2 Bit)

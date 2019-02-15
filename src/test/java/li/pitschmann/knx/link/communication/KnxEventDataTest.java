@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.test.KnxBody;
+import org.junit.jupiter.api.Test;
 
-import java.time.*;
+import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the {@link KnxEventData}

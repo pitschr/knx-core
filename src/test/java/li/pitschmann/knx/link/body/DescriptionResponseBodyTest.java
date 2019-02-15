@@ -18,13 +18,22 @@
 
 package li.pitschmann.knx.link.body;
 
-import li.pitschmann.knx.link.body.dib.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.link.body.dib.IPConfigDIB;
+import li.pitschmann.knx.link.body.dib.IPCurrentConfigDIB;
+import li.pitschmann.knx.link.body.dib.KnxAddressesDIB;
+import li.pitschmann.knx.link.body.dib.ManufacturerDataDIB;
+import li.pitschmann.knx.link.body.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests the {@link DescriptionResponseBody}

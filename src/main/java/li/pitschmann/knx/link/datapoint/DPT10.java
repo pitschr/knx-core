@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT10Value;
 
-import javax.annotation.*;
-import java.time.*;
-import java.util.regex.*;
+import javax.annotation.Nullable;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.regex.Pattern;
 
 /**
  * Data Point Type 10 for 'Time' (3 Octets)

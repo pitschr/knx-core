@@ -18,15 +18,24 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.dib.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.AbstractMultiRawData;
+import li.pitschmann.knx.link.body.dib.DescriptionType;
+import li.pitschmann.knx.link.body.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.link.body.dib.IPConfigDIB;
+import li.pitschmann.knx.link.body.dib.IPCurrentConfigDIB;
+import li.pitschmann.knx.link.body.dib.KnxAddressesDIB;
+import li.pitschmann.knx.link.body.dib.ManufacturerDataDIB;
+import li.pitschmann.knx.link.body.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.*;
+import javax.annotation.Nonnull;
 
 /**
  * Body for Description Response

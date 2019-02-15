@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT7Value;
 
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * Data Point Type 7 for '2-Octets Unsigned Value' (2 Octets)

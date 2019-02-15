@@ -18,12 +18,14 @@
 
 package li.pitschmann.knx.link.body;
 
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
+import li.pitschmann.knx.link.header.Header;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests the {@link BodyFactory}

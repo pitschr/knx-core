@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link DataPointType}

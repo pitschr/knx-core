@@ -18,13 +18,20 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.address.AddressType;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.body.address.KnxAddress;
+import li.pitschmann.knx.link.datapoint.DPT7;
+import li.pitschmann.knx.link.datapoint.value.DPT7Value;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test case for {@link CEMI}

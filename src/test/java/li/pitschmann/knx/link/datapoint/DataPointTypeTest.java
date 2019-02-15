@@ -19,8 +19,10 @@
 package li.pitschmann.knx.link.datapoint;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 /**
  * Tests for {@link DataPointType}

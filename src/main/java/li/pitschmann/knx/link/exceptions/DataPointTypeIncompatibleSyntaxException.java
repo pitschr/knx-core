@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.knx.link.datapoint.*;
+import li.pitschmann.knx.link.datapoint.DataPointType;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Exception when an incompatible syntax was provided.

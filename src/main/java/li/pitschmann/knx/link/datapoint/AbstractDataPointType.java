@@ -18,17 +18,23 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.*;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.Function;
-import java.util.regex.*;
-import java.util.stream.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base {@link DataPointType} containing common id and description data

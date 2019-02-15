@@ -18,13 +18,26 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
+import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DescriptionResponseBody;
+import li.pitschmann.knx.link.body.DisconnectRequestBody;
+import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.communication.KnxStatistic;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Statistic Plug-in that prints the statistic of KNX client for a given interval (in milliseconds)

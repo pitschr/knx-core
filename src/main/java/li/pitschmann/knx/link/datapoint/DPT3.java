@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.datapoint.value.DPT3Value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT3Value;
+import li.pitschmann.knx.link.datapoint.value.DPT3Value.StepInterval;
 
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
 /**
  * Data Point Type 3 for 'Controlled Dimming/Blinds' (3 Bits)

@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.DPT4;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.utils.ByteFormatter;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPT4Value}

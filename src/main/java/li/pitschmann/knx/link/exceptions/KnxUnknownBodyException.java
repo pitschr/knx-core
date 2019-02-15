@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.utils.*;
+import li.pitschmann.utils.ByteFormatter;
 
 /**
  * Exception in case no Body could be parsed of raw data.

@@ -18,15 +18,16 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.hpai.*;
-import li.pitschmann.knx.link.body.tunnel.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.AbstractMultiRawData;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.link.header.ServiceType;
 
-import javax.annotation.*;
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 /**
  * Body for Connect Request

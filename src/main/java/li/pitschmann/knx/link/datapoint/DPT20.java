@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointTypeEnum;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointValueEnum;
 
 /**
  * Data Point Type 20 for '8-Bit Enumeration' (1 Octet)

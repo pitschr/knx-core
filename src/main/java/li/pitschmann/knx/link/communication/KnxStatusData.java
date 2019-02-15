@@ -18,13 +18,14 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.body.cemi.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.body.address.KnxAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
+import li.pitschmann.knx.link.body.cemi.CEMI;
+import li.pitschmann.utils.ByteFormatter;
 
-import javax.annotation.*;
-import java.time.*;
+import javax.annotation.Nonnull;
+import java.time.Instant;
 
 /**
  * Status data for KNX Address. This class preserves the immutability.

@@ -18,11 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT16Value;
 
-import java.nio.charset.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Data Point Type 16 for 'Text' (14 Octets)

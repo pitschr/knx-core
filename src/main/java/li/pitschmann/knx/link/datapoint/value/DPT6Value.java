@@ -18,10 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.datapoint.DPT6;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.ByteFormatter;
 
 import java.util.Objects;
 

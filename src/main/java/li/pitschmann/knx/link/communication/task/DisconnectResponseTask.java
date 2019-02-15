@@ -18,11 +18,14 @@
 
 package li.pitschmann.knx.link.communication.task;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Flow.*;
+import java.util.concurrent.Flow.Subscriber;
+import java.util.concurrent.Flow.Subscription;
 
 /**
  * Listens to {@link DisconnectResponseBody} frame when KNX connection was subject to be closed by the local machine and

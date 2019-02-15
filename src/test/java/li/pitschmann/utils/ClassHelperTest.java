@@ -18,12 +18,13 @@
 
 package li.pitschmann.utils;
 
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test cases for {@link ClassHelper} class

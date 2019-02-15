@@ -18,8 +18,9 @@
 
 package li.pitschmann.knx.link.body.address;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.exceptions.*;
+import li.pitschmann.knx.link.AbstractMultiRawData;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 
 /**
  * Abstract KNX Address class for {@link IndividualAddress} and {@link GroupAddress} implementations

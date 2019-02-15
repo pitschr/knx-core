@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT18Value;
 
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
 /**
  * Data Point Type 18 for 'Scene Control' (1 Octet)

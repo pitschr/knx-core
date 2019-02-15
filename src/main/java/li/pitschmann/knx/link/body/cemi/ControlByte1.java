@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.exceptions.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.AbstractSingleRawData;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 
 public final class ControlByte1 extends AbstractSingleRawData {
     private static final ControlByte1 DEFAULT = create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);

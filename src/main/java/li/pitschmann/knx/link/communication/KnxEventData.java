@@ -18,10 +18,11 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.body.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.ResponseBody;
 
-import java.time.*;
+import java.time.Instant;
 
 /**
  * Mutable KNX event data containing about KNX/IP event communications.

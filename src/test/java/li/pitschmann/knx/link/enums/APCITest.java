@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.link.enums;
 
-import li.pitschmann.knx.link.body.cemi.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.cemi.APCI;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.utils.Bytes;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link APCI} enum class

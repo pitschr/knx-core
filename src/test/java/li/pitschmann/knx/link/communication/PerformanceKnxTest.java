@@ -18,16 +18,24 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.collect.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import com.google.common.collect.Lists;
+import li.pitschmann.knx.link.Constants;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DescriptionResponseBody;
+import li.pitschmann.knx.link.body.DisconnectRequestBody;
+import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.test.KnxBody;
+import li.pitschmann.test.KnxMockServer;
+import li.pitschmann.test.KnxTest;
+import org.junit.jupiter.api.DisplayName;
 
-import java.util.*;
+import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test for sending {@link DescriptionRequestBody} / receiving {@link DescriptionResponseBody} via

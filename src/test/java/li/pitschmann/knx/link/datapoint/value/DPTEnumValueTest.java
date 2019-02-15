@@ -18,10 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.DPT20;
+import li.pitschmann.knx.link.datapoint.DPTEnum;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPTEnumValue}

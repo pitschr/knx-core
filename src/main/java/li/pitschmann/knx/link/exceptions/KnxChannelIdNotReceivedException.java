@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.knx.link.body.*;
+import li.pitschmann.knx.link.body.Body;
 
 /**
  * Exception when an channel id could not be received. This exception is a subclass of {@link KnxCommunicationException}.

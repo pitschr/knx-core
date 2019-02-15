@@ -18,12 +18,16 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Device Supported Service Families DIB to specify DIB for type {@link DescriptionType#SUPPORTED_SERVICE_FAMILIES}

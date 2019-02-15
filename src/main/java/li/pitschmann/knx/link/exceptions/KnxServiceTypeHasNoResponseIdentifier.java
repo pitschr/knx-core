@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.knx.link.header.*;
+import li.pitschmann.knx.link.header.ServiceType;
 
 /**
  * Exception in case no response identifier could be found for given {@link ServiceType}.

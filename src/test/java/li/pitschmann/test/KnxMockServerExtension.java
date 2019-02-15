@@ -18,13 +18,22 @@
 
 package li.pitschmann.test;
 
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.extension.*;
-import org.junit.platform.commons.support.*;
-import org.slf4j.*;
+import li.pitschmann.utils.Sleeper;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.platform.commons.support.AnnotationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Extension to start/stop the {@link KnxMockServer}. It will be invoked using {@link KnxTest} annotation.

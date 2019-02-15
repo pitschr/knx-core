@@ -18,16 +18,19 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.*;
-import li.pitschmann.test.*;
-import org.assertj.core.data.*;
-import org.junit.jupiter.api.*;
+import com.google.common.base.Stopwatch;
+import li.pitschmann.test.TestHelpers;
+import org.assertj.core.data.Percentage;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.LongConsumer;
 import java.util.function.Supplier;
-import java.util.function.*;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test cases for {@link Sleeper} class

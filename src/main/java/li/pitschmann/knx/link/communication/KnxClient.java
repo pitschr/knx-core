@@ -18,10 +18,14 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.*;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.DataChannelRelated;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.ResponseBody;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Future;
 
 /**
  * Interface for all KNX Clients.

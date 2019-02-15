@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.*;
+import com.google.common.base.MoreObjects;
 
 /**
  * Service Type Family and Version. Designed to be used for {@link SupportedDeviceFamiliesDIB}.

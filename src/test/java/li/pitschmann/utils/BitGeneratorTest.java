@@ -18,10 +18,10 @@
 
 package li.pitschmann.utils;
 
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test for {@link BitGenerator}

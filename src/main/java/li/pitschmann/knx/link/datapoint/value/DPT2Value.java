@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.datapoint.DPT2;
+import li.pitschmann.utils.ByteFormatter;
 
 import java.util.Objects;
 

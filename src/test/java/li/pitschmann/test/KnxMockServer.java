@@ -18,27 +18,49 @@
 
 package li.pitschmann.test;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Bytes;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.body.hpai.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.BodyFactory;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.DataChannelRelated;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.header.Header;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.*;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * KNX Mock Server for testing purposes to simulate a KNX communication.

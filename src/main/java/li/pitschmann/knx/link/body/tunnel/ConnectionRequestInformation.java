@@ -18,11 +18,13 @@
 
 package li.pitschmann.knx.link.body.tunnel;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.hpai.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.AbstractMultiRawData;
+import li.pitschmann.knx.link.body.hpai.ConnectionType;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
 
 /**
  * Tunnelling Connection Request Information (CRI)

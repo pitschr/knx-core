@@ -18,15 +18,18 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
-import li.pitschmann.utils.Bytes.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Bytes.FillDirection;
+import org.junit.jupiter.api.Test;
 
-import java.net.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test case for {@link DeviceHardwareInformationDIB}

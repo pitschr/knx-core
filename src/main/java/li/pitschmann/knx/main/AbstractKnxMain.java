@@ -18,12 +18,14 @@
 
 package li.pitschmann.knx.main;
 
-import li.pitschmann.knx.link.body.address.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Stream;
 
 /**
  * Abstract class for KNX Main classes

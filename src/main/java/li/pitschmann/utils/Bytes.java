@@ -18,11 +18,11 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.*;
+import com.google.common.base.Preconditions;
 
-import java.nio.*;
-import java.util.*;
-import java.util.regex.*;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Utility for bytes

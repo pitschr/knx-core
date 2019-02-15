@@ -18,11 +18,18 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.test.KnxBody;
+import li.pitschmann.test.KnxMockServer;
+import li.pitschmann.test.KnxTest;
+import org.junit.jupiter.api.DisplayName;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test for sending/receiving {@link TunnellingRequestBody} and {@link TunnellingAckBody}

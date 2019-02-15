@@ -18,17 +18,23 @@
 
 package li.pitschmann.utils;
 
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.nio.channels.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.channels.Channel;
+import java.nio.channels.DatagramChannel;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for {@link Closeables} class

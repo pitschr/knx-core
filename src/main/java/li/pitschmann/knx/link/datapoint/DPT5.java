@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT5Value;
 
-import javax.annotation.*;
-import java.util.function.*;
+import javax.annotation.Nullable;
+import java.util.function.Function;
 
 /**
  * Data Point Type 5 for 'Unsigned Value' (8 Bits)

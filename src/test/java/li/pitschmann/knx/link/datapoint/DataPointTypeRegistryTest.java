@@ -18,14 +18,19 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointTypeEnum;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointValueEnum;
+import li.pitschmann.knx.link.exceptions.KnxDataPointTypeNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.Serializable;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests for {@link DataPointTypeRegistry}

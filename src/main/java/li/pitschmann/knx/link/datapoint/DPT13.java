@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT13Value;
 
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * Data Point Type 13 for '4-Octet Signed Value' (4 Octets)

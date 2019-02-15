@@ -18,18 +18,21 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.test.*;
-import li.pitschmann.utils.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
+import li.pitschmann.test.TestHelpers;
+import li.pitschmann.utils.Networker;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.net.*;
-import java.nio.channels.*;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectableChannel;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the {@link ChannelFactory}

@@ -18,11 +18,12 @@
 
 package li.pitschmann.test;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.header.*;
+import com.google.common.base.CharMatcher;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.header.ServiceType;
 
-import javax.annotation.*;
-import java.util.concurrent.*;
+import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Wait Action behavior for the KNX Mock Server

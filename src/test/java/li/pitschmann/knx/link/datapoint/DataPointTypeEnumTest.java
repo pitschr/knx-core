@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.DPT20.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.DPT20.Priority;
+import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link DataPointTypeEnum}

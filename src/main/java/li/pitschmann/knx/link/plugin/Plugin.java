@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import li.pitschmann.knx.link.communication.*;
+import li.pitschmann.knx.link.communication.KnxClient;
 
 /**
  * Marker interface for plugin to extend the {@link KnxClient} with some features.

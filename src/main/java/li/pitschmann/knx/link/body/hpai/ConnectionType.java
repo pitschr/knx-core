@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.body.hpai;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.KnxByteEnum;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.utils.ByteFormatter;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Connection types how the connection is established

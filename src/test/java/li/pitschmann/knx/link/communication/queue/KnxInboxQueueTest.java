@@ -19,27 +19,21 @@
 package li.pitschmann.knx.link.communication.queue;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Closeables;
-import li.pitschmann.utils.Sleeper;
-import org.eclipse.jetty.io.ManagedSelector;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.HashSet;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
@@ -83,7 +77,7 @@ public class KnxInboxQueueTest {
         when(inboxQueue.openSelector()).thenReturn(selectorMock);
 
         var executor = Executors.newSingleThreadExecutor();
-        try (localChannel; remoteChannelFake){
+        try (localChannel; remoteChannelFake) {
             executor.submit(inboxQueue);
             // simply wait until next packet is available in queue
             inboxQueue.next();
@@ -94,6 +88,7 @@ public class KnxInboxQueueTest {
 
     /**
      * Creates a local channel
+     *
      * @return DatagramChannel of local machine
      * @throws IOException
      */
@@ -108,6 +103,7 @@ public class KnxInboxQueueTest {
 
     /**
      * Simulates a remote channel (from KNX Net/IP Router) that sends the given {@code hexStream} to {@code localChannel}
+     *
      * @param localChannel
      * @param hexStream
      * @return DatagramChannel of remote device

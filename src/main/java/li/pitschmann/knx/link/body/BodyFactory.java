@@ -18,11 +18,13 @@
 
 package li.pitschmann.knx.link.body;
 
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
+import li.pitschmann.knx.link.header.Header;
+import li.pitschmann.knx.link.header.ServiceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Factory for {@link Body}. The proper body will be picked up based on {@link ServiceType} code.

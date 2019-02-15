@@ -18,15 +18,19 @@
 
 package li.pitschmann.knx.link.communication.task;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.communication.KnxEventData;
+import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Flow;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test for {@link ConnectResponseTask}

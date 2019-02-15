@@ -18,13 +18,16 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.value.DPT4Value;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import org.junit.jupiter.api.Test;
 
-import java.nio.charset.*;
+import java.nio.charset.StandardCharsets;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT4}

@@ -18,14 +18,16 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.body.cemi.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
+import li.pitschmann.knx.link.body.cemi.CEMI;
+import org.junit.jupiter.api.Test;
 
-import java.time.*;
+import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the {@link KnxStatusData}

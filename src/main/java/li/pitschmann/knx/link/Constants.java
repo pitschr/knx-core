@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link;
 
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * KNX specific Constants

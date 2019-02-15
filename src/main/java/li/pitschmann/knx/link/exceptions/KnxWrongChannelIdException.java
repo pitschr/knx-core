@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.knx.link.*;
+import li.pitschmann.knx.link.ChannelIdAware;
 
 /**
  * Exception in case we received a packet which doesn't belong to our channel id. This exception can be used for

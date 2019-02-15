@@ -18,13 +18,15 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.value.DPT11Value;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.Test;
 
-import java.time.*;
+import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT11}

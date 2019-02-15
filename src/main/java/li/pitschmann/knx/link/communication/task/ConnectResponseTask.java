@@ -18,12 +18,16 @@
 
 package li.pitschmann.knx.link.communication.task;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Flow.*;
+import java.util.concurrent.Flow.Subscriber;
+import java.util.concurrent.Flow.Subscription;
 
 /**
  * Listens to {@link ConnectResponseBody} frame that is sent by KNX Net/IP router to client when

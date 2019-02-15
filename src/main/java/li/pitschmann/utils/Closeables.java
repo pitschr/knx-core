@@ -18,11 +18,14 @@
 
 package li.pitschmann.utils;
 
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.*;
-import java.nio.channels.*;
-import java.util.concurrent.*;
+import javax.annotation.Nullable;
+import java.nio.channels.Channel;
+import java.nio.channels.DatagramChannel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Helper class to close some objects silently or with additional functionality.

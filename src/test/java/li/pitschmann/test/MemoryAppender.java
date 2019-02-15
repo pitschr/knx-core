@@ -18,19 +18,22 @@
 
 package li.pitschmann.test;
 
-import ch.qos.logback.classic.*;
-import ch.qos.logback.classic.encoder.*;
-import ch.qos.logback.classic.spi.*;
-import ch.qos.logback.core.*;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.OutputStreamAppender;
 import org.slf4j.Logger;
-import org.slf4j.*;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.concurrent.locks.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A memory appender - this will forward specific log lines to memory for testing

@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
+import li.pitschmann.utils.ByteFormatter;
 
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.*;
 
 /**
  * Abstract class for data point flags (2 or more bytes)

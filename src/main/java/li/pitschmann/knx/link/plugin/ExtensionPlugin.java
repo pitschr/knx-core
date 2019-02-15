@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import li.pitschmann.knx.link.communication.*;
+import li.pitschmann.knx.link.communication.KnxClient;
 
 /**
  * Plug-in to be invoked when {@link KnxClient} starts up / shuts down.

@@ -18,9 +18,10 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.*;
+import com.google.common.base.Preconditions;
 
-import java.util.stream.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Formatter for byte and byte arrays to print out e.g. byte array in hex-decimal format.

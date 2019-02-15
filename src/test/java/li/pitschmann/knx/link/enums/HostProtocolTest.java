@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.enums;
 
-import li.pitschmann.knx.link.body.hpai.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.hpai.HostProtocol;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies {@link HostProtocol} enum class

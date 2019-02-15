@@ -18,12 +18,15 @@
 
 package li.pitschmann.knx.main;
 
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.*;
+import java.net.InetAddress;
 
 /**
  * Demo class how to send a read request to a KNX group address.

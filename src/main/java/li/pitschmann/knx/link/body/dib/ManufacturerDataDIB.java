@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.Bytes;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Manufacturer Data DIB to specify DIB for type {@link DescriptionType#MANUFACTURER_DATA}

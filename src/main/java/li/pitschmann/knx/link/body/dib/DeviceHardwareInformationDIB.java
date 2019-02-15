@@ -18,15 +18,18 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Networker;
 
-import java.net.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.stream.*;
+import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Device Information DIB to specify DIB for type {@link DescriptionType#DEVICE_INFO}

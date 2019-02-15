@@ -18,11 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
+import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
 
-import javax.annotation.*;
+import javax.annotation.Nonnull;
 
 /**
  * Data Point Types according to KNX Specification

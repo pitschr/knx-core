@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT11Value;
 
-import java.time.*;
+import java.time.LocalDate;
 
 /**
  * Data Point Type 11 for 'Date' (3 Octets)

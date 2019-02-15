@@ -18,9 +18,9 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.*;
+import com.google.common.base.Preconditions;
 
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**

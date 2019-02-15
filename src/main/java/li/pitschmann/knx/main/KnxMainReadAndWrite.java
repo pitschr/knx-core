@@ -18,14 +18,15 @@
 
 package li.pitschmann.knx.main;
 
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.datapoint.DPT1;
+import li.pitschmann.utils.Networker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.*;
-import java.util.concurrent.*;
+import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Demo class how to read a DPT1.SWITCH value from a KNX group address and inverse the value

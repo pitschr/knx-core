@@ -18,15 +18,20 @@
 
 package li.pitschmann.utils;
 
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.io.*;
-import java.net.*;
-import java.nio.channels.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.SocketAddress;
+import java.nio.channels.Channel;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SocketChannel;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test cases for {@link Networker} class

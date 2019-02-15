@@ -18,15 +18,34 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.knx.link.plugin.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
+import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.DataChannelRelated;
+import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DescriptionResponseBody;
+import li.pitschmann.knx.link.body.DisconnectRequestBody;
+import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.test.KnxBody;
+import li.pitschmann.test.KnxMockServer;
+import li.pitschmann.test.KnxTest;
+import org.junit.jupiter.api.DisplayName;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test for {@link InternalKnxClient}

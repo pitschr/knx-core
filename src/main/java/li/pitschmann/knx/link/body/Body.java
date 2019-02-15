@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.header.*;
+import li.pitschmann.knx.link.MultiRawDataAware;
+import li.pitschmann.knx.link.header.ServiceType;
 
-import javax.annotation.*;
+import javax.annotation.Nonnull;
 
 /**
  * Marker interface for Body

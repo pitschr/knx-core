@@ -18,8 +18,19 @@
 
 package li.pitschmann.test;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.utils.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.BodyFactory;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
+import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DescriptionResponseBody;
+import li.pitschmann.knx.link.body.DisconnectRequestBody;
+import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.utils.Bytes;
 
 public final class KnxBody {
     public static final String DESCRIPTION_REQUEST = "06100203000e0801000000000000";

@@ -18,12 +18,16 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.time.*;
-import java.time.format.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Task to send connection frames from local to remote router. This class will send {@link ConnectRequestBody} to the

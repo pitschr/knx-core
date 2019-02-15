@@ -18,11 +18,15 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.value.DPT22Value.*;
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.datapoint.value.DPT22Value.ChannelActivation16;
+import li.pitschmann.knx.link.datapoint.value.DPT22Value.Media;
+import li.pitschmann.knx.link.datapoint.value.DPT22Value.StatusDHWController;
+import li.pitschmann.knx.link.datapoint.value.DPT22Value.StatusRoomHeatinCoolingController;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPT22Value}

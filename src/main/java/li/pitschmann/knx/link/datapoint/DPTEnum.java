@@ -18,13 +18,15 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
+import li.pitschmann.knx.link.datapoint.value.DataPointValueEnum;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.utils.Bytes;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * Data Point Type for enumeration fields (8 bits)

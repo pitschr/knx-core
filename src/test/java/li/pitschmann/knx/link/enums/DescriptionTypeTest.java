@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.enums;
 
-import li.pitschmann.knx.link.body.dib.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.dib.DescriptionType;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies {@link DescriptionType} enum class

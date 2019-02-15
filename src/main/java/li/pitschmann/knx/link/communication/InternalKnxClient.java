@@ -18,26 +18,62 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.body.dib.*;
-import li.pitschmann.knx.link.body.hpai.*;
-import li.pitschmann.knx.link.body.tunnel.*;
-import li.pitschmann.knx.link.communication.communicator.*;
-import li.pitschmann.knx.link.communication.task.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.plugin.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.ChannelIdAware;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectRequestBody;
+import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.DataChannelRelated;
+import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DescriptionResponseBody;
+import li.pitschmann.knx.link.body.DisconnectRequestBody;
+import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.Status;
+import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
+import li.pitschmann.knx.link.body.dib.ServiceTypeFamilyVersion;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.body.hpai.HostProtocol;
+import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
+import li.pitschmann.knx.link.communication.communicator.ControlChannelCommunicator;
+import li.pitschmann.knx.link.communication.communicator.DataChannelCommunicator;
+import li.pitschmann.knx.link.communication.communicator.DescriptionChannelCommunicator;
+import li.pitschmann.knx.link.communication.task.ConnectResponseTask;
+import li.pitschmann.knx.link.communication.task.ConnectionStateResponseTask;
+import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
+import li.pitschmann.knx.link.communication.task.DisconnectRequestTask;
+import li.pitschmann.knx.link.communication.task.DisconnectResponseTask;
+import li.pitschmann.knx.link.communication.task.TunnellingAckTask;
+import li.pitschmann.knx.link.communication.task.TunnellingRequestTask;
+import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
+import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
+import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
+import li.pitschmann.knx.link.exceptions.KnxNoTunnellingException;
+import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
+import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.utils.Closeables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.*;
-import java.nio.channels.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.*;
-import java.util.function.*;
+import java.net.InetSocketAddress;
+import java.nio.channels.DatagramChannel;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 
 /**
  * Abstract KNX Client class containing essential KNX communication ways to retrieve device information from
@@ -490,7 +526,7 @@ public final class InternalKnxClient implements KnxClient {
         try {
             final var connectResponseBody = this.<ConnectResponseBody>send(connectRequestBody, config.getTimeoutConnectRequest()).get();
             // check status
-            Preconditions.checkState(connectResponseBody!=null && connectResponseBody.getStatus()==Status.E_NO_ERROR);
+            Preconditions.checkState(connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR);
             // return channel id
             this.channelId = connectResponseBody.getChannelId();
             LOG.info("Channel ID received: {}", this.channelId);

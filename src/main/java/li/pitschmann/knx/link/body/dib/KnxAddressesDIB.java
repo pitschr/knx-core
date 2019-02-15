@@ -18,12 +18,15 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.utils.*;
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.utils.ByteFormatter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * KNX Addresses DIB to specify DIB for type {@link DescriptionType#KNX_ADDRESSES}

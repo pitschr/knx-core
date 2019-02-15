@@ -18,14 +18,18 @@
 
 package li.pitschmann.knx.link.enums;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.exceptions.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.KnxByteEnum;
+import li.pitschmann.knx.link.KnxEnum;
+import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.link.exceptions.KnxException;
+import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.util.EnumSet;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Abstract Test for {@link KnxEnum} classes

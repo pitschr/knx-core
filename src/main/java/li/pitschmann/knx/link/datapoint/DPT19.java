@@ -18,14 +18,16 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
-import li.pitschmann.knx.link.datapoint.value.*;
-import li.pitschmann.knx.link.datapoint.value.DPT19Value.*;
-import li.pitschmann.utils.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
+import li.pitschmann.knx.link.datapoint.value.DPT19Value;
+import li.pitschmann.knx.link.datapoint.value.DPT19Value.Flags;
+import li.pitschmann.utils.Bytes;
 
-import javax.annotation.*;
-import java.time.*;
-import java.util.regex.*;
+import javax.annotation.Nullable;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.regex.Pattern;
 
 /**
  * Data Point Type 19 for 'Date & Time' (8 Octets)

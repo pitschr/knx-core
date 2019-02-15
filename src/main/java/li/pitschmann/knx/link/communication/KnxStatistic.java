@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.*;
+import li.pitschmann.knx.link.body.Body;
 
 /**
  * Interface Statistic about KNX/IP communication

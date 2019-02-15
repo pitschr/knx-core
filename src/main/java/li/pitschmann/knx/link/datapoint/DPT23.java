@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.annotation.*;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointTypeEnum;
+import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointValueEnum;
 
 /**
  * Data Point Type 23 for '2-Bit Boolean' (2 Bit)

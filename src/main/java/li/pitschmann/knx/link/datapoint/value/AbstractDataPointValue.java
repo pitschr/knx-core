@@ -18,10 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.*;
-import li.pitschmann.knx.link.exceptions.*;
+import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 
-import java.math.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Abstract implementation of {@link DataPointValue}

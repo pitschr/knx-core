@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.link.plugin.experimental;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.header.*;
-import li.pitschmann.knx.link.plugin.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO: TO IMPLEMENT

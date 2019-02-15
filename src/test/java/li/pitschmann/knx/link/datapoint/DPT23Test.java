@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.test.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Class for {@link DPT23}

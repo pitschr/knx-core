@@ -18,16 +18,21 @@
 
 package li.pitschmann.knx.link.body;
 
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.body.hpai.*;
-import li.pitschmann.knx.link.body.tunnel.*;
-import li.pitschmann.knx.link.exceptions.*;
-import li.pitschmann.knx.link.header.*;
-import org.junit.jupiter.api.*;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.body.hpai.HostProtocol;
+import li.pitschmann.knx.link.body.tunnel.ConnectionResponseData;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.link.header.ServiceType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.net.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests the {@link ConnectResponseBody}

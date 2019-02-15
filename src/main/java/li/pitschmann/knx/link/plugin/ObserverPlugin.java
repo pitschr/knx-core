@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import li.pitschmann.knx.link.body.*;
+import li.pitschmann.knx.link.body.Body;
 
 /**
  * Plug-in to be notified when incoming / outgoing {@link Body} or if there was a problem with communication of

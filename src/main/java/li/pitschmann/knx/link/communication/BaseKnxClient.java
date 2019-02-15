@@ -18,14 +18,20 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.body.address.*;
-import li.pitschmann.knx.link.body.cemi.*;
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.Constants;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.cemi.CEMI;
+import li.pitschmann.knx.link.body.cemi.MessageCode;
+import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Base KNX client implementation

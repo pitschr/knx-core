@@ -18,16 +18,29 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.knx.link.communication.queue.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.DataChannelRelated;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.communication.KnxEventData;
+import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.communication.queue.KnxInboxQueue;
+import li.pitschmann.knx.link.communication.queue.KnxOutboxQueue;
+import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.*;
-import java.nio.channels.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
+import javax.annotation.Nonnull;
+import java.nio.channels.SelectableChannel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Abstract channel communicator. It coordinates the communication for given channel

@@ -18,11 +18,14 @@
 
 package li.pitschmann.knx.link.communication.task;
 
-import li.pitschmann.knx.link.body.*;
-import li.pitschmann.knx.link.communication.*;
-import org.slf4j.*;
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Flow.*;
+import java.util.concurrent.Flow.Subscriber;
+import java.util.concurrent.Flow.Subscription;
 
 /**
  * Listens to {@link ConnectionStateResponseTask} received by KNX Net/IP router about the health.

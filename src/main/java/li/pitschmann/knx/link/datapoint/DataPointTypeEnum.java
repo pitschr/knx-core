@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.value.*;
+import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
+import li.pitschmann.knx.link.datapoint.value.DataPointValueEnum;
 
 /**
  * Interface representing that data point type is an enumeration

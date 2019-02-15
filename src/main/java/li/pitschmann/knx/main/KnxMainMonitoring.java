@@ -18,14 +18,17 @@
 
 package li.pitschmann.knx.main;
 
-import com.google.common.base.*;
-import li.pitschmann.knx.link.*;
-import li.pitschmann.knx.link.communication.*;
-import li.pitschmann.utils.*;
-import org.slf4j.*;
+import com.google.common.base.Stopwatch;
+import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.*;
-import java.util.concurrent.*;
+import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Demo class how to monitor the KNX traffic
