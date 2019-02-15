@@ -64,11 +64,7 @@ public abstract class AbstractKnxQueue implements Runnable {
     public final void run() {
         LOG.info("*** {}: START ***", id);
 
-        try (final Selector selector = Selector.open()) {
-            // prepare channel for non-blocking and register to selector
-            this.channel.register(selector, interestOps());
-            LOG.trace("{}: Channel {} registered to selector: {}", this.id, this.channel, selector);
-
+        try (var selector = openSelector()) {
             // iterate until current thread is interrupted
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -88,7 +84,7 @@ public abstract class AbstractKnxQueue implements Runnable {
                     LOG.warn("{}: KNX packet with wrong channel retrieved: {}", id, wrongChannelIdException.getMessage());
                     // silently ignore and proceed with next packet
                 } catch (final InterruptedException ie) {
-                    LOG.debug("{}: Channel is interrupted: {}", id, channel);
+                    LOG.debug("{}: Channel is interrupted: {}", id, selector);
                     Thread.currentThread().interrupt();
                     // break loop as desired
                 } catch (final IOException ioe) {
@@ -100,15 +96,15 @@ public abstract class AbstractKnxQueue implements Runnable {
                     // proceed with next packet
                 }
             }
-
-        } catch (final IOException ex) {
-            LOG.error("{}: Exception during open a new selector for channel: {}", id, channel, ex);
-            throw new KnxException(String.format("Could not open a new selector for %s.", id), ex);
+        } catch (final IOException ioe) {
+            LOG.error("{}: Exception during selector for channel: {}", id, channel, ioe);
+            throw new KnxException(String.format("Could not open a new selector for %s.", id), ioe);
             // throw to channel communicator
         } finally {
             LOG.info("*** {}: END ***", id);
         }
     }
+
 
     /**
      * Returns the ID of current queue
@@ -117,6 +113,22 @@ public abstract class AbstractKnxQueue implements Runnable {
      */
     protected final String getId() {
         return id;
+    }
+
+    /**
+     * Returns a new instance of {@link Selector} that listens on the given {@link SelectableChannel}
+     *
+     * @return newly created selector with interest ops taken from {@link #interestOps()}
+     * @throws IOException          - if IO exception happened while performing the action method
+     */
+    public final Selector openSelector() throws IOException {
+        var selector = Selector.open();
+
+        // prepare channel for non-blocking and register to selector
+        channel.register(selector, interestOps());
+        LOG.trace("{}: Channel {} registered to selector: {}", this.id, channel, selector);
+
+        return selector;
     }
 
     /**
