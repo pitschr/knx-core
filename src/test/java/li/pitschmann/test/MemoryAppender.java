@@ -92,6 +92,18 @@ public final class MemoryAppender extends OutputStreamAppender<ILoggingEvent> {
     }
 
     /**
+     * Returns if at least one line that meets the predicate could be found
+     *
+     * @param predicate
+     * @return {@code true} if found, otherwise {@code false}
+     */
+    public boolean anyMatch(final Predicate<String> predicate) {
+        return Arrays //
+                .stream(fetchAllInternal()) //
+                .anyMatch(predicate);
+    }
+
+    /**
      * Resets the {@link MemoryAppender}. This will remove all log lines from memory.
      */
     public final void reset() {

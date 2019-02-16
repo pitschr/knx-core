@@ -45,14 +45,14 @@ import static org.mockito.Mockito.when;
  *
  * @author PITSCHR
  */
-public class KnxInboxQueueTest {
+public class KnxInboxQueueTest extends AbstractKnxQueueTest {
 
     /**
      * Tests a successful inbox packet from KNX Net/IP router
      */
     @Test
     @DisplayName("Test incoming KNX packet successfully")
-    public void testSuccessful() throws IOException, InterruptedException {
+    public void testSuccessful() throws Exception {
         var clientMock = mock(InternalKnxClient.class);
         when(clientMock.verifyChannelId(any(Body.class))).thenReturn(true);
 
@@ -84,21 +84,6 @@ public class KnxInboxQueueTest {
         } finally {
             Closeables.shutdownQuietly(executor);
         }
-    }
-
-    /**
-     * Creates a local channel
-     *
-     * @return DatagramChannel of local machine
-     * @throws IOException
-     */
-    private DatagramChannel localChannel() throws IOException {
-        // channel to test
-        var channel = DatagramChannel.open();
-        channel.configureBlocking(false);
-        channel.socket().bind(new InetSocketAddress(0));
-
-        return channel;
     }
 
     /**

@@ -103,8 +103,8 @@ public abstract class AbstractKnxQueue implements Runnable {
                 }
             }
         } catch (final IOException ioe) {
-            LOG.error("{}: Exception during selector for channel: {}", id, channel, ioe);
-            throw new KnxException(String.format("Could not open a new selector for %s.", id), ioe);
+            LOG.error("{}: IOException for channel: {}", id, channel, ioe);
+            throw new KnxException(String.format("IOException in '%s'.", id), ioe);
             // throw to channel communicator
         } finally {
             LOG.info("*** {}: END ***", id);
