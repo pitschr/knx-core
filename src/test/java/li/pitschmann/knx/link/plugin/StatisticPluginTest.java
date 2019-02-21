@@ -169,7 +169,7 @@ public class StatisticPluginTest {
      * @param expectedLogLine the expected log line
      */
     private void assertLogLine(final MemoryAppender appender, final int expectedSize, final int index, final String expectedLogLine) {
-        Sleeper.milliseconds(10, () -> !appender.all().isEmpty(), 1000);
+        Sleeper.milliseconds(() -> !appender.all().isEmpty(), 1000);
         var logLines = appender.all();
         Assertions.assertThat(logLines).hasSize(expectedSize);
         Assertions.assertThat(logLines.get(index)).isEqualTo(expectedLogLine);

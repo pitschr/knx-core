@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
@@ -39,13 +40,18 @@ import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link InternalKnxClient}
@@ -92,11 +98,11 @@ public class KnxClientTest {
         var configBuilder = mockServer.newConfigBuilder();
 
         // observer plug-in
-        var observerPlugin = Mockito.mock(ObserverPlugin.class);
+        var observerPlugin = mock(ObserverPlugin.class);
         configBuilder.plugin(observerPlugin);
 
         // extension plug-in
-        var extensionPlugin = Mockito.mock(ExtensionPlugin.class);
+        var extensionPlugin = mock(ExtensionPlugin.class);
         configBuilder.plugin(extensionPlugin);
 
         try (var client = new DefaultKnxClient(configBuilder.build())) {
@@ -142,22 +148,17 @@ public class KnxClientTest {
     /**
      * Test {@link InternalKnxClient#notifyPluginsError(Throwable)} after client close
      */
-    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
+    @Test
     @DisplayName("Internal Client: Test plug-in notification after close")
-    public void testPlugInNotificationAfterShutdown(final KnxMockServer mockServer) {
-        var configBuilder = mockServer.newConfigBuilder();
-
+    public void testPlugInNotificationAfterShutdown() {
         // observer plug-in
-        var observerPlugin = Mockito.mock(ObserverPlugin.class);
-        configBuilder.plugin(observerPlugin);
+        var observerPlugin = mock(ObserverPlugin.class);
 
-        var client = new InternalKnxClient(configBuilder.build());
-        try (client) {
-            // internal client must be invoked explicitly
-            client.start();
-        } catch (final Throwable t) {
-            fail("Unexpected test state", t);
-        }
+        var configMock = createConfigMock();
+        when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(observerPlugin));
+
+        var client = new InternalKnxClient(configMock);
+        client.close();
 
         // should not be an issue (silently ignored, plug-in should never be called)
         client.notifyPluginsError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
@@ -169,24 +170,27 @@ public class KnxClientTest {
      * <p/>
      * In case an exception is thrown by plug-in the KNX client should still be alive.
      */
-    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
+    @Test
     @DisplayName("Internal Client: Test erroneous plug-in")
-    public void testErroneousPlugIn(final KnxMockServer mockServer) {
-        var configBuilder = mockServer.newConfigBuilder();
-
+    public void testErroneousPlugIn() {
         // erroneous plug-in
-        var erroneousPlugin = Mockito.mock(ObserverPlugin.class);
-        configBuilder.plugin(erroneousPlugin);
+        var erroneousPlugin = mock(ObserverPlugin.class);
         Mockito.doThrow(new RuntimeException()).when(erroneousPlugin).onError(Mockito.any());
 
-        try (var client = new InternalKnxClient(configBuilder.build())) {
-            // internal client must be invoked explicitly
-            client.start();
+        var configMock = createConfigMock();
+        when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
+
+        var client = new InternalKnxClient(configMock);
+
+        try {
             // should not be an issue
             client.notifyPluginsError(new Throwable());
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+
+        // verify that onError has been invoked
+        assertThat(client.getStatistic().getNumberOfErrors()).isEqualTo(1);
     }
 
     /**
@@ -215,36 +219,46 @@ public class KnxClientTest {
     /**
      * Verify sending request body without any channel information (neither {@link ControlChannelRelated} nor
      * {@link DataChannelRelated})
-     *
-     * @param mockServer
      */
-    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
+    @Test
     @DisplayName("Error: Send body without any channel information")
-    public void testBodyWithoutChannel(final KnxMockServer mockServer) {
-        try (var client = mockServer.newKnxClient()) {
-            var requestBody = Mockito.mock(RequestBody.class);
+    public void testBodyWithoutChannel() {
+        var client = createClient();
+        var requestBody = mock(RequestBody.class);
 
-            // verify if it is returning Illegal Argument Exception
-            assertThatThrownBy(() -> client.send(requestBody)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
-            assertThatThrownBy(() -> client.send(requestBody, 0)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
-        } catch (final Throwable t) {
-            fail("Unexpected test state", t);
-        }
+        // verify if it is returning Illegal Argument Exception
+        assertThatThrownBy(() -> client.send(requestBody)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
+        assertThatThrownBy(() -> client.send(requestBody, 0)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
     }
 
     /**
-     * Verify if {@link KnxClient#getStatistic()} is an unmodifiable instance of {@link KnxStatistic}
-     *
-     * @param mockServer
+     * Verify if {@link InternalKnxClient#getStatistic()} is an unmodifiable instance of {@link KnxStatistic}
      */
-    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
+    @Test
     @DisplayName("Check if KNX statistic is an unmodifiable instance")
-    public void testIfKnxStatisticIsUnmodifiable(final KnxMockServer mockServer) {
-        try (var client = mockServer.newKnxClient()) {
-            var knxStatisticUnmodifiable = client.getStatistic();
-            assertThat(knxStatisticUnmodifiable.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
-        } catch (final Throwable t) {
-            fail("Unexpected test state", t);
-        }
+    public void testIfKnxStatisticIsUnmodifiable() {
+        var knxStatisticUnmodifiable = createClient().getStatistic();
+        assertThat(knxStatisticUnmodifiable.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
+    }
+
+    /**
+     * Creates a {@link KnxClient} for testing
+     *
+     * @return an instance of {@link KnxClient}
+     */
+    private KnxClient createClient() {
+        return new InternalKnxClient(createConfigMock());
+    }
+
+    /**
+     * Creates a {@link Configuration} for testing
+     *
+     * @return a mocked instance of {@link Configuration}
+     */
+    private Configuration createConfigMock() {
+        var configMock = mock(Configuration.class);
+        when(configMock.getCommunicationExecutorPoolSize()).thenReturn(1);
+        when(configMock.getPluginExecutorPoolSize()).thenReturn(1);
+        return configMock;
     }
 }

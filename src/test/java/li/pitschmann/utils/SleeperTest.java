@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.LongConsumer;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,71 +44,86 @@ public class SleeperTest {
     @Test
     @DisplayName("Sleep in milliseconds")
     public void testNoInterrupt() {
-        // verify the result (expected 'true')
-        assertThat(Sleeper.milliseconds(100)).isTrue();
-
-        // measure
-        // Thread#sleep(..) is not very accurate, so it may be between 90 and 110ms
-        var elapsedTime = elapsedAverage((startTime) -> Sleeper.milliseconds(100), 3);
-        assertThat(elapsedTime).isCloseTo(100d, Percentage.withPercentage(10));
+        assertUpToThreeTimes(() -> {
+            var sw = Stopwatch.createStarted();
+            var result = Sleeper.milliseconds(100);
+            var elapsedTime = sw.elapsed().toMillis();
+            // verify the result
+            //   true = not interrupted
+            //   and between 90-110 ms
+            assertThat(result).isTrue();
+            assertThat(elapsedTime).isCloseTo(100, Percentage.withPercentage(10));
+        });
     }
 
     /**
-     * Test {@link Sleeper#milliseconds(long, Supplier, long)} where as the predicates is always TRUE
+     * Test {@link Sleeper#milliseconds(Supplier, long)} where as the predicates is always TRUE
      */
     @Test
     @DisplayName("Sleep in milliseconds with predicates (always true)")
     public void testSleepWithPredicateAlwaysTrue() {
-        // verify the result (expected 'true')
-        assertThat(Sleeper.milliseconds(10, () -> true, 45)).isTrue();
-
-        // predicate meet immediately
-        var elapsedTime = elapsedAverage((startTime) -> Sleeper.milliseconds(10, () -> true, 45), 3);
-        assertThat(elapsedTime).isBetween(0d, 10d);
+        assertUpToThreeTimes(() -> {
+            var sw = Stopwatch.createStarted();
+            var result = Sleeper.milliseconds(() -> true, 100);
+            var elapsedTime = sw.elapsed().toMillis();
+            // verify the result
+            //   true = not interrupted
+            //   and between 0-10ms because it is checked immediately
+            assertThat(result).isTrue();
+            assertThat(elapsedTime).isBetween(0L, 10L);
+        });
     }
 
     /**
-     * Test {@link Sleeper#milliseconds(long, Supplier, long)} where as the predicates is always FALSE
+     * Test {@link Sleeper#milliseconds(Supplier, long)} where as the predicates is always FALSE
      * and therefore running into a timeout expiration.
      */
     @Test
     @DisplayName("Sleep in milliseconds with predicates (always false)")
     public void testSleepWithPredicateAlwaysFalse() {
-        // verify the result (expected 'false' because of timeout)
-        assertThat(Sleeper.milliseconds(10, () -> false, 45)).isFalse();
-
-        // predicate meet immediately
-        var elapsedTime = elapsedAverage((startTime) -> Sleeper.milliseconds(10, () -> false, 45), 3);
-        assertThat(elapsedTime).isCloseTo(45, Percentage.withPercentage(20));
+        assertUpToThreeTimes(() -> {
+            var sw = Stopwatch.createStarted();
+            var result = Sleeper.milliseconds(() -> false, 100);
+            var elapsedTime = sw.elapsed().toMillis();
+            // verify the result
+            //   false = interrupted
+            //   and between 90-110 ms
+            assertThat(result).isFalse();
+            assertThat(elapsedTime).isCloseTo(100, Percentage.withPercentage(10));
+        });
     }
 
     /**
-     * Test {@link Sleeper#milliseconds(long, Supplier, long)} where as the predicates is TRUE
-     * after 50 milliseconds
+     * Test {@link Sleeper#milliseconds(Supplier, long)} where as the predicates is TRUE
+     * after 100 milliseconds
      */
     @Test
-    @DisplayName("Sleep in milliseconds with predicates (true after 50 ms)")
+    @DisplayName("Sleep in milliseconds with predicates (true after 100 ms)")
     public void testSleepWithPredicate() {
-        // verify the result (true = not interrupted)
-        var startTime = System.currentTimeMillis();
-        assertThat(Sleeper.milliseconds(10, () -> System.currentTimeMillis() > startTime + 50, 100)).isTrue();
-
-        // predicate meet immediately
-        var elapsedTime = elapsedAverage((st) -> Sleeper.milliseconds(10, () -> System.currentTimeMillis() > st + 45, 100), 3);
-        assertThat(elapsedTime).isCloseTo(50, Percentage.withPercentage(20));
+        assertUpToThreeTimes(() -> {
+            var start = System.currentTimeMillis();
+            var sw = Stopwatch.createStarted();
+            var result = Sleeper.milliseconds(() -> System.currentTimeMillis() > start + 100, 200);
+            var elapsedTime = sw.elapsed().toMillis();
+            // verify the result
+            //   true = not interrupted
+            //   and between 90-110 ms
+            assertThat(result).isTrue();
+            assertThat(elapsedTime).isCloseTo(100, Percentage.withPercentage(10));
+        });
     }
 
     /**
-     * Test {@link Sleeper#milliseconds(long, Supplier, long)} where as timeout is shorter than interval
+     * Test {@link Sleeper#milliseconds(Supplier, long)} where as timeout is shorter than interval
      */
     @Test
     @DisplayName("Sleep in milliseconds where timeout is shorter than interval check")
     public void testSleepWithPredicateWrongArgument() {
-        assertThatThrownBy(() -> Sleeper.milliseconds(10, () -> false, 5)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Sleeper.milliseconds(() -> false, 5)).isInstanceOf(IllegalArgumentException.class);
     }
 
     /**
-     * Test {@link Sleeper#milliseconds(long, Supplier, long)} where as timeout is shorter than interval
+     * Test {@link Sleeper#milliseconds(Supplier, long)} where as timeout is shorter than interval
      */
     @Test
     @DisplayName("Sleep in milliseconds and thread interrupt")
@@ -117,7 +131,7 @@ public class SleeperTest {
         var thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                assertThat(Sleeper.milliseconds(10, () -> false, 100)).isFalse();
+                assertThat(Sleeper.milliseconds(() -> false, 100)).isFalse();
             }
         });
         // start thread and interrupt immediately
@@ -152,18 +166,37 @@ public class SleeperTest {
     }
 
     /**
-     * Returns the average of elapsed time in milliseconds
+     * Because the Thread.sleep(..) is not accurate it may happen that the
+     * assertion will fail because the elapsed time is outside of expected
+     * time range
+     * <p>
+     * We will accept up to three assertion failures. It may happen that
+     * first run failed, but the second run succeeded. If so, then the test
+     * is marked as accepted
+     * <p>
+     * It should be very rarely happen that all three run failed. In this
+     * case it should be re-checked if the issue was caused by a code change
      *
-     * @param supplier what should be executed/measured
-     * @param times    how many iterations
-     * @return the elapsed average time in milliseconds
+     * @param runnable body to test
      */
-    private double elapsedAverage(final LongConsumer supplier, final int times) {
-        var sw = Stopwatch.createStarted();
-        for (int i = 0; i < times; i++) {
-            supplier.accept(System.currentTimeMillis());
+    private void assertUpToThreeTimes(final Runnable runnable) {
+        AssertionError t;
+        int retries = 0;
+        do {
+            t = null;
+            try {
+                runnable.run();
+            } catch (final AssertionError error) {
+                t = error;
+                retries++;
+            }
+        } while (t != null && retries < 3);
+        // we still have assertion error and already tried three times
+        // in this case we will re-throw the assertion error to mark
+        // the test as failed!
+        if (t != null) {
+            throw t;
         }
-        return sw.elapsed().toMillis() / (double) times;
     }
 
     /**

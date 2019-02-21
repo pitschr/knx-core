@@ -76,6 +76,19 @@ public final class Sleeper {
     }
 
     /**
+     * Sleeps until the {@link Supplier} is meet. But, not longer than timeout. Interval is hardcoded with 10 milliseconds.
+     * <p>
+     * Also see: {@link #milliseconds(long, Supplier, long)}.
+     *
+     * @param supplier supplier returning {@link Boolean} if the criteria is meet
+     * @param timeout  timeout in milliseconds
+     * @return {@code true} in case the sleep has been interrupted (or timeout expired), otherwise {@code false}
+     */
+    public static boolean milliseconds(final Supplier<Boolean> supplier, long timeout) {
+        return milliseconds(10, supplier, timeout);
+    }
+
+    /**
      * Sleeps until the {@link Supplier} is meet. But, not longer than timeout.
      *
      * @param interval interval check in milliseconds

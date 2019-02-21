@@ -18,7 +18,9 @@
 
 package li.pitschmann.knx.link.body;
 
+import com.google.common.primitives.Bytes;
 import li.pitschmann.knx.link.MultiRawDataAware;
+import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
 
 import javax.annotation.Nonnull;
@@ -37,4 +39,18 @@ public interface Body extends MultiRawDataAware {
      */
     @Nonnull
     ServiceType getServiceType();
+
+    /**
+     * Returns the header and body as raw data in byte array
+     *
+     * @param withHeader if {@code true} then returned byte array will also contain the KNX header array
+     * @return byte array
+     */
+    default byte[] getRawData(final boolean withHeader) {
+        if (withHeader) {
+            return Bytes.concat(Header.create(this).getRawData(), getRawData());
+        } else {
+            return getRawData();
+        }
+    }
 }

@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Abstract KNX Queue for KNX packets
@@ -48,7 +47,6 @@ public abstract class AbstractKnxQueue implements Runnable {
     private final InternalKnxClient internalClient;
     private final SelectableChannel channel;
     private final BlockingQueue<Body> queue = new LinkedBlockingDeque<>();
-    private final AtomicInteger number = new AtomicInteger();
 
     /**
      * Constructor for Abstract KNX Queue
@@ -83,7 +81,6 @@ public abstract class AbstractKnxQueue implements Runnable {
                         // qualified?
                         if (valid(key)) {
                             action(key);
-                            number.incrementAndGet();
                         }
                     }
                 } catch (final KnxWrongChannelIdException wrongChannelIdException) {

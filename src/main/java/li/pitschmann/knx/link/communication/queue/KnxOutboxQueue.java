@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
-import com.google.common.primitives.Bytes;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.header.Header;
@@ -77,15 +76,8 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
         // get body from queue
         final Body body = next();
 
-        // header
-        final Header header = Header.create(body);
-        final byte[] headerRawData = header.getRawData();
-
-        // body
-        final byte[] bodyRawData = body.getRawData();
-
         // packet: header + body
-        final byte[] packetToSend = Bytes.concat(headerRawData, bodyRawData);
+        final byte[] packetToSend = body.getRawData(true);
 
         // write to channel
         final ByteChannel channel = (ByteChannel) key.channel();
@@ -105,7 +97,7 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
                             "   Body:    {}\n" + //
                             "----------------------------------------------------------------", //
                     Networker.getLocalAddressAsString(channel), getId(), Networker.getRemoteAddressAsString(channel),
-                    ByteFormatter.formatHexAsString(packetToSend), header, body);
+                    ByteFormatter.formatHexAsString(packetToSend), Header.create(body), body);
         }
     }
 
