@@ -127,7 +127,7 @@ public class KnxMockServerExtension
             // wait until server is ready for receiving packets from client
             long startTime = System.currentTimeMillis();
             do {
-                Sleeper.milliseconds(50);
+                Sleeper.milliseconds(500);
                 if ((System.currentTimeMillis() - startTime) > MAX_START_DELAY_IN_MILLISECONDS) {
                     throw new RuntimeException("Could not start KNX Mock server within " + MAX_START_DELAY_IN_MILLISECONDS + "ms (" + (System.currentTimeMillis() - startTime) + ").");
                 }

@@ -21,12 +21,11 @@ package li.pitschmann.knx.main;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
+import java.util.function.Function;
 
 /**
  * Demo class how to send a read request to a KNX group address.
@@ -40,13 +39,13 @@ import java.net.InetAddress;
  */
 public class KnxMainRead extends AbstractKnxMain {
     private static final Logger LOG = LoggerFactory.getLogger(KnxMainRead.class);
-    private static final InetAddress DEFAULT_ROUTER_IP = Networker.getByAddress("192.168.1.16");
+    private static final String DEFAULT_ROUTER_IP = "192.168.1.16";
     private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
     private static final int DEFAULT_LOOPS = 50;
 
     public static void main(final String[] args) {
         // 1st Argument: Get Router Address
-        final InetAddress routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Networker::getByAddress);
+        final String routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Function.identity());
         LOG.debug("Router Address: {}", routerAddress);
 
         // 2nd Argument: Get Group Address

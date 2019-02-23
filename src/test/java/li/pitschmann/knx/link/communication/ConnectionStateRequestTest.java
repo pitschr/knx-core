@@ -91,7 +91,7 @@ public class ConnectionStateRequestTest {
             //  ait for next packet (will be: ConnectionStateRequestBody)
             "WAIT=NEXT",
             // no connection state response, and then wait for next packet
-            // will be eepeated for 12 times
+            // will be repeated for 12 times
             "REPEAT=12{NO_ACTION,WAIT=NEXT}",
             // DisconnectResponseBody
             KnxBody.DISCONNECT_RESPONSE})

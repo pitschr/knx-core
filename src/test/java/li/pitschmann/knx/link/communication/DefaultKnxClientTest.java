@@ -18,29 +18,31 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.test.KnxBody;
+import li.pitschmann.test.KnxMockServer;
+import li.pitschmann.test.KnxTest;
+import org.junit.jupiter.api.DisplayName;
+
+import static org.assertj.core.api.Assertions.fail;
 
 /**
- * Default KNX client implementation
+ * Test for {@link DefaultKnxClient}
  *
  * @author PITSCHR
  */
-public final class DefaultKnxClient extends BaseKnxClient {
+public class DefaultKnxClientTest {
     /**
-     * Starts KNX client with given router address and default configuration
+     * Test {@link DefaultKnxClient#DefaultKnxClient(String)}
      *
-     * @param routerAddress address of router in IP address format
+     * @param mockServer
      */
-    public DefaultKnxClient(final String routerAddress) {
-        this(Configuration.create(routerAddress).build());
-    }
-
-    /**
-     * Starts KNX client with given configuration
-     *
-     * @param config
-     */
-    public DefaultKnxClient(final Configuration config) {
-        super(config);
+    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_ROUTER)
+    @DisplayName("Test KNX client instantiation using host address as string")
+    public void testInstantiationViaHostAddress(final KnxMockServer mockServer) {
+        try (var client = new DefaultKnxClient("127.0.0.1:" + mockServer.getPort())) {
+            // ok
+        } catch (final Throwable t) {
+            fail("Unexpected test state", t);
+        }
     }
 }

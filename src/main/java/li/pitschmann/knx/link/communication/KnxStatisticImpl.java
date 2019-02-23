@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
  *
  * @author PITSCHR
  */
-public final class DefaultKnxStatistic implements KnxStatistic {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultKnxStatistic.class);
+public final class KnxStatisticImpl implements KnxStatistic {
+    private static final Logger LOG = LoggerFactory.getLogger(KnxStatisticImpl.class);
     /**
      * 14 bytes for Ethernet packet<br>
      * 20 bytes for IPV4<br>
@@ -53,9 +53,9 @@ public final class DefaultKnxStatistic implements KnxStatistic {
     private final AtomicLong numberOfErrors = new AtomicLong();
 
     /**
-     * Default package-private constructor for {@link DefaultKnxStatistic}
+     * Default package-private constructor for {@link KnxStatisticImpl}
      */
-    DefaultKnxStatistic() {
+    KnxStatisticImpl() {
         LOG.trace("Default KNX Statistic object created.");
     }
 
@@ -132,7 +132,7 @@ public final class DefaultKnxStatistic implements KnxStatistic {
      *
      * @return an unmodifiable instance of {@link KnxStatistic}
      */
-    public KnxStatistic getUnmodifiableStatistic() {
+    public KnxStatistic asUnmodifiable() {
         return new UnmodifiableKnxStatistic(this);
     }
 
@@ -151,7 +151,7 @@ public final class DefaultKnxStatistic implements KnxStatistic {
         private final long numberOfErrors;
         private final double errorRate;
 
-        private UnmodifiableKnxStatistic(final DefaultKnxStatistic statistic) {
+        private UnmodifiableKnxStatistic(final KnxStatisticImpl statistic) {
             this.numberOfBodyReceivedMap = deepCopy(statistic.numberOfBodyReceivedMap);
             this.numberOfBodySentMap = deepCopy(statistic.numberOfBodySentMap);
             this.numberOfBytesReceived = statistic.getNumberOfBytesReceived();

@@ -43,18 +43,18 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests the {@link DefaultKnxStatistic}
+ * Tests the {@link KnxStatisticImpl}
  *
  * @author PITSCHR
  */
 public class KnxStatisticTest {
     /**
-     * Test at initialization for {@link DefaultKnxStatistic}
+     * Test at initialization for {@link KnxStatisticImpl}
      */
     @Test
     @DisplayName("Test at initialization of KNX statistic")
     public void testInitialization() {
-        final var knxStatistic = new DefaultKnxStatistic();
+        final var knxStatistic = new KnxStatisticImpl();
 
         // expected is that all are zero at initialization
         assertThat(knxStatistic.getNumberOfBytesReceived()).isZero();
@@ -69,19 +69,19 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Test for {@link DefaultKnxStatistic}
+     * Test for {@link KnxStatisticImpl}
      */
     @Test
     @DisplayName("Check for KNX statistic")
     public void testKnxStatistic() {
-        final var knxStatistic = new DefaultKnxStatistic();
+        final var knxStatistic = new KnxStatisticImpl();
 
         // fill KNX statistic
         addIncomingBodies(knxStatistic);
         addOutgoingBodies(knxStatistic);
         addErrors(knxStatistic);
 
-        // pre-check
+        // verify
         assertThat(knxStatistic.getNumberOfBodyReceived()).isEqualTo(55);
         assertThat(knxStatistic.getNumberOfBodyReceived(DescriptionRequestBody.class)).isEqualTo(1);
         assertThat(knxStatistic.getNumberOfBodyReceived(DescriptionResponseBody.class)).isEqualTo(2);
@@ -114,50 +114,50 @@ public class KnxStatisticTest {
      * Test for unmodifiable {@link KnxStatistic}
      */
     @Test
-    @DisplayName("Check of unmodifiable KNX statistic")
+    @DisplayName("Test unmodifiable KNX statistic")
     public void testUnmodifiableKnxStatistic() {
-        final var knxStatistic = new DefaultKnxStatistic();
+        final var statistic = new KnxStatisticImpl();
 
         // fill KNX statistic
-        addIncomingBodies(knxStatistic);
-        addOutgoingBodies(knxStatistic);
-        addErrors(knxStatistic);
+        addIncomingBodies(statistic);
+        addOutgoingBodies(statistic);
+        addErrors(statistic);
 
         // assert if statistic is an instance of UnmodifiableKnxStatistic
-        final var knxStatisticUnmodifiable = knxStatistic.getUnmodifiableStatistic();
-        assertThat(knxStatisticUnmodifiable.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
+        final var unmodifiableStatistic = statistic.asUnmodifiable();
+        assertThat(unmodifiableStatistic.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
 
         // assert received/sent bytes and errors
-        assertThat(knxStatisticUnmodifiable.getNumberOfBytesReceived()).isEqualTo(knxStatistic.getNumberOfBytesReceived());
-        assertThat(knxStatisticUnmodifiable.getNumberOfBytesSent()).isEqualTo(knxStatistic.getNumberOfBytesSent());
-        assertThat(knxStatisticUnmodifiable.getNumberOfErrors()).isEqualTo(knxStatistic.getNumberOfErrors());
-        assertThat(knxStatisticUnmodifiable.getErrorRate()).isEqualTo(knxStatistic.getErrorRate());
+        assertThat(unmodifiableStatistic.getNumberOfBytesReceived()).isEqualTo(statistic.getNumberOfBytesReceived());
+        assertThat(unmodifiableStatistic.getNumberOfBytesSent()).isEqualTo(statistic.getNumberOfBytesSent());
+        assertThat(unmodifiableStatistic.getNumberOfErrors()).isEqualTo(statistic.getNumberOfErrors());
+        assertThat(unmodifiableStatistic.getErrorRate()).isEqualTo(statistic.getErrorRate());
 
         // check received bodies
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived()).isEqualTo(knxStatistic.getNumberOfBodyReceived());
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(DescriptionRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(DescriptionRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(DescriptionResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(DescriptionResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(ConnectRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(ConnectRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(ConnectResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(ConnectResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(ConnectionStateRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(ConnectionStateRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(DisconnectRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(DisconnectRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(DisconnectResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(DisconnectResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(TunnellingRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(TunnellingRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodyReceived(TunnellingAckBody.class)).isEqualTo(knxStatistic.getNumberOfBodyReceived(TunnellingAckBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived()).isEqualTo(statistic.getNumberOfBodyReceived());
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(DescriptionRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(DescriptionRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(DescriptionResponseBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(DescriptionResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(ConnectRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(ConnectRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(ConnectResponseBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(ConnectResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(ConnectionStateRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(ConnectionStateRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(TunnellingRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(TunnellingRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(TunnellingAckBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(TunnellingAckBody.class));
 
         // check sent bodies
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent()).isEqualTo(knxStatistic.getNumberOfBodySent());
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(DescriptionRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(DescriptionRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(DescriptionResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(DescriptionResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(ConnectRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(ConnectRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(ConnectResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(ConnectResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(ConnectionStateRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(ConnectionStateRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(ConnectionStateResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(ConnectionStateResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(DisconnectRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(DisconnectRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(DisconnectResponseBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(DisconnectResponseBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(TunnellingRequestBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(TunnellingRequestBody.class));
-        assertThat(knxStatisticUnmodifiable.getNumberOfBodySent(TunnellingAckBody.class)).isEqualTo(knxStatistic.getNumberOfBodySent(TunnellingAckBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent()).isEqualTo(statistic.getNumberOfBodySent());
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(DescriptionRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(DescriptionRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(DescriptionResponseBody.class)).isEqualTo(statistic.getNumberOfBodySent(DescriptionResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(ConnectRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(ConnectRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(ConnectResponseBody.class)).isEqualTo(statistic.getNumberOfBodySent(ConnectResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(ConnectionStateRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(ConnectionStateRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(ConnectionStateResponseBody.class)).isEqualTo(statistic.getNumberOfBodySent(ConnectionStateResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(DisconnectRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(DisconnectRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(DisconnectResponseBody.class)).isEqualTo(statistic.getNumberOfBodySent(DisconnectResponseBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(TunnellingRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(TunnellingRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(TunnellingAckBody.class)).isEqualTo(statistic.getNumberOfBodySent(TunnellingAckBody.class));
     }
 
     /**
@@ -188,7 +188,7 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Adds 55 <strong>incoming</strong> bodies to {@link DefaultKnxStatistic}
+     * Adds 55 <strong>incoming</strong> bodies to {@link KnxStatisticImpl}
      * <p/>
      * <ul>
      * <li>1x {@link DescriptionRequestBody}</li>
@@ -205,7 +205,7 @@ public class KnxStatisticTest {
      *
      * @param knxStatistic
      */
-    private void addIncomingBodies(final DefaultKnxStatistic knxStatistic) {
+    private void addIncomingBodies(final KnxStatisticImpl knxStatistic) {
         final var bodies = new LinkedList<Body>();
 
         bodies.addAll(generateBodyList(KnxBody.DESCRIPTION_REQUEST_BODY, 1));
@@ -223,7 +223,7 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Adds 155 <strong>outgoing</strong> bodies to {@link DefaultKnxStatistic}
+     * Adds 155 <strong>outgoing</strong> bodies to {@link KnxStatisticImpl}
      * <p/>
      * <ul>
      * <li>21x {@link DescriptionRequestBody}</li>
@@ -240,7 +240,7 @@ public class KnxStatisticTest {
      *
      * @param knxStatistic
      */
-    private void addOutgoingBodies(final DefaultKnxStatistic knxStatistic) {
+    private void addOutgoingBodies(final KnxStatisticImpl knxStatistic) {
         final var bodies = new LinkedList<Body>();
 
         bodies.addAll(generateBodyList(KnxBody.DESCRIPTION_REQUEST_BODY, 21));
@@ -266,7 +266,7 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Adds 40 <strong>errors</strong> to {@link DefaultKnxStatistic}
+     * Adds 40 <strong>errors</strong> to {@link KnxStatisticImpl}
      * <p/>
      * <ul>
      * <li>8x {@link IllegalArgumentException}</li>
@@ -278,7 +278,7 @@ public class KnxStatisticTest {
      *
      * @param knxStatistic
      */
-    private void addErrors(final DefaultKnxStatistic knxStatistic) {
+    private void addErrors(final KnxStatisticImpl knxStatistic) {
         for (int i = 0; i < 8; i++) {
             knxStatistic.onError(new IllegalArgumentException());
         }

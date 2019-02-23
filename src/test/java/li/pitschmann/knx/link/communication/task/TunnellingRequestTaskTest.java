@@ -26,7 +26,7 @@ import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxStatusPool;
+import li.pitschmann.knx.link.communication.KnxStatusPoolImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -108,7 +108,7 @@ public class TunnellingRequestTaskTest {
      */
     private TunnellingRequestTask createTask() {
         final var internalClient = Mockito.mock(InternalKnxClient.class);
-        final var statusPool = Mockito.mock(KnxStatusPool.class);
+        final var statusPool = Mockito.mock(KnxStatusPoolImpl.class);
         final var subscription = Mockito.mock(Flow.Subscription.class);
 
         when(internalClient.getStatusPool()).thenReturn(statusPool);

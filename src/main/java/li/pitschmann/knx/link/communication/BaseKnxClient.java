@@ -29,6 +29,7 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.knx.link.plugin.Plugin;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +50,9 @@ public class BaseKnxClient implements KnxClient {
      */
     public BaseKnxClient(final Configuration config) {
         clientInternal = new InternalKnxClient(config);
+
+        // notifies all plug-ins about initialization
+        clientInternal.notifyPlugins(this, config.getAllPlugins(), Plugin::onInitialization);
 
         // start services for KNX communication
         clientInternal.start();
@@ -125,9 +129,10 @@ public class BaseKnxClient implements KnxClient {
 
     @Override
     public KnxStatistic getStatistic() {
-        return this.clientInternal.getStatistic();
+        return this.clientInternal.getStatistic().asUnmodifiable();
     }
 
+    @Override
     public KnxStatusPool getStatusPool() {
         return this.clientInternal.getStatusPool();
     }

@@ -223,31 +223,12 @@ public class KnxClientTest {
     @Test
     @DisplayName("Error: Send body without any channel information")
     public void testBodyWithoutChannel() {
-        var client = createClient();
+        var client = new InternalKnxClient(createConfigMock());
         var requestBody = mock(RequestBody.class);
 
         // verify if it is returning Illegal Argument Exception
         assertThatThrownBy(() -> client.send(requestBody)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
         assertThatThrownBy(() -> client.send(requestBody, 0)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
-    }
-
-    /**
-     * Verify if {@link InternalKnxClient#getStatistic()} is an unmodifiable instance of {@link KnxStatistic}
-     */
-    @Test
-    @DisplayName("Check if KNX statistic is an unmodifiable instance")
-    public void testIfKnxStatisticIsUnmodifiable() {
-        var knxStatisticUnmodifiable = createClient().getStatistic();
-        assertThat(knxStatisticUnmodifiable.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
-    }
-
-    /**
-     * Creates a {@link KnxClient} for testing
-     *
-     * @return an instance of {@link KnxClient}
-     */
-    private KnxClient createClient() {
-        return new InternalKnxClient(createConfigMock());
     }
 
     /**

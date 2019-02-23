@@ -28,7 +28,8 @@ import javax.annotation.Nonnull;
 import java.time.Instant;
 
 /**
- * Status data for KNX Address. This class preserves the immutability.
+ * Status data for KNX Address. This class preserves the immutability about KNX data,
+ * but can be marked as dirty (=may not be update anymore) or as not-dirty (=updated).
  *
  * @author PITSCHR
  */
@@ -117,7 +118,7 @@ public final class KnxStatusData {
      *
      * @param dirty dirty flag to be set ({@code true}) or cleared ({@code false})
      */
-    public void setDirty(final boolean dirty) {
+    void setDirty(final boolean dirty) {
         this.dirty = dirty;
     }
 

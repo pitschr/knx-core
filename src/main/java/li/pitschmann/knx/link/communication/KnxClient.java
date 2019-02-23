@@ -54,6 +54,13 @@ public interface KnxClient extends AutoCloseable {
     KnxStatistic getStatistic();
 
     /**
+     * Returns a copied {@link KnxStatusPool} snapshot about current status of KNX devices
+     *
+     * @return an immutable {@link KnxStatusPool}
+     */
+    KnxStatusPool getStatusPool();
+
+    /**
      * Returns {@code true} if the close has already been requested
      *
      * @return {@code true} if closed

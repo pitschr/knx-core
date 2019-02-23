@@ -43,6 +43,8 @@ public final class KnxBody {
     public static final String DISCONNECT_RESPONSE = "0610020a00080700";
     public static final String TUNNELLING_REQUEST = "06100420001704071b002900bce010c84c0f0300800c23";
     public static final String TUNNELLING_ACK = "06100421000a04071b00";
+    public static final String TUNNELLING_REQUEST_2 = "06100420001704070b002900bce010aa4c090300800c82";
+    public static final String TUNNELLING_ACK_2 = "06100421000a04070b00";
     public static final DescriptionRequestBody DESCRIPTION_REQUEST_BODY = toBody(DESCRIPTION_REQUEST);
     public static final DescriptionResponseBody DESCRIPTION_RESPONSE_BODY = toBody(DESCRIPTION_RESPONSE);
     public static final ConnectRequestBody CONNECT_REQUEST_BODY = toBody(CONNECT_REQUEST);
@@ -53,6 +55,8 @@ public final class KnxBody {
     public static final DisconnectResponseBody DISCONNECT_RESPONSE_BODY = toBody(DISCONNECT_RESPONSE);
     public static final TunnellingRequestBody TUNNELLING_REQUEST_BODY = toBody(TUNNELLING_REQUEST);
     public static final TunnellingAckBody TUNNELLING_ACK_BODY = toBody(TUNNELLING_ACK);
+    public static final TunnellingRequestBody TUNNELLING_REQUEST_BODY_2 = toBody(TUNNELLING_REQUEST_2);
+    public static final TunnellingAckBody TUNNELLING_ACK_BODY_2 = toBody(TUNNELLING_ACK_2);
 
     private KnxBody() {
         throw new AssertionError("Do not touch me!");

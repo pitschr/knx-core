@@ -23,15 +23,14 @@ import li.pitschmann.knx.link.body.TunnellingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 /**
  * Demo class how to send a specific write request to a KNX group address.
@@ -45,7 +44,7 @@ import java.util.concurrent.Future;
  */
 public class KnxMainWrite extends AbstractKnxMain {
     private static final Logger LOG = LoggerFactory.getLogger(KnxMainWrite.class);
-    private static final InetAddress DEFAULT_ROUTER_IP = Networker.getByAddress("192.168.1.16");
+    private static final String DEFAULT_ROUTER_IP = "192.168.1.16";
     private static final List<GroupAddress> DEFAULT_GROUP_ADDRESSES = Lists.newArrayList( //
             GroupAddress.of(1, 2, 0), //
             GroupAddress.of(1, 2, 50)
@@ -55,7 +54,7 @@ public class KnxMainWrite extends AbstractKnxMain {
 
     public static void main(final String[] args) {
         // 1st Argument: Get Router Address
-        final InetAddress routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Networker::getByAddress);
+        final String routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Function.identity());
         LOG.debug("Router Address: {}", routerAddress);
 
         // 2nd Argument: Get DPT

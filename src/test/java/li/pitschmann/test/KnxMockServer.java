@@ -112,6 +112,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return Configuration.create(Networker.getLocalhost(), getPort())
+                .setting("executor.pool.communication", "3") // 3 instead of 10
                 .setting("timeout.request.description", "1000") // 1s instead of 10s
                 .setting("timeout.request.connect", "1000") // 1s instead of 10s
                 .setting("timeout.request.disconnect", "1000") // 1s instead of 10s

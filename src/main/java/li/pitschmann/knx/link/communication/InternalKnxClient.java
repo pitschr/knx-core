@@ -86,8 +86,8 @@ public final class InternalKnxClient implements KnxClient {
     private final AtomicBoolean closed = new AtomicBoolean();
     private final Lock lock = new ReentrantLock();
     private final KnxEventPool eventPool = new KnxEventPool();
-    private final KnxStatusPool statusPool = new KnxStatusPool();
-    private final DefaultKnxStatistic statistics;
+    private final KnxStatisticImpl statistics;
+    private final KnxStatusPoolImpl statusPool;
     private final Configuration config;
     private final ExecutorService communicationExecutor;
     private final ExecutorService pluginExecutor;
@@ -109,7 +109,9 @@ public final class InternalKnxClient implements KnxClient {
         this.config = config;
 
         // statistics
-        this.statistics = new DefaultKnxStatistic();
+        this.statistics = new KnxStatisticImpl();
+        // status pool
+        this.statusPool = new KnxStatusPoolImpl();
 
         // executors with fixed threads for communication and subscription
         this.communicationExecutor = Executors.newFixedThreadPool(config.getCommunicationExecutorPoolSize());
@@ -124,9 +126,6 @@ public final class InternalKnxClient implements KnxClient {
      * Starts the services and notifies the plug-ins about initialization
      */
     protected final void start() {
-        // notifies all plug-ins about initialization
-        this.notifyPlugins(this, this.config.getAllPlugins(), Plugin::onInitialization);
-
         // validate
         try {
             if (this.verify()) {
@@ -150,8 +149,13 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     @Override
-    public KnxStatistic getStatistic() {
-        return this.statistics.getUnmodifiableStatistic();
+    public KnxStatisticImpl getStatistic() {
+        return this.statistics;
+    }
+
+    @Override
+    public KnxStatusPoolImpl getStatusPool() {
+        return this.statusPool;
     }
 
     /**
@@ -369,10 +373,6 @@ public final class InternalKnxClient implements KnxClient {
         return this.eventPool;
     }
 
-    public KnxStatusPool getStatusPool() {
-        return this.statusPool;
-    }
-
     public final int getChannelId() {
         return this.channelId;
     }
@@ -428,7 +428,7 @@ public final class InternalKnxClient implements KnxClient {
      * @param plugins  list of plug-ins to be notified
      * @param consumer consumer defining which method should be called
      */
-    private <O, P extends Plugin> void notifyPlugins(final O obj, final List<P> plugins, BiConsumer<P, O> consumer) {
+    protected <O, P extends Plugin> void notifyPlugins(final O obj, final List<P> plugins, BiConsumer<P, O> consumer) {
         if (this.pluginExecutor.isShutdown()) {
             LOG.warn("Could not send to plug-ins because plugin executor is shutdown already: {}",
                     obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
