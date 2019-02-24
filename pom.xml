@@ -196,6 +196,12 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>li/pitschmann/knx/link/plugin/experimental/**</exclude>
+                        <exclude>li/pitschmann/knx/main/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>

@@ -58,21 +58,28 @@ public class KnxMainReadAndWrite extends AbstractKnxMain {
         LOG.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
 
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
-            // send read status to group address
-            // otherwise the KNX client has no status about the group address yet
-            LOG.debug("READ ACK: {}", client.readRequest(groupAddress).get());
+            // Sends the read request
+            // The returned instance is the acknowledge sent by KNX router indicating that read request was received
+            final var readRequestAck = client.readRequest(groupAddress).get();
+            LOG.debug("READ ACK: {}", readRequestAck);
 
-            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            // Wait bit for update (up to 1 sec)
+            // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
+            // KNX router and status pool will be updated with lamp status
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
 
-            // read lamp status
+            // read lamp state
             final var lampStatus = client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue();
             LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
-            // send write request with inverse boolean value (true->false, false->true)
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus)).get();
+            // Sends the write request
+            // The returned instance is the acknowledge sent by KNX router indicating that write request was received
+            final var writeRequestAck = client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus)).get();
+            LOG.debug("WRITE ACK: {}", writeRequestAck);
 
-            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            // Wait bit for update (up to 1 sec)
+            // If communication and write flags on KNX group address are set the state of lamp will be changed and
+            // the state of lamp will be forwarded by the KNX router which updates the status pool as well
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
 
             LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());

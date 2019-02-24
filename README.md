@@ -7,16 +7,17 @@ A library for the KNX Net/IP communication with your KNX Net/IP router.
 
 This library is indented to allow you writing your own application communicating with your KNX network. 
 It also contains few main classes for a basic understanding how the KNX communication can be done in 
-programmatically way. See examples below.
+programmatically way.
 
-## Known limitations
+This project is more intended for developers which are interested in KNX communication. 
+However, it contains ready-to-use main classes to get a quick start. See examples below.
+
+#### Known limitations
 
 * Only *tunnelling* supported (no routing!)
 * No *NAT* supported
-
-## Getting Started
  
-### Prerequisites
+#### Prerequisites
 
 * **Java 10+**
   * Make sure that you have Java 10 installed and running as Java 10.
@@ -24,12 +25,16 @@ programmatically way. See examples below.
   * IP-Address of your KNX Net/IP router
   * Some group addresses
 
-## Examples
+#### Architecture
+
+![Architecture](./assets/readme_architecture.png)
+
+## Ready-to-go Examples
 
 This project is more intended for developers which are interested in KNX communication. 
 However, it contains ready-to-use main classes to get a quick start.
 
-### Sending a WRITE frame to your KNX Net/IP router
+### Send a WRITE frame to your KNX Net/IP router
 
 **Class:** ``li.pitschmann.knx.main.KnxMainWrite``
 
@@ -55,7 +60,7 @@ between commands is hardcoded with 2 seconds.
 Given command ``on off on off`` would perform the lamp to switch ``on``, ``off``, ``on`` and then 
 ``off`` with a delay of 2 seconds between each command.
  
-## Sending a READ frame to your KNX Net/IP router
+## Send a READ frame to your KNX Net/IP router
 
 **Class:** ``li.pitschmann.knx.main.KnxMainRead``
 
@@ -74,7 +79,7 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -n 10
  all group addresses that is sent by KNX Net/IP router will be fetched by the KNX client internally.
 
 
-## Start monitoring the KNX Net/IP router
+## KNX Monitoring
 
 **Class:** ``li.pitschmann.knx.main.KnxMainMonitoring``
 
@@ -89,14 +94,15 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -t 3600
 will monitor the traffic of KNX Net/IP router on default ``192.168.1.16`` for one hour (``3600`` seconds). 
 After one hour a disconnect frame will be sent by the KNX client to the router and application will exit.
 
-## How to implement
+## API Programming
 
-**Assumptions**
-* The IP-Address of your KNX Net/IP router is ``192.168.0.10``
+This tutorial is written for experienced Java developers and explains how to integrate the API with your
+own program. It looks basically like:
 
 ````
-// Create KNX client and start communication with your KNX Net/IP router
-try (final KnxClient client = new DefaultKnxClient("192.168.0.10)) {
+// Creates KNX client and start communication with your KNX Net/IP router.
+// The closure of KXN communication will be handled automatically by KNX client.
+try (final KnxClient client = new DefaultKnxClient("192.168.0.10")) {
     // do your stuff you want to do ...
 } catch (final Throwable t) {
     // catch all throwable you want to handle here (optional)
@@ -105,11 +111,12 @@ try (final KnxClient client = new DefaultKnxClient("192.168.0.10)) {
 }
 ````
 
-### Example #1
-You want to switch ``on`` a lamp on KNX group address ``1/2/3`` and switch ``off`` after three seconds.
+Let's start with some examples. Given assumptions:
+* You want to switch ``on`` a lamp on KNX group address ``1/2/3`` and switch ``off`` after three seconds 
+* The IP-Address of your KNX Net/IP router is ``192.168.0.10`` and KNX default port is used
+* Your KNX group address has proper KNX flags set (e.g. communication, write and read)
 
-#### Solution: Switch on/off lamp with boolean values
-
+#### Example #1: Switch on/off lamp with boolean values
 * boolean ``true`` => translated to ``0x01`` and sent to KNX Net/IP router
 * boolean ``false`` => translated to ``0x00`` and sent to KNX Net/IP router
 
@@ -133,8 +140,7 @@ public class KnxMain {
 }
 ````
 
-#### Solution: Switch on/off lamp with byte values
-
+#### Example #2: Switch on/off lamp with byte values
 * byte ``0x01`` (``0000 0001``) => validates if ``0x01`` is compatible with ``DPT1#SWITCH`` and sent to KNX Net/IP router
 * byte ``0x00`` (``0000 0000``) => validates if ``0x00`` is compatible with ``DPT1#SWITCH`` and sent to KNX Net/IP router
 
@@ -158,8 +164,7 @@ public class KnxMain {
 }
 ````
 
-#### Solution: Switch on/off lamp with human-friendly texts
-
+#### Example #3: Switch on/off lamp with human-friendly texts
 * text ``on`` => validates if ``on`` is compatible with ``DPT1#SWITCH``, translated to ``0x01`` and sent to KNX Net/IP router
 * text ``off`` => validates if ``off`` is compatible with ``DPT1#SWITCH``, translated to ``0x00`` and sent to KNX Net/IP router
 
@@ -183,43 +188,45 @@ public class KnxMain {
 }
 ````
 
-### Example #2
-You want to inverse the value of a lamp (``DPT1#SWITCH``)
-
-* When lamp is ``on``, then lamp will be switched ``off``
-* When lamp is ``off``, then lamp will be switched ``on``
-
-To use it, make sure that you have proper KNX flag (communication, read and write) set for given group address.
+#### Example #4: Inverse the status of lamp
+This example inverses the status of lamp
+* if lamp is ``on`` then lamp will be ``off``
+* if lamp is ``off`` then lamp will be ``on``
  
-#### Implementation
-
 ````java
 public class KnxMain {
     private static final String ROUTER_IP_ADDRESS = "192.168.0.10";
     private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
     
     public static void main(final String[] args) {     
-        try (final DefaultKnxClient client = new DefaultKnxClient(ROUTER_IP_ADDRESS)) {   
-            // send read status to group address
-            // otherwise the KNX client has no status about the group address yet
-            LOG.debug("READ ACK: {}", client.readRequest(groupAddress).get());
+        try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
+            // Sends the read request
+            // The returned instance is the acknowledge sent by KNX router indicating that read request was received
+            final var readRequestAck = client.readRequest(groupAddress).get();
+            LOG.debug("READ ACK: {}", readRequestAck);
 
-            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            // Wait bit for update (up to 1 sec)
+            // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
+            // KNX router and status pool will be updated with lamp status
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
 
-            // read lamp status
+            // read lamp state
             final var lampStatus = client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue();
             LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
-            // send write request with inverse boolean value (true->false, false->true)
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus));
+            // Sends the write request
+            // The returned instance is the acknowledge sent by KNX router indicating that write request was received
+            final var writeRequestAck = client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus)).get();
+            LOG.debug("WRITE ACK: {}", writeRequestAck);
 
-            // wait bit for update (up to 1 sec) - KNX router will send the indication frame and status pool will be updated
+            // Wait bit for update (up to 1 sec)
+            // If communication and write flags on KNX group address are set the state of lamp will be changed and
+            // the state of lamp will be forwarded by the KNX router which updates the status pool as well
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
 
             LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());
-        } catch (final InterruptedException ie) {
-            // do something ...
+        } catch (final Throwable t) {
+            LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
         }
     }
 }
