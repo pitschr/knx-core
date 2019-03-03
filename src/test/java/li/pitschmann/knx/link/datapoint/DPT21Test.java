@@ -21,6 +21,7 @@ package li.pitschmann.knx.link.datapoint;
 import li.pitschmann.knx.link.datapoint.value.DPT21Value;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -191,6 +192,7 @@ public class DPT21Test implements DPTTest {
      * Test constructor of {@link DPT21}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DPT21.class);
     }

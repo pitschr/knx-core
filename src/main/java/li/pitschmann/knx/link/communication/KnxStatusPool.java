@@ -41,7 +41,8 @@ public interface KnxStatusPool {
     boolean isUpdated(final @Nonnull KnxAddress address);
 
     /**
-     * Returns if the status for given {@link KnxAddress} is or becomes up to date up to given {@code duration} and {@code unit}
+     * Returns if the status for given {@link KnxAddress} is up to date or wait up to
+     * {@code duration} and {@code unit} until it is up to date.
      *
      * @param address  {@link KnxAddress} for which the status should be returned
      * @param duration duration of time unit

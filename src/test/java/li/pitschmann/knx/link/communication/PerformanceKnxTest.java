@@ -51,7 +51,7 @@ public class PerformanceKnxTest {
      * When doing a high number (100000 times) - then ensure that you set
      * the minimum log level at 'INFO'. Logging with DEBUG or lower will slow down
      * the system due I/O writing. Alter the log level in /test/resources/logback.xml
-     * by setting the root level from to 'INFO'.
+     * by setting the root level from to 'INFO'. Or start JUnit class with "-Droot-level=INFO"
      */
     private static final int TIMES = 100;
 

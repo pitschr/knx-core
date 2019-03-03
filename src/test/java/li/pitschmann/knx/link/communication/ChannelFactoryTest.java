@@ -22,6 +22,7 @@ import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.test.TestHelpers;
 import li.pitschmann.utils.Networker;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -44,6 +45,7 @@ public class ChannelFactoryTest {
      * Test constructor of {@link ChannelFactory}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(ChannelFactory.class);
     }

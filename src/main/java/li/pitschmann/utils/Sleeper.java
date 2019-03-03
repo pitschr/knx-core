@@ -87,7 +87,6 @@ public final class Sleeper {
     public static boolean milliseconds(final Supplier<Boolean> supplier, long timeout) {
         return milliseconds(10, supplier, timeout);
     }
-
     /**
      * Sleeps until the {@link Supplier} is meet. But, not longer than timeout.
      *

@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
@@ -120,6 +121,7 @@ public class DataPointTypeRegistryTest {
      * Test constructor of {@link DataPointTypeRegistry}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DataPointTypeRegistry.class);
     }

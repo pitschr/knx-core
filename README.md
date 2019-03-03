@@ -3,21 +3,21 @@
 
 # KNX Link
 
-A library for the KNX Net/IP communication with your KNX Net/IP router.
+A reactive, non-blocking Java library for KNX Net/IP communication with your KNX Net/IP router.
 
 This library is indented to allow you writing your own application communicating with your KNX network. 
 It also contains few main classes for a basic understanding how the KNX communication can be done in 
 programmatically way.
 
-This project is more intended for developers which are interested in KNX communication. 
-However, it contains ready-to-use main classes to get a quick start. See examples below.
+This project is more intended for experienced developers which are interested in communication with KNX world. 
+It contains ready-to-use main classes to get a quick start. See examples below.
 
-#### Known limitations
+### Known limitations
 
 * Only *tunnelling* supported (no routing!)
 * No *NAT* supported
  
-#### Prerequisites
+### Prerequisites
 
 * **Java 10+**
   * Make sure that you have Java 10 installed and running as Java 10.
@@ -25,9 +25,13 @@ However, it contains ready-to-use main classes to get a quick start. See example
   * IP-Address of your KNX Net/IP router
   * Some group addresses
 
-#### Architecture
+### Architecture
 
 ![Architecture](./assets/readme_architecture.png)
+
+The communication between KNX Net/IP router and the client is reactive and non-blocking which allows a very fast communication and we have two channels simultaneously open: 
+* Control Channel (for control-related frames like description, connect, disconnect and health-check)
+* Data Channel (for data-related frames like read/request frames to/from KNX)
 
 ## Ready-to-go Examples
 
@@ -60,7 +64,7 @@ between commands is hardcoded with 2 seconds.
 Given command ``on off on off`` would perform the lamp to switch ``on``, ``off``, ``on`` and then 
 ``off`` with a delay of 2 seconds between each command.
  
-## Send a READ frame to your KNX Net/IP router
+### Send a READ frame to your KNX Net/IP router
 
 **Class:** ``li.pitschmann.knx.main.KnxMainRead``
 
@@ -79,7 +83,7 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -n 10
  all group addresses that is sent by KNX Net/IP router will be fetched by the KNX client internally.
 
 
-## KNX Monitoring
+### KNX Monitoring
 
 **Class:** ``li.pitschmann.knx.main.KnxMainMonitoring``
 
@@ -202,29 +206,29 @@ public class KnxMain {
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
             // Sends the read request
             // The returned instance is the acknowledge sent by KNX router indicating that read request was received
-            final var readRequestAck = client.readRequest(groupAddress).get();
+            final var readRequestAck = client.readRequest(GROUP_ADDRESS).get();
             LOG.debug("READ ACK: {}", readRequestAck);
 
-            // Wait bit for update (up to 1 sec)
+            // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
-            // KNX router and status pool will be updated with lamp status
-            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+            // KNX router and status pool will be updated by KNX client with the actual lamp status
+            client.getStatusPool().isUpdated(address, 1, TimeUnit.SECONDS);
 
             // read lamp state
-            final var lampStatus = client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue();
+            final var lampStatus = client.getStatusPool().getValue(GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue();
             LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
             // Sends the write request
             // The returned instance is the acknowledge sent by KNX router indicating that write request was received
-            final var writeRequestAck = client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus)).get();
+            final var writeRequestAck = client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(!lampStatus)).get();
             LOG.debug("WRITE ACK: {}", writeRequestAck);
 
-            // Wait bit for update (up to 1 sec)
-            // If communication and write flags on KNX group address are set the state of lamp will be changed and
-            // the state of lamp will be forwarded by the KNX router which updates the status pool as well
-            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+            // Wait bit for update (usually few 10ms, but up to 1 sec max)
+            // If communication and write flags on KNX group address are set the state of lamp will be changed.
+            // The state of lamp will be forwarded by the KNX router and status pool will be updated by KNX client
+            client.getStatusPool().isUpdated(GROUP_ADDRESS, 1, TimeUnit.SECONDS);
 
-            LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());
+            LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue());
         } catch (final Throwable t) {
             LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
         }

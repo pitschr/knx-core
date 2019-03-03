@@ -16,24 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.link.datapoint;
-
-import li.pitschmann.test.TestHelpers;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+package li.pitschmann.knx.parser;
 
 /**
- * Test Class for {@link DPT23}
- *
- * @author PITSCHR
+ * Exception about any issue during parsing of '*.knxproj' file
  */
-public class DPT23Test {
+public final class KnxprojParserException extends RuntimeException {
     /**
-     * Test constructor of {@link DPT23}
+     * Constructs a new KNX Project Parse Exception with exception message
+     *
+     * @param message exception message
      */
-    @Test
-    @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(DPT23.class);
+    public KnxprojParserException(final String message) {
+        super(message);
     }
 }

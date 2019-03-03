@@ -196,6 +196,13 @@ public enum ServiceType implements KnxBytesEnum {
         this.responseIdentifier = responseIdentifier;
     }
 
+    /**
+     * Returns the {@link ServiceType} for given {@code code}
+     *
+     * @param code
+     * @return instance of {@link ServiceType} otherwise {@link KnxEnumNotFoundException}
+     * if given {@code code} is not known
+     */
     public static ServiceType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ServiceType.class, code));

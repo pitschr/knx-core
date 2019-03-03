@@ -19,6 +19,7 @@
 package li.pitschmann.utils;
 
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -169,6 +170,7 @@ public class BitGeneratorTest {
      * Test constructor of {@link BitGenerator}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(BitGenerator.class);
     }

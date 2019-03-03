@@ -25,6 +25,7 @@ import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -59,13 +60,17 @@ public class KnxMainRead extends AbstractKnxMain {
         // start KNX communication
         LOG.trace("START");
         try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
+            var statusPool = client.getStatusPool();
             Sleeper.seconds(1);
             LOG.debug("========================================================================");
+            LOG.debug("GROUP ADDRESS: 3-level: {}, 2-level: {}", groupAddress.getAddress(), groupAddress.getAddressLevel2());
             LOG.debug("READ ACK: {}", client.readRequest(groupAddress).get());
-            for (int i = 0; i < loops; i++) {
-                Sleeper.seconds(1);
-                LOG.debug("STATUS ({}/{}) on (3-level: {}, 2-level: {}): {}", i + 1, loops, groupAddress.getAddress(), groupAddress.getAddressLevel2(), ByteFormatter.formatHexAsString(client.getStatusPool().getStatusFor(groupAddress).getApciData()));
-            }
+
+            // Wait bit for update (usually few 10ms, but up to 1 sec max)
+            // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
+            // KNX router and status pool will be updated with the actual lamp status
+            statusPool.isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+            LOG.debug("STATUS (APCI Data): {}", ByteFormatter.formatHexAsString(statusPool.getStatusFor(groupAddress).getApciData()));
             LOG.debug("========================================================================");
         } catch (final Throwable t) {
             LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);

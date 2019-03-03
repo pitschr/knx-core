@@ -20,6 +20,7 @@ package li.pitschmann.utils;
 
 import li.pitschmann.test.TestHelpers;
 import li.pitschmann.utils.Bytes.FillDirection;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -478,6 +479,7 @@ public class BytesTest {
      * Test constructor of {@link Bytes}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Bytes.class);
     }

@@ -19,6 +19,7 @@
 package li.pitschmann.utils;
 
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -160,6 +161,7 @@ public class NetworkerTest {
      * Test constructor of {@link Networker}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Networker.class);
     }

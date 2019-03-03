@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.datapoint.value.DPT22Value.Media;
 import li.pitschmann.knx.link.datapoint.value.DPT22Value.StatusDHWController;
 import li.pitschmann.knx.link.datapoint.value.DPT22Value.StatusRoomHeatinCoolingController;
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -187,6 +188,7 @@ public final class DPT22ValueTest {
     /**
      * Test constructor of {@link DPT22Value}
      */
+    @DisplayName("Constructor not instantiable")
     @Test
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DPT22Value.class);

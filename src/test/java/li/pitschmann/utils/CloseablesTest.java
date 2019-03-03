@@ -19,6 +19,7 @@
 package li.pitschmann.utils;
 
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.Closeable;
@@ -128,6 +129,7 @@ public class CloseablesTest {
      * Test constructor of {@link Closeables}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Closeables.class);
     }

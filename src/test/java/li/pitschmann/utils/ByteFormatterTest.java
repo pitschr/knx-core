@@ -19,6 +19,7 @@
 package li.pitschmann.utils;
 
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,6 +112,7 @@ public class ByteFormatterTest {
      * Test constructor of {@link ByteFormatter}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(ByteFormatter.class);
     }

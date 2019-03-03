@@ -33,6 +33,7 @@ import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusRoomHeatingContro
 import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusSolarDHWController;
 import li.pitschmann.knx.link.datapoint.value.DPT21Value.StatusVentilationController;
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -361,6 +362,7 @@ public final class DPT21ValueTest {
      * Test constructor of {@link DPT21Value}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DPT21Value.class);
     }

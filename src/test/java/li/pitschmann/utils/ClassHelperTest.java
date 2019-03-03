@@ -19,6 +19,7 @@
 package li.pitschmann.utils;
 
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;
@@ -66,9 +67,10 @@ public class ClassHelperTest {
     }
 
     /**
-     * Test constructor of {ClassHelper Sleeper}
+     * Test constructor of {@link ClassHelper}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(ClassHelper.class);
     }

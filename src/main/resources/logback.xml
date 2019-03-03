@@ -68,7 +68,7 @@
         <appender-ref ref="STATISTIC"/>
     </logger>
 
-    <root level="INFO">
+    <root level="${root-level:-ALL}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>

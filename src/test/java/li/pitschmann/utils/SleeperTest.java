@@ -161,6 +161,7 @@ public class SleeperTest {
      * Test constructor of {@link Sleeper}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Sleeper.class);
     }

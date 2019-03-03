@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * Field Names |                 c   x   x   x |
  * Encoding    |                 B   U   U   U |
  *             +---+---+---+---+---+---+---+---+
- * Format:     3 bits (B<sub>3</sub>)
+ * Format:     3 bits (B U<sub>3</sub>)
  * </pre>
  *
  * @author PITSCHR
@@ -47,7 +47,7 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
      * Field Names |                 c   x   x   x |
      * Encoding    |                 B   U   U   U |
      *             +---+---+---+---+---+---+---+---+
-     * Format:     3 bits (B<sub>3</sub>)
+     * Format:     4 bits (B U<sub>3</sub>)
      * Range:      c = {0 = decrease, 1 = increase}
      *             x = step code { 0 = break, 1 .. 7 = step }
      *                 000b = break
@@ -67,7 +67,7 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
      * Field Names |                 c   x   x   x |
      * Encoding    |                 B   U   U   U |
      *             +---+---+---+---+---+---+---+---+
-     * Format:     3 bits (B<sub>3</sub>)
+     * Format:     4 bits (B U<sub>3</sub>)
      * Range:      c = {0 = up, 1 = down}
      *             x = step code { 0 = break, 1 .. 7 = step }
      *                 000b = break

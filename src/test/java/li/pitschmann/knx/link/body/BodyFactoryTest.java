@@ -22,6 +22,7 @@ import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.test.TestHelpers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,7 @@ public class BodyFactoryTest {
      * Test constructor of {@link BodyFactory}
      */
     @Test
+    @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(BodyFactory.class);
     }
