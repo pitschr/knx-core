@@ -43,7 +43,7 @@ public final class DPTEnumValueTest {
      */
     @Test
     public void test() {
-        final DPTEnumValue<DPT20.Priority> priorityHigh = new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.HIGH, 0, "high");
+        final var priorityHigh = new DPTEnumValue<DPT20.Priority>(DPT_ENUM, DPT20.Priority.HIGH, 0, "high");
 
         // instance methods
         assertThat(priorityHigh.getDPT()).isEqualTo(DPT_ENUM);
@@ -69,7 +69,7 @@ public final class DPTEnumValueTest {
         assertThat(priorityHigh).isNotEqualTo(new DPTEnumValue<>(new DPTEnum<>("456.123", "foobar"), DPT20.Priority.HIGH, 0, "high"));
 
         // toString
-        String toString = String.format("DPTEnumValue{dpt=%s, enumField=%s.HIGH, value=0, description=high, byteArray=0x00}", DPT_ENUM,
+        final var toString = String.format("DPTEnumValue{dpt=%s, enumField=%s.HIGH, value=0, description=high, byteArray=0x00}", DPT_ENUM,
                 DPT20.Priority.class.getName());
         assertThat(priorityHigh).hasToString(toString);
     }

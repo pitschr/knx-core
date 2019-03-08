@@ -35,7 +35,7 @@ import java.util.function.Function;
 /**
  * Demo class how to send a specific write request to a KNX group address.
  * <ul>
- * <li>1st argument is the address of KNX Net/IP router; default value "192.168.1.16"</li>
+ * <li>1st argument is the address of KNX Net/IP device; default value "192.168.1.16"</li>
  * <li>2nd argument is the DPT of value; default DPT "DPT1.SWITCH"</li>
  * <li>3rd...Nth argument are the values</li>
  * </ul>
@@ -44,7 +44,7 @@ import java.util.function.Function;
  */
 public class KnxMainWrite extends AbstractKnxMain {
     private static final Logger LOG = LoggerFactory.getLogger(KnxMainWrite.class);
-    private static final String DEFAULT_ROUTER_IP = "192.168.1.16";
+    private static final String DEFAULT_IP_ADDRESS = "192.168.1.16";
     private static final List<GroupAddress> DEFAULT_GROUP_ADDRESSES = Lists.newArrayList( //
             GroupAddress.of(1, 2, 0), //
             GroupAddress.of(1, 2, 50)
@@ -53,22 +53,22 @@ public class KnxMainWrite extends AbstractKnxMain {
     private static final String[] DEFAULT_VALUES = new String[]{"on", "off"}; // switch on, switch off
 
     public static void main(final String[] args) {
-        // 1st Argument: Get Router Address
-        final String routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Function.identity());
-        LOG.debug("Router Address: {}", routerAddress);
+        // 1st Argument: Get KNX Net/IP Address
+        final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Function.identity());
+        LOG.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get DPT
-        final String dpt = getParameterValue(args, "-dpt", DEFAULT_DPT, String::valueOf);
+        final var dpt = getParameterValue(args, "-dpt", DEFAULT_DPT, String::valueOf);
         LOG.debug("DPT: {}", dpt);
 
         // 3rd..Nth Arguments: Get Values
-        final String[] values = getParameterValues(args, "-c", DEFAULT_VALUES, String[]::new);
+        final var values = getParameterValues(args, "-c", DEFAULT_VALUES, String[]::new);
         LOG.debug("Values: {}", Arrays.toString(values));
 
         // start KNX communication
         LOG.trace("START");
-        try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
-            List<Future<TunnellingAckBody>> ackBodies = Lists.newArrayList();
+        try (final var client = new DefaultKnxClient(ipAddress)) {
+            final var ackBodies = Lists.<Future<TunnellingAckBody>>newArrayList();
             Sleeper.seconds(1);
             for (final String value : values) {
                 var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
@@ -85,7 +85,7 @@ public class KnxMainWrite extends AbstractKnxMain {
             // wait until completed
             LOG.debug("WAIT UNTIL COMPLETED");
 
-            for (int i = 0; i < ackBodies.size(); i++) {
+            for (var i = 0; i < ackBodies.size(); i++) {
                 LOG.debug("DONE: {}", ackBodies.get(i).isDone());
                 LOG.debug("GET : {}", ackBodies.get(i).get());
             }

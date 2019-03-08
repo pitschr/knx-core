@@ -37,7 +37,7 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT7 dpt = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT;
 
         assertThat(dpt.getId()).isEqualTo("7.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 2-Octet Unsigned Count (pulses)");
@@ -46,7 +46,7 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT7 dpt = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -103,7 +103,7 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT7 dpt = DPT7.TIME_PERIOD_MS;
+        final var dpt = DPT7.TIME_PERIOD_MS;
 
         // value: 0ms
         this.assertDPT(dpt, new byte[]{0x00, 0x00}, 0);
@@ -123,7 +123,7 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
      * @param intValue
      */
     private void assertDPT(final DPT7 dpt, final byte[] bValueArray, final int intValue) {
-        final DPT7Value dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.toValue(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

@@ -45,8 +45,8 @@ public final class DPT6ValueTest {
     }
 
     private void assertValue(final DPT6 dpt, final byte b, final int relativeSignedValue) {
-        DPT6Value dptValue = new DPT6Value(dpt, relativeSignedValue);
-        DPT6Value dptValueByByte = new DPT6Value(dpt, b);
+        final var dptValue = new DPT6Value(dpt, relativeSignedValue);
+        final var dptValueByByte = new DPT6Value(dpt, b);
 
         // instance methods
         assertThat(dptValue.getRelativeSignedValue()).isEqualTo(relativeSignedValue);
@@ -67,7 +67,7 @@ public final class DPT6ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT6Value(dpt, relativeSignedValue + 1));
 
         // toString
-        String toString = String.format("DPT6Value{dpt=%s, relativeSignedValue=%s, byteArray=%s}", dpt, relativeSignedValue,
+        final var toString = String.format("DPT6Value{dpt=%s, relativeSignedValue=%s, byteArray=%s}", dpt, relativeSignedValue,
                 ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
@@ -114,8 +114,8 @@ public final class DPT6ValueTest {
         assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
 
         // not equals
-        byte anotherByte = (byte) ((b & 0x80) == 0 ? b | 0x80 : b & 0x7F);
-        Mode anotherMode = (mode == Mode.MODE_0) ? Mode.MODE_1 : Mode.MODE_0;
+        final var anotherByte = (byte) ((b & 0x80) == 0 ? b | 0x80 : b & 0x7F);
+        final var anotherMode = (mode == Mode.MODE_0) ? Mode.MODE_1 : Mode.MODE_0;
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
         assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(anotherByte));

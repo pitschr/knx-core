@@ -27,14 +27,14 @@ import li.pitschmann.knx.link.body.Body;
  */
 public interface KnxStatistic {
     /**
-     * Returns <strong>total</strong> number of received {@link Body} by KNX Net/IP Client from KNX Net/IP Router
+     * Returns <strong>total</strong> number of received {@link Body} by KNX Net/IP Client from KNX Net/IP device
      *
      * @return total number of received {@link Body}
      */
     long getNumberOfBodyReceived();
 
     /**
-     * Returns the number of received {@link Body} by KNX Net/IP Client from KNX Net/IP Router
+     * Returns the number of received {@link Body} by KNX Net/IP Client from KNX Net/IP device
      *
      * @param bodyClass class of body
      * @return number of received {@link Body}
@@ -42,14 +42,14 @@ public interface KnxStatistic {
     long getNumberOfBodyReceived(Class<? extends Body> bodyClass);
 
     /**
-     * Returns <strong>total</strong> number of sent {@link Body} from KNX Net/IP Client to the KNX Net/IP Router
+     * Returns <strong>total</strong> number of sent {@link Body} from KNX Net/IP Client to the KNX Net/IP device
      *
      * @return total number of sent {@link Body}
      */
     long getNumberOfBodySent();
 
     /**
-     * Returns the number of sent {@link Body} from KNX Net/IP Client to the KNX Net/IP Router
+     * Returns the number of sent {@link Body} from KNX Net/IP Client to the KNX Net/IP device
      *
      * @param bodyClass class of body
      * @return number of sent {@link Body}
@@ -57,7 +57,7 @@ public interface KnxStatistic {
     long getNumberOfBodySent(Class<? extends Body> bodyClass);
 
     /**
-     * Returns number of bytes received by KNX Net/IP Client from KNX Net/IP Router
+     * Returns number of bytes received by KNX Net/IP Client from KNX Net/IP device
      * <p/>
      * The number of bytes is not 100% guaranteed, because it depends on underlying protocol as well.
      *
@@ -66,7 +66,7 @@ public interface KnxStatistic {
     long getNumberOfBytesReceived();
 
     /**
-     * Returns number of bytes sent from KNX Net/IP Client to the KNX Net/IP Router.
+     * Returns number of bytes sent from KNX Net/IP Client to the KNX Net/IP device.
      * <p/>
      * The number of bytes is not 100% guaranteed, because it depends on underlying protocol as well.
      *
@@ -87,7 +87,7 @@ public interface KnxStatistic {
      * @return error rate in percentage
      */
     default double getErrorRate() {
-        long numberOfPackets = this.getNumberOfBodyReceived() + this.getNumberOfBodySent();
+        final var numberOfPackets = this.getNumberOfBodyReceived() + this.getNumberOfBodySent();
         if (numberOfPackets == 0) { // avoid division by zero
             return 0d;
         } else {

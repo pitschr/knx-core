@@ -49,8 +49,8 @@ public final class DPT12ValueTest {
     }
 
     private void assertValue(final DPT12 dpt, final byte[] bytes, final long unsignedValue) {
-        DPT12Value dptValue = new DPT12Value(dpt, unsignedValue);
-        DPT12Value dptValueByByte = new DPT12Value(dpt, bytes);
+        final var dptValue = new DPT12Value(dpt, unsignedValue);
+        final var dptValueByByte = new DPT12Value(dpt, bytes);
 
         // instance methods
         assertThat(dptValue.getUnsignedValue()).isEqualTo(unsignedValue);
@@ -71,7 +71,7 @@ public final class DPT12ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT12Value(dpt, unsignedValue + 1));
 
         // toString
-        String toString = String.format("DPT12Value{dpt=%s, unsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
+        final var toString = String.format("DPT12Value{dpt=%s, unsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
                 ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

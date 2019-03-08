@@ -49,8 +49,8 @@ public final class DPT14ValueTest {
     }
 
     private void assertValue(final DPT14 dpt, final byte[] bytes, final double floatingValue) {
-        DPT14Value dptValue = new DPT14Value(dpt, floatingValue);
-        DPT14Value dptValueByByte = new DPT14Value(dpt, bytes);
+        final var dptValue = new DPT14Value(dpt, floatingValue);
+        final var dptValueByByte = new DPT14Value(dpt, bytes);
 
         // instance methods
         assertThat(dptValue.getFloatingValue()).isEqualTo(floatingValue);
@@ -72,7 +72,7 @@ public final class DPT14ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT14Value(dpt, floatingValue + 0.1));
 
         // toString
-        String toString = String.format("DPT14Value{dpt=%s, floatingValue=%s, byteArray=%s}", dpt, floatingValue,
+        final var toString = String.format("DPT14Value{dpt=%s, floatingValue=%s, byteArray=%s}", dpt, floatingValue,
                 ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

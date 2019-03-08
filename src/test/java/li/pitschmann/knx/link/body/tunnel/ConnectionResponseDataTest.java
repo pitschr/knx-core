@@ -43,14 +43,14 @@ public final class ConnectionResponseDataTest {
      */
     @Test
     public void validCase() {
-        final ConnectionResponseData criByCreate = ConnectionResponseData.create(TEST_ADDRESS);
-        final ConnectionResponseData criByCreateRawData = ConnectionResponseData.valueOf(criByCreate.getRawData());
+        final var criByCreate = ConnectionResponseData.create(TEST_ADDRESS);
+        final var criByCreateRawData = ConnectionResponseData.valueOf(criByCreate.getRawData());
         assertThat(criByCreateRawData.getLength()).isEqualTo(4);
         assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByCreateRawData.getAddress()).isEqualTo(TEST_ADDRESS);
 
         // valueOf
-        final ConnectionResponseData criByValueOf = ConnectionResponseData.valueOf(new byte[]{0x04, 0x04, (byte) 0xFF, (byte) 0xFF});
+        final var criByValueOf = ConnectionResponseData.valueOf(new byte[]{0x04, 0x04, (byte) 0xFF, (byte) 0xFF});
         assertThat(criByValueOf.getLength()).isEqualTo(4);
         assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByValueOf.getAddress()).isEqualTo(TEST_ADDRESS);

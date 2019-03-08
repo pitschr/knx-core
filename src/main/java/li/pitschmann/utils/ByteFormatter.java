@@ -52,11 +52,11 @@ public final class ByteFormatter {
     public static String formatHex(final int number) {
         Preconditions.checkArgument(number >= 0, "Argument 'number' must be positive.");
 
-        final char[] chars = Integer.toHexString(number).toUpperCase().toCharArray();
-        final StringBuilder sb = new StringBuilder();
-        int j = chars.length % 2;
+        final var chars = Integer.toHexString(number).toUpperCase().toCharArray();
+        final var sb = new StringBuilder();
+        var j = chars.length % 2;
         sb.append(j != 0 ? "0x0" : "0x").append(chars[0]);
-        for (int i = 1; i < chars.length; i++) {
+        for (var i = 1; i < chars.length; i++) {
             if (++j % 2 == 0) {
                 sb.append(' ');
             }
@@ -78,8 +78,8 @@ public final class ByteFormatter {
             return new String[0];
         }
 
-        final String[] rawDataAsHex = new String[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
+        final var rawDataAsHex = new String[bytes.length];
+        for (var i = 0; i < bytes.length; i++) {
             rawDataAsHex[i] = formatHex(bytes[i]);
         }
         return rawDataAsHex;

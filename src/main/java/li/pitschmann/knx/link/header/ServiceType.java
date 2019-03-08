@@ -71,46 +71,46 @@ import java.util.Arrays;
 public enum ServiceType implements KnxBytesEnum {
     // @formatter:off
     /**
-     * Service type sent by KNX Net/IP router when responding to a {@link #SEARCH_REQUEST}.
+     * Service type sent by KNX Net/IP device when responding to a {@link #SEARCH_REQUEST}.
      * <p>
      * Communication way: Server -> Client
      */
     SEARCH_RESPONSE(0x0202, "Search Response"),
     /**
-     * Service type sent by KNX client to search available KNX Net/IP routers.
+     * Service type sent by KNX client to search available KNX Net/IP devices.
      * <p>
      * Communication way: Client -> Server
      */
     SEARCH_REQUEST(0x0201, "Search Request", SEARCH_RESPONSE),
     /**
-     * Service type sent by KNX Net/IP router in response to a {@link #DESCRIPTION_REQUEST} to
-     * provide information about the KNX Net/IP router implementation.
+     * Service type sent by KNX Net/IP device in response to a {@link #DESCRIPTION_REQUEST} to
+     * provide information about the KNX Net/IP device implementation.
      * <p>
      * Communication way: Server -> Client
      */
     DESCRIPTION_RESPONSE(0x0204, "Description Response"),
     /**
-     * Service type sent by KNX client to a KNX Net/IP router to retrieve information
+     * Service type sent by KNX client to a KNX Net/IP device to retrieve information
      * about capabilities and supported services.
      * <p>
      * Communication way: Client -> Server
      */
     DESCRIPTION_REQUEST(0x0203, "Description Request", DESCRIPTION_RESPONSE),
     /**
-     * Service type sent by KNX Net/IP router in response to a {@link #CONNECT_REQUEST} frame.
+     * Service type sent by KNX Net/IP device in response to a {@link #CONNECT_REQUEST} frame.
      * <p>
      * Communication way: Server -> Client
      */
     CONNECT_RESPONSE(0x0206, "Connect Response"),
     /**
      * Service type sent by KNX client to establish a communication channel with a
-     * KNX Net/IP router.
+     * KNX Net/IP device.
      * <p>
      * Communication way: Client -> Server
      */
     CONNECT_REQUEST(0x0205, "Connect Request", CONNECT_RESPONSE),
     /**
-     * Service type sent by KNX Net/IP router when receiving a {@link #CONNECTIONSTATE_REQUEST}
+     * Service type sent by KNX Net/IP device when receiving a {@link #CONNECTIONSTATE_REQUEST}
      * for an established connection.
      * <p>
      * Communication way: Server -> Client
@@ -118,13 +118,13 @@ public enum ServiceType implements KnxBytesEnum {
     CONNECTIONSTATE_RESPONSE(0x0208, "Connection State Response"),
     /**
      * Service type sent by KNX client requesting the connection state of an established
-     * connection with KNX Net/IP router.
+     * connection with KNX Net/IP device.
      * <p>
      * Communication way: Client -> Server
      */
     CONNECTIONSTATE_REQUEST(0x0207, "Connection State Request", CONNECTIONSTATE_RESPONSE),
     /**
-     * Service type sent by KNX device, typically the KNX Net/IP router, in response to a
+     * Service type sent by KNX device, typically the KNX Net/IP device, in response to a
      * {@link #DISCONNECT_REQUEST}.
      * <p>
      * Communication way: Client -> Server

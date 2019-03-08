@@ -79,7 +79,7 @@ public final class IndividualAddressTest {
      */
     @Test
     public void testUseDefault() {
-        IndividualAddress addr = IndividualAddress.useDefault();
+        final var addr = IndividualAddress.useDefault();
         assertThat(addr.getAddress()).isEqualTo("0.0.0");
         assertThat(addr.getRawData()).containsExactly(new byte[2]);
     }
@@ -89,9 +89,9 @@ public final class IndividualAddressTest {
      */
     @Test
     public void testEqualsAndHashcode() {
-        IndividualAddress addrA = IndividualAddress.of(new byte[]{(byte) 0x93, 0x66});
-        IndividualAddress addrB = IndividualAddress.of(9, 3, 102);
-        IndividualAddress addrC = IndividualAddress.of(9, 3, 102);
+        final var addrA = IndividualAddress.of(new byte[]{(byte) 0x93, 0x66});
+        final var addrB = IndividualAddress.of(9, 3, 102);
+        final var addrC = IndividualAddress.of(9, 3, 102);
 
         // equals
         assertThat(addrA).isEqualTo(addrA);
@@ -123,9 +123,9 @@ public final class IndividualAddressTest {
      * @param bytes
      */
     private void assertIndividualAddress(final int area, final int line, final int device, final byte[] bytes) {
-        final IndividualAddress testByCreate = IndividualAddress.of(area, line, device);
-        final IndividualAddress testByCreateRawData = IndividualAddress.of(testByCreate.getRawData());
-        final IndividualAddress testByValueOfRawData = IndividualAddress.of(bytes);
+        final var testByCreate = IndividualAddress.of(area, line, device);
+        final var testByCreateRawData = IndividualAddress.of(testByCreate.getRawData());
+        final var testByValueOfRawData = IndividualAddress.of(bytes);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
@@ -136,7 +136,7 @@ public final class IndividualAddressTest {
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
 
         // check address print
-        final String addressAsString = String.format("%s.%s.%s", area, line, device);
+        final var addressAsString = String.format("%s.%s.%s", area, line, device);
         assertThat(testByCreate.getAddress()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddress()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddress()).isEqualTo(addressAsString);

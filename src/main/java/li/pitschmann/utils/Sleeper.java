@@ -41,7 +41,7 @@ public final class Sleeper {
      * @return {@code true} in case the sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
     public static boolean milliseconds(long duration) {
-        boolean isNotInterrupted = true;
+        var isNotInterrupted = true;
         try {
             Thread.sleep(duration);
         } catch (final InterruptedException ie) {
@@ -57,7 +57,7 @@ public final class Sleeper {
      * the time in seconds.
      *
      * @param duration in seconds
-     * @return {@code true} in case the sleep has been interrupted, otherwise {@code false}
+     * @return {@code true} in case the sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
     public static boolean seconds(long duration) {
         return sleep(duration, TimeUnit.SECONDS);
@@ -69,7 +69,7 @@ public final class Sleeper {
      *
      * @param duration duration of timeout
      * @param unit     unit of timeout
-     * @return {@code true} in case the sleep has been interrupted, otherwise {@code false}
+     * @return {@code true} in case the sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
     public static boolean sleep(long duration, final TimeUnit unit) {
         return milliseconds(unit.toMillis(duration));
@@ -82,23 +82,24 @@ public final class Sleeper {
      *
      * @param supplier supplier returning {@link Boolean} if the criteria is meet
      * @param timeout  timeout in milliseconds
-     * @return {@code true} in case the sleep has been interrupted (or timeout expired), otherwise {@code false}
+     * @return {@code true} in case the criteria was meet and sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
     public static boolean milliseconds(final Supplier<Boolean> supplier, long timeout) {
         return milliseconds(10, supplier, timeout);
     }
+
     /**
      * Sleeps until the {@link Supplier} is meet. But, not longer than timeout.
      *
      * @param interval interval check in milliseconds
      * @param supplier supplier returning {@link Boolean} if the criteria is meet
      * @param timeout  timeout in milliseconds
-     * @return {@code true} in case the sleep has been interrupted (or timeout expired), otherwise {@code false}
+     * @return {@code true} in case the criteria was meet and sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
     public static boolean milliseconds(long interval, final Supplier<Boolean> supplier, long timeout) {
         Preconditions.checkArgument(interval < timeout, "Interval cannot be bigger than timeout");
 
-        long end = System.currentTimeMillis() + timeout;
+        final var end = System.currentTimeMillis() + timeout;
         do {
             // return true when criteria is meet
             if (supplier.get()) {

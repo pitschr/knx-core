@@ -32,7 +32,6 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -73,9 +72,9 @@ public abstract class AbstractKnxQueue implements Runnable {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     selector.select();
-                    final Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
+                    final var selectedKeys = selector.selectedKeys().iterator();
                     while (selectedKeys.hasNext()) {
-                        SelectionKey key = selectedKeys.next();
+                        final var key = selectedKeys.next();
                         selectedKeys.remove();
 
                         // qualified?
@@ -125,7 +124,7 @@ public abstract class AbstractKnxQueue implements Runnable {
      * @throws IOException - if IO exception happened while performing the action method
      */
     public final Selector openSelector() throws IOException {
-        var selector = Selector.open();
+        final var selector = Selector.open();
 
         // prepare channel for non-blocking and register to selector
         channel.register(selector, interestOps());

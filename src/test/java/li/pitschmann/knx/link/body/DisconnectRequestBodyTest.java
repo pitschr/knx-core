@@ -72,13 +72,13 @@ public class DisconnectRequestBodyTest {
     @Test
     public void validCases() {
         // create()
-        final DisconnectRequestBody body = DisconnectRequestBody.create(this.channelId, this.controlEndpoint);
+        final var body = DisconnectRequestBody.create(this.channelId, this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 
         // compare raw data of create() with valueOf()
-        final DisconnectRequestBody bodyByBytes = DisconnectRequestBody
+        final var bodyByBytes = DisconnectRequestBody
                 .valueOf(new byte[]{0x0A, 0x00, 0x08, 0x01, 0x05, 0x05, 0x05, 0x05, (byte) 0xe5, 0x4e});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

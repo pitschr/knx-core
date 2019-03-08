@@ -97,7 +97,7 @@ public final class TunnellingAckBody extends AbstractMultiRawData implements Res
         }
 
         // create bytes
-        final byte[] bytes = new byte[STRUCTURE_LENGTH];
+        final var bytes = new byte[STRUCTURE_LENGTH];
         bytes[0] = STRUCTURE_LENGTH;
         bytes[1] = (byte) channelId;
         bytes[2] = (byte) sequence;

@@ -65,8 +65,8 @@ public final class DPT11ValueTest {
     }
 
     private void assertValue(final byte[] bytes, final LocalDate date) {
-        DPT11Value dptValue = new DPT11Value(date);
-        DPT11Value dptValueByByte = new DPT11Value(bytes);
+        final var dptValue = new DPT11Value(date);
+        final var dptValueByByte = new DPT11Value(bytes);
 
         // instance methods
         assertThat(dptValue.getDate()).isEqualTo(date);
@@ -86,7 +86,7 @@ public final class DPT11ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT11Value(date.plusDays(1)));
 
         // toString
-        String toString = String.format("DPT11Value{dpt=%s, date=%s, byteArray=%s}", DPT11.DATE, date, ByteFormatter.formatHexAsString(bytes));
+        final var toString = String.format("DPT11Value{dpt=%s, date=%s, byteArray=%s}", DPT11.DATE, date, ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
     }

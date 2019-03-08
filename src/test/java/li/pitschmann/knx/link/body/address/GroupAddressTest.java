@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.body.address;
 
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
@@ -47,7 +48,7 @@ public final class GroupAddressTest {
      */
     @Test
     public void testValid2Level() {
-        this.assertGroupAddress2Level(0, 0, new byte[]{0x00, 0x00});
+        this.assertGroupAddress2Level(0, 1, new byte[]{0x00, 0x01});
         this.assertGroupAddress2Level(7, 1024, new byte[]{(byte) 0x3C, (byte) 0x00});
         this.assertGroupAddress2Level(31, 2047, new byte[]{(byte) 0xFF, (byte) 0xFF});
     }
@@ -57,7 +58,7 @@ public final class GroupAddressTest {
      */
     @Test
     public void testValid3Level() {
-        this.assertGroupAddress3Level(0, 0, 0, new byte[]{0x00, 0x00});
+        this.assertGroupAddress3Level(0, 0, 1, new byte[]{0x00, 0x01});
         this.assertGroupAddress3Level(7, 3, 128, new byte[]{(byte) 0x3B, (byte) 0x80});
         this.assertGroupAddress3Level(31, 7, 255, new byte[]{(byte) 0xFF, (byte) 0xFF});
     }
@@ -93,6 +94,9 @@ public final class GroupAddressTest {
      */
     @Test
     public void invalidCreate2Level() {
+        // not allowed 0/0
+        assertThatThrownBy(() -> GroupAddress.of(0, 0)).isInstanceOf(KnxIllegalArgumentException.class);
+
         // negative numbers
         assertThatThrownBy(() -> GroupAddress.of(-1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("main");
         assertThatThrownBy(() -> GroupAddress.of(0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("sub");
@@ -107,6 +111,9 @@ public final class GroupAddressTest {
      */
     @Test
     public void invalidCreate3Level() {
+        // not allowed 0/0/0
+        assertThatThrownBy(() -> GroupAddress.of(0, 0, 0)).isInstanceOf(KnxIllegalArgumentException.class);
+
         // negative numbers
         assertThatThrownBy(() -> GroupAddress.of(-1, 0, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("main");
         assertThatThrownBy(() -> GroupAddress.of(0, -1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("middle");
@@ -162,9 +169,9 @@ public final class GroupAddressTest {
      * @param bytes
      */
     private void assertGroupAddressFreeLevel(final int address, final byte[] bytes) {
-        final GroupAddress testByCreate = GroupAddress.of(address);
-        final GroupAddress testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
-        final GroupAddress testByValueOfRawData = GroupAddress.of(bytes);
+        final var testByCreate = GroupAddress.of(address);
+        final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
+        final var testByValueOfRawData = GroupAddress.of(bytes);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
@@ -175,7 +182,7 @@ public final class GroupAddressTest {
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.GROUP);
 
         // check address print
-        final String addressAsString = String.valueOf(address);
+        final var addressAsString = String.valueOf(address);
         assertThat(testByCreate.getAddress()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddress()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddress()).isEqualTo(addressAsString);
@@ -199,9 +206,9 @@ public final class GroupAddressTest {
      * @param bytes
      */
     private void assertGroupAddress2Level(final int main, final int sub, final byte[] bytes) {
-        final GroupAddress testByCreate = GroupAddress.of(main, sub);
-        final GroupAddress testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
-        final GroupAddress testByValueOfRawData = GroupAddress.of(bytes);
+        final var testByCreate = GroupAddress.of(main, sub);
+        final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
+        final var testByValueOfRawData = GroupAddress.of(bytes);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
@@ -212,7 +219,7 @@ public final class GroupAddressTest {
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.GROUP);
 
         // check address print
-        final String addressAsString = String.format("%s/%s", main, sub);
+        final var addressAsString = String.format("%s/%s", main, sub);
         assertThat(testByCreate.getAddressLevel2()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddressLevel2()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddressLevel2()).isEqualTo(addressAsString);
@@ -237,9 +244,9 @@ public final class GroupAddressTest {
      * @param bytes
      */
     private void assertGroupAddress3Level(final int main, final int middle, final int sub, final byte[] bytes) {
-        final GroupAddress testByCreate = GroupAddress.of(main, middle, sub);
-        final GroupAddress testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
-        final GroupAddress testByValueOfRawData = GroupAddress.of(bytes);
+        final var testByCreate = GroupAddress.of(main, middle, sub);
+        final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
+        final var testByValueOfRawData = GroupAddress.of(bytes);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
@@ -250,7 +257,7 @@ public final class GroupAddressTest {
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.GROUP);
 
         // check address print
-        final String addressAsString = String.format("%s/%s/%s", main, middle, sub);
+        final var addressAsString = String.format("%s/%s/%s", main, middle, sub);
         assertThat(testByCreate.getAddressLevel3()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddressLevel3()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddressLevel3()).isEqualTo(addressAsString);

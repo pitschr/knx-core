@@ -26,8 +26,6 @@ import li.pitschmann.utils.ByteFormatter;
  * @author PITSCHR
  */
 public final class KnxNumberOutOfRangeException extends KnxException {
-    private static final long serialVersionUID = 1L;
-
     /**
      * Exception if {@code actual} number argument is out of the defined range ({@code startInclusive},
      * {@code endInclusive})

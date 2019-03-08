@@ -35,7 +35,7 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT2 dpt = DPT2.SWITCH_CONTROL;
+        final var dpt = DPT2.SWITCH_CONTROL;
 
         assertThat(dpt.getId()).isEqualTo("2.001");
         assertThat(dpt.getDescription()).isEqualTo("Switch Controlled");
@@ -44,7 +44,7 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT2 dpt = DPT2.SWITCH_CONTROL;
+        final var dpt = DPT2.SWITCH_CONTROL;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[]{0x04})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -111,7 +111,7 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
      */
     private void assertDPT(final DPT2 dpt, final byte byteValue, final boolean controlled, final boolean boolValue, final String[] strValue,
                            final String[] strIntValue) {
-        final DPT2Value dptValue = dpt.toValue(controlled, boolValue);
+        final var dptValue = dpt.toValue(controlled, boolValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);

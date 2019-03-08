@@ -35,7 +35,7 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT1 dpt = DPT1.SWITCH;
+        final var dpt = DPT1.SWITCH;
 
         assertThat(dpt.getId()).isEqualTo("1.001");
         assertThat(dpt.getDescription()).isEqualTo("Switch");
@@ -44,7 +44,7 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT1 dpt = DPT1.SWITCH;
+        final var dpt = DPT1.SWITCH;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[]{0x02})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -78,7 +78,7 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
      */
     @Test
     public void testText() {
-        final DPT1 dpt = DPT1.SWITCH;
+        final var dpt = DPT1.SWITCH;
 
         // direct methods
         assertThat(dpt.getTextForFalse()).isEqualTo("off");
@@ -114,7 +114,7 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
      * @param strIntValue
      */
     private void assertDPT(final DPT1 dpt, final byte byteValue, final boolean boolValue, final String[] strValue, final String[] strIntValue) {
-        final DPT1Value dptValue = dpt.toValue(boolValue);
+        final var dptValue = dpt.toValue(boolValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);

@@ -50,14 +50,11 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -142,8 +139,16 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
         return Collections.unmodifiableList(this.receivedBodies);
     }
 
+    public String getReceivedBodiesAsString() {
+        return this.getReceivedBodies().stream().map(b -> b.getClass().getSimpleName()).collect(Collectors.joining(System.lineSeparator()));
+    }
+
     public List<Body> getSentBodies() {
         return Collections.unmodifiableList(this.sentBodies);
+    }
+
+    public String getSentBodiesAsString() {
+        return this.getSentBodies().stream().map(b -> b.getClass().getSimpleName()).collect(Collectors.joining(System.lineSeparator()));
     }
 
     public int getPort() {
@@ -169,22 +174,22 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
     public KnxMockServer call() {
         Preconditions.checkArgument(!(this.ready || this.completed), "This method can be invoked only once time!");
 
-        final List<KnxMockServerAction> knxActions = Lists.newLinkedList();
+        final var knxActions = Lists.<KnxMockServerAction>newLinkedList();
         knxActions.add(KnxMockServerWaitAction.NEXT); // KNX Mock Server is always waiting for first request from client
         for (var knxCommand : knxCommands) {
             knxActions.addAll(KnxMockServerAction.parse(knxCommand));
         }
-        ActionRunnable actionRunnable = new ActionRunnable(knxActions);
+        final var actionRunnable = new ActionRunnable(knxActions);
 
         if (LOG.isDebugEnabled()) {
-            final StringBuilder sb = new StringBuilder(knxActions.size() * 100);
+            final var sb = new StringBuilder(knxActions.size() * 100);
             sb.append("Number of KNX commands: ")
                     .append(knxActions.size())
                     .append(" (original: ")
                     .append(knxCommands.length)
                     .append(')')
                     .append(System.lineSeparator());
-            for (int i = 0; i < knxActions.size(); i++) {
+            for (var i = 0; i < knxActions.size(); i++) {
                 sb.append("  KNX Mock Action (")
                         .append(i + 1)
                         .append('/')
@@ -197,17 +202,17 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
         }
 
         // start heartbeat monitor
-        ExecutorService heartbeatMonitor = Executors.newSingleThreadExecutor();
+        final var heartbeatMonitor = Executors.newSingleThreadExecutor();
         heartbeatMonitor.submit(new HeartbeatMonitorRunnable());
         heartbeatMonitor.shutdown();
 
         // start KNX Action runnable
-        ExecutorService actionExecutor = Executors.newSingleThreadExecutor();
+        final var actionExecutor = Executors.newSingleThreadExecutor();
         actionExecutor.execute(actionRunnable);
         actionExecutor.shutdown();
 
-        try (Selector selector = Selector.open();
-             DatagramChannel channel = newDatagramChannel()) {
+        try (final var selector = Selector.open();
+             final var channel = newDatagramChannel()) {
             // prepare channel for non-blocking and register to selector
             channel.register(selector, channel.validOps());
             LOG.trace("Channel {} registered to selector: {}", channel, selector);
@@ -216,7 +221,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
             this.ready = true;
             LOG.debug("Server Channel created and listening on port: {}", getPort());
 
-            int i = 0;
+            var i = 0;
             // iterate until current thread is interrupted
             while (!actionRunnable.isCompleted() && !Thread.interrupted()) {
                 // Give few time to breathe. If there is a high load of 10'000+ packets per second the
@@ -228,9 +233,9 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
 
                 try {
                     selector.select();
-                    final Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
+                    final var selectedKeys = selector.selectedKeys().iterator();
                     while (selectedKeys.hasNext()) {
-                        final SelectionKey key = selectedKeys.next();
+                        final var key = selectedKeys.next();
                         selectedKeys.remove();
 
                         if (key.isValid() && key.isReadable()) {
@@ -251,7 +256,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
             this.ready = false;
             LOG.info("Stop KNX Mock Server initiated");
 
-            long end = System.currentTimeMillis() + 1000;
+            final var end = System.currentTimeMillis() + 1000;
             while (true) {
                 if (System.currentTimeMillis() > end) {
                     break;
@@ -278,9 +283,9 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
      */
     private DatagramChannel newDatagramChannel() {
         try {
-            final DatagramChannel channel = DatagramChannel.open();
+            final var channel = DatagramChannel.open();
             channel.configureBlocking(false);
-            final DatagramSocket socket = channel.socket();
+            final var socket = channel.socket();
             socket.bind(new InetSocketAddress(0));
             socket.setSoTimeout(3000);
             return channel;
@@ -296,9 +301,9 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
      * @throws IOException
      */
     private void read(final SelectionKey key) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(0xFF);
-        DatagramChannel channel = (DatagramChannel) key.channel();
-        SocketAddress address = channel.receive(byteBuffer);
+        final var byteBuffer = ByteBuffer.allocate(0xFF);
+        final var channel = (DatagramChannel) key.channel();
+        final var address = channel.receive(byteBuffer);
 
         // not available yet - simply cancel this method
         if (address == null) {
@@ -306,11 +311,11 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
         }
         key.attach(address);
 
-        Body body = BodyFactory.valueOf(byteBuffer.array());
+        final var body = BodyFactory.valueOf(byteBuffer.array());
 
         // fetch HPAI
         if (body instanceof ConnectRequestBody) {
-            final ConnectRequestBody connectReqBody = (ConnectRequestBody) body;
+            final var connectReqBody = (ConnectRequestBody) body;
             // fetch the control and data ports
             controlHPAI = connectReqBody.getControlEndpoint();
             LOG.debug("Control HPAI: {}", controlHPAI);
@@ -334,7 +339,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
      * @throws IOException
      */
     private void send(final SelectionKey key) throws IOException, InterruptedException {
-        final Body body = this.outbox.take();
+        final var body = this.outbox.take();
 
         final byte[] packetBytes;
         // Special handling for Erroneous body
@@ -344,18 +349,18 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
         // Non-Errorneous body
         else {
             // header
-            final Header header = Header.create(body);
-            final byte[] headerRawData = header.getRawData();
+            final var header = Header.create(body);
+            final var headerRawData = header.getRawData();
 
             // body
-            final byte[] bodyRawData = body.getRawData();
+            final var bodyRawData = body.getRawData();
 
             // packet: header + body
             packetBytes = Bytes.concat(headerRawData, bodyRawData);
         }
 
-        final ByteBuffer byteBuffer = ByteBuffer.wrap(packetBytes);
-        final DatagramChannel channel = (DatagramChannel) key.channel();
+        final var byteBuffer = ByteBuffer.wrap(packetBytes);
+        final var channel = (DatagramChannel) key.channel();
 
         final SocketAddress address;
         if (body instanceof KnxMockServerSendAction.WrongChannelBody) {
@@ -388,13 +393,27 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
     }
 
     /**
-     * Waits until the mock server is completed (and quitted).
+     * Waits until the mock server is completed (and quit gracefully). Waiting up to 30s seconds only!
+     *
+     * @throws KnxMockServerQuitException in case it takes longer than 30 seconds to avoid an infinity loop.
      */
     public void waitForCompletion() {
+        final var maxMs = 30000; // 30s
+        final var start = System.currentTimeMillis();
         // wait until mock server is finished
         while (!this.completed && !Thread.interrupted()) {
             Sleeper.milliseconds(100);
             LOG.trace("Waiting for completion");
+            if (System.currentTimeMillis() > start + maxMs) {
+                LOG.error("It took too long, I'll abort the waitForCompletion() method!\n" +
+                        "Received bodies:\n" +
+                        "-------------------\n" +
+                        "{}\n" +
+                        "Sent bodies:\n" +
+                        "-------------------\n" +
+                        "{}", this.getReceivedBodiesAsString(), this.getSentBodiesAsString());
+                throw new KnxMockServerQuitException();
+            }
         }
     }
 
@@ -431,9 +450,9 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
      */
     private boolean contains(final List<Body> bodies, final ServiceType serviceType, final int occurrence) {
         // wait until mock server is finished
-        boolean found = false;
-        int occurrences = 0;
-        for (final Body body : new ArrayList<>(bodies)) {
+        var found = false;
+        var occurrences = 0;
+        for (final var body : new ArrayList<>(bodies)) {
             if (body instanceof KnxMockServerSendAction.CorruptedBody) {
                 LOG.warn("Skip unknown body: {}", body);
             } else if (body.getServiceType() == serviceType && ++occurrences == occurrence) {
@@ -502,7 +521,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
         @Override
         public void run() {
             LOG.trace("*** Start KnxMockServer#ActionRunnable ***");
-            for (final KnxMockServerAction knxAction : knxActions) {
+            for (final var knxAction : knxActions) {
                 knxActionsIndex++;
                 // no action
                 if (knxAction instanceof KnxMockServerNoAction) {
@@ -549,17 +568,17 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
                     Sleeper.milliseconds(10);
                 }
             } else if (waitAction.getWaitType() == KnxMockServerWaitAction.WaitType.DELAY) {
-                final long duration = waitAction.getDuration();
-                final TimeUnit timeUnit = waitAction.getTimeUnit();
+                final var duration = waitAction.getDuration();
+                final var timeUnit = waitAction.getTimeUnit();
                 LOG.debug("WAIT DELAY ({}/{}): {} {}", knxActionsIndex, knxActions.size(), duration, timeUnit.name());
                 // delay
                 Thread.sleep(timeUnit.toMillis(duration));
             } else if (waitAction.getWaitType() == KnxMockServerWaitAction.WaitType.TYPE) {
-                final ServiceType expectedServiceType = waitAction.getServiceType();
+                final var expectedServiceType = waitAction.getServiceType();
                 LOG.debug("WAIT FOR TYPE ({}/{}): {}", knxActionsIndex, knxActions.size(), expectedServiceType);
 
                 // wait until the packet with expected service type is received
-                boolean receivedCorrectServiceType = false;
+                var receivedCorrectServiceType = false;
                 do {
                     Body body = null;
                     while ((inbox.isEmpty() || (body = inbox.take()) == null) && !Thread.interrupted()) {
@@ -567,7 +586,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
                     }
 
                     if (body != null) {
-                        ServiceType receivedServiceType = body.getServiceType();
+                        final var receivedServiceType = body.getServiceType();
 
                         receivedCorrectServiceType = receivedServiceType == expectedServiceType;
                         if (!receivedCorrectServiceType) {
@@ -587,7 +606,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
          * @param sendAction
          */
         private void doSend(final KnxMockServerSendAction sendAction) {
-            Body body = sendAction.getBody();
+            final var body = sendAction.getBody();
             LOG.debug("SEND ACTION ({}/{}): {}", knxActionsIndex, knxActions.size(), body);
             outbox.add(body);
         }

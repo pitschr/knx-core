@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class ConnectionStateRequestTest {
     /**
-     * Test successful connection state communication with KNX Net/IP router
+     * Test successful connection state communication with KNX Net/IP device
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
@@ -61,7 +61,7 @@ public class ConnectionStateRequestTest {
             KnxBody.DISCONNECT_RESPONSE})
     @DisplayName("Successful Connection State Request communication")
     public void testSuccessful(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             // after 2-nd connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTIONSTATE_REQUEST, 2);
         } catch (final Throwable t) {
@@ -79,7 +79,7 @@ public class ConnectionStateRequestTest {
     }
 
     /**
-     * Test no response of ConnectionStateResponseBody from KNX Net/IP router
+     * Test no response of ConnectionStateResponseBody from KNX Net/IP device
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
@@ -97,7 +97,7 @@ public class ConnectionStateRequestTest {
             KnxBody.DISCONNECT_RESPONSE})
     @DisplayName("Error: No Connection State Request received")
     public void testFailureNoResponse(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             mockServer.waitForCompletion();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

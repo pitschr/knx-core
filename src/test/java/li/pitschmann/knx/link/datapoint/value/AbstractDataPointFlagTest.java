@@ -41,7 +41,7 @@ public class AbstractDataPointFlagTest {
 
         // values
         assertThat(flag1.toByteArray()).containsExactly(0x04);
-        for (int bit = 0; bit < 8; bit++) {
+        for (var bit = 0; bit < 8; bit++) {
             assertThat(flag1.isSet(bit)).isEqualTo(bit == 2);
         }
 
@@ -57,7 +57,7 @@ public class AbstractDataPointFlagTest {
         assertThat(flag1).isNotEqualTo(new TestDataPointFlag(DPT1.SWITCH, (byte) 0x03));
 
         // toString
-        String toString = String.format("TestDataPointFlag{dpt=%s, byte=0x04}", DPT1.SWITCH);
+        final var toString = String.format("TestDataPointFlag{dpt=%s, byte=0x04}", DPT1.SWITCH);
         assertThat(flag1).hasToString(toString);
     }
 
@@ -66,7 +66,7 @@ public class AbstractDataPointFlagTest {
      */
     @Test
     public void testFailures() {
-        TestDataPointFlag obj = new TestDataPointFlag(DPT1.SWITCH, (byte) 0x04);
+        final var obj = new TestDataPointFlag(DPT1.SWITCH, (byte) 0x04);
         assertThatThrownBy(() -> obj.isSet(-1)).isInstanceOf(IllegalArgumentException.class).hasMessage("Bit must be between 0 and 7 (actual: -1)");
         assertThatThrownBy(() -> obj.isSet(8)).isInstanceOf(IllegalArgumentException.class).hasMessage("Bit must be between 0 and 7 (actual: 8)");
     }

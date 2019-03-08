@@ -32,7 +32,7 @@ import javax.annotation.Nonnull;
 /**
  * Body for Connection State Response
  * <p>
- * The {@link ServiceType#CONNECTIONSTATE_RESPONSE} frame shall be sent by the KNX Net/IP router as an answer to a
+ * The {@link ServiceType#CONNECTIONSTATE_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a
  * received {@link ServiceType#CONNECTIONSTATE_REQUEST} frame.
  *
  * <pre>
@@ -88,7 +88,7 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
         }
 
         // create bytes
-        final byte[] bytes = new byte[2];
+        final var bytes = new byte[2];
         bytes[0] = (byte) channelId;
         bytes[1] = status.getCodeAsByte();
 

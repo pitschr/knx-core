@@ -82,11 +82,11 @@ public final class KnxprojParser {
 
         LOGGER.debug("File '{}' to be parsed.", path);
 
-        final Stopwatch sw = Stopwatch.createStarted();
+        final var sw = Stopwatch.createStarted();
         final XmlProject project;
         try (var zipFile = new ZipFile(path.toFile())) {
             // get KNX group address data
-            var groupAddresses = getKnxProjectGroupAddresses(zipFile);
+            final var groupAddresses = getKnxProjectGroupAddresses(zipFile);
 
             // get KNX project information
             project = getKnxProjectInformation(zipFile);
@@ -109,7 +109,7 @@ public final class KnxprojParser {
      */
     private static XmlProject getKnxProjectInformation(final ZipFile zipFile) throws IOException, VTDException {
         // find 'project.xml' in ZIP file
-        var zipEntry = zipFile.stream().filter(f -> f.getName().matches("^P-\\d+/project\\.xml$"))
+        final var zipEntry = zipFile.stream().filter(f -> f.getName().matches("^P-\\d+/project\\.xml$"))
                 .findFirst()
                 .orElseThrow(() -> new KnxprojParserException("File 'project.xml' not found in ZIP file"));
         LOGGER.debug("Project Information file found: {}", zipEntry.getName());
@@ -226,7 +226,7 @@ public final class KnxprojParser {
      * @throws NavException navigation exception by VTD-XML
      */
     private static String readAttributeValue(final VTDNav vtdNav, final String attribute) throws NavException {
-        final int index = vtdNav.getAttrVal(attribute);
+        final var index = vtdNav.getAttrVal(attribute);
         return index > 0 ? vtdNav.toString(index) : null;
     }
 }

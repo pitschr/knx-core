@@ -35,21 +35,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * KNX specific configurations like KNX Net/IP router address. This class can be created once time only! A change
+ * KNX specific configurations like KNX Net/IP device address. This class can be created once time only! A change
  * requires a restart of KNX client and its communication.
  *
  * @author PITSCHR
  */
 public final class Configuration {
-    private final InetSocketAddress routerEndpoint;
+    private final InetSocketAddress endpoint;
     private final List<Plugin> allPlugins;
     private final List<ExtensionPlugin> extensionPlugins;
     private final List<ObserverPlugin> observerPlugins;
     private final Map<String, String> settings;
 
     private Configuration(final Builder builder) {
-        // remote router end point
-        this.routerEndpoint = new InetSocketAddress(builder.routerAddress, builder.routerPort);
+        // endpoint of KNX Net/IP device
+        this.endpoint = new InetSocketAddress(builder.address, builder.port);
         // settings
         this.settings = Collections.unmodifiableMap(builder.settings);
         // plugins
@@ -63,51 +63,51 @@ public final class Configuration {
     /**
      * Creates a Builder for a customized configuration
      *
-     * @param routerAddress
+     * @param address
      * @return {@link Builder}
      */
-    public static Builder create(final String routerAddress) {
-        if (routerAddress.contains(":")) {
-            String[] routerAddressSplitted = routerAddress.split(":");
-            Preconditions.checkArgument(routerAddressSplitted.length == 2, "Illegal Router Address provided.");
+    public static Builder create(final String address) {
+        if (address.contains(":")) {
+            final var addressSplitted = address.split(":");
+            Preconditions.checkArgument(addressSplitted.length == 2, "Unsupported Address provided.");
 
-            String address = routerAddressSplitted[0];
-            int port = Integer.parseInt(routerAddressSplitted[1]);
+            final var host = addressSplitted[0];
+            final var port = Integer.parseInt(addressSplitted[1]);
 
-            return create(Networker.getByAddress(address), port);
+            return create(Networker.getByAddress(host), port);
         } else {
-            return create(Networker.getByAddress(routerAddress));
+            return create(Networker.getByAddress(address));
         }
     }
 
     /**
      * Creates a Builder for a customized configuration
      *
-     * @param routerAddress
+     * @param address
      * @return {@link Builder}
      */
-    public static Builder create(final InetAddress routerAddress) {
-        return create(routerAddress, Constants.Protocol.PORT);
+    public static Builder create(final InetAddress address) {
+        return create(address, Constants.Protocol.PORT);
     }
 
     /**
      * Creates a Builder for a customized configuration
      *
-     * @param routerAddress
-     * @param routerPort
+     * @param address
+     * @param port
      * @return {@link Builder}
      */
-    public static Builder create(final InetAddress routerAddress, final int routerPort) {
-        return new Builder().routerAddress(routerAddress, routerPort);
+    public static Builder create(final InetAddress address, final int port) {
+        return new Builder().endpoint(address, port);
     }
 
     /**
-     * Remote Router Endpoint
+     * Remote endpoint of KNX Net/IP device
      *
      * @return {@link InetSocketAddress}
      */
-    public InetSocketAddress getRouterEndpoint() {
-        return this.routerEndpoint;
+    public InetSocketAddress getEndpoint() {
+        return this.endpoint;
     }
 
     /**
@@ -138,7 +138,7 @@ public final class Configuration {
     }
 
     public <T> T getSetting(final String key, final T defaultValue, Function<String, T> function) {
-        String value = this.settings.get(key);
+        final var value = this.settings.get(key);
         return value == null ? defaultValue : function.apply(value);
     }
 
@@ -198,18 +198,18 @@ public final class Configuration {
     public static class Builder {
         private final List<Plugin> plugins = Lists.newLinkedList();
         private final Map<String, String> settings = Maps.newHashMap();
-        private InetAddress routerAddress;
-        private int routerPort;
+        private InetAddress address;
+        private int port;
 
         private Builder() {
         }
 
-        public Builder routerAddress(final InetAddress routerAddress, final int routerPort) {
-            Preconditions.checkNotNull(routerAddress);
-            Preconditions.checkArgument(routerPort > 0, "Illegal Router Port provided.");
+        public Builder endpoint(final InetAddress address, final int port) {
+            Preconditions.checkNotNull(address);
+            Preconditions.checkArgument(port > 0, "Illegal Port provided.");
 
-            this.routerAddress = routerAddress;
-            this.routerPort = routerPort;
+            this.address = address;
+            this.port = port;
             return this;
         }
 

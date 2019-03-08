@@ -48,7 +48,7 @@ public final class BodyFactory {
      * @throws KnxUnknownBodyException in case the body is not known
      */
     public static <T extends Body> T valueOf(final byte[] headerAndBodyBytes) {
-        final Header header = Header.valueOf(headerAndBodyBytes);
+        final var header = Header.valueOf(headerAndBodyBytes);
         return valueOf(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
     }
 

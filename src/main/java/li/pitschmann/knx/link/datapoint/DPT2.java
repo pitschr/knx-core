@@ -252,8 +252,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
     @Override
     protected DPT2Value parse(final String[] args) {
         // true if 'true' or '1' or DPT related true value (e.g. switch => 'on'), otherwise false
-        boolean boolValue = this.findByString(args, "true", "1", this.getDPT1().getTextForTrue());
-        boolean controlled = this.findByString(args, "controlled");
+        final var boolValue = this.findByString(args, "true", "1", this.getDPT1().getTextForTrue());
+        final var controlled = this.findByString(args, "controlled");
 
         return new DPT2Value(this, controlled, boolValue);
     }

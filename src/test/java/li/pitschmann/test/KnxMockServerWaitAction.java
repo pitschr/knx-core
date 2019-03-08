@@ -65,14 +65,14 @@ public final class KnxMockServerWaitAction implements KnxMockServerAction {
      * @return an instance of {@link KnxMockServerWaitAction}
      */
     static KnxMockServerWaitAction of(final String knxCommand) {
-        String waitCommand = knxCommand.split("=")[1];
+        final var waitCommand = knxCommand.split("=")[1];
         // wait for next packet?
         if ("NEXT".equalsIgnoreCase(waitCommand)) {
             return KnxMockServerWaitAction.NEXT;
         }
         // wait delay
         else if (CharMatcher.inRange('0', '9').matchesAllOf(waitCommand)) {
-            long duration = Long.parseLong(waitCommand);
+            final var duration = Long.parseLong(waitCommand);
             return new KnxMockServerWaitAction(duration, TimeUnit.MILLISECONDS);
         }
         // else wait for specific packet with service type

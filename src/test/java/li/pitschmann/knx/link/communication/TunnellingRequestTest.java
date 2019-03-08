@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class TunnellingRequestTest {
     /**
-     * Perform a communication between {@link KnxClient} and the KNX Net/IP router containing following:
+     * Perform a communication between {@link KnxClient} and the KNX Net/IP device containing following:
      * <p>
      * Normal communication, however no Tunnelling acknowledge packet is sent by client because of wrong channel id. It is simply ignored.
      */
@@ -64,7 +64,7 @@ public class TunnellingRequestTest {
     })
     @DisplayName("Packet with wrong Channel ID received. Ignore.")
     public void testWrongChannelId(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             mockServer.waitForCompletion();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
@@ -81,7 +81,7 @@ public class TunnellingRequestTest {
     }
 
     /**
-     * Perform a communication between {@link KnxClient} and the KNX Net/IP router containing following:
+     * Perform a communication between {@link KnxClient} and the KNX Net/IP device containing following:
      * <p>
      * Normal communication, however no Tunnelling acknowledge packet is sent by client because
      * the {@link TunnellingRequestBody} is being to sent to control channel (instead of data channel)
@@ -109,7 +109,7 @@ public class TunnellingRequestTest {
     })
     @DisplayName("Packet sent to wrong channel. Ignore.")
     public void testWrongChannel(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             mockServer.waitForCompletion();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

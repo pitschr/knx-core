@@ -35,7 +35,7 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT18 dpt = DPT18.SCENE_CONTROL;
+        final var dpt = DPT18.SCENE_CONTROL;
 
         assertThat(dpt.getId()).isEqualTo("18.001");
         assertThat(dpt.getDescription()).isEqualTo("Scene Control");
@@ -44,7 +44,7 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT18 dpt = DPT18.SCENE_CONTROL;
+        final var dpt = DPT18.SCENE_CONTROL;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -67,7 +67,7 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT18 dpt = DPT18.SCENE_CONTROL;
+        final var dpt = DPT18.SCENE_CONTROL;
 
         // No Control, Scene Number: 0
         this.assertDPT(dpt, (byte) 0x00, false, 0);
@@ -97,7 +97,7 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
      * @param intValue
      */
     private void assertDPT(final DPT18 dpt, final byte bValue, final boolean controlled, final int intValue) {
-        final DPT18Value dptValue = dpt.toValue(controlled, intValue);
+        final var dptValue = dpt.toValue(controlled, intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);

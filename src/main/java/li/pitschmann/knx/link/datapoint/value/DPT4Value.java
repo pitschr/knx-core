@@ -94,7 +94,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT4Value) {
-            final DPT4Value other = (DPT4Value) obj;
+            final var other = (DPT4Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.character, other.character);
         }

@@ -71,8 +71,8 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @return double value
      */
     public static double toFloatingValue(final byte[] bytes) {
-        int exponent = getExponent(bytes);
-        int mantissa = getMantissa(bytes);
+        final var exponent = getExponent(bytes);
+        final var mantissa = getMantissa(bytes);
         return (1 << exponent) * mantissa * 0.01d;
     }
 
@@ -117,7 +117,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
     private static int getMantissa(final byte[] bytes) {
         // @formatter:off
         // Result: MMMM 0000 0000 0000 0000 0000 0000 0000
-        int highByte = // M... .... --> M... .... 0000 0000 0000 0000 0000 0000
+        var highByte = // M... .... --> M... .... 0000 0000 0000 0000 0000 0000
                 (bytes[0] & 0x80 << 24)
                         // .... .MMM --> .MMM 0000 0000 0000 0000 0000 0000 0000
                         | ((bytes[0] & 0x07) << 28);
@@ -127,11 +127,11 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         highByte = highByte >> 20;
 
         // Result: .... MMMM MMMM
-        int lowByte = (bytes[1] & 0xFF);
+        final var lowByte = (bytes[1] & 0xFF);
         // @formatter:on
 
         // result: MMMM MMMM MMMM
-        int mantissa = (highByte | lowByte);
+        final var mantissa = (highByte | lowByte);
         LOG.debug("Mantissa for value '{}' (high-byte={}, low-byte={}): {}", ByteFormatter.formatHexAsString(bytes), highByte, lowByte, mantissa);
         return mantissa;
     }
@@ -144,10 +144,10 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      */
     public static byte[] toByteArray(final double value) {
         // multiply with 100 because value is a digit with two decimal places
-        double calcValue = value * 100d;
+        var calcValue = value * 100d;
 
-        boolean valueNegative = calcValue < 0d;
-        int exponent = 0;
+        var exponent = 0;
+        final var valueNegative = calcValue < 0d;
         if (valueNegative) {
             // negative value, calculate how many times it can be divided by 2
             while (calcValue < -2048.0d) {
@@ -164,17 +164,17 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         LOG.debug("Exponents for '{}': {}", value, exponent);
         LOG.debug("Value after division for '{}': {}", value, calcValue);
 
-        long mantissa = Math.round(calcValue) & 0x7FF;
+        final var mantissa = Math.round(calcValue) & 0x7FF;
         LOG.debug("Mantissa for '{}': {}", value, mantissa);
         // M... ....
-        byte highByte = valueNegative ? (byte) 0x80 : 0x00;
+        var highByte = valueNegative ? (byte) 0x80 : 0x00;
         // .EEE ....
         highByte |= (exponent << 3);
         // .... MMMM
         highByte |= (mantissa >>> 8);
         LOG.debug("High Byte for '{}': {} (unsigned: {})", value, highByte, Bytes.toUnsignedInt(highByte));
 
-        byte lowByte = (byte) (mantissa & 0xFF);
+        final var lowByte = (byte) (mantissa & 0xFF);
         LOG.debug("Low Byte for '{}': {} (unsigned: {})", value, lowByte, Bytes.toUnsignedInt(lowByte));
 
         return new byte[]{highByte, lowByte};
@@ -205,7 +205,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT9Value) {
-            final DPT9Value other = (DPT9Value) obj;
+            final var other = (DPT9Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.floatingValue, other.floatingValue);
         }

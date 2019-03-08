@@ -26,7 +26,6 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Networker;
 
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
@@ -109,7 +108,7 @@ public final class HPAI extends AbstractMultiRawData {
             throw new KnxNullPointerException("channel");
         }
 
-        final DatagramSocket socket = channel.socket();
+        final var socket = channel.socket();
         return of(protocol, socket.getLocalAddress(), socket.getLocalPort());
     }
 
@@ -131,11 +130,11 @@ public final class HPAI extends AbstractMultiRawData {
             throw new KnxNumberOutOfRangeException("port", 0, 0xFFFF, port);
         }
 
-        final byte[] ipAddressAsBytes = address.getAddress();
-        final byte[] ipPortAsBytes = new byte[]{(byte) (port >>> 8), (byte) port};
+        final var ipAddressAsBytes = address.getAddress();
+        final var ipPortAsBytes = new byte[]{(byte) (port >>> 8), (byte) port};
 
         // create bytes
-        final byte[] bytes = new byte[]{KNXNET_HPAI_LENGTH, protocol.getCodeAsByte(), ipAddressAsBytes[0], ipAddressAsBytes[1], ipAddressAsBytes[2],
+        final var bytes = new byte[]{KNXNET_HPAI_LENGTH, protocol.getCodeAsByte(), ipAddressAsBytes[0], ipAddressAsBytes[1], ipAddressAsBytes[2],
                 ipAddressAsBytes[3], ipPortAsBytes[0], ipPortAsBytes[1]};
 
         return of(bytes);
@@ -186,7 +185,7 @@ public final class HPAI extends AbstractMultiRawData {
         if (obj == this) {
             return true;
         } else if (obj instanceof HPAI) {
-            final HPAI other = (HPAI) obj;
+            final var other = (HPAI) obj;
             return this.length == other.length && Objects.equals(this.protocol, other.protocol) && Objects.equals(this.address, other.address) && this.port == other.port;
         }
         return false;

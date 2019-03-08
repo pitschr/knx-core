@@ -97,9 +97,9 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     private static @Nullable
     DayOfWeek toDayOfWeek(final byte[] bytes) {
         // byte 3: day of week
-        int dayNr = (bytes[3] & 0xE0) >>> 5;
+        final var dayNr = (bytes[3] & 0xE0) >>> 5;
 
-        DayOfWeek dayOfWeek = dayNr == 0 ? null : DayOfWeek.of(dayNr);
+        final var dayOfWeek = dayNr == 0 ? null : DayOfWeek.of(dayNr);
         LOG.debug("DayOfWeek of '{}': {}", ByteFormatter.formatHex(bytes), dayOfWeek);
         return dayOfWeek;
     }
@@ -112,15 +112,15 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      */
     private static LocalDate toLocalDate(final byte[] bytes) {
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
-        int year = Bytes.toUnsignedInt(bytes[0]) + 1900;
+        final var year = Bytes.toUnsignedInt(bytes[0]) + 1900;
 
         // byte 1: month
-        int month = Bytes.toUnsignedInt(bytes[1]);
+        final var month = Bytes.toUnsignedInt(bytes[1]);
 
         // byte 2: day of month
-        int dayOfMonth = Bytes.toUnsignedInt(bytes[2]);
+        final var dayOfMonth = Bytes.toUnsignedInt(bytes[2]);
 
-        final LocalDate date = LocalDate.of(year, month, dayOfMonth);
+        final var date = LocalDate.of(year, month, dayOfMonth);
         LOG.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
         return date;
     }
@@ -133,15 +133,15 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      */
     private static LocalTime toLocalTime(final byte[] bytes) {
         // byte 3: hour (day of week is done separately)
-        int hour = bytes[3] & 0x1F;
+        final var hour = bytes[3] & 0x1F;
 
         // byte 4: minute
-        int minute = Bytes.toUnsignedInt(bytes[4]);
+        final var minute = Bytes.toUnsignedInt(bytes[4]);
 
         // byte 5: second
-        int second = Bytes.toUnsignedInt(bytes[5]);
+        final var second = Bytes.toUnsignedInt(bytes[5]);
 
-        final LocalTime time = LocalTime.of(hour, minute, second);
+        final var time = LocalTime.of(hour, minute, second);
         LOG.debug("DateTime of '{}': {}", ByteFormatter.formatHex(bytes), time);
         return time;
     }
@@ -159,29 +159,29 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         Preconditions.checkArgument(date.getYear() >= 1900 && date.getYear() <= 2155, "Year must be between '1900..2155'. Got: " + date.getYear());
 
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
-        byte yearAsByte = (byte) (date.getYear() - 1900);
+        final var yearAsByte = (byte) (date.getYear() - 1900);
 
         // byte 1: month
-        byte monthAsByte = (byte) date.getMonthValue();
+        final var monthAsByte = (byte) date.getMonthValue();
 
         // byte 2: day of month
-        byte dayOfMonthAsByte = (byte) date.getDayOfMonth();
+        final var dayOfMonthAsByte = (byte) date.getDayOfMonth();
 
         // byte 3: dayOfWeek + hour
-        byte dayOfWeekAsByte = dayOfWeek == null ? 0x00 : (byte) (dayOfWeek.getValue() << 5);
-        byte hourAsByte = (byte) time.getHour();
+        final var dayOfWeekAsByte = dayOfWeek == null ? 0x00 : (byte) (dayOfWeek.getValue() << 5);
+        final var hourAsByte = (byte) time.getHour();
 
         // byte 4: minute
-        byte minuteAsByte = (byte) time.getMinute();
+        final var minuteAsByte = (byte) time.getMinute();
 
         // byte 5: second
-        byte secondAsByte = (byte) time.getSecond();
+        final var secondAsByte = (byte) time.getSecond();
 
         // byte 6 + 7: flags
-        byte byte6FlagsAsByte = flags == null ? 0x00 : flags.getByte6();
-        byte byte7FlagsAsByte = flags == null ? 0x00 : flags.getByte7();
+        final var byte6FlagsAsByte = flags == null ? 0x00 : flags.getByte6();
+        final var byte7FlagsAsByte = flags == null ? 0x00 : flags.getByte7();
 
-        byte[] bytes = new byte[]{yearAsByte, monthAsByte, dayOfMonthAsByte, (byte) (dayOfWeekAsByte | hourAsByte), minuteAsByte, secondAsByte,
+        final var bytes = new byte[]{yearAsByte, monthAsByte, dayOfMonthAsByte, (byte) (dayOfWeekAsByte | hourAsByte), minuteAsByte, secondAsByte,
                 byte6FlagsAsByte, byte7FlagsAsByte};
         if (LOG.isDebugEnabled()) {
             LOG.debug("Bytes of [DayOfWeek={}, Date={}, Time={}, Flags={}]: {}", dayOfWeek, date, time, flags, ByteFormatter.formatHexAsString(bytes));
@@ -230,7 +230,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT19Value) {
-            final DPT19Value other = (DPT19Value) obj;
+            final var other = (DPT19Value) obj;
             return Objects.equals(this.dayOfWeek, other.dayOfWeek) //
                     && Objects.equals(this.date, other.date) //
                     && Objects.equals(this.time, other.time) //
@@ -423,7 +423,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
             if (obj == this) {
                 return true;
             } else if (obj instanceof Flags) {
-                final Flags other = (Flags) obj;
+                final var other = (Flags) obj;
                 return Objects.equals(this.fault, other.fault) //
                         && Objects.equals(this.workingDay, other.workingDay) //
                         && Objects.equals(this.workingDayValid, other.workingDayValid) //

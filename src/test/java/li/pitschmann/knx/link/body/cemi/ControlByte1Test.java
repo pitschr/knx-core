@@ -50,8 +50,8 @@ public final class ControlByte1Test {
     @Test
     public void validCaseA() {
         // create
-        final ControlByte1 controlByteByCreate = ControlByte1.create(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false);
-        final ControlByte1 controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.create(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false);
+        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isFalse();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isFalse();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -60,7 +60,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isFalse();
 
         // valueOf
-        final ControlByte1 controlByteByValueOf = ControlByte1.valueOf((byte) (0x00 << 7 | 0x01 << 5 | 0x00 << 4 | 0x00 << 2 | 0x00 << 1 | 0x00));
+        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x00 << 7 | 0x01 << 5 | 0x00 << 4 | 0x00 << 2 | 0x00 << 1 | 0x00));
         assertThat(controlByteByValueOf.isStandardFrame()).isFalse();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isFalse();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -81,8 +81,8 @@ public final class ControlByte1Test {
     @Test
     public void validCaseB() {
         // create
-        final ControlByte1 controlByteByCreate = ControlByte1.create(true, true, BroadcastType.NORMAL, Priority.LOW, true, true);
-        final ControlByte1 controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.create(true, true, BroadcastType.NORMAL, Priority.LOW, true, true);
+        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isTrue();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isTrue();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -91,7 +91,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isTrue();
 
         // valueOf
-        final ControlByte1 controlByteByValueOf = ControlByte1.valueOf((byte) (0x01 << 7 | 0x00 << 5 | 0x01 << 4 | 0x03 << 2 | 0x01 << 1 | 0x01));
+        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x01 << 7 | 0x00 << 5 | 0x01 << 4 | 0x03 << 2 | 0x01 << 1 | 0x01));
         assertThat(controlByteByValueOf.isStandardFrame()).isTrue();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isTrue();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -112,8 +112,8 @@ public final class ControlByte1Test {
     @Test
     public void validCaseC() {
         // create
-        final ControlByte1 controlByteByCreate = ControlByte1.create(true, false, BroadcastType.SYSTEM, Priority.NORMAL, true, false);
-        final ControlByte1 controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.create(true, false, BroadcastType.SYSTEM, Priority.NORMAL, true, false);
+        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isTrue();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isFalse();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -122,7 +122,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isFalse();
 
         // valueOf
-        final ControlByte1 controlByteByValueOf = ControlByte1.valueOf((byte) (0x01 << 7 | 0x01 << 5 | 0x00 << 4 | 0x01 << 2 | 0x01 << 1 | 0x00));
+        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x01 << 7 | 0x01 << 5 | 0x00 << 4 | 0x01 << 2 | 0x01 << 1 | 0x00));
         assertThat(controlByteByValueOf.isStandardFrame()).isTrue();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isFalse();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -143,8 +143,8 @@ public final class ControlByte1Test {
     @Test
     public void validCaseD() {
         // create
-        final ControlByte1 controlByteByCreate = ControlByte1.create(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true);
-        final ControlByte1 controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.create(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true);
+        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isFalse();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isTrue();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -153,7 +153,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isTrue();
 
         // valueOf
-        final ControlByte1 controlByteByValueOf = ControlByte1.valueOf((byte) (0x00 << 7 | 0x00 << 5 | 0x01 << 4 | 0x02 << 2 | 0x00 << 1 | 0x01));
+        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x00 << 7 | 0x00 << 5 | 0x01 << 4 | 0x02 << 2 | 0x00 << 1 | 0x01));
         assertThat(controlByteByValueOf.isStandardFrame()).isFalse();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isTrue();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);

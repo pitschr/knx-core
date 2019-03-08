@@ -50,7 +50,7 @@ public final class ManufacturerDataDIBTest {
     @Test
     public void valueOfWithData() {
         // valueOf
-        ManufacturerDataDIB dib = ManufacturerDataDIB.valueOf(BYTES_WITH_DATA);
+        final var dib = ManufacturerDataDIB.valueOf(BYTES_WITH_DATA);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(19);
@@ -69,7 +69,7 @@ public final class ManufacturerDataDIBTest {
     @Test
     public void valueOfWithoutData() {
         // valueOf
-        ManufacturerDataDIB dib = ManufacturerDataDIB.valueOf(BYTES_WITHOUT_DATA);
+        final var dib = ManufacturerDataDIB.valueOf(BYTES_WITHOUT_DATA);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(4);

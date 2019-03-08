@@ -49,35 +49,35 @@ public enum Status implements KnxByteEnum {
      */
     E_SEQUENCE_NUMBER(0x04, "Sequence number out of order"),
     /**
-     * The KNX Net/IP router device cannot find an active data connection
+     * The KNX Net/IP device device cannot find an active data connection
      * with the specified ID.
      */
     E_CONNECTION_ID(0x21, "No active connection with specified id"),
     /**
-     * The KNX Net/IP router device does not support the requested connection type.
+     * The KNX Net/IP device device does not support the requested connection type.
      */
     E_CONNECTION_TYPE(0x22, "Connection type not supported"),
     /**
-     * The KNX Net/IP router device does not support one or more requested connection options.
+     * The KNX Net/IP device device does not support one or more requested connection options.
      */
     E_CONNECTION_OPTION(0x23, "Connection option not supported"),
     /**
-     * The KNX Net/IP router device cannot accept the new data connection because its
+     * The KNX Net/IP device device cannot accept the new data connection because its
      * maximum amount of concurrent connections is already used.
      */
     E_NO_MORE_CONNECTIONS(0x24, "All connections already used"),
     /**
-     * The KNX Net/IP router device detects an error concerning the data
+     * The KNX Net/IP device device detects an error concerning the data
      * connection with the specified ID.
      */
     E_DATA_CONNECTION(0x26, "Error in data connection for specified id"),
     /**
-     * The KNX Net/IP router device detects an error concerning the KNX
+     * The KNX Net/IP device device detects an error concerning the KNX
      * connection with the specified ID.
      */
     E_KNX_CONNECTION(0x27, "Error in KNX connection for specified id"),
     /**
-     * The KNX Net/IP router device does not support the requested KNX/IP
+     * The KNX Net/IP device device does not support the requested KNX/IP
      * Tunnelling layer.
      */
     E_TUNNELLING_LAYER(0x29, "Requested KNX/IP Tunneling layer not supported")

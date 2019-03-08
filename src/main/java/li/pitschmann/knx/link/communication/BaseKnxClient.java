@@ -31,6 +31,7 @@ import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.plugin.Plugin;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,50 +62,50 @@ public class BaseKnxClient implements KnxClient {
     /**
      * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} <strong>asynchronously</strong>.
      *
-     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP router. The
+     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP device. The
      * requested KNX device will send a {@link TunnellingRequestBody} with {@link MessageCode#L_DATA_CON} if write was
      * successful. It is possible only when communication and write flags are set on KNX device. A
      * {@link MessageCode#L_DATA_IND} is sent by the KNX device additionally when a transmit flag was set too.
      *
      * @param address
      * @param dataPointValue
-     * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP router
+     * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP device
      */
     public Future<TunnellingAckBody> writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
-        final CEMI cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
+        final var cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
         return this.clientInternal.send(TunnellingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
      * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
      *
-     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP router. The
+     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP device. The
      * requested KNX device will send a {@link TunnellingRequestBody} with {@link MessageCode#L_DATA_CON} if write was
      * successful. It is possible only when communication and write flags are set on KNX device. A
      * {@link MessageCode#L_DATA_IND} is sent by the KNX device additionally when a transmit flag was set too.
      *
      * @param address
      * @param apciData
-     * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP router
+     * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP device
      */
     public Future<TunnellingAckBody> writeRequest(final GroupAddress address, final byte[] apciData) {
-        final CEMI cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
+        final var cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
         return this.clientInternal.send(TunnellingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
      * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>
      *
-     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP router. The
+     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP device. The
      * requested KNX device will send a {@link TunnellingRequestBody} with {@link MessageCode#L_DATA_CON} and
      * {@link MessageCode#L_DATA_IND} if read was successful. It is possible only when communication and read flags are
      * set on KNX device.
      *
      * @param address
-     * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP router
+     * @return A {@link Future} containing {@link TunnellingAckBody} from KNX Net/IP device
      */
     public Future<TunnellingAckBody> readRequest(final GroupAddress address) {
-        final CEMI cemi = CEMI.useDefaultForGroupValueRead(address);
+        final var cemi = CEMI.useDefaultForGroupValueRead(address);
         return this.clientInternal.send(TunnellingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
@@ -148,7 +149,7 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public <T extends ResponseBody> Future<T> send(RequestBody requestBody, long timeout) {
+    public <T extends ResponseBody> CompletableFuture<T> send(RequestBody requestBody, long timeout) {
         return this.clientInternal.send(requestBody, timeout);
     }
 }

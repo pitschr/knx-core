@@ -259,7 +259,7 @@ public class KnxStatisticTest {
 
     private List<Body> generateBodyList(final Body body, final int occurrences) {
         final var list = new ArrayList<Body>(occurrences);
-        for (int i = 0; i < occurrences; i++) {
+        for (var i = 0; i < occurrences; i++) {
             list.add(body);
         }
         return list;
@@ -279,19 +279,19 @@ public class KnxStatisticTest {
      * @param knxStatistic
      */
     private void addErrors(final KnxStatisticImpl knxStatistic) {
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new IllegalArgumentException());
         }
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new IOException());
         }
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new KnxException(null));
         }
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new NullPointerException());
         }
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new Throwable());
         }
     }

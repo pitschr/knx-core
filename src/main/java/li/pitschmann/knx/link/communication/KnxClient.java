@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -85,8 +86,8 @@ public interface KnxClient extends AutoCloseable {
      *
      * @param requestBody
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
-     * @return a {@link Future} representing pending completion of the task containing either an instance of {@link ResponseBody},
+     * @return a {@link CompletableFuture} representing pending completion of the task containing either an instance of {@link ResponseBody},
      * or {@code null} if no response was received because of e.g. timeout
      */
-    <T extends ResponseBody> Future<T> send(final RequestBody requestBody, final long msTimeout);
+    <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout);
 }

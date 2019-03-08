@@ -39,8 +39,8 @@ public final class DPT3ValueTest {
      */
     @Test
     public void test() {
-        for (int stepCode = 0; stepCode < 7; stepCode++) {
-            StepInterval stepInterval = StepInterval.ofCode(stepCode);
+        for (var stepCode = 0; stepCode < 7; stepCode++) {
+            final var stepInterval = StepInterval.ofCode(stepCode);
             this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) stepCode, false, stepCode, stepInterval);
             this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) (0x08 | stepCode), true, stepCode, stepInterval);
         }
@@ -61,9 +61,9 @@ public final class DPT3ValueTest {
     }
 
     private void assertValue(final DPT3 dpt, final byte b, final boolean controlled, final int stepCode, final StepInterval stepInterval) {
-        DPT3Value dptValue = new DPT3Value(dpt, controlled, stepCode);
-        DPT3Value dptValueByByte = new DPT3Value(dpt, b);
-        DPT3Value dptvalueByStepInterval = new DPT3Value(dpt, controlled, stepInterval);
+        final var dptValue = new DPT3Value(dpt, controlled, stepCode);
+        final var dptValueByByte = new DPT3Value(dpt, b);
+        final var dptvalueByStepInterval = new DPT3Value(dpt, controlled, stepInterval);
 
         // instance methods
         assertThat(dptValue.isControlled()).isEqualTo(controlled);
@@ -89,7 +89,7 @@ public final class DPT3ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT3Value(dpt, !controlled, stepCode));
 
         // toString
-        String toString = String.format("DPT3Value{dpt=%s, controlled=%s, stepCode=%s, stepInterval=%s, byteArray=%s}", dpt, controlled, stepCode,
+        final var toString = String.format("DPT3Value{dpt=%s, controlled=%s, stepCode=%s, stepInterval=%s, byteArray=%s}", dpt, controlled, stepCode,
                 stepInterval, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
@@ -133,19 +133,19 @@ public final class DPT3ValueTest {
         assertThat(StepInterval.ofInterval(5)).isEqualTo(StepInterval.PERCENT_25);
         assertThat(StepInterval.ofInterval(6)).isEqualTo(StepInterval.PERCENT_25);
         // 4
-        for (int i = 7; i <= 12; i++) {
+        for (var i = 7; i <= 12; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_12);
         }
         // 5
-        for (int i = 13; i <= 24; i++) {
+        for (var i = 13; i <= 24; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_6);
         }
         // 6
-        for (int i = 25; i <= 48; i++) {
+        for (var i = 25; i <= 48; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_3);
         }
         // 7
-        for (int i = 49; i <= 64; i++) {
+        for (var i = 49; i <= 64; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_1);
         }
 

@@ -90,10 +90,10 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
             throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
         }
 
-        final byte[] hpaiAsBytes = controlEndpoint.getRawData();
+        final var hpaiAsBytes = controlEndpoint.getRawData();
 
         // create bytes
-        final byte[] bytes = new byte[2 + hpaiAsBytes.length];
+        final var bytes = new byte[2 + hpaiAsBytes.length];
         bytes[0] = (byte) channelId;
         bytes[1] = 0x00; // reserved
         System.arraycopy(hpaiAsBytes, 0, bytes, 2, hpaiAsBytes.length);

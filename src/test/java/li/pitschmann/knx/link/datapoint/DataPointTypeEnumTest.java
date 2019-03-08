@@ -19,7 +19,6 @@
 package li.pitschmann.knx.link.datapoint;
 
 import li.pitschmann.knx.link.datapoint.DPT20.Priority;
-import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +36,7 @@ public class DataPointTypeEnumTest {
     @Test
     public void test() {
         // using an enumeration that is using DataPointTypeEnum
-        final DPTEnumValue<Priority> priorityValue = Priority.HIGH.toValue();
+        final var priorityValue = Priority.HIGH.toValue();
         assertThat(priorityValue).isNotNull();
         assertThat(priorityValue.getDPT().getId()).isEqualTo("20.004");
         assertThat(priorityValue.getDPT().getDescription()).isEqualTo("Priority");

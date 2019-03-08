@@ -20,12 +20,11 @@ package li.pitschmann.knx.link.exceptions;
 
 /**
  * KNX communication partner exception that is being thrown when KNX client cannot establish a communication to the
- * KNX Net/IP router because it doesn't support the tunnelling.
+ * KNX Net/IP device because it doesn't support the tunnelling.
  *
  * @author PITSCHR
  */
 public class KnxNoTunnellingException extends KnxException {
-    private static final long serialVersionUID = 1L;
 
     public KnxNoTunnellingException(final String message) {
         super(message);

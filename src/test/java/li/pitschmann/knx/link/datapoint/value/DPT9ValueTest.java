@@ -50,8 +50,8 @@ public final class DPT9ValueTest {
     }
 
     private void assertValue(final DPT9 dpt, final byte[] bytes, final double floatingValue) {
-        DPT9Value dptValue = new DPT9Value(dpt, floatingValue);
-        DPT9Value dptValueByByte = new DPT9Value(dpt, bytes);
+        final var dptValue = new DPT9Value(dpt, floatingValue);
+        final var dptValueByByte = new DPT9Value(dpt, bytes);
 
         // instance methods
         assertThat(dptValue.getFloatingValue()).isEqualTo(floatingValue);
@@ -73,7 +73,7 @@ public final class DPT9ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT9Value(dpt, floatingValue + 0.1));
 
         // toString
-        String toString = String.format("DPT9Value{dpt=%s, floatingValue=%s, byteArray=%s}", dpt, floatingValue,
+        final var toString = String.format("DPT9Value{dpt=%s, floatingValue=%s, byteArray=%s}", dpt, floatingValue,
                 ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

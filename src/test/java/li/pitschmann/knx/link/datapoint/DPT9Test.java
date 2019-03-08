@@ -35,7 +35,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT9 dpt = DPT9.TEMPERATURE;
+        final var dpt = DPT9.TEMPERATURE;
 
         assertThat(dpt.getId()).isEqualTo("9.001");
         assertThat(dpt.getDescription()).isEqualTo("Temperature (°C)");
@@ -44,7 +44,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT9 dpt = DPT9.TEMPERATURE_DIFFERENCE;
+        final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -69,7 +69,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
         /*
          * TEMPERATURE
          */
-        final DPT9 dptTemperature = DPT9.TEMPERATURE;
+        final var dptTemperature = DPT9.TEMPERATURE;
         // value: 0°C
         this.assertInternal(dptTemperature, new byte[]{0x00, 0x00}, 0d);
         // value: -273 (-272.96 because the precision is not so accurate)
@@ -83,7 +83,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
         /*
          * POWER
          */
-        final DPT9 dptPower = DPT9.POWER;
+        final var dptPower = DPT9.POWER;
         // value: 0 kW
         this.assertInternal(dptPower, new byte[]{0x00, 0x00}, 0d);
         // value: -671088.64 kW
@@ -100,7 +100,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
      * @param doubleValue
      */
     private void assertInternal(final DPT9 dpt, final byte[] bValueArray, final double doubleValue) {
-        final DPT9Value dptValue = dpt.toValue(doubleValue);
+        final var dptValue = dpt.toValue(doubleValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

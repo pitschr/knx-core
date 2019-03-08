@@ -31,7 +31,6 @@ import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.body.cemi.Priority;
 import li.pitschmann.knx.link.body.cemi.TPCI;
 import li.pitschmann.knx.link.datapoint.DPT7;
-import li.pitschmann.knx.link.datapoint.value.DPT7Value;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
@@ -56,13 +55,13 @@ public class TunnellingRequestBodyTest {
 
     @BeforeEach
     public void before() {
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 160);
-        final GroupAddress destinationAddress = GroupAddress.of(9, 4, 7);
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 160);
+        final var destinationAddress = GroupAddress.of(9, 4, 7);
 
         // ACPI data: new byte[]{0x0c, 0x3f}
-        DPT7Value dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.toValue(3135);
+        final var dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.toValue(3135);
 
         this.channelId = 17;
         this.sequence = 92;
@@ -111,7 +110,7 @@ public class TunnellingRequestBodyTest {
     @Test
     public void validCases() {
         // create()
-        final TunnellingRequestBody body = TunnellingRequestBody.create(this.channelId, this.sequence, this.cemi);
+        final var body = TunnellingRequestBody.create(this.channelId, this.sequence, this.cemi);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
         assertThat(body.getLength()).isEqualTo(4);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
@@ -119,7 +118,7 @@ public class TunnellingRequestBodyTest {
         assertThat(body.getCEMI().getRawData()).containsExactly(this.cemi.getRawData());
 
         // compare raw data of create() with valueOf()
-        final TunnellingRequestBody bodyByBytes = TunnellingRequestBody.valueOf(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
+        final var bodyByBytes = TunnellingRequestBody.valueOf(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
                 (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

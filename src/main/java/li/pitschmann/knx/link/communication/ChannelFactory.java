@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
@@ -49,9 +48,9 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newDescriptionChannel(final Configuration config) {
-        LOG.debug("Create new description channel for: {} (socket timeout: {}ms)", config.getRouterEndpoint(),
+        LOG.debug("Create new description channel for: {} (socket timeout: {}ms)", config.getEndpoint(),
                 config.getSocketTimeoutControlChannel());
-        return newDatagramChannel(config.getRouterEndpoint(), config.getSocketTimeoutControlChannel());
+        return newDatagramChannel(config.getEndpoint(), config.getSocketTimeoutControlChannel());
     }
 
     /**
@@ -62,9 +61,9 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newControlChannel(final Configuration config) {
-        LOG.debug("Create new control channel for: {} (socket timeout: {}ms)", config.getRouterEndpoint(),
+        LOG.debug("Create new control channel for: {} (socket timeout: {}ms)", config.getEndpoint(),
                 config.getSocketTimeoutControlChannel());
-        return newDatagramChannel(config.getRouterEndpoint(), config.getSocketTimeoutControlChannel());
+        return newDatagramChannel(config.getEndpoint(), config.getSocketTimeoutControlChannel());
     }
 
     /**
@@ -75,8 +74,8 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newDataChannel(final Configuration config) {
-        LOG.debug("Create new data channel for: {} (socket timeout: {}ms)", config.getRouterEndpoint(), config.getSocketTimeoutDataChannel());
-        return newDatagramChannel(config.getRouterEndpoint(), config.getSocketTimeoutDataChannel());
+        LOG.debug("Create new data channel for: {} (socket timeout: {}ms)", config.getEndpoint(), config.getSocketTimeoutDataChannel());
+        return newDatagramChannel(config.getEndpoint(), config.getSocketTimeoutDataChannel());
     }
 
     /**
@@ -88,9 +87,9 @@ public final class ChannelFactory {
      */
     private static DatagramChannel newDatagramChannel(final InetSocketAddress socketAddress, long socketTimeout) {
         try {
-            final DatagramChannel channel = DatagramChannel.open();
+            final var channel = DatagramChannel.open();
             channel.configureBlocking(false);
-            final DatagramSocket socket = channel.socket();
+            final var socket = channel.socket();
             socket.bind(new InetSocketAddress(0));
             socket.setSoTimeout((int) socketTimeout);
             socket.connect(socketAddress);
@@ -108,9 +107,9 @@ public final class ChannelFactory {
 //     */
 //    private static SocketChannel newSocketChannel(final InetSocketAddress socketAddress, long socketTimeout) {
 //        try {
-//            final SocketChannel channel = SocketChannel.open();
+//            final var channel = SocketChannel.open();
 //            channel.configureBlocking(false);
-//            final Socket socket = channel.socket();
+//            final var socket = channel.socket();
 //            socket.bind(new InetSocketAddress(0));
 //            socket.setSoTimeout((int) socketTimeout);
 //            socket.connect(socketAddress);

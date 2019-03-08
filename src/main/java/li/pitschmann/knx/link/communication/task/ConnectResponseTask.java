@@ -30,7 +30,7 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Listens to {@link ConnectResponseBody} frame that is sent by KNX Net/IP router to client when
+ * Listens to {@link ConnectResponseBody} frame that is sent by KNX Net/IP device to client when
  * {@link ConnectRequestBody} was sent.
  *
  * @author PITSCHR
@@ -48,7 +48,7 @@ public final class ConnectResponseTask implements Subscriber<Body> {
     public void onNext(final Body body) {
         // we are interested in connect response only
         if (body instanceof ConnectResponseBody) {
-            final ConnectResponseBody responseBody = (ConnectResponseBody) body;
+            final var responseBody = (ConnectResponseBody) body;
             LOG.debug("Connect Response received: {}", responseBody);
             this.client.getEventPool().connectEvent().setResponse(responseBody);
             LOG.trace("Connect Response saved.");

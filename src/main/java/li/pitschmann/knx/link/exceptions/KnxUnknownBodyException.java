@@ -26,7 +26,6 @@ import li.pitschmann.utils.ByteFormatter;
  * @author PITSCHR
  */
 public final class KnxUnknownBodyException extends KnxCommunicationException {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor for {@link KnxUnknownBodyException} in case the body could not be parsed based on given

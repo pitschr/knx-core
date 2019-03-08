@@ -20,7 +20,7 @@ package li.pitschmann.knx.link.body.dib;
 
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
-import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 
@@ -78,9 +78,9 @@ public final class KnxAddressesDIB extends AbstractDIB {
         // KNX Individual Address (mandatory)
         this.knxAddress = IndividualAddress.of(new byte[]{rawData[2], rawData[3]});
         // Additional Individual Addresses (optional)
-        int sizeOfAdditionalAddresses = (rawData.length - 4) / 2;
-        List<IndividualAddress> tmp = new ArrayList<>(sizeOfAdditionalAddresses);
-        for (int i = 4; i < rawData.length; i += 2) {
+        final var sizeOfAdditionalAddresses = (rawData.length - 4) / 2;
+        final var tmp = new ArrayList<IndividualAddress>(sizeOfAdditionalAddresses);
+        for (var i = 4; i < rawData.length; i += 2) {
             tmp.add(IndividualAddress.of(new byte[]{rawData[i], rawData[i + 1]}));
         }
         this.additionalAddresses = Collections.unmodifiableList(tmp);
@@ -101,7 +101,7 @@ public final class KnxAddressesDIB extends AbstractDIB {
         if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
         } else if (rawData.length % 2 != 0) {
-            throw new KnxIllegalStateException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
+            throw new KnxIllegalArgumentException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
                     rawData.length, ByteFormatter.formatHexAsString(rawData)));
         }
     }

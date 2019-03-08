@@ -115,7 +115,7 @@ public enum APCI implements KnxBytesEnum {
 
     @Override
     public byte[] getCodeAsBytes() {
-        int code = this.getCode();
+        final var code = this.getCode();
         return new byte[]{(byte) (code >>> 8), (byte) (code & 0xFF)};
     }
 

@@ -21,14 +21,14 @@ package li.pitschmann.knx.link.exceptions;
 import li.pitschmann.knx.link.body.Body;
 
 /**
- * Exception when an channel id could not be received. This exception is a subclass of {@link KnxCommunicationException}.
+ * Exception when an channel id could not be received by KNX Net/IP device.
+ * This exception is a subclass of {@link KnxCommunicationException}.
  *
  * @author PITSCHR
  */
 public final class KnxChannelIdNotReceivedException extends KnxCommunicationException {
-    private static final long serialVersionUID = 1L;
 
     public KnxChannelIdNotReceivedException(final Body body) {
-        super(String.format("Could not obtain channel id from router: %s", body));
+        super(String.format("Could not get channel id from KNX Net/IP device: %s", body));
     }
 }

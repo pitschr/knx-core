@@ -46,7 +46,7 @@ public abstract class AbstractKnxMain {
      */
     protected static <T> T getParameterValue(final String[] args, final String parameterName, final T defaultValue,
                                              final Function<String, T> function) {
-        for (int i = 0; i < args.length; i++) {
+        for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {
                 // found - next argument should be the value
                 if ((i + 1) < args.length) {
@@ -76,13 +76,13 @@ public abstract class AbstractKnxMain {
     // @SuppressWarnings("unchecked")
     protected static <T> T[] getParameterValues(final String[] args, final String parameterName, final T[] defaultValues,
                                                 final IntFunction<T[]> function) {
-        for (int i = 0; i < args.length; i++) {
+        for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {
                 // found - next arguments should be the values
                 if ((i + 1) < args.length) {
-                    int start = i + 1;
-                    int end = args.length;
-                    for (int j = start; j < args.length; j++) {
+                    final var start = i + 1;
+                    var end = args.length;
+                    for (var j = start; j < args.length; j++) {
                         if (args[j].startsWith("-")) {
                             // next argument name found
                             end = j - 1;
@@ -108,8 +108,9 @@ public abstract class AbstractKnxMain {
      * Converts from either {@code x/y/z} to a <strong>3-level</strong> {@link GroupAddress} or {@code x/y} to a
      * <strong>2-level</strong> {@link GroupAddress}
      * <p>
-     * For 3-level address the value range is {@code [0/0/0, 15/7/255]}<br>
-     * For 2-level address the value range is {@code [0/0, 0/2047]}<br>
+     * For 3-level address the value range is {@code [0/0/1, 31/7/255]}<br>
+     * For 2-level address the value range is {@code [0/1, 31/2047]}<br>
+     * For Free-level address the value range is {@code [1, 65535]}<br>
      *
      * @param groupAddress
      * @return {@link GroupAddress}
@@ -127,6 +128,8 @@ public abstract class AbstractKnxMain {
                     Integer.valueOf(groupAddressAreas[0]), //
                     Integer.valueOf(groupAddressAreas[1]) //
             );
+        } else if (groupAddressAreas.length == 1) {
+            return GroupAddress.of(Integer.valueOf(groupAddressAreas[0]));
         }
         throw new IllegalArgumentException("Invalid Group Address provided: " + groupAddress);
     }

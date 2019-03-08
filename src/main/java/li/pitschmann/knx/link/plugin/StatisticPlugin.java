@@ -29,7 +29,6 @@ import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.TunnellingAckBody;
 import li.pitschmann.knx.link.body.TunnellingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
-import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +99,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
      * @return human-friendly statistic string
      */
     private String getStatisticAsText() {
-        final KnxStatistic statistics = this.client.getStatistic();
+        final var statistics = this.client.getStatistic();
 
         return String.format( //
                 format.getTemplate(),

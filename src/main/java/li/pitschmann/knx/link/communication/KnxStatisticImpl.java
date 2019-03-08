@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
- * Statistic about KNX/IP communications between client and the router
+ * Statistic about KNX/IP communications between client and the KNX Net/IP device
  *
  * @author PITSCHR
  */
@@ -66,7 +66,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
 
     @Override
     public long getNumberOfBodyReceived(Class<? extends Body> bodyClass) {
-        final AtomicLong al = this.numberOfBodyReceivedMap.get(bodyClass);
+        final var al = this.numberOfBodyReceivedMap.get(bodyClass);
         return al == null ? 0L : al.longValue();
     }
 
@@ -77,7 +77,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
 
     @Override
     public long getNumberOfBodySent(Class<? extends Body> bodyClass) {
-        final AtomicLong al = this.numberOfBodySentMap.get(bodyClass);
+        final var al = this.numberOfBodySentMap.get(bodyClass);
         return al == null ? 0L : al.longValue();
     }
 

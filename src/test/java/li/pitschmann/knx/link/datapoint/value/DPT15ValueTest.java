@@ -54,8 +54,8 @@ public final class DPT15ValueTest {
     }
 
     private void assertValue(final byte[] bytes, final byte[] accessIdentificationData, final Flags flags) {
-        DPT15Value dptValue = new DPT15Value(accessIdentificationData, flags);
-        DPT15Value dptValueByByte = new DPT15Value(bytes);
+        final var dptValue = new DPT15Value(accessIdentificationData, flags);
+        final var dptValueByByte = new DPT15Value(bytes);
 
         // instance methods
         assertThat(dptValue.getAccessIdentificationData()).containsExactly(accessIdentificationData);
@@ -71,17 +71,17 @@ public final class DPT15ValueTest {
         assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
 
         // not equals
-        byte[] anotherAccessIdentificationData = accessIdentificationData.clone();
+        final var anotherAccessIdentificationData = accessIdentificationData.clone();
         anotherAccessIdentificationData[0] = (byte) ((anotherAccessIdentificationData[0] & 0xFF) == 0x00 ? 0x01 : 0x00);
-        byte flagByte = flags.getAsByte();
-        Flags anotherFlags = new Flags((byte) (((byte) (flagByte & 0x80) == 0) ? flagByte | 0x80 : flagByte & 0x7F));
+        final var flagByte = flags.getAsByte();
+        final var anotherFlags = new Flags((byte) (((byte) (flagByte & 0x80) == 0) ? flagByte | 0x80 : flagByte & 0x7F));
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
         assertThat(dptValue).isNotEqualTo(new DPT15Value(anotherAccessIdentificationData, flags));
         assertThat(dptValue).isNotEqualTo(new DPT15Value(accessIdentificationData, anotherFlags));
 
         // toString
-        String toString = String.format("DPT15Value{dpt=%s, accessIdentificationData=%s, flags=%s, byteArray=%s}", DPT15.ACCESS_DATA,
+        final var toString = String.format("DPT15Value{dpt=%s, accessIdentificationData=%s, flags=%s, byteArray=%s}", DPT15.ACCESS_DATA,
                 ByteFormatter.formatHexAsString(accessIdentificationData), flags, ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
@@ -100,7 +100,7 @@ public final class DPT15ValueTest {
      */
     @Test
     public void testToByteArrayPadding() {
-        Flags flags = new Flags((byte) 0x80);
+        final var flags = new Flags((byte) 0x80);
         assertThat(DPT15Value.toByteArray(new byte[0], flags)).containsExactly(0x00, 0x00, 0x00, 0x80);
         assertThat(DPT15Value.toByteArray(new byte[]{0x11}, flags)).containsExactly(0x00, 0x00, 0x11, 0x80);
         assertThat(DPT15Value.toByteArray(new byte[]{0x12, 0x11}, flags)).containsExactly(0x00, 0x12, 0x11, 0x80);
@@ -121,8 +121,8 @@ public final class DPT15ValueTest {
 
     private void assertFlags(final byte b, final boolean error, final boolean permissionAccepted, final boolean readDirectionRightToLeft,
                              final boolean encryptionEnabled, final int index) {
-        Flags flags = new Flags(error, permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index);
-        Flags flagsByByte = new Flags(b);
+        final var flags = new Flags(error, permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index);
+        final var flagsByByte = new Flags(b);
 
         // instance methods
         assertThat(flags.isError()).isEqualTo(error);
@@ -147,7 +147,7 @@ public final class DPT15ValueTest {
         assertThat(flags).isNotEqualTo(new Flags(error, permissionAccepted, readDirectionRightToLeft, encryptionEnabled, (index + 1) % 15));
 
         // toString
-        String toString = String.format("Flags{error=%s, permissionAccepted=%s, readDirectionRightToLeft=%s, encryptionEnabled=%s, index=%s}", error,
+        final var toString = String.format("Flags{error=%s, permissionAccepted=%s, readDirectionRightToLeft=%s, encryptionEnabled=%s, index=%s}", error,
                 permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index);
         assertThat(flags).hasToString(toString);
         assertThat(flagsByByte).hasToString(toString);

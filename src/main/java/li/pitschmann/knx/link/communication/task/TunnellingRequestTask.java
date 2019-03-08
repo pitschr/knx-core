@@ -23,7 +23,6 @@ import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.TunnellingAckBody;
 import li.pitschmann.knx.link.body.TunnellingRequestBody;
 import li.pitschmann.knx.link.body.cemi.APCI;
-import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.utils.ByteFormatter;
@@ -34,7 +33,7 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Observes the {@link TunnellingRequestBody} which is received from KNX Net/IP Router on data channel.
+ * Observes the {@link TunnellingRequestBody} which is received from KNX Net/IP device on data channel.
  *
  * @author PITSCHR
  */
@@ -53,14 +52,14 @@ public final class TunnellingRequestTask implements Subscriber<Body> {
             LOG.debug("Tunnelling Request received: {}", body);
 
             // acknowledge frame to be sent back
-            final TunnellingRequestBody reqBody = (TunnellingRequestBody) body;
-            final TunnellingAckBody ackBody = TunnellingAckBody.create(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
+            final var reqBody = (TunnellingRequestBody) body;
+            final var ackBody = TunnellingAckBody.create(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
 
             // send acknowledge frame
             this.client.send(ackBody);
 
             // if it is indication, update the state of source address
-            final CEMI cemi = reqBody.getCEMI();
+            final var cemi = reqBody.getCEMI();
 
             // Consider only:
             // 1) Indication + Group Value Response

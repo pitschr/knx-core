@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import li.pitschmann.knx.link.datapoint.DPT6.StatusMode;
 import li.pitschmann.knx.link.datapoint.value.DPT6Value;
 import li.pitschmann.knx.link.datapoint.value.DPT6Value.StatusMode.Mode;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
@@ -38,7 +37,7 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT6 dpt = DPT6.PERCENT;
+        final var dpt = DPT6.PERCENT;
 
         assertThat(dpt.getId()).isEqualTo("6.001");
         assertThat(dpt.getDescription()).isEqualTo("Percent (%)");
@@ -47,7 +46,7 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT6 dpt = DPT6.PERCENT;
+        final var dpt = DPT6.PERCENT;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -68,7 +67,7 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT6 dpt = DPT6.PERCENT;
+        final var dpt = DPT6.PERCENT;
 
         // value: 0%
         this.assertDPT(dpt, (byte) 0x00, 0);
@@ -97,7 +96,7 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
      * @param intValue
      */
     private void assertDPT(final DPT6 dpt, final byte bValue, final int intValue) {
-        final DPT6Value dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.toValue(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
@@ -116,7 +115,7 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
         @Override
         @Test
         public void testIdAndDescription() {
-            final StatusMode dpt = DPT6.STATUS_MODE;
+            final var dpt = DPT6.STATUS_MODE;
 
             assertThat(dpt.getId()).isEqualTo("6.020");
             assertThat(dpt.getDescription()).isEqualTo("Status Mode");
@@ -125,7 +124,7 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
         @Override
         @Test
         public void testCompatibility() {
-            final StatusMode dpt = DPT6.STATUS_MODE;
+            final var dpt = DPT6.STATUS_MODE;
 
             // failures
             assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -163,8 +162,8 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
          */
         private void assertInternal(final byte byteValue, final boolean bool1, final boolean bool2, final boolean bool3, final boolean bool4,
                                     final boolean bool5, final Mode mode) {
-            final StatusMode dptStatusMode = DPT6.STATUS_MODE;
-            final DPT6Value.StatusMode dptStatusModeValue = dptStatusMode.toValue(bool1, bool2, bool3, bool4, bool5, mode);
+            final var dptStatusMode = DPT6.STATUS_MODE;
+            final var dptStatusModeValue = dptStatusMode.toValue(bool1, bool2, bool3, bool4, bool5, mode);
 
             // assert base DPT
             this.assertBaseDPT(dptStatusMode, new byte[]{byteValue}, dptStatusModeValue);

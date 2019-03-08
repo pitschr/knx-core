@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  * Class Helper
@@ -59,12 +58,12 @@ public final class ClassHelper {
     <T> Class<T> getGenericTypeSuperclass(final Class<?> clazz, final int index) {
         final Class<T> retClass;
 
-        final Type superClassType = clazz.getGenericSuperclass();
+        final var superClassType = clazz.getGenericSuperclass();
         if (superClassType instanceof ParameterizedType) {
-            final ParameterizedType superClassParamType = (ParameterizedType) superClassType;
-            final Type[] typeArguments = superClassParamType.getActualTypeArguments();
+            final var superClassParamType = (ParameterizedType) superClassType;
+            final var typeArguments = superClassParamType.getActualTypeArguments();
             if (typeArguments.length > index) {
-                final Type typeArgument = typeArguments[index];
+                final var typeArgument = typeArguments[index];
                 if (typeArgument instanceof ParameterizedType) {
                     LOG.trace("'ParameterizedType' for class {} and argument type index {}", clazz, index);
                     retClass = (Class<T>) ((ParameterizedType) typeArgument).getRawType();

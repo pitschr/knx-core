@@ -37,7 +37,7 @@ import java.util.function.Function;
  * To use it, make sure that you have proper KNX flag (communication, read and write) set for given group address.
  *
  * <ul>
- * <li>1st argument is the address of KNX Net/IP router; default value "192.168.1.16"</li>
+ * <li>1st argument is the address of KNX Net/IP device; default value "192.168.1.16"</li>
  * <li>2nd argument is the address of KNX group; default value "1/2/100"</li>
  * </ul>
  *
@@ -45,27 +45,27 @@ import java.util.function.Function;
  */
 public class KnxExampleInvertLampStatus extends AbstractKnxMain {
     private static final Logger LOG = LoggerFactory.getLogger(KnxExampleInvertLampStatus.class);
-    private static final String DEFAULT_ROUTER_IP = "192.168.1.16";
+    private static final String DEFAULT_IP_ADDRESS = "192.168.1.16";
     private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
 
     public static void main(final String[] args) {
-        // 1st Argument: Get Router Address
-        final String routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Function.identity());
-        LOG.debug("Router Address: {}", routerAddress);
+        // 1st Argument: Get KNX Net/IP Address
+        final var address = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Function.identity());
+        LOG.debug("KNX Net/IP Address: {}", address);
 
         // 2nd Argument: Get Group Address
-        final GroupAddress groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, AbstractKnxMain::parseGroupAddress);
+        final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, AbstractKnxMain::parseGroupAddress);
         LOG.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
 
-        try (final DefaultKnxClient client = new DefaultKnxClient(routerAddress)) {
+        try (final var client = new DefaultKnxClient(address)) {
             // Sends the read request
-            // The returned instance is the acknowledge sent by KNX router indicating that read request was received
+            // The returned instance is the acknowledge sent by KNX Net/IP device indicating that read request was received
             final var readRequestAck = client.readRequest(groupAddress).get();
             LOG.debug("READ ACK: {}", readRequestAck);
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
-            // KNX router and status pool will be updated by KNX client with the actual lamp status
+            // KNX Net/IP device and status pool will be updated by KNX client with the actual lamp status
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
 
             // read lamp state
@@ -73,13 +73,13 @@ public class KnxExampleInvertLampStatus extends AbstractKnxMain {
             LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
             // Sends the write request
-            // The returned instance is the acknowledge sent by KNX router indicating that write request was received
+            // The returned instance is the acknowledge sent by KNX Net/IP device indicating that write request was received
             final var writeRequestAck = client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus)).get();
             LOG.debug("WRITE ACK: {}", writeRequestAck);
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and write flags on KNX group address are set the state of lamp will be changed.
-            // The state of lamp will be forwarded by the KNX router and status pool will be updated by KNX client
+            // The state of lamp will be forwarded by the KNX Net/IP device and status pool will be updated by KNX client
             client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
 
             LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());

@@ -74,7 +74,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      * @throws KnxEnumNotFoundException if enumeration with given value could not be found
      */
     public final DPTEnumValue<T> toValue(final int value) {
-        final DPTEnumValue<T> dptEnumValue = this.values.get(value);
+        final var dptEnumValue = this.values.get(value);
         if (dptEnumValue == null) {
             throw new KnxEnumNotFoundException(
                     String.format("Could not find data point enum value for dpt '%s' and value '%s'.", this.getId(), value));
@@ -100,8 +100,8 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
     @Override
     protected DataPointValueEnum<T> parse(final String[] args) {
         // first try to parse it as digits only
-        boolean digitsOnly = true;
-        for (char c : args[0].toCharArray()) {
+        var digitsOnly = true;
+        for (final var c : args[0].toCharArray()) {
             if (!Character.isDigit(c)) {
                 digitsOnly = false;
                 break;
@@ -113,7 +113,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
             return this.toValue(Integer.valueOf(args[0]));
         } else {
             // not digits only -> try with value name
-            for (DataPointValueEnum<T> value : this.values.values()) {
+            for (final var value : this.values.values()) {
                 if (args[0].equalsIgnoreCase(value.getDescription())) {
                     // found
                     return value;

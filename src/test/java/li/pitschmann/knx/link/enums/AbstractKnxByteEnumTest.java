@@ -40,9 +40,9 @@ abstract class AbstractKnxByteEnumTest<E extends Enum<E> & KnxByteEnum> extends 
      */
     @Test
     public void verifyCodeIsSameAsCodeAsByte() {
-        for (final E identifier : EnumSet.allOf(this.getCurrentClass())) {
-            final int identifierCodeAsInt = identifier.getCode();
-            final byte identifierCodeAsByte = identifier.getCodeAsByte();
+        for (final var identifier : EnumSet.allOf(this.getCurrentClass())) {
+            final var identifierCodeAsInt = identifier.getCode();
+            final var identifierCodeAsByte = identifier.getCodeAsByte();
             assertThat(identifierCodeAsByte).inBinary().isSameAs((byte) (identifierCodeAsInt & 0xFF));
         }
     }
@@ -63,8 +63,8 @@ abstract class AbstractKnxByteEnumTest<E extends Enum<E> & KnxByteEnum> extends 
         assertThrows(KnxEnumNotFoundException.class, () -> this.invokeValueOf((byte) -1));
 
         // ints
-        final int[] testInvalidInts = new int[]{-1, 0xFF};
-        for (final int testInvalidInt : testInvalidInts) {
+        final var testInvalidInts = new int[]{-1, 0xFF};
+        for (final var testInvalidInt : testInvalidInts) {
             assertThrows(KnxEnumNotFoundException.class, () -> this.invokeValueOf(testInvalidInt));
         }
     }

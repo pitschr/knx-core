@@ -34,7 +34,7 @@ public class AbstractSingleRawDataTest {
         TestSingleRawData testClass1 = new TestSingleRawData((byte) 0x11);
         TestSingleRawData testClass2 = new TestSingleRawData((byte) 0x11);
         TestSingleRawData testClass3 = new TestSingleRawData((byte) 0x22);
-        AnotherTestSingleRawData anotherTestClass = new AnotherTestSingleRawData((byte) 0x11);
+        final var anotherTestClass = new AnotherTestSingleRawData((byte) 0x11);
 
         // equals
         assertThat(testClass1).isEqualTo(testClass1);

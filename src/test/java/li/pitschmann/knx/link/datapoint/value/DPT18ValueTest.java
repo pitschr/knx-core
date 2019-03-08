@@ -40,8 +40,8 @@ public final class DPT18ValueTest {
     }
 
     private void assertValue(final byte b, final boolean controlled, final int sceneNumber) {
-        DPT18Value dptValue = new DPT18Value(controlled, sceneNumber);
-        DPT18Value dptValueByByte = new DPT18Value(b);
+        final var dptValue = new DPT18Value(controlled, sceneNumber);
+        final var dptValueByByte = new DPT18Value(b);
 
         // instance methods
         assertThat(dptValue.isControlled()).isEqualTo(controlled);
@@ -63,7 +63,7 @@ public final class DPT18ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT18Value(controlled, sceneNumber + 1));
 
         // toString
-        String toString = String.format("DPT18Value{dpt=%s, controlled=%s, sceneNumber=%s, byteArray=%s}", DPT18.SCENE_CONTROL, controlled,
+        final var toString = String.format("DPT18Value{dpt=%s, controlled=%s, sceneNumber=%s, byteArray=%s}", DPT18.SCENE_CONTROL, controlled,
                 sceneNumber, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

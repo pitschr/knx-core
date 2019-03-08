@@ -81,14 +81,14 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
             throw new KnxNullPointerException("address");
         }
 
-        final byte[] addressAsBytes = address.getRawData();
+        final var addressAsBytes = address.getRawData();
 
         // hardcoded
         // 2 bytes (1 byte for length, 1 byte for connection type) + 2 bytes for individual address
-        final int length = 2 + addressAsBytes.length;
+        final var length = 2 + addressAsBytes.length;
 
         // create bytes
-        final byte[] bytes = new byte[length];
+        final var bytes = new byte[length];
         bytes[0] = (byte) length;
         bytes[1] = ConnectionType.TUNNEL_CONNECTION.getCodeAsByte();
         System.arraycopy(addressAsBytes, 0, bytes, 2, addressAsBytes.length);

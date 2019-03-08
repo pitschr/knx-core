@@ -24,8 +24,6 @@ package li.pitschmann.knx.link.exceptions;
  * @author PITSCHR
  */
 public final class KnxDataPointTypeNotFoundException extends KnxException {
-    private static final long serialVersionUID = 1L;
-
     public KnxDataPointTypeNotFoundException(final String id) {
         super(String.format("Could not find data point type ID '%s'", id));
     }

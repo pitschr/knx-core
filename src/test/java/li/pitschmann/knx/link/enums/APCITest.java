@@ -41,14 +41,14 @@ public final class APCITest extends AbstractKnxEnumTest<APCI> {
     @Test
     public void invalidValueOf() {
         // bytes
-        final byte[][] testInvalidBytes = new byte[][]{new byte[]{0x02}, new byte[]{0x02, 0x01, 0x00}};
-        for (final byte[] testInvalidByte : testInvalidBytes) {
+        final var testInvalidBytes = new byte[][]{new byte[]{0x02}, new byte[]{0x02, 0x01, 0x00}};
+        for (final var testInvalidByte : testInvalidBytes) {
             assertThatThrownBy(() -> APCI.valueOf(Bytes.toUnsignedInt(testInvalidByte))).isInstanceOf(KnxEnumNotFoundException.class);
         }
 
-        // ints
-        final int[] testInvalidInts = new int[]{-1, 0x200};
-        for (final int testInvalidInt : testInvalidInts) {
+        // integers
+        final var testInvalidInts = new int[]{-1, 0x200};
+        for (final var testInvalidInt : testInvalidInts) {
             assertThatThrownBy(() -> APCI.valueOf(testInvalidInt)).isInstanceOf(KnxEnumNotFoundException.class);
         }
     }

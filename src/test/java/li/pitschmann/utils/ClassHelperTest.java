@@ -39,12 +39,12 @@ public class ClassHelperTest {
      */
     @Test
     public void getGenericClass() {
-        final TestStringClass str = new TestStringClass();
+        final var str = new TestStringClass();
         assertThat(str.getClassType().getTypeName()).isEqualTo(String.class.getName());
         assertThat(str.getClassType2().getTypeName()).isEqualTo(CharSequence.class.getName());
         assertThat(str.getClassType3().getTypeName()).isEqualTo(Comparable.class.getName());
 
-        final TestNumberClass num = new TestNumberClass();
+        final var num = new TestNumberClass();
         assertThat(num.getClassType().getTypeName()).isEqualTo(Number.class.getName());
         assertThat(num.getClassType2().getTypeName()).isEqualTo(Integer.class.getName());
         assertThat(num.getClassType3().getTypeName()).isEqualTo(Void.class.getName());

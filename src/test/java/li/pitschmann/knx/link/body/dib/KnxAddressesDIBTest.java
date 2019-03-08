@@ -19,14 +19,13 @@
 package li.pitschmann.knx.link.body.dib;
 
 import li.pitschmann.knx.link.body.address.IndividualAddress;
-import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,7 +51,7 @@ public final class KnxAddressesDIBTest {
     @Test
     public void valueOf() {
         // valueOf
-        KnxAddressesDIB dib = KnxAddressesDIB.valueOf(BYTES);
+        final var dib = KnxAddressesDIB.valueOf(BYTES);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(10);
@@ -60,7 +59,7 @@ public final class KnxAddressesDIBTest {
         assertThat(dib.getKnxAddress()).isNotNull();
         assertThat(dib.getKnxAddress().getAddress()).isEqualTo("0.0.0");
 
-        List<IndividualAddress> additionalAddresses = dib.getAdditionalAddresses();
+        final var additionalAddresses = dib.getAdditionalAddresses();
         assertThat(additionalAddresses).hasSize(3);
         assertThat(additionalAddresses.get(0).getAddress()).isEqualTo("1.2.3");
         assertThat(additionalAddresses.get(1).getAddress()).isEqualTo("7.8.127");
@@ -73,7 +72,7 @@ public final class KnxAddressesDIBTest {
     @Test
     public void invalidCases() {
         // specific for KNX addresses DIB
-        assertThatThrownBy(() -> KnxAddressesDIB.valueOf(new byte[]{0x05, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(KnxIllegalStateException.class)
+        assertThatThrownBy(() -> KnxAddressesDIB.valueOf(new byte[]{0x05, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("divisible by two");
 
         // incorrect size of bytes
@@ -88,8 +87,8 @@ public final class KnxAddressesDIBTest {
      */
     @Test
     public void testToString() {
-        IndividualAddress knxAddress = IndividualAddress.of(new byte[]{0x00, 0x00});
-        List<IndividualAddress> additionalAddresses = Arrays.asList(//
+        final var knxAddress = IndividualAddress.of(new byte[]{0x00, 0x00});
+        final var additionalAddresses = Arrays.asList(//
                 IndividualAddress.of(1, 2, 3), //
                 IndividualAddress.of(7, 8, 127), //
                 IndividualAddress.of(15, 15, 255));

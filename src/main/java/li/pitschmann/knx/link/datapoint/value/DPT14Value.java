@@ -80,7 +80,7 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
      * @return 4-byte array
      */
     public static byte[] toByteArray(final double value) {
-        final int rawBits = Float.floatToIntBits(Double.valueOf(value).floatValue());
+        final var rawBits = Float.floatToIntBits(Double.valueOf(value).floatValue());
         return new byte[]{ //
                 (byte) ((rawBits >>> 24) & 0xFF), //
                 (byte) ((rawBits >>> 16) & 0xFF), //
@@ -113,7 +113,7 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT14Value) {
-            final DPT14Value other = (DPT14Value) obj;
+            final var other = (DPT14Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.floatingValue, other.floatingValue);
         }

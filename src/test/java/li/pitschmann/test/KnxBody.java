@@ -82,7 +82,7 @@ public final class KnxBody {
                         "WAIT=DISCONNECT_REQUEST," +
                         // send DisconnectResponseBody
                         KnxBody.DISCONNECT_RESPONSE;
-        public static final String MINIMAL_DISCONNECT_BY_ROUTER =
+        public static final String MINIMAL_DISCONNECT_BY_REMOTE =
                 // On first request send DescriptionResponseBody
                 KnxBody.DESCRIPTION_RESPONSE + "," +
                         // wait for next packet (will be: ConnectRequestBody)

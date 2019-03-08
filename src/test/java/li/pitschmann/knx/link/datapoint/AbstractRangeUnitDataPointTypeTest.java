@@ -53,11 +53,11 @@ public class AbstractRangeUnitDataPointTypeTest {
      */
     @Test
     public void testUnitAndDescriptions() {
-        final TestRangeUnitDPT dptWithoutUnit = new TestRangeUnitDPT(null);
+        final var dptWithoutUnit = new TestRangeUnitDPT(null);
         assertThat(dptWithoutUnit.getUnit()).isNull();
         assertThat(dptWithoutUnit.getDescription()).isEqualTo("description");
 
-        final TestRangeUnitDPT dptWithUnit = new TestRangeUnitDPT("unit");
+        final var dptWithUnit = new TestRangeUnitDPT("unit");
         assertThat(dptWithUnit.getUnit()).isEqualTo("unit");
         assertThat(dptWithUnit.getDescription()).isEqualTo("description (unit)");
     }

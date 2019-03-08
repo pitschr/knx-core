@@ -81,8 +81,8 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
      * @param localDate
      */
     private void assertDPT(final byte[] bValueArray, final LocalDate localDate) {
-        final DPT11 dpt = DPT_DATE;
-        final DPT11Value dptValue = dpt.toValue(localDate);
+        final var dpt = DPT_DATE;
+        final var dptValue = dpt.toValue(localDate);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

@@ -27,7 +27,6 @@ import li.pitschmann.utils.ByteFormatter;
  * @author PITSCHR
  */
 public final class DataPointTypeIncompatibleBytesException extends KnxException {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Creates an exception in case incompatible {@code bytes} array have been provided for the {@code dpt}.

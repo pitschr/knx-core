@@ -33,40 +33,40 @@ public interface Constants {
      */
     interface Timeouts {
         /**
-         * KNX client shall wait for 10 seconds for a DESCRIPTION_RESPONSE frame from KNX Net/IP router.
+         * KNX client shall wait for 10 seconds for a DESCRIPTION_RESPONSE frame from KNX Net/IP device.
          */
         long DESCRIPTION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         /**
-         * KNX client shall wait for 10 seconds for a CONNECT_RESPONSE frame from KNX Net/IP router.
+         * KNX client shall wait for 10 seconds for a CONNECT_RESPONSE frame from KNX Net/IP device.
          */
         long CONNECT_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         /**
-         * KNX client shall wait for 5 seconds for a DISCONNECT_RESPONSE frame from KNX Net/IP router.
+         * KNX client shall wait for 5 seconds for a DISCONNECT_RESPONSE frame from KNX Net/IP device.
          */
         long DISCONNECT_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
         /**
-         * KNX client shall wait for 1 seconds after sending a DISCONNECT_RESPONSE frame to KNX Net/IP router.
+         * KNX client shall wait for 1 seconds after sending a DISCONNECT_RESPONSE frame to KNX Net/IP device.
          */
         long DISCONNECT_RESPONSE_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
-         * KNX client shall wait for 10 seconds for a CONNECTIONSTATE_RESPONSE frame from KNX Net/IP router.
+         * KNX client shall wait for 10 seconds for a CONNECTIONSTATE_RESPONSE frame from KNX Net/IP device.
          */
         long CONNECTIONSTATE_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         // /**
-        //  * KNX client shall wait for 10 seconds for a DEVICE_CONFIGURATION_RESPONSE frame from KNX Net/IP router.
+        //  * KNX client shall wait for 10 seconds for a DEVICE_CONFIGURATION_RESPONSE frame from KNX Net/IP device.
         //  */
         // long DEVICE_CONFIGURATION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         // /**
-        //  * KNX client shall wait for 1 second for a control request frame to KNX Net/IP router.
+        //  * KNX client shall wait for 1 second for a control request frame to KNX Net/IP device.
         //  */
         // long CONTROL_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
          * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
-         * KNX Net/IP router.
+         * KNX Net/IP device.
          */
         long DATA_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
-         * If the KNX Net/IP router does not receive a heartbeat request within 120 seconds of the last correctly
+         * If the KNX Net/IP device does not receive a heartbeat request within 120 seconds of the last correctly
          * received message frame, the server shall terminate the connection by sending a DISCONNECT_REQUEST to the
          * client’s control endpoint.
          */

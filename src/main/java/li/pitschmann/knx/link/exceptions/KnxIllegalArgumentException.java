@@ -18,19 +18,30 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import java.util.Arrays;
+
 /**
- * {@link NullPointerException} for KNX
+ * Exception for KNX/IP specific illegal argument
  *
  * @author PITSCHR
  */
-public final class KnxNullPointerException extends KnxException {
+public final class KnxIllegalArgumentException extends KnxException {
+    /**
+     * Creates an exception for KNX/IP illegal argument with message
+     *
+     * @param message
+     */
+    public KnxIllegalArgumentException(final String message) {
+        super(message);
+    }
 
     /**
-     * {@link NullPointerException} for KNX specific array
+     * Creates an exception for KNX/IP illegal argument with message and objects for more diagnostic data
      *
-     * @param argumentName
+     * @param message
+     * @param obj
      */
-    public KnxNullPointerException(final String argumentName) {
-        super(String.format("Argument '%s' is null.", argumentName));
+    public KnxIllegalArgumentException(final String message, final Object... obj) {
+        super(String.format("KNX Illegal Argument: '%s'. Actual: %s", message, Arrays.toString(obj)));
     }
 }

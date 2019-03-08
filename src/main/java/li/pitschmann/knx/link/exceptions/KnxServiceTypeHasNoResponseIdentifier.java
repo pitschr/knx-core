@@ -27,8 +27,6 @@ import li.pitschmann.knx.link.header.ServiceType;
  * @see ServiceType#getResponseIdentifier()
  */
 public final class KnxServiceTypeHasNoResponseIdentifier extends KnxCommunicationException {
-    private static final long serialVersionUID = 1L;
-
     /**
      * Constructor for {@link KnxServiceTypeHasNoResponseIdentifier} in case when you are trying to get a response
      * identifier for given {@link ServiceType} which has no response identifier.

@@ -114,28 +114,28 @@ public final class ControlByte1 extends AbstractSingleRawData {
         // x... .... frame type
         // 0 = extended frame (9-263 octets)
         // 1 = standard frame (8-23 octets)
-        final byte frameAsByte = standardFrame ? (byte) (0x01 << 7) : 0x00;
+        final var frameAsByte = standardFrame ? (byte) (0x01 << 7) : 0x00;
         // ..x. .... repeat
         // 0 = repeat on medium if error
         // 1 = do not repeat
-        final byte repeatAsByte = isRepeatEnabled ? 0x00 : (byte) (0x01 << 5);
+        final var repeatAsByte = isRepeatEnabled ? 0x00 : (byte) (0x01 << 5);
         // ...x .... broadcast
         // 0 = system broadcast
         // 1 = broadcast
-        final byte broadcastTypeAsByte = (byte) (broadcastType.getCode() << 4);
+        final var broadcastTypeAsByte = (byte) (broadcastType.getCode() << 4);
         // .... xx.. priority
-        final byte priorityAsByte = (byte) (priority.getCodeAsByte() << 2);
+        final var priorityAsByte = (byte) (priority.getCodeAsByte() << 2);
         // .... ..x. acknowledge request flag
         // 0 = no ACK requested
         // 1 = ACK requested
-        final byte requestAckAsByte = acknowledgeRequested ? (byte) (0x01 << 1) : 0x00;
+        final var requestAckAsByte = acknowledgeRequested ? (byte) (0x01 << 1) : 0x00;
         // .... ...x confirmation flag
         // 0 = no error (confirm)
         // 1 = error (L-Data.Connection)
-        final byte confirmationFlagAsByte = confirmationFlag ? (byte) 0x01 : 0x00;
+        final var confirmationFlagAsByte = confirmationFlag ? (byte) 0x01 : 0x00;
 
         // create byte
-        final byte b = (byte) (frameAsByte | repeatAsByte | broadcastTypeAsByte | priorityAsByte | requestAckAsByte | confirmationFlagAsByte);
+        final var b = (byte) (frameAsByte | repeatAsByte | broadcastTypeAsByte | priorityAsByte | requestAckAsByte | confirmationFlagAsByte);
         return valueOf(b);
     }
 

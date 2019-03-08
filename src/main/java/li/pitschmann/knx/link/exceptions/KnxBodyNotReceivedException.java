@@ -27,8 +27,6 @@ import li.pitschmann.knx.link.body.Body;
  * @author PITSCHR
  */
 public final class KnxBodyNotReceivedException extends KnxCommunicationException {
-    private static final long serialVersionUID = 1L;
-
     public KnxBodyNotReceivedException(final Class<? extends Body> bodyClass) {
         super(String.format("Body with class '%s' not received.", bodyClass));
     }

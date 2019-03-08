@@ -71,7 +71,7 @@ public final class Networker {
      */
     public static InetAddress getByAddress(final String addressAsString) {
         // more strict implementation rather than InetAddress#getByName(String)
-        int[] blocks = StreamSupport.stream(Splitter.on('.').split(addressAsString).spliterator(), false).mapToInt(Integer::parseInt).toArray();
+        final var blocks = StreamSupport.stream(Splitter.on('.').split(addressAsString).spliterator(), false).mapToInt(Integer::parseInt).toArray();
         Preconditions.checkArgument(blocks.length == 4);
         return getByAddress(blocks[0], blocks[1], blocks[2], blocks[3]);
     }

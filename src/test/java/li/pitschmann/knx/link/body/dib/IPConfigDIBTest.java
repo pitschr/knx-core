@@ -47,7 +47,7 @@ public final class IPConfigDIBTest {
     @Test
     public void valueOf() {
         // valueOf
-        IPConfigDIB dib = IPConfigDIB.valueOf(BYTES);
+        final var dib = IPConfigDIB.valueOf(BYTES);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(16);

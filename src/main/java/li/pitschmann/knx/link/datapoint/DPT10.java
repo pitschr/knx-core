@@ -103,8 +103,8 @@ public final class DPT10 extends AbstractDataPointType<DPT10Value> {
 
     @Override
     protected DPT10Value parse(final String[] args) {
-        final DayOfWeek dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
-        final LocalTime time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
+        final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
+        final var time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
 
         return new DPT10Value(dayOfWeek, time);
     }

@@ -103,7 +103,7 @@ public final class DPT12Value extends AbstractDataPointValue<DPT12> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT12Value) {
-            final DPT12Value other = (DPT12Value) obj;
+            final var other = (DPT12Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.unsignedValue, other.unsignedValue);
         }

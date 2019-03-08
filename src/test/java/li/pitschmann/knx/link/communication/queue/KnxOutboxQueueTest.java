@@ -75,7 +75,7 @@ public class KnxOutboxQueueTest {
     }
 
     /**
-     * Test a successful outgoing packet from client to KNX Net/IP router via Channel
+     * Test a successful outgoing packet from client to KNX Net/IP device via Channel
      */
     @Test
     @DisplayName("Test successful outgoing KNX packet (through channel)")
@@ -102,7 +102,7 @@ public class KnxOutboxQueueTest {
         queue.action(selectionKeyMock);
 
         // verify if remote channel got those bytes
-        ByteBuffer bb = ByteBuffer.allocate(body.getRawData(true).length);
+        final var bb = ByteBuffer.allocate(body.getRawData(true).length);
         remoteChannel.read(bb);
         assertThat(bb.array()).containsExactly(body.getRawData(true));
     }
@@ -113,7 +113,7 @@ public class KnxOutboxQueueTest {
     @Test
     @DisplayName("Test for interest ops")
     public void testInterestOpsAndKeyValidity() {
-        var queue = new KnxOutboxQueue(null, null, null); // args are not relevant for this test
+        final var queue = new KnxOutboxQueue(null, null, null); // args are not relevant for this test
 
         // verify if interest op is WRITE only
         assertThat(queue.interestOps()).isEqualTo(SelectionKey.OP_WRITE);

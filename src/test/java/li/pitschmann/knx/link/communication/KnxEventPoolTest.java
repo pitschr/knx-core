@@ -62,15 +62,15 @@ public class KnxEventPoolTest {
      */
     @Test
     public void testAdd() {
-        var pool = new KnxEventPool();
-        var eventData = pool.descriptionEvent();
+        final var pool = new KnxEventPool();
+        final var eventData = pool.descriptionEvent();
 
         assertThat(eventData.getRequest()).isNull();
         assertThat(eventData.getRequestTime()).isNull();
 
-        final Instant instantBeforeAdd = Instant.now();
+        final var instantBeforeAdd = Instant.now();
         pool.add(KnxBody.DESCRIPTION_REQUEST_BODY);
-        final Instant instantAfterAdd = Instant.now();
+        final var instantAfterAdd = Instant.now();
 
         assertThat(eventData.getRequest()).isSameAs(KnxBody.DESCRIPTION_REQUEST_BODY);
         assertThat(eventData.getRequestTime()).isBetween(instantBeforeAdd, instantAfterAdd);
@@ -83,7 +83,7 @@ public class KnxEventPoolTest {
     public void testAddFailures() {
         assertThatThrownBy(() -> new KnxEventPool().add(null)).isInstanceOf(IllegalArgumentException.class);
 
-        final RequestBody requestBody = Mockito.mock(RequestBody.class);
+        final var requestBody = Mockito.mock(RequestBody.class);
         assertThatThrownBy(() -> new KnxEventPool().add(requestBody)).isInstanceOf(IllegalArgumentException.class);
     }
 }

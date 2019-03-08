@@ -66,7 +66,7 @@ public class TunnellingAckBodyTest {
     @Test
     public void validCases() {
         // create()
-        final TunnellingAckBody body = TunnellingAckBody.create(this.channelId, this.sequence, this.status);
+        final var body = TunnellingAckBody.create(this.channelId, this.sequence, this.status);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
         assertThat(body.getLength()).isEqualTo(4);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
@@ -74,7 +74,7 @@ public class TunnellingAckBodyTest {
         assertThat(body.getStatus()).isEqualTo(this.status);
 
         // compare raw data of create() with valueOf()
-        final TunnellingAckBody bodyByBytes = TunnellingAckBody.valueOf(new byte[]{0x04, 0x11, (byte) 0x81, 0x29});
+        final var bodyByBytes = TunnellingAckBody.valueOf(new byte[]{0x04, 0x11, (byte) 0x81, 0x29});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString

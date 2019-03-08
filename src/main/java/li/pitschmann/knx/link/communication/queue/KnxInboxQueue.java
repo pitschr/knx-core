@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
-import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.BodyFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.header.Header;
@@ -34,7 +33,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 
 /**
- * Inbox Queue for KNX receiving packets from KNX Net/IP router
+ * Inbox Queue for KNX receiving packets from KNX Net/IP device
  *
  * @author PITSCHR
  */
@@ -74,7 +73,7 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
         LOG.trace("{}: Method 'action(SelectionKey)' called.", getId());
 
         final byte[] receivedBytes;
-        final ByteChannel channel = (ByteChannel) key.channel();
+        final var channel = (ByteChannel) key.channel();
         try {
             LOG.trace("{}: Receiving packet.", getId());
             channel.read(buff);
@@ -86,13 +85,13 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
             buff.rewind();
         }
 
-        final Body body = BodyFactory.valueOf(receivedBytes);
+        final var body = BodyFactory.valueOf(receivedBytes);
 
         // verify the channel id
         if (this.getInternalClient().verifyChannelId(body)) {
             // channel id is correct
             if (LOG.isDebugEnabled()) {
-                final Header header = Header.valueOf(receivedBytes);
+                final var header = Header.valueOf(receivedBytes);
                 LOG.debug("RECEIVE\n" + //
                                 "----------------------------------------------------------------\n" + //
                                 "   Source: {}\n" + //

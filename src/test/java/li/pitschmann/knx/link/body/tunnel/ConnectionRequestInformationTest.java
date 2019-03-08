@@ -40,14 +40,14 @@ public final class ConnectionRequestInformationTest {
      */
     @Test
     public void validConnectionRequestInformationTunnel() {
-        final ConnectionRequestInformation criByCreate = ConnectionRequestInformation.create();
-        final ConnectionRequestInformation criByCreateRawData = ConnectionRequestInformation.valueOf(criByCreate.getRawData());
+        final var criByCreate = ConnectionRequestInformation.create();
+        final var criByCreateRawData = ConnectionRequestInformation.valueOf(criByCreate.getRawData());
         assertThat(criByCreateRawData.getLength()).isEqualTo(4);
         assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByCreateRawData.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
 
         // valueOf
-        final ConnectionRequestInformation criByValueOf = ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x04, 0x02, 0x00});
+        final var criByValueOf = ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x04, 0x02, 0x00});
         assertThat(criByValueOf.getLength()).isEqualTo(4);
         assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByValueOf.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
@@ -65,14 +65,14 @@ public final class ConnectionRequestInformationTest {
      */
     @Test
     public void validConnectionRequestInformationDeviceMgmt() {
-        final ConnectionRequestInformation criByCreate = ConnectionRequestInformation.create();
-        final ConnectionRequestInformation criByCreateRawData = ConnectionRequestInformation.valueOf(criByCreate.getRawData());
+        final var criByCreate = ConnectionRequestInformation.create();
+        final var criByCreateRawData = ConnectionRequestInformation.valueOf(criByCreate.getRawData());
         assertThat(criByCreateRawData.getLength()).isEqualTo(4);
         assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByCreateRawData.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
 
         // valueOf
-        final ConnectionRequestInformation criByValueOf = ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x04, 0x02, 0x00});
+        final var criByValueOf = ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x04, 0x02, 0x00});
         assertThat(criByValueOf.getLength()).isEqualTo(4);
         assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByValueOf.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);

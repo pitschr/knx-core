@@ -38,7 +38,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT5 dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
 
         assertThat(dpt.getId()).isEqualTo("5.010");
         assertThat(dpt.getDescription()).isEqualTo("Value 1-Octet Unsigned Count (pulses)");
@@ -47,7 +47,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT5 dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -74,7 +74,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
          * SCALING
          */
         // with calculation functions
-        DPT5 dptScaling = DPT5.SCALING;
+        final var dptScaling = DPT5.SCALING;
         assertThat(dptScaling.getCalcuationFunction()).isInstanceOf(Function.class);
         // value: 0%
         assertThat(dptScaling.toValue(0).getUnsignedValue()).isEqualTo(0d);
@@ -90,7 +90,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
         /*
          * ANGLE
          */
-        final DPT5 dptAngle = DPT5.ANGLE;
+        final var dptAngle = DPT5.ANGLE;
         // value: 0%
         assertThat(dptAngle.toValue(0).getUnsignedValue()).isEqualTo(0d);
         // value: ~90°
@@ -106,7 +106,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT5 dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
         this.assertDPT(dpt, (byte) 0x00, 0);
         this.assertDPT(dpt, (byte) 0x40, 64);
         this.assertDPT(dpt, (byte) 0x7f, 127);
@@ -133,7 +133,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
      * @param intValue
      */
     private void assertDPT(final DPT5 dpt, final byte byteValue, final int intValue) {
-        final DPT5Value dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.toValue(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);

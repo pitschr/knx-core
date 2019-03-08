@@ -40,7 +40,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT16 dpt = DPT16.ASCII;
+        final var dpt = DPT16.ASCII;
 
         assertThat(dpt.getId()).isEqualTo("16.000");
         assertThat(dpt.getDescription()).isEqualTo("ASCII Characters");
@@ -49,7 +49,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT16 dpt = DPT16.ASCII;
+        final var dpt = DPT16.ASCII;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[15])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -83,7 +83,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
         // --------
         // ASCII
         // --------
-        final DPT16 dptAscii = DPT16.ASCII;
+        final var dptAscii = DPT16.ASCII;
         // 0 characters
         this.assertDPT(dptAscii, new byte[0], "");
         // 5 characters
@@ -102,7 +102,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
         // --------
         // ISO_8859_1
         // --------
-        final DPT16 dpt = DPT16.ISO_8859_1;
+        final var dpt = DPT16.ISO_8859_1;
         // 0 characters
         this.assertDPT(dpt, new byte[0], "");
         // 5 characters
@@ -134,8 +134,8 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
      * @param strValue
      */
     private void assertDPT(final DPT16 dpt, final byte[] bValueArray, final String strValue) {
-        final DPT16Value dptValue = dpt.toValue(strValue);
-        final byte[] bValueArrayPadded = Bytes.padRight(bValueArray, (byte) 0x00, 14);
+        final var dptValue = dpt.toValue(strValue);
+        final var bValueArrayPadded = Bytes.padRight(bValueArray, (byte) 0x00, 14);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArrayPadded, dptValue);

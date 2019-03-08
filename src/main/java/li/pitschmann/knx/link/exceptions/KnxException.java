@@ -24,7 +24,6 @@ package li.pitschmann.knx.link.exceptions;
  * @author PITSCHR
  */
 public class KnxException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
 
     public KnxException(final String message) {
         super(message);

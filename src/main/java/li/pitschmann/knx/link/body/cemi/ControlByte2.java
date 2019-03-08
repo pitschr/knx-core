@@ -100,17 +100,17 @@ public final class ControlByte2 extends AbstractSingleRawData {
         // x... .... destination address type
         // 0 = individual address
         // 1 = group address
-        final byte addressTypeAsByte = (byte) (addressType.getCodeAsByte() << 7);
+        final var addressTypeAsByte = (byte) (addressType.getCodeAsByte() << 7);
         // .xxx .... routing / hop count
-        final byte hopCountAsByte = (byte) ((hopCount & 0x07) << 4);
+        final var hopCountAsByte = (byte) ((hopCount & 0x07) << 4);
         // .... xxxx extended frame format
         // .... 0000 for standard frame
         // .... 01xx for LTE frames
         // .... 1111 for Escape (reserved by KNX Assocation)
-        final byte frameFormatAsByte = (byte) (frameFormat & 0x0F);
+        final var frameFormatAsByte = (byte) (frameFormat & 0x0F);
 
         // create byte
-        final byte b = (byte) (addressTypeAsByte | hopCountAsByte | frameFormatAsByte);
+        final var b = (byte) (addressTypeAsByte | hopCountAsByte | frameFormatAsByte);
         return valueOf(b);
     }
 

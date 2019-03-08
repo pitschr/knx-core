@@ -64,7 +64,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
      * @return byte array
      */
     public static byte[] toByteArray(final boolean controlled, final boolean booleanValue) {
-        byte b = 0x00;
+        var b = (byte) 0x00;
         if (controlled) {
             b |= 0x02;
         }
@@ -109,7 +109,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT2Value) {
-            final DPT2Value other = (DPT2Value) obj;
+            final var other = (DPT2Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.controlled, other.controlled) //
                     && Objects.equals(this.booleanValue, other.booleanValue);

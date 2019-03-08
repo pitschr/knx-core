@@ -32,8 +32,7 @@ import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
 import org.junit.jupiter.api.DisplayName;
-
-import java.util.List;
+import org.junit.jupiter.api.RepeatedTest;
 
 import static org.assertj.core.api.Assertions.fail;
 
@@ -46,7 +45,7 @@ import static org.assertj.core.api.Assertions.fail;
 public class PerformanceKnxTest {
     /**
      * How many times the TUNNELLING_REQUEST and TUNNELLING_ACK packets should be
-     * sent between KNX Net/IP router and clients.
+     * sent between KNX Net/IP device and clients.
      * <p>
      * When doing a high number (100000 times) - then ensure that you set
      * the minimum log level at 'INFO'. Logging with DEBUG or lower will slow down
@@ -56,7 +55,7 @@ public class PerformanceKnxTest {
     private static final int TIMES = 100;
 
     /**
-     * Perform a happy path between {@link KnxClient} and the KNX Net/IP router with N packets.
+     * Perform a happy path between {@link KnxClient} and the KNX Net/IP device with N packets.
      */
     @KnxTest({
             // On first request send DescriptionResponseBody
@@ -87,7 +86,7 @@ public class PerformanceKnxTest {
                 .setting("interval.connectionstate", String.valueOf(Constants.Interval.CONNECTIONSTATE))
                 .build();
 
-        try (final KnxClient client = new DefaultKnxClient(config)) {
+        try (final var client = new DefaultKnxClient(config)) {
             // after N-times tunnelling acknowledge sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK, TIMES);
         } catch (final Throwable t) {
@@ -98,11 +97,11 @@ public class PerformanceKnxTest {
         mockServer.waitForCompletion();
 
         // assert packets
-        List<Class<? extends Body>> expectedClasses = Lists.newLinkedList();
+        final var expectedClasses = Lists.<Class<? extends Body>>newLinkedList();
         expectedClasses.add(DescriptionRequestBody.class);
         expectedClasses.add(ConnectRequestBody.class);
         expectedClasses.add(ConnectionStateRequestBody.class);
-        for (int i = 0; i < TIMES; i++) {
+        for (var i = 0; i < TIMES; i++) {
             expectedClasses.add(TunnellingAckBody.class);
         }
         expectedClasses.add(DisconnectRequestBody.class);

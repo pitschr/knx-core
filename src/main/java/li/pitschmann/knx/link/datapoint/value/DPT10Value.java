@@ -88,9 +88,9 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
     private static @Nullable
     DayOfWeek toDayOfWeek(final byte[] bytes) {
         // day of week
-        int dayNr = (bytes[0] & 0xE0) >>> 5;
+        final var dayNr = (bytes[0] & 0xE0) >>> 5;
 
-        DayOfWeek dayOfWeek = dayNr == 0 ? null : DayOfWeek.of(dayNr);
+        final var dayOfWeek = dayNr == 0 ? null : DayOfWeek.of(dayNr);
         if (LOG.isDebugEnabled()) {
             LOG.debug("DayOfWeek of '{}': {}", ByteFormatter.formatHex(bytes), dayOfWeek);
         }
@@ -105,15 +105,15 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
      */
     private static LocalTime toLocalTime(final byte[] bytes) {
         // hour
-        int hour = bytes[0] & 0x1F;
+        final var hour = bytes[0] & 0x1F;
 
         // minute
-        int minute = Bytes.toUnsignedInt(bytes[1]);
+        final var minute = Bytes.toUnsignedInt(bytes[1]);
 
         // second
-        int second = Bytes.toUnsignedInt(bytes[2]);
+        final var second = Bytes.toUnsignedInt(bytes[2]);
 
-        final LocalTime time = LocalTime.of(hour, minute, second);
+        final var time = LocalTime.of(hour, minute, second);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Time of '{}': {}", ByteFormatter.formatHex(bytes), time);
         }
@@ -129,16 +129,16 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
      */
     public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
         // byte 0: day-of-week + hour
-        byte hourAsByte = (byte) time.getHour();
-        byte dayOfWeekAsByte = dayOfWeek == null ? 0x00 : (byte) (dayOfWeek.getValue() << 5);
+        final var hourAsByte = (byte) time.getHour();
+        final var dayOfWeekAsByte = dayOfWeek == null ? 0x00 : (byte) (dayOfWeek.getValue() << 5);
 
         // byte 1: minute
-        byte minuteAsByte = (byte) time.getMinute();
+        final var minuteAsByte = (byte) time.getMinute();
 
         // byte 2: second
-        byte secondAsByte = (byte) time.getSecond();
+        final var secondAsByte = (byte) time.getSecond();
 
-        byte[] bytes = new byte[]{(byte) (dayOfWeekAsByte | hourAsByte), minuteAsByte, secondAsByte};
+        final var bytes = new byte[]{(byte) (dayOfWeekAsByte | hourAsByte), minuteAsByte, secondAsByte};
         if (LOG.isDebugEnabled()) {
             LOG.debug("Bytes of [DayOfWeek={}, LocalTime={}]: {}", dayOfWeek, time, ByteFormatter.formatHexAsString(bytes));
         }
@@ -176,7 +176,7 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT10Value) {
-            final DPT10Value other = (DPT10Value) obj;
+            final var other = (DPT10Value) obj;
             return Objects.equals(this.dayOfWeek, other.dayOfWeek) //
                     && Objects.equals(this.time, other.time);
         }

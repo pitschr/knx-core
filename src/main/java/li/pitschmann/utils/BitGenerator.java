@@ -34,8 +34,8 @@ public final class BitGenerator {
      * @return array of {@code true}
      */
     public static boolean[] trueOnly(final int bits) {
-        boolean[] trueOnly = new boolean[bits];
-        for (int i = 0; i < bits; i++) {
+        final var trueOnly = new boolean[bits];
+        for (var i = 0; i < bits; i++) {
             trueOnly[i] = true;
         }
         return trueOnly;
@@ -82,13 +82,13 @@ public final class BitGenerator {
      * @return
      */
     public static boolean[][] matrix(final int bitsLength, final boolean skipOnlyFalse, final boolean skipOnlyTrue) {
-        int bitsCombo = 1 << bitsLength;
+        final var bitsCombo = 1 << bitsLength;
 
         // create full matrix
-        boolean[][] matrix = new boolean[bitsCombo][bitsLength];
-        for (int i = 0; i < bitsCombo; i++) {
-            boolean[] tmp = new boolean[bitsLength];
-            for (int j = 0; j < bitsLength; j++) {
+        final var matrix = new boolean[bitsCombo][bitsLength];
+        for (var i = 0; i < bitsCombo; i++) {
+            final var tmp = new boolean[bitsLength];
+            for (var j = 0; j < bitsLength; j++) {
                 tmp[bitsLength - 1 - j] = (i & (1 << j)) != 0;
             }
             matrix[i] = tmp;
@@ -96,9 +96,9 @@ public final class BitGenerator {
 
         // remove only false / only true if requested
         if (skipOnlyFalse || skipOnlyTrue) {
-            int startPos = skipOnlyFalse ? 1 : 0;
-            int endPos = bitsCombo - startPos - (skipOnlyTrue ? 1 : 0);
-            boolean[][] newMatrix = new boolean[endPos][bitsLength];
+            final var startPos = skipOnlyFalse ? 1 : 0;
+            final var endPos = bitsCombo - startPos - (skipOnlyTrue ? 1 : 0);
+            final var newMatrix = new boolean[endPos][bitsLength];
             System.arraycopy(matrix, startPos, newMatrix, 0, endPos);
             return newMatrix;
         } else {

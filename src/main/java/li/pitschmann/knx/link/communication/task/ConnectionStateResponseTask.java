@@ -28,7 +28,7 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Listens to {@link ConnectionStateResponseTask} received by KNX Net/IP router about the health.
+ * Listens to {@link ConnectionStateResponseTask} received by KNX Net/IP device about the health.
  *
  * @author PITSCHR
  */
@@ -44,7 +44,7 @@ public final class ConnectionStateResponseTask implements Subscriber<Body> {
     public void onNext(final Body body) {
         // we are interested in connection state response only
         if (body instanceof ConnectionStateResponseBody) {
-            final ConnectionStateResponseBody responseBody = (ConnectionStateResponseBody) body;
+            final var responseBody = (ConnectionStateResponseBody) body;
             LOG.debug("Connection State Response received: {}", responseBody);
             this.client.getEventPool().connectionStateEvent().setResponse(responseBody);
             LOG.trace("Connection State Response saved.");

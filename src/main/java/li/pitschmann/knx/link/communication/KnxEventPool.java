@@ -56,7 +56,7 @@ public final class KnxEventPool {
     public KnxEventPool() {
         // initialize tunnelling map and fill with default KnxEventData entries (we will need it anyway)
         tunnellingMap = Maps.newHashMapWithExpectedSize(DEFAULT_TUNNELLING_REQUEST_CAPACITY);
-        for (int i = 0; i < DEFAULT_TUNNELLING_REQUEST_CAPACITY; i++) {
+        for (var i = 0; i < DEFAULT_TUNNELLING_REQUEST_CAPACITY; i++) {
             tunnellingMap.put(i, new KnxEventData<>());
         }
     }

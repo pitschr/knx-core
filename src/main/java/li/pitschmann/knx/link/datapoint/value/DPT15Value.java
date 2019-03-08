@@ -148,7 +148,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT15Value) {
-            final DPT15Value other = (DPT15Value) obj;
+            final var other = (DPT15Value) obj;
             return Arrays.equals(this.accessIdentificationData, other.accessIdentificationData) //
                     && Objects.equals(this.flags, other.flags);
         }
@@ -234,7 +234,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
          */
         public byte getAsByte() {
             // byte with 4 bit flags and 4 bit index
-            byte b = (byte) this.index;
+            var b = (byte) this.index;
             if (this.error) {
                 b |= 0x80;
             }
@@ -268,7 +268,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
             if (obj == this) {
                 return true;
             } else if (obj instanceof Flags) {
-                final Flags other = (Flags) obj;
+                final var other = (Flags) obj;
                 return Objects.equals(this.error, other.error) //
                         && Objects.equals(this.permissionAccepted, other.permissionAccepted) //
                         && Objects.equals(this.readDirectionRightToLeft, other.readDirectionRightToLeft) //

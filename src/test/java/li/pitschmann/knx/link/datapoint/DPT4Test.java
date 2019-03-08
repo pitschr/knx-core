@@ -38,7 +38,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT4 dpt = DPT4.ASCII;
+        final var dpt = DPT4.ASCII;
 
         assertThat(dpt.getId()).isEqualTo("4.001");
         assertThat(dpt.getDescription()).isEqualTo("ASCII Character");
@@ -47,7 +47,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT4 dpt = DPT4.ASCII;
+        final var dpt = DPT4.ASCII;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -76,7 +76,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         /*
          * ASCII
          */
-        final DPT4 dptAscii = DPT4.ASCII;
+        final var dptAscii = DPT4.ASCII;
         // character: NULL
         this.assertDPT(dptAscii, (byte) 0x00, '\u0000');
         // character: DEL
@@ -94,7 +94,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         /*
          * ISO_8859_1
          */
-        final DPT4 dptIso = DPT4.ISO_8859_1;
+        final var dptIso = DPT4.ISO_8859_1;
         // character: NULL
         this.assertDPT(dptIso, (byte) 0x00, '\u0000');
         // character: DEL
@@ -128,7 +128,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
      * @param charValue
      */
     private void assertDPT(final DPT4 dpt, final byte byteValue, final char charValue) {
-        final DPT4Value dptValue = dpt.toValue(charValue);
+        final var dptValue = dpt.toValue(charValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);

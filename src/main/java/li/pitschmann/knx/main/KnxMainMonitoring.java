@@ -21,7 +21,6 @@ package li.pitschmann.knx.main;
 import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
-import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Demo class how to monitor the KNX traffic
  * <ul>
- * <li>1st argument is the address of KNX Net/IP router; default value "192.168.1.16"</li>
+ * <li>1st argument is the address of KNX Net/IP device; default value "192.168.1.16"</li>
  * <li>2nd argument is the monitoring time in seconds; default value is "forever" ({@link Long#MAX_VALUE})</li>
  * <li>Subsequent arguments are ignored.</li>
  * </ul>
@@ -43,38 +42,38 @@ import java.util.concurrent.TimeUnit;
 public class KnxMainMonitoring extends AbstractKnxMain {
     private static final Logger LOG = LoggerFactory.getLogger(KnxMainMonitoring.class);
     private static final Logger ROOT_LOGGER = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    private static final InetAddress DEFAULT_ROUTER_IP = Networker.getByAddress("192.168.1.16");
+    private static final InetAddress DEFAULT_IP_ADDRESS = Networker.getByAddress("192.168.1.16");
 
     public static void main(final String[] args) {
         // set level to Level#ALL for ROOT logger implementation
-        final boolean logAll = getParameterValue(args, "-l", false, Boolean::parseBoolean);
+        final var logAll = getParameterValue(args, "-l", false, Boolean::parseBoolean);
         if (logAll) {
             ((ch.qos.logback.classic.Logger) ROOT_LOGGER).setLevel(ch.qos.logback.classic.Level.ALL);
         }
         LOG.debug("Log all: {}", logAll);
 
-        // Get Router Address
-        final InetAddress routerAddress = getParameterValue(args, "-r", DEFAULT_ROUTER_IP, Networker::getByAddress);
-        LOG.debug("Router Address: {}", routerAddress);
+        // Get KNX Net/IP Address
+        final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Networker::getByAddress);
+        LOG.debug("KNX Net/IP Address: {}", ipAddress);
 
         // Get Monitor Time in Seconds
-        final long monitorTime = getParameterValue(args, "-t", Long.MAX_VALUE, Long::parseLong);
+        final var monitorTime = getParameterValue(args, "-t", Long.MAX_VALUE, Long::parseLong);
         LOG.debug("Monitor Time: {}s", monitorTime);
 
         // start KNX communication
         LOG.trace("START");
 
-        final Configuration config = Configuration.create(routerAddress)//
+        final var config = Configuration.create(ipAddress)//
                 .setting("timeout.request.connectionstate", "10000") //
                 .setting("interval.connectionstate", "30000") //
                 .setting("timeout.alive.connectionstate", "60000") //
                 .build();
 
-        try (final KnxClient client = new DefaultKnxClient(config)) {
+        try (final var client = new DefaultKnxClient(config)) {
             LOG.debug("========================================================================");
             LOG.debug("MONITORING for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
             LOG.debug("========================================================================");
-            Stopwatch sw = Stopwatch.createStarted();
+            final var sw = Stopwatch.createStarted();
             while (!client.isClosed() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
                 Sleeper.seconds(1);
             }

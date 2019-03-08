@@ -114,8 +114,8 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
 
     @Override
     protected DPT3Value parse(final String[] args) {
-        boolean controlled = this.findByString(args, "controlled");
-        int intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::parseInt);
+        final var controlled = this.findByString(args, "controlled");
+        final var intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::parseInt);
 
         return new DPT3Value(this, controlled, intValue);
     }

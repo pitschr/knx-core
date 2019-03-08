@@ -46,8 +46,8 @@ public final class HPAITest {
     static {
         // mock DatagramChannel
         CHANNEL_MOCK = Mockito.mock(DatagramChannel.class);
-        final DatagramSocket socketMock = Mockito.mock(DatagramSocket.class);
-        final InetAddress inetAddressMock = Mockito.mock(InetAddress.class);
+        final var socketMock = Mockito.mock(DatagramSocket.class);
+        final var inetAddressMock = Mockito.mock(InetAddress.class);
         Mockito.when(CHANNEL_MOCK.socket()).thenReturn(socketMock);
         Mockito.when(socketMock.getLocalAddress()).thenReturn(inetAddressMock);
         Mockito.when(socketMock.getLocalPort()).thenReturn(12345);
@@ -59,8 +59,8 @@ public final class HPAITest {
      */
     @Test
     public void useDefault() {
-        final HPAI hpaiDefault = HPAI.useDefault();
-        final HPAI hpaiCreateBy = HPAI.of(HostProtocol.IPV4_UDP, UNBOUND, 0);
+        final var hpaiDefault = HPAI.useDefault();
+        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_UDP, UNBOUND, 0);
 
         // assert
         assertThat(hpaiDefault.getRawData()).containsExactly(hpaiCreateBy.getRawData());
@@ -71,8 +71,8 @@ public final class HPAITest {
      */
     @Test
     public void createByDatagramChannel() {
-        final HPAI hpaiCreateByChannel = HPAI.of(HostProtocol.IPV4_TCP, CHANNEL_MOCK);
-        final HPAI hpaiCreateBy = HPAI.of(HostProtocol.IPV4_TCP, LOCALHOST, 12345);
+        final var hpaiCreateByChannel = HPAI.of(HostProtocol.IPV4_TCP, CHANNEL_MOCK);
+        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_TCP, LOCALHOST, 12345);
 
         // assert
         assertThat(hpaiCreateByChannel.getRawData()).containsExactly(hpaiCreateBy.getRawData());
@@ -84,15 +84,15 @@ public final class HPAITest {
     @Test
     public void emptyAdditionalInfo() {
         // create
-        final HPAI hpaiByCreate = HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 80);
-        final HPAI hpaiByCreateRawData = HPAI.of(hpaiByCreate.getRawData());
+        final var hpaiByCreate = HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 80);
+        final var hpaiByCreateRawData = HPAI.of(hpaiByCreate.getRawData());
         assertThat(hpaiByCreateRawData.getLength()).isEqualTo(HPAI.KNXNET_HPAI_LENGTH);
         assertThat(hpaiByCreateRawData.getProtocol()).isEqualTo(HostProtocol.IPV4_UDP);
         assertThat(hpaiByCreateRawData.getAddress().getAddress()).containsExactly(0x7f, 0x00, 0x00, 0x01);
         assertThat(hpaiByCreateRawData.getPort()).isEqualTo(80);
 
         // valueOf
-        final HPAI hpaiByValueOf = HPAI.of(new byte[]{0x08, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x00, 0x50});
+        final var hpaiByValueOf = HPAI.of(new byte[]{0x08, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x00, 0x50});
         assertThat(hpaiByValueOf.getLength()).isEqualTo(HPAI.KNXNET_HPAI_LENGTH);
         assertThat(hpaiByValueOf.getProtocol()).isEqualTo(HostProtocol.IPV4_UDP);
         assertThat(hpaiByValueOf.getAddress().getAddress()).containsExactly(0x7f, 0x00, 0x00, 0x01);
@@ -141,8 +141,8 @@ public final class HPAITest {
      */
     @Test
     public void testEqualsAndHashcode() {
-        HPAI hpaiA = HPAI.of(new byte[]{0x08, 0x02, 0x03, 0x04, 0x05, 0x06, 0x00, 0x07});
-        HPAI hpaiB = HPAI.of(HostProtocol.IPV4_TCP, Networker.getByAddress(3, 4, 5, 6), 7);
+        final var hpaiA = HPAI.of(new byte[]{0x08, 0x02, 0x03, 0x04, 0x05, 0x06, 0x00, 0x07});
+        final var hpaiB = HPAI.of(HostProtocol.IPV4_TCP, Networker.getByAddress(3, 4, 5, 6), 7);
 
         // equals
         assertThat(hpaiA).isEqualTo(hpaiA);

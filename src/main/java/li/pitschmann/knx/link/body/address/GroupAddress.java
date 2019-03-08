@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.body.address;
 
 import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
 
@@ -54,7 +55,9 @@ public final class GroupAddress extends KnxAddress {
     }
 
     /**
-     * Returns an instance of {@link GroupAddress} based on free-level topology
+     * Returns an instance of {@link GroupAddress} based on free-level topology.
+     * <p/>
+     * The range must be between 1 and 65535
      *
      * @param address
      * @return immutable {@link GroupAddress}
@@ -65,9 +68,9 @@ public final class GroupAddress extends KnxAddress {
         }
 
         // byte 0: xxxx xxxx
-        final byte byte0 = (byte) (address >>> 8);
+        final var byte0 = (byte) (address >>> 8);
         // byte 1: xxxx xxxx
-        final byte byte1 = (byte) (address & 0xFF);
+        final var byte1 = (byte) (address & 0xFF);
 
         // create bytes
         return of(new byte[]{byte0, byte1});
@@ -75,6 +78,8 @@ public final class GroupAddress extends KnxAddress {
 
     /**
      * Returns an instance of {@link GroupAddress} based on 2-level topology
+     * <p/>
+     * The range must be between 0/1 and 31/2047
      *
      * @param main
      * @param sub
@@ -85,22 +90,26 @@ public final class GroupAddress extends KnxAddress {
             throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
         } else if (sub < 0 || sub > 0x7FF) {
             throw new KnxNumberOutOfRangeException("sub", 0, 0x7FF, sub);
+        } else if (main == 0 && sub == 0) {
+            throw new KnxIllegalArgumentException("Group Address 0/0 is not allowed.");
         }
 
         // byte 0: xxxx x...
-        final byte mainAsByte = (byte) ((main & 0x1F) << 3);
+        final var mainAsByte = (byte) ((main & 0x1F) << 3);
         // byte 0: .... .xxx
-        final byte middleAsByte = (byte) ((sub & 0x0700) >>> 8);
+        final var middleAsByte = (byte) ((sub & 0x0700) >>> 8);
         // byte 1: xxxx xxxx
-        final byte subAsByte = (byte) (sub & 0x00FF);
+        final var subAsByte = (byte) (sub & 0x00FF);
 
         // create bytes
-        final byte[] bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
+        final var bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
         return of(bytes);
     }
 
     /**
      * Returns an instance of {@link GroupAddress} based on 3-level topology
+     * <p/>
+     * The range must be between 0/0/1 and 31/7/255
      *
      * @param main
      * @param middle
@@ -114,17 +123,19 @@ public final class GroupAddress extends KnxAddress {
             throw new KnxNumberOutOfRangeException("middle", 0, 0x07, middle);
         } else if (sub < 0 || sub > 0xFF) {
             throw new KnxNumberOutOfRangeException("sub", 0, 0xFF, sub);
+        } else if (main == 0 && middle == 0 && sub == 0) {
+            throw new KnxIllegalArgumentException("Group Address 0/0/0 is not allowed.");
         }
 
         // byte 0: xxxx x...
-        final byte mainAsByte = (byte) ((main & 0x1F) << 3);
+        final var mainAsByte = (byte) ((main & 0x1F) << 3);
         // byte 0: .... .xxx
-        final byte middleAsByte = (byte) (middle & 0x07);
+        final var middleAsByte = (byte) (middle & 0x07);
         // byte 1: xxxx xxxx
-        final byte subAsByte = (byte) sub;
+        final var subAsByte = (byte) sub;
 
         // create bytes
-        final byte[] bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
+        final var bytes = new byte[]{(byte) (mainAsByte | middleAsByte), subAsByte};
         return of(bytes);
     }
 
@@ -134,9 +145,9 @@ public final class GroupAddress extends KnxAddress {
     }
 
     /**
-     * Returns Group pAddress in 3-Level
+     * Returns Group Address in Free-Level
      *
-     * @return group address in 3-level
+     * @return group address in Free-level
      */
     @Override
     public String getAddress() {
@@ -195,7 +206,7 @@ public final class GroupAddress extends KnxAddress {
         if (obj == this) {
             return true;
         } else if (obj instanceof GroupAddress) {
-            final GroupAddress other = (GroupAddress) obj;
+            final var other = (GroupAddress) obj;
             return Objects.equals(this.address[0], other.address[0]) && Objects.equals(this.address[1], other.address[1]);
         }
         return false;

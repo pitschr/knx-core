@@ -90,7 +90,7 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT1Value) {
-            final DPT1Value other = (DPT1Value) obj;
+            final var other = (DPT1Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.booleanValue, other.booleanValue);
         }

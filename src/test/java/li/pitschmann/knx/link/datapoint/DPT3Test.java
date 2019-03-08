@@ -36,7 +36,7 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT3 dpt = DPT3.DPT_CONTROL_BLINDS;
+        final var dpt = DPT3.DPT_CONTROL_BLINDS;
 
         assertThat(dpt.getId()).isEqualTo("3.008");
         assertThat(dpt.getDescription()).isEqualTo("Control Blinds");
@@ -45,7 +45,7 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT3 dpt = DPT3.DPT_CONTROL_BLINDS;
+        final var dpt = DPT3.DPT_CONTROL_BLINDS;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[]{0x10})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -54,10 +54,10 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
         assertThatThrownBy(() -> dpt.toValue(new String[]{"false", "true", "false"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        for (int i = 0; i < 0x10; i++) {
+        for (var i = 0; i < 0x10; i++) {
             assertThat(dpt.toValue(new byte[]{(byte) i})).isInstanceOf(DPT3Value.class);
         }
-        for (int i = 0; i < 7; i++) {
+        for (var i = 0; i < 7; i++) {
             assertThat(dpt.toValue(new String[]{String.valueOf(i)})).isInstanceOf(DPT3Value.class);
             assertThat(dpt.toValue(new String[]{"controlled", String.valueOf(i)})).isInstanceOf(DPT3Value.class);
         }
@@ -109,7 +109,7 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
      */
     private void assertDPT(final DPT3 dpt, final byte byteValue, final boolean controlled, final int stepCode, final StepInterval stepInterval,
                            final String[] strValue) {
-        final DPT3Value dptValue = dpt.toValue(controlled, stepCode);
+        final var dptValue = dpt.toValue(controlled, stepCode);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);

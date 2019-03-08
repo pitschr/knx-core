@@ -109,11 +109,11 @@ public final class Header extends AbstractMultiRawData {
             throw new KnxNumberOutOfRangeException("totalLength", KNXNET_HEADER_LENGTH, 0xFFFF, totalLength);
         }
 
-        final byte[] serviceTypeIdentifierAsBytes = serviceType.getCodeAsBytes();
-        final byte[] lengthAsBytes = new byte[]{(byte) (totalLength >>> 8), (byte) totalLength};
+        final var serviceTypeIdentifierAsBytes = serviceType.getCodeAsBytes();
+        final var lengthAsBytes = new byte[]{(byte) (totalLength >>> 8), (byte) totalLength};
 
         // create bytes
-        final byte[] bytes = new byte[]{Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, serviceTypeIdentifierAsBytes[0],
+        final var bytes = new byte[]{Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, serviceTypeIdentifierAsBytes[0],
                 serviceTypeIdentifierAsBytes[1], lengthAsBytes[0], lengthAsBytes[1]};
 
         return valueOf(bytes);

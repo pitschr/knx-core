@@ -180,7 +180,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      */
     private V tryParseAsHexString(final String[] args) {
         Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string starting with '0x' expected.");
-        final String joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
+        final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
         return this.toValue(Bytes.toByteArray(joinedString));
     }
 
@@ -193,9 +193,9 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      */
     protected final @Nullable
     <E extends Enum<E>> E findByEnumConstant(final String[] args, final Class<E> enumClass) {
-        for (int i = 0; i < args.length; i++) {
-            final String arg = args[i].toUpperCase();
-            for (final E enumConstant : enumClass.getEnumConstants()) {
+        for (var i = 0; i < args.length; i++) {
+            final var arg = args[i].toUpperCase();
+            for (final var enumConstant : enumClass.getEnumConstants()) {
                 if (enumConstant.name().equals(arg)) {
                     return enumConstant;
                 }
@@ -228,7 +228,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      */
     protected final @Nullable
     <T> T findByPattern(final String[] args, final Pattern pattern, final Function<String, T> function, final T defaultValue) {
-        for (int i = 0; i < args.length; i++) {
+        for (var i = 0; i < args.length; i++) {
             if (pattern.matcher(args[i]).matches()) {
                 return function.apply(args[i]);
             }
@@ -245,7 +245,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return {@code true} if found, otherwise {@code false}
      */
     protected final boolean findByString(final String[] args, final String searchString, final String... moreSearchStrings) {
-        for (int i = 0; i < args.length; i++) {
+        for (var i = 0; i < args.length; i++) {
             if (searchString.equalsIgnoreCase(args[i])) {
                 return true;
             }

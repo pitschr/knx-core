@@ -105,7 +105,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT7Value) {
-            final DPT7Value other = (DPT7Value) obj;
+            final var other = (DPT7Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) && Objects.equals(this.rawUnsignedValue, other.rawUnsignedValue);
         }
         return false;

@@ -30,7 +30,7 @@ public interface ExtensionPlugin extends Plugin {
      * Notifies the plug-in when KNX communication starts.
      * <p>
      * The start of KNX communication is done when description & connect frames have been exchanged between this client
-     * and the KNX Net/IP router.
+     * and the KNX Net/IP device.
      */
     void onStart();
 

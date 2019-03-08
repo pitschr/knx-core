@@ -59,11 +59,11 @@ public final class DPT16ValueTest {
     }
 
     private void assertValue(final DPT16 dpt, final byte[] textAsBytes, final String text) {
-        DPT16Value dptValue = new DPT16Value(dpt, text);
-        DPT16Value dptValueByByte = new DPT16Value(dpt, textAsBytes);
+        final var dptValue = new DPT16Value(dpt, text);
+        final var dptValueByByte = new DPT16Value(dpt, textAsBytes);
 
         // fills out the right padding with zero bytes (0x00)
-        byte[] bytesWith14Length = Bytes.padRight(textAsBytes, (byte) 0x00, 14);
+        final var bytesWith14Length = Bytes.padRight(textAsBytes, (byte) 0x00, 14);
 
         // instance methods
         assertThat(dptValue.getText()).isEqualTo(text);
@@ -78,7 +78,7 @@ public final class DPT16ValueTest {
         assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
 
         // not equals
-        DPT16 anotherDPT = dpt == DPT16.ASCII ? DPT16.ISO_8859_1 : DPT16.ASCII;
+        final var anotherDPT = dpt == DPT16.ASCII ? DPT16.ISO_8859_1 : DPT16.ASCII;
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
         if (dpt == DPT16.ISO_8859_1) {
@@ -89,7 +89,7 @@ public final class DPT16ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT16Value(dpt, text.substring(1)));
 
         // toString
-        String toString = String.format("DPT16Value{dpt=%s, text=%s, byteArray=%s}", dpt, text, ByteFormatter.formatHexAsString(bytesWith14Length));
+        final var toString = String.format("DPT16Value{dpt=%s, text=%s, byteArray=%s}", dpt, text, ByteFormatter.formatHexAsString(bytesWith14Length));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
     }
@@ -99,13 +99,13 @@ public final class DPT16ValueTest {
      */
     @Test
     public void testWithNullAndEmpty() {
-        DPT16 dpt = DPT16.ASCII;
-        byte[] emptyBytes = new byte[14];
+        final var dpt = DPT16.ASCII;
+        final var emptyBytes = new byte[14];
 
-        DPT16Value dptValueNull = new DPT16Value(dpt, (String) null);
-        DPT16Value dptValueNullByByte = new DPT16Value(dpt, (byte[]) null);
-        DPT16Value dptValueEmpty = new DPT16Value(dpt, "");
-        DPT16Value dptValueEmptyByByte = new DPT16Value(dpt, new byte[0]);
+        final var dptValueNull = new DPT16Value(dpt, (String) null);
+        final var dptValueNullByByte = new DPT16Value(dpt, (byte[]) null);
+        final var dptValueEmpty = new DPT16Value(dpt, "");
+        final var dptValueEmptyByByte = new DPT16Value(dpt, new byte[0]);
 
         // instance methods
         assertThat(dptValueNull.getText()).isEmpty();
@@ -124,7 +124,7 @@ public final class DPT16ValueTest {
         assertThat(dptValueEmptyByByte).hasSameHashCodeAs(dptValueNull);
 
         // not equals
-        DPT16 anotherDPT = dpt == DPT16.ASCII ? DPT16.ISO_8859_1 : DPT16.ASCII;
+        final var anotherDPT = dpt == DPT16.ASCII ? DPT16.ISO_8859_1 : DPT16.ASCII;
         assertThat(dptValueNull).isNotEqualTo(null);
         assertThat(dptValueNull).isNotEqualTo(new Object());
         assertThat(dptValueNull).isNotEqualTo(new DPT16Value(anotherDPT, (byte[]) null));
@@ -132,7 +132,7 @@ public final class DPT16ValueTest {
         assertThat(dptValueNull).isNotEqualTo(new DPT16Value(dpt, " "));
 
         // toString
-        String toString = String.format("DPT16Value{dpt=%s, text=, byteArray=0x00 00 00 00 00 00 00 00 00 00 00 00 00 00}", dpt);
+        final var toString = String.format("DPT16Value{dpt=%s, text=, byteArray=0x00 00 00 00 00 00 00 00 00 00 00 00 00 00}", dpt);
         assertThat(dptValueNull).hasToString(toString);
         assertThat(dptValueNullByByte).hasToString(toString);
         assertThat(dptValueEmpty).hasToString(toString);

@@ -33,7 +33,7 @@ import java.util.Arrays;
  * Body for Connect Request
  * <p>
  * The {@link ServiceType#CONNECT_REQUEST} frame shall be sent by the KNX client to the control endpoint of the
- * KNX Net/IP router.
+ * KNX Net/IP device.
  * <p>
  * Next follows the CRI, a variable data structure that shall include all additional information that is specific to the
  * requested connection type (and to the underlying host protocol).
@@ -102,12 +102,12 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
             throw new KnxNullPointerException("cri");
         }
 
-        final byte[] controlEndpointAsBytes = controlEndpoint.getRawData();
-        final byte[] dataEndpointAsBytes = dataEndpoint.getRawData();
-        final byte[] criAsBytes = cri.getRawData();
+        final var controlEndpointAsBytes = controlEndpoint.getRawData();
+        final var dataEndpointAsBytes = dataEndpoint.getRawData();
+        final var criAsBytes = cri.getRawData();
 
         // create bytes
-        final byte[] bytes = new byte[controlEndpointAsBytes.length + dataEndpointAsBytes.length + criAsBytes.length];
+        final var bytes = new byte[controlEndpointAsBytes.length + dataEndpointAsBytes.length + criAsBytes.length];
         System.arraycopy(controlEndpointAsBytes, 0, bytes, 0, controlEndpointAsBytes.length);
         System.arraycopy(dataEndpointAsBytes, 0, bytes, 8, dataEndpointAsBytes.length);
         System.arraycopy(criAsBytes, 0, bytes, 16, criAsBytes.length);

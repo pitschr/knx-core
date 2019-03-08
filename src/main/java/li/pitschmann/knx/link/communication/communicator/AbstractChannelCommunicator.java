@@ -26,7 +26,6 @@ import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.TunnellingRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.KnxEventData;
-import li.pitschmann.knx.link.communication.KnxEventPool;
 import li.pitschmann.knx.link.communication.queue.KnxInboxQueue;
 import li.pitschmann.knx.link.communication.queue.KnxOutboxQueue;
 import li.pitschmann.utils.Closeables;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.nio.channels.SelectableChannel;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -57,6 +57,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     private final String id;
     private final InternalKnxClient internalClient;
     private final AtomicBoolean closed = new AtomicBoolean();
+    private final ExecutorService queueExecutor;
     private final ExecutorService communicationExecutor;
 
     private final SelectableChannel channel;
@@ -74,6 +75,13 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         this.inboxQueue = new KnxInboxQueue(id, internalClient, channel);
         this.outboxQueue = new KnxOutboxQueue(id, internalClient, channel);
         LOG.trace("{}: Inbox and Outbox Queues created.", id);
+
+        // creates queue executor
+        this.queueExecutor = Executors.newFixedThreadPool(2);
+        this.queueExecutor.execute(inboxQueue);
+        this.queueExecutor.execute(outboxQueue);
+        this.queueExecutor.shutdown();
+        LOG.info("{}: Queue Executor created: {}", id, this.queueExecutor);
 
         // creates executor for communication
         this.communicationExecutor = Executors.newFixedThreadPool(internalClient.getConfig().getCommunicationExecutorPoolSize());
@@ -97,34 +105,23 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     public void run() {
         LOG.trace("*** {}: START ***", id);
 
-        // creates queue executor
-        final ExecutorService queueExecutor = Executors.newFixedThreadPool(2);
-        queueExecutor.execute(inboxQueue);
-        queueExecutor.execute(outboxQueue);
-        queueExecutor.shutdown();
-        LOG.info("{}: Queue Executor created: {}", id, queueExecutor);
-
-        try {
-            while (!Thread.interrupted()) {
-                try {
-                    LOG.debug("{}: Waiting for next packet from channel", id);
-                    final Body body = this.inboxQueue.next();
-                    // accepted body
-                    if (this.isCompatible(body)) {
-                        LOG.debug("{}: Body from channel to be sent to subscribers: {}", id, body);
-                        this.submit(body);
-                    }
-                    // not accepted body
-                    else {
-                        LOG.warn("{}: Body is not expected for channel and therefore ignored: {}", id, body);
-                    }
-                } catch (final InterruptedException ex) {
-                    LOG.debug("{}: Channel receiver is cancelled.", id);
-                    Thread.currentThread().interrupt();
+        while (!Thread.interrupted()) {
+            try {
+                LOG.debug("{}: Waiting for next packet from channel", id);
+                final var body = this.inboxQueue.next();
+                // accepted body
+                if (this.isCompatible(body)) {
+                    LOG.debug("{}: Body from channel to be sent to subscribers: {}", id, body);
+                    this.submit(body);
                 }
+                // not accepted body
+                else {
+                    LOG.warn("{}: Body is not expected for channel and therefore ignored: {}", id, body);
+                }
+            } catch (final InterruptedException ex) {
+                LOG.debug("{}: Channel receiver is cancelled.", id);
+                Thread.currentThread().interrupt();
             }
-        } finally {
-            Closeables.shutdownQuietly(queueExecutor);
         }
 
         LOG.trace("*** {}: END ***", id);
@@ -153,11 +150,11 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      *
      * @param requestBody
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
-     * @return a {@link Future} representing pending completion of the task containing either an instance of {@link ResponseBody},
+     * @return a {@link CompletableFuture} representing pending completion of the task containing either an instance of {@link ResponseBody},
      * or {@code null} if no response was received because of e.g. timeout
      */
-    public final <T extends ResponseBody> Future<T> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
-        return this.communicationExecutor.submit(() -> sendAndWait(requestBody, msTimeout));
+    public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
+        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout), this.communicationExecutor);
     }
 
     /**
@@ -171,8 +168,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
-    public final <T extends ResponseBody> T sendAndWait(final RequestBody requestBody, final long msTimeout) {
-        final KnxEventPool eventPool = this.internalClient.getEventPool();
+    private final <T extends ResponseBody> T sendAndWaitInternal(final RequestBody requestBody, final long msTimeout) {
+        final var eventPool = this.internalClient.getEventPool();
 
         // add request body to event pool
         eventPool.add(requestBody);
@@ -183,9 +180,9 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
             this.internalClient.getStatusPool().setDirty(((TunnellingRequestBody) requestBody).getCEMI().getDestinationAddress());
         }
 
-        int attempts = 1;
-        int totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)
-        long eventWaiting = this.internalClient.getConfig().getIntervalEvent();
+        var attempts = 1;
+        final var totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)
+        final var eventWaiting = this.internalClient.getConfig().getIntervalEvent();
         T responseBody;
 
         do {
@@ -193,7 +190,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
             send(requestBody);
 
             // iterate for event response
-            long start = System.currentTimeMillis();
+            final var start = System.currentTimeMillis();
             KnxEventData<RequestBody, T> event;
             do {
                 event = eventPool.get(requestBody);
@@ -230,6 +227,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
             // close channel and executors
             Closeables.closeQuietly(this.channel);
+            Closeables.shutdownQuietly(this.queueExecutor);
             Closeables.shutdownQuietly(this.communicationExecutor);
             LOG.debug("{}: Method 'close()' called.", id);
         }

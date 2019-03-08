@@ -53,7 +53,7 @@ public class CloseablesTest {
         assertThat(Closeables.closeQuietly(null)).isTrue();
 
         // close Closeable successfully
-        final Closeable closeableMock = mock(Closeable.class);
+        final var closeableMock = mock(Closeable.class);
         assertThat(Closeables.closeQuietly(closeableMock)).isTrue();
 
         // close Closeable with throwing exception
@@ -61,7 +61,7 @@ public class CloseablesTest {
         assertThat(Closeables.closeQuietly(closeableMock)).isFalse();
 
         // close DatagramChannel successfully
-        final DatagramChannel datagramChannelMock = mock(DatagramChannel.class);
+        final var datagramChannelMock = mock(DatagramChannel.class);
         assertThat(Closeables.closeQuietly(datagramChannelMock)).isTrue();
 
         // close DatagramChannel with throwing exception
@@ -78,7 +78,7 @@ public class CloseablesTest {
         assertThat(Closeables.shutdownQuietly(null)).isTrue();
 
         // shutdown successfully
-        final ExecutorService executorServiceMock = mock(ExecutorService.class);
+        final var executorServiceMock = mock(ExecutorService.class);
         when(executorServiceMock.isTerminated()).thenReturn(true);
         assertThat(Closeables.shutdownQuietly(executorServiceMock)).isTrue();
 
@@ -87,7 +87,7 @@ public class CloseablesTest {
         assertThat(Closeables.shutdownQuietly(executorServiceMock)).isTrue();
 
         // shutdown successfully with termination (non-empty list)
-        final Runnable runnableMock = mock(Runnable.class);
+        final var runnableMock = mock(Runnable.class);
         when(executorServiceMock.shutdownNow()).thenReturn(List.of(runnableMock)); // not empty
         assertThat(Closeables.shutdownQuietly(executorServiceMock)).isFalse();
     }
@@ -98,7 +98,7 @@ public class CloseablesTest {
     @Test
     public void testShutdownQuietlyWithTime() throws InterruptedException {
         // shutdown successfully
-        final ExecutorService executorServiceMock = mock(ExecutorService.class);
+        final var executorServiceMock = mock(ExecutorService.class);
         when(executorServiceMock.isTerminated()).thenReturn(true);
         when(executorServiceMock.awaitTermination(1, TimeUnit.MILLISECONDS)).thenReturn(true);
         assertThat(Closeables.shutdownQuietly(executorServiceMock, 1, TimeUnit.MILLISECONDS)).isTrue();
@@ -106,7 +106,7 @@ public class CloseablesTest {
         // shutdown with throwing exception
         // run mock in an isolated class because JUnit parallelism may fail when
         // Thread.currentThread().interrupt() is called
-        final ExecutorService es = Executors.newSingleThreadExecutor();
+        final var es = Executors.newSingleThreadExecutor();
         es.submit(() -> {
             try {
                 doThrow(new InterruptedException()).when(executorServiceMock).awaitTermination(2, TimeUnit.MILLISECONDS);

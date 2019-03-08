@@ -88,7 +88,7 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT17Value) {
-            final DPT17Value other = (DPT17Value) obj;
+            final var other = (DPT17Value) obj;
             return Objects.equals(this.sceneNumber, other.sceneNumber);
         }
         return false;

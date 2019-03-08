@@ -85,7 +85,7 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         }
 
         // create bytes
-        final byte[] bytes = new byte[2];
+        final var bytes = new byte[2];
         bytes[0] = (byte) channelId;
         bytes[1] = status.getCodeAsByte();
 

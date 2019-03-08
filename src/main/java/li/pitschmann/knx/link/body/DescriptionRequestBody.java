@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
  * Body for Description Request
  * <p>
  * The {@link ServiceType#DESCRIPTION_REQUEST} frame shall be sent by the KNX client to the control endpoint of
- * the KNX Net/IP router to obtain a self-description of the KNX Net/IP router device. The KNX/IP body shall contain
+ * the KNX Net/IP device to obtain a self-description of the KNX Net/IP device device. The KNX/IP body shall contain
  * the return address information of the KNX client’s control endpoint.
  *
  * <pre>

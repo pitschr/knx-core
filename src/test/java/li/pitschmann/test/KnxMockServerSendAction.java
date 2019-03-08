@@ -60,10 +60,10 @@ public final class KnxMockServerSendAction implements KnxMockServerAction {
     static KnxMockServerSendAction of(final String knxCommand) {
         if (knxCommand.toUpperCase().startsWith("CHANNEL=")) {
             // get channel type
-            final String channelTypeAsString = knxCommand.substring(8, knxCommand.indexOf("{")).toUpperCase();
-            final KnxMockServerSendAction.WrongChannelBody.ChannelType channelType = KnxMockServerSendAction.WrongChannelBody.ChannelType.valueOf(channelTypeAsString);
+            final var channelTypeAsString = knxCommand.substring(8, knxCommand.indexOf("{")).toUpperCase();
+            final var channelType = KnxMockServerSendAction.WrongChannelBody.ChannelType.valueOf(channelTypeAsString);
             // get packet as byte
-            final String innerCommand = knxCommand.substring(knxCommand.indexOf("{") + 1, knxCommand.lastIndexOf("}"));
+            final var innerCommand = knxCommand.substring(knxCommand.indexOf("{") + 1, knxCommand.lastIndexOf("}"));
             return new KnxMockServerSendAction(Bytes.toByteArray(innerCommand), channelType);
         } else {
             return new KnxMockServerSendAction(Bytes.toByteArray(knxCommand));

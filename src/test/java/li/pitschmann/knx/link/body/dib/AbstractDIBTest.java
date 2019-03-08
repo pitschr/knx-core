@@ -43,7 +43,7 @@ public final class AbstractDIBTest {
     @Test
     public void valueOf() {
         // new instance
-        TestDIB abstractDIB = new TestDIB(BYTES);
+        final var abstractDIB = new TestDIB(BYTES);
 
         // compare
         assertThat(abstractDIB.getLength()).isEqualTo(2);

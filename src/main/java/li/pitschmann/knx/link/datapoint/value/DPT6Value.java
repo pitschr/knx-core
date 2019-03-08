@@ -91,7 +91,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT6Value) {
-            final DPT6Value other = (DPT6Value) obj;
+            final var other = (DPT6Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.relativeSignedValue, other.relativeSignedValue);
         }
@@ -136,7 +136,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         }
 
         public static byte toByte(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
-            byte status = (byte) mode.value;
+            var status = (byte) mode.value;
             status |= a ? 0x80 : 0x00;
             status |= b ? 0x40 : 0x00;
             status |= c ? 0x20 : 0x00;
@@ -181,7 +181,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
             if (obj == this) {
                 return true;
             } else if (obj instanceof StatusMode) {
-                StatusMode other = (StatusMode) obj;
+                final var other = (StatusMode) obj;
                 return Objects.equals(this.getMode(), other.getMode()) && this.b == other.b;
             }
             return false;

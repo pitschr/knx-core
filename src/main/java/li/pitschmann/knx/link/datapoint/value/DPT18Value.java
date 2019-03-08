@@ -69,8 +69,8 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
      * @return byte array
      */
     public static byte[] toByteArray(final boolean controlled, final int sceneNumber) {
-        byte controlledAsByte = controlled ? (byte) 0x80 : 0x00;
-        byte sceneNumberAsByte = (byte) sceneNumber;
+        final var controlledAsByte = controlled ? (byte) 0x80 : 0x00;
+        final var sceneNumberAsByte = (byte) sceneNumber;
 
         return new byte[]{(byte) (controlledAsByte | sceneNumberAsByte)};
     }
@@ -105,7 +105,7 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT18Value) {
-            final DPT18Value other = (DPT18Value) obj;
+            final var other = (DPT18Value) obj;
             return Objects.equals(this.controlled, other.controlled) //
                     && Objects.equals(this.sceneNumber, other.sceneNumber);
         }

@@ -23,9 +23,8 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.datapoint.DPT7;
-import li.pitschmann.knx.link.datapoint.value.DPT7Value;
 import li.pitschmann.knx.link.exceptions.KnxException;
-import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import org.junit.jupiter.api.Test;
@@ -44,16 +43,16 @@ public final class CEMITest {
      */
     @Test
     public void useDefaultForGroupValueRead() {
-        final KnxAddress knxAddress = IndividualAddress.of(5, 9, 15);
+        final var knxAddress = IndividualAddress.of(5, 9, 15);
 
         // useDefaultForGroupValueRead
-        final CEMI cemiDefaultForGroupValueRead = CEMI.useDefaultForGroupValueRead(knxAddress);
+        final var cemiDefaultForGroupValueRead = CEMI.useDefaultForGroupValueRead(knxAddress);
 
         // useDefault
-        final CEMI cemiDefault = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_READ, (byte[]) null);
+        final var cemiDefault = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_READ, (byte[]) null);
 
         // complex
-        final CEMI cemiCreate = CEMI.create(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
+        final var cemiCreate = CEMI.create(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
                 ControlByte2.useDefault(knxAddress), IndividualAddress.useDefault(), knxAddress, TPCI.UNNUMBERED_PACKAGE, 0,
                 APCI.GROUP_VALUE_READ, (byte[]) null);
 
@@ -68,23 +67,23 @@ public final class CEMITest {
      */
     @Test
     public void useDefaultForGroupValueWrite() {
-        final KnxAddress knxAddress = IndividualAddress.of(7, 13, 41);
-        final byte[] bytes = new byte[]{(byte) 0xAA, (byte) 0xBB};
-        DPT7Value dptValue = DPT7.BRIGHTNESS.toValue(bytes);
+        final var knxAddress = IndividualAddress.of(7, 13, 41);
+        final var bytes = new byte[]{(byte) 0xAA, (byte) 0xBB};
+        final var dptValue = DPT7.BRIGHTNESS.toValue(bytes);
 
         // useDefaultForGroupValueWrite
-        final CEMI cemiDefaultForGroupValueWriteWithBytes = CEMI.useDefaultForGroupValueWrite(knxAddress, bytes);
-        final CEMI cemiDefaultForGroupValueWriteWithDataPoint = CEMI.useDefaultForGroupValueWrite(knxAddress, dptValue);
+        final var cemiDefaultForGroupValueWriteWithBytes = CEMI.useDefaultForGroupValueWrite(knxAddress, bytes);
+        final var cemiDefaultForGroupValueWriteWithDataPoint = CEMI.useDefaultForGroupValueWrite(knxAddress, dptValue);
 
         // useDefault
-        final CEMI cemiDefaultWithBytes = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
-        final CEMI cemiDefaultWithDataPoint = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
+        final var cemiDefaultWithBytes = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
+        final var cemiDefaultWithDataPoint = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
 
         // complex
-        final CEMI cemiCreateWithBytes = CEMI.create(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
+        final var cemiCreateWithBytes = CEMI.create(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
                 ControlByte2.useDefault(knxAddress), IndividualAddress.useDefault(), knxAddress, TPCI.UNNUMBERED_PACKAGE, 0,
                 APCI.GROUP_VALUE_WRITE, bytes);
-        final CEMI cemiCreateWithDataPoint = CEMI.create(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
+        final var cemiCreateWithDataPoint = CEMI.create(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
                 ControlByte2.useDefault(knxAddress), IndividualAddress.useDefault(), knxAddress, TPCI.UNNUMBERED_PACKAGE, 0,
                 APCI.GROUP_VALUE_WRITE, dptValue);
 
@@ -123,20 +122,20 @@ public final class CEMITest {
      */
     @Test
     public void validGroupValueRead() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 255);
-        final GroupAddress destinationAddress = GroupAddress.of(1, 2, 150);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 255);
+        final var destinationAddress = GroupAddress.of(1, 2, 150);
 
         // create
-        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemiByCreate = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
-        final CEMI cemiByCreateEmptyArray = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress,
+        final var cemiByCreateEmptyArray = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress,
                 destinationAddress, TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
-        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
+        final var cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
         // valueOf
-        final CEMI cemiByValueOf = CEMI
+        final var cemiByValueOf = CEMI
                 .valueOf(new byte[]{0x2e, 0x00, (byte) 0xbc, (byte) 0xe0, 0x10, (byte) 0xff, 0x0a, (byte) 0x96, 0x01, 0x00, 0x00});
 
         // compare raw data of 'create' and 'valueOf'
@@ -182,18 +181,18 @@ public final class CEMITest {
      */
     @Test
     public void validGroupValueWriteApciDataInside() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.SYSTEM, Priority.URGENT, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 3, 0x0C);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 21);
-        final GroupAddress destinationAddress = GroupAddress.of(1, 3, 203);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.SYSTEM, Priority.URGENT, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 3, 0x0C);
+        final var sourceAddress = IndividualAddress.of(1, 0, 21);
+        final var destinationAddress = GroupAddress.of(1, 3, 203);
 
         // create
-        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.NUMBERED_PACKAGE, 1, APCI.GROUP_VALUE_WRITE, new byte[]{0x01});
-        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
+        final var cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
         // valueOf
-        final CEMI cemiByValueOf = CEMI
+        final var cemiByValueOf = CEMI
                 .valueOf(new byte[]{0x29, 0x00, (byte) 0xa8, (byte) 0xbc, 0x10, 0x15, 0x0b, (byte) 0xcb, 0x01, 0x44, (byte) 0x81});
 
         // compare raw data of 'create' and 'valueOf'
@@ -237,18 +236,18 @@ public final class CEMITest {
      */
     @Test
     public void validGroupValueWriteApciDataOneByteAppended() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 21);
-        final GroupAddress destinationAddress = GroupAddress.of(1, 3, 204);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 21);
+        final var destinationAddress = GroupAddress.of(1, 3, 204);
 
         // create
-        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, new byte[]{0x5d});
-        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
+        final var cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
         // valueOf
-        final CEMI cemiByValueOf = CEMI
+        final var cemiByValueOf = CEMI
                 .valueOf(new byte[]{0x29, 0x00, (byte) 0xbc, (byte) 0xe0, 0x10, 0x15, 0x0b, (byte) 0xcc, 0x02, 0x00, (byte) 0x80, 0x5d});
 
         // compare raw data of 'create' and 'valueOf'
@@ -292,18 +291,18 @@ public final class CEMITest {
      */
     @Test
     public void validGroupValueWriteApciDataTwoBytesAppended() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 130);
-        final IndividualAddress destinationAddress = IndividualAddress.of(6, 3, 67);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 130);
+        final var destinationAddress = IndividualAddress.of(6, 3, 67);
 
         // create
-        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, new byte[]{0x0c, 0x09});
-        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
+        final var cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
         // valueOf
-        final CEMI cemiByValueOf = CEMI.valueOf(
+        final var cemiByValueOf = CEMI.valueOf(
                 new byte[]{0x29, 0x00, (byte) 0xbc, (byte) 0x60, 0x10, (byte) 0x82, 0x63, 0x43, 0x03, 0x00, (byte) 0x80, 0x0c, 0x09});
 
         // compare raw data of 'create' and 'valueOf'
@@ -347,18 +346,18 @@ public final class CEMITest {
      */
     @Test
     public void testGroupValueResponse() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 130);
-        final IndividualAddress destinationAddress = IndividualAddress.of(6, 3, 67);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 130);
+        final var destinationAddress = IndividualAddress.of(6, 3, 67);
 
         // create
-        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, new byte[]{0x0c, 0x09});
-        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
+        final var cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
         // valueOf
-        final CEMI cemiByValueOf = CEMI.valueOf(
+        final var cemiByValueOf = CEMI.valueOf(
                 new byte[]{0x29, 0x00, (byte) 0xbc, (byte) 0x60, 0x10, (byte) 0x82, 0x63, 0x43, 0x03, 0x00, (byte) 0x40, 0x0c, 0x09});
 
         // compare raw data of 'create' and 'valueOf'
@@ -402,35 +401,15 @@ public final class CEMITest {
      */
     @Test
     public void testIndividualAddressResponse() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 130);
-        final IndividualAddress destinationAddress = IndividualAddress.of(6, 3, 67);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 130);
+        final var destinationAddress = IndividualAddress.of(6, 3, 67);
 
         // exception expected
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_RESPONSE, new byte[]{0x0b})).isInstanceOf(KnxException.class).hasMessage("Current APCI is not supported: " + APCI.INDIVIDUAL_ADDRESS_RESPONSE);
-
-//        // create
-//        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_RESPONSE, new byte[]{0x0b});
-//        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
-//        // valueOf
-//        final CEMI cemiByValueOf = CEMI.valueOf(
-//                new byte[]{0x29, 0x00, (byte) 0xbc, (byte) 0x60, 0x10, (byte) 0x82, 0x63, 0x43, 0x02, (byte) 0x01, (byte) 0x40, 0x0b});
-//
-//        // compare raw data of 'create' and 'valueOf'
-//        assertThat(cemiByCreate.getRawData()).isEqualTo(cemiByCreateRawData.getRawData());
-//        assertThat(cemiByCreate.getRawData()).isEqualTo(cemiByValueOf.getRawData());
-//
-//        // assert
-//        this.assertCEMI(cemiByCreate, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 2,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_RESPONSE, new byte[]{0x0b});
-//        this.assertCEMI(cemiByCreateRawData, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 2,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_RESPONSE, new byte[]{0x0b});
-//        this.assertCEMI(cemiByValueOf, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 2,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_RESPONSE, new byte[]{0x0b});
     }
 
     /**
@@ -460,34 +439,15 @@ public final class CEMITest {
      */
     @Test
     public void testIndividualAddressRead() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 130);
-        final IndividualAddress destinationAddress = IndividualAddress.of(6, 3, 67);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 130);
+        final var destinationAddress = IndividualAddress.of(6, 3, 67);
 
         // exception expected
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_READ, new byte[0])).isInstanceOf(KnxException.class).hasMessage("Current APCI is not supported: " + APCI.INDIVIDUAL_ADDRESS_READ);
-
-//        // create
-//        final CEMI cemiByCreate = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_READ, new byte[0]);
-//        final CEMI cemiByCreateRawData = CEMI.valueOf(cemiByCreate.getRawData());
-//        // valueOf
-//        final CEMI cemiByValueOf = CEMI.valueOf(new byte[]{0x29, 0x00, (byte) 0xbc, (byte) 0x60, 0x10, (byte) 0x82, 0x63, 0x43, 0x01, 0x01, 0x00});
-//
-//        // compare raw data of 'create' and 'valueOf'
-//        assertThat(cemiByCreate.getRawData()).isEqualTo(cemiByCreateRawData.getRawData());
-//        assertThat(cemiByCreate.getRawData()).isEqualTo(cemiByValueOf.getRawData());
-//
-//        // assert
-//        this.assertCEMI(cemiByCreate, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 1,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_READ, new byte[0]);
-//        this.assertCEMI(cemiByCreateRawData, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 1,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_READ, new byte[0]);
-//        this.assertCEMI(cemiByValueOf, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 1,
-//                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_READ, new byte[0]);
     }
 
     /**
@@ -495,11 +455,11 @@ public final class CEMITest {
      */
     @Test
     public void invalidCases() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, true, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 255);
-        final GroupAddress destinationAddress = GroupAddress.of(1, 2, 150);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, true, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 255);
+        final var destinationAddress = GroupAddress.of(1, 2, 150);
 
         // null
         assertThatThrownBy(() -> CEMI.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("cemiRawData");
@@ -555,30 +515,30 @@ public final class CEMITest {
 
         // illegal state
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 1, APCI.GROUP_VALUE_READ, new byte[0])).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_PACKAGE, 1, APCI.GROUP_VALUE_READ, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[1])).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[1])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, (byte[]) null)).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, (byte[]) null)).isInstanceOf(KnxIllegalArgumentException.class);
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, new byte[0])).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, (byte[]) null)).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, (byte[]) null)).isInstanceOf(KnxIllegalArgumentException.class);
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, new byte[0])).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 
         // conflict between ControlByte2 and Destination Address instance type
         // ControlByte2#addressType = GROUP, destination = INDIVIDUAL
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, sourceAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0])).isInstanceOf(KnxIllegalStateException.class);
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
         // ControlByte2#addressType = INDIVIDUAL, destination = GROUP
         final ControlByte2 controlByte2Individual = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
         assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2Individual, sourceAddress,
                 destinationAddress, TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]))
-                .isInstanceOf(KnxIllegalStateException.class);
+                .isInstanceOf(KnxIllegalArgumentException.class);
 
         // test invalid additional info length
         assertThatThrownBy(() -> CEMI.valueOf(new byte[]{0x29, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}))
@@ -627,13 +587,13 @@ public final class CEMITest {
     @Test
     public void testToStringWithRawData() {
         // with raw data
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 255);
-        final GroupAddress destinationAddress = GroupAddress.of(1, 2, 150);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 255);
+        final var destinationAddress = GroupAddress.of(1, 2, 150);
 
-        final CEMI cemi = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemi = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
 
         assertThat(cemi).hasToString(String.format(
@@ -649,14 +609,14 @@ public final class CEMITest {
      */
     @Test
     public void testToStringWithRawData2() {
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 130);
-        final IndividualAddress destinationAddress = IndividualAddress.of(6, 3, 67);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 130);
+        final var destinationAddress = IndividualAddress.of(6, 3, 67);
 
         // create
-        final CEMI cemi = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemi = CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, new byte[]{0x0c, 0x09});
 
         assertThat(cemi).hasToString(String.format(
@@ -673,13 +633,13 @@ public final class CEMITest {
     @Test
     public void testToStringWithoutRawData() {
         // with raw data
-        final AdditionalInfo additionalInfo = AdditionalInfo.empty();
-        final ControlByte1 controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final ControlByte2 controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
-        final IndividualAddress sourceAddress = IndividualAddress.of(1, 0, 255);
-        final GroupAddress destinationAddress = GroupAddress.of(1, 2, 150);
+        final var additionalInfo = AdditionalInfo.empty();
+        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 255);
+        final var destinationAddress = GroupAddress.of(1, 2, 150);
 
-        final CEMI cemi = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+        final var cemi = CEMI.create(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
 
         assertThat(cemi.toString(false)).isEqualTo(String.format(

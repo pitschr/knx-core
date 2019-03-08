@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class ConnectRequestTest {
     /**
-     * Test no responding/not available KNX Net/IP router
+     * Test no responding/not available KNX Net/IP device
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
@@ -57,7 +57,7 @@ public class ConnectRequestTest {
             "NO_ACTION"})
     @DisplayName("Error: No Channel ID because of no response")
     public void testFailureNoResponse(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             mockServer.waitForCompletion();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
@@ -76,7 +76,7 @@ public class ConnectRequestTest {
     }
 
     /**
-     * Test if all free connection slots are used on KNX Net/IP router. It will return the "no more connections" error.
+     * Test if all free connection slots are used on KNX Net/IP device. It will return the "no more connections" error.
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
@@ -87,7 +87,7 @@ public class ConnectRequestTest {
             KnxBody.Failures.CONNECT_RESPONSE_NO_MORE_CONNECTIONS})
     @DisplayName("Error: No Channel ID because of no more connections")
     public void testFailureNoMoreConnections(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             mockServer.waitForCompletion();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
@@ -104,7 +104,7 @@ public class ConnectRequestTest {
     }
 
     /**
-     * Test if all free connection slots are used on KNX Net/IP router. It will return the "no more connections" error.
+     * Test if all free connection slots are used on KNX Net/IP device. It will return the "no more connections" error.
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
@@ -128,7 +128,7 @@ public class ConnectRequestTest {
     })
     @DisplayName("Error: Corrupted Connect Response and then OK")
     public void testConnectionCorruptedAndThenOK(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             // OK
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

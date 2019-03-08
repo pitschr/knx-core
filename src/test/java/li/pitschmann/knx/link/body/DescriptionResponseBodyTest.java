@@ -156,7 +156,7 @@ public class DescriptionResponseBodyTest {
         byte[] dibBytes = Bytes.concat(this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData());
 
         // create()
-        final DescriptionResponseBody body = DescriptionResponseBody.create(this.deviceHardwareInformation, this.supportedDeviceFamilies);
+        final var body = DescriptionResponseBody.create(this.deviceHardwareInformation, this.supportedDeviceFamilies);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
         assertThat(body.getSupportedDeviceFamilies()).isEqualTo(this.supportedDeviceFamilies);
@@ -166,7 +166,7 @@ public class DescriptionResponseBodyTest {
         assertThat(body.getManufacturerData()).isNull();
 
         // compare raw data of create() with valueOf()
-        final DescriptionResponseBody bodyByBytes = DescriptionResponseBody.valueOf(dibBytes);
+        final var bodyByBytes = DescriptionResponseBody.valueOf(dibBytes);
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -190,12 +190,12 @@ public class DescriptionResponseBodyTest {
      */
     @Test
     public void validCaseAllDIBs() {
-        byte[] dibBytes = Bytes.concat(this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData(),
+        final var dibBytes = Bytes.concat(this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData(),
                 this.ipConfig.getRawData(), this.ipCurrentConfig.getRawData(), this.knxAddresses.getRawData(),
                 this.manufacturerData.getRawData());
 
         // create()
-        final DescriptionResponseBody body = DescriptionResponseBody.valueOf(dibBytes);
+        final var body = DescriptionResponseBody.valueOf(dibBytes);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
         assertThat(body.getSupportedDeviceFamilies()).isEqualTo(this.supportedDeviceFamilies);

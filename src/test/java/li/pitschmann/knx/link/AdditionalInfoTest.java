@@ -38,12 +38,12 @@ public final class AdditionalInfoTest {
     @Test
     public void emptyAdditionalInfo() {
         // create
-        final AdditionalInfo addInfoByCreate = AdditionalInfo.empty();
+        final var addInfoByCreate = AdditionalInfo.empty();
         assertThat(addInfoByCreate.getLength()).isEqualTo(0);
         assertThat(addInfoByCreate.getTotalLength()).isEqualTo(1);
 
         // valueOf
-        final AdditionalInfo addInfoByValueOf = AdditionalInfo.valueOf(new byte[]{0x00});
+        final var addInfoByValueOf = AdditionalInfo.valueOf(new byte[]{0x00});
         assertThat(addInfoByValueOf.getLength()).isEqualTo(0);
         assertThat(addInfoByValueOf.getTotalLength()).isEqualTo(addInfoByCreate.getRawData().length);
 

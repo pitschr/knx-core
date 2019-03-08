@@ -72,13 +72,13 @@ public class ConnectionStateRequestBodyTest {
     @Test
     public void validCases() {
         // create()
-        final ConnectionStateRequestBody body = ConnectionStateRequestBody.create(this.channelId, this.controlEndpoint);
+        final var body = ConnectionStateRequestBody.create(this.channelId, this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTIONSTATE_REQUEST);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 
         // compare raw data of create() with valueOf()
-        final ConnectionStateRequestBody bodyByBytes = ConnectionStateRequestBody
+        final var bodyByBytes = ConnectionStateRequestBody
                 .valueOf(new byte[]{0x08, 0x00, 0x08, 0x01, 0x04, 0x04, 0x04, 0x04, (byte) 0xe5, 0x4e});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

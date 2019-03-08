@@ -37,12 +37,12 @@ public class AbstractDataPointFlagsTest {
      */
     @Test
     public void test() {
-        TestDataPointFlags flag1 = new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x04});
-        TestDataPointFlags flag2 = new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x04});
+        final var flag1 = new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x04});
+        final var flag2 = new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x04});
 
         // values
         assertThat(flag1.toByteArray()).containsExactly(0x08, 0x04);
-        for (int bit = 0; bit < 16; bit++) {
+        for (var bit = 0; bit < 16; bit++) {
             assertThat(flag1.isSet(bit)).isEqualTo(bit == 2 || bit == 11);
         }
 
@@ -58,7 +58,7 @@ public class AbstractDataPointFlagsTest {
         assertThat(flag1).isNotEqualTo(new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x03}));
 
         // toString
-        String toString = String.format("TestDataPointFlags{dpt=%s, byteArray=0x08 04}", DPT1.SWITCH,
+        final var toString = String.format("TestDataPointFlags{dpt=%s, byteArray=0x08 04}", DPT1.SWITCH,
                 ByteFormatter.formatHexAsString(new byte[]{0x08, 0x04}));
         assertThat(flag1).hasToString(toString);
     }
@@ -68,7 +68,7 @@ public class AbstractDataPointFlagsTest {
      */
     @Test
     public void testFailures() {
-        TestDataPointFlags obj = new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x04});
+        final var obj = new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x04});
         assertThatThrownBy(() -> obj.isSet(-1)).isInstanceOf(IllegalArgumentException.class).hasMessage("Bit must be between 0 and 15 (actual: -1)");
         assertThatThrownBy(() -> obj.isSet(16)).isInstanceOf(IllegalArgumentException.class).hasMessage("Bit must be between 0 and 15 (actual: 16)");
     }

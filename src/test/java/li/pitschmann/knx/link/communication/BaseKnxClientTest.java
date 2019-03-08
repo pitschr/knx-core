@@ -27,6 +27,7 @@ import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.mockito.ArgumentCaptor;
 
 import java.util.stream.Collectors;
@@ -54,6 +55,7 @@ public class BaseKnxClientTest {
      */
     @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
     @DisplayName("Check Base KNX Client")
+    @RepeatedTest(10)
     public void testCommonMethods(final KnxMockServer mockServer) {
         // mock extension plugin to verify if the init method is invoked with correct client instance
         var extensionPlugin = mock(ExtensionPlugin.class);

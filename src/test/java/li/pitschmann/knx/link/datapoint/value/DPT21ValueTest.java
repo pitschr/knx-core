@@ -59,7 +59,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertGeneralStatus(final byte b, final boolean[] bool) {
-        GeneralStatus dptValue = new GeneralStatus(bool[0], bool[1], bool[2], bool[3], bool[4]);
+        final var dptValue = new GeneralStatus(bool[0], bool[1], bool[2], bool[3], bool[4]);
         assertThat(new GeneralStatus(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isOutOfService()).isEqualTo(bool[0]);
@@ -81,7 +81,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertDeviceControl(final byte b, final boolean[] bool) {
-        DeviceControl dptValue = new DeviceControl(bool[0], bool[1], bool[2]);
+        final var dptValue = new DeviceControl(bool[0], bool[1], bool[2]);
         assertThat(new DeviceControl(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isUserApplicationStopped()).isEqualTo(bool[0]);
@@ -106,7 +106,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertForcingSignal(final byte b, final boolean[] bool) {
-        ForcingSignal dptValue = new ForcingSignal(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
+        final var dptValue = new ForcingSignal(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
         assertThat(new ForcingSignal(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isForceRequest()).isEqualTo(bool[0]);
@@ -129,7 +129,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertForcingSignalCooling(final byte b, final boolean bool) {
-        ForcingSignalCooling dptValue = new ForcingSignalCooling(bool);
+        final var dptValue = new ForcingSignalCooling(bool);
         assertThat(new ForcingSignalCooling(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isForceRequest()).isEqualTo(bool);
@@ -152,8 +152,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusRoomHeatingController(final byte b, final boolean[] bool) {
-        StatusRoomHeatingController dptValue = new StatusRoomHeatingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6],
-                bool[7]);
+        final var dptValue = new StatusRoomHeatingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
         assertThat(new StatusRoomHeatingController(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
@@ -178,7 +177,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusSolarDHWController(final byte b, final boolean[] bool) {
-        StatusSolarDHWController dptValue = new StatusSolarDHWController(bool[0], bool[1], bool[2]);
+        final var dptValue = new StatusSolarDHWController(bool[0], bool[1], bool[2]);
         assertThat(new StatusSolarDHWController(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
@@ -198,7 +197,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertFuelTypeSet(final byte b, final boolean[] bool) {
-        FuelTypeSet dptValue = new FuelTypeSet(bool[0], bool[1], bool[2]);
+        final var dptValue = new FuelTypeSet(bool[0], bool[1], bool[2]);
         assertThat(new FuelTypeSet(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isOilFuelSupported()).isEqualTo(bool[0]);
@@ -216,7 +215,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusRoomCoolingController(final byte b, final boolean bool) {
-        StatusRoomCoolingController dptValue = new StatusRoomCoolingController(bool);
+        final var dptValue = new StatusRoomCoolingController(bool);
         assertThat(new StatusRoomCoolingController(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool);
@@ -235,7 +234,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusVentilationController(final byte b, final boolean[] bool) {
-        StatusVentilationController dptValue = new StatusVentilationController(bool[0], bool[1], bool[2], bool[3]);
+        final var dptValue = new StatusVentilationController(bool[0], bool[1], bool[2], bool[3]);
         assertThat(new StatusVentilationController(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
@@ -260,7 +259,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertLightingActuatorErrorInfo(final byte b, final boolean[] bool) {
-        LightingActuatorErrorInfo dptValue = new LightingActuatorErrorInfo(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6]);
+        final var dptValue = new LightingActuatorErrorInfo(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6]);
         assertThat(new LightingActuatorErrorInfo(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isErrorLoad()).isEqualTo(bool[0]);
@@ -284,7 +283,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertRadioFrequencyCommunicationModeInfo(final byte b, final boolean[] bool) {
-        RadioFrequencyCommunicationModeInfo dptValue = new RadioFrequencyCommunicationModeInfo(bool[0], bool[1], bool[2]);
+        final var dptValue = new RadioFrequencyCommunicationModeInfo(bool[0], bool[1], bool[2]);
         assertThat(new RadioFrequencyCommunicationModeInfo(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isAsynchronous()).isEqualTo(bool[0]);
@@ -304,7 +303,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertCEMIServerSupportedFilteringMode(final byte b, final boolean[] bool) {
-        CEMIServerSupportedFilteringMode dptValue = new CEMIServerSupportedFilteringMode(bool[0], bool[1], bool[2]);
+        final var dptValue = new CEMIServerSupportedFilteringMode(bool[0], bool[1], bool[2]);
         assertThat(new CEMIServerSupportedFilteringMode(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFilteredByDomainAddress()).isEqualTo(bool[0]);
@@ -322,7 +321,7 @@ public final class DPT21ValueTest {
     }
 
     private void assertSecurityReport(final byte b, final boolean bool) {
-        SecurityReport dptValue = new SecurityReport(bool);
+        final var dptValue = new SecurityReport(bool);
         assertThat(new SecurityReport(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFailure()).isEqualTo(bool);
@@ -345,10 +344,10 @@ public final class DPT21ValueTest {
     }
 
     private void assertChannelActivation8(final byte b, final boolean[] bool) {
-        ChannelActivation8 dptValue = new ChannelActivation8(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
+        final var dptValue = new ChannelActivation8(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
         assertThat(new ChannelActivation8(b)).isEqualTo(dptValue);
 
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             assertThat(dptValue.isChannelActive(i + 1)).isEqualTo(bool[i]);
         }
 

@@ -91,7 +91,7 @@ public class AbstractKnxQueueTest {
     }
 
     /**
-     * Tests an inbox packet from KNX Net/IP router with wrong channel id information
+     * Tests an inbox packet from KNX Net/IP device with wrong channel id information
      */
     @Test
     @MemoryLog(AbstractKnxQueue.class)

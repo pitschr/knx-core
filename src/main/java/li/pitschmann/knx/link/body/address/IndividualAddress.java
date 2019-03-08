@@ -48,7 +48,7 @@ public final class IndividualAddress extends KnxAddress {
 
     /**
      * Returns the default {@link IndividualAddress} ({@code 0.0.0}). This will usually use the address from the
-     * KNX Net/IP router.
+     * KNX Net/IP device.
      *
      * @return default {@link IndividualAddress} ({@code 0.0.0})
      */
@@ -85,14 +85,14 @@ public final class IndividualAddress extends KnxAddress {
         }
 
         // byte 0: xxxx ....
-        final byte areaAsByte = (byte) ((area & 0x0F) << 4);
+        final var areaAsByte = (byte) ((area & 0x0F) << 4);
         // byte 0: .... xxxx
-        final byte lineAsByte = (byte) (line & 0x0F);
+        final var lineAsByte = (byte) (line & 0x0F);
         // byte 1: xxxx xxxx
-        final byte deviceAsByte = (byte) device;
+        final var deviceAsByte = (byte) device;
 
         // create bytes
-        final byte[] bytes = new byte[]{(byte) (areaAsByte | lineAsByte), deviceAsByte};
+        final var bytes = new byte[]{(byte) (areaAsByte | lineAsByte), deviceAsByte};
         return of(bytes);
     }
 
@@ -124,7 +124,7 @@ public final class IndividualAddress extends KnxAddress {
         if (obj == this) {
             return true;
         } else if (obj instanceof IndividualAddress) {
-            final IndividualAddress other = (IndividualAddress) obj;
+            final var other = (IndividualAddress) obj;
             return this.area == other.area && this.line == other.line && this.device == other.device;
         }
         return false;

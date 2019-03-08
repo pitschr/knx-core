@@ -54,14 +54,14 @@ public interface KnxMockServerAction {
         // Example #1: REPEAT=5{...} for repeating 5-times
         else if (command.toUpperCase().startsWith("REPEAT=")) {
             // get number of repeats
-            int numberOfRepeats = Integer.parseInt(command.substring(7, command.indexOf("{")));
+            final var numberOfRepeats = Integer.parseInt(command.substring(7, command.indexOf("{")));
             // get repeat commands (within "{" and "}")
-            final String innerCommand = command.substring(command.indexOf("{") + 1, command.lastIndexOf("}"));
-            final List<KnxMockServerAction> innerCommands = Lists.newLinkedList();
+            final var innerCommand = command.substring(command.indexOf("{") + 1, command.lastIndexOf("}"));
+            final var innerCommands = Lists.<KnxMockServerAction>newLinkedList();
             Arrays.stream(innerCommand.split(",")).forEach(c -> innerCommands.addAll(parse(c)));
             // add the inner commands N-times
-            final List<KnxMockServerAction> innerKnxActions = Lists.newLinkedList();
-            for (int i = 0; i < numberOfRepeats; i++) {
+            final var innerKnxActions = Lists.<KnxMockServerAction>newLinkedList();
+            for (var i = 0; i < numberOfRepeats; i++) {
                 innerKnxActions.addAll(innerCommands);
             }
             return innerKnxActions;
@@ -69,9 +69,9 @@ public interface KnxMockServerAction {
             if (command.contains("{")) {
                 // bit tricky because "," within "{" and "}" should not be splitted
                 // workaround is just to use another character
-                var sb = new StringBuilder(command.length());
-                boolean withinBracket = false;
-                for (char c : command.toCharArray()) {
+                final var sb = new StringBuilder(command.length());
+                var withinBracket = false;
+                for (final var c : command.toCharArray()) {
                     var newChar = c;
                     if (c == '{') {
                         withinBracket = true;

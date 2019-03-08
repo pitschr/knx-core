@@ -105,8 +105,8 @@ public class DPT19Test extends AbstractDataPointTypeTest<DPT19, DPT19Value> {
      * @param time
      */
     private void assertDPT(final byte[] bValueArray, final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
-        final DPT19 dpt = DPT_DATE_TIME;
-        final DPT19Value dptValue = dpt.toValue(dayOfWeek, date, time, flags);
+        final var dpt = DPT_DATE_TIME;
+        final var dptValue = dpt.toValue(dayOfWeek, date, time, flags);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

@@ -30,8 +30,8 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Task to send connection frames from local to remote router. This class will send {@link ConnectRequestBody} to the
- * KNX Net/IP router and waits for {@link ConnectResponseBody} to obtain the channel id which is used as identifier for
+ * Task to send connection frames from local to KNX Net/IP device. This class will send {@link ConnectRequestBody} to the
+ * KNX Net/IP device and waits for {@link ConnectResponseBody} to obtain the channel id which is used as identifier for
  * further communications.
  *
  * @author PITSCHR
@@ -60,14 +60,14 @@ public final class ConnectionStateMonitor implements Runnable {
         this.sendConnectionStateRequest();
 
         while (!this.client.isClosed()) {
-            final Instant lastRequestTime = this.getLastRequestTime();
-            final Instant lastResponseTime = this.getLastResponseTime();
+            final var lastRequestTime = this.getLastRequestTime();
+            final var lastResponseTime = this.getLastResponseTime();
 
             if (lastRequestTime.isAfter(lastResponseTime)) {
                 // request time > response time -> we are waiting for response
-                final Instant now = Instant.now();
-                final long offsetLastRequest = Duration.between(lastRequestTime, now).toMillis();
-                final long offsetLastResponse = Duration.between(lastResponseTime, now).toMillis();
+                final var now = Instant.now();
+                final var offsetLastRequest = Duration.between(lastRequestTime, now).toMillis();
+                final var offsetLastResponse = Duration.between(lastResponseTime, now).toMillis();
 
                 // duration between last response and now is bigger than connection alive -> disconnect
                 if (offsetLastResponse > this.client.getConfig().getTimeoutAliveConnection()) {
@@ -94,7 +94,7 @@ public final class ConnectionStateMonitor implements Runnable {
                 }
             } else {
                 // request time < response time -> we already got response
-                long sleepTimeInMillis = this.client.getConfig().getIntervalConnectionState() - Duration.between(lastRequestTime, lastResponseTime).toMillis();
+                final var sleepTimeInMillis = this.client.getConfig().getIntervalConnectionState() - Duration.between(lastRequestTime, lastResponseTime).toMillis();
                 LOG.debug("Next connection state check will be done in {} ms.", sleepTimeInMillis);
                 if (Sleeper.milliseconds(sleepTimeInMillis)) {
                     this.sendConnectionStateRequest();
@@ -121,7 +121,7 @@ public final class ConnectionStateMonitor implements Runnable {
      * @return last response time
      */
     private Instant getLastResponseTime() {
-        final Instant lastResponseTime = this.client.getEventPool().connectionStateEvent().getResponseTime();
+        final var lastResponseTime = this.client.getEventPool().connectionStateEvent().getResponseTime();
         if (lastResponseTime == null) {
             return this.client.getEventPool().connectEvent().getResponseTime();
         } else {
@@ -136,7 +136,7 @@ public final class ConnectionStateMonitor implements Runnable {
         LOG.trace("Send connection state request now.");
 
         // create body
-        final ConnectionStateRequestBody requestBody = ConnectionStateRequestBody.create(this.client.getChannelId(), this.client.getControlHPAI());
+        final var requestBody = ConnectionStateRequestBody.create(this.client.getChannelId(), this.client.getControlHPAI());
 
         // send
         this.client.getEventPool().add(requestBody);

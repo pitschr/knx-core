@@ -76,10 +76,10 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
     public static ConnectionRequestInformation create() {
         // hardcoded
         // 4 bytes (1 byte for length, 1 byte for connection type, 1 byte for layer type and 1 byte for reserved)
-        final int length = 4;
+        final var length = 4;
 
         // create bytes
-        final byte[] bytes = new byte[length];
+        final var bytes = new byte[length];
         bytes[0] = (byte) length;
         bytes[1] = ConnectionType.TUNNEL_CONNECTION.getCodeAsByte();
         bytes[2] = LayerType.TUNNEL_LINKLAYER.getCodeAsByte();

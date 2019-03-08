@@ -35,7 +35,7 @@ import java.util.Arrays;
  * Body for Connection State Request
  * <p>
  * The {@link ServiceType#CONNECTIONSTATE_REQUEST} frame shall be sent by the KNX client to the control endpoint
- * of the KNX Net/IP router.
+ * of the KNX Net/IP device.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -94,10 +94,10 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
             throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
         }
 
-        final byte[] hpaiAsBytes = controlEndpoint.getRawData();
+        final var hpaiAsBytes = controlEndpoint.getRawData();
 
         // create bytes
-        final byte[] bytes = new byte[2 + hpaiAsBytes.length];
+        final var bytes = new byte[2 + hpaiAsBytes.length];
         bytes[0] = (byte) channelId;
         bytes[1] = 0x00; // reserved
         System.arraycopy(hpaiAsBytes, 0, bytes, 2, hpaiAsBytes.length);

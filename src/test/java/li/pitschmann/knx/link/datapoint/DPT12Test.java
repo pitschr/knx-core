@@ -35,7 +35,7 @@ public class DPT12Test extends AbstractDataPointTypeTest<DPT12, DPT12Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT12 dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
 
         assertThat(dpt.getId()).isEqualTo("12.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 4-Octet Unsigned Count (pulses)");
@@ -44,7 +44,7 @@ public class DPT12Test extends AbstractDataPointTypeTest<DPT12, DPT12Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT12 dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -68,7 +68,7 @@ public class DPT12Test extends AbstractDataPointTypeTest<DPT12, DPT12Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT12 dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
 
         // value: 0
         this.assertDPT(dpt, new byte[]{0x00, 0x00, 0x00, 0x00}, 0L);
@@ -86,7 +86,7 @@ public class DPT12Test extends AbstractDataPointTypeTest<DPT12, DPT12Value> {
      * @param longValue
      */
     private void assertDPT(final DPT12 dpt, final byte[] bValueArray, final long longValue) {
-        final DPT12Value dptValue = dpt.toValue(longValue);
+        final var dptValue = dpt.toValue(longValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

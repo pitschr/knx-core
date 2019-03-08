@@ -58,7 +58,7 @@ public final class Bytes {
      * @return signed short, between {@link Short#MIN_VALUE} and {@link Short#MAX_VALUE}
      */
     public static short toSignedShort(byte[] bytes) {
-        byte[] adjustedBytes = toByteArrayWithCapacity(bytes, 2);
+        final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
         return (short) (adjustedBytes[0] << 8 | adjustedBytes[1] & 0xFF);
     }
 
@@ -84,7 +84,7 @@ public final class Bytes {
      * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
      */
     public static short toUnsignedShort(byte[] bytes) {
-        byte[] adjustedBytes = toByteArrayWithCapacity(bytes, 2);
+        final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
         // max size of short is Short#MAX_VALUE
         Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
                 "Byte array cannot be converted to unsigned short because it exceeds Short#MAX_VALUE: "
@@ -114,7 +114,7 @@ public final class Bytes {
      * @return signed int, between {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE}
      */
     public static int toSignedInt(byte[] bytes) {
-        byte[] adjustedBytes = toByteArrayWithCapacity(bytes, 4);
+        final var adjustedBytes = toByteArrayWithCapacity(bytes, 4);
 
         return ((adjustedBytes[0] & 0xFF) << 24) //
                 | ((adjustedBytes[1] & 0xFF) << 16) //
@@ -144,7 +144,7 @@ public final class Bytes {
      * @return unsigned int, between {@code 0} and {@link Integer#MAX_VALUE}
      */
     public static int toUnsignedInt(byte[] bytes) {
-        byte[] adjustedBytes = toByteArrayWithCapacity(bytes, 4);
+        final var adjustedBytes = toByteArrayWithCapacity(bytes, 4);
         return toUnsignedInt(adjustedBytes[0], adjustedBytes[1], adjustedBytes[2], adjustedBytes[3]);
     }
 
@@ -247,7 +247,7 @@ public final class Bytes {
      * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
      */
     public static long toUnsignedLong(byte[] bytes) {
-        byte[] adjustedBytes = toByteArrayWithCapacity(bytes, 8);
+        final var adjustedBytes = toByteArrayWithCapacity(bytes, 8);
         // max size of long is Long#MAX_VALUE
         Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
                 "Byte array cannot be converted to unsigned long because it exceeds Long#MAX_VALUE: "
@@ -264,7 +264,7 @@ public final class Bytes {
      * @return byte array
      */
     private static byte[] concatByteToByteArray(byte b, byte[] moreBytes) {
-        final byte[] newByteArray = new byte[moreBytes.length + 1];
+        final var newByteArray = new byte[moreBytes.length + 1];
         newByteArray[0] = b;
         System.arraycopy(moreBytes, 0, newByteArray, 1, moreBytes.length);
         return newByteArray;
@@ -284,16 +284,16 @@ public final class Bytes {
         } else if (bytes.length == capacity) {
             return bytes;
         } else if (bytes.length > capacity) {
-            for (int i = 0; i < bytes.length - capacity; i++) {
+            for (var i = 0; i < bytes.length - capacity; i++) {
                 if (bytes[i] != 0x00) {
                     throw new IllegalArgumentException("Cannot shrink bytes to " + capacity + " byte array: " + ByteFormatter.formatHexAsString(bytes));
                 }
             }
-            final byte[] newByteArray = new byte[capacity];
+            final var newByteArray = new byte[capacity];
             System.arraycopy(bytes, bytes.length - capacity, newByteArray, 0, capacity);
             return newByteArray;
         } else {
-            final byte[] newByteArray = new byte[capacity];
+            final var newByteArray = new byte[capacity];
             System.arraycopy(bytes, 0, newByteArray, capacity - bytes.length, bytes.length);
             return newByteArray;
         }
@@ -313,11 +313,11 @@ public final class Bytes {
         if (bytes.length == templateArray.length) {
             return bytes;
         } else if (direction == FillDirection.LEFT_TO_RIGHT) {
-            final byte[] newByteArray = templateArray.clone();
+            final var newByteArray = templateArray.clone();
             System.arraycopy(bytes, 0, newByteArray, 0, bytes.length);
             return newByteArray;
         } else if (direction == FillDirection.RIGHT_TO_LEFT) {
-            final byte[] newByteArray = templateArray.clone();
+            final var newByteArray = templateArray.clone();
             System.arraycopy(bytes, 0, newByteArray, newByteArray.length - bytes.length, bytes.length);
             return newByteArray;
         } else {
@@ -344,8 +344,8 @@ public final class Bytes {
      */
     public static byte[] trimRight(final byte[] bytes, final byte byteToRemoved) {
         // count occurrence of bytes to be removed
-        int count = 0;
-        for (int i = bytes.length - 1; i >= 0; i--) {
+        var count = 0;
+        for (var i = bytes.length - 1; i >= 0; i--) {
             if (bytes[i] == byteToRemoved) {
                 count++;
             } else {
@@ -370,12 +370,12 @@ public final class Bytes {
         if (bytes.length == newCapacity) {
             return bytes.clone();
         } else if (bytes.length == 0) {
-            byte[] newBytes = new byte[newCapacity];
+            final var newBytes = new byte[newCapacity];
             Arrays.fill(newBytes, b);
             return newBytes;
         } else {
             // must be filled
-            byte[] newBytes = new byte[newCapacity];
+            final var newBytes = new byte[newCapacity];
             if (b != (byte) 0x00) {
                 Arrays.fill(newBytes, b);
             }
@@ -401,12 +401,12 @@ public final class Bytes {
         }
 
         Preconditions.checkArgument(PATTERN_HEX_STRING.matcher(hexString).matches(), "Illegal hex string format: " + hexString);
-        String newHexString = hexString;
+        var newHexString = hexString;
         if (hexString.startsWith("0x")) {
             newHexString = hexString.substring(2).replaceAll(" ", "");
         }
-        byte[] hexAsBytes = new byte[newHexString.length() / 2];
-        for (int i = 0; i < hexAsBytes.length; i++) {
+        final var hexAsBytes = new byte[newHexString.length() / 2];
+        for (var i = 0; i < hexAsBytes.length; i++) {
             hexAsBytes[i] = (byte) Integer.parseInt(newHexString.substring(i * 2, i * 2 + 2), 16);
         }
         return hexAsBytes;
@@ -427,7 +427,7 @@ public final class Bytes {
      */
     public static byte toByte(final boolean b7, final boolean b6, final boolean b5, final boolean b4, final boolean b3, final boolean b2,
                               final boolean b1, final boolean b0) {
-        byte b = 0x00;
+        var b = (byte) 0x00;
         if (b7) {
             b |= 0x80;
         }
@@ -487,22 +487,22 @@ public final class Bytes {
                     // byte 1
                     toByte(bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15])};
         } else {
-            int byteArrayLength = Double.valueOf(Math.ceil(bits.length / 8d)).intValue();
-            int remainder = bits.length % 8;
+            final var byteArrayLength = (int)Math.ceil(bits.length / 8d);
+            final var remainder = bits.length % 8;
 
-            int bytePos = 0;
-            byte[] bytes = new byte[byteArrayLength];
+            var bytePos = 0;
+            final var bytes = new byte[byteArrayLength];
             // if remainder available - first position is bytes[0]
             if (remainder > 0) {
-                boolean remainderBool = bits[0];
-                boolean[] moreRemainderBools = new boolean[remainder - 1];
+                final var remainderBool = bits[0];
+                final var moreRemainderBools = new boolean[remainder - 1];
                 System.arraycopy(bits, 1, moreRemainderBools, 0, remainder - 1);
                 bytes[bytePos++] = toByte(remainderBool, moreRemainderBools);
             }
             // if remainder available - first position is bytes[1]
             // if remainder not available - first position is bytes[0]
             if (byteArrayLength > 1 || remainder == 0) {
-                for (int i = remainder; i < bits.length; i += 8) {
+                for (var i = remainder; i < bits.length; i += 8) {
                     bytes[bytePos++] = toByte(bits[i], bits[i + 1], bits[i + 2], bits[i + 3], bits[i + 4], bits[i + 5], bits[i + 6], bits[i + 7]);
                 }
             }
@@ -520,9 +520,9 @@ public final class Bytes {
      * @return
      */
     public static int toInt(final boolean bit, final boolean... bits) {
-        int n = bit ? 1 : 0;
+        var n = bit ? 1 : 0;
         if (bits.length > 0) {
-            for (int i = 0; i < bits.length; ++i) {
+            for (var i = 0; i < bits.length; ++i) {
                 n = (n << 1) + (bits[i] ? 1 : 0);
             }
         }

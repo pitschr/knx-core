@@ -36,7 +36,7 @@ import java.util.Arrays;
 /**
  * Body for Connect Response
  * <p>
- * The {@link ServiceType#CONNECT_RESPONSE} frame shall be sent by the KNX Net/IP router as an answer to a received
+ * The {@link ServiceType#CONNECT_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a received
  * {@link ServiceType#CONNECT_REQUEST} frame. It shall be addressed to the KNX client’s control endpoint using the
  * HPAI included in the received {@link ServiceType#CONNECT_REQUEST} frame.
  *
@@ -120,11 +120,11 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
             }
 
             // no error - provide everything
-            final byte[] dataEndpointAsBytes = dataEndpoint.getRawData();
-            final byte[] crdAsBytes = crd.getRawData();
+            final var dataEndpointAsBytes = dataEndpoint.getRawData();
+            final var crdAsBytes = crd.getRawData();
 
             // create bytes
-            final byte[] bytes = new byte[2 + dataEndpointAsBytes.length + crdAsBytes.length];
+            final var bytes = new byte[2 + dataEndpointAsBytes.length + crdAsBytes.length];
             bytes[0] = (byte) channelId;
             bytes[1] = status.getCodeAsByte();
             System.arraycopy(dataEndpointAsBytes, 0, bytes, 2, dataEndpointAsBytes.length);

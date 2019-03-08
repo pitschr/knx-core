@@ -85,18 +85,18 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      */
     private static LocalDate toLocalDate(final byte[] bytes) {
         // day
-        int day = Bytes.toUnsignedInt(bytes[0]);
+        final var day = Bytes.toUnsignedInt(bytes[0]);
 
         // month
-        int month = Bytes.toUnsignedInt(bytes[1]);
+        final var month = Bytes.toUnsignedInt(bytes[1]);
 
         // year (two digits only)
         // If year contains value ≥ 90 : interpret as 20th century
         // If year contains value < 90: interpret as 21st century
-        int year = Bytes.toUnsignedInt(bytes[2]);
-        int fullYear = (year < 90 ? 2000 : 1900) + year;
+        final var year = Bytes.toUnsignedInt(bytes[2]);
+        final var fullYear = (year < 90 ? 2000 : 1900) + year;
 
-        final LocalDate date = LocalDate.of(fullYear, month, day);
+        final var date = LocalDate.of(fullYear, month, day);
         LOG.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
         return date;
     }
@@ -111,15 +111,15 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
 
         // byte 0: day
-        byte dayAsByte = (byte) date.getDayOfMonth();
+        final var dayAsByte = (byte) date.getDayOfMonth();
 
         // byte 1: month
-        byte monthAsByte = (byte) date.getMonthValue();
+        final var monthAsByte = (byte) date.getMonthValue();
 
         // byte 2: year (get last two digits only)
-        byte yearAsByte = (byte) (date.getYear() % 100);
+        final var yearAsByte = (byte) (date.getYear() % 100);
 
-        byte[] bytes = new byte[]{dayAsByte, monthAsByte, yearAsByte};
+        final var bytes = new byte[]{dayAsByte, monthAsByte, yearAsByte};
         if (LOG.isDebugEnabled()) {
             LOG.debug("Bytes of '{}': {}", date, ByteFormatter.formatHexAsString(bytes));
         }
@@ -151,7 +151,7 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT11Value) {
-            final DPT11Value other = (DPT11Value) obj;
+            final var other = (DPT11Value) obj;
             return Objects.equals(this.date, other.date);
         }
         return false;

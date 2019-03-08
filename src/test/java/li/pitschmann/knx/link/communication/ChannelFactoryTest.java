@@ -29,7 +29,6 @@ import org.mockito.Mockito;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectableChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,7 +57,7 @@ public class ChannelFactoryTest {
     @Test
     public void testNewDescriptionChannel() throws SocketException {
         final var configMock = Mockito.mock(Configuration.class);
-        when(configMock.getRouterEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
+        when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
         when(configMock.getSocketTimeoutControlChannel()).thenReturn(1000L);
 
         final var channel = ChannelFactory.newDescriptionChannel(configMock);
@@ -79,14 +78,14 @@ public class ChannelFactoryTest {
     @Test
     public void testNewControlChannel() throws SocketException {
         final var configMock = Mockito.mock(Configuration.class);
-        when(configMock.getRouterEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(2, 3, 4, 5), 5432));
+        when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(2, 3, 4, 5), 5432));
         when(configMock.getSocketTimeoutControlChannel()).thenReturn(2000L);
 
-        final SelectableChannel channel = ChannelFactory.newControlChannel(configMock);
+        final var channel = ChannelFactory.newControlChannel(configMock);
         assertThat(channel).isNotNull();
         assertThat(channel).isInstanceOf(DatagramChannel.class);
 
-        final DatagramChannel datagramChannel = (DatagramChannel) channel;
+        final var datagramChannel = (DatagramChannel) channel;
         assertThat(datagramChannel.socket().getInetAddress().getHostAddress()).isEqualTo("2.3.4.5");
         assertThat(datagramChannel.socket().getPort()).isEqualTo(5432);
         assertThat(datagramChannel.socket().getSoTimeout()).isEqualTo(2000);
@@ -99,15 +98,15 @@ public class ChannelFactoryTest {
      */
     @Test
     public void testNewDataChannel() throws SocketException {
-        final Configuration configMock = Mockito.mock(Configuration.class);
-        when(configMock.getRouterEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(3, 4, 5, 6), 6543));
+        final var configMock = Mockito.mock(Configuration.class);
+        when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(3, 4, 5, 6), 6543));
         when(configMock.getSocketTimeoutDataChannel()).thenReturn(3000L);
 
-        final SelectableChannel channel = ChannelFactory.newDataChannel(configMock);
+        final var channel = ChannelFactory.newDataChannel(configMock);
         assertThat(channel).isNotNull();
         assertThat(channel).isInstanceOf(DatagramChannel.class);
 
-        final DatagramChannel datagramChannel = (DatagramChannel) channel;
+        final var datagramChannel = (DatagramChannel) channel;
         assertThat(datagramChannel.socket().getInetAddress().getHostAddress()).isEqualTo("3.4.5.6");
         assertThat(datagramChannel.socket().getPort()).isEqualTo(6543);
         assertThat(datagramChannel.socket().getSoTimeout()).isEqualTo(3000);
@@ -120,11 +119,11 @@ public class ChannelFactoryTest {
      */
     @Test
     public void testFailure() throws SocketException {
-        final InetSocketAddress socketAddressMock = Mockito.mock(InetSocketAddress.class);
+        final var socketAddressMock = Mockito.mock(InetSocketAddress.class);
         when(socketAddressMock.isUnresolved()).thenReturn(true);
 
-        final Configuration configMock = Mockito.mock(Configuration.class);
-        when(configMock.getRouterEndpoint()).thenReturn(socketAddressMock);
+        final var configMock = Mockito.mock(Configuration.class);
+        when(configMock.getEndpoint()).thenReturn(socketAddressMock);
         when(configMock.getSocketTimeoutDataChannel()).thenReturn(4000L);
 
         assertThatThrownBy(() -> ChannelFactory.newDataChannel(configMock)).isInstanceOf(KnxCommunicationException.class);

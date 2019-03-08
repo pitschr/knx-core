@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.body.dib;
 
 import com.google.common.base.MoreObjects;
-import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
@@ -83,9 +83,9 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         // rawData[1] -> description type already covered in abstract class DIB
 
         // Service Type Family / Version
-        int sizeOfServiceFamilies = (rawData.length - 2) / 2;
-        List<ServiceTypeFamilyVersion> tmp = new ArrayList<>(sizeOfServiceFamilies);
-        for (int i = 2; i < rawData.length; i += 2) {
+        final var sizeOfServiceFamilies = (rawData.length - 2) / 2;
+        final var tmp = new ArrayList<ServiceTypeFamilyVersion>(sizeOfServiceFamilies);
+        for (var i = 2; i < rawData.length; i += 2) {
             tmp.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.valueOf(rawData[i]), Bytes.toUnsignedInt(rawData[i + 1])));
         }
         this.serviceFamilies = Collections.unmodifiableList(tmp);
@@ -106,7 +106,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
         } else if (rawData.length % 2 != 0) {
-            throw new KnxIllegalStateException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
+            throw new KnxIllegalArgumentException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
                     rawData.length, ByteFormatter.formatHexAsString(rawData)));
         }
     }

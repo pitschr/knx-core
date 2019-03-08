@@ -34,10 +34,10 @@ public class AbstractMultiRawDataTest {
      */
     @Test
     public void testEquals() {
-        TestMultiRawData testClass1 = new TestMultiRawData(new byte[]{0x11, 0x12});
-        TestMultiRawData testClass2 = new TestMultiRawData(new byte[]{0x11, 0x12});
-        TestMultiRawData testClass3 = new TestMultiRawData(new byte[]{0x22, 0x12});
-        AnotherTestMultiRawData anotherTestClass = new AnotherTestMultiRawData(new byte[]{0x11, 0x12});
+        final var testClass1 = new TestMultiRawData(new byte[]{0x11, 0x12});
+        final var testClass2 = new TestMultiRawData(new byte[]{0x11, 0x12});
+        final var testClass3 = new TestMultiRawData(new byte[]{0x22, 0x12});
+        final var anotherTestClass = new AnotherTestMultiRawData(new byte[]{0x11, 0x12});
 
         // equals
         assertThat(testClass1).isEqualTo(testClass1);

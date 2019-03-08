@@ -66,15 +66,15 @@ public class DescriptionRequestBodyTest {
     @Test
     public void validCases() {
         // create()
-        final DescriptionRequestBody body = DescriptionRequestBody.create(this.controlEndpoint);
+        final var body = DescriptionRequestBody.create(this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 
-        final DescriptionRequestBody bodyDefault = DescriptionRequestBody.create();
+        final var bodyDefault = DescriptionRequestBody.create();
         assertThat(body.getRawData()).containsExactly(bodyDefault.getRawData());
 
         // compare raw data of create() with valueOf()
-        final DescriptionRequestBody bodyByBytes = DescriptionRequestBody.valueOf(new byte[]{0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
+        final var bodyByBytes = DescriptionRequestBody.valueOf(new byte[]{0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString

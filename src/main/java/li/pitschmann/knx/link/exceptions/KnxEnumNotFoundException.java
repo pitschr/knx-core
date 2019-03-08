@@ -24,8 +24,6 @@ package li.pitschmann.knx.link.exceptions;
  * @author PITSCHR
  */
 public final class KnxEnumNotFoundException extends KnxException {
-    private static final long serialVersionUID = 1L;
-
     public KnxEnumNotFoundException(final String message) {
         super(message);
     }

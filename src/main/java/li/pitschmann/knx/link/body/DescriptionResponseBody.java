@@ -40,7 +40,7 @@ import javax.annotation.Nonnull;
 /**
  * Body for Description Response
  * <p>
- * The {@link ServiceType#DESCRIPTION_RESPONSE} frame shall be sent by the KNX Net/IP router as an answer to a received
+ * The {@link ServiceType#DESCRIPTION_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a received
  * {@link ServiceType#DESCRIPTION_REQUEST} frame. It shall be addressed to the KNX client’s control endpoint using
  * the HPAI included in the received {@link ServiceType#DESCRIPTION_REQUEST} frame.
  * <p>
@@ -118,14 +118,14 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             throw new KnxNullPointerException("supportedDeviceFamilies");
         }
 
-        final byte[] deviceHardwareInformationAsBytes = deviceHardwareInformation.getRawData();
-        final byte[] deviceFamiliesAsBytes = supportedDeviceFamilies.getRawData();
+        final var deviceHardwareInformationAsBytes = deviceHardwareInformation.getRawData();
+        final var deviceFamiliesAsBytes = supportedDeviceFamilies.getRawData();
 
-        final int totalLength = deviceHardwareInformationAsBytes.length + deviceFamiliesAsBytes.length;
+        final var totalLength = deviceHardwareInformationAsBytes.length + deviceFamiliesAsBytes.length;
 
         // create bytes
-        final byte[] bytes = new byte[totalLength];
-        int pos = 0;
+        final var bytes = new byte[totalLength];
+        var pos = 0;
         System.arraycopy(deviceHardwareInformationAsBytes, 0, bytes, pos, deviceHardwareInformationAsBytes.length);
         pos += deviceHardwareInformationAsBytes.length;
         System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
@@ -139,11 +139,11 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             throw new KnxNullPointerException("rawData");
         } else {
             // mandatory are device information DIB and supported device families DIB
-            boolean deviceInformationFound = this.indexOfDIB(DescriptionType.DEVICE_INFO, rawData) >= 0;
+            final var deviceInformationFound = this.indexOfDIB(DescriptionType.DEVICE_INFO, rawData) >= 0;
             if (!deviceInformationFound) {
                 throw new KnxException("Could not find device hardware information DIB array.");
             }
-            boolean supportedDeviceFamiliesFound = this.indexOfDIB(DescriptionType.SUPPORTED_SERVICE_FAMILIES, rawData) >= 0;
+            final var supportedDeviceFamiliesFound = this.indexOfDIB(DescriptionType.SUPPORTED_SERVICE_FAMILIES, rawData) >= 0;
             if (!supportedDeviceFamiliesFound) {
                 throw new KnxException("Could not find supported device families DIB array.");
             }
@@ -159,10 +159,10 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @return positive number if found, otherwise {@code -1}.
      */
     private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
-        int index = -1;
-        for (int i = 0; i < rawData.length; ) {
-            int dibLength = Bytes.toUnsignedInt(rawData[i]);
-            int dibCode = Bytes.toUnsignedInt(rawData[i + 1]);
+        var index = -1;
+        for (var i = 0; i < rawData.length; ) {
+            final var dibLength = Bytes.toUnsignedInt(rawData[i]);
+            final var dibCode = Bytes.toUnsignedInt(rawData[i + 1]);
             // we are interested in 2nd byte of DIB only
             if (descriptionType.getCode() == dibCode) {
                 // found it!
@@ -189,7 +189,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @return byte array if found, otherwise {@code null}
      */
     private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {
-        int index = this.indexOfDIB(descriptionType, rawData);
+        final var index = this.indexOfDIB(descriptionType, rawData);
 
         if (index < 0) {
             // not found
@@ -199,8 +199,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             return null;
         } else {
             // found
-            int dibLength = Bytes.toUnsignedInt(rawData[index]);
-            byte[] dibArray = new byte[dibLength];
+            final var dibLength = Bytes.toUnsignedInt(rawData[index]);
+            final var dibArray = new byte[dibLength];
             System.arraycopy(rawData, index, dibArray, 0, dibLength);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("DIB '{}' found: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(dibArray));

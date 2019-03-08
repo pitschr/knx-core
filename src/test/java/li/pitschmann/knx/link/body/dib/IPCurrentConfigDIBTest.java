@@ -48,7 +48,7 @@ public final class IPCurrentConfigDIBTest {
     @Test
     public void valueOf() {
         // valueOf
-        IPCurrentConfigDIB dib = IPCurrentConfigDIB.valueOf(BYTES);
+        final var dib = IPCurrentConfigDIB.valueOf(BYTES);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(20);

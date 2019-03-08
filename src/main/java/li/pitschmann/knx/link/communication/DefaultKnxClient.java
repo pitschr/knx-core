@@ -27,12 +27,12 @@ import li.pitschmann.knx.link.Configuration;
  */
 public final class DefaultKnxClient extends BaseKnxClient {
     /**
-     * Starts KNX client with given router address and default configuration
+     * Starts KNX client with given address and default configuration
      *
-     * @param routerAddress address of router in IP address format
+     * @param address of KNX Net/IP device in IP address format
      */
-    public DefaultKnxClient(final String routerAddress) {
-        this(Configuration.create(routerAddress).build());
+    public DefaultKnxClient(final String address) {
+        this(Configuration.create(address).build());
     }
 
     /**

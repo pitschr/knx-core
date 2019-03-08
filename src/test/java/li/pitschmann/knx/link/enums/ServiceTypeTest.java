@@ -38,14 +38,14 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
     @Test
     public void invalidValueOf() {
         // bytes
-        final byte[][] testInvalidBytes = new byte[][]{null, new byte[0], new byte[]{0x02}, new byte[]{0x02, 0x01, 0x00}};
-        for (final byte[] testInvalidByte : testInvalidBytes) {
+        final var testInvalidBytes = new byte[][]{null, new byte[0], new byte[]{0x02}, new byte[]{0x02, 0x01, 0x00}};
+        for (final var testInvalidByte : testInvalidBytes) {
             assertThatThrownBy(() -> ServiceType.valueOf(Bytes.toUnsignedInt(testInvalidByte))).isInstanceOf(KnxEnumNotFoundException.class);
         }
 
         // ints
-        final int[] testInvalidInts = new int[]{-1, 0x200};
-        for (final int testInvalidInt : testInvalidInts) {
+        final var testInvalidInts = new int[]{-1, 0x200};
+        for (final var testInvalidInt : testInvalidInts) {
             assertThatThrownBy(() -> ServiceType.valueOf(testInvalidInt)).isInstanceOf(KnxEnumNotFoundException.class);
         }
     }

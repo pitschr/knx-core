@@ -71,9 +71,9 @@ public final class HeaderTest {
      */
     @Test
     public void testHeadersWithBody() {
-        final TunnellingAckBody body = TunnellingAckBody.create(0x33, 0x66, Status.E_TUNNELLING_LAYER);
-        final Header headerByBody = Header.create(body);
-        final Header headerByCreate = Header.create(ServiceType.TUNNELING_ACK, Header.KNXNET_HEADER_LENGTH + body.getLength());
+        final var body = TunnellingAckBody.create(0x33, 0x66, Status.E_TUNNELLING_LAYER);
+        final var headerByBody = Header.create(body);
+        final var headerByCreate = Header.create(ServiceType.TUNNELING_ACK, Header.KNXNET_HEADER_LENGTH + body.getLength());
 
         assertThat(headerByBody.getRawData()).containsExactly(headerByCreate.getRawData());
     }
@@ -124,9 +124,9 @@ public final class HeaderTest {
      * @param bytes
      */
     private void assertHeader(final ServiceType serviceType, final int totalLength, final byte[] bytes) {
-        final Header testByCreate = Header.create(serviceType, totalLength);
-        final Header testByCreateRawData = Header.valueOf(testByCreate.getRawData());
-        final Header testByValueOfRawData = Header.valueOf(bytes);
+        final var testByCreate = Header.create(serviceType, totalLength);
+        final var testByCreateRawData = Header.valueOf(testByCreate.getRawData());
+        final var testByValueOfRawData = Header.valueOf(bytes);
 
         // KNX Header Length + Protocol Version are hard-coded
         assertThat(testByCreate.getLength()).isEqualTo(Header.KNXNET_HEADER_LENGTH);

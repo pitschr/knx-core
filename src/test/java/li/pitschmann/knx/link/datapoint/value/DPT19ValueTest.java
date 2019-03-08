@@ -99,11 +99,11 @@ public final class DPT19ValueTest {
     }
 
     private void assertValue(final byte[] bytes, final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
-        Flags flagsNotNull = Objects.requireNonNullElse(flags, Flags.NO_FLAGS);
+        final var flagsNotNull = Objects.requireNonNullElse(flags, Flags.NO_FLAGS);
 
-        DPT19Value dptValue = new DPT19Value(dayOfWeek, date, time, flags);
-        DPT19Value dptValueFlagsNotNull = new DPT19Value(dayOfWeek, date, time, flagsNotNull);
-        DPT19Value dptValueByByte = new DPT19Value(bytes);
+        final var dptValue = new DPT19Value(dayOfWeek, date, time, flags);
+        final var dptValueFlagsNotNull = new DPT19Value(dayOfWeek, date, time, flagsNotNull);
+        final var dptValueByByte = new DPT19Value(bytes);
 
         // instance methods
         assertThat(dptValue.getDayOfWeek()).isEqualTo(dayOfWeek);
@@ -122,7 +122,7 @@ public final class DPT19ValueTest {
         assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
 
         // not equals
-        DayOfWeek anotherDayOfWeek = dayOfWeek == null ? DayOfWeek.MONDAY : dayOfWeek.plus(1);
+        final var anotherDayOfWeek = dayOfWeek == null ? DayOfWeek.MONDAY : dayOfWeek.plus(1);
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
         assertThat(dptValue).isNotEqualTo(new DPT19Value(anotherDayOfWeek, date, time, flagsNotNull));
@@ -134,14 +134,14 @@ public final class DPT19ValueTest {
             assertThat(dptValue).isNotEqualTo(new DPT19Value(null, date.plusDays(1), time, flagsNotNull));
             assertThat(dptValue).isNotEqualTo(new DPT19Value(null, date, time.plusMinutes(1), flagsNotNull));
         }
-        byte[] flagBytes = flagsNotNull.getAsBytes();
-        byte anotherFlagByte1 = (byte) ((flagBytes[0] & 0x80) == 0 ? flagBytes[0] | 0x80 : flagBytes[0] & 0x7F);
-        byte anotherFlagByte2 = (byte) ((flagBytes[1] & 0x80) == 0 ? flagBytes[1] | 0x80 : flagBytes[1] & 0x7F);
+        final var flagBytes = flagsNotNull.getAsBytes();
+        final var anotherFlagByte1 = (byte) ((flagBytes[0] & 0x80) == 0 ? flagBytes[0] | 0x80 : flagBytes[0] & 0x7F);
+        final var anotherFlagByte2 = (byte) ((flagBytes[1] & 0x80) == 0 ? flagBytes[1] | 0x80 : flagBytes[1] & 0x7F);
         assertThat(dptValue).isNotEqualTo(new DPT19Value(dayOfWeek, date, time, new Flags(new byte[]{anotherFlagByte1, flagBytes[1]})));
         assertThat(dptValue).isNotEqualTo(new DPT19Value(dayOfWeek, date, time, new Flags(new byte[]{flagBytes[0], anotherFlagByte2})));
 
         // toString
-        String toString = String.format("DPT19Value{dpt=%s, dayOfWeek=%s, date=%s, time=%s, flags=%s, byteArray=%s}", DPT19.DATE_TIME, dayOfWeek,
+        final var toString = String.format("DPT19Value{dpt=%s, dayOfWeek=%s, date=%s, time=%s, flags=%s, byteArray=%s}", DPT19.DATE_TIME, dayOfWeek,
                 date, time, flagsNotNull, ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
@@ -158,9 +158,9 @@ public final class DPT19ValueTest {
     private void assertFlags(final byte[] bytes, final boolean fault, final boolean workingDay, final boolean workingDayValid,
                              final boolean yearValid, final boolean dateValid, final boolean dayOfWeekValid, final boolean timeValid, final boolean summerTime,
                              final boolean clockWithExternalSyncSignal) {
-        final Flags flags = new Flags(fault, workingDay, workingDayValid, yearValid, dateValid, dayOfWeekValid, timeValid, summerTime,
+        final var flags = new Flags(fault, workingDay, workingDayValid, yearValid, dateValid, dayOfWeekValid, timeValid, summerTime,
                 clockWithExternalSyncSignal);
-        final Flags flagsByBytes = new Flags(bytes);
+        final var flagsByBytes = new Flags(bytes);
 
         // instance methods
         assertThat(flags.isFault()).isEqualTo(fault);
@@ -195,7 +195,7 @@ public final class DPT19ValueTest {
         // @formatter:on
 
         // toString
-        String toString = String.format(
+        final var toString = String.format(
                 "Flags{fault=%s, workingDay=%s, workingDayValid=%s, yearValid=%s, dateValid=%s, dayOfWeekValid=%s, timeValid=%s, summerTime=%s, clockWithExternalSyncSignal=%s}",
                 fault, workingDay, workingDayValid, yearValid, dateValid, dayOfWeekValid, timeValid, summerTime, clockWithExternalSyncSignal);
         assertThat(flags).hasToString(toString);

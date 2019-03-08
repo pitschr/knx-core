@@ -38,7 +38,7 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT8 dpt = DPT8.VALUE_2_OCTET_COUNT;
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
 
         assertThat(dpt.getId()).isEqualTo("8.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 2-Octet Signed Count (pulses)");
@@ -47,7 +47,7 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT8 dpt = DPT8.VALUE_2_OCTET_COUNT;
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -78,7 +78,7 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
         /*
          * PERCENT
          */
-        final DPT8 dpt = DPT8.PERCENT;
+        final var dpt = DPT8.PERCENT;
         assertThat(dpt.getCalculationFunction()).isInstanceOf(Function.class);
         // value: 0%
         assertThat(dpt.toValue(0).getSignedValue()).isEqualTo(0d);
@@ -99,7 +99,7 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT8 dpt = DPT8.VALUE_2_OCTET_COUNT;
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
 
         // value: 0
         this.assertDPT(dpt, new byte[]{0x00, 0x00}, 0);
@@ -117,7 +117,7 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
      * @param intValue
      */
     private void assertDPT(final DPT8 dpt, final byte[] bValueArray, final int intValue) {
-        final DPT8Value dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.toValue(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

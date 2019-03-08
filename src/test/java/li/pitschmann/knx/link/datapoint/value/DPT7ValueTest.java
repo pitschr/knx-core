@@ -53,8 +53,8 @@ public final class DPT7ValueTest {
     }
 
     private void assertValue(final DPT7 dpt, final byte[] bytes, final int rawUnsignedValue, final double unsignedValue) {
-        DPT7Value dptValue = new DPT7Value(dpt, rawUnsignedValue);
-        DPT7Value dptValueByByte = new DPT7Value(dpt, bytes);
+        final var dptValue = new DPT7Value(dpt, rawUnsignedValue);
+        final var dptValueByByte = new DPT7Value(dpt, bytes);
 
         // instance methods
         assertThat(dptValue.getUnsignedValue()).isEqualTo(unsignedValue);
@@ -76,7 +76,7 @@ public final class DPT7ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT7Value(dpt, rawUnsignedValue + 1));
 
         // toString
-        String toString = String.format("DPT7Value{dpt=%s, unsignedValue=%s, rawUnsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
+        final var toString = String.format("DPT7Value{dpt=%s, unsignedValue=%s, rawUnsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
                 rawUnsignedValue, ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

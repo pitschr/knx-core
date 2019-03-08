@@ -20,9 +20,7 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +28,7 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Observes the {@link TunnellingAckBody} which is received from KNX Net/IP Router on data channel.
+ * Observes the {@link TunnellingAckBody} which is received from KNX Net/IP device on data channel.
  *
  * @author PITSCHR
  */
@@ -47,9 +45,9 @@ public final class TunnellingAckTask implements Subscriber<Body> {
         // we are interested in tunnelling acknowledge only
         if (body instanceof TunnellingAckBody) {
             LOG.debug("Tunnelling Ack received: {}", body);
-            final TunnellingAckBody ackBody = (TunnellingAckBody) body;
+            final var ackBody = (TunnellingAckBody) body;
 
-            final KnxEventData<TunnellingRequestBody, TunnellingAckBody> eventData = this.client.getEventPool().get(ackBody);
+            final var eventData = this.client.getEventPool().get(ackBody);
             if (eventData.hasResponse()) {
                 LOG.warn("Event already acknowledged? Looks there was a communication problem. Ignoring acknowledge: {} for event: {}", ackBody,
                         eventData);

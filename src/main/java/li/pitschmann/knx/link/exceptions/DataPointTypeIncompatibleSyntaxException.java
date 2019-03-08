@@ -28,7 +28,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public final class DataPointTypeIncompatibleSyntaxException extends KnxException {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Creates an exception in case incompatible {@code commands} array have been provided for the {@code dpt}.

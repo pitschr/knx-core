@@ -46,7 +46,7 @@ public class NetworkerTest {
      */
     @Test
     public void testLocalhost() {
-        final InetAddress addr = Networker.getLocalhost();
+        final var addr = Networker.getLocalhost();
         assertThat(addr.getHostAddress()).isEqualTo("127.0.0.1");
         assertThat(addr.getAddress()).containsExactly(new byte[]{127, 0, 0, 1});
 
@@ -59,7 +59,7 @@ public class NetworkerTest {
      */
     @Test
     public void testByAddressUnbound() {
-        final InetAddress addr = Networker.getAddressUnbound();
+        final var addr = Networker.getAddressUnbound();
         assertThat(addr.getHostAddress()).isEqualTo("0.0.0.0");
         assertThat(addr.getAddress()).containsExactly(new byte[4]);
     }
@@ -70,7 +70,7 @@ public class NetworkerTest {
      */
     @Test
     public void testByAddress() {
-        final InetAddress addr = Networker.getByAddress("1.2.3.4");
+        final var addr = Networker.getByAddress("1.2.3.4");
         assertThat(addr.getHostAddress()).isEqualTo("1.2.3.4");
 
         // OK
@@ -103,15 +103,15 @@ public class NetworkerTest {
     @Test
     public void testRemoteAddressAsString() throws IOException {
         // test UDP
-        final DatagramChannel datagramChannelMock = Mockito.mock(DatagramChannel.class);
-        final SocketAddress socketAddressUdpMock = Mockito.mock(SocketAddress.class);
+        final var datagramChannelMock = Mockito.mock(DatagramChannel.class);
+        final var socketAddressUdpMock = Mockito.mock(SocketAddress.class);
         Mockito.when(socketAddressUdpMock.toString()).thenReturn("1.2.3.4/udp");
         Mockito.when(datagramChannelMock.getRemoteAddress()).thenReturn(socketAddressUdpMock);
         assertThat(Networker.getRemoteAddressAsString(datagramChannelMock)).isEqualTo("1.2.3.4/udp");
 
         // test TCP
-        final SocketAddress socketAddressTdpMock = Mockito.mock(SocketAddress.class);
-        final SocketChannel socketChannelMock = Mockito.mock(SocketChannel.class);
+        final var socketAddressTdpMock = Mockito.mock(SocketAddress.class);
+        final var socketChannelMock = Mockito.mock(SocketChannel.class);
         Mockito.when(socketAddressTdpMock.toString()).thenReturn("1.2.3.4/tcp");
         Mockito.when(socketChannelMock.getRemoteAddress()).thenReturn(socketAddressTdpMock);
         assertThat(Networker.getRemoteAddressAsString(socketChannelMock)).isEqualTo("1.2.3.4/tcp");
@@ -123,7 +123,7 @@ public class NetworkerTest {
         assertThat(Networker.getRemoteAddressAsString(socketChannelMock)).isEqualTo("N/A");
 
         // test "Error"
-        final FileChannel fileChannelMock = Mockito.mock(FileChannel.class);
+        final var fileChannelMock = Mockito.mock(FileChannel.class);
         assertThat(Networker.getRemoteAddressAsString(fileChannelMock)).isEqualTo("Error[Unsupported channel type]");
     }
 
@@ -133,15 +133,15 @@ public class NetworkerTest {
     @Test
     public void testLocalAddressAsString() throws IOException {
         // test UDP
-        final DatagramChannel datagramChannelMock = Mockito.mock(DatagramChannel.class);
-        final SocketAddress socketAddressUdpMock = Mockito.mock(SocketAddress.class);
+        final var datagramChannelMock = Mockito.mock(DatagramChannel.class);
+        final var socketAddressUdpMock = Mockito.mock(SocketAddress.class);
         Mockito.when(socketAddressUdpMock.toString()).thenReturn("5.6.7.8/udp");
         Mockito.when(datagramChannelMock.getLocalAddress()).thenReturn(socketAddressUdpMock);
         assertThat(Networker.getLocalAddressAsString(datagramChannelMock)).isEqualTo("5.6.7.8/udp");
 
         // test TCP
-        final SocketAddress socketAddressTdpMock = Mockito.mock(SocketAddress.class);
-        final SocketChannel socketChannelMock = Mockito.mock(SocketChannel.class);
+        final var socketAddressTdpMock = Mockito.mock(SocketAddress.class);
+        final var socketChannelMock = Mockito.mock(SocketChannel.class);
         Mockito.when(socketAddressTdpMock.toString()).thenReturn("5.6.7.8/tcp");
         Mockito.when(socketChannelMock.getLocalAddress()).thenReturn(socketAddressTdpMock);
         assertThat(Networker.getLocalAddressAsString(socketChannelMock)).isEqualTo("5.6.7.8/tcp");
@@ -153,7 +153,7 @@ public class NetworkerTest {
         assertThat(Networker.getLocalAddressAsString(socketChannelMock)).isEqualTo("N/A");
 
         // test "Error"
-        final FileChannel fileChannelMock = Mockito.mock(FileChannel.class);
+        final var fileChannelMock = Mockito.mock(FileChannel.class);
         assertThat(Networker.getLocalAddressAsString(fileChannelMock)).isEqualTo("Error[Unsupported channel type]");
     }
 

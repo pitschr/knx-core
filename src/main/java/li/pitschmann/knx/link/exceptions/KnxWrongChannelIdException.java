@@ -27,8 +27,6 @@ import li.pitschmann.knx.link.ChannelIdAware;
  * @author PITSCHR
  */
 public final class KnxWrongChannelIdException extends KnxCommunicationException {
-    private static final long serialVersionUID = 1L;
-
     /**
      * Constructor for {@link KnxWrongChannelIdException} in case we received a packet with unexpected channel id.
      *

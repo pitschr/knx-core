@@ -172,8 +172,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.plugin.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>10</source>
-                    <target>10</target>
+                    <source>11</source>
+                    <target>11</target>
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
                     </compilerArgs>

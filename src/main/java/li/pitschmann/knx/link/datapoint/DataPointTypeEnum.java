@@ -35,7 +35,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
      */
     @SuppressWarnings("unchecked")
     default DPTEnumValue<T> toValue() {
-        final T thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
+        final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
         return DataPointTypeRegistry.getDataPointType(thisObj);
     }
 
@@ -54,7 +54,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
      * @return id
      */
     default String getId() {
-        final DPTEnumValue<T> value = toValue();
+        final var value = toValue();
         return value.getDPT().getId() + " - " + value.getEnumField();
     }
 
@@ -64,7 +64,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
      * @return description
      */
     default String getDescription() {
-        final DPTEnumValue<T> value = toValue();
+        final var value = toValue();
         return value.getDPT().getDescription() + " - " + value.getDescription();
     }
 }

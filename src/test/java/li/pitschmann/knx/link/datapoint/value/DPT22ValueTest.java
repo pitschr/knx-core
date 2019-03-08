@@ -54,7 +54,7 @@ public final class DPT22ValueTest {
     }
 
     private void assertStatusDHWController(final byte[] bytes, final boolean[] bool) {
-        StatusDHWController dptValue = new StatusDHWController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
+        final var dptValue = new StatusDHWController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
         assertThat(new StatusDHWController(bytes)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
@@ -95,7 +95,7 @@ public final class DPT22ValueTest {
     }
 
     private void assertStatusRoomHeatinCoolingController(final byte[] bytes, final boolean[] bool) {
-        StatusRoomHeatinCoolingController dptValue = new StatusRoomHeatinCoolingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5],
+        final var dptValue = new StatusRoomHeatinCoolingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5],
                 bool[6], bool[7], bool[8], bool[9], bool[10], bool[11], bool[12], bool[13], bool[14]);
         assertThat(new StatusRoomHeatinCoolingController(bytes)).isEqualTo(dptValue);
 
@@ -131,7 +131,7 @@ public final class DPT22ValueTest {
     }
 
     private void assertMedia(final byte[] bytes, final boolean[] bool) {
-        Media dptValue = new Media(bool[0], bool[1], bool[2], bool[3]);
+        final var dptValue = new Media(bool[0], bool[1], bool[2], bool[3]);
         assertThat(new Media(bytes)).isEqualTo(dptValue);
 
         assertThat(dptValue.isTP1Supported()).isEqualTo(bool[0]);
@@ -171,11 +171,11 @@ public final class DPT22ValueTest {
     }
 
     private void assertChannelActivation16(final byte[] bytes, final boolean[] bool) {
-        ChannelActivation16 dptValue = new ChannelActivation16(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7], bool[8],
+        final var dptValue = new ChannelActivation16(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7], bool[8],
                 bool[9], bool[10], bool[11], bool[12], bool[13], bool[14], bool[15]);
         assertThat(new ChannelActivation16(bytes)).isEqualTo(dptValue);
 
-        for (int i = 0; i < 16; i++) {
+        for (var i = 0; i < 16; i++) {
             assertThat(dptValue.isChannelActive(i + 1)).isEqualTo(bool[i]);
         }
 

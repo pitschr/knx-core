@@ -54,8 +54,8 @@ public final class DPT4ValueTest {
     }
 
     private void assertValue(final DPT4 dpt, final byte b, final char character) {
-        DPT4Value dptValue = new DPT4Value(dpt, character);
-        DPT4Value dptValueByByte = new DPT4Value(dpt, b);
+        final var dptValue = new DPT4Value(dpt, character);
+        final var dptValueByByte = new DPT4Value(dpt, b);
 
         // instance methods
         assertThat(dptValue.getCharacter()).isEqualTo(character);
@@ -76,7 +76,7 @@ public final class DPT4ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT4Value(dpt, (char) (character + 1))); // next char
 
         // toString
-        String toString = String.format("DPT4Value{dpt=%s, character=%s, byteArray=%s}", dpt, character, ByteFormatter.formatHex(b));
+        final var toString = String.format("DPT4Value{dpt=%s, character=%s, byteArray=%s}", dpt, character, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
     }

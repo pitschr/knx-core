@@ -53,8 +53,8 @@ public final class DPT13ValueTest {
     }
 
     private void assertValue(final DPT13 dpt, final byte[] bytes, final int rawSignedValue, final double signedValue) {
-        DPT13Value dptValue = new DPT13Value(dpt, rawSignedValue);
-        DPT13Value dptValueByByte = new DPT13Value(dpt, bytes);
+        final var dptValue = new DPT13Value(dpt, rawSignedValue);
+        final var dptValueByByte = new DPT13Value(dpt, bytes);
 
         // instance methods
         assertThat(dptValue.getRawSignedValue()).isEqualTo(rawSignedValue);
@@ -76,7 +76,7 @@ public final class DPT13ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT13Value(dpt, rawSignedValue + 1));
 
         // toString
-        String toString = String.format("DPT13Value{dpt=%s, signedValue=%s, rawSignedValue=%s, byteArray=%s}", dpt, signedValue, rawSignedValue,
+        final var toString = String.format("DPT13Value{dpt=%s, signedValue=%s, rawSignedValue=%s, byteArray=%s}", dpt, signedValue, rawSignedValue,
                 ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

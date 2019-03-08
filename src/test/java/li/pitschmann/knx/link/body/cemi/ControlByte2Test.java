@@ -41,10 +41,10 @@ public final class ControlByte2Test {
      */
     @Test
     public void useDefaultIndividual() {
-        final KnxAddress knxAddress = IndividualAddress.of(15, 3, 7);
+        final var knxAddress = IndividualAddress.of(15, 3, 7);
 
-        final ControlByte2 controlByte2Default = ControlByte2.useDefault(knxAddress);
-        final ControlByte2 controlByte2CreateBy = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
+        final var controlByte2Default = ControlByte2.useDefault(knxAddress);
+        final var controlByte2CreateBy = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
 
         // assert
         assertThat(controlByte2Default.getRawData()).isEqualTo(controlByte2CreateBy.getRawData());
@@ -55,10 +55,10 @@ public final class ControlByte2Test {
      */
     @Test
     public void useDefaultGroup() {
-        final KnxAddress knxAddress = GroupAddress.of(3, 1024);
+        final var knxAddress = GroupAddress.of(3, 1024);
 
-        final ControlByte2 controlByte2Default = ControlByte2.useDefault(knxAddress);
-        final ControlByte2 controlByte2CreateBy = ControlByte2.create(AddressType.GROUP, 6, 0);
+        final var controlByte2Default = ControlByte2.useDefault(knxAddress);
+        final var controlByte2CreateBy = ControlByte2.create(AddressType.GROUP, 6, 0);
 
         // assert
         assertThat(controlByte2Default.getRawData()).isEqualTo(controlByte2CreateBy.getRawData());
@@ -70,14 +70,14 @@ public final class ControlByte2Test {
     @Test
     public void validCaseA() {
         // create
-        final ControlByte2 controlByteByCreate = ControlByte2.create(AddressType.INDIVIDUAL, 0, 0);
-        final ControlByte2 controlByteByCreateRawData = ControlByte2.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte2.create(AddressType.INDIVIDUAL, 0, 0);
+        final var controlByteByCreateRawData = ControlByte2.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
         assertThat(controlByteByCreateRawData.getHopCount()).isEqualTo(0);
         assertThat(controlByteByCreateRawData.getExtendedFrameFormat()).isEqualTo(0);
 
         // valueOf
-        final ControlByte2 controlByteByValueOf = ControlByte2.valueOf((byte) (0x00 << 7 | 0x00 << 4 | 0x00));
+        final var controlByteByValueOf = ControlByte2.valueOf((byte) (0x00 << 7 | 0x00 << 4 | 0x00));
         assertThat(controlByteByValueOf.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
         assertThat(controlByteByValueOf.getHopCount()).isEqualTo(0);
         assertThat(controlByteByValueOf.getExtendedFrameFormat()).isEqualTo(0);
@@ -93,14 +93,14 @@ public final class ControlByte2Test {
     @Test
     public void validCaseB() {
         // create
-        final ControlByte2 controlByteByCreate = ControlByte2.create(AddressType.GROUP, 3, 8);
-        final ControlByte2 controlByteByCreateRawData = ControlByte2.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte2.create(AddressType.GROUP, 3, 8);
+        final var controlByteByCreateRawData = ControlByte2.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(controlByteByCreateRawData.getHopCount()).isEqualTo(3);
         assertThat(controlByteByCreateRawData.getExtendedFrameFormat()).isEqualTo(8);
 
         // valueOf
-        final ControlByte2 controlByteByValueOf = ControlByte2.valueOf((byte) (0x01 << 7 | 0x03 << 4 | 0x08));
+        final var controlByteByValueOf = ControlByte2.valueOf((byte) (0x01 << 7 | 0x03 << 4 | 0x08));
         assertThat(controlByteByValueOf.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(controlByteByValueOf.getHopCount()).isEqualTo(3);
         assertThat(controlByteByValueOf.getExtendedFrameFormat()).isEqualTo(8);
@@ -116,14 +116,14 @@ public final class ControlByte2Test {
     @Test
     public void validCaseC() {
         // create
-        final ControlByte2 controlByteByCreate = ControlByte2.create(AddressType.GROUP, 7, 15);
-        final ControlByte2 controlByteByCreateRawData = ControlByte2.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte2.create(AddressType.GROUP, 7, 15);
+        final var controlByteByCreateRawData = ControlByte2.valueOf(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(controlByteByCreateRawData.getHopCount()).isEqualTo(7);
         assertThat(controlByteByCreateRawData.getExtendedFrameFormat()).isEqualTo(15);
 
         // valueOf
-        final ControlByte2 controlByteByValueOf = ControlByte2.valueOf((byte) (0x01 << 7 | 0x07 << 4 | 0x0F));
+        final var controlByteByValueOf = ControlByte2.valueOf((byte) (0x01 << 7 | 0x07 << 4 | 0x0F));
         assertThat(controlByteByValueOf.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(controlByteByValueOf.getHopCount()).isEqualTo(7);
         assertThat(controlByteByValueOf.getExtendedFrameFormat()).isEqualTo(15);

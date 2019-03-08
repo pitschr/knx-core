@@ -114,10 +114,10 @@ public final class TunnellingRequestBody extends AbstractMultiRawData implements
             throw new KnxNumberOutOfRangeException("sequence", 0, 0xFF, sequence);
         }
 
-        final byte[] cemiAsBytes = cemi.getRawData();
+        final var cemiAsBytes = cemi.getRawData();
 
         // create bytes
-        final byte[] bytes = new byte[STRUCTURE_LENGTH + cemiAsBytes.length];
+        final var bytes = new byte[STRUCTURE_LENGTH + cemiAsBytes.length];
         bytes[0] = STRUCTURE_LENGTH;
         bytes[1] = (byte) channelId;
         bytes[2] = (byte) sequence;

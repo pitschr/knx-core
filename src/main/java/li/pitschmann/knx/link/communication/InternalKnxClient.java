@@ -35,7 +35,6 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
-import li.pitschmann.knx.link.body.dib.ServiceTypeFamilyVersion;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
@@ -53,6 +52,7 @@ import li.pitschmann.knx.link.communication.task.TunnellingRequestTask;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
+import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxNoTunnellingException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -61,14 +61,12 @@ import li.pitschmann.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -77,7 +75,7 @@ import java.util.function.BiConsumer;
 
 /**
  * Abstract KNX Client class containing essential KNX communication ways to retrieve device information from
- * KNX Net/IP router and connection management.
+ * KNX Net/IP device and connection management.
  *
  * @author PITSCHR
  */
@@ -159,19 +157,19 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     /**
-     * Verify if the retrieved {@link DescriptionResponseBody} returned by the KNX Net/IP router
+     * Verify if the retrieved {@link DescriptionResponseBody} returned by the KNX Net/IP device
      * is applicable for current client implementation.
      * <p/>
-     * It will just check if the KNX Net/IP router supports tunnelling.
+     * It will just check if the KNX Net/IP device supports tunnelling.
      *
-     * @return {@code true} if tunneling is supported by KNX Net/IP router and we can proceed with connect, otherwise {@code false}.
+     * @return {@code true} if tunneling is supported by KNX Net/IP device and we can proceed with connect, otherwise {@code false}.
      */
     private boolean verify() {
         LOG.trace("Call 'verify()' method.");
-        final DescriptionResponseBody descriptionResponseBody = this.fetchDescriptionFromRouter();
+        final var descriptionResponseBody = this.fetchDescriptionFromKNX();
 
         // get supported device families
-        final List<ServiceTypeFamilyVersion> serviceFamilies = descriptionResponseBody.getSupportedDeviceFamilies().getServiceFamilies();
+        final var serviceFamilies = descriptionResponseBody.getSupportedDeviceFamilies().getServiceFamilies();
         LOG.debug("Supported device families: {}", serviceFamilies);
 
         // check if the remote device accepts TUNNELLING
@@ -195,10 +193,10 @@ public final class InternalKnxClient implements KnxClient {
             this.channelId = -1;
 
             // logging
-            final InetSocketAddress routerAddress = this.config.getRouterEndpoint();
-            LOG.info("Remote Endpoint (Router) : {}:{}", routerAddress.getAddress().getHostAddress(), routerAddress.getPort());
-            LOG.info("Local Endpoint  (Control): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
-            LOG.info("Local Endpoint  (Data)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
+            final var endpoint = this.config.getEndpoint();
+            LOG.info("Remote Endpoint (KNX Net/IP)     : {}:{}", endpoint.getAddress().getHostAddress(), endpoint.getPort());
+            LOG.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
+            LOG.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
 
             // channel executors
             // 1) Control Channel Receiver,
@@ -209,7 +207,8 @@ public final class InternalKnxClient implements KnxClient {
             this.channelExecutor.execute(dataChannelCommunicator);
 
             // get channel for further communications
-            this.fetchChannelIdFromRouter();
+            this.channelId = this.fetchChannelIdFromKNX();
+            LOG.info("Channel ID received: {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
             this.channelExecutor.submit(this.createConnectionStateMonitor());
@@ -237,7 +236,7 @@ public final class InternalKnxClient implements KnxClient {
      * @return {@link ControlChannelCommunicator}
      */
     private DescriptionChannelCommunicator newDescriptionChannelCommunicator() {
-        final DescriptionChannelCommunicator communicator = new DescriptionChannelCommunicator(this);
+        final var communicator = new DescriptionChannelCommunicator(this);
         communicator.subscribe(new DescriptionResponseTask(this));
         return communicator;
     }
@@ -249,16 +248,16 @@ public final class InternalKnxClient implements KnxClient {
      * Following subscribers are:
      * <ul>
      * <li>{@link ConnectResponseTask} receiving the response after {@link ConnectRequestBody}, only once time</li>
-     * <li>{@link ConnectionStateResponseTask} receiving connection health status from KNX Net/IP router</li>
-     * <li>{@link DisconnectRequestTask} when disconnect is initiated by the KNX Net/IP router</li>
-     * <li>{@link DisconnectResponseTask} as answer from KNX Net/IP router when disconnect is initiated by the
+     * <li>{@link ConnectionStateResponseTask} receiving connection health status from KNX Net/IP device</li>
+     * <li>{@link DisconnectRequestTask} when disconnect is initiated by the KNX Net/IP device</li>
+     * <li>{@link DisconnectResponseTask} as answer from KNX Net/IP device when disconnect is initiated by the
      * client</li>
      * </ul>
      *
      * @return {@link ControlChannelCommunicator}
      */
     private ControlChannelCommunicator newControlChannelCommunicator() {
-        final ControlChannelCommunicator communicator = new ControlChannelCommunicator(this);
+        final var communicator = new ControlChannelCommunicator(this);
         communicator.subscribe(new ConnectResponseTask(this));
         communicator.subscribe(new ConnectionStateResponseTask(this));
         communicator.subscribe(new DisconnectRequestTask(this));
@@ -272,15 +271,15 @@ public final class InternalKnxClient implements KnxClient {
      * <p>
      * Following subscribers are:
      * <ul>
-     * <li>{@link TunnellingRequestTask} when KNX Net/IP router notifies the client about a change from a remote KNX
+     * <li>{@link TunnellingRequestTask} when KNX Net/IP device notifies the client about a change from a remote KNX
      * device</li>
-     * <li>{@link TunnellingAckTask} as answer from KNX Net/IP router when sending a data packet</li>
+     * <li>{@link TunnellingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
      * </ul>
      *
      * @return {@link DataChannelCommunicator}
      */
     private DataChannelCommunicator newDataChannelCommunciator() {
-        final DataChannelCommunicator communicator = new DataChannelCommunicator(this);
+        final var communicator = new DataChannelCommunicator(this);
         communicator.subscribe(new TunnellingRequestTask(this));
         communicator.subscribe(new TunnellingAckTask(this));
         return communicator;
@@ -288,7 +287,7 @@ public final class InternalKnxClient implements KnxClient {
 
     /**
      * Registers the {@link ConnectionStateMonitor} to send {@link ConnectionStateRequestBody} frequently to the
-     * KNX Net/IP router and monitors the health status.
+     * KNX Net/IP device and monitors the health status.
      * <p>
      * No subscribers.
      *
@@ -326,15 +325,15 @@ public final class InternalKnxClient implements KnxClient {
      */
     private void stopServices() {
         LOG.trace("Method 'stopServices()' called");
-        boolean isOk = true;
+        var isOk = true;
         try {
             // Check if there is already a disconnect request present in the event pool.
-            // 1) If exists, disconnect request came from KNX Net/IP router -> no disconnect request to sent
-            // 2) If NOT exists, client is closing the communication and send disconnect request to KNX Net/IP router
+            // 1) If exists, disconnect request came from KNX Net/IP device -> no disconnect request to sent
+            // 2) If NOT exists, client is closing the communication and send disconnect request to KNX Net/IP device
             if (this.channelId > 0 && !this.eventPool.disconnectEvent().hasRequest()) {
                 LOG.trace("Control channel is still connected. Send disconnect request.");
                 // create body
-                final DisconnectRequestBody requestBody = DisconnectRequestBody.create(this.channelId, this.controlHPAI);
+                final var requestBody = DisconnectRequestBody.create(this.channelId, this.controlHPAI);
                 try {
                     final var responseBody = this.send(requestBody, config.getTimeoutDisconnectRequest()).get();
                     if (responseBody != null) {
@@ -450,7 +449,7 @@ public final class InternalKnxClient implements KnxClient {
      * Verifies if the {@link Body} response if it meets the {@link #channelId}. The channel id check is skipped when
      * given {@link Body} doesn't implement the {@link ChannelIdAware} interface.
      * <p/>
-     * The {@link #channelId} is fetched and set during initialization of connection with KNX Net/IP router.
+     * The {@link #channelId} is fetched and set during initialization of connection with KNX Net/IP device.
      *
      * @param body any KNX body to be verified
      * @return {@code true} if channel id is valid for current KNX client, otherwise {@link KnxWrongChannelIdException} is thrown.
@@ -459,8 +458,8 @@ public final class InternalKnxClient implements KnxClient {
     public final boolean verifyChannelId(final Body body) {
         // if body is channel id aware then verify the channel id, otherwise skip it
         if (ChannelIdAware.class.isAssignableFrom(body.getClass())) {
-            final ChannelIdAware channelIdAwareBody = (ChannelIdAware) body;
-            final int actualChannelId = channelIdAwareBody.getChannelId();
+            final var channelIdAwareBody = (ChannelIdAware) body;
+            final var actualChannelId = channelIdAwareBody.getChannelId();
             // skip check for ConnectResponseBody because it is the first time where we get channelId
             if (body instanceof ConnectResponseBody) {
                 LOG.debug("Channel ID in ConnectResponseBody isn't be checked because it is the first response with channel id.");
@@ -475,63 +474,61 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     /**
-     * Returns the description response body from KNX Net/IP router containing device information, supported device
+     * Returns the description response body from KNX Net/IP device containing device information, supported device
      * capabilities.
      *
      * @return {@link DescriptionResponseBody}
      */
-    private DescriptionResponseBody fetchDescriptionFromRouter() {
-        LOG.trace("Method 'fetchDescriptionFromRouter()' called.");
+    private DescriptionResponseBody fetchDescriptionFromKNX() {
+        LOG.trace("Method 'fetchDescriptionFromKNX()' called.");
 
-        // Description request / response is one-time task before establishing communication to KNX Net/IP Router
-        final DescriptionChannelCommunicator communicator = newDescriptionChannelCommunicator();
+        // Description request / response is one-time task before establishing communication to KNX Net/IP device
+        final var communicator = newDescriptionChannelCommunicator();
 
         // Create executor service for description communication
-        final ExecutorService es = Executors.newSingleThreadExecutor();
+        final var es = Executors.newSingleThreadExecutor();
         es.execute(communicator);
         es.shutdown();
 
+        // send description request
+        final var descriptionRequestBody = DescriptionRequestBody.create();
+        LOG.debug("Request for description: {}", descriptionRequestBody);
+
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
         try (communicator) {
-            // send description request
-            final DescriptionRequestBody requestBody = DescriptionRequestBody.create();
-            LOG.debug("Request for description: {}", requestBody);
-
-            final DescriptionResponseBody responseBody = communicator.sendAndWait(requestBody, config.getTimeoutDescriptionRequest());
+            final var descriptionResponseBody = communicator.<DescriptionResponseBody>send(descriptionRequestBody, config.getTimeoutDescriptionRequest()).get();
             // check status
-            if (responseBody != null) {
-                LOG.debug("Description response received: {}", responseBody);
-                return responseBody;
-            } else {
-                LOG.error("Description response not received for request: {}", requestBody);
-                throw new KnxBodyNotReceivedException(DescriptionResponseBody.class);
-            }
+            Preconditions.checkState(descriptionResponseBody != null, descriptionResponseBody);
+            return descriptionResponseBody;
+        } catch (final Exception ex) {
+            LOG.error("Exception during fetch description from KNX Net/IP device", ex);
+            throw new KnxDescriptionNotReceivedException(descriptionRequestBody);
         } finally {
             Closeables.shutdownQuietly(es);
         }
     }
 
     /**
-     * Fetches the channel id from KNX Net/IP router.
+     * Fetches the channel id from KNX Net/IP device.
      *
+     * @return the channel id retrieved from KNX Net/ip device
      * @throws KnxCommunicationException in case channel id could not be fetched due an error or timeout
      */
-    private void fetchChannelIdFromRouter() {
-        LOG.trace("Method 'fetchChannelIdFromRouter()' called.");
+    private int fetchChannelIdFromKNX() {
+        LOG.trace("Method 'fetchChannelIdFromKNX()' called.");
 
         // create connect request and send it
         final var cri = ConnectionRequestInformation.create();
         final var connectRequestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
+        LOG.debug("Request for connect: {}", connectRequestBody);
 
         try {
             final var connectResponseBody = this.<ConnectResponseBody>send(connectRequestBody, config.getTimeoutConnectRequest()).get();
             // check status
-            Preconditions.checkState(connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR);
-            // return channel id
-            this.channelId = connectResponseBody.getChannelId();
-            LOG.info("Channel ID received: {}", this.channelId);
-        } catch (final IllegalStateException | InterruptedException | ExecutionException ex) {
-            LOG.error("Exception during fetch channel id from router", ex);
+            Preconditions.checkState(connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR, connectResponseBody);
+            return connectResponseBody.getChannelId();
+        } catch (final Exception ex) {
+            LOG.error("Exception during fetch channel id from KNX Net/IP device", ex);
             throw new KnxChannelIdNotReceivedException(connectRequestBody);
         }
     }
@@ -542,7 +539,7 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     @Override
-    public final <T extends ResponseBody> Future<T> send(final RequestBody requestBody, final long msTimeout) {
+    public final <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunciator(requestBody).send(requestBody, msTimeout);
     }
 }

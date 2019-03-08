@@ -41,7 +41,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
      */
     @Test
     public void testGeneralCompatability() {
-        final DPT1 dpt = DPT1.SWITCH;
+        final var dpt = DPT1.SWITCH;
 
         // general failures
         assertThatThrownBy(() -> dpt.toValue((byte[]) null)).isInstanceOf(KnxNullPointerException.class);
@@ -50,7 +50,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
 
     @Test
     public void testTestDataPointTypeCompatibility() {
-        final TestDataPointType dpt = new TestDataPointType();
+        final var dpt = new TestDataPointType();
 
         // parse OK
         assertThat(dpt.toValue(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointValue.class);
@@ -64,7 +64,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
 
     @Test
     public void testTestDataPointTypeCompatibilityNoStringSyntax() {
-        final TestDataPointTypeNoStringSyntax dpt = new TestDataPointTypeNoStringSyntax();
+        final var dpt = new TestDataPointTypeNoStringSyntax();
 
         // parse (unsupported!)
         assertThatThrownBy(() -> dpt.toValue(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
@@ -104,7 +104,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
      */
     protected void assertBaseDPT(final D dpt, final byte[] bValueArray, final DV dptValue) {
         // create by #of(byte[])
-        final DV baseOfValue = dpt.toValue(bValueArray);
+        final var baseOfValue = dpt.toValue(bValueArray);
         assertThat(baseOfValue).isEqualTo(dptValue);
         assertThat(dptValue.getDPT()).isEqualTo(dpt);
 

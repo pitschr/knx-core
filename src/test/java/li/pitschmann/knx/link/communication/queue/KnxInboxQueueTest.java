@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class KnxInboxQueueTest {
 
     /**
-     * Test a successful incoming packet from KNX Net/IP router to client
+     * Test a successful incoming packet from KNX Net/IP device to client
      */
     @Test
     @DisplayName("Test successful incoming KNX packet")
@@ -78,7 +78,7 @@ public class KnxInboxQueueTest {
     }
 
     /**
-     * Test a successful incoming packet from KNX Net/IP router to client
+     * Test a successful incoming packet from KNX Net/IP device to client
      */
     @Test
     @DisplayName("Test successful incoming KNX packet (through channel)")

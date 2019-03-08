@@ -151,10 +151,10 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
 
     @Override
     protected DPT19Value parse(final String[] args) {
-        final DayOfWeek dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
-        final LocalDate date = this.findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse);
-        final LocalTime time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
-        final Flags flags = this.findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), null);
+        final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
+        final var date = this.findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse);
+        final var time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
+        final var flags = this.findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), null);
 
         return new DPT19Value(dayOfWeek, date, time, flags);
     }

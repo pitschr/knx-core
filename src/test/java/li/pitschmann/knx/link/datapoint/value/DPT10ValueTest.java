@@ -64,8 +64,8 @@ public final class DPT10ValueTest {
     }
 
     private void assertValue(final byte[] bytes, final DayOfWeek dayOfWeek, final LocalTime time) {
-        DPT10Value dptValue = new DPT10Value(dayOfWeek, time);
-        DPT10Value dptValueByByte = new DPT10Value(bytes);
+        final var dptValue = new DPT10Value(dayOfWeek, time);
+        final var dptValueByByte = new DPT10Value(bytes);
 
         // instance methods
         assertThat(dptValue.getDayOfWeek()).isEqualTo(dayOfWeek);
@@ -81,7 +81,7 @@ public final class DPT10ValueTest {
         assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
 
         // not equals
-        DayOfWeek anotherDayOfWeek = dayOfWeek == null ? DayOfWeek.MONDAY : dayOfWeek.plus(1);
+        final var anotherDayOfWeek = dayOfWeek == null ? DayOfWeek.MONDAY : dayOfWeek.plus(1);
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
         assertThat(dptValue).isNotEqualTo(new DPT10Value(anotherDayOfWeek, time));
@@ -93,7 +93,7 @@ public final class DPT10ValueTest {
         }
 
         // toString
-        String toString = String.format("DPT10Value{dpt=%s, dayOfWeek=%s, time=%s, byteArray=%s}", DPT10.TIME_OF_DAY, dayOfWeek, time,
+        final var toString = String.format("DPT10Value{dpt=%s, dayOfWeek=%s, time=%s, byteArray=%s}", DPT10.TIME_OF_DAY, dayOfWeek, time,
                 ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

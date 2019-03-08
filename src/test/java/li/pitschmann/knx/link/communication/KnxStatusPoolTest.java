@@ -86,9 +86,9 @@ public class KnxStatusPoolTest {
         pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x00}));
 
         // Scenario 1: Init (false)
-        final DPT1Value boolValue = pool.getValue(ADDRESS, DPT1.SWITCH.getId());
+        final var boolValue = pool.<DPT1Value>getValue(ADDRESS, DPT1.SWITCH.getId());
         assertThat(boolValue.getBooleanValue()).isFalse();
-        final DPT1Value boolValue2 = pool.getValue(ADDRESS, DPT1.SWITCH);
+        final var boolValue2 = pool.getValue(ADDRESS, DPT1.SWITCH);
         assertThat(boolValue2.getBooleanValue()).isFalse();
 
         // Scenario 2: Update (false -> true)
@@ -124,9 +124,9 @@ public class KnxStatusPoolTest {
         pool.updateStatus(CEMI.useDefault(ADDRESS_2, APCI.GROUP_VALUE_WRITE, new byte[]{0x0C, 0x0F}));
 
         // Scenario 1: Init (19.52 °C)
-        final DPT9Value tempValue = pool.getValue(ADDRESS, DPT9.TEMPERATURE.getId());
+        final var tempValue = pool.<DPT9Value>getValue(ADDRESS, DPT9.TEMPERATURE.getId());
         assertThat(tempValue.getFloatingValue()).isEqualTo(19.52d);
-        final DPT9Value tempValue2 = pool.getValue(ADDRESS, DPT9.TEMPERATURE);
+        final var tempValue2 = pool.getValue(ADDRESS, DPT9.TEMPERATURE);
         assertThat(tempValue2.getFloatingValue()).isEqualTo(19.52d);
 
         // Scenario 2: Update (20.78 °C)

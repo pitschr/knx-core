@@ -83,14 +83,14 @@ public class ConnectRequestBodyTest {
     @Test
     public void validCases() {
         // create()
-        final ConnectRequestBody body = ConnectRequestBody.create(this.controlEndpoint, this.dataEndpoint, this.cri);
+        final var body = ConnectRequestBody.create(this.controlEndpoint, this.dataEndpoint, this.cri);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
         assertThat(body.getDataEndpoint()).isEqualTo(this.dataEndpoint);
         assertThat(body.getConnectionRequestInformation()).isEqualTo(this.cri);
 
         // compare raw data of create() with valueOf()
-        final ConnectRequestBody bodyByBytes = ConnectRequestBody.valueOf(new byte[]{0x08, 0x01, 0x01, 0x01, 0x01, 0x01, (byte) 0xe5, (byte) 0x4e,
+        final var bodyByBytes = ConnectRequestBody.valueOf(new byte[]{0x08, 0x01, 0x01, 0x01, 0x01, 0x01, (byte) 0xe5, (byte) 0x4e,
                 0x08, 0x01, 0x02, 0x02, 0x02, 0x02, (byte) 0xe5, 0x4f, 0x04, 0x04, 0x02, 0x00});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

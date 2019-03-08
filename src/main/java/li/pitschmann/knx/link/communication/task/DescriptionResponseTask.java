@@ -29,7 +29,7 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Listens to {@link DescriptionResponseBody} frame that is sent by KNX Net/IP router to client when
+ * Listens to {@link DescriptionResponseBody} frame that is sent by KNX Net/IP device to client when
  * {@link DescriptionRequestBody} was sent.
  *
  * @author PITSCHR
@@ -46,7 +46,7 @@ public final class DescriptionResponseTask implements Subscriber<Body> {
     public void onNext(final Body body) {
         // we are interested in description response only
         if (body instanceof DescriptionResponseBody) {
-            final DescriptionResponseBody responseBody = (DescriptionResponseBody) body;
+            final var responseBody = (DescriptionResponseBody) body;
             LOG.debug("Description response received: {}", responseBody);
             this.client.getEventPool().descriptionEvent().setResponse(responseBody);
             LOG.trace("Description response saved.");

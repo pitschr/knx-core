@@ -25,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,8 +147,8 @@ public class SleeperTest {
      */
     @Test
     public void testInterrupt() {
-        final SleepTestRunnable sleepRunnable = new SleepTestRunnable();
-        final Future<?> future = Executors.newSingleThreadExecutor().submit(sleepRunnable);
+        final var sleepRunnable = new SleepTestRunnable();
+        final var future = Executors.newSingleThreadExecutor().submit(sleepRunnable);
         Sleeper.milliseconds(100);
         future.cancel(true);
 
@@ -182,7 +181,7 @@ public class SleeperTest {
      */
     private void assertUpToThreeTimes(final Runnable runnable) {
         AssertionError t;
-        int retries = 0;
+        var retries = 0;
         do {
             t = null;
             try {

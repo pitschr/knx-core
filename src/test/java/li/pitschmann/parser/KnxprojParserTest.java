@@ -25,7 +25,6 @@ import li.pitschmann.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -62,19 +61,19 @@ public class KnxprojParserTest {
         assertThat(groupAddresses).hasSize(63);
 
         // assert DPT-x group address
-        // address = 0/0/1 => 1
-        assertGroupAddress(groupAddresses, 0, "P-0501-0_GA-117", 1, "Sub Group - DPT 1", "DPT-1");
-        // address = 0/3/0 => 768
-        assertGroupAddress(groupAddresses, 11, "P-0501-0_GA-128", 768, "Sub Group - DPT 12", "DPT-12");
+        // address = 0/0/10 => 0000 0000 0000 1010 => 10
+        assertGroupAddress(groupAddresses, 0, "P-0501-0_GA-117", 10, "Sub Group - DPT 1", "DPT-1");
+        // address = 0/3/10 => 0000 0011 0000 1010 => 778
+        assertGroupAddress(groupAddresses, 11, "P-0501-0_GA-128", 778, "Sub Group - DPT 12", "DPT-12");
 
         // assert DPST-x-y group address
-        // address = 1/0/1 => 2049
-        assertGroupAddress(groupAddresses, 16, "P-0501-0_GA-133", 2049, "Sub Group - DPST 1.001", "DPST-1-1");
-        // address = 1/2/1 => 2561
-        assertGroupAddress(groupAddresses, 26, "P-0501-0_GA-143", 2561, "Sub Group - DPST 11.001", "DPST-11-1");
+        // address = 1/0/10 => 0000 1000 0000 1010 => 2058
+        assertGroupAddress(groupAddresses, 16, "P-0501-0_GA-133", 2058, "Sub Group - DPST 1.001", "DPST-1-1");
+        // address = 1/2/20 => 0000 1010 0001 0100 => 2570
+        assertGroupAddress(groupAddresses, 26, "P-0501-0_GA-143", 2580, "Sub Group - DPST 11.001", "DPST-11-1");
 
         // assert group address without DPT
-        // address = 2/0/0 => 4096
+        // address = 2/0/0 => 0001 0000 0000 0000 => 4096
         assertGroupAddress(groupAddresses, 32, "P-0501-0_GA-149", 4096, "Sub Group - No DPT", null);
     }
 
@@ -93,12 +92,12 @@ public class KnxprojParserTest {
     /**
      * Asserts a corrupted KNX project without mandatory attributes
      * <ul>
-     *     <li>Missing {@code @Id} on {@code <Project />}</li>
-     *     <li>Missing {@code @Name} on {@code <ProjectInformation />}</li>
-     *     <li>Missing {@code @GroupAddressStyle} on {@code <ProjectInformation />}</li>
-     *     <li>Missing {@code @Id} on {@code <GroupAddress />}</li>
-     *     <li>Missing {@code @Name} on {@code <GroupAddress />}</li>
-     *     <li>Missing {@code @Address} on {@code <GroupAddress />}</li>
+     * <li>Missing {@code @Id} on {@code <Project />}</li>
+     * <li>Missing {@code @Name} on {@code <ProjectInformation />}</li>
+     * <li>Missing {@code @GroupAddressStyle} on {@code <ProjectInformation />}</li>
+     * <li>Missing {@code @Id} on {@code <GroupAddress />}</li>
+     * <li>Missing {@code @Name} on {@code <GroupAddress />}</li>
+     * <li>Missing {@code @Address} on {@code <GroupAddress />}</li>
      * </ul>
      */
     @Test

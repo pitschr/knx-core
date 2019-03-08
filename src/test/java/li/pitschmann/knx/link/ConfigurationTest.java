@@ -41,15 +41,15 @@ public class ConfigurationTest {
     public void testCreate() {
         // creates a new one without port -> default KNX port will be used
         var config1 = Configuration.create("127.0.1.1").build();
-        var config1RouterEndpoint = config1.getRouterEndpoint();
-        assertThat(config1RouterEndpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
-        assertThat(config1RouterEndpoint.getPort()).isEqualTo(Constants.Protocol.PORT);
+        var config1Endpoint = config1.getEndpoint();
+        assertThat(config1Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
+        assertThat(config1Endpoint.getPort()).isEqualTo(Constants.Protocol.PORT);
 
         // creates a new with port
         var config2 = Configuration.create("127.0.1.2:4711").build();
-        var config2RouterEndpoint = config2.getRouterEndpoint();
-        assertThat(config2RouterEndpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 2));
-        assertThat(config2RouterEndpoint.getPort()).isEqualTo(4711);
+        var config2Endpoint = config2.getEndpoint();
+        assertThat(config2Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 2));
+        assertThat(config2Endpoint.getPort()).isEqualTo(4711);
     }
 
     /**
@@ -65,12 +65,12 @@ public class ConfigurationTest {
         var observerPlugin2 = mock(ObserverPlugin.class);
         var observerPlugin3 = mock(ObserverPlugin.class);
         configBuilder.plugin(observerPlugin1, observerPlugin2, observerPlugin3);
-        for (int i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             configBuilder.plugin(mock(ObserverPlugin.class));
         }
 
         // add 20 extension plugins
-        for (int i = 0; i < 20; i++) {
+        for (var i = 0; i < 20; i++) {
             configBuilder.plugin(mock(ExtensionPlugin.class));
         }
 

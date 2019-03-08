@@ -46,7 +46,7 @@ public final class Closeables {
     public static boolean closeQuietly(final @Nullable Channel channel) {
         LOG.trace("Call 'closeQuietly(DatagramChannel)' method");
 
-        boolean isOk = true;
+        var isOk = true;
         if (channel instanceof DatagramChannel) {
             try {
                 ((DatagramChannel) channel).disconnect();
@@ -67,7 +67,7 @@ public final class Closeables {
      */
     public static boolean closeQuietly(final @Nullable AutoCloseable closeable) {
         LOG.trace("Call 'closeQuietly(Closeable)' method");
-        boolean isOk = true;
+        var isOk = true;
         if (closeable != null) {
             try {
                 closeable.close();
@@ -100,7 +100,7 @@ public final class Closeables {
      */
     public static boolean shutdownQuietly(final @Nullable ExecutorService executorService, final long timeout, final @Nullable TimeUnit timeUnit) {
         LOG.trace("Call 'shutdownQuietly(ExecutorService, long, TimeUnit)' method: {}, {}, {}", executorService, timeout, timeUnit);
-        boolean isOk = true;
+        var isOk = true;
         if (executorService != null) {
             executorService.shutdown();
             if (timeout > 0 && timeUnit != null) {

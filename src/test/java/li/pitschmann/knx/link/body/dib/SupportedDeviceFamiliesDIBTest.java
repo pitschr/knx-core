@@ -18,14 +18,13 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import li.pitschmann.knx.link.exceptions.KnxIllegalStateException;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,29 +64,29 @@ public final class SupportedDeviceFamiliesDIBTest {
     @Test
     public void valueOf() {
         // valueOf
-        SupportedDeviceFamiliesDIB supportedDevicesFamiliesByValueOf = SupportedDeviceFamiliesDIB.valueOf(BYTES);
+        final var supportedDevicesFamiliesByValueOf = SupportedDeviceFamiliesDIB.valueOf(BYTES);
 
         // compare
         assertThat(supportedDevicesFamiliesByValueOf.getLength()).isEqualTo(10);
         assertThat(supportedDevicesFamiliesByValueOf.getDescriptionType()).isEqualTo(DescriptionType.SUPPORTED_SERVICE_FAMILIES);
 
         // verify service type family & version
-        List<ServiceTypeFamilyVersion> serviceFamilyVersions = supportedDevicesFamiliesByValueOf.getServiceFamilies();
+        final var serviceFamilyVersions = supportedDevicesFamiliesByValueOf.getServiceFamilies();
         assertThat(serviceFamilyVersions).hasSize(4);
 
-        final ServiceTypeFamilyVersion svcCore = serviceFamilyVersions.get(0);
+        final var svcCore = serviceFamilyVersions.get(0);
         assertThat(svcCore.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(svcCore.getVersion()).isEqualTo(1);
 
-        final ServiceTypeFamilyVersion svcDeviceManagement = serviceFamilyVersions.get(1);
+        final var svcDeviceManagement = serviceFamilyVersions.get(1);
         assertThat(svcDeviceManagement.getFamily()).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(svcDeviceManagement.getVersion()).isEqualTo(2);
 
-        final ServiceTypeFamilyVersion svcTunnelling = serviceFamilyVersions.get(2);
+        final var svcTunnelling = serviceFamilyVersions.get(2);
         assertThat(svcTunnelling.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELLING);
         assertThat(svcTunnelling.getVersion()).isEqualTo(1);
 
-        final ServiceTypeFamilyVersion svcRouting = serviceFamilyVersions.get(3);
+        final var svcRouting = serviceFamilyVersions.get(3);
         assertThat(svcRouting.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
         assertThat(svcRouting.getVersion()).isEqualTo(3);
     }
@@ -98,7 +97,7 @@ public final class SupportedDeviceFamiliesDIBTest {
     @Test
     public void invalidCases() {
         // specific for supported device families DIB
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalStateException.class)
+        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("divisible by two");
 
         // incorrect size of bytes
@@ -113,9 +112,9 @@ public final class SupportedDeviceFamiliesDIBTest {
      */
     @Test
     public void testToString() {
-        SupportedDeviceFamiliesDIB supportedDevicesFamiliesDIB = SupportedDeviceFamiliesDIB.valueOf(BYTES);
+        final var supportedDevicesFamiliesDIB = SupportedDeviceFamiliesDIB.valueOf(BYTES);
 
-        List<ServiceTypeFamilyVersion> familyVersions = new ArrayList<>();
+        final var familyVersions = new ArrayList<ServiceTypeFamilyVersion>();
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.CORE, 1));
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.DEVICE_MANAGEMENT, 2));
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.TUNNELLING, 1));

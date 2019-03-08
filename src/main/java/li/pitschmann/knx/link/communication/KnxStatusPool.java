@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * KNX Status Pool holding all statuses of KNX addresses which have been sent by KNX/Net IP router
+ * KNX Status Pool holding all statuses of KNX addresses which have been sent by KNX/Net IP device
  *
  * @author PITSCHR
  */

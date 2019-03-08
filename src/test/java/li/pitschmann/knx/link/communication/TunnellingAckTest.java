@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class TunnellingAckTest {
     /**
-     * Perform a communication between {@link KnxClient} and the KNX Net/IP router
+     * Perform a communication between {@link KnxClient} and the KNX Net/IP device
      * with a tunnelling request packet
      */
     @KnxTest({
@@ -65,7 +65,7 @@ public class TunnellingAckTest {
     })
     @DisplayName("Send a Tunnelling Request packet and receive Tunnelling Ack packet")
     public void testReceivingAckOnceTime(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             // send tunnelling request
             final var ackBody = client.send(KnxBody.TUNNELLING_REQUEST_BODY, 500).get();
             assertThat(ackBody).isNotNull();
@@ -84,7 +84,7 @@ public class TunnellingAckTest {
     }
 
     /**
-     * Perform a communication between {@link KnxClient} and the KNX Net/IP router
+     * Perform a communication between {@link KnxClient} and the KNX Net/IP device
      * with a tunnelling request packet and mock server re-sent the same tunnelling
      * request packet which should be ignored by the KNX Net/IP client.
      */
@@ -112,7 +112,7 @@ public class TunnellingAckTest {
     })
     @DisplayName("Receiving Tunnelling Ack packet twice times")
     public void testReceivingAckTwiceTimes(final KnxMockServer mockServer) {
-        try (final KnxClient client = mockServer.newKnxClient()) {
+        try (final var client = mockServer.newKnxClient()) {
             // send tunnelling request
             final var ackBody = client.send(KnxBody.TUNNELLING_REQUEST_BODY, 500).get();
             assertThat(ackBody).isNotNull();

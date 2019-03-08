@@ -49,17 +49,19 @@ public final class DisconnectRequestTask implements Subscriber<Body> {
         // we are interested in disconnect request only
         if (body instanceof DisconnectRequestBody) {
             LOG.trace("Disconnect Request received");
-            final DisconnectRequestBody requestBody = (DisconnectRequestBody) body;
+            final var requestBody = (DisconnectRequestBody) body;
 
             // create body
-            final DisconnectResponseBody responseBody = DisconnectResponseBody.create(this.client.getChannelId(), Status.E_NO_ERROR);
+            final var responseBody = DisconnectResponseBody.create(this.client.getChannelId(), Status.E_NO_ERROR);
             this.client.getEventPool().disconnectEvent().setRequest(requestBody);
             LOG.trace("Disconnect Request saved.");
             this.client.getEventPool().disconnectEvent().setResponse(responseBody);
             LOG.trace("Disconnect Response saved.");
             try {
                 this.client.send(responseBody);
-                Sleeper.milliseconds(this.client.getConfig().getTimeoutDisconnectResponse());
+                Sleeper.milliseconds(
+                        () -> this.client.getEventPool().disconnectEvent().hasResponse(),
+                        this.client.getConfig().getTimeoutDisconnectResponse());
             } finally {
                 // initiate close by remote
                 this.client.close();

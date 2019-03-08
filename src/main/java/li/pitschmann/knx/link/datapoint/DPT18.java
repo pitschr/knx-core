@@ -82,8 +82,8 @@ public final class DPT18 extends AbstractRangeUnitDataPointType<DPT18Value, Inte
 
     @Override
     protected DPT18Value parse(final String[] args) {
-        boolean controlled = this.findByString(args, "controlled");
-        int intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
+        final var controlled = this.findByString(args, "controlled");
+        final var intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
 
         return new DPT18Value(controlled, intValue);
     }

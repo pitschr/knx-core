@@ -74,7 +74,7 @@ public class KnxMockServerExtension
     public void afterTestExecution(final ExtensionContext context) throws Exception {
         LOG.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
         if (executorContainer.containsKey(context)) {
-            final ExecutorService es = executorContainer.get(context).getExecutorService();
+            final var es = executorContainer.get(context).getExecutorService();
             try {
                 es.awaitTermination(10, TimeUnit.SECONDS);
             } finally {
@@ -113,7 +113,7 @@ public class KnxMockServerExtension
          * @param context
          */
         public ExecutorContainerEntry(final ExtensionContext context) {
-            final KnxTest annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), KnxTest.class).get();
+            final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), KnxTest.class).get();
             this.mockServer = new KnxMockServer(annotation.value());
 
             this.executorService = Executors.newSingleThreadExecutor();
@@ -125,7 +125,7 @@ public class KnxMockServerExtension
             }
 
             // wait until server is ready for receiving packets from client
-            long startTime = System.currentTimeMillis();
+            final var startTime = System.currentTimeMillis();
             do {
                 Sleeper.milliseconds(500);
                 if ((System.currentTimeMillis() - startTime) > MAX_START_DELAY_IN_MILLISECONDS) {

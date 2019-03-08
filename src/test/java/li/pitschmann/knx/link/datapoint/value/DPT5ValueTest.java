@@ -43,8 +43,8 @@ public final class DPT5ValueTest {
     }
 
     private void assertValue(final DPT5 dpt, final byte b, final int rawUnsignedValue, final double unsignedValue) {
-        DPT5Value dptValue = new DPT5Value(dpt, rawUnsignedValue);
-        DPT5Value dptValueByByte = new DPT5Value(dpt, b);
+        final var dptValue = new DPT5Value(dpt, rawUnsignedValue);
+        final var dptValueByByte = new DPT5Value(dpt, b);
 
         // instance methods
         assertThat(dptValue.getUnsignedValue()).isEqualTo(unsignedValue);
@@ -66,7 +66,7 @@ public final class DPT5ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT5Value(dpt, rawUnsignedValue + 1));
 
         // toString
-        String toString = String.format("DPT5Value{dpt=%s, unsignedValue=%s, rawUnsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
+        final var toString = String.format("DPT5Value{dpt=%s, unsignedValue=%s, rawUnsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
                 rawUnsignedValue, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

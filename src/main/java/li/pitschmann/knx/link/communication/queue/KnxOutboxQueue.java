@@ -34,7 +34,7 @@ import java.nio.channels.SelectionKey;
 import java.util.Collection;
 
 /**
- * Outbox Queue for KNX packets to be sent to KNX Net/IP router
+ * Outbox Queue for KNX packets to be sent to KNX Net/IP device
  *
  * @author PITSCHR
  */
@@ -74,13 +74,13 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
         LOG.trace("{}: Method 'action(SelectionKey)' called.", getId());
 
         // get body from queue
-        final Body body = next();
+        final var body = next();
 
         // packet: header + body
-        final byte[] packetToSend = body.getRawData(true);
+        final var packetToSend = body.getRawData(true);
 
         // write to channel
-        final ByteChannel channel = (ByteChannel) key.channel();
+        final var channel = (ByteChannel) key.channel();
         LOG.trace("{}: Sending packet: {}", getId(), body);
         channel.write(ByteBuffer.wrap(packetToSend));
         LOG.trace("{}: Packet sent.", getId());

@@ -151,7 +151,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT16Value) {
-            final DPT16Value other = (DPT16Value) obj;
+            final var other = (DPT16Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.text, other.text);
         }

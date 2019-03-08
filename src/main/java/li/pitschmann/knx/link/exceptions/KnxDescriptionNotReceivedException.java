@@ -18,32 +18,17 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import java.util.Arrays;
+import li.pitschmann.knx.link.body.Body;
 
 /**
- * Exception for KNX/IP specific Illegal State
+ * Exception when description information could not be received by KNX Net/IP device.
+ * This exception is a subclass of {@link KnxCommunicationException}.
  *
  * @author PITSCHR
  */
-public final class KnxIllegalStateException extends KnxException {
-    private static final long serialVersionUID = 1L;
+public final class KnxDescriptionNotReceivedException extends KnxCommunicationException {
 
-    /**
-     * Creates an exception for KNX/IP Illegal State with message
-     *
-     * @param message
-     */
-    public KnxIllegalStateException(final String message) {
-        super(message);
-    }
-
-    /**
-     * Creates an exception for KNX/IP Illegal State with message and objects which contains more diagnostic data.
-     *
-     * @param message
-     * @param obj
-     */
-    public KnxIllegalStateException(final String message, final Object... obj) {
-        super(String.format("KNX Illegal State: '%s'. Actual data: %s", message, Arrays.toString(obj)));
+    public KnxDescriptionNotReceivedException(final Body body) {
+        super(String.format("Could not get description from KNX Net/IP device: %s", body));
     }
 }

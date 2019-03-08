@@ -77,7 +77,7 @@ public final class DeviceInformationDIBTest {
     @Test
     public void valueOfMDT() {
         // valueOf
-        DeviceHardwareInformationDIB infoByValueOf = DeviceHardwareInformationDIB.valueOf(BYTES);
+        final var infoByValueOf = DeviceHardwareInformationDIB.valueOf(BYTES);
 
         // compare
         assertThat(infoByValueOf.getLength()).isEqualTo(54);
@@ -117,7 +117,7 @@ public final class DeviceInformationDIBTest {
     @Test
     public void valueOfWireGate() {
         // valueOf
-        DeviceHardwareInformationDIB infoByValueOf = DeviceHardwareInformationDIB
+        final var infoByValueOf = DeviceHardwareInformationDIB
                 .valueOf(new byte[]{0x36, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x36, 0x01, 0x02, 0x00, 0x00, 0x00, (byte) 0xe0, 0x00,
                         0x17, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x69, 0x62, 0x64, 0x20, 0x6f, 0x6e, 0x20, 0x57, 0x69, 0x72,
                         0x65, 0x47, 0x61, 0x74, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});

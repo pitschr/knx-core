@@ -82,7 +82,7 @@ public class ConnectResponseBodyTest {
     @Test
     public void validCases() {
         // create()
-        final ConnectResponseBody body = ConnectResponseBody.create(this.channelId, this.status, this.dataEndpoint, this.crd);
+        final var body = ConnectResponseBody.create(this.channelId, this.status, this.dataEndpoint, this.crd);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getStatus()).isEqualTo(this.status);
@@ -90,7 +90,7 @@ public class ConnectResponseBodyTest {
         assertThat(body.getConnectionResponseData()).isEqualTo(this.crd);
 
         // compare raw data of create() with valueOf()
-        final ConnectResponseBody bodyByBytes = ConnectResponseBody
+        final var bodyByBytes = ConnectResponseBody
                 .valueOf(new byte[]{0x07, 0x00, 0x08, 0x01, 0x03, 0x03, 0x03, 0x03, 0x0e, 0x57, 0x04, 0x04, (byte) 0xff, (byte) 0xf2});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
@@ -103,7 +103,7 @@ public class ConnectResponseBodyTest {
     @Test
     public void validCaseErrorStatus() {
         // create()
-        final ConnectResponseBody body = ConnectResponseBody.create(10, Status.E_NO_MORE_CONNECTIONS, null, null);
+        final var body = ConnectResponseBody.create(10, Status.E_NO_MORE_CONNECTIONS, null, null);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(0x0A);
         assertThat(body.getStatus()).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
@@ -111,7 +111,7 @@ public class ConnectResponseBodyTest {
         assertThat(body.getConnectionResponseData()).isNull();
 
         // compare raw data of create() with valueOf()
-        final ConnectResponseBody bodyByBytes = ConnectResponseBody.valueOf(new byte[]{0x0A, 0x24});
+        final var bodyByBytes = ConnectResponseBody.valueOf(new byte[]{0x0A, 0x24});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString

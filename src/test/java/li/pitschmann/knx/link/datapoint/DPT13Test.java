@@ -37,7 +37,7 @@ public class DPT13Test extends AbstractDataPointTypeTest<DPT13, DPT13Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT13 dpt = DPT13.VALUE_4_OCTET_COUNT;
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
 
         assertThat(dpt.getId()).isEqualTo("13.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 4-Octet Signed Count (pulses)");
@@ -46,7 +46,7 @@ public class DPT13Test extends AbstractDataPointTypeTest<DPT13, DPT13Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT13 dpt = DPT13.VALUE_4_OCTET_COUNT;
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -68,7 +68,7 @@ public class DPT13Test extends AbstractDataPointTypeTest<DPT13, DPT13Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT13 dpt = DPT13.VALUE_4_OCTET_COUNT;
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
 
         // value: 0
         this.assertDPT(dpt, new byte[]{0x00, 0x00, 0x00, 0x00}, 0);
@@ -91,11 +91,11 @@ public class DPT13Test extends AbstractDataPointTypeTest<DPT13, DPT13Value> {
         assertThat(DPT13.VALUE_4_OCTET_COUNT.getCalculationFunction()).isNull();
 
         // value: 214748.3647 m³/h
-        DPT13Value valueMax = DPT13.FLOW_RATE.toValue(Integer.MAX_VALUE);
+        final var valueMax = DPT13.FLOW_RATE.toValue(Integer.MAX_VALUE);
         assertThat(valueMax.getSignedValue()).isEqualTo(214748.3647);
         assertThat(valueMax.getRawSignedValue()).isEqualTo(Integer.MAX_VALUE);
         // value: -214748.3648 m³/h
-        DPT13Value valueMin = DPT13.FLOW_RATE.toValue(Integer.MIN_VALUE);
+        final var valueMin = DPT13.FLOW_RATE.toValue(Integer.MIN_VALUE);
         assertThat(valueMin.getSignedValue()).isEqualTo(-214748.3648);
         assertThat(valueMin.getRawSignedValue()).isEqualTo(Integer.MIN_VALUE);
     }
@@ -108,7 +108,7 @@ public class DPT13Test extends AbstractDataPointTypeTest<DPT13, DPT13Value> {
      * @param intValue
      */
     private void assertDPT(final DPT13 dpt, final byte[] bValueArray, final int intValue) {
-        final DPT13Value dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.toValue(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

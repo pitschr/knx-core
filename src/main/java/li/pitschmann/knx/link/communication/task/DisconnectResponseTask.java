@@ -29,7 +29,7 @@ import java.util.concurrent.Flow.Subscription;
 
 /**
  * Listens to {@link DisconnectResponseBody} frame when KNX connection was subject to be closed by the local machine and
- * replied by the KNX Net/IP router.
+ * replied by the KNX Net/IP device.
  *
  * @author PITSCHR
  */
@@ -45,7 +45,7 @@ public final class DisconnectResponseTask implements Subscriber<Body> {
     public void onNext(final Body body) {
         // we are interested in disconnect response only
         if (body instanceof DisconnectResponseBody) {
-            final DisconnectResponseBody responseBody = (DisconnectResponseBody) body;
+            final var responseBody = (DisconnectResponseBody) body;
             LOG.debug("Disconnect Response received: {}", responseBody);
             this.client.getEventPool().disconnectEvent().setResponse(responseBody);
             LOG.trace("Disconnect Response saved.");

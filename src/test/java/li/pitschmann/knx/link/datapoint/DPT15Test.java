@@ -77,8 +77,8 @@ public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
      * @param flags
      */
     private void assertDPT(final byte[] bValueArray, final byte[] accessIdData, final Flags flags) {
-        final DPT15 dpt = DPT_ACCESS_DATA;
-        final DPT15Value dptValue = dpt.toValue(accessIdData, flags);
+        final var dpt = DPT_ACCESS_DATA;
+        final var dptValue = dpt.toValue(accessIdData, flags);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);

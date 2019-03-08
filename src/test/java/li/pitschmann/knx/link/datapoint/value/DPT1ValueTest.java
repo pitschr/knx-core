@@ -43,8 +43,8 @@ public final class DPT1ValueTest {
     }
 
     private void assertValue(final DPT1 dpt, final byte b, final boolean booleanValue, final String booleanText) {
-        DPT1Value dptValue = new DPT1Value(dpt, booleanValue);
-        DPT1Value dptValueByByte = new DPT1Value(dpt, b);
+        final var dptValue = new DPT1Value(dpt, booleanValue);
+        final var dptValueByByte = new DPT1Value(dpt, b);
 
         // instance methods
         assertThat(dptValue.getBooleanValue()).isEqualTo(booleanValue);
@@ -66,7 +66,7 @@ public final class DPT1ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT1Value(dpt, !booleanValue));
 
         // toString
-        String toString = String.format("DPT1Value{dpt=%s, booleanValue=%s, booleanText=%s, byteArray=%s}", dpt, booleanValue, booleanText,
+        final var toString = String.format("DPT1Value{dpt=%s, booleanValue=%s, booleanText=%s, byteArray=%s}", dpt, booleanValue, booleanText,
                 ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

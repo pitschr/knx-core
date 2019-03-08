@@ -35,7 +35,7 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
     @Override
     @Test
     public void testIdAndDescription() {
-        final DPT14 dpt = DPT14.TEMPERATURE;
+        final var dpt = DPT14.TEMPERATURE;
 
         assertThat(dpt.getId()).isEqualTo("14.068");
         assertThat(dpt.getDescription()).isEqualTo("Temperature (°C)");
@@ -44,7 +44,7 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
     @Override
     @Test
     public void testCompatibility() {
-        final DPT14 dpt = DPT14.TEMPERATURE;
+        final var dpt = DPT14.TEMPERATURE;
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
@@ -66,7 +66,7 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
     @Override
     @Test
     public void testOf() {
-        final DPT14 dpt = DPT14.TEMPERATURE;
+        final var dpt = DPT14.TEMPERATURE;
 
         // value: 0°C
         this.assertDPT(dpt, new byte[]{0x00, 0x00, 0x00, 0x00}, 0f);
@@ -84,7 +84,7 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
      * @param doubleValue
      */
     private void assertDPT(final DPT14 dpt, final byte[] bValueArray, final double doubleValue) {
-        final DPT14Value dptValue = dpt.toValue(doubleValue);
+        final var dptValue = dpt.toValue(doubleValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
