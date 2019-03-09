@@ -98,7 +98,7 @@ public class DataPointTypeTest {
         final var dpt = mock(DataPointType.class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue((String) any())).thenCallRealMethod();
+        when(dpt.toValue((String)null)).thenCallRealMethod();
 
         assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
     }
