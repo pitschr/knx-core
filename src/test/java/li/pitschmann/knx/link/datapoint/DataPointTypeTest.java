@@ -25,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link DataPointType}
@@ -39,11 +40,11 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(byte, byte...) with one parameter")
     public void testToValueByteVararg() {
-        var dpt = mock(DataPointType.class);
-        var captor = ArgumentCaptor.forClass(byte[].class);
+        final var dpt = mock(DataPointType.class);
+        final var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
-        Mockito.when(dpt.toValue(Mockito.anyByte())).thenCallRealMethod();
+        when(dpt.toValue(Mockito.anyByte())).thenCallRealMethod();
 
         dpt.toValue((byte) 0x01);
         Mockito.verify(dpt).toValue(captor.capture());
@@ -56,11 +57,11 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(byte, byte...) with three parameters")
     public void testToValueByteVarargWithThreeParameters() {
-        var dpt = mock(DataPointType.class);
-        var captor = ArgumentCaptor.forClass(byte[].class);
+        final var dpt = mock(DataPointType.class);
+        final var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
-        Mockito.when(dpt.toValue(Mockito.anyByte(), Mockito.anyByte(), Mockito.anyByte())).thenCallRealMethod();
+        when(dpt.toValue(Mockito.anyByte(), Mockito.anyByte(), Mockito.anyByte())).thenCallRealMethod();
 
         dpt.toValue((byte) 0x03, (byte) 0x04, (byte) 0x05);
         Mockito.verify(dpt).toValue(captor.capture());
@@ -73,11 +74,11 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(String, String...) with one parameter")
     public void testToValueStringVararg() {
-        var dpt = mock(DataPointType.class);
-        var captor = ArgumentCaptor.forClass(String[].class);
+        final var dpt = mock(DataPointType.class);
+        final var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
-        Mockito.when(dpt.toValue(Mockito.anyString())).thenCallRealMethod();
+        when(dpt.toValue(Mockito.anyString())).thenCallRealMethod();
 
         dpt.toValue("Foobar");
         Mockito.verify(dpt).toValue(captor.capture());
@@ -90,10 +91,10 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(String, String...) with null as 1st parameter")
     public void testToValueStringVarargWithNull() {
-        var dpt = mock(DataPointType.class);
+        final var dpt = mock(DataPointType.class);
 
         // do real call because we want to test the implementation
-        Mockito.when(dpt.toValue((String) Mockito.any())).thenCallRealMethod();
+        when(dpt.toValue((String) Mockito.any())).thenCallRealMethod();
 
         Assertions.assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
     }
@@ -104,11 +105,11 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(String, String...) with three parameters")
     public void testToValueStringVarargWithThreeParameters() {
-        var dpt = mock(DataPointType.class);
-        var captor = ArgumentCaptor.forClass(String[].class);
+        final var dpt = mock(DataPointType.class);
+        final var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
-        Mockito.when(dpt.toValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenCallRealMethod();
+        when(dpt.toValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenCallRealMethod();
 
         dpt.toValue("Hello", "World", "!");
         Mockito.verify(dpt).toValue(captor.capture());

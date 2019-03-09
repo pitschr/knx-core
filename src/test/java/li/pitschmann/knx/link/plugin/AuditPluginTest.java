@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test {@link AuditPlugin}
@@ -44,9 +45,9 @@ public class AuditPluginTest {
     @MemoryLog(AuditPlugin.class)
     public void auditIncomingBody(final MemoryAppender appender) {
         final var body = mock(Body.class);
-        Mockito.when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
-        Mockito.when(body.getRawData()).thenReturn(new byte[]{0x11, 0x22, 0x33});
-        Mockito.when(body.getRawDataAsHexString()).thenReturn("0x11 22 33");
+        when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
+        when(body.getRawData()).thenReturn(new byte[]{0x11, 0x22, 0x33});
+        when(body.getRawDataAsHexString()).thenReturn("0x11 22 33");
 
         plugin.onIncomingBody(body);
 
@@ -78,9 +79,9 @@ public class AuditPluginTest {
     @MemoryLog(AuditPlugin.class)
     public void auditOutgoingBody(final MemoryAppender appender) {
         final var body = mock(Body.class);
-        Mockito.when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
-        Mockito.when(body.getRawData()).thenReturn(new byte[]{0x22, 0x33});
-        Mockito.when(body.getRawDataAsHexString()).thenReturn("0x22 33");
+        when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
+        when(body.getRawData()).thenReturn(new byte[]{0x22, 0x33});
+        when(body.getRawDataAsHexString()).thenReturn("0x22 33");
 
         plugin.onOutgoingBody(body);
 
@@ -112,8 +113,8 @@ public class AuditPluginTest {
     @MemoryLog(AuditPlugin.class)
     public void auditOnError(final MemoryAppender appender) {
         final var exception = mock(RuntimeException.class);
-        Mockito.when(exception.getMessage()).thenReturn("I am a RuntimeException");
-        Mockito.when(exception.getStackTrace()).thenReturn(
+        when(exception.getMessage()).thenReturn("I am a RuntimeException");
+        when(exception.getStackTrace()).thenReturn(
                 new StackTraceElement[]{
                         new StackTraceElement(
                                 "org.class.Foo",

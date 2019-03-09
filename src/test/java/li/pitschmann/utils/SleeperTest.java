@@ -44,9 +44,9 @@ public class SleeperTest {
     @DisplayName("Sleep in milliseconds")
     public void testNoInterrupt() {
         assertUpToThreeTimes(() -> {
-            var sw = Stopwatch.createStarted();
-            var result = Sleeper.milliseconds(100);
-            var elapsedTime = sw.elapsed().toMillis();
+            final var sw = Stopwatch.createStarted();
+            final var result = Sleeper.milliseconds(100);
+            final var elapsedTime = sw.elapsed().toMillis();
             // verify the result
             //   true = not interrupted
             //   and between 90-110 ms
@@ -62,9 +62,9 @@ public class SleeperTest {
     @DisplayName("Sleep in milliseconds with predicates (always true)")
     public void testSleepWithPredicateAlwaysTrue() {
         assertUpToThreeTimes(() -> {
-            var sw = Stopwatch.createStarted();
-            var result = Sleeper.milliseconds(() -> true, 100);
-            var elapsedTime = sw.elapsed().toMillis();
+            final var sw = Stopwatch.createStarted();
+            final var result = Sleeper.milliseconds(() -> true, 100);
+            final var elapsedTime = sw.elapsed().toMillis();
             // verify the result
             //   true = not interrupted
             //   and between 0-10ms because it is checked immediately
@@ -81,9 +81,9 @@ public class SleeperTest {
     @DisplayName("Sleep in milliseconds with predicates (always false)")
     public void testSleepWithPredicateAlwaysFalse() {
         assertUpToThreeTimes(() -> {
-            var sw = Stopwatch.createStarted();
-            var result = Sleeper.milliseconds(() -> false, 100);
-            var elapsedTime = sw.elapsed().toMillis();
+            final var sw = Stopwatch.createStarted();
+            final var result = Sleeper.milliseconds(() -> false, 100);
+            final var elapsedTime = sw.elapsed().toMillis();
             // verify the result
             //   false = interrupted
             //   and between 90-110 ms
@@ -100,10 +100,10 @@ public class SleeperTest {
     @DisplayName("Sleep in milliseconds with predicates (true after 100 ms)")
     public void testSleepWithPredicate() {
         assertUpToThreeTimes(() -> {
-            var start = System.currentTimeMillis();
-            var sw = Stopwatch.createStarted();
-            var result = Sleeper.milliseconds(() -> System.currentTimeMillis() > start + 100, 200);
-            var elapsedTime = sw.elapsed().toMillis();
+            final var start = System.currentTimeMillis();
+            final var sw = Stopwatch.createStarted();
+            final var result = Sleeper.milliseconds(() -> System.currentTimeMillis() > start + 100, 200);
+            final var elapsedTime = sw.elapsed().toMillis();
             // verify the result
             //   true = not interrupted
             //   and between 90-110 ms
@@ -127,7 +127,7 @@ public class SleeperTest {
     @Test
     @DisplayName("Sleep in milliseconds and thread interrupt")
     public void testSleepWithPredicateTheradInterrupt() {
-        var thread = new Thread(new Runnable() {
+        final var thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 assertThat(Sleeper.milliseconds(() -> false, 100)).isFalse();

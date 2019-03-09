@@ -39,14 +39,14 @@ public class BodyTest {
     @Test
     @DisplayName("Test #getRawData(Boolean)")
     public void testGetRawData() {
-        var body = KnxBody.TUNNELLING_ACK_BODY;
+        final var body = KnxBody.TUNNELLING_ACK_BODY;
 
         // false -> should return the byte array of body only
-        var bodyBytes = body.getRawData();
+        final var bodyBytes = body.getRawData();
         assertThat(body.getRawData(false)).containsExactly(bodyBytes);
 
         // true -> should return the byte array of header and body
-        var headerBytes = Header.create(body).getRawData();
+        final var headerBytes = Header.create(body).getRawData();
         assertThat(body.getRawData(true)).startsWith(headerBytes);
         assertThat(body.getRawData(true)).endsWith(body.getRawData());
         assertThat(body.getRawData(true)).hasSize(headerBytes.length + bodyBytes.length);

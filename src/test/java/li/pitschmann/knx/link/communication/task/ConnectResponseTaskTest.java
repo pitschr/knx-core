@@ -31,7 +31,9 @@ import org.mockito.Mockito;
 import java.util.concurrent.Flow;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link ConnectResponseTask}
@@ -95,8 +97,8 @@ public class ConnectResponseTaskTest {
         final var eventData = mock(KnxEventData.class);
         final var subscription = mock(Flow.Subscription.class);
 
-        Mockito.doReturn(eventData).when(eventPool).connectEvent();
-        Mockito.when(internalClient.getEventPool()).thenReturn(eventPool);
+        doReturn(eventData).when(eventPool).connectEvent();
+        when(internalClient.getEventPool()).thenReturn(eventPool);
 
         final var task = new ConnectResponseTask(internalClient);
         task.onSubscribe(subscription);

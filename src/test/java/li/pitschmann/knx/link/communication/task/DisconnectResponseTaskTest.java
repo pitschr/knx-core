@@ -29,7 +29,9 @@ import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link DisconnectResponseTask}
@@ -90,8 +92,8 @@ public class DisconnectResponseTaskTest {
         final var eventData = mock(KnxEventData.class);
         final var subscription = mock(Flow.Subscription.class);
 
-        Mockito.doReturn(eventData).when(eventPool).disconnectEvent();
-        Mockito.when(internalClient.getEventPool()).thenReturn(eventPool);
+        doReturn(eventData).when(eventPool).disconnectEvent();
+        when(internalClient.getEventPool()).thenReturn(eventPool);
 
         final var task = new DisconnectResponseTask(internalClient);
         task.onSubscribe(subscription);

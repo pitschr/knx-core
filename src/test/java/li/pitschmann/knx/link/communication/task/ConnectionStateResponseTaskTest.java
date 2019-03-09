@@ -29,7 +29,9 @@ import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link ConnectionStateResponseTask}
@@ -90,8 +92,8 @@ public class ConnectionStateResponseTaskTest {
         final var eventData = mock(KnxEventData.class);
         final var subscription = mock(Flow.Subscription.class);
 
-        Mockito.doReturn(eventData).when(eventPool).connectionStateEvent();
-        Mockito.when(internalClient.getEventPool()).thenReturn(eventPool);
+        doReturn(eventData).when(eventPool).connectionStateEvent();
+        when(internalClient.getEventPool()).thenReturn(eventPool);
 
         final var task = new ConnectionStateResponseTask(internalClient);
         task.onSubscribe(subscription);

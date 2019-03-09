@@ -117,7 +117,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param body body to be printed
      */
     private void auditBody(final @Nonnull AuditType type, final Body body) {
-        var header = Header.create(body);
+        final var header = Header.create(body);
         LOG.info(String.format(JSON_TEMPLATE_BODY, //
                 type, // #1
                 ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes()), // #2

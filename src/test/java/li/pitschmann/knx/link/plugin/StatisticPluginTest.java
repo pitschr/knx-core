@@ -51,7 +51,7 @@ public class StatisticPluginTest {
     @MemoryLog(StatisticPlugin.class)
     public void testStatisticWithJsonFormat(final MemoryAppender appender) {
         final var client = mock(KnxClient.class);
-        Mockito.when(client.getStatistic()).thenReturn(mock(KnxStatistic.class));
+        when(client.getStatistic()).thenReturn(mock(KnxStatistic.class));
 
         // on init (will print the first statistic)
         plugin.onInitialization(client);
@@ -89,7 +89,7 @@ public class StatisticPluginTest {
 
         // modify statistic
         final var statistic = createKnxStatisticMock();
-        Mockito.when(client.getStatistic()).thenReturn(statistic);
+        when(client.getStatistic()).thenReturn(statistic);
 
         // on shutdown (will print the last statistic)
         plugin.onShutdown();
@@ -130,34 +130,34 @@ public class StatisticPluginTest {
      */
     private KnxStatistic createKnxStatisticMock() {
         final var statistic = mock(KnxStatistic.class);
-        Mockito.when(statistic.getNumberOfBodyReceived()).thenReturn(10L);
-        Mockito.when(statistic.getNumberOfBytesReceived()).thenReturn(11L);
+        when(statistic.getNumberOfBodyReceived()).thenReturn(10L);
+        when(statistic.getNumberOfBytesReceived()).thenReturn(11L);
 
-        Mockito.when(statistic.getNumberOfBodySent()).thenReturn(12L);
-        Mockito.when(statistic.getNumberOfBytesSent()).thenReturn(13L);
+        when(statistic.getNumberOfBodySent()).thenReturn(12L);
+        when(statistic.getNumberOfBytesSent()).thenReturn(13L);
 
-        Mockito.when(statistic.getNumberOfErrors()).thenReturn(14L);
-        Mockito.when(statistic.getErrorRate()).thenReturn(1.5d);
+        when(statistic.getNumberOfErrors()).thenReturn(14L);
+        when(statistic.getErrorRate()).thenReturn(1.5d);
 
         // Description
-        Mockito.when(statistic.getNumberOfBodyReceived(DescriptionResponseBody.class)).thenReturn(16L);
-        Mockito.when(statistic.getNumberOfBodySent(DescriptionRequestBody.class)).thenReturn(17L);
+        when(statistic.getNumberOfBodyReceived(DescriptionResponseBody.class)).thenReturn(16L);
+        when(statistic.getNumberOfBodySent(DescriptionRequestBody.class)).thenReturn(17L);
         // Connect
-        Mockito.when(statistic.getNumberOfBodyReceived(ConnectResponseBody.class)).thenReturn(18L);
-        Mockito.when(statistic.getNumberOfBodySent(ConnectRequestBody.class)).thenReturn(19L);
+        when(statistic.getNumberOfBodyReceived(ConnectResponseBody.class)).thenReturn(18L);
+        when(statistic.getNumberOfBodySent(ConnectRequestBody.class)).thenReturn(19L);
         // Connection State
-        Mockito.when(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).thenReturn(20L);
-        Mockito.when(statistic.getNumberOfBodySent(ConnectionStateRequestBody.class)).thenReturn(21L);
+        when(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).thenReturn(20L);
+        when(statistic.getNumberOfBodySent(ConnectionStateRequestBody.class)).thenReturn(21L);
         // Tunnelling
-        Mockito.when(statistic.getNumberOfBodyReceived(TunnellingRequestBody.class)).thenReturn(22L);
-        Mockito.when(statistic.getNumberOfBodySent(TunnellingRequestBody.class)).thenReturn(23L);
-        Mockito.when(statistic.getNumberOfBodyReceived(TunnellingAckBody.class)).thenReturn(24L);
-        Mockito.when(statistic.getNumberOfBodySent(TunnellingAckBody.class)).thenReturn(25L);
+        when(statistic.getNumberOfBodyReceived(TunnellingRequestBody.class)).thenReturn(22L);
+        when(statistic.getNumberOfBodySent(TunnellingRequestBody.class)).thenReturn(23L);
+        when(statistic.getNumberOfBodyReceived(TunnellingAckBody.class)).thenReturn(24L);
+        when(statistic.getNumberOfBodySent(TunnellingAckBody.class)).thenReturn(25L);
         // Disconnect
-        Mockito.when(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).thenReturn(26L);
-        Mockito.when(statistic.getNumberOfBodySent(DisconnectRequestBody.class)).thenReturn(27L);
-        Mockito.when(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).thenReturn(28L);
-        Mockito.when(statistic.getNumberOfBodySent(DisconnectResponseBody.class)).thenReturn(29L);
+        when(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).thenReturn(26L);
+        when(statistic.getNumberOfBodySent(DisconnectRequestBody.class)).thenReturn(27L);
+        when(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).thenReturn(28L);
+        when(statistic.getNumberOfBodySent(DisconnectResponseBody.class)).thenReturn(29L);
 
         return statistic;
     }

@@ -50,14 +50,14 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX Project with 3-Level group addresses")
     public void testGoodProjectV14() {
-        var project = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var project = KnxprojParser.parse(KNX_PROJECT_V14);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0501");
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
 
-        var groupAddresses = project.getGroupAddresses();
+        final var groupAddresses = project.getGroupAddresses();
         assertThat(groupAddresses).hasSize(63);
 
         // assert DPT-x group address
@@ -80,7 +80,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX project without any group addresses")
     public void testEmptyProject() {
-        var project = KnxprojParser.parse(GOOD_EMPTY_PROJECT);
+        final var project = KnxprojParser.parse(GOOD_EMPTY_PROJECT);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0700");
@@ -149,7 +149,7 @@ public class KnxprojParserTest {
     }
 
     private void assertGroupAddress(final List<XmlGroupAddress> groupAddresses, final int index, final String id, final int address, final String name, final String datapointType) {
-        var groupAddress = groupAddresses.get(index);
+        final var groupAddress = groupAddresses.get(index);
         assertThat(groupAddress.getId()).isEqualTo(id);
         assertThat(groupAddress.getAddress()).isEqualTo(address);
         assertThat(groupAddress.getName()).isEqualTo(name);

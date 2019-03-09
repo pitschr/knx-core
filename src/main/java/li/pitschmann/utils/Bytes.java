@@ -401,9 +401,11 @@ public final class Bytes {
         }
 
         Preconditions.checkArgument(PATTERN_HEX_STRING.matcher(hexString).matches(), "Illegal hex string format: " + hexString);
-        var newHexString = hexString;
+        final String newHexString;
         if (hexString.startsWith("0x")) {
             newHexString = hexString.substring(2).replaceAll(" ", "");
+        } else {
+            newHexString = hexString;
         }
         final var hexAsBytes = new byte[newHexString.length() / 2];
         for (var i = 0; i < hexAsBytes.length; i++) {

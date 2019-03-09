@@ -74,7 +74,7 @@ public class KnxStatusDataTest {
         when(cemi.getApciData()).thenReturn(apciData);
 
         // create status data instance
-        var statusData = new KnxStatusData(cemi);
+        final var statusData = new KnxStatusData(cemi);
 
         // try to change outside of status data instance
         apciData[1] = 0x33;

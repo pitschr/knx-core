@@ -29,7 +29,9 @@ import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link DescriptionResponseTask}
@@ -90,8 +92,8 @@ public class DescriptionResponseTaskTest {
         final var eventData = mock(KnxEventData.class);
         final var subscription = mock(Flow.Subscription.class);
 
-        Mockito.doReturn(eventData).when(eventPool).descriptionEvent();
-        Mockito.when(internalClient.getEventPool()).thenReturn(eventPool);
+        doReturn(eventData).when(eventPool).descriptionEvent();
+        when(internalClient.getEventPool()).thenReturn(eventPool);
 
         final var task = new DescriptionResponseTask(internalClient);
         task.onSubscribe(subscription);

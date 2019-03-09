@@ -57,7 +57,7 @@ public class KnxStatusPoolTest {
         pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x44, 0x22, 0x33}));
 
         // verify
-        var statusData = pool.getStatusFor(ADDRESS);
+        final var statusData = pool.getStatusFor(ADDRESS);
         assertThat(statusData).isNotNull();
         assertThat(statusData.getApci()).isSameAs(APCI.GROUP_VALUE_WRITE);
         assertThat(statusData.getApciData()).containsExactly(0x44, 0x22, 0x33);
@@ -69,7 +69,7 @@ public class KnxStatusPoolTest {
     @Test
     @DisplayName("Test getStatusFor(KnxAddress) for unknown")
     public void testGetStatusForUnknown() {
-        var pool = new KnxStatusPoolImpl();
+        final var pool = new KnxStatusPoolImpl();
         pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
 
         // not found because not known to status pool (IndividualAddress != GroupAddress)

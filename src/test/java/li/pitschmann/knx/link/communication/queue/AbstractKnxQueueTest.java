@@ -61,19 +61,19 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Test incoming KNX packet successfully")
     public void testSuccessful() throws Exception {
-        var selectionKeyMock = mock(SelectionKey.class);
+        final var selectionKeyMock = mock(SelectionKey.class);
 
-        var selectedKeys = new HashSet<SelectionKey>();
+        final var selectedKeys = new HashSet<SelectionKey>();
         selectedKeys.add(selectionKeyMock);
 
-        var selectorMock = mock(Selector.class);
+        final var selectorMock = mock(Selector.class);
         when(selectorMock.selectedKeys()).thenReturn(selectedKeys);
 
-        var queue = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
+        final var queue = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
         doReturn(selectorMock).when(queue).openSelector();
         doReturn(true).when(queue).valid(any(SelectionKey.class));
 
-        var executor = Executors.newSingleThreadExecutor();
+        final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queue);
             // verify if the action(SelectionKey) has been invoked
@@ -97,13 +97,13 @@ public class AbstractKnxQueueTest {
     @MemoryLog(AbstractKnxQueue.class)
     @DisplayName("Test KNX packet with wrong channel")
     public void testInboxWrongChannel(final MemoryAppender appender) throws Exception {
-        var selectorMock = mock(Selector.class);
+        final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(KnxWrongChannelIdException.class).thenReturn(0);
 
-        var queue = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
+        final var queue = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
         doReturn(selectorMock).when(queue).openSelector();
 
-        var executor = Executors.newSingleThreadExecutor();
+        final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queue);
             // wait until task is done or wait for timeout
@@ -125,20 +125,20 @@ public class AbstractKnxQueueTest {
     @MemoryLog(AbstractKnxQueue.class)
     @DisplayName("Test interrupted queue")
     public void testInterruption(final MemoryAppender appender) throws Exception {
-        var selectionKeyMock = mock(SelectionKey.class);
+        final var selectionKeyMock = mock(SelectionKey.class);
 
-        var selectedKeys = new HashSet<SelectionKey>();
+        final var selectedKeys = new HashSet<SelectionKey>();
         selectedKeys.add(selectionKeyMock);
 
-        var selectorMock = mock(Selector.class);
+        final var selectorMock = mock(Selector.class);
         when(selectorMock.selectedKeys()).thenReturn(selectedKeys);
 
-        var queueMock = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
+        final var queueMock = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
         doReturn(selectorMock).when(queueMock).openSelector();
         doReturn(true).when(queueMock).valid(any(SelectionKey.class));
         doThrow(InterruptedException.class).when(queueMock).action(any(SelectionKey.class));
 
-        var executor = Executors.newSingleThreadExecutor();
+        final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queueMock);
             // wait until task is done or wait for timeout
@@ -160,15 +160,15 @@ public class AbstractKnxQueueTest {
     @MemoryLog(AbstractKnxQueue.class)
     @DisplayName("Test queue with IOException")
     public void testInboxIOException(final MemoryAppender appender) throws Exception {
-        var selectorMock = mock(Selector.class);
+        final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(IOException.class).thenReturn(0);
 
-        var queueMock = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
+        final var queueMock = mock(AbstractKnxQueue.class, CALLS_REAL_METHODS);
         doReturn(selectorMock).when(queueMock).openSelector();
 
-        var executor = Executors.newSingleThreadExecutor();
+        final var executor = Executors.newSingleThreadExecutor();
         try {
-            var taskFuture = executor.submit(queueMock);
+            final var taskFuture = executor.submit(queueMock);
             // wait until task is done or wait for timeout
             // when timeout the return is false, otherwise true which passes the test
             assertThat(
@@ -189,14 +189,14 @@ public class AbstractKnxQueueTest {
     @MemoryLog(AbstractKnxQueue.class)
     @DisplayName("Test queue with an unexpected exception")
     public void testInboxCorrupted(final MemoryAppender appender) throws Exception {
-        var selectorMock = mock(Selector.class);
+        final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(RuntimeException.class).thenReturn(0);
 
-        var clientMock = mock(InternalKnxClient.class);
-        var queueSpy = spy(new TestKnxQueue(clientMock)); // must inject clientMock for 'verify' invocation
+        final var clientMock = mock(InternalKnxClient.class);
+        final var queueSpy = spy(new TestKnxQueue(clientMock)); // must inject clientMock for 'verify' invocation
         doReturn(selectorMock).when(queueSpy).openSelector();
 
-        var executor = Executors.newSingleThreadExecutor();
+        final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queueSpy);
             // wait until task is done or wait for timeout
@@ -220,7 +220,7 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Check #getId()")
     public void testId() {
-        var queue = new TestKnxQueue(mock(InternalKnxClient.class));
+        final var queue = new TestKnxQueue(mock(InternalKnxClient.class));
         assertThat(queue.getId()).isEqualTo("testQueue");
     }
 
@@ -230,9 +230,9 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Check #getInternalClient()")
     public void testInternalClient() {
-        var internalClient = mock(InternalKnxClient.class);
+        final var internalClient = mock(InternalKnxClient.class);
 
-        var queue = new TestKnxQueue(internalClient);
+        final var queue = new TestKnxQueue(internalClient);
         assertThat(queue.getInternalClient()).isSameAs(internalClient);
     }
 
@@ -244,7 +244,7 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Check #openSelector()")
     public void testOpenSelector() throws IOException {
-        var queue = new TestKnxQueue(mock(InternalKnxClient.class));
+        final var queue = new TestKnxQueue(mock(InternalKnxClient.class));
 
         assertThat(queue.openSelector()).isNotNull();
     }
@@ -257,9 +257,9 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Check #add(Body) and #next()")
     public void testAddAndNext() throws InterruptedException {
-        var body = KnxBody.TUNNELLING_ACK_BODY;
+        final var body = KnxBody.TUNNELLING_ACK_BODY;
 
-        var queue = new TestKnxQueue(mock(InternalKnxClient.class));
+        final var queue = new TestKnxQueue(mock(InternalKnxClient.class));
         // add to queue
         queue.add(body);
         // verify if it is in queue

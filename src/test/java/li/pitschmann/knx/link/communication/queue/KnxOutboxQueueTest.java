@@ -48,17 +48,17 @@ public class KnxOutboxQueueTest {
     @Test
     @DisplayName("Test successful outgoing KNX packet")
     public void testViaMock() throws Exception {
-        var clientMock = mock(InternalKnxClient.class);
-        var channelMock = mock(DatagramChannel.class);
+        final var clientMock = mock(InternalKnxClient.class);
+        final var channelMock = mock(DatagramChannel.class);
 
-        var selectionKeyMock = mock(SelectionKey.class);
+        final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(channelMock);
 
         // Tunnelling Request Body is used for test
-        var body = KnxBody.TUNNELLING_REQUEST_BODY;
+        final var body = KnxBody.TUNNELLING_REQUEST_BODY;
 
         // add body to outbox queue
-        var queue = new KnxOutboxQueue("outboxQueue", clientMock, null); // channel is not relevant here
+        final var queue = new KnxOutboxQueue("outboxQueue", clientMock, null); // channel is not relevant here
         queue.send(body);
 
         // execute (this will pick up the body from outbox queue and write to channel)
@@ -68,7 +68,7 @@ public class KnxOutboxQueueTest {
         // - bytes are written
         // - outgoing body notification
         // capture what is written to channel
-        var byteBufferCaptor = ArgumentCaptor.forClass(ByteBuffer.class);
+        final var byteBufferCaptor = ArgumentCaptor.forClass(ByteBuffer.class);
         verify(channelMock).write(byteBufferCaptor.capture());
         assertThat(byteBufferCaptor.getValue().array()).containsExactly(body.getRawData(true));
         verify(clientMock).notifyPluginsOutgoingBody(body);
@@ -80,22 +80,22 @@ public class KnxOutboxQueueTest {
     @Test
     @DisplayName("Test successful outgoing KNX packet (through channel)")
     public void testViaChannel() throws Exception {
-        var localChannel = fakeChannel();
-        var remoteChannel = fakeChannel();
+        final var localChannel = fakeChannel();
+        final var remoteChannel = fakeChannel();
 
         // connect channel
         localChannel.connect(new InetSocketAddress("localhost", remoteChannel.socket().getLocalPort()));
         remoteChannel.connect(new InetSocketAddress("localhost", localChannel.socket().getLocalPort()));
 
-        var clientMock = mock(InternalKnxClient.class);
-        var selectionKeyMock = mock(SelectionKey.class);
+        final var clientMock = mock(InternalKnxClient.class);
+        final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(localChannel);
 
         // Tunnelling Request Body is used for test
-        var body = KnxBody.TUNNELLING_REQUEST_BODY;
+        final var body = KnxBody.TUNNELLING_REQUEST_BODY;
 
         // add body to outbox queue
-        var queue = new KnxOutboxQueue("outboxQueue", clientMock, localChannel);
+        final var queue = new KnxOutboxQueue("outboxQueue", clientMock, localChannel);
         queue.send(body);
 
         // execute (this will pick up the body from outbox queue and write to remote channel)
@@ -125,10 +125,10 @@ public class KnxOutboxQueueTest {
     @Test
     @DisplayName("Test for key validity")
     public void testKeyValidity() {
-        var queue = new KnxOutboxQueue(null, null, null); // args are not relevant for this test
+        final var queue = new KnxOutboxQueue(null, null, null); // args are not relevant for this test
 
         // verify validity of the key (should be 'valid' + 'writable')
-        var selectionKeyMock = mock(SelectionKey.class);
+        final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(mock(DatagramChannel.class));
         assertThat(queue.valid(selectionKeyMock)).isFalse();
         when(selectionKeyMock.isWritable()).thenReturn(true);
@@ -144,7 +144,7 @@ public class KnxOutboxQueueTest {
      * @throws IOException
      */
     private DatagramChannel fakeChannel() throws IOException {
-        var channel = DatagramChannel.open();
+        final var channel = DatagramChannel.open();
         channel.configureBlocking(false);
         channel.socket().bind(new InetSocketAddress(0));
         return channel;

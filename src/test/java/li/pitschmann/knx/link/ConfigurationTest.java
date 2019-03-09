@@ -40,14 +40,14 @@ public class ConfigurationTest {
     @DisplayName("Creates a new instance of Configuration")
     public void testCreate() {
         // creates a new one without port -> default KNX port will be used
-        var config1 = Configuration.create("127.0.1.1").build();
-        var config1Endpoint = config1.getEndpoint();
+        final var config1 = Configuration.create("127.0.1.1").build();
+        final var config1Endpoint = config1.getEndpoint();
         assertThat(config1Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
         assertThat(config1Endpoint.getPort()).isEqualTo(Constants.Protocol.PORT);
 
         // creates a new with port
-        var config2 = Configuration.create("127.0.1.2:4711").build();
-        var config2Endpoint = config2.getEndpoint();
+        final var config2 = Configuration.create("127.0.1.2:4711").build();
+        final var config2Endpoint = config2.getEndpoint();
         assertThat(config2Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 2));
         assertThat(config2Endpoint.getPort()).isEqualTo(4711);
     }
@@ -58,12 +58,12 @@ public class ConfigurationTest {
     @Test
     @DisplayName("Tests configuration with plugins")
     public void testPlugins() {
-        var configBuilder = Configuration.create(Networker.getLocalhost());
+        final var configBuilder = Configuration.create(Networker.getLocalhost());
 
         // add 13 observer plugins
-        var observerPlugin1 = mock(ObserverPlugin.class);
-        var observerPlugin2 = mock(ObserverPlugin.class);
-        var observerPlugin3 = mock(ObserverPlugin.class);
+        final var observerPlugin1 = mock(ObserverPlugin.class);
+        final var observerPlugin2 = mock(ObserverPlugin.class);
+        final var observerPlugin3 = mock(ObserverPlugin.class);
         configBuilder.plugin(observerPlugin1, observerPlugin2, observerPlugin3);
         for (var i = 0; i < 10; i++) {
             configBuilder.plugin(mock(ObserverPlugin.class));
@@ -75,7 +75,7 @@ public class ConfigurationTest {
         }
 
         // verify
-        var config = configBuilder.build();
+        final var config = configBuilder.build();
         assertThat(config.getAllPlugins()).hasSize(33);
         assertThat(config.getObserverPlugins()).hasSize(13);
         assertThat(config.getExtensionPlugins()).hasSize(20);

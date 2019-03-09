@@ -34,6 +34,7 @@ import java.nio.channels.SocketChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for {@link Networker} class
@@ -106,15 +107,15 @@ public class NetworkerTest {
         // test UDP
         final var datagramChannelMock = mock(DatagramChannel.class);
         final var socketAddressUdpMock = mock(SocketAddress.class);
-        Mockito.when(socketAddressUdpMock.toString()).thenReturn("1.2.3.4/udp");
-        Mockito.when(datagramChannelMock.getRemoteAddress()).thenReturn(socketAddressUdpMock);
+        when(socketAddressUdpMock.toString()).thenReturn("1.2.3.4/udp");
+        when(datagramChannelMock.getRemoteAddress()).thenReturn(socketAddressUdpMock);
         assertThat(Networker.getRemoteAddressAsString(datagramChannelMock)).isEqualTo("1.2.3.4/udp");
 
         // test TCP
         final var socketAddressTdpMock = mock(SocketAddress.class);
         final var socketChannelMock = mock(SocketChannel.class);
-        Mockito.when(socketAddressTdpMock.toString()).thenReturn("1.2.3.4/tcp");
-        Mockito.when(socketChannelMock.getRemoteAddress()).thenReturn(socketAddressTdpMock);
+        when(socketAddressTdpMock.toString()).thenReturn("1.2.3.4/tcp");
+        when(socketChannelMock.getRemoteAddress()).thenReturn(socketAddressTdpMock);
         assertThat(Networker.getRemoteAddressAsString(socketChannelMock)).isEqualTo("1.2.3.4/tcp");
 
         // test "N/A"
@@ -136,15 +137,15 @@ public class NetworkerTest {
         // test UDP
         final var datagramChannelMock = mock(DatagramChannel.class);
         final var socketAddressUdpMock = mock(SocketAddress.class);
-        Mockito.when(socketAddressUdpMock.toString()).thenReturn("5.6.7.8/udp");
-        Mockito.when(datagramChannelMock.getLocalAddress()).thenReturn(socketAddressUdpMock);
+        when(socketAddressUdpMock.toString()).thenReturn("5.6.7.8/udp");
+        when(datagramChannelMock.getLocalAddress()).thenReturn(socketAddressUdpMock);
         assertThat(Networker.getLocalAddressAsString(datagramChannelMock)).isEqualTo("5.6.7.8/udp");
 
         // test TCP
         final var socketAddressTdpMock = mock(SocketAddress.class);
         final var socketChannelMock = mock(SocketChannel.class);
-        Mockito.when(socketAddressTdpMock.toString()).thenReturn("5.6.7.8/tcp");
-        Mockito.when(socketChannelMock.getLocalAddress()).thenReturn(socketAddressTdpMock);
+        when(socketAddressTdpMock.toString()).thenReturn("5.6.7.8/tcp");
+        when(socketChannelMock.getLocalAddress()).thenReturn(socketAddressTdpMock);
         assertThat(Networker.getLocalAddressAsString(socketChannelMock)).isEqualTo("5.6.7.8/tcp");
 
         // test "N/A"

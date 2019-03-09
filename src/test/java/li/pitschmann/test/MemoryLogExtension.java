@@ -62,9 +62,9 @@ public class MemoryLogExtension
      */
     @Override
     public void beforeTestExecution(final ExtensionContext context) throws Exception {
-        var classes = getMemoryLogAnnotation(context).value();
+        final var classes = getMemoryLogAnnotation(context).value();
         LOG.debug("[{}] MemoryAppender added for classes: {}", context.getRequiredTestMethod(), classes);
-        var memoryAppender = new MemoryAppender();
+        final var memoryAppender = new MemoryAppender();
         getLoggers(classes).forEach(memoryAppender::addForLogger);
         memoryAppenders.put(context, memoryAppender);
     }
@@ -76,9 +76,9 @@ public class MemoryLogExtension
      */
     @Override
     public void afterTestExecution(final ExtensionContext context) throws Exception {
-        var classes = getMemoryLogAnnotation(context).value();
+        final var classes = getMemoryLogAnnotation(context).value();
         LOG.debug("[{}] MemoryAppender detached for classes: {}", context.getRequiredTestMethod(), classes);
-        var memoryAppender = memoryAppenders.remove(context);
+        final var memoryAppender = memoryAppenders.remove(context);
         memoryAppender.reset();
         getLoggers(classes).forEach(memoryAppender::detachForLogger);
     }

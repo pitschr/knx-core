@@ -161,11 +161,11 @@ public final class GroupAddress extends KnxAddress {
      */
     public String getAddressLevel2() {
         // byte 0: xxxx x...
-        var main = (address[0] & 0xF8) >>> 3;
+        final var main = (address[0] & 0xF8) >>> 3;
         // byte 0: .... .xxx
-        var middle = address[0] & 0x07;
+        final var middle = address[0] & 0x07;
         // byte 1: xxxx xxxx
-        var sub = Bytes.toUnsignedInt(address[1]);
+        final var sub = Bytes.toUnsignedInt(address[1]);
 
         return main + "/" + (middle << 8 | sub);
     }
@@ -177,11 +177,11 @@ public final class GroupAddress extends KnxAddress {
      */
     public String getAddressLevel3() {
         // byte 0: xxxx x...
-        var main = (address[0] & 0xF8) >>> 3;
+        final var main = (address[0] & 0xF8) >>> 3;
         // byte 0: .... .xxx
-        var middle = address[0] & 0x07;
+        final var middle = address[0] & 0x07;
         // byte 1: xxxx xxxx
-        var sub = Bytes.toUnsignedInt(address[1]);
+        final var sub = Bytes.toUnsignedInt(address[1]);
 
         return main + "/" + middle + "/" + sub;
     }

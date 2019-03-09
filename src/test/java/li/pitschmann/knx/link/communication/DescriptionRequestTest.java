@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for sending {@link DescriptionRequestBody} / receiving {@link DescriptionResponseBody} via
@@ -276,7 +277,7 @@ public class DescriptionRequestTest {
         // define a specific port because there will be no real port available.
         // the port number 4711 is randomly chosen
         final var mockServerSpy = Mockito.spy(mockServer);
-        Mockito.when(mockServerSpy.getPort()).thenReturn(4711);
+        when(mockServerSpy.getPort()).thenReturn(4711);
 
         try (final var client = mockServerSpy.newKnxClient()) {
             // keep client alive until it is closed

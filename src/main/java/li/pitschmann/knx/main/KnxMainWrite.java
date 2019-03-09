@@ -71,10 +71,10 @@ public class KnxMainWrite extends AbstractKnxMain {
             final var ackBodies = Lists.<Future<TunnellingAckBody>>newArrayList();
             Sleeper.seconds(1);
             for (final String value : values) {
-                var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
+                final var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
                 LOG.debug("========================================================================");
                 for (final GroupAddress groupAddress : DEFAULT_GROUP_ADDRESSES) {
-                    var future = client.writeRequest(groupAddress, dpValue);
+                    final var future = client.writeRequest(groupAddress, dpValue);
                     ackBodies.add(future);
                     LOG.debug("WRITE: {} - {}\nACK: {}", value, dpValue, future);
                 }

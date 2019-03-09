@@ -54,7 +54,7 @@ public final class MemoryAppender extends OutputStreamAppender<ILoggingEvent> {
         setName("MEMORY");
 
         // set layout and encoder
-        var ple = new PatternLayoutEncoder();
+        final var ple = new PatternLayoutEncoder();
         ple.setPattern("%msg%n");
         ple.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         ple.start();
@@ -121,7 +121,7 @@ public final class MemoryAppender extends OutputStreamAppender<ILoggingEvent> {
      * @param logger logger that should be attached with appender
      */
     public final void addForLogger(final Logger logger) {
-        var loggerImpl = (ch.qos.logback.classic.Logger) logger;
+        final var loggerImpl = (ch.qos.logback.classic.Logger) logger;
 
         if (!loggerImpl.isAttached(this)) {
             loggerImpl.setLevel(Level.ALL);

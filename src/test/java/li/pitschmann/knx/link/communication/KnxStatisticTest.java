@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the {@link KnxStatisticImpl}
@@ -166,24 +167,24 @@ public class KnxStatisticTest {
     @Test
     @DisplayName("Test the error rate")
     public void testErrorRate() {
-        var knxStatistic = Mockito.spy(KnxStatistic.class);
+        final var knxStatistic = Mockito.spy(KnxStatistic.class);
 
         // error rate = 0% (no communication yet)
-        Mockito.when(knxStatistic.getNumberOfBodyReceived()).thenReturn(0L);
-        Mockito.when(knxStatistic.getNumberOfBodySent()).thenReturn(0L);
-        Mockito.when(knxStatistic.getNumberOfErrors()).thenReturn(0L);
+        when(knxStatistic.getNumberOfBodyReceived()).thenReturn(0L);
+        when(knxStatistic.getNumberOfBodySent()).thenReturn(0L);
+        when(knxStatistic.getNumberOfErrors()).thenReturn(0L);
         assertThat(knxStatistic.getErrorRate()).isZero();
 
         // error rate = 0% (with communication)
-        Mockito.when(knxStatistic.getNumberOfBodyReceived()).thenReturn(1L);
-        Mockito.when(knxStatistic.getNumberOfBodySent()).thenReturn(0L);
-        Mockito.when(knxStatistic.getNumberOfErrors()).thenReturn(0L);
+        when(knxStatistic.getNumberOfBodyReceived()).thenReturn(1L);
+        when(knxStatistic.getNumberOfBodySent()).thenReturn(0L);
+        when(knxStatistic.getNumberOfErrors()).thenReturn(0L);
         assertThat(knxStatistic.getErrorRate()).isZero();
 
         // error rate = 50% (4 received, 2 sent = 6 packets; 3 error packets)
-        Mockito.when(knxStatistic.getNumberOfBodyReceived()).thenReturn(4L);
-        Mockito.when(knxStatistic.getNumberOfBodySent()).thenReturn(2L);
-        Mockito.when(knxStatistic.getNumberOfErrors()).thenReturn(3L);
+        when(knxStatistic.getNumberOfBodyReceived()).thenReturn(4L);
+        when(knxStatistic.getNumberOfBodySent()).thenReturn(2L);
+        when(knxStatistic.getNumberOfErrors()).thenReturn(3L);
         assertThat(knxStatistic.getErrorRate()).isEqualTo(50d);
     }
 

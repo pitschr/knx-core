@@ -95,17 +95,17 @@ public class KnxClientTest {
     })
     @DisplayName("Default Client: Test notification of plug-ins")
     public void testPlugins(final KnxMockServer mockServer) {
-        var configBuilder = mockServer.newConfigBuilder();
+        final var configBuilder = mockServer.newConfigBuilder();
 
         // observer plug-in
-        var observerPlugin = mock(ObserverPlugin.class);
+        final var observerPlugin = mock(ObserverPlugin.class);
         configBuilder.plugin(observerPlugin);
 
         // extension plug-in
-        var extensionPlugin = mock(ExtensionPlugin.class);
+        final var extensionPlugin = mock(ExtensionPlugin.class);
         configBuilder.plugin(extensionPlugin);
 
-        try (var client = new DefaultKnxClient(configBuilder.build())) {
+        try (final var client = new DefaultKnxClient(configBuilder.build())) {
             // wait for first tunnelling ack body sent by client
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK);
         } catch (final Throwable t) {
@@ -152,12 +152,12 @@ public class KnxClientTest {
     @DisplayName("Internal Client: Test plug-in notification after close")
     public void testPlugInNotificationAfterShutdown() {
         // observer plug-in
-        var observerPlugin = mock(ObserverPlugin.class);
+        final var observerPlugin = mock(ObserverPlugin.class);
 
-        var configMock = createConfigMock();
+        final var configMock = createConfigMock();
         when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(observerPlugin));
 
-        var client = new InternalKnxClient(configMock);
+        final var client = new InternalKnxClient(configMock);
         client.close();
 
         // should not be an issue (silently ignored, plug-in should never be called)
@@ -174,15 +174,15 @@ public class KnxClientTest {
     @DisplayName("Internal Client: Test erroneous plug-in")
     public void testErroneousPlugIn() {
         // erroneous plug-in
-        var erroneousPlugin = mock(ObserverPlugin.class);
+        final var erroneousPlugin = mock(ObserverPlugin.class);
         Mockito.doThrow(new RuntimeException()).when(erroneousPlugin).onError(Mockito.any());
 
-        var configMock = createConfigMock();
+        final var configMock = createConfigMock();
         when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
 
-        var client = new InternalKnxClient(configMock);
+        final var client = new InternalKnxClient(configMock);
 
-        try {
+        try (){
             // should not be an issue
             client.notifyPluginsError(new Throwable());
         } catch (final Throwable t) {
@@ -199,14 +199,14 @@ public class KnxClientTest {
     @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
     @DisplayName("Default Client: Test Control and Data HPAI")
     public void testControlAndDataHPAI(final KnxMockServer mockServer) {
-        try (var client = new InternalKnxClient(mockServer.newConfigBuilder().build())) {
+        try (final var client = new InternalKnxClient(mockServer.newConfigBuilder().build())) {
             // internal client must be invoked explicitly
             client.start();
 
-            var controlHPAI = client.getControlHPAI();
+            final var controlHPAI = client.getControlHPAI();
             assertThat(controlHPAI).isNotNull().isEqualTo(mockServer.getClientControlHPAI());
 
-            var dataHPAI = client.getDataHPAI();
+            final var dataHPAI = client.getDataHPAI();
             assertThat(dataHPAI).isNotNull().isEqualTo(mockServer.getClientDataHPAI());
 
             // and should be different
@@ -223,8 +223,8 @@ public class KnxClientTest {
     @Test
     @DisplayName("Error: Send body without any channel information")
     public void testBodyWithoutChannel() {
-        var client = new InternalKnxClient(createConfigMock());
-        var requestBody = mock(RequestBody.class);
+        final var client = new InternalKnxClient(createConfigMock());
+        final var requestBody = mock(RequestBody.class);
 
         // verify if it is returning Illegal Argument Exception
         assertThatThrownBy(() -> client.send(requestBody)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
@@ -237,7 +237,7 @@ public class KnxClientTest {
      * @return a mocked instance of {@link Configuration}
      */
     private Configuration createConfigMock() {
-        var configMock = mock(Configuration.class);
+        final var configMock = mock(Configuration.class);
         when(configMock.getCommunicationExecutorPoolSize()).thenReturn(1);
         when(configMock.getPluginExecutorPoolSize()).thenReturn(1);
         return configMock;

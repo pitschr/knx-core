@@ -58,22 +58,22 @@ public class BaseKnxClientTest {
     @RepeatedTest(10)
     public void testCommonMethods(final KnxMockServer mockServer) {
         // mock extension plugin to verify if the init method is invoked with correct client instance
-        var extensionPlugin = mock(ExtensionPlugin.class);
+        final var extensionPlugin = mock(ExtensionPlugin.class);
 
-        var client = new BaseKnxClient(mockServer.newConfigBuilder().plugin(extensionPlugin).build());
+        final var client = new BaseKnxClient(mockServer.newConfigBuilder().plugin(extensionPlugin).build());
         try (client) {
             assertThat(client.getStatusPool()).isNotNull();
             assertThat(client.getConfig()).isNotNull();
             assertThat(client.isClosed()).isFalse();
 
             // verify if statistic is an unmodifiable instance
-            var statistic = client.getStatistic();
+            final var statistic = client.getStatistic();
             assertThat(statistic).isNotNull();
             assertThat(statistic.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
 
             // verify if the init method of extension plugin has been called and the parameter is
             // the client (and not e.g. internal client)
-            var argCaptor = ArgumentCaptor.forClass(KnxClient.class);
+            final var argCaptor = ArgumentCaptor.forClass(KnxClient.class);
             verify(extensionPlugin).onInitialization(argCaptor.capture());
             assertThat(argCaptor.getValue()).isSameAs(client);
         } catch (final Throwable t) {
@@ -113,9 +113,9 @@ public class BaseKnxClientTest {
     )
     @DisplayName("Test write requests (incl. async)")
     public void testWriteRequests(final KnxMockServer mockServer) {
-        var groupAddress = GroupAddress.of(1, 2, 3);
+        final var groupAddress = GroupAddress.of(1, 2, 3);
 
-        try (var client = (BaseKnxClient) mockServer.newKnxClient()) {
+        try (final var client = (BaseKnxClient) mockServer.newKnxClient()) {
             // async read request
             client.readRequest(groupAddress).get();
             // async write request with DPT
@@ -133,7 +133,7 @@ public class BaseKnxClientTest {
         }
 
         // assert if mock server got right sequences
-        var requestBodies = mockServer.getReceivedBodies().stream().filter(b -> b.getServiceType() == ServiceType.TUNNELING_REQUEST).collect(Collectors.toList());
+        final var requestBodies = mockServer.getReceivedBodies().stream().filter(b -> b.getServiceType() == ServiceType.TUNNELING_REQUEST).collect(Collectors.toList());
         assertThat(requestBodies).hasSize(5);
         // first two requests are sequences (incremental)
         assertThat(((TunnellingRequestBody) requestBodies.get(0)).getSequence()).isEqualTo(0);
