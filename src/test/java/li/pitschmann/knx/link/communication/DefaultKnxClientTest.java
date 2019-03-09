@@ -39,7 +39,7 @@ public class DefaultKnxClientTest {
     @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_REMOTE)
     @DisplayName("Test KNX client instantiation using host address as string")
     public void testInstantiationViaHostAddress(final KnxMockServer mockServer) {
-        try (var client = new DefaultKnxClient("127.0.0.1:" + mockServer.getPort())) {
+        try (final var client = new DefaultKnxClient("127.0.0.1:" + mockServer.getPort())) {
             // ok
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

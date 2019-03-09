@@ -176,7 +176,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
 
         final var knxActions = Lists.<KnxMockServerAction>newLinkedList();
         knxActions.add(KnxMockServerWaitAction.NEXT); // KNX Mock Server is always waiting for first request from client
-        for (var knxCommand : knxCommands) {
+        for (final var knxCommand : knxCommands) {
             knxActions.addAll(KnxMockServerAction.parse(knxCommand));
         }
         final var actionRunnable = new ActionRunnable(knxActions);

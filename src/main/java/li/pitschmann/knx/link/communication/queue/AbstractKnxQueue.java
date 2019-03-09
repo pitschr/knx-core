@@ -67,7 +67,7 @@ public abstract class AbstractKnxQueue implements Runnable {
     public final void run() {
         LOG.info("*** {}: START ***", id);
 
-        try (var selector = openSelector()) {
+        try (final var selector = openSelector()) {
             // iterate until current thread is interrupted
             while (!Thread.currentThread().isInterrupted()) {
                 try {

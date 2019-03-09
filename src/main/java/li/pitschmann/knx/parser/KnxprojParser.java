@@ -84,7 +84,7 @@ public final class KnxprojParser {
 
         final var sw = Stopwatch.createStarted();
         final XmlProject project;
-        try (var zipFile = new ZipFile(path.toFile())) {
+        try (final var zipFile = new ZipFile(path.toFile())) {
             // get KNX group address data
             final var groupAddresses = getKnxProjectGroupAddresses(zipFile);
 

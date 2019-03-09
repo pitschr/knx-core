@@ -85,9 +85,9 @@ public class KnxMainWrite extends AbstractKnxMain {
             // wait until completed
             LOG.debug("WAIT UNTIL COMPLETED");
 
-            for (var i = 0; i < ackBodies.size(); i++) {
-                LOG.debug("DONE: {}", ackBodies.get(i).isDone());
-                LOG.debug("GET : {}", ackBodies.get(i).get());
+            for (final var ackBody : ackBodies) {
+                LOG.debug("DONE: {}", ackBody.isDone());
+                LOG.debug("GET : {}", ackBody.get());
             }
             LOG.debug("Statistic: {}", client.getStatistic());
             LOG.debug("COMPLETED!");
