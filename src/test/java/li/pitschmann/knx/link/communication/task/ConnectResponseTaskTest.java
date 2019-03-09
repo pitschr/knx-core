@@ -26,7 +26,6 @@ import li.pitschmann.knx.link.communication.KnxEventPool;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 

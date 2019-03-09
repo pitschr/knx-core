@@ -26,7 +26,6 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxNoTunnellingException;
 import li.pitschmann.knx.link.header.ServiceType;
@@ -35,12 +34,10 @@ import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.RepeatedTest;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 

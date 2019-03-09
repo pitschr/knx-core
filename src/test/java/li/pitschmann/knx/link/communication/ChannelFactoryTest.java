@@ -24,7 +24,6 @@ import li.pitschmann.test.TestHelpers;
 import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.net.InetSocketAddress;
 import java.net.SocketException;

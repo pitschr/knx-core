@@ -18,22 +18,11 @@
 
 package li.pitschmann.parser;
 
-import li.pitschmann.knx.link.header.Header;
-import li.pitschmann.knx.parser.KnxprojParser;
-import li.pitschmann.knx.parser.KnxprojParserException;
 import li.pitschmann.knx.parser.XmlGroupAddress;
-import li.pitschmann.test.TestHelpers;
-import li.pitschmann.utils.ByteFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests {@link XmlGroupAddress} that contains data from '*.knxproj' file

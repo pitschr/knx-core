@@ -183,7 +183,7 @@ public class KnxClientTest {
 
         final var client = new InternalKnxClient(configMock);
 
-        try (client){
+        try (client) {
             // should not be an issue
             client.notifyPluginsError(new Throwable());
         } catch (final Throwable t) {

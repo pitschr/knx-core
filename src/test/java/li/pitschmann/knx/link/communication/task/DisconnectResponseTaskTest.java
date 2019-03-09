@@ -25,7 +25,6 @@ import li.pitschmann.knx.link.communication.KnxEventData;
 import li.pitschmann.knx.link.communication.KnxEventPool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 

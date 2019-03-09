@@ -24,7 +24,6 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;

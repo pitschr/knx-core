@@ -28,8 +28,6 @@ import li.pitschmann.utils.Networker;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -143,9 +141,9 @@ public final class Configuration {
      * Returns the setting for given {@code key}. Defaults back to {@code defaultValue} in case the
      * key is not defined or unknown.
      *
-     * @param key configuration key
+     * @param key          configuration key
      * @param defaultValue used if value for key is absent
-     * @param function for conversion from {@link String} to an instance of {@code T}
+     * @param function     for conversion from {@link String} to an instance of {@code T}
      * @param <T>
      * @return the value of setting (key)
      */
@@ -200,10 +198,6 @@ public final class Configuration {
 
     public long getTimeoutAliveConnection() {
         return getSetting("timeout.alive.connectionstate", Constants.Timeouts.CONNECTION_ALIVE_TIME, Long::valueOf);
-    }
-
-    public Path getKnxproj() {
-        return getSetting("path.knxproj", null, Paths::get);
     }
 
     /**

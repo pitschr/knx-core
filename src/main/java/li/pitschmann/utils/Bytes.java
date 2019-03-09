@@ -489,7 +489,7 @@ public final class Bytes {
                     // byte 1
                     toByte(bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15])};
         } else {
-            final var byteArrayLength = (int)Math.ceil(bits.length / 8d);
+            final var byteArrayLength = (int) Math.ceil(bits.length / 8d);
             final var remainder = bits.length % 8;
 
             var bytePos = 0;

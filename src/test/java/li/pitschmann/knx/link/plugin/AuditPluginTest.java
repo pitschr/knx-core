@@ -23,9 +23,7 @@ import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.test.MemoryAppender;
 import li.pitschmann.test.MemoryLog;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

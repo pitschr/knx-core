@@ -21,7 +21,6 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.test.KnxBody;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.Instant;
 

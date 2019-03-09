@@ -29,7 +29,6 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.KnxStatusPoolImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
