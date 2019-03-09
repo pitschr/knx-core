@@ -33,7 +33,6 @@ import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.test.KnxBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.ArrayList;

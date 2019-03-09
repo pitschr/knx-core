@@ -34,7 +34,6 @@ import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

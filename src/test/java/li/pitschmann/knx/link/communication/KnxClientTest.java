@@ -41,7 +41,6 @@ import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +49,12 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -115,28 +118,28 @@ public class KnxClientTest {
         }
 
         // verify number of notifications to observer plug-in
-        verify(observerPlugin, Mockito.times(1)).onInitialization(Mockito.any());
+        verify(observerPlugin, times(1)).onInitialization(any());
 
-        verify(observerPlugin, Mockito.times(5)).onIncomingBody(Mockito.any());
-        verify(observerPlugin, Mockito.times(1)).onIncomingBody(Mockito.isA(DescriptionResponseBody.class));
-        verify(observerPlugin, Mockito.times(1)).onIncomingBody(Mockito.isA(ConnectResponseBody.class));
-        verify(observerPlugin, Mockito.times(1)).onIncomingBody(Mockito.isA(ConnectionStateResponseBody.class));
-        verify(observerPlugin, Mockito.times(1)).onIncomingBody(Mockito.isA(TunnellingRequestBody.class));
-        verify(observerPlugin, Mockito.times(1)).onIncomingBody(Mockito.isA(DisconnectResponseBody.class));
+        verify(observerPlugin, times(5)).onIncomingBody(any());
+        verify(observerPlugin, times(1)).onIncomingBody(isA(DescriptionResponseBody.class));
+        verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectResponseBody.class));
+        verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectionStateResponseBody.class));
+        verify(observerPlugin, times(1)).onIncomingBody(isA(TunnellingRequestBody.class));
+        verify(observerPlugin, times(1)).onIncomingBody(isA(DisconnectResponseBody.class));
 
-        verify(observerPlugin, Mockito.times(5)).onOutgoingBody(Mockito.any());
-        verify(observerPlugin, Mockito.times(1)).onOutgoingBody(Mockito.isA(DescriptionRequestBody.class));
-        verify(observerPlugin, Mockito.times(1)).onOutgoingBody(Mockito.isA(ConnectRequestBody.class));
-        verify(observerPlugin, Mockito.times(1)).onOutgoingBody(Mockito.isA(ConnectionStateRequestBody.class));
-        verify(observerPlugin, Mockito.times(1)).onOutgoingBody(Mockito.isA(TunnellingAckBody.class));
-        verify(observerPlugin, Mockito.times(1)).onOutgoingBody(Mockito.isA(DisconnectRequestBody.class));
+        verify(observerPlugin, times(5)).onOutgoingBody(any());
+        verify(observerPlugin, times(1)).onOutgoingBody(isA(DescriptionRequestBody.class));
+        verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectRequestBody.class));
+        verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectionStateRequestBody.class));
+        verify(observerPlugin, times(1)).onOutgoingBody(isA(TunnellingAckBody.class));
+        verify(observerPlugin, times(1)).onOutgoingBody(isA(DisconnectRequestBody.class));
 
-        verify(observerPlugin, Mockito.times(2)).onError(Mockito.any());
+        verify(observerPlugin, times(2)).onError(any());
 
         // verify number of notifications to extension plug-in
-        verify(extensionPlugin, Mockito.times(1)).onInitialization(Mockito.any());
-        verify(extensionPlugin, Mockito.times(1)).onStart();
-        verify(extensionPlugin, Mockito.times(1)).onShutdown();
+        verify(extensionPlugin, times(1)).onInitialization(any());
+        verify(extensionPlugin, times(1)).onStart();
+        verify(extensionPlugin, times(1)).onShutdown();
 
         // assert packets
         mockServer.assertReceivedPackets(
@@ -164,7 +167,7 @@ public class KnxClientTest {
 
         // should not be an issue (silently ignored, plug-in should never be called)
         client.notifyPluginsError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
-        verify(observerPlugin, Mockito.never()).onError(Mockito.any());
+        verify(observerPlugin, never()).onError(any());
     }
 
     /**
@@ -177,7 +180,7 @@ public class KnxClientTest {
     public void testErroneousPlugIn() {
         // erroneous plug-in
         final var erroneousPlugin = mock(ObserverPlugin.class);
-        doThrow(new RuntimeException()).when(erroneousPlugin).onError(Mockito.any());
+        doThrow(new RuntimeException()).when(erroneousPlugin).onError(any());
 
         final var configMock = createConfigMock();
         when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));

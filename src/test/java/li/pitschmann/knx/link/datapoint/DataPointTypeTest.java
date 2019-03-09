@@ -18,14 +18,15 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyByte;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +48,7 @@ public class DataPointTypeTest {
         final var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(Mockito.anyByte())).thenCallRealMethod();
+        when(dpt.toValue(anyByte())).thenCallRealMethod();
 
         dpt.toValue((byte) 0x01);
         verify(dpt).toValue(captor.capture());
@@ -64,7 +65,7 @@ public class DataPointTypeTest {
         final var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(Mockito.anyByte(), Mockito.anyByte(), Mockito.anyByte())).thenCallRealMethod();
+        when(dpt.toValue(anyByte(), anyByte(), anyByte())).thenCallRealMethod();
 
         dpt.toValue((byte) 0x03, (byte) 0x04, (byte) 0x05);
         verify(dpt).toValue(captor.capture());
@@ -81,7 +82,7 @@ public class DataPointTypeTest {
         final var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(Mockito.anyString())).thenCallRealMethod();
+        when(dpt.toValue(anyString())).thenCallRealMethod();
 
         dpt.toValue("Foobar");
         verify(dpt).toValue(captor.capture());
@@ -97,7 +98,7 @@ public class DataPointTypeTest {
         final var dpt = mock(DataPointType.class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue((String) Mockito.any())).thenCallRealMethod();
+        when(dpt.toValue((String) any())).thenCallRealMethod();
 
         assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
     }
@@ -112,7 +113,7 @@ public class DataPointTypeTest {
         final var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenCallRealMethod();
+        when(dpt.toValue(anyString(), anyString(), anyString())).thenCallRealMethod();
 
         dpt.toValue("Hello", "World", "!");
         verify(dpt).toValue(captor.capture());

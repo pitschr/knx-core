@@ -21,7 +21,6 @@ package li.pitschmann.utils;
 import li.pitschmann.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -34,6 +33,7 @@ import java.nio.channels.SocketChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 /**
@@ -119,8 +119,8 @@ public class NetworkerTest {
         assertThat(Networker.getRemoteAddressAsString(socketChannelMock)).isEqualTo("1.2.3.4/tcp");
 
         // test "N/A"
-        Mockito.reset(datagramChannelMock);
-        Mockito.reset(socketChannelMock);
+        reset(datagramChannelMock);
+        reset(socketChannelMock);
         assertThat(Networker.getRemoteAddressAsString(datagramChannelMock)).isEqualTo("N/A");
         assertThat(Networker.getRemoteAddressAsString(socketChannelMock)).isEqualTo("N/A");
 
@@ -149,8 +149,8 @@ public class NetworkerTest {
         assertThat(Networker.getLocalAddressAsString(socketChannelMock)).isEqualTo("5.6.7.8/tcp");
 
         // test "N/A"
-        Mockito.reset(datagramChannelMock);
-        Mockito.reset(socketChannelMock);
+        reset(datagramChannelMock);
+        reset(socketChannelMock);
         assertThat(Networker.getLocalAddressAsString(datagramChannelMock)).isEqualTo("N/A");
         assertThat(Networker.getLocalAddressAsString(socketChannelMock)).isEqualTo("N/A");
 

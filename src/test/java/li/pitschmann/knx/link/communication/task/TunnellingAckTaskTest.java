@@ -25,10 +25,11 @@ import li.pitschmann.knx.link.communication.KnxEventData;
 import li.pitschmann.knx.link.communication.KnxEventPool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -98,12 +99,12 @@ public class TunnellingAckTaskTest {
 
         // 0 = (normal) not acknowledged
         final var eventData = mock(KnxEventData.class);
-        doReturn(eventData).when(eventPool).get(Mockito.any(TunnellingAckBody.class));
+        doReturn(eventData).when(eventPool).get(any(TunnellingAckBody.class));
 
         // 1 = already acknowledged
         final var eventDataAcknowledgedAlready = mock(KnxEventData.class);
         when(eventDataAcknowledgedAlready.hasResponse()).thenReturn(true);
-        doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnellingAckBody) Mockito.argThat(t -> ((TunnellingAckBody) t).getSequence() == 1));
+        doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnellingAckBody) argThat(t -> ((TunnellingAckBody) t).getSequence() == 1));
 
         when(internalClient.getEventPool()).thenReturn(eventPool);
 
