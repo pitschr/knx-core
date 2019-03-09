@@ -27,6 +27,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Test {@link AuditPlugin}
  */
@@ -41,7 +43,7 @@ public class AuditPluginTest {
     @Test
     @MemoryLog(AuditPlugin.class)
     public void auditIncomingBody(final MemoryAppender appender) {
-        var body = Mockito.mock(Body.class);
+        final var body = mock(Body.class);
         Mockito.when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
         Mockito.when(body.getRawData()).thenReturn(new byte[]{0x11, 0x22, 0x33});
         Mockito.when(body.getRawDataAsHexString()).thenReturn("0x11 22 33");
@@ -75,7 +77,7 @@ public class AuditPluginTest {
     @Test
     @MemoryLog(AuditPlugin.class)
     public void auditOutgoingBody(final MemoryAppender appender) {
-        var body = Mockito.mock(Body.class);
+        final var body = mock(Body.class);
         Mockito.when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
         Mockito.when(body.getRawData()).thenReturn(new byte[]{0x22, 0x33});
         Mockito.when(body.getRawDataAsHexString()).thenReturn("0x22 33");
@@ -109,7 +111,7 @@ public class AuditPluginTest {
     @Test
     @MemoryLog(AuditPlugin.class)
     public void auditOnError(final MemoryAppender appender) {
-        var exception = Mockito.mock(RuntimeException.class);
+        final var exception = mock(RuntimeException.class);
         Mockito.when(exception.getMessage()).thenReturn("I am a RuntimeException");
         Mockito.when(exception.getStackTrace()).thenReturn(
                 new StackTraceElement[]{
@@ -192,7 +194,7 @@ public class AuditPluginTest {
      * @param expected the expected string
      */
     private void assertLogLine(final MemoryAppender appender, final String expected) {
-        var logLines = appender.all();
+        final var logLines = appender.all();
         Assertions.assertThat(logLines).hasSize(1);
         Assertions.assertThat(logLines.get(0)).isEqualTo(expected);
     }

@@ -27,6 +27,7 @@ import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link KnxEventPool}
@@ -83,7 +84,7 @@ public class KnxEventPoolTest {
     public void testAddFailures() {
         assertThatThrownBy(() -> new KnxEventPool().add(null)).isInstanceOf(IllegalArgumentException.class);
 
-        final var requestBody = Mockito.mock(RequestBody.class);
+        final var requestBody = mock(RequestBody.class);
         assertThatThrownBy(() -> new KnxEventPool().add(requestBody)).isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -29,6 +29,8 @@ import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Test for {@link ConnectionStateResponseTask}
  *
@@ -45,11 +47,11 @@ public class ConnectionStateResponseTaskTest {
         final var task = createTask();
 
         // correct body
-        final var correctBody = Mockito.mock(ConnectionStateResponseBody.class);
+        final var correctBody = mock(ConnectionStateResponseBody.class);
         task.onNext(correctBody);
 
         // wrong body - should not be an issue - simply ignored
-        final var wrongBody = Mockito.mock(Body.class);
+        final var wrongBody = mock(Body.class);
         task.onNext(wrongBody);
     }
 
@@ -83,10 +85,10 @@ public class ConnectionStateResponseTaskTest {
      * @return returns a newly instance of {@link ConnectionStateResponseTask}
      */
     private ConnectionStateResponseTask createTask() {
-        final var internalClient = Mockito.mock(InternalKnxClient.class);
-        final var eventPool = Mockito.mock(KnxEventPool.class);
-        final var eventData = Mockito.mock(KnxEventData.class);
-        final var subscription = Mockito.mock(Flow.Subscription.class);
+        final var internalClient = mock(InternalKnxClient.class);
+        final var eventPool = mock(KnxEventPool.class);
+        final var eventData = mock(KnxEventData.class);
+        final var subscription = mock(Flow.Subscription.class);
 
         Mockito.doReturn(eventData).when(eventPool).connectionStateEvent();
         Mockito.when(internalClient.getEventPool()).thenReturn(eventPool);

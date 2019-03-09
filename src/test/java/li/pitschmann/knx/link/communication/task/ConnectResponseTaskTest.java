@@ -31,6 +31,7 @@ import org.mockito.Mockito;
 import java.util.concurrent.Flow;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link ConnectResponseTask}
@@ -51,11 +52,11 @@ public class ConnectResponseTaskTest {
         final var task = createTask();
 
         // correct body
-        final var correctBody = Mockito.mock(ConnectResponseBody.class);
+        final var correctBody = mock(ConnectResponseBody.class);
         task.onNext(correctBody);
 
         // wrong body
-        final var wrongBody = Mockito.mock(Body.class);
+        final var wrongBody = mock(Body.class);
         assertThatThrownBy(() -> task.onNext(wrongBody)).isInstanceOf(KnxBodyNotReceivedException.class);
     }
 
@@ -89,10 +90,10 @@ public class ConnectResponseTaskTest {
      * @return returns a newly instance of {@link ConnectResponseTask}
      */
     private ConnectResponseTask createTask() {
-        final var internalClient = Mockito.mock(InternalKnxClient.class);
-        final var eventPool = Mockito.mock(KnxEventPool.class);
-        final var eventData = Mockito.mock(KnxEventData.class);
-        final var subscription = Mockito.mock(Flow.Subscription.class);
+        final var internalClient = mock(InternalKnxClient.class);
+        final var eventPool = mock(KnxEventPool.class);
+        final var eventData = mock(KnxEventData.class);
+        final var subscription = mock(Flow.Subscription.class);
 
         Mockito.doReturn(eventData).when(eventPool).connectEvent();
         Mockito.when(internalClient.getEventPool()).thenReturn(eventPool);

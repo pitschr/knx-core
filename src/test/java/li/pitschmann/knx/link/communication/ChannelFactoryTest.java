@@ -32,6 +32,7 @@ import java.nio.channels.DatagramChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -56,7 +57,7 @@ public class ChannelFactoryTest {
      */
     @Test
     public void testNewDescriptionChannel() throws SocketException {
-        final var configMock = Mockito.mock(Configuration.class);
+        final var configMock = mock(Configuration.class);
         when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
         when(configMock.getSocketTimeoutControlChannel()).thenReturn(1000L);
 
@@ -77,7 +78,7 @@ public class ChannelFactoryTest {
      */
     @Test
     public void testNewControlChannel() throws SocketException {
-        final var configMock = Mockito.mock(Configuration.class);
+        final var configMock = mock(Configuration.class);
         when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(2, 3, 4, 5), 5432));
         when(configMock.getSocketTimeoutControlChannel()).thenReturn(2000L);
 
@@ -98,7 +99,7 @@ public class ChannelFactoryTest {
      */
     @Test
     public void testNewDataChannel() throws SocketException {
-        final var configMock = Mockito.mock(Configuration.class);
+        final var configMock = mock(Configuration.class);
         when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(3, 4, 5, 6), 6543));
         when(configMock.getSocketTimeoutDataChannel()).thenReturn(3000L);
 
@@ -119,10 +120,10 @@ public class ChannelFactoryTest {
      */
     @Test
     public void testFailure() throws SocketException {
-        final var socketAddressMock = Mockito.mock(InetSocketAddress.class);
+        final var socketAddressMock = mock(InetSocketAddress.class);
         when(socketAddressMock.isUnresolved()).thenReturn(true);
 
-        final var configMock = Mockito.mock(Configuration.class);
+        final var configMock = mock(Configuration.class);
         when(configMock.getEndpoint()).thenReturn(socketAddressMock);
         when(configMock.getSocketTimeoutDataChannel()).thenReturn(4000L);
 

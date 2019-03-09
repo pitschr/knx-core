@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Tests for {@link DataPointType}
  *
@@ -37,7 +39,7 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(byte, byte...) with one parameter")
     public void testToValueByteVararg() {
-        var dpt = Mockito.mock(DataPointType.class);
+        var dpt = mock(DataPointType.class);
         var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
@@ -54,7 +56,7 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(byte, byte...) with three parameters")
     public void testToValueByteVarargWithThreeParameters() {
-        var dpt = Mockito.mock(DataPointType.class);
+        var dpt = mock(DataPointType.class);
         var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
@@ -71,7 +73,7 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(String, String...) with one parameter")
     public void testToValueStringVararg() {
-        var dpt = Mockito.mock(DataPointType.class);
+        var dpt = mock(DataPointType.class);
         var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
@@ -88,7 +90,7 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(String, String...) with null as 1st parameter")
     public void testToValueStringVarargWithNull() {
-        var dpt = Mockito.mock(DataPointType.class);
+        var dpt = mock(DataPointType.class);
 
         // do real call because we want to test the implementation
         Mockito.when(dpt.toValue((String) Mockito.any())).thenCallRealMethod();
@@ -102,7 +104,7 @@ public class DataPointTypeTest {
     @Test
     @DisplayName("Tests the DataPointType#toValue(String, String...) with three parameters")
     public void testToValueStringVarargWithThreeParameters() {
-        var dpt = Mockito.mock(DataPointType.class);
+        var dpt = mock(DataPointType.class);
         var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation

@@ -38,6 +38,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Test {@link StatisticPlugin}
  */
@@ -48,8 +50,8 @@ public class StatisticPluginTest {
     @DisplayName("Test KNX statistic with JSON format")
     @MemoryLog(StatisticPlugin.class)
     public void testStatisticWithJsonFormat(final MemoryAppender appender) {
-        var client = Mockito.mock(KnxClient.class);
-        Mockito.when(client.getStatistic()).thenReturn(Mockito.mock(KnxStatistic.class));
+        final var client = mock(KnxClient.class);
+        Mockito.when(client.getStatistic()).thenReturn(mock(KnxStatistic.class));
 
         // on init (will print the first statistic)
         plugin.onInitialization(client);
@@ -86,7 +88,7 @@ public class StatisticPluginTest {
         plugin.onStart();
 
         // modify statistic
-        var statistic = createKnxStatisticMock();
+        final var statistic = createKnxStatisticMock();
         Mockito.when(client.getStatistic()).thenReturn(statistic);
 
         // on shutdown (will print the last statistic)
@@ -127,7 +129,7 @@ public class StatisticPluginTest {
      * @return a mocked version of {@link KnxStatistic}
      */
     private KnxStatistic createKnxStatisticMock() {
-        var statistic = Mockito.mock(KnxStatistic.class);
+        final var statistic = mock(KnxStatistic.class);
         Mockito.when(statistic.getNumberOfBodyReceived()).thenReturn(10L);
         Mockito.when(statistic.getNumberOfBytesReceived()).thenReturn(11L);
 
@@ -170,7 +172,7 @@ public class StatisticPluginTest {
      */
     private void assertLogLine(final MemoryAppender appender, final int expectedSize, final int index, final String expectedLogLine) {
         Sleeper.milliseconds(() -> !appender.all().isEmpty(), 1000);
-        var logLines = appender.all();
+        final var logLines = appender.all();
         Assertions.assertThat(logLines).hasSize(expectedSize);
         Assertions.assertThat(logLines.get(index)).isEqualTo(expectedLogLine);
     }

@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -51,8 +52,8 @@ public class TunnellingRequestTaskTest {
         final var task = createTask();
 
 
-        final var cemi = Mockito.mock(CEMI.class);
-        final var correctBody = Mockito.mock(TunnellingRequestBody.class);
+        final var cemi = mock(CEMI.class);
+        final var correctBody = mock(TunnellingRequestBody.class);
         when(correctBody.getCEMI()).thenReturn(cemi);
         when(cemi.getSourceAddress()).thenReturn(IndividualAddress.of(1, 2, 3));
         when(cemi.getDestinationAddress()).thenReturn(GroupAddress.of(4, 5, 6));
@@ -73,7 +74,7 @@ public class TunnellingRequestTaskTest {
         task.onNext(correctBody);
 
         // wrong body - should not be an issue - simply ignored
-        final var wrongBody = Mockito.mock(Body.class);
+        final var wrongBody = mock(Body.class);
         task.onNext(wrongBody);
     }
 
@@ -107,9 +108,9 @@ public class TunnellingRequestTaskTest {
      * @return returns a newly instance of {@link TunnellingRequestTask}
      */
     private TunnellingRequestTask createTask() {
-        final var internalClient = Mockito.mock(InternalKnxClient.class);
-        final var statusPool = Mockito.mock(KnxStatusPoolImpl.class);
-        final var subscription = Mockito.mock(Flow.Subscription.class);
+        final var internalClient = mock(InternalKnxClient.class);
+        final var statusPool = mock(KnxStatusPoolImpl.class);
+        final var subscription = mock(Flow.Subscription.class);
 
         when(internalClient.getStatusPool()).thenReturn(statusPool);
 

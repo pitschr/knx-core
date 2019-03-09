@@ -32,6 +32,7 @@ import java.nio.channels.DatagramChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test case for {@link HPAI}
@@ -45,9 +46,9 @@ public final class HPAITest {
 
     static {
         // mock DatagramChannel
-        CHANNEL_MOCK = Mockito.mock(DatagramChannel.class);
-        final var socketMock = Mockito.mock(DatagramSocket.class);
-        final var inetAddressMock = Mockito.mock(InetAddress.class);
+        CHANNEL_MOCK = mock(DatagramChannel.class);
+        final var socketMock = mock(DatagramSocket.class);
+        final var inetAddressMock = mock(InetAddress.class);
         Mockito.when(CHANNEL_MOCK.socket()).thenReturn(socketMock);
         Mockito.when(socketMock.getLocalAddress()).thenReturn(inetAddressMock);
         Mockito.when(socketMock.getLocalPort()).thenReturn(12345);

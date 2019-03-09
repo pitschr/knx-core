@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 import java.util.concurrent.Flow;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -47,17 +48,17 @@ public class TunnellingAckTaskTest {
         final var task = createTask();
 
         // correct body #1 - not acknowledged yet
-        final var correctBody = Mockito.mock(TunnellingAckBody.class);
+        final var correctBody = mock(TunnellingAckBody.class);
         when(correctBody.getSequence()).thenReturn(0);
         task.onNext(correctBody);
 
         // correct body #2 - already acknowledged
-        final var correctBodyAlreadyAcknowledged = Mockito.mock(TunnellingAckBody.class);
+        final var correctBodyAlreadyAcknowledged = mock(TunnellingAckBody.class);
         when(correctBodyAlreadyAcknowledged.getSequence()).thenReturn(1);
         task.onNext(correctBodyAlreadyAcknowledged);
 
         // wrong body - should not be an issue - simply ignored
-        final var wrongBody = Mockito.mock(Body.class);
+        final var wrongBody = mock(Body.class);
         task.onNext(wrongBody);
     }
 
@@ -91,16 +92,16 @@ public class TunnellingAckTaskTest {
      * @return returns a newly instance of {@link TunnellingAckTask}
      */
     private TunnellingAckTask createTask() {
-        final var internalClient = Mockito.mock(InternalKnxClient.class);
-        final var eventPool = Mockito.mock(KnxEventPool.class);
-        final var subscription = Mockito.mock(Flow.Subscription.class);
+        final var internalClient = mock(InternalKnxClient.class);
+        final var eventPool = mock(KnxEventPool.class);
+        final var subscription = mock(Flow.Subscription.class);
 
         // 0 = (normal) not acknowledged
-        final var eventData = Mockito.mock(KnxEventData.class);
+        final var eventData = mock(KnxEventData.class);
         doReturn(eventData).when(eventPool).get(Mockito.any(TunnellingAckBody.class));
 
         // 1 = already acknowledged
-        final var eventDataAcknowledgedAlready = Mockito.mock(KnxEventData.class);
+        final var eventDataAcknowledgedAlready = mock(KnxEventData.class);
         when(eventDataAcknowledgedAlready.hasResponse()).thenReturn(true);
         doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnellingAckBody) Mockito.argThat(t -> ((TunnellingAckBody) t).getSequence() == 1));
 

@@ -31,6 +31,7 @@ import org.mockito.Mockito;
 import java.util.concurrent.Flow;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -49,11 +50,11 @@ public class DisconnectRequestTaskTest {
         final var task = createTask();
 
         // correct body
-        final var correctBody = Mockito.mock(DisconnectRequestBody.class);
+        final var correctBody = mock(DisconnectRequestBody.class);
         task.onNext(correctBody);
 
         // wrong body - should not be an issue - simply ignored
-        final var wrongBody = Mockito.mock(Body.class);
+        final var wrongBody = mock(Body.class);
         task.onNext(wrongBody);
     }
 
@@ -87,11 +88,11 @@ public class DisconnectRequestTaskTest {
      * @return returns a newly instance of {@link DisconnectRequestTask}
      */
     private DisconnectRequestTask createTask() {
-        final var internalClient = Mockito.mock(InternalKnxClient.class);
-        final var config = Mockito.mock(Configuration.class);
-        final var eventPool = Mockito.mock(KnxEventPool.class);
-        final var eventData = Mockito.mock(KnxEventData.class);
-        final var subscription = Mockito.mock(Flow.Subscription.class);
+        final var internalClient = mock(InternalKnxClient.class);
+        final var config = mock(Configuration.class);
+        final var eventPool = mock(KnxEventPool.class);
+        final var eventData = mock(KnxEventData.class);
+        final var subscription = mock(Flow.Subscription.class);
 
         doReturn(eventData).when(eventPool).disconnectEvent();
         when(config.getTimeoutDisconnectResponse()).thenReturn(1000L);
