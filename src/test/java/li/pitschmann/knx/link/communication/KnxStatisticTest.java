@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
@@ -167,7 +168,7 @@ public class KnxStatisticTest {
     @Test
     @DisplayName("Test the error rate")
     public void testErrorRate() {
-        final var knxStatistic = Mockito.spy(KnxStatistic.class);
+        final var knxStatistic = spy(KnxStatistic.class);
 
         // error rate = 0% (no communication yet)
         when(knxStatistic.getNumberOfBodyReceived()).thenReturn(0L);

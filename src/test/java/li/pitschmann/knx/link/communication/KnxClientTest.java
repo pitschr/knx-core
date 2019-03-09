@@ -50,6 +50,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -176,7 +177,7 @@ public class KnxClientTest {
     public void testErroneousPlugIn() {
         // erroneous plug-in
         final var erroneousPlugin = mock(ObserverPlugin.class);
-        Mockito.doThrow(new RuntimeException()).when(erroneousPlugin).onError(Mockito.any());
+        doThrow(new RuntimeException()).when(erroneousPlugin).onError(Mockito.any());
 
         final var configMock = createConfigMock();
         when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));

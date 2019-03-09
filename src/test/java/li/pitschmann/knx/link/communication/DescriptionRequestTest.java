@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
@@ -273,7 +274,7 @@ public class DescriptionRequestTest {
     public void testNoCommunication(final KnxMockServer mockServer) {
         // define a specific port because there will be no real port available.
         // the port number 4711 is randomly chosen
-        final var mockServerSpy = Mockito.spy(mockServer);
+        final var mockServerSpy = spy(mockServer);
         when(mockServerSpy.getPort()).thenReturn(4711);
 
         try (final var client = mockServerSpy.newKnxClient()) {

@@ -25,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,7 +99,7 @@ public class DataPointTypeTest {
         // do real call because we want to test the implementation
         when(dpt.toValue((String) Mockito.any())).thenCallRealMethod();
 
-        Assertions.assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
     }
 
     /**
