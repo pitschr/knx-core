@@ -38,7 +38,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test {@link StatisticPlugin}
@@ -173,7 +175,7 @@ public class StatisticPluginTest {
     private void assertLogLine(final MemoryAppender appender, final int expectedSize, final int index, final String expectedLogLine) {
         Sleeper.milliseconds(() -> !appender.all().isEmpty(), 1000);
         final var logLines = appender.all();
-        Assertions.assertThat(logLines).hasSize(expectedSize);
-        Assertions.assertThat(logLines.get(index)).isEqualTo(expectedLogLine);
+        assertThat(logLines).hasSize(expectedSize);
+        assertThat(logLines.get(index)).isEqualTo(expectedLogLine);
     }
 }

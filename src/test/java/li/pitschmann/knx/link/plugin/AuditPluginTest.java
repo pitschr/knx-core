@@ -27,6 +27,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -196,7 +197,7 @@ public class AuditPluginTest {
      */
     private void assertLogLine(final MemoryAppender appender, final String expected) {
         final var logLines = appender.all();
-        Assertions.assertThat(logLines).hasSize(1);
-        Assertions.assertThat(logLines.get(0)).isEqualTo(expected);
+        assertThat(logLines).hasSize(1);
+        assertThat(logLines.get(0)).isEqualTo(expected);
     }
 }

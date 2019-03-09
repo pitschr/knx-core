@@ -24,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -47,8 +49,8 @@ public class DataPointTypeTest {
         when(dpt.toValue(Mockito.anyByte())).thenCallRealMethod();
 
         dpt.toValue((byte) 0x01);
-        Mockito.verify(dpt).toValue(captor.capture());
-        Assertions.assertThat(captor.getValue()).containsExactly(0x01);
+        verify(dpt).toValue(captor.capture());
+        assertThat(captor.getValue()).containsExactly(0x01);
     }
 
     /**
@@ -64,8 +66,8 @@ public class DataPointTypeTest {
         when(dpt.toValue(Mockito.anyByte(), Mockito.anyByte(), Mockito.anyByte())).thenCallRealMethod();
 
         dpt.toValue((byte) 0x03, (byte) 0x04, (byte) 0x05);
-        Mockito.verify(dpt).toValue(captor.capture());
-        Assertions.assertThat(captor.getValue()).containsExactly(0x03, 0x04, 0x05);
+        verify(dpt).toValue(captor.capture());
+        assertThat(captor.getValue()).containsExactly(0x03, 0x04, 0x05);
     }
 
     /**
@@ -81,8 +83,8 @@ public class DataPointTypeTest {
         when(dpt.toValue(Mockito.anyString())).thenCallRealMethod();
 
         dpt.toValue("Foobar");
-        Mockito.verify(dpt).toValue(captor.capture());
-        Assertions.assertThat(captor.getValue()).containsExactly("Foobar");
+        verify(dpt).toValue(captor.capture());
+        assertThat(captor.getValue()).containsExactly("Foobar");
     }
 
     /**
@@ -112,7 +114,7 @@ public class DataPointTypeTest {
         when(dpt.toValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenCallRealMethod();
 
         dpt.toValue("Hello", "World", "!");
-        Mockito.verify(dpt).toValue(captor.capture());
-        Assertions.assertThat(captor.getValue()).containsExactly("Hello", "World", "!");
+        verify(dpt).toValue(captor.capture());
+        assertThat(captor.getValue()).containsExactly("Hello", "World", "!");
     }
 }
