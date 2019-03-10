@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.KnxEventData;
 import li.pitschmann.knx.link.communication.KnxEventPool;
@@ -35,13 +35,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link TunnellingAckTask}
+ * Test for {@link TunnelingAckTask}
  *
  * @author PITSCHR
  */
-public class TunnellingAckTaskTest {
+public class TunnelingAckTaskTest {
     /**
-     * Tests the {@link TunnellingAckTask#onNext(Body)}
+     * Tests the {@link TunnelingAckTask#onNext(Body)}
      */
     @Test
     @DisplayName("Test 'onNext(Body)' method")
@@ -49,12 +49,12 @@ public class TunnellingAckTaskTest {
         final var task = createTask();
 
         // correct body #1 - not acknowledged yet
-        final var correctBody = mock(TunnellingAckBody.class);
+        final var correctBody = mock(TunnelingAckBody.class);
         when(correctBody.getSequence()).thenReturn(0);
         task.onNext(correctBody);
 
         // correct body #2 - already acknowledged
-        final var correctBodyAlreadyAcknowledged = mock(TunnellingAckBody.class);
+        final var correctBodyAlreadyAcknowledged = mock(TunnelingAckBody.class);
         when(correctBodyAlreadyAcknowledged.getSequence()).thenReturn(1);
         task.onNext(correctBodyAlreadyAcknowledged);
 
@@ -64,7 +64,7 @@ public class TunnellingAckTaskTest {
     }
 
     /**
-     * Test the {@link TunnellingAckTask#onError(Throwable)}
+     * Test the {@link TunnelingAckTask#onError(Throwable)}
      * <p/>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
@@ -76,7 +76,7 @@ public class TunnellingAckTaskTest {
     }
 
     /**
-     * Test the {@link TunnellingAckTask#onComplete()}
+     * Test the {@link TunnelingAckTask#onComplete()}
      * <p/>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
@@ -88,27 +88,27 @@ public class TunnellingAckTaskTest {
     }
 
     /**
-     * Helper for creating a {@link TunnellingAckTask}
+     * Helper for creating a {@link TunnelingAckTask}
      *
-     * @return returns a newly instance of {@link TunnellingAckTask}
+     * @return returns a newly instance of {@link TunnelingAckTask}
      */
-    private TunnellingAckTask createTask() {
+    private TunnelingAckTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
         final var eventPool = mock(KnxEventPool.class);
         final var subscription = mock(Flow.Subscription.class);
 
         // 0 = (normal) not acknowledged
         final var eventData = mock(KnxEventData.class);
-        doReturn(eventData).when(eventPool).get(any(TunnellingAckBody.class));
+        doReturn(eventData).when(eventPool).get(any(TunnelingAckBody.class));
 
         // 1 = already acknowledged
         final var eventDataAcknowledgedAlready = mock(KnxEventData.class);
         when(eventDataAcknowledgedAlready.hasResponse()).thenReturn(true);
-        doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnellingAckBody) argThat(t -> ((TunnellingAckBody) t).getSequence() == 1));
+        doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnelingAckBody) argThat(t -> ((TunnelingAckBody) t).getSequence() == 1));
 
         when(internalClient.getEventPool()).thenReturn(eventPool);
 
-        final var task = new TunnellingAckTask(internalClient);
+        final var task = new TunnelingAckTask(internalClient);
         task.onSubscribe(subscription);
         return task;
     }

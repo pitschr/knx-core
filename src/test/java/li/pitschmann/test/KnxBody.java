@@ -28,8 +28,8 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.utils.Bytes;
 
 public final class KnxBody {
@@ -41,10 +41,10 @@ public final class KnxBody {
     public static final String CONNECTION_STATE_RESPONSE = "0610020800080700";
     public static final String DISCONNECT_REQUEST = "06100209001007000801c0a80118e54e";
     public static final String DISCONNECT_RESPONSE = "0610020a00080700";
-    public static final String TUNNELLING_REQUEST = "06100420001704071b002900bce010c84c0f0300800c23";
-    public static final String TUNNELLING_ACK = "06100421000a04071b00";
-    public static final String TUNNELLING_REQUEST_2 = "06100420001704070b002900bce010aa4c090300800c82";
-    public static final String TUNNELLING_ACK_2 = "06100421000a04070b00";
+    public static final String TUNNELING_REQUEST = "06100420001704071b002900bce010c84c0f0300800c23";
+    public static final String TUNNELING_ACK = "06100421000a04071b00";
+    public static final String TUNNELING_REQUEST_2 = "06100420001704070b002900bce010aa4c090300800c82";
+    public static final String TUNNELING_ACK_2 = "06100421000a04070b00";
     public static final DescriptionRequestBody DESCRIPTION_REQUEST_BODY = toBody(DESCRIPTION_REQUEST);
     public static final DescriptionResponseBody DESCRIPTION_RESPONSE_BODY = toBody(DESCRIPTION_RESPONSE);
     public static final ConnectRequestBody CONNECT_REQUEST_BODY = toBody(CONNECT_REQUEST);
@@ -53,10 +53,10 @@ public final class KnxBody {
     public static final ConnectionStateResponseBody CONNECTION_STATE_RESPONSE_BODY = toBody(CONNECTION_STATE_RESPONSE);
     public static final DisconnectRequestBody DISCONNECT_REQUEST_BODY = toBody(DISCONNECT_REQUEST);
     public static final DisconnectResponseBody DISCONNECT_RESPONSE_BODY = toBody(DISCONNECT_RESPONSE);
-    public static final TunnellingRequestBody TUNNELLING_REQUEST_BODY = toBody(TUNNELLING_REQUEST);
-    public static final TunnellingAckBody TUNNELLING_ACK_BODY = toBody(TUNNELLING_ACK);
-    public static final TunnellingRequestBody TUNNELLING_REQUEST_BODY_2 = toBody(TUNNELLING_REQUEST_2);
-    public static final TunnellingAckBody TUNNELLING_ACK_BODY_2 = toBody(TUNNELLING_ACK_2);
+    public static final TunnelingRequestBody TUNNELING_REQUEST_BODY = toBody(TUNNELING_REQUEST);
+    public static final TunnelingAckBody TUNNELING_ACK_BODY = toBody(TUNNELING_ACK);
+    public static final TunnelingRequestBody TUNNELING_REQUEST_BODY_2 = toBody(TUNNELING_REQUEST_2);
+    public static final TunnelingAckBody TUNNELING_ACK_BODY_2 = toBody(TUNNELING_ACK_2);
 
     private KnxBody() {
         throw new AssertionError("Do not touch me!");
@@ -71,11 +71,11 @@ public final class KnxBody {
                 // On first request send DescriptionResponseBody
                 KnxBody.DESCRIPTION_RESPONSE + "," +
                         // wait for next packet (will be: ConnectRequestBody)
-                        "WAIT=NEXT," +
+                        "WAIT=CONNECT_REQUEST," +
                         // send ConnectResponseBody
                         KnxBody.CONNECT_RESPONSE + "," +
                         // wait for next packet (will be: ConnectionStateRequestBody)
-                        "WAIT=NEXT," +
+                        "WAIT=CONNECTION_STATE_REQUEST," +
                         // ConnectionStateResponseBody
                         KnxBody.CONNECTION_STATE_RESPONSE + "," +
                         // wait for packet with type 'DisconnectRequestBody'
@@ -86,11 +86,11 @@ public final class KnxBody {
                 // On first request send DescriptionResponseBody
                 KnxBody.DESCRIPTION_RESPONSE + "," +
                         // wait for next packet (will be: ConnectRequestBody)
-                        "WAIT=NEXT," +
+                        "WAIT=CONNECT_REQUEST," +
                         // send ConnectResponseBody
                         KnxBody.CONNECT_RESPONSE + "," +
                         // wait for next packet (will be: ConnectionStateRequestBody)
-                        "WAIT=NEXT," +
+                        "WAIT=CONNECTION_STATE_REQUEST," +
                         // ConnectionStateResponseBody
                         KnxBody.CONNECTION_STATE_RESPONSE + "," +
                         // send DisconnectRequestBody
@@ -103,11 +103,11 @@ public final class KnxBody {
         public static final String DESCRIPTION_RESPONSE_INVALID_SERVICE_TYPE = "061002FF002036010200100000000083497f01ece000170ccc1be08008da4d44";
         public static final String DESCRIPTION_RESPONSE_NO_SUPPORTED_DEVICE_DIB = "06100204002036010200100000000083497f01ece000170ccc1be08008da4d44";
         public static final String DESCRIPTION_RESPONSE_BAD_DATA = "06100204004634010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f7574657200000000000000000000000000";
-        public static final String DESCRIPTION_RESPONSE_WITHOUT_TUNNELLING = "06100204004436010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f75746572000000000000000000000000000802020103010501";
+        public static final String DESCRIPTION_RESPONSE_WITHOUT_TUNNELING = "06100204004436010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f75746572000000000000000000000000000802020103010501";
 
         public static final String CONNECT_RESPONSE_NO_MORE_CONNECTIONS = "06100206001407240801c0a801100e570404fff2";
         public static final String CONNECT_RESPONSE_BAD_DATA = "0610020600140000000100000000000004000000";
 
-        public static final String TUNNELLING_REQUEST_WRONG_CHANNEL_ID = "061004200015041100001100bce000000a96010081";
+        public static final String TUNNELING_REQUEST_WRONG_CHANNEL_ID = "061004200015041100001100bce000000a96010081";
     }
 }

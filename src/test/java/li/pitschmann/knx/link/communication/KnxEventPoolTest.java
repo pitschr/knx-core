@@ -41,7 +41,7 @@ public class KnxEventPoolTest {
      * <li>Connect</li>
      * <li>Connection State</li>
      * <li>Disconnect</li>
-     * <li>Tunnelling Request & Ack</li>
+     * <li>Tunneling Request & Ack</li>
      * </ol>
      */
     @Test
@@ -53,8 +53,8 @@ public class KnxEventPoolTest {
         assertThat(pool.connectionStateEvent()).isNotNull().isSameAs(pool.get(KnxBody.CONNECTION_STATE_REQUEST_BODY));
         assertThat(pool.disconnectEvent()).isNotNull().isSameAs(pool.get(KnxBody.DISCONNECT_REQUEST_BODY));
 
-        assertThat(pool.get(KnxBody.TUNNELLING_REQUEST_BODY)).isNotNull().isSameAs(pool.get(KnxBody.TUNNELLING_ACK_BODY));
-        assertThat(pool.get(KnxBody.TUNNELLING_ACK_BODY)).isNotNull().isSameAs(pool.get(KnxBody.TUNNELLING_REQUEST_BODY));
+        assertThat(pool.get(KnxBody.TUNNELING_REQUEST_BODY)).isNotNull().isSameAs(pool.get(KnxBody.TUNNELING_ACK_BODY));
+        assertThat(pool.get(KnxBody.TUNNELING_ACK_BODY)).isNotNull().isSameAs(pool.get(KnxBody.TUNNELING_REQUEST_BODY));
     }
 
     /**

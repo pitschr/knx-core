@@ -47,17 +47,20 @@ import li.pitschmann.knx.link.communication.task.ConnectionStateResponseTask;
 import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
 import li.pitschmann.knx.link.communication.task.DisconnectRequestTask;
 import li.pitschmann.knx.link.communication.task.DisconnectResponseTask;
-import li.pitschmann.knx.link.communication.task.TunnellingAckTask;
-import li.pitschmann.knx.link.communication.task.TunnellingRequestTask;
+import li.pitschmann.knx.link.communication.task.TunnelingAckTask;
+import li.pitschmann.knx.link.communication.task.TunnelingRequestTask;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
-import li.pitschmann.knx.link.exceptions.KnxNoTunnellingException;
+import li.pitschmann.knx.link.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.WrappedMdcRunnable;
+import li.pitschmann.utils.WrappedMdcSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,8 +133,8 @@ public final class InternalKnxClient implements KnxClient {
                 LOG.info("Verification passed. Starting KNX services.");
                 this.startServices();
             } else {
-                throw new KnxNoTunnellingException(
-                        "The remote device doesn't support TUNNELLING. Please choose a remote device that supports TUNNELLING.");
+                throw new KnxNoTunnelingException(
+                        "The remote device doesn't support TUNNELING. Please choose a remote device that supports TUNNELING.");
             }
         } catch (final Exception ex) {
             LOG.error("Exception caught on 'start()' method.", ex);
@@ -160,7 +163,7 @@ public final class InternalKnxClient implements KnxClient {
      * Verify if the retrieved {@link DescriptionResponseBody} returned by the KNX Net/IP device
      * is applicable for current client implementation.
      * <p/>
-     * It will just check if the KNX Net/IP device supports tunnelling.
+     * It will just check if the KNX Net/IP device supports tunneling.
      *
      * @return {@code true} if tunneling is supported by KNX Net/IP device and we can proceed with connect, otherwise {@code false}.
      */
@@ -172,8 +175,8 @@ public final class InternalKnxClient implements KnxClient {
         final var serviceFamilies = descriptionResponseBody.getSupportedDeviceFamilies().getServiceFamilies();
         LOG.debug("Supported device families: {}", serviceFamilies);
 
-        // check if the remote device accepts TUNNELLING
-        return serviceFamilies.stream().anyMatch(f -> f.getFamily() == ServiceTypeFamily.TUNNELLING);
+        // check if the remote device accepts TUNNELING
+        return serviceFamilies.stream().anyMatch(f -> f.getFamily() == ServiceTypeFamily.TUNNELING);
     }
 
     /**
@@ -203,15 +206,15 @@ public final class InternalKnxClient implements KnxClient {
             // 2) Data Channel Receiver and
             // 3) Connection State Monitor
             this.channelExecutor = Executors.newFixedThreadPool(3);
-            this.channelExecutor.execute(controlChannelCommunicator);
-            this.channelExecutor.execute(dataChannelCommunicator);
+            this.channelExecutor.execute(new WrappedMdcRunnable(controlChannelCommunicator));
+            this.channelExecutor.execute(new WrappedMdcRunnable(dataChannelCommunicator));
 
             // get channel for further communications
             this.channelId = this.fetchChannelIdFromKNX();
             LOG.info("Channel ID received: {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
-            this.channelExecutor.submit(this.createConnectionStateMonitor());
+            this.channelExecutor.submit(new WrappedMdcRunnable(this.createConnectionStateMonitor()));
 
             // do not accept more services anymore!
             this.channelExecutor.shutdown();
@@ -237,7 +240,7 @@ public final class InternalKnxClient implements KnxClient {
      */
     private DescriptionChannelCommunicator newDescriptionChannelCommunicator() {
         final var communicator = new DescriptionChannelCommunicator(this);
-        communicator.subscribe(new DescriptionResponseTask(this));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new DescriptionResponseTask(this)));
         return communicator;
     }
 
@@ -258,10 +261,10 @@ public final class InternalKnxClient implements KnxClient {
      */
     private ControlChannelCommunicator newControlChannelCommunicator() {
         final var communicator = new ControlChannelCommunicator(this);
-        communicator.subscribe(new ConnectResponseTask(this));
-        communicator.subscribe(new ConnectionStateResponseTask(this));
-        communicator.subscribe(new DisconnectRequestTask(this));
-        communicator.subscribe(new DisconnectResponseTask(this));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new ConnectResponseTask(this)));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new ConnectionStateResponseTask(this)));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new DisconnectRequestTask(this)));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new DisconnectResponseTask(this)));
         return communicator;
     }
 
@@ -271,17 +274,17 @@ public final class InternalKnxClient implements KnxClient {
      * <p>
      * Following subscribers are:
      * <ul>
-     * <li>{@link TunnellingRequestTask} when KNX Net/IP device notifies the client about a change from a remote KNX
+     * <li>{@link TunnelingRequestTask} when KNX Net/IP device notifies the client about a change from a remote KNX
      * device</li>
-     * <li>{@link TunnellingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
+     * <li>{@link TunnelingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
      * </ul>
      *
      * @return {@link DataChannelCommunicator}
      */
     private DataChannelCommunicator newDataChannelCommunciator() {
         final var communicator = new DataChannelCommunicator(this);
-        communicator.subscribe(new TunnellingRequestTask(this));
-        communicator.subscribe(new TunnellingAckTask(this));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new TunnelingRequestTask(this)));
+        communicator.subscribe(new WrappedMdcSubscriber<>(new TunnelingAckTask(this)));
         return communicator;
     }
 
@@ -305,6 +308,8 @@ public final class InternalKnxClient implements KnxClient {
         if (this.closed.getAndSet(true)) {
             LOG.debug("Already closed. Do nothing!");
             return;
+        } else {
+            LOG.info("Client will be closed.");
         }
 
         this.lock.lock();
@@ -347,6 +352,10 @@ public final class InternalKnxClient implements KnxClient {
                 }
             }
         } finally {
+            // wait bit - otherwise it may happen that channel are closed (too quickly) during packet send/receive
+            // it doesn't matter in real world, but makes tests more stable in verification process
+            Sleeper.milliseconds(100);
+
             // close communicators
             isOk &= Closeables.closeQuietly(controlChannelCommunicator);
             isOk &= Closeables.closeQuietly(dataChannelCommunicator);
@@ -487,7 +496,7 @@ public final class InternalKnxClient implements KnxClient {
 
         // Create executor service for description communication
         final var es = Executors.newSingleThreadExecutor();
-        es.execute(communicator);
+        es.execute(new WrappedMdcRunnable(communicator));
         es.shutdown();
 
         // send description request

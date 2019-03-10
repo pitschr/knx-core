@@ -27,8 +27,8 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.test.KnxBody;
 import org.junit.jupiter.api.DisplayName;
@@ -92,8 +92,8 @@ public class KnxStatisticTest {
         assertThat(knxStatistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).isEqualTo(6);
         assertThat(knxStatistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).isEqualTo(7);
         assertThat(knxStatistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).isEqualTo(8);
-        assertThat(knxStatistic.getNumberOfBodyReceived(TunnellingRequestBody.class)).isEqualTo(9);
-        assertThat(knxStatistic.getNumberOfBodyReceived(TunnellingAckBody.class)).isEqualTo(10);
+        assertThat(knxStatistic.getNumberOfBodyReceived(TunnelingRequestBody.class)).isEqualTo(9);
+        assertThat(knxStatistic.getNumberOfBodyReceived(TunnelingAckBody.class)).isEqualTo(10);
 
         assertThat(knxStatistic.getNumberOfBodySent()).isEqualTo(255);
         assertThat(knxStatistic.getNumberOfBodySent(DescriptionRequestBody.class)).isEqualTo(21);
@@ -104,8 +104,8 @@ public class KnxStatisticTest {
         assertThat(knxStatistic.getNumberOfBodySent(ConnectionStateResponseBody.class)).isEqualTo(26);
         assertThat(knxStatistic.getNumberOfBodySent(DisconnectRequestBody.class)).isEqualTo(27);
         assertThat(knxStatistic.getNumberOfBodySent(DisconnectResponseBody.class)).isEqualTo(28);
-        assertThat(knxStatistic.getNumberOfBodySent(TunnellingRequestBody.class)).isEqualTo(29);
-        assertThat(knxStatistic.getNumberOfBodySent(TunnellingAckBody.class)).isEqualTo(30);
+        assertThat(knxStatistic.getNumberOfBodySent(TunnelingRequestBody.class)).isEqualTo(29);
+        assertThat(knxStatistic.getNumberOfBodySent(TunnelingAckBody.class)).isEqualTo(30);
 
         assertThat(knxStatistic.getNumberOfErrors()).isEqualTo(40);
         assertThat(knxStatistic.getErrorRate()).isEqualTo(40d * 100 / (55 + 255));
@@ -144,8 +144,8 @@ public class KnxStatisticTest {
         assertThat(unmodifiableStatistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class));
         assertThat(unmodifiableStatistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class));
         assertThat(unmodifiableStatistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class));
-        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(TunnellingRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(TunnellingRequestBody.class));
-        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(TunnellingAckBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(TunnellingAckBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(TunnelingRequestBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(TunnelingRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodyReceived(TunnelingAckBody.class)).isEqualTo(statistic.getNumberOfBodyReceived(TunnelingAckBody.class));
 
         // check sent bodies
         assertThat(unmodifiableStatistic.getNumberOfBodySent()).isEqualTo(statistic.getNumberOfBodySent());
@@ -157,8 +157,8 @@ public class KnxStatisticTest {
         assertThat(unmodifiableStatistic.getNumberOfBodySent(ConnectionStateResponseBody.class)).isEqualTo(statistic.getNumberOfBodySent(ConnectionStateResponseBody.class));
         assertThat(unmodifiableStatistic.getNumberOfBodySent(DisconnectRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(DisconnectRequestBody.class));
         assertThat(unmodifiableStatistic.getNumberOfBodySent(DisconnectResponseBody.class)).isEqualTo(statistic.getNumberOfBodySent(DisconnectResponseBody.class));
-        assertThat(unmodifiableStatistic.getNumberOfBodySent(TunnellingRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(TunnellingRequestBody.class));
-        assertThat(unmodifiableStatistic.getNumberOfBodySent(TunnellingAckBody.class)).isEqualTo(statistic.getNumberOfBodySent(TunnellingAckBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(TunnelingRequestBody.class)).isEqualTo(statistic.getNumberOfBodySent(TunnelingRequestBody.class));
+        assertThat(unmodifiableStatistic.getNumberOfBodySent(TunnelingAckBody.class)).isEqualTo(statistic.getNumberOfBodySent(TunnelingAckBody.class));
     }
 
     /**
@@ -200,8 +200,8 @@ public class KnxStatisticTest {
      * <li>6x {@link ConnectionStateResponseBody}</li>
      * <li>7x {@link DisconnectRequestBody}</li>
      * <li>8x {@link DisconnectResponseBody}</li>
-     * <li>9x {@link TunnellingRequestBody}</li>
-     * <li>10x {@link TunnellingAckBody}</li>
+     * <li>9x {@link TunnelingRequestBody}</li>
+     * <li>10x {@link TunnelingAckBody}</li>
      * </ul>
      *
      * @param knxStatistic
@@ -217,8 +217,8 @@ public class KnxStatisticTest {
         bodies.addAll(generateBodyList(KnxBody.CONNECTION_STATE_RESPONSE_BODY, 6));
         bodies.addAll(generateBodyList(KnxBody.DISCONNECT_REQUEST_BODY, 7));
         bodies.addAll(generateBodyList(KnxBody.DISCONNECT_RESPONSE_BODY, 8));
-        bodies.addAll(generateBodyList(KnxBody.TUNNELLING_REQUEST_BODY, 9));
-        bodies.addAll(generateBodyList(KnxBody.TUNNELLING_ACK_BODY, 10));
+        bodies.addAll(generateBodyList(KnxBody.TUNNELING_REQUEST_BODY, 9));
+        bodies.addAll(generateBodyList(KnxBody.TUNNELING_ACK_BODY, 10));
 
         bodies.stream().forEach(knxStatistic::onIncomingBody);
     }
@@ -235,8 +235,8 @@ public class KnxStatisticTest {
      * <li>26x {@link ConnectionStateResponseBody}</li>
      * <li>27x {@link DisconnectRequestBody}</li>
      * <li>28x {@link DisconnectResponseBody}</li>
-     * <li>29x {@link TunnellingRequestBody}</li>
-     * <li>30x {@link TunnellingAckBody}</li>
+     * <li>29x {@link TunnelingRequestBody}</li>
+     * <li>30x {@link TunnelingAckBody}</li>
      * </ul>
      *
      * @param knxStatistic
@@ -252,8 +252,8 @@ public class KnxStatisticTest {
         bodies.addAll(generateBodyList(KnxBody.CONNECTION_STATE_RESPONSE_BODY, 26));
         bodies.addAll(generateBodyList(KnxBody.DISCONNECT_REQUEST_BODY, 27));
         bodies.addAll(generateBodyList(KnxBody.DISCONNECT_RESPONSE_BODY, 28));
-        bodies.addAll(generateBodyList(KnxBody.TUNNELLING_REQUEST_BODY, 29));
-        bodies.addAll(generateBodyList(KnxBody.TUNNELLING_ACK_BODY, 30));
+        bodies.addAll(generateBodyList(KnxBody.TUNNELING_REQUEST_BODY, 29));
+        bodies.addAll(generateBodyList(KnxBody.TUNNELING_ACK_BODY, 30));
 
         bodies.stream().forEach(knxStatistic::onOutgoingBody);
     }

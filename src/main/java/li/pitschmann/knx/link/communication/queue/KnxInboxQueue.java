@@ -90,9 +90,9 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
         // verify the channel id
         if (this.getInternalClient().verifyChannelId(body)) {
             // channel id is correct
-            if (LOG.isDebugEnabled()) {
+            if (LOG.isTraceEnabled()) {
                 final var header = Header.valueOf(receivedBytes);
-                LOG.debug("RECEIVE\n" + //
+                LOG.trace("RECEIVE\n" + //
                                 "----------------------------------------------------------------\n" + //
                                 "   Source: {}\n" + //
                                 "   Target: {} ({})\n" + //
@@ -102,6 +102,8 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
                                 "----------------------------------------------------------------", //
                         Networker.getRemoteAddressAsString(channel), Networker.getLocalAddressAsString(channel), getId(),
                         ByteFormatter.formatHexAsString(receivedBytes), header, body);
+            } else {
+                LOG.debug("RECEIVE body: {}", Header.valueOf(receivedBytes).getServiceType().name());
             }
 
             // add body to queue

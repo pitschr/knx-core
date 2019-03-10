@@ -20,8 +20,8 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.Status;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
@@ -33,27 +33,27 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Observes the {@link TunnellingRequestBody} which is received from KNX Net/IP device on data channel.
+ * Observes the {@link TunnelingRequestBody} which is received from KNX Net/IP device on data channel.
  *
  * @author PITSCHR
  */
-public final class TunnellingRequestTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(TunnellingRequestTask.class);
+public final class TunnelingRequestTask implements Subscriber<Body> {
+    private static final Logger LOG = LoggerFactory.getLogger(TunnelingRequestTask.class);
     private final InternalKnxClient client;
 
-    public TunnellingRequestTask(InternalKnxClient client) {
+    public TunnelingRequestTask(InternalKnxClient client) {
         this.client = client;
     }
 
     @Override
     public void onNext(Body body) {
         // we are interested in tunneling request only
-        if (body instanceof TunnellingRequestBody) {
-            LOG.debug("Tunnelling Request received: {}", body);
+        if (body instanceof TunnelingRequestBody) {
+            LOG.debug("Tunneling Request received: {}", body);
 
             // acknowledge frame to be sent back
-            final var reqBody = (TunnellingRequestBody) body;
-            final var ackBody = TunnellingAckBody.create(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
+            final var reqBody = (TunnelingRequestBody) body;
+            final var ackBody = TunnelingAckBody.create(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
 
             // send acknowledge frame
             this.client.send(ackBody);
@@ -69,18 +69,18 @@ public final class TunnellingRequestTask implements Subscriber<Body> {
             if (cemi.getMessageCode() == MessageCode.L_DATA_IND) {
                 if (cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("TunnellingRequest frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                        LOG.debug("TunnelingRequest frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
                 } else if (cemi.getApci() == APCI.GROUP_VALUE_RESPONSE) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("TunnellingRequest frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                        LOG.debug("TunnelingRequest frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
                 }
             } else if (cemi.getMessageCode() == MessageCode.L_DATA_CON && cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("TunnellingRequest frame received from KNX after WRITE request from KNX client: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                    LOG.debug("TunnelingRequest frame received from KNX after WRITE request from KNX client: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                 }
                 this.client.getStatusPool().updateStatus(cemi);
             }
@@ -89,7 +89,7 @@ public final class TunnellingRequestTask implements Subscriber<Body> {
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Tunnelling Request Task class", throwable);
+        LOG.error("Error during Tunneling Request Task class", throwable);
     }
 
     @Override

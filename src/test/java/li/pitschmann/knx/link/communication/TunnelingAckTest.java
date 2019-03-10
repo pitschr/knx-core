@@ -23,51 +23,52 @@ import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
+import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
- * Test for receiving {@link TunnellingAckBody}
+ * Test for receiving {@link TunnelingAckBody}
  *
  * @author PITSCHR
  */
-public class TunnellingAckTest {
+public class TunnelingAckTest {
     /**
      * Perform a communication between {@link KnxClient} and the KNX Net/IP device
-     * with a tunnelling request packet
+     * with a tunneling request packet
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody with channel id = 7
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
-            // wait for next packet (will be: TunnellingRequestBody)
-            "WAIT=NEXT",
-            // send TunnellingAckBody
-            KnxBody.TUNNELLING_ACK,
+            // wait for next packet (will be: TunnelingRequestBody)
+            "WAIT=TUNNELING_REQUEST",
+            // send TunnelingAckBody
+            KnxBody.TUNNELING_ACK,
             // wait for next packet (will be: DisconnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=DISCONNECT_REQUEST",
             // and then DisconnectResponseBody
             KnxBody.DISCONNECT_RESPONSE
     })
-    @DisplayName("Send a Tunnelling Request packet and receive Tunnelling Ack packet")
+    @DisplayName("Send a Tunneling Request packet and receive Tunneling Ack packet")
     public void testReceivingAckOnceTime(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
-            // send tunnelling request
-            final var ackBody = client.send(KnxBody.TUNNELLING_REQUEST_BODY, 500).get();
+            // send tunneling request
+            final var ackBody = client.send(KnxBody.TUNNELING_REQUEST_BODY, 1000).get();
             assertThat(ackBody).isNotNull();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
@@ -78,44 +79,47 @@ public class TunnellingAckTest {
                 DescriptionRequestBody.class, // #1
                 ConnectRequestBody.class, // #2
                 ConnectionStateRequestBody.class, // #3
-                TunnellingRequestBody.class, // #4
+                TunnelingRequestBody.class, // #4
                 DisconnectRequestBody.class // #5
         );
     }
 
     /**
      * Perform a communication between {@link KnxClient} and the KNX Net/IP device
-     * with a tunnelling request packet and mock server re-sent the same tunnelling
+     * with a tunneling request packet and mock server re-sent the same tunneling
      * request packet which should be ignored by the KNX Net/IP client.
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody with channel id = 7
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
-            // wait for next packet (will be: TunnellingRequestBody)
-            "WAIT=NEXT",
-            // send TunnellingAckBody
-            KnxBody.TUNNELLING_ACK,
-            // re-send TunnellingAckBody
-            KnxBody.TUNNELLING_ACK,
+            // wait for next packet (will be: TunnelingRequestBody)
+            "WAIT=TUNNELING_REQUEST",
+            // send TunnelingAckBody
+            KnxBody.TUNNELING_ACK,
+            // re-send TunnelingAckBody
+            KnxBody.TUNNELING_ACK,
             // and then DisconnectRequestBody
             KnxBody.DISCONNECT_REQUEST,
             // Wait for last response from client and quit mock server gracefully
             "WAIT=NEXT"
     })
-    @DisplayName("Receiving Tunnelling Ack packet twice times")
+    @DisplayName("Receiving Tunneling Ack packet twice times")
     public void testReceivingAckTwiceTimes(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
-            // send tunnelling request
-            final var ackBody = client.send(KnxBody.TUNNELLING_REQUEST_BODY, 500).get();
-            assertThat(ackBody).isNotNull();
+            // wait bit to avoid racing condition between ConnectionStateRequest and TunnelingRequest
+            // In real world, it doesn't matter but makes the verification (see below) stable
+            Sleeper.milliseconds(100);
+            // send tunneling request
+            final var ackBody = client.send(KnxBody.TUNNELING_REQUEST_BODY, 1000).get();
+            assertThat(ackBody).isInstanceOf(TunnelingAckBody.class);
 
             // wait until Disconnect response arrived KNX mock server
             mockServer.waitForCompletion();
@@ -128,7 +132,7 @@ public class TunnellingAckTest {
                 DescriptionRequestBody.class, // #1
                 ConnectRequestBody.class, // #2
                 ConnectionStateRequestBody.class, // #3
-                TunnellingRequestBody.class, // #4
+                TunnelingRequestBody.class, // #4
                 DisconnectResponseBody.class // #5
         );
     }

@@ -27,7 +27,7 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
 /**
- * Tunnelling Connection Request Information (CRI)
+ * Tunneling Connection Request Information (CRI)
  * <p>
  * The Connection Request Information structure (CRI) shall be the additional information needed for different types of
  * communication channels to fulfill a connection request.

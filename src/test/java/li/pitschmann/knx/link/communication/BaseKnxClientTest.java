@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
@@ -90,20 +90,20 @@ public class BaseKnxClientTest {
             // On first request send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE + "," +
                     // wait for next packet (will be: ConnectRequestBody)
-                    "WAIT=NEXT," +
+                    "WAIT=CONNECT_REQUEST," +
                     // send ConnectResponseBody
                     KnxBody.CONNECT_RESPONSE + "," +
                     // wait for next packet (will be: ConnectionStateRequestBody)
-                    "WAIT=NEXT," +
+                    "WAIT=CONNECTION_STATE_REQUEST," +
                     // ConnectionStateResponseBody
                     KnxBody.CONNECTION_STATE_RESPONSE + "," +
-                    // send three tunnelling acknowledges as we are getting three tunnelling requests
-                    "WAIT=NEXT,06100421000a04070000," + // sequence = 0
-                    "WAIT=NEXT,06100421000a04070100," + // sequence = 1
-                    "WAIT=NEXT,06100421000a04070200," + // sequence = 2
-                    "WAIT=NEXT," + KnxBody.TUNNELLING_ACK + "," + // sequence = 27
-                    "WAIT=NEXT," + KnxBody.TUNNELLING_ACK_2 + "," + // sequence = 11
-                    // send one tunnelling acknowledge for read request
+                    // send three tunneling acknowledges as we are getting three tunneling requests
+                    "WAIT=TUNNELING_REQUEST,06100421000a04070000," + // sequence = 0
+                    "WAIT=TUNNELING_REQUEST,06100421000a04070100," + // sequence = 1
+                    "WAIT=TUNNELING_REQUEST,06100421000a04070200," + // sequence = 2
+                    "WAIT=TUNNELING_REQUEST," + KnxBody.TUNNELING_ACK + "," + // sequence = 27
+                    "WAIT=TUNNELING_REQUEST," + KnxBody.TUNNELING_ACK_2 + "," + // sequence = 11
+                    // send one tunneling acknowledge for read request
                     // wait for packet with type 'DisconnectRequestBody'
                     "WAIT=DISCONNECT_REQUEST," +
                     // send DisconnectResponseBody
@@ -121,9 +121,9 @@ public class BaseKnxClientTest {
             // async write request with APCI data
             client.writeRequest(groupAddress, new byte[]{0x00}).get();
             // send via body
-            client.send(KnxBody.TUNNELLING_REQUEST_BODY);
+            client.send(KnxBody.TUNNELING_REQUEST_BODY);
             // send via body and timeout
-            client.send(KnxBody.TUNNELLING_REQUEST_BODY_2, 1000);
+            client.send(KnxBody.TUNNELING_REQUEST_BODY_2, 1000);
 
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, 5);
         } catch (final Throwable t) {
@@ -134,12 +134,12 @@ public class BaseKnxClientTest {
         final var requestBodies = mockServer.getReceivedBodies().stream().filter(b -> b.getServiceType() == ServiceType.TUNNELING_REQUEST).collect(Collectors.toList());
         assertThat(requestBodies).hasSize(5);
         // first two requests are sequences (incremental)
-        assertThat(((TunnellingRequestBody) requestBodies.get(0)).getSequence()).isEqualTo(0);
-        assertThat(((TunnellingRequestBody) requestBodies.get(1)).getSequence()).isEqualTo(1);
-        assertThat(((TunnellingRequestBody) requestBodies.get(2)).getSequence()).isEqualTo(2);
+        assertThat(((TunnelingRequestBody) requestBodies.get(0)).getSequence()).isEqualTo(0);
+        assertThat(((TunnelingRequestBody) requestBodies.get(1)).getSequence()).isEqualTo(1);
+        assertThat(((TunnelingRequestBody) requestBodies.get(2)).getSequence()).isEqualTo(2);
         // 2nd last is pre-defined sequence (taken sample) = 27
-        assertThat(((TunnellingRequestBody) requestBodies.get(3)).getSequence()).isEqualTo(27);
+        assertThat(((TunnelingRequestBody) requestBodies.get(3)).getSequence()).isEqualTo(27);
         // last is pre-defined sequence (taken sample) = 11
-        assertThat(((TunnellingRequestBody) requestBodies.get(4)).getSequence()).isEqualTo(11);
+        assertThat(((TunnelingRequestBody) requestBodies.get(4)).getSequence()).isEqualTo(11);
     }
 }

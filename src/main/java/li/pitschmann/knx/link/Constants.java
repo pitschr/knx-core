@@ -49,7 +49,7 @@ public interface Constants {
          */
         long DISCONNECT_RESPONSE_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
-         * KNX client shall wait for 10 seconds for a CONNECTIONSTATE_RESPONSE frame from KNX Net/IP device.
+         * KNX client shall wait for 10 seconds for a CONNECTION_STATE_RESPONSE frame from KNX Net/IP device.
          */
         long CONNECTIONSTATE_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         // /**

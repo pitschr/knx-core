@@ -44,26 +44,26 @@ public class ConnectionStateRequestTest {
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody
             KnxBody.CONNECT_RESPONSE,
             // wait for ConnectionStateRequestBody #1
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponseBody #1
             KnxBody.CONNECTION_STATE_RESPONSE,
             // wait for ConnectionStateRequestBody #2
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponseBody #2
             KnxBody.CONNECTION_STATE_RESPONSE,
             // wait for next packet (will be: DisconnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=DISCONNECT_REQUEST",
             // DisconnectResponseBody
             KnxBody.DISCONNECT_RESPONSE})
     @DisplayName("Successful Connection State Request communication")
     public void testSuccessful(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
             // after 2-nd connection state request sent by client a disconnect will be initiated
-            mockServer.waitForReceivedServiceType(ServiceType.CONNECTIONSTATE_REQUEST, 2);
+            mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST, 2);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -85,11 +85,11 @@ public class ConnectionStateRequestTest {
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody
             KnxBody.CONNECT_RESPONSE,
             //  ait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // no connection state response, and then wait for next packet
             // will be repeated for 12 times
             "REPEAT=12{NO_ACTION,WAIT=NEXT}",

@@ -52,7 +52,7 @@ public class ConnectionStateResponseBodyTest {
      * 	    Header
      * 	        Header Length: 0x06
      * 	        Protocol Version: 0x10
-     * 	        Service Type Identifier: CONNECTIONSTATE_RESPONSE (0x0208)
+     * 	        Service Type Identifier: CONNECTION_STATE_RESPONSE (0x0208)
      * 	        Total Length: 8 octets
      * 	    Body
      * 	        Communication Channel ID: 17
@@ -63,7 +63,7 @@ public class ConnectionStateResponseBodyTest {
     public void validCases() {
         // create()
         final var body = ConnectionStateResponseBody.create(this.channelId, this.status);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTIONSTATE_RESPONSE);
+        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getStatus()).isEqualTo(this.status);
 

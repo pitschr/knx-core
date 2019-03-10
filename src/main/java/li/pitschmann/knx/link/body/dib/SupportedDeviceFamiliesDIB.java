@@ -56,7 +56,7 @@ import java.util.List;
  * {@code (Structure Length - 1 octet (Description Type Code)) / 2}
  * <p>
  * whereas the Service Family is a pair of ID and Version. The service family IDs shall be the high octet of the
- * {@link ServiceType}. For example, for KNX/IP Tunnelling the ID would be {@code 0x04}.
+ * {@link ServiceType}. For example, for KNX/IP Tunneling the ID would be {@code 0x04}.
  * <p>
  * See: KNX Standard Core
  *

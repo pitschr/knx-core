@@ -32,8 +32,8 @@ import javax.annotation.Nonnull;
 /**
  * Body for Connection State Response
  * <p>
- * The {@link ServiceType#CONNECTIONSTATE_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a
- * received {@link ServiceType#CONNECTIONSTATE_REQUEST} frame.
+ * The {@link ServiceType#CONNECTION_STATE_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a
+ * received {@link ServiceType#CONNECTION_STATE_REQUEST} frame.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -109,7 +109,7 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
     @Override
     @Nonnull
     public ServiceType getServiceType() {
-        return ServiceType.CONNECTIONSTATE_RESPONSE;
+        return ServiceType.CONNECTION_STATE_RESPONSE;
     }
 
     @Override

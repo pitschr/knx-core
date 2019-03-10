@@ -22,8 +22,8 @@ import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
@@ -32,31 +32,29 @@ import org.junit.jupiter.api.DisplayName;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
- * Test for sending/receiving {@link TunnellingRequestBody} and {@link TunnellingAckBody}
+ * Test for sending/receiving {@link TunnelingRequestBody} and {@link TunnelingAckBody}
  *
  * @author PITSCHR
  */
-public class TunnellingRequestTest {
+public class TunnelingRequestTest {
     /**
      * Perform a communication between {@link KnxClient} and the KNX Net/IP device containing following:
      * <p>
-     * Normal communication, however no Tunnelling acknowledge packet is sent by client because of wrong channel id. It is simply ignored.
+     * Normal communication, however no Tunneling acknowledge packet is sent by client because of wrong channel id. It is simply ignored.
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody with channel id = 7
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
-            // Send TunnellingRequestBody with wrong channel id = 17 (0x11) instead of 7 (0x07)
-            KnxBody.Failures.TUNNELLING_REQUEST_WRONG_CHANNEL_ID,
-            // Wait 500ms
-            "WAIT=100",
+            // Send TunnelingRequestBody with wrong channel id = 17 (0x11) instead of 7 (0x07)
+            KnxBody.Failures.TUNNELING_REQUEST_WRONG_CHANNEL_ID,
             // and then DisconnectRequestBody
             KnxBody.DISCONNECT_REQUEST,
             // Wait for last response from client and quit mock server gracefully
@@ -83,25 +81,23 @@ public class TunnellingRequestTest {
     /**
      * Perform a communication between {@link KnxClient} and the KNX Net/IP device containing following:
      * <p>
-     * Normal communication, however no Tunnelling acknowledge packet is sent by client because
-     * the {@link TunnellingRequestBody} is being to sent to control channel (instead of data channel)
+     * Normal communication, however no Tunneling acknowledge packet is sent by client because
+     * the {@link TunnelingRequestBody} is being to sent to control channel (instead of data channel)
      * It is simply ignored.
      */
     @KnxTest({
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
-            // Send TunnellingRequestBody to wrong channel (control instead of data)
-            "CHANNEL=CONTROL{" + KnxBody.TUNNELLING_REQUEST + "}",
-            // Wait 500ms
-            "WAIT=500",
+            // Send TunnelingRequestBody to wrong channel (control instead of data)
+            "CHANNEL=CONTROL{" + KnxBody.TUNNELING_REQUEST + "}",
             // and then DisconnectRequestBody
             KnxBody.DISCONNECT_REQUEST,
             // Wait for last response from client and quit mock server gracefully

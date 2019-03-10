@@ -48,8 +48,8 @@ public class KnxInboxQueueTest {
     @Test
     @DisplayName("Test successful incoming KNX packet")
     public void testViaMock() throws Exception {
-        // Tunnelling Request Body is used for test
-        final var body = KnxBody.TUNNELLING_REQUEST_BODY;
+        // Tunneling Request Body is used for test
+        final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
         final var clientMock = mock(InternalKnxClient.class);
         when(clientMock.verifyChannelId(body)).thenReturn(true);
@@ -89,8 +89,8 @@ public class KnxInboxQueueTest {
         localChannel.connect(new InetSocketAddress("localhost", remoteChannel.socket().getLocalPort()));
         remoteChannel.connect(new InetSocketAddress("localhost", localChannel.socket().getLocalPort()));
 
-        // Tunnelling Request Body is used for test
-        final var body = KnxBody.TUNNELLING_REQUEST_BODY;
+        // Tunneling Request Body is used for test
+        final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
         final var clientMock = mock(InternalKnxClient.class);
         when(clientMock.verifyChannelId(body)).thenReturn(true);

@@ -19,7 +19,7 @@
 package li.pitschmann.knx.main;
 
 import com.google.common.collect.Lists;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
@@ -68,7 +68,7 @@ public class KnxMainWrite extends AbstractKnxMain {
         // start KNX communication
         LOG.trace("START");
         try (final var client = new DefaultKnxClient(ipAddress)) {
-            final var ackBodies = Lists.<Future<TunnellingAckBody>>newArrayList();
+            final var ackBodies = Lists.<Future<TunnelingAckBody>>newArrayList();
             Sleeper.seconds(1);
             for (final String value : values) {
                 final var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});

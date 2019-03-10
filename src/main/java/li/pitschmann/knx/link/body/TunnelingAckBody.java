@@ -21,7 +21,6 @@ package li.pitschmann.knx.link.body;
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.ChannelIdAware;
-import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
@@ -29,30 +28,25 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 
 /**
- * Body for Tunnelling Request
+ * Body for Tunneling Acknowledge / Response
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
  * | Structure Length              | Communication Channel ID      |
- * | (1 octet)                     | (1 octet)                     |
+ * | (1 octet = 04h)               | (1 octet)                     |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
- * | Sequence Counter              | reserved                      |
+ * | Sequence Counter              | Status                        |
  * | (1 octet)                     | (1 octet)                     |
- * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- * |                                                               |
- * |                           cEMI frame                          |
- * |                                                               |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
  *
  * @author PITSCHR
  */
-public final class TunnellingRequestBody extends AbstractMultiRawData implements RequestBody, ChannelIdAware, DataChannelRelated {
+public final class TunnelingAckBody extends AbstractMultiRawData implements ResponseBody, ChannelIdAware, DataChannelRelated {
     /**
-     * Structure Length for {@link TunnellingRequestBody} without {@link CEMI}
+     * Structure Length for {@link TunnelingAckBody}
      * <p>
      * 1 byte for length<br>
      * 1 byte for channel id<br>
@@ -60,69 +54,54 @@ public final class TunnellingRequestBody extends AbstractMultiRawData implements
      * 1 byte for status<br>
      */
     private static final int STRUCTURE_LENGTH = 4;
-    /**
-     * Minimum Structure Length for {@link TunnellingRequestBody} including {@link CEMI}
-     * <p>
-     * 4 bytes for {@link TunnellingRequestBody} ( {@link #STRUCTURE_LENGTH} )<br>
-     * 11 bytes minimum for {@link CEMI}<br>
-     */
-    private static final int STRUCTURE_WITH_CEMI_MIN_LENGTH = STRUCTURE_LENGTH + 11;
-    /**
-     * Maximum Structure Length for {@link TunnellingRequestBody} including {@link CEMI}
-     */
-    private static final int STRUCTURE_WITH_CEMI_MAX_LENGTH = 0xFF;
     private final int length;
     private final int channelId;
     private final int sequence;
-    private final CEMI cemi;
+    private final Status status;
 
-    private TunnellingRequestBody(final byte[] bytes) {
+    private TunnelingAckBody(final byte[] bytes) {
         super(bytes);
 
         this.length = Bytes.toUnsignedInt(bytes[0]);
         this.channelId = Bytes.toUnsignedInt(bytes[1]);
         this.sequence = Bytes.toUnsignedInt(bytes[2]);
-        // [3] -> reserved
-        this.cemi = CEMI.valueOf(Arrays.copyOfRange(bytes, 4, bytes.length));
+        this.status = Status.valueOf(Bytes.toUnsignedInt(bytes[3]));
     }
 
     /**
-     * Builds a new {@link TunnellingRequestBody} instance
+     * Builds a new {@link TunnelingAckBody} instance
      *
-     * @param bytes complete byte array for {@link TunnellingRequestBody}
-     * @return immutable {@link TunnellingRequestBody}
+     * @param bytes complete byte array for {@link TunnelingAckBody}
+     * @return immutable {@link TunnelingAckBody}
      */
-    public static TunnellingRequestBody valueOf(final byte[] bytes) {
-        return new TunnellingRequestBody(bytes);
+    public static TunnelingAckBody valueOf(final byte[] bytes) {
+        return new TunnelingAckBody(bytes);
     }
 
     /**
-     * Creates a new {@link TunnellingRequestBody} instance
+     * Creates a new {@link TunnelingAckBody} instance
      *
      * @param channelId
      * @param sequence
-     * @param cemi
-     * @return immutable {@link TunnellingRequestBody}
+     * @param status
+     * @return immutable {@link TunnelingAckBody}
      */
-    public static TunnellingRequestBody create(final int channelId, final int sequence, final CEMI cemi) {
+    public static TunnelingAckBody create(final int channelId, final int sequence, final Status status) {
         // validate
-        if (cemi == null) {
-            throw new KnxNullPointerException("cemi");
+        if (status == null) {
+            throw new KnxNullPointerException("status");
         } else if (channelId < 0 || channelId > 0xFF) {
             throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
         } else if (sequence < 0 || sequence > 0xFF) {
             throw new KnxNumberOutOfRangeException("sequence", 0, 0xFF, sequence);
         }
 
-        final var cemiAsBytes = cemi.getRawData();
-
         // create bytes
-        final var bytes = new byte[STRUCTURE_LENGTH + cemiAsBytes.length];
+        final var bytes = new byte[STRUCTURE_LENGTH];
         bytes[0] = STRUCTURE_LENGTH;
         bytes[1] = (byte) channelId;
         bytes[2] = (byte) sequence;
-        bytes[3] = 0x00; // reserved
-        System.arraycopy(cemiAsBytes, 0, bytes, STRUCTURE_LENGTH, cemiAsBytes.length);
+        bytes[3] = status.getCodeAsByte();
 
         return valueOf(bytes);
     }
@@ -131,18 +110,15 @@ public final class TunnellingRequestBody extends AbstractMultiRawData implements
     protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
-        } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_WITH_CEMI_MIN_LENGTH, STRUCTURE_WITH_CEMI_MAX_LENGTH, rawData.length,
-                    rawData);
-        } else if (Bytes.toUnsignedInt(rawData[0]) != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData[0]", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData[0], rawData);
+        } else if (rawData.length != STRUCTURE_LENGTH) {
+            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
 
     @Override
     @Nonnull
     public ServiceType getServiceType() {
-        return ServiceType.TUNNELING_REQUEST;
+        return ServiceType.TUNNELING_ACK;
     }
 
     public int getLength() {
@@ -158,8 +134,8 @@ public final class TunnellingRequestBody extends AbstractMultiRawData implements
         return this.sequence;
     }
 
-    public CEMI getCEMI() {
-        return this.cemi;
+    public Status getStatus() {
+        return this.status;
     }
 
     @Override
@@ -169,7 +145,7 @@ public final class TunnellingRequestBody extends AbstractMultiRawData implements
                 .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
                 .add("channelId", this.channelId + " (" + ByteFormatter.formatHex(this.channelId) + ")")
                 .add("sequence", this.sequence + " (" + ByteFormatter.formatHex(this.sequence) + ")")
-                .add("cemi", this.cemi.toString(false));
+                .add("status", this.status);
         // @formatter:on
         if (inclRawData) {
             h.add("rawData", this.getRawDataAsHexString());

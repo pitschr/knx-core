@@ -31,8 +31,8 @@ import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -80,15 +80,15 @@ public class KnxClientTest {
             // On first request send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnetionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
-            // send TunnellingRequestBody
-            KnxBody.TUNNELLING_REQUEST,
+            // send TunnelingRequestBody
+            KnxBody.TUNNELING_REQUEST,
             // send an erroneous body
             KnxBody.Failures.CONNECT_RESPONSE_BAD_DATA,
             // send an erroneous body #2
@@ -111,7 +111,7 @@ public class KnxClientTest {
         configBuilder.plugin(extensionPlugin);
 
         try (final var client = new DefaultKnxClient(configBuilder.build())) {
-            // wait for first tunnelling ack body sent by client
+            // wait for first tunneling ack body sent by client
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
@@ -124,14 +124,14 @@ public class KnxClientTest {
         verify(observerPlugin, times(1)).onIncomingBody(isA(DescriptionResponseBody.class));
         verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectResponseBody.class));
         verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectionStateResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(TunnellingRequestBody.class));
+        verify(observerPlugin, times(1)).onIncomingBody(isA(TunnelingRequestBody.class));
         verify(observerPlugin, times(1)).onIncomingBody(isA(DisconnectResponseBody.class));
 
         verify(observerPlugin, times(5)).onOutgoingBody(any());
         verify(observerPlugin, times(1)).onOutgoingBody(isA(DescriptionRequestBody.class));
         verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectRequestBody.class));
         verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectionStateRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(TunnellingAckBody.class));
+        verify(observerPlugin, times(1)).onOutgoingBody(isA(TunnelingAckBody.class));
         verify(observerPlugin, times(1)).onOutgoingBody(isA(DisconnectRequestBody.class));
 
         verify(observerPlugin, times(2)).onError(any());
@@ -146,7 +146,7 @@ public class KnxClientTest {
                 DescriptionRequestBody.class,
                 ConnectRequestBody.class,
                 ConnectionStateRequestBody.class,
-                TunnellingAckBody.class,
+                TunnelingAckBody.class,
                 DisconnectRequestBody.class);
     }
 

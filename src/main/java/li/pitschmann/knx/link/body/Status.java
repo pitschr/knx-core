@@ -78,9 +78,9 @@ public enum Status implements KnxByteEnum {
     E_KNX_CONNECTION(0x27, "Error in KNX connection for specified id"),
     /**
      * The KNX Net/IP device device does not support the requested KNX/IP
-     * Tunnelling layer.
+     * Tunneling layer.
      */
-    E_TUNNELLING_LAYER(0x29, "Requested KNX/IP Tunneling layer not supported")
+    E_TUNNELING_LAYER(0x29, "Requested KNX/IP Tunneling layer not supported")
     // @formatter:on
     ;
 

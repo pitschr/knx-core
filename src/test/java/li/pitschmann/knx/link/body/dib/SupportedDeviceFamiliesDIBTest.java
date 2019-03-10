@@ -82,9 +82,9 @@ public final class SupportedDeviceFamiliesDIBTest {
         assertThat(svcDeviceManagement.getFamily()).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(svcDeviceManagement.getVersion()).isEqualTo(2);
 
-        final var svcTunnelling = serviceFamilyVersions.get(2);
-        assertThat(svcTunnelling.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELLING);
-        assertThat(svcTunnelling.getVersion()).isEqualTo(1);
+        final var svcTunneling = serviceFamilyVersions.get(2);
+        assertThat(svcTunneling.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELING);
+        assertThat(svcTunneling.getVersion()).isEqualTo(1);
 
         final var svcRouting = serviceFamilyVersions.get(3);
         assertThat(svcRouting.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
@@ -117,7 +117,7 @@ public final class SupportedDeviceFamiliesDIBTest {
         final var familyVersions = new ArrayList<ServiceTypeFamilyVersion>();
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.CORE, 1));
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.DEVICE_MANAGEMENT, 2));
-        familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.TUNNELLING, 1));
+        familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.TUNNELING, 1));
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.ROUTING, 3));
 
         assertThat(supportedDevicesFamiliesDIB)

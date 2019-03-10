@@ -39,7 +39,7 @@ public class BodyTest {
     @Test
     @DisplayName("Test #getRawData(Boolean)")
     public void testGetRawData() {
-        final var body = KnxBody.TUNNELLING_ACK_BODY;
+        final var body = KnxBody.TUNNELING_ACK_BODY;
 
         // false -> should return the byte array of body only
         final var bodyBytes = body.getRawData();

@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link;
 
 import li.pitschmann.knx.link.body.Status;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.Header;
@@ -46,7 +46,7 @@ public final class HeaderTest {
     @Test
     public void testHeaders() {
         // @formatter:off
-        this.assertHeader(ServiceType.CONNECTIONSTATE_REQUEST,
+        this.assertHeader(ServiceType.CONNECTION_STATE_REQUEST,
                 16,
                 new byte[]{0x06, 0x10, 0x02, 0x07, 0x00, 0x10,
                         0x11, 0x00, 0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x18, (byte) 0xe1, (byte) 0xa9}); // complete original stream
@@ -71,7 +71,7 @@ public final class HeaderTest {
      */
     @Test
     public void testHeadersWithBody() {
-        final var body = TunnellingAckBody.create(0x33, 0x66, Status.E_TUNNELLING_LAYER);
+        final var body = TunnelingAckBody.create(0x33, 0x66, Status.E_TUNNELING_LAYER);
         final var headerByBody = Header.create(body);
         final var headerByCreate = Header.create(ServiceType.TUNNELING_ACK, Header.KNXNET_HEADER_LENGTH + body.getLength());
 

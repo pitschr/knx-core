@@ -19,6 +19,7 @@
 package li.pitschmann.test;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Bytes;
 import li.pitschmann.knx.link.Configuration;
@@ -37,6 +38,7 @@ import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.WrappedMdcRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -173,6 +176,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
     @Override
     public KnxMockServer call() {
         Preconditions.checkArgument(!(this.ready || this.completed), "This method can be invoked only once time!");
+        final var sw = Stopwatch.createStarted();
 
         final var knxActions = Lists.<KnxMockServerAction>newLinkedList();
         knxActions.add(KnxMockServerWaitAction.NEXT); // KNX Mock Server is always waiting for first request from client
@@ -203,12 +207,12 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
 
         // start heartbeat monitor
         final var heartbeatMonitor = Executors.newSingleThreadExecutor();
-        heartbeatMonitor.submit(new HeartbeatMonitorRunnable());
+        heartbeatMonitor.submit(new WrappedMdcRunnable(new HeartbeatMonitorRunnable()));
         heartbeatMonitor.shutdown();
 
         // start KNX Action runnable
         final var actionExecutor = Executors.newSingleThreadExecutor();
-        actionExecutor.execute(actionRunnable);
+        actionExecutor.execute(new WrappedMdcRunnable(actionRunnable));
         actionExecutor.shutdown();
 
         try (final var selector = Selector.open();
@@ -223,7 +227,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
 
             var i = 0;
             // iterate until current thread is interrupted
-            while (!actionRunnable.isCompleted() && !Thread.interrupted()) {
+            while (!actionRunnable.isCompleted() && !Thread.currentThread().isInterrupted()) {
                 // Give few time to breathe. If there is a high load of 10'000+ packets per second the
                 // receiver buffer on KNX Mock Server may be full which results into a PortUnreachableException
                 // on KNX client side because KNX Mock Server is not accepting more packets.
@@ -246,22 +250,18 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
                         }
                     }
                 } catch (final Throwable ioe) {
-                    LOG.error("IOException", ioe);
+                    LOG.error("Throwable during KnxMockServer", ioe);
                     throw ioe;
                     // break loop due exception
                 }
             }
 
+            LOG.info("Stop KNX Mock Server initiated (isCompleted={}, isInterrupted={}, duration={} ms)", actionRunnable.isCompleted(), Thread.currentThread().isInterrupted(), sw.elapsed(TimeUnit.MILLISECONDS));
             this.completed = true;
             this.ready = false;
-            LOG.info("Stop KNX Mock Server initiated");
 
-            final var end = System.currentTimeMillis() + 1000;
-            while (true) {
-                if (System.currentTimeMillis() > end) {
-                    break;
-                }
-            }
+            // sleep bit to get e.g. DisconnectResponse from client
+            Sleeper.seconds(1);
         } catch (final KnxMockServerQuitException quitException) {
             LOG.debug("Quit signal received from 'handleActions' method.");
         } catch (final Exception exception) {
@@ -498,12 +498,16 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
             LOG.trace("*** START HEARTBEAT MONITOR ***");
             lastHeartbeat = System.currentTimeMillis();
 
-            while (System.currentTimeMillis() - lastHeartbeat < 10000 && !Thread.interrupted()) {
+            while (System.currentTimeMillis() - lastHeartbeat < 10000 && !Thread.currentThread().isInterrupted()) {
                 Sleeper.milliseconds(300);
             }
             Closeables.closeQuietly(socket);
-            Closeables.closeQuietly(client);
-            LOG.debug("Client closed by KNX Mock Server.");
+
+            // Client already closed?
+            if (!client.isClosed()) {
+                Closeables.closeQuietly(client);
+                LOG.debug("Client closed by KNX Mock Server.");
+            }
             LOG.trace("*** END HEARTBEAT MONITOR ***");
         }
     }
@@ -581,7 +585,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
                 var receivedCorrectServiceType = false;
                 do {
                     Body body = null;
-                    while ((inbox.isEmpty() || (body = inbox.take()) == null) && !Thread.interrupted()) {
+                    while ((inbox.isEmpty() || (body = inbox.take()) == null) && !Thread.currentThread().isInterrupted()) {
                         Sleeper.milliseconds(10);
                     }
 
@@ -593,7 +597,7 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
                             LOG.trace("Packet received, but will be ignored (got: {}, expected: {})", receivedServiceType, expectedServiceType);
                         }
                     }
-                } while (!receivedCorrectServiceType && !Thread.interrupted());
+                } while (!receivedCorrectServiceType && !Thread.currentThread().isInterrupted());
                 LOG.debug("Packet with expected service type received: {}", expectedServiceType);
             }
         }

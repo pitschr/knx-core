@@ -29,7 +29,7 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
 /**
- * Tunnelling Connection Response Data (CRD)
+ * Tunneling Connection Response Data (CRD)
  * <p>
  * The Connection Request Data Block structure (CRD) shall be the data block returned with the
  * {@link ServiceType#CONNECT_RESPONSE} frame.

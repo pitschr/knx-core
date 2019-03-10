@@ -41,9 +41,9 @@ public enum ServiceTypeFamily implements KnxByteEnum {
      */
     DEVICE_MANAGEMENT(0x03, "KNX device Management"),
     /**
-     * KNX/IP Tunnelling
+     * KNX/IP Tunneling
      */
-    TUNNELLING(0x04, "KNX/IP Tunnelling"),
+    TUNNELING(0x04, "KNX/IP Tunneling"),
     /**
      * KNX/IP Routing
      */

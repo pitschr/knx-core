@@ -57,7 +57,7 @@ public class ConnectionStateRequestBodyTest {
      * 	    Header
      * 	        Header Length: 0x06
      * 	        Protocol Version: 0x10
-     * 	        Service Type Identifier: CONNECTIONSTATE_REQUEST (0x0207)
+     * 	        Service Type Identifier: CONNECTION_STATE_REQUEST (0x0207)
      * 	        Total Length: 16 octets
      * 	    Body
      * 	        Communication Channel ID: 8
@@ -73,7 +73,7 @@ public class ConnectionStateRequestBodyTest {
     public void validCases() {
         // create()
         final var body = ConnectionStateRequestBody.create(this.channelId, this.controlEndpoint);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTIONSTATE_REQUEST);
+        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 

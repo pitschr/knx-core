@@ -14,7 +14,7 @@ It contains ready-to-use main classes to get a quick start. See examples below.
 
 ### Known limitations
 
-* Only *tunnelling* supported (no routing!)
+* Only *tunneling* supported (no routing!)
 * No KNX Secure implementation yet
 * No Additional Info support in CEMI frame yet
  
@@ -23,7 +23,7 @@ It contains ready-to-use main classes to get a quick start. See examples below.
 * **Java 11+**
   * Make sure that you have Java 11 installed and running as Java 11
 * **KNX Net/IP device (Router or Interface)**
-  * One free tunnelling connection available  
+  * One free tunneling connection available  
   * IP-Address
 
 ### Architecture

@@ -43,11 +43,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Tests the {@link TunnellingRequestBody}
+ * Tests the {@link TunnelingRequestBody}
  *
  * @author PITSCHR
  */
-public class TunnellingRequestBodyTest {
+public class TunnelingRequestBodyTest {
     // prepare
     private int channelId;
     private int sequence;
@@ -70,15 +70,15 @@ public class TunnellingRequestBodyTest {
     }
 
     /**
-     * Tests the {@link TunnellingRequestBody#create(int, int, CEMI)} and
-     * {@link TunnellingRequestBody#valueOf(byte[])} methods.
+     * Tests the {@link TunnelingRequestBody#create(int, int, CEMI)} and
+     * {@link TunnelingRequestBody#valueOf(byte[])} methods.
      *
      * <pre>
      * 	KNX/IP
      * 	    Header
      * 	        Header Length: 0x06
      * 	        Protocol Version: 0x10
-     * 	        Service Type Identifier: TUNNELLING_REQUEST (0x0420)
+     * 	        Service Type Identifier: TUNNELING_REQUEST (0x0420)
      * 	        Total Length: 23 octets
      * 	    Body
      * 	        Structure Length: 4 octets
@@ -110,7 +110,7 @@ public class TunnellingRequestBodyTest {
     @Test
     public void validCases() {
         // create()
-        final var body = TunnellingRequestBody.create(this.channelId, this.sequence, this.cemi);
+        final var body = TunnelingRequestBody.create(this.channelId, this.sequence, this.cemi);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
         assertThat(body.getLength()).isEqualTo(4);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
@@ -118,42 +118,42 @@ public class TunnellingRequestBodyTest {
         assertThat(body.getCEMI().getRawData()).containsExactly(this.cemi.getRawData());
 
         // compare raw data of create() with valueOf()
-        final var bodyByBytes = TunnellingRequestBody.valueOf(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
+        final var bodyByBytes = TunnelingRequestBody.valueOf(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
                 (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
         assertThat(body).hasToString(String.format(
-                "TunnellingRequestBody{length=4 (0x04), channelId=17 (0x11), sequence=92 (0x5C), cemi=%s, rawData=0x04 11 5C 00 29 00 BC E0 10 A0 4C 07 03 00 80 0C 3F}",
+                "TunnelingRequestBody{length=4 (0x04), channelId=17 (0x11), sequence=92 (0x5C), cemi=%s, rawData=0x04 11 5C 00 29 00 BC E0 10 A0 4C 07 03 00 80 0C 3F}",
                 this.cemi.toString(false)));
     }
 
     /**
-     * Tests {@link TunnellingRequestBody} with invalid arguments
+     * Tests {@link TunnelingRequestBody} with invalid arguments
      */
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> TunnellingRequestBody.create(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.create(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("cemi");
 
         // invalid size
-        assertThatThrownBy(() -> TunnellingRequestBody.create(this.channelId, -1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.create(this.channelId, -1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("sequence");
-        assertThatThrownBy(() -> TunnellingRequestBody.create(this.channelId, 0xFF + 1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.create(this.channelId, 0xFF + 1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("sequence");
-        assertThatThrownBy(() -> TunnellingRequestBody.create(-1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.create(-1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> TunnellingRequestBody.create(0xFF + 1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.create(0xFF + 1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
 
         // invalid raw data length
-        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> TunnelingRequestBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingRequestBody.valueOf(new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnellingRequestBody.valueOf(Bytes.fillByteArray(new byte[20], new byte[]{0x05}, FillDirection.LEFT_TO_RIGHT)))
+        assertThatThrownBy(() -> TunnelingRequestBody.valueOf(Bytes.fillByteArray(new byte[20], new byte[]{0x05}, FillDirection.LEFT_TO_RIGHT)))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData[0]");
     }
 }

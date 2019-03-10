@@ -19,6 +19,7 @@
 package li.pitschmann.test;
 
 import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.WrappedMdcCallable;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -28,12 +29,14 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Extension to start/stop the {@link KnxMockServer}. It will be invoked using {@link KnxTest} annotation.
@@ -44,6 +47,7 @@ public class KnxMockServerExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     private static final Logger LOG = LoggerFactory.getLogger(KnxMockServerExtension.class);
     private static final Map<ExtensionContext, ExecutorContainerEntry> executorContainer = new ConcurrentHashMap<>();
+    private static final AtomicInteger junitTestNr = new AtomicInteger();
 
     /**
      * Initializes the {@link KnxMockServer} and start
@@ -52,6 +56,9 @@ public class KnxMockServerExtension
      */
     @Override
     public void beforeTestExecution(final ExtensionContext context) throws Exception {
+        MDC.put("junitClass", context.getRequiredTestClass().getSimpleName());
+        MDC.put("junitMethod", context.getRequiredTestMethod().getName() + "(" + junitTestNr.incrementAndGet() + ")");
+
         LOG.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
 
         // create and start KNX Mock Server
@@ -85,6 +92,7 @@ public class KnxMockServerExtension
             LOG.warn("Executor Container could not be found.");
         }
         LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+        MDC.clear();
     }
 
     @Override
@@ -118,7 +126,7 @@ public class KnxMockServerExtension
 
             this.executorService = Executors.newSingleThreadExecutor();
             try {
-                this.executorService.submit(this.mockServer);
+                this.executorService.submit(new WrappedMdcCallable<>(this.mockServer));
                 this.executorService.shutdown();
             } catch (Throwable t) {
                 t.printStackTrace();

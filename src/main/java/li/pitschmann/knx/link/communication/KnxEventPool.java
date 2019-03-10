@@ -29,8 +29,8 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +46,18 @@ import java.util.Map;
  */
 public final class KnxEventPool {
     private static final Logger LOG = LoggerFactory.getLogger(KnxEventPool.class);
-    private static final int DEFAULT_TUNNELLING_REQUEST_CAPACITY = 0xFF; // 1 byte only according to KNX specification
-    private final Map<Integer, KnxEventData<TunnellingRequestBody, TunnellingAckBody>> tunnellingMap;
+    private static final int DEFAULT_TUNNELING_REQUEST_CAPACITY = 0xFF; // 1 byte only according to KNX specification
+    private final Map<Integer, KnxEventData<TunnelingRequestBody, TunnelingAckBody>> tunnelingMap;
     private final KnxEventData<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent = new KnxEventData<>();
     private final KnxEventData<ConnectRequestBody, ConnectResponseBody> connectEvent = new KnxEventData<>();
     private final KnxEventData<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent = new KnxEventData<>();
     private final KnxEventData<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent = new KnxEventData<>();
 
     public KnxEventPool() {
-        // initialize tunnelling map and fill with default KnxEventData entries (we will need it anyway)
-        tunnellingMap = Maps.newHashMapWithExpectedSize(DEFAULT_TUNNELLING_REQUEST_CAPACITY);
-        for (var i = 0; i < DEFAULT_TUNNELLING_REQUEST_CAPACITY; i++) {
-            tunnellingMap.put(i, new KnxEventData<>());
+        // initialize tunneling map and fill with default KnxEventData entries (we will need it anyway)
+        tunnelingMap = Maps.newHashMapWithExpectedSize(DEFAULT_TUNNELING_REQUEST_CAPACITY);
+        for (var i = 0; i < DEFAULT_TUNNELING_REQUEST_CAPACITY; i++) {
+            tunnelingMap.put(i, new KnxEventData<>());
         }
     }
 
@@ -115,8 +115,8 @@ public final class KnxEventPool {
     @SuppressWarnings("unchecked")
     public @Nonnull
     <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEventData<REQUEST, RESPONSE> get(final REQUEST request) {
-        if (request instanceof TunnellingRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.tunnellingMap.get(((TunnellingRequestBody) request).getSequence());
+        if (request instanceof TunnelingRequestBody) {
+            return (KnxEventData<REQUEST, RESPONSE>) this.tunnelingMap.get(((TunnelingRequestBody) request).getSequence());
         } else if (request instanceof ConnectionStateRequestBody) {
             return (KnxEventData<REQUEST, RESPONSE>) this.connectionStateEvent;
         } else if (request instanceof DisconnectRequestBody) {
@@ -131,13 +131,13 @@ public final class KnxEventPool {
     }
 
     /**
-     * Returns the {@link KnxEventData} for given {@link TunnellingAckBody} from event pool
+     * Returns the {@link KnxEventData} for given {@link TunnelingAckBody} from event pool
      *
      * @param acknowledge
      * @return {@link KnxEventData}
      */
     public @Nonnull
-    KnxEventData<TunnellingRequestBody, TunnellingAckBody> get(final TunnellingAckBody acknowledge) {
-        return this.tunnellingMap.get(acknowledge.getSequence());
+    KnxEventData<TunnelingRequestBody, TunnelingAckBody> get(final TunnelingAckBody acknowledge) {
+        return this.tunnelingMap.get(acknowledge.getSequence());
     }
 }

@@ -49,7 +49,7 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
         assertThat(Status.valueOf(0x24)).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
         assertThat(Status.valueOf(0x26)).isEqualTo(Status.E_DATA_CONNECTION);
         assertThat(Status.valueOf(0x27)).isEqualTo(Status.E_KNX_CONNECTION);
-        assertThat(Status.valueOf(0x29)).isEqualTo(Status.E_TUNNELLING_LAYER);
+        assertThat(Status.valueOf(0x29)).isEqualTo(Status.E_TUNNELING_LAYER);
     }
 
     @Test
@@ -67,7 +67,7 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
         assertThat(Status.E_NO_MORE_CONNECTIONS.getFriendlyName()).isEqualTo("All connections already used");
         assertThat(Status.E_DATA_CONNECTION.getFriendlyName()).isEqualTo("Error in data connection for specified id");
         assertThat(Status.E_KNX_CONNECTION.getFriendlyName()).isEqualTo("Error in KNX connection for specified id");
-        assertThat(Status.E_TUNNELLING_LAYER.getFriendlyName()).isEqualTo("Requested KNX/IP Tunneling layer not supported");
+        assertThat(Status.E_TUNNELING_LAYER.getFriendlyName()).isEqualTo("Requested KNX/IP Tunneling layer not supported");
     }
 
     @Test

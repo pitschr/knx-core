@@ -40,8 +40,8 @@ public enum MessageCode implements KnxByteEnum {
      * acknowledges the requests and forwards to a KNX device (e.g. a KNX push-button).
      *
      * <pre>
-     * Client --> | KNX Net/IP |      KNX device   (TUNNELLING_REQ to KNX Net/IP)
-     * Client <-- | KNX Net/IP |      KNX device   (TUNNELLING_ACK from KNX Net/IP)
+     * Client --> | KNX Net/IP |      KNX device   (TUNNELING_REQ to KNX Net/IP)
+     * Client <-- | KNX Net/IP |      KNX device   (TUNNELING_ACK from KNX Net/IP)
      * </pre>
      */
     L_DATA_REQ(0x11, "L-Data.req (Request)"),
@@ -59,14 +59,14 @@ public enum MessageCode implements KnxByteEnum {
      * the status pool of client knows that the change has been applied!<br>
      *
      * <pre>
-     * Client --> | KNX Net/IP |     KNX device  (TUNNELLING_REQ to KNX Net/IP)
-     * Client <-- | KNX Net/IP |     KNX device  (TUNNELLING_ACK from KNX Net/IP)
-     * Client     | KNX Net/IP | --> KNX device  (TUNNELLING_REQ forwarded to KNX device)
-     * Client     | KNX Net/IP | <-- KNX device  (TUNNELLING_ACK from device to KNX Net/IP)
-     * Client     | KNX Net/IP | <-- KNX device  (TUNNELLING_CON to KNX Net/IP)
-     * Client     | KNX Net/IP | --> KNX device  (TUNNELLING_ACK from KNX Net/IP to KNX device)
-     * Client <-- | KNX Net/IP |     KNX device	 (TUNNELLING_CON forwarded to client)
-     * Client --> | KNX Net/IP |     KNX device	 (TUNNELLING_ACK to KNX Net/IP)
+     * Client --> | KNX Net/IP |     KNX device  (TUNNELING_REQ to KNX Net/IP)
+     * Client <-- | KNX Net/IP |     KNX device  (TUNNELING_ACK from KNX Net/IP)
+     * Client     | KNX Net/IP | --> KNX device  (TUNNELING_REQ forwarded to KNX device)
+     * Client     | KNX Net/IP | <-- KNX device  (TUNNELING_ACK from device to KNX Net/IP)
+     * Client     | KNX Net/IP | <-- KNX device  (TUNNELING_CON to KNX Net/IP)
+     * Client     | KNX Net/IP | --> KNX device  (TUNNELING_ACK from KNX Net/IP to KNX device)
+     * Client <-- | KNX Net/IP |     KNX device	 (TUNNELING_CON forwarded to client)
+     * Client --> | KNX Net/IP |     KNX device	 (TUNNELING_ACK to KNX Net/IP)
      * </pre>
      */
     L_DATA_CON(0x2E, "L-Data.con (Confirmation)"),
@@ -83,10 +83,10 @@ public enum MessageCode implements KnxByteEnum {
      * change was requested by client or if the request happened outside of the application.
      *
      * <pre>
-     * Client     | KNX Net/IP | <-- KNX device  (TUNNELLING_IND from device to KNX Net/IP)
-     * Client     | KNX Net/IP | --> KNX device  (TUNNELLING_ACK to KNX device)
-     * Client <-- | KNX Net/IP |     KNX device	 (TUNNELLING_IND forwarded to client)
-     * Client --> | KNX Net/IP |     KNX device	 (TUNNELLING_ACK to KNX Net/IP)
+     * Client     | KNX Net/IP | <-- KNX device  (TUNNELING_IND from device to KNX Net/IP)
+     * Client     | KNX Net/IP | --> KNX device  (TUNNELING_ACK to KNX device)
+     * Client <-- | KNX Net/IP |     KNX device	 (TUNNELING_IND forwarded to client)
+     * Client --> | KNX Net/IP |     KNX device	 (TUNNELING_ACK to KNX Net/IP)
      * </pre>
      */
     L_DATA_IND(0x29, "L-Data.ind (Indication)");

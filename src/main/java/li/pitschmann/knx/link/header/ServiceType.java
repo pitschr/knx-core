@@ -46,7 +46,7 @@ import java.util.Arrays;
  * </tr>
  * <tr>
  * <td>0x0420 ... 0x042F</td>
- * <td>KNX/IP Tunnelling</td>
+ * <td>KNX/IP Tunneling</td>
  * </tr>
  * <tr>
  * <td>0x0530 ... 0x053F</td>
@@ -110,19 +110,19 @@ public enum ServiceType implements KnxBytesEnum {
      */
     CONNECT_REQUEST(0x0205, "Connect Request", CONNECT_RESPONSE),
     /**
-     * Service type sent by KNX Net/IP device when receiving a {@link #CONNECTIONSTATE_REQUEST}
+     * Service type sent by KNX Net/IP device when receiving a {@link #CONNECTION_STATE_REQUEST}
      * for an established connection.
      * <p>
      * Communication way: Server -> Client
      */
-    CONNECTIONSTATE_RESPONSE(0x0208, "Connection State Response"),
+    CONNECTION_STATE_RESPONSE(0x0208, "Connection State Response"),
     /**
      * Service type sent by KNX client requesting the connection state of an established
      * connection with KNX Net/IP device.
      * <p>
      * Communication way: Client -> Server
      */
-    CONNECTIONSTATE_REQUEST(0x0207, "Connection State Request", CONNECTIONSTATE_RESPONSE),
+    CONNECTION_STATE_REQUEST(0x0207, "Connection State Request", CONNECTION_STATE_RESPONSE),
     /**
      * Service type sent by KNX device, typically the KNX Net/IP device, in response to a
      * {@link #DISCONNECT_REQUEST}.

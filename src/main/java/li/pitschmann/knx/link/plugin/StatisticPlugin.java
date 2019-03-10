@@ -26,8 +26,8 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -119,11 +119,11 @@ public final class StatisticPlugin implements ExtensionPlugin {
                 // Connection State
                 statistics.getNumberOfBodyReceived(ConnectionStateResponseBody.class), // %11
                 statistics.getNumberOfBodySent(ConnectionStateRequestBody.class), // %12
-                // Tunnelling
-                statistics.getNumberOfBodyReceived(TunnellingRequestBody.class), // %13
-                statistics.getNumberOfBodySent(TunnellingRequestBody.class), // %14
-                statistics.getNumberOfBodyReceived(TunnellingAckBody.class), // %15
-                statistics.getNumberOfBodySent(TunnellingAckBody.class), // %16
+                // Tunneling
+                statistics.getNumberOfBodyReceived(TunnelingRequestBody.class), // %13
+                statistics.getNumberOfBodySent(TunnelingRequestBody.class), // %14
+                statistics.getNumberOfBodyReceived(TunnelingAckBody.class), // %15
+                statistics.getNumberOfBodySent(TunnelingAckBody.class), // %16
                 // Disconnect
                 statistics.getNumberOfBodyReceived(DisconnectRequestBody.class), // %17
                 statistics.getNumberOfBodySent(DisconnectRequestBody.class), // %18
@@ -146,13 +146,13 @@ public final class StatisticPlugin implements ExtensionPlugin {
             "%n\t\t[Description     ] Request: 0, Response: %7$s" + //
             "%n\t\t[Connect         ] Request: 0, Response: %9$s" + //
             "%n\t\t[Connection State] Request: 0, Response: %11$s" + //
-            "%n\t\t[Tunnelling      ] Request: %13$s, Response: %15$s" + //
+            "%n\t\t[Tunneling       ] Request: %13$s, Response: %15$s" + //
             "%n\t\t[Disconnect      ] Request: %17$s, Response: %19$s" + //
             "%n\t%3$s packets sent (%4$s bytes)" + //
             "%n\t\t[Description     ] Request: %8$s, Response: 0" + //
             "%n\t\t[Connect         ] Request: %10$s, Response: 0" + //
             "%n\t\t[Connection State] Request: %12$s, Response: 0" + //
-            "%n\t\t[Tunnelling      ] Request: %14$s, Response: %16$s" + //
+            "%n\t\t[Tunneling       ] Request: %14$s, Response: %16$s" + //
             "%n\t\t[Disconnect      ] Request: %18$s, Response: %20$s" + //
             "%n\t%5$s errors (%6$.2f%%)"),
          /**
@@ -177,7 +177,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
                         "\"request\":0," + //
                         "\"response\":%11$s" + //
                     "}," + //
-                    "\"tunnelling\":{" + //
+                    "\"tunneling\":{" + //
                         "\"request\":%13$s," + //
                         "\"acknowledge\":%15$s" + //
                     "}," + //
@@ -203,7 +203,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
                         "\"request\":%12$s," + //
                         "\"response\":0" + //
                     "}," + //
-                    "\"tunnelling\":{" + //
+                    "\"tunneling\":{" + //
                         "\"request\":%14$s," + //
                         "\"acknowledge\":%16$s" + //
                     "}," + //

@@ -3,7 +3,7 @@
     <!-- Console Logging (ALL) -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[TEST] [%thread] %date [%-5level] [%logger{40}:%line] - %msg%n</pattern>
+            <pattern>[TEST] [%X{junitClass}.%X{junitMethod}] %date [%-5level] [%logger{40}:%line] - %msg%n</pattern>
         </encoder>
     </appender>
 

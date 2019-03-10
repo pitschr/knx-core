@@ -24,6 +24,7 @@ import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
+import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
@@ -82,7 +83,7 @@ public class ConnectRequestTest {
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody with "No More Connections" error
             KnxBody.Failures.CONNECT_RESPONSE_NO_MORE_CONNECTIONS})
     @DisplayName("Error: No Channel ID because of no more connections")
@@ -110,25 +111,26 @@ public class ConnectRequestTest {
             // On first packet send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody attempt #1)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody (corrupted #1)
             KnxBody.Failures.CONNECT_RESPONSE_BAD_DATA,
             // wait for next packet (will be: ConnectRequestBody attempt #2)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // ConnectResponseBody (OK)
             KnxBody.CONNECT_RESPONSE,
             // wait for Connection State Request
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // send ConnectionStateResponse
             KnxBody.CONNECTION_STATE_RESPONSE,
             // wait for DisconnectRequestBody from KNX Net/IP Client
-            "WAIT=NEXT",
+            "WAIT=DISCONNECT_REQUEST",
             // send DisconnectResponseBody
             KnxBody.DISCONNECT_RESPONSE
     })
     @DisplayName("Error: Corrupted Connect Response and then OK")
     public void testConnectionCorruptedAndThenOK(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
+            mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
             // OK
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

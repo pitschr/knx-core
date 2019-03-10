@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public final class ConnectionRequestInformationTest {
     /**
-     * Valid {@link ConnectionRequestInformation} for tunnelling.
+     * Valid {@link ConnectionRequestInformation} for tunneling.
      * <p>
      * Tests the {@link ConnectionRequestInformation#create()} and
      * {@link ConnectionRequestInformation#valueOf(byte[])}

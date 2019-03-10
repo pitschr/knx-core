@@ -87,8 +87,8 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
         this.getInternalClient().notifyPluginsOutgoingBody(body);
 
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("SEND\n" + //
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("SEND\n" + //
                             "----------------------------------------------------------------\n" + //
                             "   Source:  {} ({})\n" + //
                             "   Target:  {}\n" + //
@@ -98,6 +98,8 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
                             "----------------------------------------------------------------", //
                     Networker.getLocalAddressAsString(channel), getId(), Networker.getRemoteAddressAsString(channel),
                     ByteFormatter.formatHexAsString(packetToSend), Header.create(body), body);
+        } else {
+            LOG.debug("SEND body: {}", body.getServiceType().name());
         }
     }
 

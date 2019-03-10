@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
@@ -36,14 +36,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link TunnellingRequestTask}
+ * Test for {@link TunnelingRequestTask}
  *
  * @author PITSCHR
  */
-public class TunnellingRequestTaskTest {
+public class TunnelingRequestTaskTest {
 
     /**
-     * Tests the {@link TunnellingRequestTask#onNext(Body)}
+     * Tests the {@link TunnelingRequestTask#onNext(Body)}
      */
     @Test
     @DisplayName("Test 'onNext(Body)' method")
@@ -52,7 +52,7 @@ public class TunnellingRequestTaskTest {
 
 
         final var cemi = mock(CEMI.class);
-        final var correctBody = mock(TunnellingRequestBody.class);
+        final var correctBody = mock(TunnelingRequestBody.class);
         when(correctBody.getCEMI()).thenReturn(cemi);
         when(cemi.getSourceAddress()).thenReturn(IndividualAddress.of(1, 2, 3));
         when(cemi.getDestinationAddress()).thenReturn(GroupAddress.of(4, 5, 6));
@@ -78,7 +78,7 @@ public class TunnellingRequestTaskTest {
     }
 
     /**
-     * Test the {@link TunnellingRequestTask#onError(Throwable)}
+     * Test the {@link TunnelingRequestTask#onError(Throwable)}
      * <p/>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
@@ -90,7 +90,7 @@ public class TunnellingRequestTaskTest {
     }
 
     /**
-     * Test the {@link TunnellingRequestTask#onComplete()}
+     * Test the {@link TunnelingRequestTask#onComplete()}
      * <p/>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
@@ -102,18 +102,18 @@ public class TunnellingRequestTaskTest {
     }
 
     /**
-     * Helper for creating a {@link TunnellingRequestTask}
+     * Helper for creating a {@link TunnelingRequestTask}
      *
-     * @return returns a newly instance of {@link TunnellingRequestTask}
+     * @return returns a newly instance of {@link TunnelingRequestTask}
      */
-    private TunnellingRequestTask createTask() {
+    private TunnelingRequestTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
         final var statusPool = mock(KnxStatusPoolImpl.class);
         final var subscription = mock(Flow.Subscription.class);
 
         when(internalClient.getStatusPool()).thenReturn(statusPool);
 
-        final var task = new TunnellingRequestTask(internalClient);
+        final var task = new TunnelingRequestTask(internalClient);
         task.onSubscribe(subscription);
         return task;
     }

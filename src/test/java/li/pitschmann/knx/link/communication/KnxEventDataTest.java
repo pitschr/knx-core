@@ -55,7 +55,7 @@ public class KnxEventDataTest {
         final var eventData = new KnxEventData<>();
 
         final var instantBeforeRequest = Instant.now();
-        eventData.setRequest(KnxBody.TUNNELLING_REQUEST_BODY);
+        eventData.setRequest(KnxBody.TUNNELING_REQUEST_BODY);
         final var instantAfterRequest = Instant.now();
 
         assertThat(eventData.hasRequest()).isTrue();
@@ -75,7 +75,7 @@ public class KnxEventDataTest {
         final var eventData = new KnxEventData<>();
 
         final var instantBeforeResponse = Instant.now();
-        eventData.setResponse(KnxBody.TUNNELLING_ACK_BODY);
+        eventData.setResponse(KnxBody.TUNNELING_ACK_BODY);
         final var instantAfterResponse = Instant.now();
 
         assertThat(eventData.hasRequest()).isFalse();
@@ -97,11 +97,11 @@ public class KnxEventDataTest {
 
         // test with request
         final var eventRequest = new KnxEventData<>();
-        eventRequest.setRequest(KnxBody.TUNNELLING_REQUEST_BODY);
-        assertThat(eventRequest).hasToString(String.format("KnxEventData{requestTime=%s, request=%s, responseTime=null, response=null}", eventRequest.getRequestTime(), KnxBody.TUNNELLING_REQUEST_BODY.toString()));
+        eventRequest.setRequest(KnxBody.TUNNELING_REQUEST_BODY);
+        assertThat(eventRequest).hasToString(String.format("KnxEventData{requestTime=%s, request=%s, responseTime=null, response=null}", eventRequest.getRequestTime(), KnxBody.TUNNELING_REQUEST_BODY.toString()));
 
         // test with response
         final var eventResponse = new KnxEventData<>();
-        eventResponse.setResponse(KnxBody.TUNNELLING_ACK_BODY);
+        eventResponse.setResponse(KnxBody.TUNNELING_ACK_BODY);
     }
 }

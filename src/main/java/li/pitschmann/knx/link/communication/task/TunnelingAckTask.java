@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,24 +28,24 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Observes the {@link TunnellingAckBody} which is received from KNX Net/IP device on data channel.
+ * Observes the {@link TunnelingAckBody} which is received from KNX Net/IP device on data channel.
  *
  * @author PITSCHR
  */
-public final class TunnellingAckTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(TunnellingAckTask.class);
+public final class TunnelingAckTask implements Subscriber<Body> {
+    private static final Logger LOG = LoggerFactory.getLogger(TunnelingAckTask.class);
     private final InternalKnxClient client;
 
-    public TunnellingAckTask(final InternalKnxClient client) {
+    public TunnelingAckTask(final InternalKnxClient client) {
         this.client = client;
     }
 
     @Override
     public void onNext(Body body) {
-        // we are interested in tunnelling acknowledge only
-        if (body instanceof TunnellingAckBody) {
-            LOG.debug("Tunnelling Ack received: {}", body);
-            final var ackBody = (TunnellingAckBody) body;
+        // we are interested in tunneling acknowledge only
+        if (body instanceof TunnelingAckBody) {
+            LOG.debug("Tunneling Ack received: {}", body);
+            final var ackBody = (TunnelingAckBody) body;
 
             final var eventData = this.client.getEventPool().get(ackBody);
             if (eventData.hasResponse()) {
@@ -60,7 +60,7 @@ public final class TunnellingAckTask implements Subscriber<Body> {
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Tunnelling Ack Task class", throwable);
+        LOG.error("Error during Tunneling Ack Task class", throwable);
     }
 
     @Override

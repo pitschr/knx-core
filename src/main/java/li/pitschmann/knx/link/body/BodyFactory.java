@@ -80,12 +80,12 @@ public final class BodyFactory {
     public static <T extends Body> T valueOf(final ServiceType serviceType, final byte[] bodyBytes) {
         // try to find the correct body
         if (serviceType == ServiceType.TUNNELING_REQUEST) {
-            return (T) TunnellingRequestBody.valueOf(bodyBytes);
+            return (T) TunnelingRequestBody.valueOf(bodyBytes);
         } else if (serviceType == ServiceType.TUNNELING_ACK) {
-            return (T) TunnellingAckBody.valueOf(bodyBytes);
-        } else if (serviceType == ServiceType.CONNECTIONSTATE_REQUEST) {
+            return (T) TunnelingAckBody.valueOf(bodyBytes);
+        } else if (serviceType == ServiceType.CONNECTION_STATE_REQUEST) {
             return (T) ConnectionStateRequestBody.valueOf(bodyBytes);
-        } else if (serviceType == ServiceType.CONNECTIONSTATE_RESPONSE) {
+        } else if (serviceType == ServiceType.CONNECTION_STATE_RESPONSE) {
             return (T) ConnectionStateResponseBody.valueOf(bodyBytes);
         } else if (serviceType == ServiceType.DISCONNECT_REQUEST) {
             return (T) DisconnectRequestBody.valueOf(bodyBytes);

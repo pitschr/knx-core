@@ -26,7 +26,7 @@ import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class PerformanceKnxTest {
     /**
-     * How many times the TUNNELLING_REQUEST and TUNNELLING_ACK packets should be
+     * How many times the TUNNELING_REQUEST and TUNNELING_ACK packets should be
      * sent between KNX Net/IP device and clients.
      * <p>
      * When doing a high number (100000 times) - then ensure that you set
@@ -60,21 +60,21 @@ public class PerformanceKnxTest {
             // On first request send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // send ConnectResponseBody
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnetionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
-            // send TunnellingRequestBody N-times
+            // send TunnelingRequestBody N-times
             "REPEAT=" + TIMES + "{061004200015040700002e00bce010ff0a96010081}",
             // wait for packet with type 'DisconnectRequestBody'
             "WAIT=DISCONNECT_REQUEST",
             // send DisconnectResponseBody
             KnxBody.DISCONNECT_RESPONSE
     })
-    @DisplayName("Test Performance (sending " + TIMES + "x Tunnelling requests/acks)")
+    @DisplayName("Test Performance (sending " + TIMES + "x Tunneling requests/acks)")
     public void testSuccessPerformance(final KnxMockServer mockServer) {
 
         // Adjust JUnit specific configuration
@@ -86,7 +86,7 @@ public class PerformanceKnxTest {
                 .build();
 
         try (final var client = new DefaultKnxClient(config)) {
-            // after N-times tunnelling acknowledge sent by client a disconnect will be initiated
+            // after N-times tunneling acknowledge sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK, TIMES);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
@@ -101,7 +101,7 @@ public class PerformanceKnxTest {
         expectedClasses.add(ConnectRequestBody.class);
         expectedClasses.add(ConnectionStateRequestBody.class);
         for (var i = 0; i < TIMES; i++) {
-            expectedClasses.add(TunnellingAckBody.class);
+            expectedClasses.add(TunnelingAckBody.class);
         }
         expectedClasses.add(DisconnectRequestBody.class);
         mockServer.assertReceivedPackets(expectedClasses);

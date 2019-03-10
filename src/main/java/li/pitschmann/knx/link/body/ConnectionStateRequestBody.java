@@ -34,7 +34,7 @@ import java.util.Arrays;
 /**
  * Body for Connection State Request
  * <p>
- * The {@link ServiceType#CONNECTIONSTATE_REQUEST} frame shall be sent by the KNX client to the control endpoint
+ * The {@link ServiceType#CONNECTION_STATE_REQUEST} frame shall be sent by the KNX client to the control endpoint
  * of the KNX Net/IP device.
  *
  * <pre>
@@ -117,7 +117,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
     @Override
     @Nonnull
     public ServiceType getServiceType() {
-        return ServiceType.CONNECTIONSTATE_REQUEST;
+        return ServiceType.CONNECTION_STATE_REQUEST;
     }
 
     @Override

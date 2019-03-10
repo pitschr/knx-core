@@ -27,7 +27,7 @@ import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
-import li.pitschmann.knx.link.exceptions.KnxNoTunnellingException;
+import li.pitschmann.knx.link.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
@@ -66,51 +66,7 @@ public class DescriptionRequestTest {
     public void testSuccessDisconnectByClient(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
             // after connection state request sent by client a disconnect will be initiated
-            mockServer.waitForReceivedServiceType(ServiceType.CONNECTIONSTATE_REQUEST);
-        } catch (final Throwable t) {
-            fail("Unexpected test state", t);
-        }
-
-        // wait until all packets are sent/received
-        mockServer.waitForCompletion();
-
-        // assert packets
-        mockServer.assertReceivedPackets( //
-                DescriptionRequestBody.class, // #1
-                ConnectRequestBody.class, // #2
-                ConnectionStateRequestBody.class, // #3
-                DisconnectRequestBody.class // #4
-        );
-    }
-
-    /**
-     * Perform a happy path between {@link KnxClient} and the KNX Net/IP device containing following:
-     * <ol>
-     * <li>{@link DescriptionResponseBody}</li>
-     * <li>{@link ConnectResponseBody}</li>
-     * <li>{@link ConnectionStateResponseBody}</li>
-     * </ol>
-     * <p>
-     * Disconnect will be initiated by the KNX client.
-     */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
-            // send ConnectResponseBody
-            KnxBody.CONNECT_RESPONSE,
-            // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
-            // send ConnectionStateResponseBody
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // wait for next packet and then quit immediately
-            "WAIT=NEXT"})
-    @DisplayName("Test happy path - disconnect by KNX client (but no Disconnect response from KNX Net/IP)")
-    public void testSuccessDisconnectByClientButNoDisconnectResponse(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
-            // after connection state request sent by client a disconnect will be initiated
-            mockServer.waitForReceivedServiceType(ServiceType.CONNECTIONSTATE_REQUEST);
+            mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -176,21 +132,21 @@ public class DescriptionRequestTest {
             // send DescriptionResponseBody
             KnxBody.DESCRIPTION_RESPONSE,
             // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECT_REQUEST",
             // ConnectResponseBody
             KnxBody.CONNECT_RESPONSE,
             // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=NEXT",
+            "WAIT=CONNECTION_STATE_REQUEST",
             // ConnectionStateResponseBody
             KnxBody.CONNECTION_STATE_RESPONSE,
             // wait for next packet (will be: DisconnectRequestBody)
-            "WAIT=NEXT",
+            "WAIT=DISCONNECT_REQUEST",
             // DisconnectResponseBody
             KnxBody.DISCONNECT_RESPONSE})
     public void testSuccessDescriptionOnThirdAttempt(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
             // after connection state request sent by client a disconnect will be initiated
-            mockServer.waitForReceivedServiceType(ServiceType.CONNECTIONSTATE_REQUEST);
+            mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -210,17 +166,17 @@ public class DescriptionRequestTest {
     }
 
     /**
-     * Test to {@link DescriptionResponseBody} that is not offering the required tunnelling support
+     * Test to {@link DescriptionResponseBody} that is not offering the required tunneling support
      */
     @KnxTest({
-            // On first packet send DescriptionResponseBody without "Tunnelling" support
-            KnxBody.Failures.DESCRIPTION_RESPONSE_WITHOUT_TUNNELLING
+            // On first packet send DescriptionResponseBody without "Tunneling" support
+            KnxBody.Failures.DESCRIPTION_RESPONSE_WITHOUT_TUNNELING
     })
-    public void testDescriptionWithoutTunnelling(final KnxMockServer mockServer) {
+    public void testDescriptionWithoutTunneling(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
             mockServer.waitForCompletion();
             fail("Not the expected state");
-        } catch (final KnxNoTunnellingException noTunnellingException) {
+        } catch (final KnxNoTunnelingException noTunnelingException) {
             // OK
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

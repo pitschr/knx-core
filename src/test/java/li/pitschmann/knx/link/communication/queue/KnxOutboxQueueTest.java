@@ -54,8 +54,8 @@ public class KnxOutboxQueueTest {
         final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(channelMock);
 
-        // Tunnelling Request Body is used for test
-        final var body = KnxBody.TUNNELLING_REQUEST_BODY;
+        // Tunneling Request Body is used for test
+        final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
         // add body to outbox queue
         final var queue = new KnxOutboxQueue("outboxQueue", clientMock, null); // channel is not relevant here
@@ -91,8 +91,8 @@ public class KnxOutboxQueueTest {
         final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(localChannel);
 
-        // Tunnelling Request Body is used for test
-        final var body = KnxBody.TUNNELLING_REQUEST_BODY;
+        // Tunneling Request Body is used for test
+        final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
         // add body to outbox queue
         final var queue = new KnxOutboxQueue("outboxQueue", clientMock, localChannel);

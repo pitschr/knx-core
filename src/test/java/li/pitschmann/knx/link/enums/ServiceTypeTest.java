@@ -59,8 +59,8 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.valueOf(0x0204)).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(ServiceType.valueOf(0x0205)).isEqualTo(ServiceType.CONNECT_REQUEST);
         assertThat(ServiceType.valueOf(0x0206)).isEqualTo(ServiceType.CONNECT_RESPONSE);
-        assertThat(ServiceType.valueOf(0x0207)).isEqualTo(ServiceType.CONNECTIONSTATE_REQUEST);
-        assertThat(ServiceType.valueOf(0x0208)).isEqualTo(ServiceType.CONNECTIONSTATE_RESPONSE);
+        assertThat(ServiceType.valueOf(0x0207)).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
+        assertThat(ServiceType.valueOf(0x0208)).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
         assertThat(ServiceType.valueOf(0x0209)).isEqualTo(ServiceType.DISCONNECT_REQUEST);
         assertThat(ServiceType.valueOf(0x020A)).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
         assertThat(ServiceType.valueOf(0x0310)).isEqualTo(ServiceType.DEVICE_CONFIGURATION_REQUEST);
@@ -80,8 +80,8 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.DESCRIPTION_RESPONSE.getFriendlyName()).isEqualTo("Description Response");
         assertThat(ServiceType.CONNECT_REQUEST.getFriendlyName()).isEqualTo("Connect Request");
         assertThat(ServiceType.CONNECT_RESPONSE.getFriendlyName()).isEqualTo("Connect Response");
-        assertThat(ServiceType.CONNECTIONSTATE_REQUEST.getFriendlyName()).isEqualTo("Connection State Request");
-        assertThat(ServiceType.CONNECTIONSTATE_RESPONSE.getFriendlyName()).isEqualTo("Connection State Response");
+        assertThat(ServiceType.CONNECTION_STATE_REQUEST.getFriendlyName()).isEqualTo("Connection State Request");
+        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getFriendlyName()).isEqualTo("Connection State Response");
         assertThat(ServiceType.DISCONNECT_REQUEST.getFriendlyName()).isEqualTo("Disconnect Request");
         assertThat(ServiceType.DISCONNECT_RESPONSE.getFriendlyName()).isEqualTo("Disconnect Response");
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getFriendlyName()).isEqualTo("Device Configuration Request");
@@ -98,7 +98,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         // with response identifier
         assertThat(ServiceType.TUNNELING_REQUEST).hasToString(String.format(
                 "ServiceType{name=TUNNELING_REQUEST, friendlyName=Tunneling Request, code=1056 (0x04 20), family=%s, responseIdentifier=TUNNELING_ACK}",
-                ServiceTypeFamily.TUNNELLING));
+                ServiceTypeFamily.TUNNELING));
 
         // without response identifier
         assertThat(ServiceType.SEARCH_RESPONSE).hasToString(String.format(
@@ -117,8 +117,8 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.DESCRIPTION_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x04});
         assertThat(ServiceType.CONNECT_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x05});
         assertThat(ServiceType.CONNECT_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x06});
-        assertThat(ServiceType.CONNECTIONSTATE_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x07});
-        assertThat(ServiceType.CONNECTIONSTATE_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x08});
+        assertThat(ServiceType.CONNECTION_STATE_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x07});
+        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x08});
         assertThat(ServiceType.DISCONNECT_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x09});
         assertThat(ServiceType.DISCONNECT_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x0A});
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x03, 0x10});
@@ -140,14 +140,14 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.DESCRIPTION_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.CONNECT_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.CONNECT_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
-        assertThat(ServiceType.CONNECTIONSTATE_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
-        assertThat(ServiceType.CONNECTIONSTATE_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
+        assertThat(ServiceType.CONNECTION_STATE_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
+        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.DISCONNECT_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.DISCONNECT_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.getFamily()).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
-        assertThat(ServiceType.TUNNELING_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELLING);
-        assertThat(ServiceType.TUNNELING_ACK.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELLING);
+        assertThat(ServiceType.TUNNELING_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELING);
+        assertThat(ServiceType.TUNNELING_ACK.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELING);
         assertThat(ServiceType.ROUTING_INDICATION.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
     }
@@ -163,8 +163,8 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.DESCRIPTION_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.CONNECT_REQUEST.hasResponseIdentifier()).isTrue();
         assertThat(ServiceType.CONNECT_RESPONSE.hasResponseIdentifier()).isFalse();
-        assertThat(ServiceType.CONNECTIONSTATE_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.CONNECTIONSTATE_RESPONSE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.CONNECTION_STATE_REQUEST.hasResponseIdentifier()).isTrue();
+        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.DISCONNECT_REQUEST.hasResponseIdentifier()).isTrue();
         assertThat(ServiceType.DISCONNECT_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.hasResponseIdentifier()).isTrue();
@@ -184,7 +184,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.SEARCH_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.SEARCH_RESPONSE);
         assertThat(ServiceType.DESCRIPTION_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(ServiceType.CONNECT_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.CONNECT_RESPONSE);
-        assertThat(ServiceType.CONNECTIONSTATE_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.CONNECTIONSTATE_RESPONSE);
+        assertThat(ServiceType.CONNECTION_STATE_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
         assertThat(ServiceType.DISCONNECT_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.DEVICE_CONFIGURATION_ACK);
         assertThat(ServiceType.TUNNELING_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.TUNNELING_ACK);
@@ -193,7 +193,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThatThrownBy(() -> ServiceType.SEARCH_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.DESCRIPTION_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.CONNECT_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.CONNECTIONSTATE_RESPONSE.getResponseIdentifier())
+        assertThatThrownBy(() -> ServiceType.CONNECTION_STATE_RESPONSE.getResponseIdentifier())
                 .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.DISCONNECT_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.DEVICE_CONFIGURATION_ACK.getResponseIdentifier())

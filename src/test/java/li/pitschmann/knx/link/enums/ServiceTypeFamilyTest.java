@@ -39,7 +39,7 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
     void validValueOf() {
         assertThat(ServiceTypeFamily.valueOf(0x02)).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceTypeFamily.valueOf(0x03)).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
-        assertThat(ServiceTypeFamily.valueOf(0x04)).isEqualTo(ServiceTypeFamily.TUNNELLING);
+        assertThat(ServiceTypeFamily.valueOf(0x04)).isEqualTo(ServiceTypeFamily.TUNNELING);
         assertThat(ServiceTypeFamily.valueOf(0x05)).isEqualTo(ServiceTypeFamily.ROUTING);
     }
 
@@ -48,7 +48,7 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
     void friendlyName() {
         assertThat(ServiceTypeFamily.CORE.getFriendlyName()).isEqualTo("KNX/IP Core");
         assertThat(ServiceTypeFamily.DEVICE_MANAGEMENT.getFriendlyName()).isEqualTo("KNX device Management");
-        assertThat(ServiceTypeFamily.TUNNELLING.getFriendlyName()).isEqualTo("KNX/IP Tunnelling");
+        assertThat(ServiceTypeFamily.TUNNELING.getFriendlyName()).isEqualTo("KNX/IP Tunneling");
         assertThat(ServiceTypeFamily.ROUTING.getFriendlyName()).isEqualTo("KNX/IP Routing");
     }
 
@@ -56,6 +56,6 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
     @Override
     public void testToString() {
         assertThat(ServiceTypeFamily.CORE).hasToString("ServiceTypeFamily{name=CORE, friendlyName=KNX/IP Core, code=2 (0x02)}");
-        assertThat(ServiceTypeFamily.TUNNELLING).hasToString("ServiceTypeFamily{name=TUNNELLING, friendlyName=KNX/IP Tunnelling, code=4 (0x04)}");
+        assertThat(ServiceTypeFamily.TUNNELING).hasToString("ServiceTypeFamily{name=TUNNELING, friendlyName=KNX/IP Tunneling, code=4 (0x04)}");
     }
 }

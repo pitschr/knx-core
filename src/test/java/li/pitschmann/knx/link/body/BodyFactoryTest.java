@@ -51,7 +51,7 @@ public class BodyFactoryTest {
         byte[] tunReqBytes = new byte[]{ //
                 // Header
                 Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
-                0x04, 0x20, // Tunnelling Request
+                0x04, 0x20, // Tunneling Request
                 0x00, 0x17, // Total Length Octets
                 // Body
                 0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc, (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f};
@@ -59,7 +59,7 @@ public class BodyFactoryTest {
         byte[] tunAckBytes = new byte[]{ //
                 // Header
                 Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
-                0x04, 0x21, // Tunnelling Ack
+                0x04, 0x21, // Tunneling Ack
                 0x00, 0x0A, // Total Length Octets
                 // Body
                 0x04, 0x11, (byte) 0x81, 0x29};
@@ -137,8 +137,8 @@ public class BodyFactoryTest {
         assertThat(BodyFactory.valueOf(tunReqBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
         assertThat(BodyFactory.valueOf(tunAckBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
 
-        assertThat(BodyFactory.valueOf(conStateReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECTIONSTATE_REQUEST);
-        assertThat(BodyFactory.valueOf(conStateResBytes).getServiceType()).isEqualTo(ServiceType.CONNECTIONSTATE_RESPONSE);
+        assertThat(BodyFactory.valueOf(conStateReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
+        assertThat(BodyFactory.valueOf(conStateResBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
 
         assertThat(BodyFactory.valueOf(disconnectReqBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
         assertThat(BodyFactory.valueOf(disconnectResBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);

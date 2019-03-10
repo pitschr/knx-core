@@ -26,8 +26,8 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
-import li.pitschmann.knx.link.body.TunnellingAckBody;
-import li.pitschmann.knx.link.body.TunnellingRequestBody;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.test.MemoryAppender;
@@ -63,7 +63,7 @@ public class StatisticPluginTest {
                         "\"description\":{\"request\":0,\"response\":0}," +
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connectionState\":{\"request\":0,\"response\":0}," +
-                        "\"tunnelling\":{\"request\":0,\"acknowledge\":0}," +
+                        "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
                         "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
                     "\"outbound\":{"+
@@ -71,7 +71,7 @@ public class StatisticPluginTest {
                         "\"description\":{\"request\":0,\"response\":0}," +
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connectionState\":{\"request\":0,\"response\":0}," +
-                        "\"tunnelling\":{\"request\":0,\"acknowledge\":0}," +
+                        "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
                         "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
                     "\"error\":{" +
@@ -101,7 +101,7 @@ public class StatisticPluginTest {
                         "\"description\":{\"request\":0,\"response\":16}," +
                         "\"connect\":{\"request\":0,\"response\":18}," +
                         "\"connectionState\":{\"request\":0,\"response\":20}," +
-                        "\"tunnelling\":{\"request\":22,\"acknowledge\":24}," +
+                        "\"tunneling\":{\"request\":22,\"acknowledge\":24}," +
                         "\"disconnect\":{\"request\":26,\"response\":28}" +
                     "}," +
                     "\"outbound\":{"+
@@ -109,7 +109,7 @@ public class StatisticPluginTest {
                         "\"description\":{\"request\":17,\"response\":0}," +
                         "\"connect\":{\"request\":19,\"response\":0}," +
                         "\"connectionState\":{\"request\":21,\"response\":0}," +
-                        "\"tunnelling\":{\"request\":23,\"acknowledge\":25}," +
+                        "\"tunneling\":{\"request\":23,\"acknowledge\":25}," +
                         "\"disconnect\":{\"request\":27,\"response\":29}" +
                     "}," +
                     "\"error\":{" +
@@ -148,11 +148,11 @@ public class StatisticPluginTest {
         // Connection State
         when(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).thenReturn(20L);
         when(statistic.getNumberOfBodySent(ConnectionStateRequestBody.class)).thenReturn(21L);
-        // Tunnelling
-        when(statistic.getNumberOfBodyReceived(TunnellingRequestBody.class)).thenReturn(22L);
-        when(statistic.getNumberOfBodySent(TunnellingRequestBody.class)).thenReturn(23L);
-        when(statistic.getNumberOfBodyReceived(TunnellingAckBody.class)).thenReturn(24L);
-        when(statistic.getNumberOfBodySent(TunnellingAckBody.class)).thenReturn(25L);
+        // Tunneling
+        when(statistic.getNumberOfBodyReceived(TunnelingRequestBody.class)).thenReturn(22L);
+        when(statistic.getNumberOfBodySent(TunnelingRequestBody.class)).thenReturn(23L);
+        when(statistic.getNumberOfBodyReceived(TunnelingAckBody.class)).thenReturn(24L);
+        when(statistic.getNumberOfBodySent(TunnelingAckBody.class)).thenReturn(25L);
         // Disconnect
         when(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).thenReturn(26L);
         when(statistic.getNumberOfBodySent(DisconnectRequestBody.class)).thenReturn(27L);

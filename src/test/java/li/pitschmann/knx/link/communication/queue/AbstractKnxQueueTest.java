@@ -257,7 +257,7 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Check #add(Body) and #next()")
     public void testAddAndNext() throws InterruptedException {
-        final var body = KnxBody.TUNNELLING_ACK_BODY;
+        final var body = KnxBody.TUNNELING_ACK_BODY;
 
         final var queue = new TestKnxQueue(mock(InternalKnxClient.class));
         // add to queue

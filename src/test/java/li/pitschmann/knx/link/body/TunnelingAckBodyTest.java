@@ -28,11 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Tests the {@link TunnellingAckBody}
+ * Tests the {@link TunnelingAckBody}
  *
  * @author PITSCHR
  */
-public class TunnellingAckBodyTest {
+public class TunnelingAckBodyTest {
     // prepare
     private int channelId;
     private int sequence;
@@ -42,11 +42,11 @@ public class TunnellingAckBodyTest {
     public void before() {
         this.channelId = 17;
         this.sequence = 129;
-        this.status = Status.E_TUNNELLING_LAYER;
+        this.status = Status.E_TUNNELING_LAYER;
     }
 
     /**
-     * Tests the {@link TunnellingAckBody#create(int, int, Status)} and {@link TunnellingAckBody#valueOf(byte[])}
+     * Tests the {@link TunnelingAckBody#create(int, int, Status)} and {@link TunnelingAckBody#valueOf(byte[])}
      * methods.
      *
      * <pre>
@@ -60,13 +60,13 @@ public class TunnellingAckBodyTest {
      * 	        Structure Length: 4 octets
      * 	        Communication Channel ID: 17
      * 	        Sequence Counter: 129
-     * 	        Status: E_TUNNELLING_LAYER - Requested KNX/IP Tunneling layer not supported (0x29)
+     * 	        Status: E_TUNNELING_LAYER - Requested KNX/IP Tunneling layer not supported (0x29)
      * </pre>
      */
     @Test
     public void validCases() {
         // create()
-        final var body = TunnellingAckBody.create(this.channelId, this.sequence, this.status);
+        final var body = TunnelingAckBody.create(this.channelId, this.sequence, this.status);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
         assertThat(body.getLength()).isEqualTo(4);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
@@ -74,37 +74,37 @@ public class TunnellingAckBodyTest {
         assertThat(body.getStatus()).isEqualTo(this.status);
 
         // compare raw data of create() with valueOf()
-        final var bodyByBytes = TunnellingAckBody.valueOf(new byte[]{0x04, 0x11, (byte) 0x81, 0x29});
+        final var bodyByBytes = TunnelingAckBody.valueOf(new byte[]{0x04, 0x11, (byte) 0x81, 0x29});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
         assertThat(body).hasToString(String.format(
-                "TunnellingAckBody{length=4 (0x04), channelId=17 (0x11), sequence=129 (0x81), status=%s, rawData=0x04 11 81 29}",
-                Status.E_TUNNELLING_LAYER));
+                "TunnelingAckBody{length=4 (0x04), channelId=17 (0x11), sequence=129 (0x81), status=%s, rawData=0x04 11 81 29}",
+                Status.E_TUNNELING_LAYER));
     }
 
     /**
-     * Tests {@link TunnellingAckBody} with invalid arguments
+     * Tests {@link TunnelingAckBody} with invalid arguments
      */
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> TunnellingAckBody.create(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.create(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("status");
 
         // invalid size
-        assertThatThrownBy(() -> TunnellingAckBody.create(-1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.create(-1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> TunnellingAckBody.create(0xFF + 1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.create(0xFF + 1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> TunnellingAckBody.create(this.channelId, -1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.create(this.channelId, -1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("sequence");
-        assertThatThrownBy(() -> TunnellingAckBody.create(this.channelId, 0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.create(this.channelId, 0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("sequence");
 
         // invalid raw data length
-        assertThatThrownBy(() -> TunnellingAckBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnellingAckBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> TunnelingAckBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }
