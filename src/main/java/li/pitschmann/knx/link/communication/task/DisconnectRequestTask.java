@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,7 @@ public final class DisconnectRequestTask implements Subscriber<Body> {
             LOG.trace("Disconnect Response saved.");
             try {
                 this.client.send(responseBody);
+                Sleeper.milliseconds(this.client.getConfig().getTimeoutDisconnectResponse());
             } finally {
                 // initiate close by remote
                 this.client.close();

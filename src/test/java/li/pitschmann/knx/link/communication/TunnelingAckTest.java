@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.test.KnxMockServer;
 import li.pitschmann.test.KnxTest;
@@ -67,12 +68,19 @@ public class TunnelingAckTest {
     @DisplayName("Send a Tunneling Request packet and receive Tunneling Ack packet")
     public void testReceivingAckOnceTime(final KnxMockServer mockServer) {
         try (final var client = mockServer.newKnxClient()) {
+            // wait bit to avoid racing condition between ConnectionStateRequest and TunnelingRequest
+            // In real world, it doesn't matter but makes the verification (see below) stable
+            Sleeper.milliseconds(100);
             // send tunneling request
             final var ackBody = client.send(KnxBody.TUNNELING_REQUEST_BODY, 1000).get();
             assertThat(ackBody).isNotNull();
+
+            mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+
+        mockServer.waitForCompletion();
 
         // assert packets
         mockServer.assertReceivedPackets( //

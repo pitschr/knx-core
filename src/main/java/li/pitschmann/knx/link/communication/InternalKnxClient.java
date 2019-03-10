@@ -58,7 +58,6 @@ import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Closeables;
-import li.pitschmann.utils.Sleeper;
 import li.pitschmann.utils.WrappedMdcRunnable;
 import li.pitschmann.utils.WrappedMdcSubscriber;
 import org.slf4j.Logger;
@@ -352,10 +351,6 @@ public final class InternalKnxClient implements KnxClient {
                 }
             }
         } finally {
-            // wait bit - otherwise it may happen that channel are closed (too quickly) during packet send/receive
-            // it doesn't matter in real world, but makes tests more stable in verification process
-            Sleeper.milliseconds(100);
-
             // close communicators
             isOk &= Closeables.closeQuietly(controlChannelCommunicator);
             isOk &= Closeables.closeQuietly(dataChannelCommunicator);
