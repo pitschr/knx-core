@@ -109,7 +109,7 @@ public class TunnelingRequestBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = TunnelingRequestBody.create(this.channelId, this.sequence, this.cemi);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
         assertThat(body.getLength()).isEqualTo(4);
@@ -117,7 +117,7 @@ public class TunnelingRequestBodyTest {
         assertThat(body.getSequence()).isEqualTo(this.sequence);
         assertThat(body.getCEMI().getRawData()).containsExactly(this.cemi.getRawData());
 
-        // compare raw data of create() with valueOf()
+        // compare raw data of with valueOf(byte[])
         final var bodyByBytes = TunnelingRequestBody.valueOf(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
                 (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());

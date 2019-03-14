@@ -24,11 +24,9 @@ import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,9 +43,9 @@ public class ConnectRequestBodyTest {
     private ConnectionRequestInformation cri;
 
     @BeforeEach
-    public void before() throws UnknownHostException {
-        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, InetAddress.getByName("1.1.1.1"), 58702);
-        this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, InetAddress.getByName("2.2.2.2"), 58703);
+    public void before() {
+        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(1, 1, 1, 1), 58702);
+        this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(2, 2, 2, 2), 58703);
         this.cri = ConnectionRequestInformation.create();
     }
 
@@ -82,14 +80,14 @@ public class ConnectRequestBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = ConnectRequestBody.create(this.controlEndpoint, this.dataEndpoint, this.cri);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
         assertThat(body.getDataEndpoint()).isEqualTo(this.dataEndpoint);
         assertThat(body.getConnectionRequestInformation()).isEqualTo(this.cri);
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = ConnectRequestBody.valueOf(new byte[]{0x08, 0x01, 0x01, 0x01, 0x01, 0x01, (byte) 0xe5, (byte) 0x4e,
                 0x08, 0x01, 0x02, 0x02, 0x02, 0x02, (byte) 0xe5, 0x4f, 0x04, 0x04, 0x02, 0x00});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());

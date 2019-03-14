@@ -50,13 +50,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-273 .. 670433.28]
+     * Range:      [-273 .. 670760.96]
      * Unit:       °C
      * Resolution: 0.01 °C
      * </pre>
      */
     @KnxDataPointType(id = "9.001", description = "Temperature")
-    public static final DPT9 TEMPERATURE = new DPT9("9.001", "Temperature", -273, 670433.28, "°C");
+    public static final DPT9 TEMPERATURE = new DPT9("9.001", "Temperature", -273, 670760.96, "°C");
 
     /**
      * <strong>9.002</strong> Temperature Difference (K)
@@ -70,13 +70,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       K
      * Resolution: 0.01 K
      * </pre>
      */
     @KnxDataPointType(id = "9.002", description = "Temperature Difference")
-    public static final DPT9 TEMPERATURE_DIFFERENCE = new DPT9("9.002", "Temperature Difference", -671088.64, 670433.28, "K");
+    public static final DPT9 TEMPERATURE_DIFFERENCE = new DPT9("9.002", "Temperature Difference", -671088.64, 670760.96, "K");
     /**
      * <strong>9.003</strong> Temperature Kelvin/Hour (K/h)
      *
@@ -89,13 +89,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       K/h
      * Resolution: 0.01 K/h
      * </pre>
      */
     @KnxDataPointType(id = "9.003", description = "Temperature Kelvin/Hour")
-    public static final DPT9 TEMPERATURE_KELVIN_HOUR = new DPT9("9.003", "Temperature Kelvin/Hour", -671088.64, 670433.28, "K/h");
+    public static final DPT9 TEMPERATURE_KELVIN_HOUR = new DPT9("9.003", "Temperature Kelvin/Hour", -671088.64, 670760.96, "K/h");
     /**
      * <strong>9.004</strong> Luminous Flux (lux)
      *
@@ -108,13 +108,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [0 .. 670433.28]
+     * Range:      [0 .. 670760.96]
      * Unit:       lux
      * Resolution: 0.01 lux
      * </pre>
      */
     @KnxDataPointType(id = "9.004", description = "Luminous Flux")
-    public static final DPT9 LUMINOUS_FLUX = new DPT9("9.004", "Luminous Flux", 0, 670433.28, "lux");
+    public static final DPT9 LUMINOUS_FLUX = new DPT9("9.004", "Luminous Flux", 0, 670760.96, "lux");
     /**
      * <strong>9.005</strong> Wind Speed (m/s)
      *
@@ -127,13 +127,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [0 .. 670433.28]
+     * Range:      [0 .. 670760.96]
      * Unit:       m/s
      * Resolution: 0.01 m/s
      * </pre>
      */
     @KnxDataPointType(id = "9.005", description = "Wind Speed")
-    public static final DPT9 WIND_SPEED = new DPT9("9.005", "Wind Speed", 0, 670433.28, "m/s");
+    public static final DPT9 WIND_SPEED = new DPT9("9.005", "Wind Speed", 0, 670760.96, "m/s");
     /**
      * <strong>9.006</strong> Air Pressure (Pa)
      *
@@ -146,13 +146,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [0 .. 670433.28]
+     * Range:      [0 .. 670760.96]
      * Unit:       Pa
      * Resolution: 0.01 Pa
      * </pre>
      */
     @KnxDataPointType(id = "9.006", description = "Air Pressure")
-    public static final DPT9 AIR_PRESSURE = new DPT9("9.006", "Air Pressure", 0, 670433.28, "Pa");
+    public static final DPT9 AIR_PRESSURE = new DPT9("9.006", "Air Pressure", 0, 670760.96, "Pa");
     /**
      * <strong>9.007</strong> Humidity (%)
      *
@@ -165,13 +165,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [0 .. 670433.28]
+     * Range:      [0 .. 670760.96]
      * Unit:       %
      * Resolution: 0.01 %
      * </pre>
      */
     @KnxDataPointType(id = "9.007", description = "Humidity")
-    public static final DPT9 HUMIDITY = new DPT9("9.007", "Humidity", 0, 670433.28, "%");
+    public static final DPT9 HUMIDITY = new DPT9("9.007", "Humidity", 0, 670760.96, "%");
     /**
      * <strong>9.008</strong> Air Quality (ppm)
      *
@@ -184,13 +184,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [0 .. 670433.28]
+     * Range:      [0 .. 670760.96]
      * Unit:       ppm
      * Resolution: 0.01 ppm
      * </pre>
      */
     @KnxDataPointType(id = "9.008", description = "Air Quality")
-    public static final DPT9 AIR_QUALITY = new DPT9("9.008", "Air Quality", 0, 670433.28, "ppm");
+    public static final DPT9 AIR_QUALITY = new DPT9("9.008", "Air Quality", 0, 670760.96, "ppm");
 
     /**
      * <strong>9.009</strong> Air Flow (m<sup>3</sup>/h)
@@ -204,13 +204,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       m<sup>3</sup>/h
      * Resolution: 0.01 m<sup>3</sup>/h
      * </pre>
      */
     @KnxDataPointType(id = "9.009", description = "Air Flow")
-    public static final DPT9 AIR_FLOW = new DPT9("9.009", "Air Flow", -671088.64, 670433.28, "m³/h");
+    public static final DPT9 AIR_FLOW = new DPT9("9.009", "Air Flow", -671088.64, 670760.96, "m³/h");
 
     /**
      * <strong>9.010</strong> Time Difference (seconds)
@@ -224,13 +224,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       s
      * Resolution: 0.01 s
      * </pre>
      */
     @KnxDataPointType(id = "9.010", description = "Time Difference")
-    public static final DPT9 TIME_DIFFERENCE_SECONDS = new DPT9("9.010", "Time Difference", -671088.64, 670433.28, "s");
+    public static final DPT9 TIME_DIFFERENCE_SECONDS = new DPT9("9.010", "Time Difference", -671088.64, 670760.96, "s");
     /**
      * <strong>9.011</strong> Time Difference (milliseconds)
      *
@@ -243,13 +243,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       ms
      * Resolution: 0.01 ms
      * </pre>
      */
     @KnxDataPointType(id = "9.011", description = "Time Difference")
-    public static final DPT9 TIME_DIFFERENCE_MILLISECONDS = new DPT9("9.011", "Time Difference", -671088.64, 670433.28, "ms");
+    public static final DPT9 TIME_DIFFERENCE_MILLISECONDS = new DPT9("9.011", "Time Difference", -671088.64, 670760.96, "ms");
     /**
      * <strong>9.020</strong> Voltage (mV)
      *
@@ -262,13 +262,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       mV
      * Resolution: 0.01 mV
      * </pre>
      */
     @KnxDataPointType(id = "9.020", description = "Voltage")
-    public static final DPT9 VOLTAGE = new DPT9("9.020", "Voltage", -671088.64, 670433.28, "mV");
+    public static final DPT9 VOLTAGE = new DPT9("9.020", "Voltage", -671088.64, 670760.96, "mV");
     /**
      * <strong>9.021</strong> Electric Current (mA)
      *
@@ -281,13 +281,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       mA
      * Resolution: 0.01 mA
      * </pre>
      */
     @KnxDataPointType(id = "9.021", description = "Electric Current")
-    public static final DPT9 ELECTRIC_CURRENT = new DPT9("9.021", "Electric Current", -671088.64, 670433.28, "mA");
+    public static final DPT9 ELECTRIC_CURRENT = new DPT9("9.021", "Electric Current", -671088.64, 670760.96, "mA");
     /**
      * <strong>9.022</strong> Power Density (W/m<sup>2</sup>)
      *
@@ -300,13 +300,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       W/m<sup>2</sup>
      * Resolution: 0.01 W/m<sup>2</sup>
      * </pre>
      */
     @KnxDataPointType(id = "9.022", description = "Power Density")
-    public static final DPT9 POWER_DENSITY = new DPT9("9.022", "Power Density", -671088.64, 670433.28, "W/m²");
+    public static final DPT9 POWER_DENSITY = new DPT9("9.022", "Power Density", -671088.64, 670760.96, "W/m²");
     /**
      * <strong>9.023</strong> Kelvin Per Percent (K/%)
      *
@@ -319,13 +319,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       K/%
      * Resolution: 0.01 K/%
      * </pre>
      */
     @KnxDataPointType(id = "9.023", description = "Kelvin Per Percent")
-    public static final DPT9 KELVIN_PER_PERCENT = new DPT9("9.023", "Kelvin Per Percent", -671088.64, 670433.28, "K/%");
+    public static final DPT9 KELVIN_PER_PERCENT = new DPT9("9.023", "Kelvin Per Percent", -671088.64, 670760.96, "K/%");
     /**
      * <strong>9.024</strong> Power (kW)
      *
@@ -338,13 +338,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       kW
      * Resolution: 0.01 kW
      * </pre>
      */
     @KnxDataPointType(id = "9.024", description = "Power")
-    public static final DPT9 POWER = new DPT9("9.024", "Power", -671088.64, 670433.28, "kW");
+    public static final DPT9 POWER = new DPT9("9.024", "Power", -671088.64, 670760.96, "kW");
     /**
      * <strong>9.025</strong> Volume Flow (l/h)
      *
@@ -357,13 +357,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28]
+     * Range:      [-671088.64 .. 670760.96]
      * Unit:       l/h
      * Resolution: 0.01 l/h
      * </pre>
      */
     @KnxDataPointType(id = "9.025", description = "Volume Flow")
-    public static final DPT9 VOLUME_FLOW = new DPT9("9.025", "Volume Flow", -671088.64, 670433.28, "l/h");
+    public static final DPT9 VOLUME_FLOW = new DPT9("9.025", "Volume Flow", -671088.64, 670760.96, "l/h");
     /**
      * <strong>9.026</strong> Rain Amount (l/m<sup>2</sup>)
      *
@@ -376,13 +376,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-671088.64 .. 670433.28.96]
+     * Range:      [-671088.64 .. 670760.96.96]
      * Unit:       l/m<sup>2</sup>
      * Resolution: 0.01 l/m<sup>2</sup>
      * </pre>
      */
     @KnxDataPointType(id = "9.026", description = "Rain Amount")
-    public static final DPT9 RAIN_AMOUNT = new DPT9("9.026", "Rain Amount", -671088.64f, 670433.28, "l/m²");
+    public static final DPT9 RAIN_AMOUNT = new DPT9("9.026", "Rain Amount", -671088.64f, 670760.96, "l/m²");
     /**
      * <strong>9.027</strong> Temperature (°F)
      *
@@ -395,13 +395,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [-459.6 .. 670433.28]
+     * Range:      [-459.6 .. 670760.96]
      * Unit:       °F
      * Resolution: 0.01 °F
      * </pre>
      */
     @KnxDataPointType(id = "9.027", description = "Temperature")
-    public static final DPT9 TEMPERATURE_FAHRENHEIT = new DPT9("9.027", "Temperature", -459.6f, 670433.28, "°F");
+    public static final DPT9 TEMPERATURE_FAHRENHEIT = new DPT9("9.027", "Temperature", -459.6f, 670760.96, "°F");
     /**
      * <strong>9.028</strong> Wind Speed (km/h)
      *
@@ -414,13 +414,13 @@ public final class DPT9 extends AbstractRangeUnitDataPointType<DPT9Value, Double
      * Encoding:   Float Value = (0.01 * M)*2(E)
      *             E = [0 .. 15]
      *             M = [-2048 .. 2047], two's complement notation
-     * Range:      [0 .. 670433.28]
+     * Range:      [0 .. 670760.96]
      * Unit:       km/h
      * Resolution: 0.01 km/h
      * </pre>
      */
     @KnxDataPointType(id = "9.028", description = "Wind Speed")
-    public static final DPT9 WIND_SPEED_KMH = new DPT9("9.028", "Wind Speed", 0f, 670433.28, "km/h");
+    public static final DPT9 WIND_SPEED_KMH = new DPT9("9.028", "Wind Speed", 0f, 670760.96, "km/h");
 
     /**
      * Constructor for {@link DPT9}

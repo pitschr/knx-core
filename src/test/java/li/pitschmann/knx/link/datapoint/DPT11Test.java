@@ -89,6 +89,7 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
 
         // assert specific DPT11
         assertThat(dpt.toValue(new String[]{localDate.toString()})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth())).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(localDate)).containsExactly(bValueArray);
         assertThat(dptValue.getDate()).isEqualTo(localDate);
     }

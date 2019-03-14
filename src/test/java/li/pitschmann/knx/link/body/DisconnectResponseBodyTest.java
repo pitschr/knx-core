@@ -61,13 +61,13 @@ public class DisconnectResponseBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = DisconnectResponseBody.create(this.channelId, this.status);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getStatus()).isEqualTo(this.status);
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = DisconnectResponseBody.valueOf(new byte[]{0x0B, 0x24});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

@@ -58,8 +58,7 @@ import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Closeables;
-import li.pitschmann.utils.WrappedMdcRunnable;
-import li.pitschmann.utils.WrappedMdcSubscriber;
+import li.pitschmann.utils.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -114,9 +112,9 @@ public final class InternalKnxClient implements KnxClient {
         this.statusPool = new KnxStatusPoolImpl();
 
         // executors with fixed threads for communication and subscription
-        this.communicationExecutor = Executors.newFixedThreadPool(config.getCommunicationExecutorPoolSize());
+        this.communicationExecutor = Executors.newFixedThreadPool(config.getCommunicationExecutorPoolSize(), true);
         LOG.info("Communication Executor created with size of {}: {}", config.getCommunicationExecutorPoolSize(), this.communicationExecutor);
-        this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize());
+        this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
         LOG.info("Plugin Executor created with size of {}: {}", config.getPluginExecutorPoolSize(), this.pluginExecutor);
         LOG.info("Observer Plugins: {}", this.config.getObserverPlugins());
         LOG.info("Extension Plugins: {}", this.config.getExtensionPlugins());
@@ -204,16 +202,16 @@ public final class InternalKnxClient implements KnxClient {
             // 1) Control Channel Receiver,
             // 2) Data Channel Receiver and
             // 3) Connection State Monitor
-            this.channelExecutor = Executors.newFixedThreadPool(3);
-            this.channelExecutor.execute(new WrappedMdcRunnable(controlChannelCommunicator));
-            this.channelExecutor.execute(new WrappedMdcRunnable(dataChannelCommunicator));
+            this.channelExecutor = Executors.newFixedThreadPool(3, true);
+            this.channelExecutor.execute(controlChannelCommunicator);
+            this.channelExecutor.execute(dataChannelCommunicator);
 
             // get channel for further communications
             this.channelId = this.fetchChannelIdFromKNX();
             LOG.info("Channel ID received: {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
-            this.channelExecutor.submit(new WrappedMdcRunnable(this.createConnectionStateMonitor()));
+            this.channelExecutor.submit(this.createConnectionStateMonitor());
 
             // do not accept more services anymore!
             this.channelExecutor.shutdown();
@@ -239,7 +237,7 @@ public final class InternalKnxClient implements KnxClient {
      */
     private DescriptionChannelCommunicator newDescriptionChannelCommunicator() {
         final var communicator = new DescriptionChannelCommunicator(this);
-        communicator.subscribe(new WrappedMdcSubscriber<>(new DescriptionResponseTask(this)));
+        communicator.subscribe(new DescriptionResponseTask(this));
         return communicator;
     }
 
@@ -260,10 +258,10 @@ public final class InternalKnxClient implements KnxClient {
      */
     private ControlChannelCommunicator newControlChannelCommunicator() {
         final var communicator = new ControlChannelCommunicator(this);
-        communicator.subscribe(new WrappedMdcSubscriber<>(new ConnectResponseTask(this)));
-        communicator.subscribe(new WrappedMdcSubscriber<>(new ConnectionStateResponseTask(this)));
-        communicator.subscribe(new WrappedMdcSubscriber<>(new DisconnectRequestTask(this)));
-        communicator.subscribe(new WrappedMdcSubscriber<>(new DisconnectResponseTask(this)));
+        communicator.subscribe(new ConnectResponseTask(this));
+        communicator.subscribe(new ConnectionStateResponseTask(this));
+        communicator.subscribe(new DisconnectRequestTask(this));
+        communicator.subscribe(new DisconnectResponseTask(this));
         return communicator;
     }
 
@@ -282,8 +280,8 @@ public final class InternalKnxClient implements KnxClient {
      */
     private DataChannelCommunicator newDataChannelCommunciator() {
         final var communicator = new DataChannelCommunicator(this);
-        communicator.subscribe(new WrappedMdcSubscriber<>(new TunnelingRequestTask(this)));
-        communicator.subscribe(new WrappedMdcSubscriber<>(new TunnelingAckTask(this)));
+        communicator.subscribe(new TunnelingRequestTask(this));
+        communicator.subscribe(new TunnelingAckTask(this));
         return communicator;
     }
 
@@ -490,8 +488,8 @@ public final class InternalKnxClient implements KnxClient {
         final var communicator = newDescriptionChannelCommunicator();
 
         // Create executor service for description communication
-        final var es = Executors.newSingleThreadExecutor();
-        es.execute(new WrappedMdcRunnable(communicator));
+        final var es = Executors.newSingleThreadExecutor(true);
+        es.execute(communicator);
         es.shutdown();
 
         // send description request

@@ -84,7 +84,7 @@ public class AbstractKnxQueueTest {
                 } catch (final Throwable e) {
                     return false;
                 }
-            }, 1000)).isTrue();
+            }, 3000)).isTrue();
         } finally {
             Closeables.shutdownQuietly(executor);
         }
@@ -174,7 +174,7 @@ public class AbstractKnxQueueTest {
             assertThat(
                     Sleeper.milliseconds(
                             () -> appender.anyMatch(s -> s.contains("IOException for channel")),
-                            1000)
+                            3000)
             ).isTrue();
             assertThatThrownBy(() -> taskFuture.get()).hasCauseInstanceOf(KnxException.class);
         } finally {

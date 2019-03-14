@@ -47,7 +47,7 @@
         <version.junit-jupiter-engine>5.3.1</version.junit-jupiter-engine>
         <version.junit-platform-runner>1.3.1</version.junit-platform-runner>
         <version.assertj-core>3.11.1</version.assertj-core>
-        <version.mockito-core>2.23.0</version.mockito-core>
+        <version.mockito-inline>2.25.0</version.mockito-inline>
         <!-- Code Coverage -->
         <version.jacoco-maven-plugin>0.8.2</version.jacoco-maven-plugin>
         <version.coveralls-maven-plugin>4.3.0</version.coveralls-maven-plugin>
@@ -70,9 +70,13 @@
             <!-- HTTP server -->
             <dependency>
                 <groupId>ro.pippo</groupId>
-                <artifactId>pippo</artifactId>
+                <artifactId>pippo-undertow</artifactId>
                 <version>${version.pippo}</version>
-                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>ro.pippo</groupId>
+                <artifactId>pippo-gson</artifactId>
+                <version>${version.pippo}</version>
             </dependency>
             <!-- Logging -->
             <dependency>
@@ -107,8 +111,8 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${version.mockito-core}</version>
+                <artifactId>mockito-inline</artifactId>
+                <version>${version.mockito-inline}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -128,8 +132,11 @@
         <!-- HTTP server -->
         <dependency>
             <groupId>ro.pippo</groupId>
-            <artifactId>pippo</artifactId>
-            <type>pom</type>
+            <artifactId>pippo-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-gson</artifactId>
         </dependency>
         <!-- Logging -->
         <dependency>
@@ -159,7 +166,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <artifactId>mockito-inline</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

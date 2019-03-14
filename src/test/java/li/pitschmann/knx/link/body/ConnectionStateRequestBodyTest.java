@@ -27,8 +27,6 @@ import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.UnknownHostException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,7 +41,7 @@ public class ConnectionStateRequestBodyTest {
     private HPAI controlEndpoint;
 
     @BeforeEach
-    public void before() throws UnknownHostException {
+    public void before() {
         this.channelId = 8;
         this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(4, 4, 4, 4), 58702);
     }
@@ -71,13 +69,13 @@ public class ConnectionStateRequestBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = ConnectionStateRequestBody.create(this.channelId, this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = ConnectionStateRequestBody
                 .valueOf(new byte[]{0x08, 0x00, 0x08, 0x01, 0x04, 0x04, 0x04, 0x04, (byte) 0xe5, 0x4e});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());

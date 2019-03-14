@@ -16,11 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.parser;
+package li.pitschmann.knx.parser;
 
 import com.google.common.collect.Lists;
-import li.pitschmann.knx.parser.XmlGroupAddress;
-import li.pitschmann.knx.parser.XmlProject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -23,11 +23,9 @@ import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,9 +41,9 @@ public class DisconnectRequestBodyTest {
     private HPAI controlEndpoint;
 
     @BeforeEach
-    public void before() throws UnknownHostException {
+    public void before() {
         this.channelId = 10;
-        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, InetAddress.getByName("5.5.5.5"), 58702);
+        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(5, 5, 5, 5), 58702);
     }
 
     /**
@@ -71,13 +69,13 @@ public class DisconnectRequestBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = DisconnectRequestBody.create(this.channelId, this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = DisconnectRequestBody
                 .valueOf(new byte[]{0x0A, 0x00, 0x08, 0x01, 0x05, 0x05, 0x05, 0x05, (byte) 0xe5, 0x4e});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());

@@ -18,15 +18,13 @@
 
 package li.pitschmann.knx.link.body.dib;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Bytes.FillDirection;
 import org.junit.jupiter.api.Test;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -149,17 +147,15 @@ public final class DeviceInformationDIBTest {
 
     /**
      * Test {@link DeviceHardwareInformationDIB#toString()}
-     *
-     * @throws UnknownHostException
      */
     @Test
-    public void testToString() throws UnknownHostException {
+    public void testToString() {
         assertThat(DeviceHardwareInformationDIB.valueOf(BYTES)).hasToString(String.format(
                 "DeviceHardwareInformationDIB{"
                         + "length=54 (0x36), descriptionType=%s, mediumType=%s, programmingMode=false, individualAddress=%s, "
                         + "projectNumber=582, projectInstallationIdentifier=4, serialNumber=0x00 88 99 AA BB CC, "
                         + "multicastAddress=%s, macAddress=01:02:03:04:05:AA, deviceFriendlyName=MDT KNX IP Router, rawData=%s}",
                 DescriptionType.DEVICE_INFO, MediumType.TP, IndividualAddress.of(new byte[]{0x10, 0x00}).toString(false),
-                InetAddress.getByName("224.0.23.12"), ByteFormatter.formatHexAsString(BYTES)));
+                Constants.Protocol.MULTICAST_ADDRESS, ByteFormatter.formatHexAsString(BYTES)));
     }
 }

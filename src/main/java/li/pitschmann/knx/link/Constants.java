@@ -18,6 +18,9 @@
 
 package li.pitschmann.knx.link;
 
+import li.pitschmann.utils.Networker;
+
+import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -89,10 +92,10 @@ public interface Constants {
          * KNX/IP Port Number
          */
         int PORT = 3671;
-        // /**
-        //  * KNX/IP System Setup Multicast Address
-        //  */
-        // InetAddress MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
+        /**
+         * KNX/IP System Setup Multicast Address
+         */
+        InetAddress MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
     }
 
     /**

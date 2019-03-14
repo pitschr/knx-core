@@ -155,7 +155,7 @@ public class DescriptionResponseBodyTest {
     public void validCase() {
         byte[] dibBytes = Bytes.concat(this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData());
 
-        // create()
+        // create
         final var body = DescriptionResponseBody.create(this.deviceHardwareInformation, this.supportedDeviceFamilies);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
@@ -165,7 +165,7 @@ public class DescriptionResponseBodyTest {
         assertThat(body.getKnxAddresses()).isNull();
         assertThat(body.getManufacturerData()).isNull();
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = DescriptionResponseBody.valueOf(dibBytes);
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
@@ -194,7 +194,7 @@ public class DescriptionResponseBodyTest {
                 this.ipConfig.getRawData(), this.ipCurrentConfig.getRawData(), this.knxAddresses.getRawData(),
                 this.manufacturerData.getRawData());
 
-        // create()
+        // create
         final var body = DescriptionResponseBody.valueOf(dibBytes);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);

@@ -52,7 +52,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
         assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[]{"foo", "bar"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[]{"-671088.65"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"670433.29"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue(new String[]{"670760.97"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
         assertThat(dpt.toValue(new byte[]{0x00, 0x00})).isInstanceOf(DPT9Value.class);

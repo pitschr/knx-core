@@ -18,8 +18,9 @@
 
 package li.pitschmann.test;
 
+import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.WrappedMdcCallable;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -34,7 +35,6 @@ import org.slf4j.MDC;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,9 +55,9 @@ public class KnxMockServerExtension
      * @param context
      */
     @Override
-    public void beforeTestExecution(final ExtensionContext context) throws Exception {
+    public void beforeTestExecution(final ExtensionContext context) {
         MDC.put("junitClass", context.getRequiredTestClass().getSimpleName());
-        MDC.put("junitMethod", context.getRequiredTestMethod().getName() + "(" + junitTestNr.incrementAndGet() + ")");
+        MDC.put("junitMethod", context.getRequiredTestMethod().getName() + "-" + junitTestNr.incrementAndGet());
 
         LOG.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
 
@@ -80,19 +80,18 @@ public class KnxMockServerExtension
     @Override
     public void afterTestExecution(final ExtensionContext context) throws Exception {
         LOG.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
-        if (executorContainer.containsKey(context)) {
-            final var es = executorContainer.get(context).getExecutorService();
-            try {
-                es.awaitTermination(10, TimeUnit.SECONDS);
-            } finally {
-                es.shutdownNow();
-                executorContainer.remove(context);
+        try {
+            if (executorContainer.containsKey(context)) {
+                final var executorService = executorContainer.remove(context).getExecutorService();
+                final var gracefully = Closeables.shutdownQuietly(executorService, 10, TimeUnit.SECONDS);
+                LOG.debug("Shutdown of executor container was gracefully?: {}", gracefully);
+            } else {
+                LOG.warn("Executor Container could not be found.");
             }
-        } else {
-            LOG.warn("Executor Container could not be found.");
+        } finally {
+            LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+            MDC.clear();
         }
-        LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
-        MDC.clear();
     }
 
     @Override
@@ -124,20 +123,17 @@ public class KnxMockServerExtension
             final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), KnxTest.class).get();
             this.mockServer = new KnxMockServer(annotation.value());
 
-            this.executorService = Executors.newSingleThreadExecutor();
-            try {
-                this.executorService.submit(new WrappedMdcCallable<>(this.mockServer));
-                this.executorService.shutdown();
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            this.executorService = Executors.newSingleThreadExecutor(true);
+            this.executorService.submit(this.mockServer);
+            this.executorService.shutdown();
 
             // wait until server is ready for receiving packets from client
             final var startTime = System.currentTimeMillis();
             do {
                 Sleeper.milliseconds(500);
-                if ((System.currentTimeMillis() - startTime) > MAX_START_DELAY_IN_MILLISECONDS) {
-                    throw new RuntimeException("Could not start KNX Mock server within " + MAX_START_DELAY_IN_MILLISECONDS + "ms (" + (System.currentTimeMillis() - startTime) + ").");
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                if (elapsedTime > MAX_START_DELAY_IN_MILLISECONDS) {
+                    throw new RuntimeException("Could not start KNX Mock server within " + MAX_START_DELAY_IN_MILLISECONDS + "ms (elapsed: " + elapsedTime + "ms).");
                 }
             } while (!this.mockServer.isReady());
         }

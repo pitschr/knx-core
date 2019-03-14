@@ -25,11 +25,9 @@ import li.pitschmann.knx.link.body.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,10 +45,10 @@ public class ConnectResponseBodyTest {
     private ConnectionResponseData crd;
 
     @BeforeEach
-    public void before() throws UnknownHostException {
+    public void before() {
         this.channelId = 7;
         this.status = Status.E_NO_ERROR;
-        this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, InetAddress.getByName("3.3.3.3"), 3671);
+        this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(3, 3, 3, 3), 3671);
         this.crd = ConnectionResponseData.create(IndividualAddress.of(15, 15, 242));
     }
 
@@ -81,7 +79,7 @@ public class ConnectResponseBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = ConnectResponseBody.create(this.channelId, this.status, this.dataEndpoint, this.crd);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
@@ -89,7 +87,7 @@ public class ConnectResponseBodyTest {
         assertThat(body.getDataEndpoint()).isEqualTo(this.dataEndpoint);
         assertThat(body.getConnectionResponseData()).isEqualTo(this.crd);
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = ConnectResponseBody
                 .valueOf(new byte[]{0x07, 0x00, 0x08, 0x01, 0x03, 0x03, 0x03, 0x03, 0x0e, 0x57, 0x04, 0x04, (byte) 0xff, (byte) 0xf2});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
@@ -102,7 +100,7 @@ public class ConnectResponseBodyTest {
 
     @Test
     public void validCaseErrorStatus() {
-        // create()
+        // create
         final var body = ConnectResponseBody.create(10, Status.E_NO_MORE_CONNECTIONS, null, null);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(0x0A);
@@ -110,7 +108,7 @@ public class ConnectResponseBodyTest {
         assertThat(body.getDataEndpoint()).isNull();
         assertThat(body.getConnectionResponseData()).isNull();
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = ConnectResponseBody.valueOf(new byte[]{0x0A, 0x24});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

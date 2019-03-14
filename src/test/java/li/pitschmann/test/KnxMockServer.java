@@ -36,9 +36,9 @@ import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.WrappedMdcRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -206,13 +205,13 @@ public final class KnxMockServer implements Callable<KnxMockServer> {
         }
 
         // start heartbeat monitor
-        final var heartbeatMonitor = Executors.newSingleThreadExecutor();
-        heartbeatMonitor.submit(new WrappedMdcRunnable(new HeartbeatMonitorRunnable()));
+        final var heartbeatMonitor = Executors.newSingleThreadExecutor(true);
+        heartbeatMonitor.submit(new HeartbeatMonitorRunnable());
         heartbeatMonitor.shutdown();
 
         // start KNX Action runnable
-        final var actionExecutor = Executors.newSingleThreadExecutor();
-        actionExecutor.execute(new WrappedMdcRunnable(actionRunnable));
+        final var actionExecutor = Executors.newSingleThreadExecutor(true);
+        actionExecutor.execute(actionRunnable);
         actionExecutor.shutdown();
 
         try (final var selector = Selector.open();

@@ -23,11 +23,9 @@ import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,8 +39,8 @@ public class DescriptionRequestBodyTest {
     private HPAI controlEndpoint;
 
     @BeforeEach
-    public void before() throws UnknownHostException {
-        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, InetAddress.getByName("0.0.0.0"), 0);
+    public void before() {
+        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getAddressUnbound(), 0);
     }
 
     /**
@@ -65,7 +63,7 @@ public class DescriptionRequestBodyTest {
      */
     @Test
     public void validCases() {
-        // create()
+        // create
         final var body = DescriptionRequestBody.create(this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
@@ -73,7 +71,7 @@ public class DescriptionRequestBodyTest {
         final var bodyDefault = DescriptionRequestBody.create();
         assertThat(body.getRawData()).containsExactly(bodyDefault.getRawData());
 
-        // compare raw data of create() with valueOf()
+        // compare raw data with valueOf(byte[])
         final var bodyByBytes = DescriptionRequestBody.valueOf(new byte[]{0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 

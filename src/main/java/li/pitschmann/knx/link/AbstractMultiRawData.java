@@ -61,8 +61,9 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
     }
 
     /**
-     * Validates the given {@code rawData} raw data it qualifies for the current class. In case the validation fails
-     * then a {@link KnxException} will be thrown.
+     * Validates the given {@code rawData} raw data it qualifies for the
+     * current class. In case the validation fails a {@link KnxException}
+     * will be thrown.
      *
      * @param rawData
      */
@@ -71,9 +72,9 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
     /**
      * Returns a string representation for current object
      *
-     * @param inclRawData if the raw data should be a part of string representation, if {@code false} then it won't be a part of
-     *                    string
-     * @return string
+     * @param inclRawData if the raw data should be a part of string representation,
+     *                    if {@code false} then it won't be a part of string
+     * @return string representation with or without raw data
      */
     public abstract String toString(final boolean inclRawData);
 }

@@ -29,9 +29,8 @@ import li.pitschmann.knx.link.communication.KnxEventData;
 import li.pitschmann.knx.link.communication.queue.KnxInboxQueue;
 import li.pitschmann.knx.link.communication.queue.KnxOutboxQueue;
 import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.WrappedMdcRunnable;
-import li.pitschmann.utils.WrappedMdcSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ import javax.annotation.Nonnull;
 import java.nio.channels.SelectableChannel;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Flow;
 import java.util.concurrent.Future;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,14 +78,14 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         LOG.trace("{}: Inbox and Outbox Queues created.", id);
 
         // creates queue executor
-        this.queueExecutor = Executors.newFixedThreadPool(2);
-        this.queueExecutor.submit(new WrappedMdcRunnable(inboxQueue));
-        this.queueExecutor.submit(new WrappedMdcRunnable(outboxQueue));
+        this.queueExecutor = Executors.newFixedThreadPool(2, true);
+        this.queueExecutor.submit(inboxQueue);
+        this.queueExecutor.submit(outboxQueue);
         this.queueExecutor.shutdown();
         LOG.info("{}: Queue Executor created: {}", id, this.queueExecutor);
 
         // creates executor for communication
-        this.communicationExecutor = Executors.newFixedThreadPool(internalClient.getConfig().getCommunicationExecutorPoolSize());
+        this.communicationExecutor = Executors.newFixedThreadPool(internalClient.getConfig().getCommunicationExecutorPoolSize(), true);
         LOG.info("{}: Communication Executor created with size of {}: {}", id, internalClient.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
     }
 
@@ -129,6 +128,12 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         LOG.trace("*** {}: END ***", id);
     }
 
+    @Override
+    public void subscribe(Flow.Subscriber<? super Body> subscriber) {
+        LOG.debug("Subscriber added with MDC: {}", subscriber);
+        super.subscribe(Executors.wrapSubscriberWithMDC(subscriber));
+    }
+
     /**
      * Returns if given {@link Body} is compatible
      *
@@ -156,7 +161,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * or {@code null} if no response was received because of e.g. timeout
      */
     public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
-        return CompletableFuture.supplyAsync(new WrappedMdcSupplier<>(() -> sendAndWaitInternal(requestBody, msTimeout)), this.communicationExecutor);
+        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout), this.communicationExecutor);
     }
 
     /**
@@ -209,7 +214,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
             if (responseBody == null) {
                 LOG.warn("{}: No response received yet for request ({}/{}): {}", id, attempts, totalAttempts, requestBody);
             } else {
-                LOG.debug("{}: Response received for request({}/{}): {}, Response: {}", id, attempts, totalAttempts, requestBody, responseBody);
+                LOG.debug("{}: Response received for request ({}/{}): {}, Response: {}", id, attempts, totalAttempts, requestBody, responseBody);
             }
 
             // if no response and not interrupted try to repeat this step up to 'totalAttempts'

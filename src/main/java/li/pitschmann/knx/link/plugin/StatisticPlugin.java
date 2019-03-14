@@ -29,6 +29,7 @@ import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +89,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
 
     @Override
     public void onShutdown() {
-        executor.shutdownNow();
+        Closeables.shutdownQuietly(executor);
         // print last statistic
         LOG.info(StatisticPlugin.this.getStatisticAsText());
     }
