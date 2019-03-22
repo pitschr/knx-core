@@ -169,7 +169,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
          * @return unmodifiable deep copied map whereas the value is a {@link Long} (and not an {@link AtomicLong})
          */
         private static Map<Class<? extends Body>, Long> deepCopy(final Map<Class<? extends Body>, AtomicLong> map) {
-            return map.entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().longValue()));
+            return Maps.newHashMap(map).entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().longValue()));
         }
 
         @Override

@@ -36,7 +36,6 @@ import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.link.body.hpai.HPAI;
-import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.ControlChannelCommunicator;
@@ -62,7 +61,6 @@ import li.pitschmann.utils.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.channels.DatagramChannel;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -87,7 +85,6 @@ public final class InternalKnxClient implements KnxClient {
     private final KnxStatisticImpl statistics;
     private final KnxStatusPoolImpl statusPool;
     private final Configuration config;
-    private final ExecutorService communicationExecutor;
     private final ExecutorService pluginExecutor;
     private ExecutorService channelExecutor;
     private HPAI controlHPAI;
@@ -112,8 +109,6 @@ public final class InternalKnxClient implements KnxClient {
         this.statusPool = new KnxStatusPoolImpl();
 
         // executors with fixed threads for communication and subscription
-        this.communicationExecutor = Executors.newFixedThreadPool(config.getCommunicationExecutorPoolSize(), true);
-        LOG.info("Communication Executor created with size of {}: {}", config.getCommunicationExecutorPoolSize(), this.communicationExecutor);
         this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
         LOG.info("Plugin Executor created with size of {}: {}", config.getPluginExecutorPoolSize(), this.pluginExecutor);
         LOG.info("Observer Plugins: {}", this.config.getObserverPlugins());
@@ -187,8 +182,8 @@ public final class InternalKnxClient implements KnxClient {
             // communicators, HPAIs, KNX event pool
             this.controlChannelCommunicator = newControlChannelCommunicator();
             this.dataChannelCommunicator = newDataChannelCommunciator();
-            this.controlHPAI = HPAI.of(HostProtocol.IPV4_UDP, (DatagramChannel) controlChannelCommunicator.getChannel());
-            this.dataHPAI = HPAI.of(HostProtocol.IPV4_UDP, (DatagramChannel) dataChannelCommunicator.getChannel());
+            this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
+            this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());
 
             this.channelId = -1;
 
@@ -355,7 +350,6 @@ public final class InternalKnxClient implements KnxClient {
             LOG.info("Channel Communicator stopped gracefully. Status: {}", isOk);
 
             // shutdown executors now
-            isOk &= Closeables.shutdownQuietly(this.communicationExecutor, 0, TimeUnit.SECONDS);
             isOk &= Closeables.shutdownQuietly(this.channelExecutor, 0, TimeUnit.SECONDS);
             isOk &= Closeables.shutdownQuietly(this.pluginExecutor, 10, TimeUnit.SECONDS);
             LOG.info("KNX Services stopped gracefully. Status: {}", isOk);

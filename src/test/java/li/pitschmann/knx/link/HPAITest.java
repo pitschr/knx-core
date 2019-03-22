@@ -20,6 +20,7 @@ package li.pitschmann.knx.link;
 
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.hpai.HostProtocol;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Networker;
@@ -27,7 +28,11 @@ import org.junit.jupiter.api.Test;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
+import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectableChannel;
+import java.nio.channels.SocketChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,18 +46,24 @@ import static org.mockito.Mockito.when;
  */
 public final class HPAITest {
     private static final InetAddress LOCALHOST = Networker.getByAddress(127, 0, 0, 1);
+    private static final InetAddress TCP_ADDRESS = Networker.getByAddress(126, 0, 0, 1);
     private static final InetAddress UNBOUND = Networker.getAddressUnbound();
-    private static final DatagramChannel CHANNEL_MOCK;
+    private static final DatagramChannel udpChannelMock;
+    private static final SocketChannel tcpChannelMock;
 
     static {
-        // mock DatagramChannel
-        CHANNEL_MOCK = mock(DatagramChannel.class);
+        // mock UDP (DatagramChannel)
+        udpChannelMock = mock(DatagramChannel.class);
         final var socketMock = mock(DatagramSocket.class);
-        final var inetAddressMock = mock(InetAddress.class);
-        when(CHANNEL_MOCK.socket()).thenReturn(socketMock);
-        when(socketMock.getLocalAddress()).thenReturn(inetAddressMock);
+        when(udpChannelMock.socket()).thenReturn(socketMock);
+        when(socketMock.getLocalAddress()).thenReturn(LOCALHOST);
         when(socketMock.getLocalPort()).thenReturn(12345);
-        when(inetAddressMock.getAddress()).thenReturn(new byte[]{127, 0, 0, 1});
+
+        tcpChannelMock = mock(SocketChannel.class);
+        final var tcpSocketMock = mock(Socket.class);
+        when(tcpChannelMock.socket()).thenReturn(tcpSocketMock);
+        when(tcpSocketMock.getLocalAddress()).thenReturn(TCP_ADDRESS);
+        when(tcpSocketMock.getLocalPort()).thenReturn(45678);
     }
 
     /**
@@ -68,12 +79,24 @@ public final class HPAITest {
     }
 
     /**
-     * Tests the {@link HPAI#of(HostProtocol, java.nio.channels.DatagramChannel)}
+     * Tests the {@link HPAI#of(Channel)}
      */
     @Test
-    public void createByDatagramChannel() {
-        final var hpaiCreateByChannel = HPAI.of(HostProtocol.IPV4_TCP, CHANNEL_MOCK);
-        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_TCP, LOCALHOST, 12345);
+    public void createByUdpChannel() {
+        final var hpaiCreateByChannel = HPAI.of(udpChannelMock);
+        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 12345);
+
+        // assert
+        assertThat(hpaiCreateByChannel.getRawData()).containsExactly(hpaiCreateBy.getRawData());
+    }
+
+    /**
+     * Tests the {@link HPAI#of(Channel)}
+     */
+    @Test
+    public void createByTcpChannel() {
+        final var hpaiCreateByChannel = HPAI.of(tcpChannelMock);
+        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_TCP, TCP_ADDRESS, 45678);
 
         // assert
         assertThat(hpaiCreateByChannel.getRawData()).containsExactly(hpaiCreateBy.getRawData());
@@ -110,10 +133,8 @@ public final class HPAITest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> HPAI.of(null, CHANNEL_MOCK)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("protocol");
-        assertThatThrownBy(() -> HPAI.of(HostProtocol.IPV4_UDP, null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("channel");
-        assertThatThrownBy(() -> HPAI.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("hpaiRawData");
+        assertThatThrownBy(() -> HPAI.of((Channel) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("channel");
+        assertThatThrownBy(() -> HPAI.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("hpaiRawData");
         assertThatThrownBy(() -> HPAI.of(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("hpaiRawData");
 
         assertThatThrownBy(() -> HPAI.of(null, LOCALHOST, 80)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("protocol");
@@ -125,6 +146,11 @@ public final class HPAITest {
                 .hasMessageContaining("port");
         assertThatThrownBy(() -> HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 0xFFFF + 1)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("port");
+
+        // test unsupported channel
+        assertThatThrownBy(() -> HPAI.of(mock(SelectableChannel.class))) //
+                .isInstanceOf(KnxIllegalArgumentException.class) //
+                .hasMessageStartingWith("Channel type is not supported:");
     }
 
     /**
@@ -132,8 +158,12 @@ public final class HPAITest {
      */
     @Test
     public void testToString() {
-        assertThat(HPAI.of(HostProtocol.IPV4_TCP, CHANNEL_MOCK)).hasToString(String.format(
-                "HPAI{length=8 (0x08), protocol=%s, address=127.0.0.1 (0x7F 00 00 01), port=12345 (0x30 39), rawData=0x08 02 7F 00 00 01 30 39}",
+        assertThat(HPAI.of(udpChannelMock)).hasToString(String.format(
+                "HPAI{length=8 (0x08), protocol=%s, address=127.0.0.1 (0x7F 00 00 01), port=12345 (0x30 39), rawData=0x08 01 7F 00 00 01 30 39}",
+                HostProtocol.IPV4_UDP));
+
+        assertThat(HPAI.of(tcpChannelMock)).hasToString(String.format(
+                "HPAI{length=8 (0x08), protocol=%s, address=126.0.0.1 (0x7E 00 00 01), port=45678 (0xB2 6E), rawData=0x08 02 7E 00 00 01 B2 6E}",
                 HostProtocol.IPV4_TCP));
     }
 

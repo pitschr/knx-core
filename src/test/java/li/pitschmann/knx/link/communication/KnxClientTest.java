@@ -36,13 +36,10 @@ import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
-import li.pitschmann.test.KnxBody;
-import li.pitschmann.test.KnxMockServer;
-import li.pitschmann.test.KnxTest;
+import li.pitschmann.knx.server.MockServer;
+import li.pitschmann.knx.server.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
@@ -64,8 +61,6 @@ import static org.mockito.Mockito.when;
  * @author PITSCHR
  */
 public class KnxClientTest {
-    private static Logger LOG = LoggerFactory.getLogger(KnxClientTest.class);
-
     /**
      * Test following methods indirectly (inside {@link InternalKnxClient)}:
      * <ul>
@@ -76,30 +71,12 @@ public class KnxClientTest {
      * <li>{@link InternalKnxClient#notifyPluginsError(Throwable)}</li>
      * </ul>
      */
-    @KnxTest({
-            // On first request send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody
-            KnxBody.CONNECT_RESPONSE,
-            // wait for next packet (will be: ConnetionStateRequestBody)
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // ConnectionStateResponseBody
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // send TunnelingRequestBody
-            KnxBody.TUNNELING_REQUEST,
-            // send an erroneous body
-            KnxBody.Failures.CONNECT_RESPONSE_BAD_DATA,
-            // send an erroneous body #2
-            KnxBody.Failures.CONNECT_RESPONSE_BAD_DATA,
-            // wait for packet with type 'DisconnectRequestBody'
-            "WAIT=DISCONNECT_REQUEST",
-            // send DisconnectResponseBody
-            KnxBody.DISCONNECT_RESPONSE
-    })
+    @MockServerTest(tunnelingTrigger = {
+            "cemi(1)={2900bce010c84c0f0300800c23}",
+            "raw(2)={0610020600140000000100000000000004000000}"} // corrupted body
+    )
     @DisplayName("Default Client: Test notification of plug-ins")
-    public void testPlugins(final KnxMockServer mockServer) {
+    public void testPlugins(final MockServer mockServer) {
         final var configBuilder = mockServer.newConfigBuilder();
 
         // observer plug-in
@@ -148,6 +125,37 @@ public class KnxClientTest {
                 ConnectionStateRequestBody.class,
                 TunnelingAckBody.class,
                 DisconnectRequestBody.class);
+    }
+
+
+    /**
+     * Test {@link InternalKnxClient#getControlHPAI()} and {@link InternalKnxClient#getDataHPAI()}
+     */
+    @MockServerTest
+    @DisplayName("Internal Client: Test Control and Data HPAI")
+    public void testControlAndDataHPAI(final MockServer mockServer) {
+        try (final var client = new InternalKnxClient(mockServer.newConfigBuilder().build())) {
+            // internal client must be invoked explicitly
+            client.start();
+
+            // get connect request body that was received by mock server
+            final var connectRequestBody = (ConnectRequestBody) mockServer.getReceivedBodies()
+                    .stream()
+                    .filter(p -> p instanceof ConnectRequestBody)
+                    .findFirst()
+                    .get();
+
+            final var controlHPAI = client.getControlHPAI();
+            assertThat(controlHPAI).isNotNull().isEqualTo(connectRequestBody.getControlEndpoint());
+
+            final var dataHPAI = client.getDataHPAI();
+            assertThat(dataHPAI).isNotNull().isEqualTo(connectRequestBody.getDataEndpoint());
+
+            // and should be different
+            assertThat(controlHPAI).isNotSameAs(dataHPAI);
+        } catch (final Throwable t) {
+            fail("Unexpected test state", t);
+        }
     }
 
     /**
@@ -199,29 +207,6 @@ public class KnxClientTest {
     }
 
     /**
-     * Test {@link InternalKnxClient#getControlHPAI()} and {@link InternalKnxClient#getDataHPAI()}
-     */
-    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
-    @DisplayName("Default Client: Test Control and Data HPAI")
-    public void testControlAndDataHPAI(final KnxMockServer mockServer) {
-        try (final var client = new InternalKnxClient(mockServer.newConfigBuilder().build())) {
-            // internal client must be invoked explicitly
-            client.start();
-
-            final var controlHPAI = client.getControlHPAI();
-            assertThat(controlHPAI).isNotNull().isEqualTo(mockServer.getClientControlHPAI());
-
-            final var dataHPAI = client.getDataHPAI();
-            assertThat(dataHPAI).isNotNull().isEqualTo(mockServer.getClientDataHPAI());
-
-            // and should be different
-            assertThat(controlHPAI).isNotSameAs(dataHPAI);
-        } catch (final Throwable t) {
-            fail("Unexpected test state", t);
-        }
-    }
-
-    /**
      * Verify sending request body without any channel information (neither {@link ControlChannelRelated} nor
      * {@link DataChannelRelated})
      */
@@ -232,8 +217,12 @@ public class KnxClientTest {
         final var requestBody = mock(RequestBody.class);
 
         // verify if it is returning Illegal Argument Exception
-        assertThatThrownBy(() -> client.send(requestBody)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
-        assertThatThrownBy(() -> client.send(requestBody, 0)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("No channel relation defined for body.");
+        assertThatThrownBy(() -> client.send(requestBody))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("No channel relation defined for body.");
+        assertThatThrownBy(() -> client.send(requestBody, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("No channel relation defined for body.");
     }
 
     /**

@@ -115,7 +115,7 @@ public class BaseKnxClient implements KnxClient {
      * @return next sequence number
      */
     private int getNextSequence() {
-        return this.sequence.getAndUpdate(v -> (v + 1) % 0xFF);
+        return this.sequence.getAndUpdate(v -> (v + 1) % 256);
     }
 
     @Override

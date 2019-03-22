@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.test;
+package li.pitschmann.knx.server;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
-import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -39,18 +40,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Extension to start/stop the {@link KnxMockServer}. It will be invoked using {@link KnxTest} annotation.
+ * Extension to start/stop the {@link MockServer}. It will be invoked using {@link MockServerTest} annotation.
  *
  * @author PITSCHR
  */
-public class KnxMockServerExtension
+public class MockServerTestExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxMockServerExtension.class);
-    private static final Map<ExtensionContext, ExecutorContainerEntry> executorContainer = new ConcurrentHashMap<>();
+    private static final Logger LOG = LoggerFactory.getLogger(MockServerTestExtension.class);
+    private static final Map<ExtensionContext, MockServerTestContainer> testContainers = new ConcurrentHashMap<>();
     private static final AtomicInteger junitTestNr = new AtomicInteger();
 
     /**
-     * Initializes the {@link KnxMockServer} and start
+     * Initializes the {@link MockServer} and start
      *
      * @param context
      */
@@ -62,8 +63,8 @@ public class KnxMockServerExtension
         LOG.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
 
         // create and start KNX Mock Server
-        if (!executorContainer.containsKey(context)) {
-            executorContainer.put(context, new ExecutorContainerEntry(context));
+        if (!testContainers.containsKey(context)) {
+            testContainers.put(context, new MockServerTestContainer(context));
             LOG.debug("KNX Mock Server started.");
         } else {
             throw new IllegalStateException("KNX Mock Server already running.");
@@ -73,7 +74,7 @@ public class KnxMockServerExtension
     }
 
     /**
-     * Shuts down the {@link KnxMockServer} after test
+     * Shuts down the executor service running {@link MockServer} after test
      *
      * @param context
      */
@@ -81,12 +82,13 @@ public class KnxMockServerExtension
     public void afterTestExecution(final ExtensionContext context) throws Exception {
         LOG.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
         try {
-            if (executorContainer.containsKey(context)) {
-                final var executorService = executorContainer.remove(context).getExecutorService();
+            final var testContainer = testContainers.remove(context);
+            if (testContainer != null) {
+                final var executorService = testContainer.getExecutorService();
                 final var gracefully = Closeables.shutdownQuietly(executorService, 10, TimeUnit.SECONDS);
-                LOG.debug("Shutdown of executor container was gracefully?: {}", gracefully);
+                LOG.debug("Shutdown of executor service was gracefully?: {}", gracefully);
             } else {
-                LOG.warn("Executor Container could not be found.");
+                LOG.warn("Test container could not be found for context: {}", context);
             }
         } finally {
             LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
@@ -95,53 +97,61 @@ public class KnxMockServerExtension
     }
 
     @Override
-    public Object resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return executorContainer.get(context).getMockServer();
+    public MockServer resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+        return testContainers.get(context).getMockServer();
     }
 
     @Override
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return paramContext.getParameter().getType().equals(KnxMockServer.class);
+        return paramContext.getParameter().getType().equals(MockServer.class);
     }
 
     /**
-     * Entry for executor container
+     * Mock server test container holding mock server
      *
      * @author PITSCHR
      */
-    private class ExecutorContainerEntry {
-        private static final int MAX_START_DELAY_IN_MILLISECONDS = 5000; // 5 seconds
-        private final KnxMockServer mockServer;
+    private class MockServerTestContainer {
+        private final MockServer mockServer;
         private final ExecutorService executorService;
 
         /**
-         * Initializes {@link KnxMockServer} and starts as single thread executor immediately
+         * Initializes {@link MockServer} and starts as single thread executor immediately
          *
          * @param context
          */
-        public ExecutorContainerEntry(final ExtensionContext context) {
-            final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), KnxTest.class).get();
-            this.mockServer = new KnxMockServer(annotation.value());
+        public MockServerTestContainer(final ExtensionContext context) {
+            final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockServerTest.class).get();
+            final var stopwatch = Stopwatch.createStarted();
+            this.mockServer = new MockServer(annotation);
 
             this.executorService = Executors.newSingleThreadExecutor(true);
-            this.executorService.submit(this.mockServer);
+            this.executorService.execute(this.mockServer);
             this.executorService.shutdown();
 
-            // wait until server is ready for receiving packets from client
-            final var startTime = System.currentTimeMillis();
-            do {
-                Sleeper.milliseconds(500);
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                if (elapsedTime > MAX_START_DELAY_IN_MILLISECONDS) {
-                    throw new RuntimeException("Could not start KNX Mock server within " + MAX_START_DELAY_IN_MILLISECONDS + "ms (elapsed: " + elapsedTime + "ms).");
-                }
-            } while (!this.mockServer.isReady());
+            // wait until mock server is ready for receiving packets from client
+            final var wait = this.mockServer.waitReady();
+            if (!wait) {
+                // it took too long!
+                throw new RuntimeException("Could not start KNX mock server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
+            }
         }
 
-        public KnxMockServer getMockServer() {
+        /**
+         * Returns the mock server
+         *
+         * @return an instance of mock server, otherwise
+         */
+        public MockServer getMockServer() {
+            Preconditions.checkState(this.mockServer.isReady(), "KNX mock server is not ready.");
             return this.mockServer;
         }
 
+        /**
+         * Returns the executor service that is running the mock server
+         *
+         * @return executor service
+         */
         public ExecutorService getExecutorService() {
             return this.executorService;
         }

@@ -126,7 +126,7 @@ public class SleeperTest {
      */
     @Test
     @DisplayName("Sleep in milliseconds and thread interrupt")
-    public void testSleepWithPredicateTheradInterrupt() {
+    public void testSleepWithPredicateThreadInterrupt() {
         final var thread = new Thread(new Runnable() {
             @Override
             public void run() {

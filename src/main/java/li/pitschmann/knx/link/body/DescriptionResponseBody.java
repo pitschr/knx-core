@@ -62,7 +62,7 @@ import javax.annotation.Nonnull;
  *
  * @author PITSCHR
  */
-public final class DescriptionResponseBody extends AbstractMultiRawData implements ResponseBody, ControlChannelRelated {
+public final class DescriptionResponseBody extends AbstractMultiRawData implements ResponseBody, DescriptionChannelRelated {
     private static final Logger LOG = LoggerFactory.getLogger(DescriptionResponseBody.class);
     private final DeviceHardwareInformationDIB deviceHardwareInformation;
     private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;

@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.body.hpai;
 
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
@@ -27,7 +28,9 @@ import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Networker;
 
 import java.net.InetAddress;
+import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Objects;
 
 /**
@@ -98,18 +101,26 @@ public final class HPAI extends AbstractMultiRawData {
     /**
      * Returns an instance of {@link HPAI}
      *
-     * @param protocol
      * @param channel
      * @return immutable {@link HPAI}
      */
-    public static HPAI of(final HostProtocol protocol, final DatagramChannel channel) {
+    public static HPAI of(final Channel channel) {
         // validate
         if (channel == null) {
             throw new KnxNullPointerException("channel");
         }
 
-        final var socket = channel.socket();
-        return of(protocol, socket.getLocalAddress(), socket.getLocalPort());
+        // is channel supported?
+        if (channel instanceof DatagramChannel) {
+            // UDP
+            final var socket = ((DatagramChannel) channel).socket();
+            return of(HostProtocol.IPV4_UDP, socket.getLocalAddress(), socket.getLocalPort());
+        } else if (channel instanceof SocketChannel) {
+            final var socket = ((SocketChannel) channel).socket();
+            return of(HostProtocol.IPV4_TCP, socket.getLocalAddress(), socket.getLocalPort());
+        } else {
+            throw new KnxIllegalArgumentException(String.format("Channel type is not supported: %s", channel.getClass()));
+        }
     }
 
     /**

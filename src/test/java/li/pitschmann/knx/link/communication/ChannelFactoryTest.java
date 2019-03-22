@@ -113,12 +113,10 @@ public class ChannelFactoryTest {
     }
 
     /**
-     * Test failure
-     *
-     * @throws SocketException
+     * Test failure when creating a new data channel (because the socket address is 'unresolved')
      */
     @Test
-    public void testFailure() throws SocketException {
+    public void testFailure() {
         final var socketAddressMock = mock(InetSocketAddress.class);
         when(socketAddressMock.isUnresolved()).thenReturn(true);
 

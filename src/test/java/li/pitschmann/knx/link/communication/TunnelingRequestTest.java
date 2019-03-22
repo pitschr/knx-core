@@ -21,14 +21,17 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.server.MockServer;
+import li.pitschmann.knx.server.MockServerTest;
+import li.pitschmann.knx.server.strategy.impl.TunnelingWrongChannelIdStrategy;
 import li.pitschmann.test.KnxBody;
-import li.pitschmann.test.KnxMockServer;
-import li.pitschmann.test.KnxTest;
 import org.junit.jupiter.api.DisplayName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -38,32 +41,20 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class TunnelingRequestTest {
     /**
-     * Perform a communication between {@link KnxClient} and the KNX Net/IP device containing following:
+     * Perform a communication between {@link KnxClient} and the KNX Net/IP device
+     * containing following:
      * <p>
-     * Normal communication, however no Tunneling acknowledge packet is sent by client because of wrong channel id. It is simply ignored.
+     * Normal communication, however no Tunneling acknowledge packet is accepted
+     * by KNX client because of wrong channel id. It is simply ignored.
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody with channel id = 7
-            KnxBody.CONNECT_RESPONSE,
-            // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // send ConnectionStateResponseBody
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // Send TunnelingRequestBody with wrong channel id = 17 (0x11) instead of 7 (0x07)
-            KnxBody.Failures.TUNNELING_REQUEST_WRONG_CHANNEL_ID,
-            // and then DisconnectRequestBody
-            KnxBody.DISCONNECT_REQUEST,
-            // Wait for last response from client and quit mock server gracefully
-            "WAIT=NEXT"
-    })
+    @MockServerTest(tunnelingStrategy = TunnelingWrongChannelIdStrategy.class)
     @DisplayName("Packet with wrong Channel ID received. Ignore.")
-    public void testWrongChannelId(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
-            mockServer.waitForCompletion();
+    public void testWrongChannelId(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
+            // send tunneling request
+            final var ackBody = client.send(KnxBody.TUNNELING_REQUEST_BODY, 1000).get();
+            // no acknowledge received
+            assertThat(ackBody).isNull();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -73,8 +64,10 @@ public class TunnelingRequestTest {
                 DescriptionRequestBody.class, // #1
                 ConnectRequestBody.class, // #2
                 ConnectionStateRequestBody.class, // #3
-                // no ACK is being sent because of wrong channel id (=ignored)
-                DisconnectResponseBody.class // #4
+                TunnelingRequestBody.class, // #4 (wrong channel id acknowledge)
+                TunnelingRequestBody.class, // #5 (wrong channel id acknowledge)
+                TunnelingRequestBody.class, // #6 (wrong channel id acknowledge)
+                DisconnectRequestBody.class // #7
         );
     }
 
@@ -85,28 +78,14 @@ public class TunnelingRequestTest {
      * the {@link TunnelingRequestBody} is being to sent to control channel (instead of data channel)
      * It is simply ignored.
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody
-            KnxBody.CONNECT_RESPONSE,
-            // wait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // send ConnectionStateResponseBody
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // Send TunnelingRequestBody to wrong channel (control instead of data)
-            "CHANNEL=CONTROL{" + KnxBody.TUNNELING_REQUEST + "}",
-            // and then DisconnectRequestBody
-            KnxBody.DISCONNECT_REQUEST,
-            // Wait for last response from client and quit mock server gracefully
-            "WAIT=NEXT"
-    })
+    @MockServerTest(
+            disconnectTrigger = "after-tunnelingTrigger",
+            tunnelingTrigger = "channel=control,cemi(1)={2900bce010c84c0f0300800c23}")
     @DisplayName("Packet sent to wrong channel. Ignore.")
-    public void testWrongChannel(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
-            mockServer.waitForCompletion();
+    public void testWrongChannel(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
+            // wait until mock server closes the connection
+            mockServer.waitDone();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }

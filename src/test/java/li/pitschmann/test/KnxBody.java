@@ -32,6 +32,9 @@ import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.utils.Bytes;
 
+/**
+ * Some KNX bodies and hex-strings for testing purposes only
+ */
 public final class KnxBody {
     public static final String DESCRIPTION_REQUEST = "06100203000e0801000000000000";
     public static final String DESCRIPTION_RESPONSE = "06100204004636010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f75746572000000000000000000000000000a020201030104010501";
@@ -64,50 +67,5 @@ public final class KnxBody {
 
     private static <T extends Body> T toBody(final String hexString) {
         return BodyFactory.valueOf(Bytes.toByteArray(hexString));
-    }
-
-    public static final class Sequences {
-        public static final String MINIMAL_DISCONNECT_BY_CLIENT =
-                // On first request send DescriptionResponseBody
-                KnxBody.DESCRIPTION_RESPONSE + "," +
-                        // wait for next packet (will be: ConnectRequestBody)
-                        "WAIT=CONNECT_REQUEST," +
-                        // send ConnectResponseBody
-                        KnxBody.CONNECT_RESPONSE + "," +
-                        // wait for next packet (will be: ConnectionStateRequestBody)
-                        "WAIT=CONNECTION_STATE_REQUEST," +
-                        // ConnectionStateResponseBody
-                        KnxBody.CONNECTION_STATE_RESPONSE + "," +
-                        // wait for packet with type 'DisconnectRequestBody'
-                        "WAIT=DISCONNECT_REQUEST," +
-                        // send DisconnectResponseBody
-                        KnxBody.DISCONNECT_RESPONSE;
-        public static final String MINIMAL_DISCONNECT_BY_REMOTE =
-                // On first request send DescriptionResponseBody
-                KnxBody.DESCRIPTION_RESPONSE + "," +
-                        // wait for next packet (will be: ConnectRequestBody)
-                        "WAIT=CONNECT_REQUEST," +
-                        // send ConnectResponseBody
-                        KnxBody.CONNECT_RESPONSE + "," +
-                        // wait for next packet (will be: ConnectionStateRequestBody)
-                        "WAIT=CONNECTION_STATE_REQUEST," +
-                        // ConnectionStateResponseBody
-                        KnxBody.CONNECTION_STATE_RESPONSE + "," +
-                        // send DisconnectRequestBody
-                        KnxBody.DISCONNECT_REQUEST + "," +
-                        // Wait for last response from client and quit mock server gracefully
-                        "WAIT=NEXT";
-    }
-
-    public static final class Failures {
-        public static final String DESCRIPTION_RESPONSE_INVALID_SERVICE_TYPE = "061002FF002036010200100000000083497f01ece000170ccc1be08008da4d44";
-        public static final String DESCRIPTION_RESPONSE_NO_SUPPORTED_DEVICE_DIB = "06100204002036010200100000000083497f01ece000170ccc1be08008da4d44";
-        public static final String DESCRIPTION_RESPONSE_BAD_DATA = "06100204004634010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f7574657200000000000000000000000000";
-        public static final String DESCRIPTION_RESPONSE_WITHOUT_TUNNELING = "06100204004436010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f75746572000000000000000000000000000802020103010501";
-
-        public static final String CONNECT_RESPONSE_NO_MORE_CONNECTIONS = "06100206001407240801c0a801100e570404fff2";
-        public static final String CONNECT_RESPONSE_BAD_DATA = "0610020600140000000100000000000004000000";
-
-        public static final String TUNNELING_REQUEST_WRONG_CHANNEL_ID = "061004200015041100001100bce000000a96010081";
     }
 }

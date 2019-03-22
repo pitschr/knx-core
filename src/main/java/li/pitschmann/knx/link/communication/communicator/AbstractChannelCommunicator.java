@@ -117,7 +117,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                 }
                 // not accepted body
                 else {
-                    LOG.warn("{}: Body is not expected for channel and therefore ignored: {}", id, body);
+                    LOG.warn("{}: Body is not expected for this channel and therefore ignored: {}", id, body);
                 }
             } catch (final InterruptedException ex) {
                 LOG.debug("{}: Channel receiver is cancelled.", id);

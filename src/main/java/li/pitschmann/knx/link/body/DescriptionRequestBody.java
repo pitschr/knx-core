@@ -43,7 +43,7 @@ import javax.annotation.Nonnull;
  *
  * @author PITSCHR
  */
-public final class DescriptionRequestBody extends AbstractMultiRawData implements RequestBody, ControlChannelRelated {
+public final class DescriptionRequestBody extends AbstractMultiRawData implements RequestBody, DescriptionChannelRelated {
     private final HPAI controlEndpoint;
 
     private DescriptionRequestBody(final byte[] bytes) {

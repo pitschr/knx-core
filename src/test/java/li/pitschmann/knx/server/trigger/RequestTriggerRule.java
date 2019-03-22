@@ -16,21 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.test;
+package li.pitschmann.knx.server.trigger;
+
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.server.MockServer;
 
 /**
- * No Action behavior for the KNX Mock Server
- *
- * @author PITSCHR
+ * A trigger rule for sending request
  */
-public final class KnxMockServerNoAction implements KnxMockServerAction {
-    public static final KnxMockServerNoAction INSTANCE = new KnxMockServerNoAction();
+public class RequestTriggerRule implements TriggerRule {
+    private final MockServer mockServer;
+    private final Body body;
 
-    private KnxMockServerNoAction() {
+    public RequestTriggerRule(final MockServer mockServer, final Body body) {
+        this.mockServer = mockServer;
+        this.body = body;
     }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
+    public boolean apply() {
+        this.mockServer.addToOutbox(body);
+        return true;
     }
 }

@@ -68,7 +68,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * <li>Frame Format = {@link #DEFAULT_FRAME_FORMAT}</li>
      * </ul>
      *
-     * @param knxAddress to distinguish which address type should be used.
+     * @param knxAddress to distinguish which address type from destination address should be used.
      * @return immutable {@link ControlByte1} with default hop count and frame format
      */
     public static ControlByte2 useDefault(final KnxAddress knxAddress) {

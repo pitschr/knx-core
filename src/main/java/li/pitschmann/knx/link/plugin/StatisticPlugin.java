@@ -30,13 +30,13 @@ import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.utils.Closeables;
+import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class StatisticPlugin implements ExtensionPlugin {
     private static final Logger LOG = LoggerFactory.getLogger(StatisticPlugin.class);
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor(true);
     private static final long DEFAULT_INTERVAL_MILLISECONDS = TimeUnit.MINUTES.toMillis(1); // 60000 ms
     private static final StatisticFormat DEFAULT_FORMAT = StatisticFormat.JSON;
     private final long intervalMilliseconds;

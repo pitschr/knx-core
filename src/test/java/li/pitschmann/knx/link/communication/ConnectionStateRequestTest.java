@@ -18,17 +18,22 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.test.KnxBody;
-import li.pitschmann.test.KnxMockServer;
-import li.pitschmann.test.KnxTest;
+import li.pitschmann.knx.server.MockServer;
+import li.pitschmann.knx.server.MockServerTest;
+import li.pitschmann.knx.server.strategy.IgnoreStrategy;
 import org.junit.jupiter.api.DisplayName;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -40,33 +45,18 @@ public class ConnectionStateRequestTest {
     /**
      * Test successful connection state communication with KNX Net/IP device
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody
-            KnxBody.CONNECT_RESPONSE,
-            // wait for ConnectionStateRequestBody #1
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // send ConnectionStateResponseBody #1
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // wait for ConnectionStateRequestBody #2
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // send ConnectionStateResponseBody #2
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // wait for next packet (will be: DisconnectRequestBody)
-            "WAIT=DISCONNECT_REQUEST",
-            // DisconnectResponseBody
-            KnxBody.DISCONNECT_RESPONSE})
+    @MockServerTest
     @DisplayName("Successful Connection State Request communication")
-    public void testSuccessful(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
+    public void testSuccessful(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
             // after 2-nd connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST, 2);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+
+        // wait until done
+        mockServer.waitDone();
 
         // assert packets
         mockServer.assertReceivedPackets( //
@@ -81,45 +71,42 @@ public class ConnectionStateRequestTest {
     /**
      * Test no response of ConnectionStateResponseBody from KNX Net/IP device
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody
-            KnxBody.CONNECT_RESPONSE,
-            //  ait for next packet (will be: ConnectionStateRequestBody)
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // no connection state response, and then wait for next packet
-            // will be repeated for 12 times
-            "REPEAT=12{NO_ACTION,WAIT=NEXT}",
-            // DisconnectResponseBody
-            KnxBody.DISCONNECT_RESPONSE})
+    @MockServerTest(connectionStateStrategy = IgnoreStrategy.class)
     @DisplayName("Error: No Connection State Request received")
-    public void testFailureNoResponse(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
-            mockServer.waitForCompletion();
+    public void testFailureNoResponse(final MockServer mockServer) {
+        final var client = mockServer.createTestClient();
+        try (client) {
+            mockServer.waitDone();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
 
-        // assert packets
-        mockServer.assertReceivedPackets( //
-                DescriptionRequestBody.class, // #1
-                ConnectRequestBody.class, // #2
-                ConnectionStateRequestBody.class, // #3 (1/12)
-                ConnectionStateRequestBody.class, // #4 (2/12)
-                ConnectionStateRequestBody.class, // #5 (3/12)
-                ConnectionStateRequestBody.class, // #6 (4/12)
-                ConnectionStateRequestBody.class, // #7 (5/12)
-                ConnectionStateRequestBody.class, // #8 (6/12)
-                ConnectionStateRequestBody.class, // #9 (7/12)
-                ConnectionStateRequestBody.class, // #10 (8/12)
-                ConnectionStateRequestBody.class, // #11 (9/12)
-                ConnectionStateRequestBody.class, // #12 (10/12)
-                ConnectionStateRequestBody.class, // #13 (11/12)
-                ConnectionStateRequestBody.class, // #14 (12/12)
-                DisconnectRequestBody.class // #15
-        );
+        // asserts that client is closed
+        assertThat(client.isClosed()).isTrue();
+
+        // assert packets (it may happen that 6 or 7 ConnectionStateRequestBody
+        // are received by mock - depending how busy the machine is under test)
+        try {
+            mockServer.assertReceivedPackets(generateExpectedReceivedBodies(6));
+        } catch (final AssertionError error) {
+            mockServer.assertReceivedPackets(generateExpectedReceivedBodies(7));
+        }
+    }
+
+    /**
+     * Generate list of expected received bodies for assertion
+     *
+     * @param numberOfConnectionStateRequestBodies
+     * @return list of body classes
+     */
+    private final List<Class<? extends Body>> generateExpectedReceivedBodies(final int numberOfConnectionStateRequestBodies) {
+        final var list = new ArrayList<Class<? extends Body>>(numberOfConnectionStateRequestBodies + 3);
+        list.add(DescriptionRequestBody.class); // first request
+        list.add(ConnectRequestBody.class); // second request
+        for (var i = 0; i < numberOfConnectionStateRequestBodies; i++) {
+            list.add(ConnectionStateRequestBody.class);
+        }
+        list.add(DisconnectRequestBody.class); // last request
+        return list;
     }
 }

@@ -27,12 +27,16 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.test.KnxBody;
-import li.pitschmann.test.KnxMockServer;
-import li.pitschmann.test.KnxTest;
+import li.pitschmann.knx.server.MockServer;
+import li.pitschmann.knx.server.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -51,31 +55,14 @@ public class PerformanceKnxTest {
      * the system due I/O writing. Alter the log level in /test/resources/logback.xml
      * by setting the root level from to 'INFO'. Or start JUnit class with "-Droot-level=INFO"
      */
-    private static final int TIMES = 100;
+    private static final int TIMES = 260;
 
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device with N packets.
      */
-    @KnxTest({
-            // On first request send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody
-            KnxBody.CONNECT_RESPONSE,
-            // wait for next packet (will be: ConnetionStateRequestBody)
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // ConnectionStateResponseBody
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // send TunnelingRequestBody N-times
-            "REPEAT=" + TIMES + "{061004200015040700002e00bce010ff0a96010081}",
-            // wait for packet with type 'DisconnectRequestBody'
-            "WAIT=DISCONNECT_REQUEST",
-            // send DisconnectResponseBody
-            KnxBody.DISCONNECT_RESPONSE
-    })
-    @DisplayName("Test Performance (sending " + TIMES + "x Tunneling requests/acks)")
-    public void testSuccessPerformance(final KnxMockServer mockServer) {
+    @MockServerTest(tunnelingTrigger = "cemi(" + TIMES + ")={2E00BCE010FF0A96010081}")
+    @DisplayName("KNX Mock Server sending " + TIMES + "x Tunneling requests")
+    public void testSuccessPerformance(final MockServer mockServer) {
 
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
@@ -93,7 +80,7 @@ public class PerformanceKnxTest {
         }
 
         // wait until all packets are sent/received
-        mockServer.waitForCompletion();
+        mockServer.waitDone();
 
         // assert packets
         final var expectedClasses = Lists.<Class<? extends Body>>newLinkedList();
@@ -105,5 +92,71 @@ public class PerformanceKnxTest {
         }
         expectedClasses.add(DisconnectRequestBody.class);
         mockServer.assertReceivedPackets(expectedClasses);
+
+        // check sequence
+        final var tunnelingAckBodies = mockServer.getReceivedBodies().stream()
+                .filter(TunnelingAckBody.class::isInstance)
+                .map(TunnelingAckBody.class::cast)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(tunnelingAckBodies).hasSize(TIMES);
+        assertThat(tunnelingAckBodies.get(0).getSequence()).isEqualTo(0);
+        assertThat(tunnelingAckBodies.get(31).getSequence()).isEqualTo(31);
+        assertThat(tunnelingAckBodies.get(178).getSequence()).isEqualTo(178);
+        assertThat(tunnelingAckBodies.get(255).getSequence()).isEqualTo(255);
+        // after 0xFF it should start back with 0
+        assertThat(tunnelingAckBodies.get(256).getSequence()).isEqualTo(0);
+        assertThat(tunnelingAckBodies.get(258).getSequence()).isEqualTo(2);
+    }
+
+    /**
+     * Perform a happy path between {@link KnxClient} and the KNX Net/IP device with N packets.
+     * <p/>
+     * Here the client is sending {@code TIMES} tunneling requests to KNX mock server
+     */
+    @MockServerTest
+    @DisplayName("KNX Client sending " + TIMES + "x Tunneling requests")
+    public void testSendByClient(final MockServer mockServer) {
+
+        // Adjust JUnit specific configuration
+        final var config = mockServer.newConfigBuilder() //
+                // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
+                .setting("timeout.request.connectionstate", String.valueOf(Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT))
+                // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
+                .setting("interval.connectionstate", String.valueOf(Constants.Interval.CONNECTIONSTATE))
+                .build();
+
+        try (final var client = new DefaultKnxClient(config)) {
+            final var groupAddress = GroupAddress.of(1, 2, 3);
+            for (int i = 0; i < TIMES; i++) {
+                assertThat(client.readRequest(groupAddress).get()).isNotNull();
+            }
+        } catch (final Throwable t) {
+            fail("Unexpected test state", t);
+        }
+
+        // assert packets
+        final var expectedClasses = Lists.<Class<? extends Body>>newLinkedList();
+        expectedClasses.add(DescriptionRequestBody.class);
+        expectedClasses.add(ConnectRequestBody.class);
+        expectedClasses.add(ConnectionStateRequestBody.class);
+        for (var i = 0; i < TIMES; i++) {
+            expectedClasses.add(TunnelingRequestBody.class);
+        }
+        expectedClasses.add(DisconnectRequestBody.class);
+        mockServer.assertReceivedPackets(expectedClasses);
+
+        // check sequence
+        final var tunnelingRequestBodies = mockServer.getReceivedBodies().stream()
+                .filter(TunnelingRequestBody.class::isInstance)
+                .map(TunnelingRequestBody.class::cast)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(tunnelingRequestBodies).hasSize(TIMES);
+        assertThat(tunnelingRequestBodies.get(0).getSequence()).isEqualTo(0);
+        assertThat(tunnelingRequestBodies.get(56).getSequence()).isEqualTo(56);
+        assertThat(tunnelingRequestBodies.get(198).getSequence()).isEqualTo(198);
+        assertThat(tunnelingRequestBodies.get(255).getSequence()).isEqualTo(255);
+        // after 0xFF it should start back with 0
+        assertThat(tunnelingRequestBodies.get(256).getSequence()).isEqualTo(0);
+        assertThat(tunnelingRequestBodies.get(258).getSequence()).isEqualTo(2);
     }
 }

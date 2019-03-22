@@ -23,9 +23,9 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.server.MockServer;
+import li.pitschmann.knx.server.MockServerTest;
 import li.pitschmann.test.KnxBody;
-import li.pitschmann.test.KnxMockServer;
-import li.pitschmann.test.KnxTest;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 
@@ -52,9 +52,9 @@ public class BaseKnxClientTest {
      *
      * @param mockServer
      */
-    @KnxTest(KnxBody.Sequences.MINIMAL_DISCONNECT_BY_CLIENT)
+    @MockServerTest
     @DisplayName("Check Base KNX Client")
-    public void testCommonMethods(final KnxMockServer mockServer) {
+    public void testCommonMethods(final MockServer mockServer) {
         // mock extension plugin to verify if the init method is invoked with correct client instance
         final var extensionPlugin = mock(ExtensionPlugin.class);
 
@@ -86,34 +86,12 @@ public class BaseKnxClientTest {
      *
      * @param mockServer
      */
-    @KnxTest(
-            // On first request send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE + "," +
-                    // wait for next packet (will be: ConnectRequestBody)
-                    "WAIT=CONNECT_REQUEST," +
-                    // send ConnectResponseBody
-                    KnxBody.CONNECT_RESPONSE + "," +
-                    // wait for next packet (will be: ConnectionStateRequestBody)
-                    "WAIT=CONNECTION_STATE_REQUEST," +
-                    // ConnectionStateResponseBody
-                    KnxBody.CONNECTION_STATE_RESPONSE + "," +
-                    // send three tunneling acknowledges as we are getting three tunneling requests
-                    "WAIT=TUNNELING_REQUEST,06100421000a04070000," + // sequence = 0
-                    "WAIT=TUNNELING_REQUEST,06100421000a04070100," + // sequence = 1
-                    "WAIT=TUNNELING_REQUEST,06100421000a04070200," + // sequence = 2
-                    "WAIT=TUNNELING_REQUEST," + KnxBody.TUNNELING_ACK + "," + // sequence = 27
-                    "WAIT=TUNNELING_REQUEST," + KnxBody.TUNNELING_ACK_2 + "," + // sequence = 11
-                    // send one tunneling acknowledge for read request
-                    // wait for packet with type 'DisconnectRequestBody'
-                    "WAIT=DISCONNECT_REQUEST," +
-                    // send DisconnectResponseBody
-                    KnxBody.DISCONNECT_RESPONSE
-    )
+    @MockServerTest
     @DisplayName("Test write requests (incl. async)")
-    public void testWriteRequests(final KnxMockServer mockServer) {
+    public void testWriteRequests(final MockServer mockServer) {
         final var groupAddress = GroupAddress.of(1, 2, 3);
 
-        try (final var client = (BaseKnxClient) mockServer.newKnxClient()) {
+        try (final var client = mockServer.createTestClient()) {
             // async read request
             client.readRequest(groupAddress).get();
             // async write request with DPT
@@ -131,15 +109,15 @@ public class BaseKnxClientTest {
         }
 
         // assert if mock server got right sequences
-        final var requestBodies = mockServer.getReceivedBodies().stream().filter(b -> b.getServiceType() == ServiceType.TUNNELING_REQUEST).collect(Collectors.toList());
-        assertThat(requestBodies).hasSize(5);
+        final var tunnelingRequestBodies = mockServer.getReceivedBodies().stream().filter(TunnelingRequestBody.class::isInstance).map(TunnelingRequestBody.class::cast).collect(Collectors.toList());
+        assertThat(tunnelingRequestBodies).hasSize(5);
         // first two requests are sequences (incremental)
-        assertThat(((TunnelingRequestBody) requestBodies.get(0)).getSequence()).isEqualTo(0);
-        assertThat(((TunnelingRequestBody) requestBodies.get(1)).getSequence()).isEqualTo(1);
-        assertThat(((TunnelingRequestBody) requestBodies.get(2)).getSequence()).isEqualTo(2);
+        assertThat(tunnelingRequestBodies.get(0).getSequence()).isEqualTo(0);
+        assertThat(tunnelingRequestBodies.get(1).getSequence()).isEqualTo(1);
+        assertThat(tunnelingRequestBodies.get(2).getSequence()).isEqualTo(2);
         // 2nd last is pre-defined sequence (taken sample) = 27
-        assertThat(((TunnelingRequestBody) requestBodies.get(3)).getSequence()).isEqualTo(27);
+        assertThat(tunnelingRequestBodies.get(3).getSequence()).isEqualTo(27);
         // last is pre-defined sequence (taken sample) = 11
-        assertThat(((TunnelingRequestBody) requestBodies.get(4)).getSequence()).isEqualTo(11);
+        assertThat(tunnelingRequestBodies.get(4).getSequence()).isEqualTo(11);
     }
 }

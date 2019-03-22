@@ -16,31 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.test;
+package li.pitschmann.knx.server.strategy.impl;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import li.pitschmann.knx.link.body.Status;
+import li.pitschmann.knx.server.strategy.ConnectStrategy;
 
 /**
- * KNX Test annotation to run the test with {@link KnxMockServer}.
- *
- * @author PITSCHR
+ * No More Connections implementation for {@link ConnectStrategy}
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Test
-@ExtendWith(KnxMockServerExtension.class)
-public @interface KnxTest {
+public class ConnectNoMoreConnectionsStrategy extends DefaultConnectStrategy {
     /**
-     * The values should contain array of {@code <hex stream>} as string that should be sent by {@link KnxMockServer}
-     * when requesting from KNX client.
+     * Return no more connections status
      *
-     * @return array of hex streams for {@link KnxMockServerAction}
+     * @return status
      */
-    String[] value() default {};
+    protected Status getStatus() {
+        return Status.E_NO_MORE_CONNECTIONS;
+    }
 }

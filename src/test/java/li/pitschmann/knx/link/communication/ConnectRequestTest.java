@@ -25,9 +25,12 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.test.KnxBody;
-import li.pitschmann.test.KnxMockServer;
-import li.pitschmann.test.KnxTest;
+import li.pitschmann.knx.server.MockServer;
+import li.pitschmann.knx.server.MockServerTest;
+import li.pitschmann.knx.server.strategy.IgnoreStrategy;
+import li.pitschmann.knx.server.strategy.impl.ConnectBadDataStrategy;
+import li.pitschmann.knx.server.strategy.impl.ConnectNoMoreConnectionsStrategy;
+import li.pitschmann.knx.server.strategy.impl.DefaultConnectStrategy;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.assertj.core.api.Assertions.fail;
@@ -41,28 +44,14 @@ public class ConnectRequestTest {
     /**
      * Test no responding/not available KNX Net/IP device
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody attempt #1)
-            "WAIT=NEXT",
-            // do nothing (no ConnectResponseBody #1)
-            "NO_ACTION",
-            // wait for next packet (will be: ConnectRequestBody attempt #2)
-            "WAIT=NEXT",
-            // do nothing (no ConnectResponseBody #2)
-            "NO_ACTION",
-            // wait for next packet (will be: ConnectRequestBody attempt #3)
-            "WAIT=NEXT",
-            // do nothing (no ConnectResponseBody #1)
-            "NO_ACTION"})
+    @MockServerTest(connectStrategy = IgnoreStrategy.class)
     @DisplayName("Error: No Channel ID because of no response")
-    public void testFailureNoResponse(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
-            mockServer.waitForCompletion();
+    public void testFailureNoResponse(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
+            mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
-            // OK
+            // OK - we can abort mock server
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -79,20 +68,14 @@ public class ConnectRequestTest {
     /**
      * Test if all free connection slots are used on KNX Net/IP device. It will return the "no more connections" error.
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody with "No More Connections" error
-            KnxBody.Failures.CONNECT_RESPONSE_NO_MORE_CONNECTIONS})
+    @MockServerTest(connectStrategy = ConnectNoMoreConnectionsStrategy.class)
     @DisplayName("Error: No Channel ID because of no more connections")
-    public void testFailureNoMoreConnections(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
-            mockServer.waitForCompletion();
+    public void testFailureNoMoreConnections(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
+            mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
-            // OK
+            // OK - we can abort mock server
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -107,29 +90,10 @@ public class ConnectRequestTest {
     /**
      * Test if all free connection slots are used on KNX Net/IP device. It will return the "no more connections" error.
      */
-    @KnxTest({
-            // On first packet send DescriptionResponseBody
-            KnxBody.DESCRIPTION_RESPONSE,
-            // wait for next packet (will be: ConnectRequestBody attempt #1)
-            "WAIT=CONNECT_REQUEST",
-            // send ConnectResponseBody (corrupted #1)
-            KnxBody.Failures.CONNECT_RESPONSE_BAD_DATA,
-            // wait for next packet (will be: ConnectRequestBody attempt #2)
-            "WAIT=CONNECT_REQUEST",
-            // ConnectResponseBody (OK)
-            KnxBody.CONNECT_RESPONSE,
-            // wait for Connection State Request
-            "WAIT=CONNECTION_STATE_REQUEST",
-            // send ConnectionStateResponse
-            KnxBody.CONNECTION_STATE_RESPONSE,
-            // wait for DisconnectRequestBody from KNX Net/IP Client
-            "WAIT=DISCONNECT_REQUEST",
-            // send DisconnectResponseBody
-            KnxBody.DISCONNECT_RESPONSE
-    })
+    @MockServerTest(connectStrategy = {ConnectBadDataStrategy.class, DefaultConnectStrategy.class})
     @DisplayName("Error: Corrupted Connect Response and then OK")
-    public void testConnectionCorruptedAndThenOK(final KnxMockServer mockServer) {
-        try (final var client = mockServer.newKnxClient()) {
+    public void testConnectionCorruptedAndThenOK(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
             // OK
         } catch (final Throwable t) {
