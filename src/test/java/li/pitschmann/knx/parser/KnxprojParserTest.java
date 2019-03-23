@@ -55,7 +55,7 @@ public class KnxprojParserTest {
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
 
         final var groupAddresses = project.getGroupAddresses();
-        assertThat(groupAddresses).hasSize(63);
+        assertThat(groupAddresses).hasSize(66);
 
         // assert DPT-x group address
         // address = 0/0/10 => 0000 0000 0000 1010 => 10

@@ -36,6 +36,10 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Executors {
 
+    private Executors() {
+        throw new AssertionError("Do not touch me!");
+    }
+
     /**
      * Creates an Executor that uses a single worker thread operating
      * off an unbounded queue.
