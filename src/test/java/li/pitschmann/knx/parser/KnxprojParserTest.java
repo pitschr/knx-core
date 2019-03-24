@@ -55,7 +55,7 @@ public class KnxprojParserTest {
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
 
         final var groupAddresses = project.getGroupAddresses();
-        assertThat(groupAddresses).hasSize(66);
+        assertThat(groupAddresses).hasSize(73);
 
         // assert DPT-x group address
         // address = 0/0/10 => 0000 0000 0000 1010 => 10
@@ -71,7 +71,9 @@ public class KnxprojParserTest {
 
         // assert group address without DPT
         // address = 2/0/0 => 0001 0000 0000 0000 => 4096
-        assertGroupAddress(groupAddresses, 32, "P-0501-0_GA-149", 4096, "Sub Group - No DPT", null);
+        assertGroupAddress(groupAddresses, 32, "P-0501-0_GA-149", 4096, "Sub Group - No DPT 1-byte", null);
+        // address = 2/3/0 => 0001 0011 0000 0000 => 4864
+        assertGroupAddress(groupAddresses, 35, "P-0501-0_GA-188", 4864, "Sub Group - No DPT 4-bytes", null);
     }
 
     @Test
