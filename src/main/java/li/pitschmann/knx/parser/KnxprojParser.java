@@ -23,7 +23,6 @@ import com.google.common.base.Stopwatch;
 import com.google.common.io.ByteStreams;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
-import com.ximpleware.ParseException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
@@ -148,9 +147,8 @@ public final class KnxprojParser {
      *
      * @param zipFile to be parsed
      * @return list of KNX Group Addresses
-     * @throws IOException    I/O exception when reading ZIP stream
-     * @throws ParseException parse exception from VTD-XML
-     * @throws NavException   navigation exception from VTD-XML
+     * @throws IOException  I/O exception when reading ZIP stream
+     * @throws VTDException exception from VTD-XML
      */
     private static List<XmlGroupAddress> getKnxProjectGroupAddresses(final ZipFile zipFile) throws IOException, VTDException {
         // find 'project.xml' in ZIP file
@@ -184,8 +182,8 @@ public final class KnxprojParser {
             groupAddress.setId(readAttributeValue(vtdNav, "Id",
                     () -> new KnxprojParserException("Attribute <GroupAddress @Id /> not found.")));
 
-            groupAddress.setAddress(Integer.parseInt(readAttributeValue(vtdNav, "Address",
-                    () -> new KnxprojParserException("Attribute <GroupAddress @Address /> not found."))));
+            groupAddress.setAddress(readAttributeValue(vtdNav, "Address",
+                    () -> new KnxprojParserException("Attribute <GroupAddress @Address /> not found.")));
 
             groupAddress.setName(readAttributeValue(vtdNav, "Name",
                     () -> new KnxprojParserException("Attribute <GroupAddress @Name /> not found.")));
@@ -193,11 +191,34 @@ public final class KnxprojParser {
             // obtain optional @DatapointType
             groupAddress.setDatapointType(readAttributeValue(vtdNav, "DatapointType"));
 
+            // get flags (via ComObjectInstanceRef)
+            readFlags(vtdNav.cloneNav(), groupAddress);
+
             // add to list
             groupAddresses.add(groupAddress);
         }
 
         return groupAddresses;
+    }
+
+    /**
+     * Reads the flag for given {@link XmlGroupAddress}
+     *
+     * @param vtdNav       VTD navigator (must be cloned)
+     * @param groupAddress look up for flags that is connected to this group address
+     * @throws VTDException exception from VTD-XML
+     */
+    private static final void readFlags(final VTDNav vtdNav, final XmlGroupAddress groupAddress) throws VTDException {
+        final var vtdAutoPilot = new AutoPilot(vtdNav);
+        // select xpath and evaluate
+        vtdAutoPilot.selectXPath("//ComObjectInstanceRef[Connectors/Send[@GroupAddressRefId='" + groupAddress.getId() + "']]");
+        vtdAutoPilot.evalXPath();
+        // read flags
+        groupAddress.setCommunicationFlag(readAttributeValue(vtdNav, "CommunicationFlag"));
+        groupAddress.setReadFlag(readAttributeValue(vtdNav, "ReadFlag"));
+        groupAddress.setWriteFlag(readAttributeValue(vtdNav, "WriteFlag"));
+        groupAddress.setTransmitFlag(readAttributeValue(vtdNav, "TransmitFlag"));
+        groupAddress.setUpdateFlag(readAttributeValue(vtdNav, "UpdateFlag"));
     }
 
     /**

@@ -71,7 +71,7 @@ public class KnxClientTest {
      * <li>{@link InternalKnxClient#notifyPluginsError(Throwable)}</li>
      * </ul>
      */
-    @MockServerTest(tunnelingTrigger = {
+    @MockServerTest(requests = {
             "cemi(1)={2900bce010c84c0f0300800c23}",
             "raw(2)={0610020600140000000100000000000004000000}"} // corrupted body
     )

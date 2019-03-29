@@ -19,6 +19,7 @@
 package li.pitschmann.knx.server;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
@@ -38,12 +39,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.nio.channels.Selector;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -89,13 +93,23 @@ public final class MockServer implements Runnable {
         this.channelId = globalChannelIdPool.incrementAndGet() % 256;
         logger.info("Mock Server Channel ID: {}", this.channelId);
 
-        // start executor service for logic and heartbeat monitor
-        final var executorService = Executors.newFixedThreadPool(2, true);
-        final var mockServerLogic = new MockServerLogic(this, mockServerTest);
-        final var mockServerLogicFuture = executorService.submit(mockServerLogic);
+        // Start executor service heartbeat monitor
+        final var executorService = Executors.newSingleThreadExecutor(true);
         final var heartbeatMonitor = new MockServerHeartbeatMonitor(this);
-        final var heartbeatMonitorFuture = executorService.submit(heartbeatMonitor);
+        executorService.submit(heartbeatMonitor);
         executorService.shutdown();
+
+        final var publisher = new SubmissionPublisher<Body>();
+        // Subscribe KNX Mock Server Logic (mandatory)
+        publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerTest)));
+
+        // Subscribe KNX Mock Server Communicator if project path is set
+        if (!Strings.isNullOrEmpty(mockServerTest.projectPath())) {
+            final var projectPath = Paths.get(mockServerTest.projectPath());
+            Preconditions.checkArgument(Files.isReadable(projectPath), "File '" + mockServerTest.projectPath() + "' doesn't exists or is not readable!");
+
+            publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerProjectLogic(this, projectPath)));
+        }
 
         try (final var selector = Selector.open();
              this.serverChannel) {
@@ -111,10 +125,7 @@ public final class MockServer implements Runnable {
             // mark mock server as "ready" for communication
             this.ready = true;
 
-            while (!heartbeatMonitorFuture.isDone()
-                    && !mockServerLogicFuture.isDone()
-                    && !isCancelled()
-                    && isRunning()) {
+            while (!isCancelled() && isRunning()) {
                 selector.select();
                 final var selectedKeys = selector.selectedKeys().iterator();
                 while (selectedKeys.hasNext()) {
@@ -127,6 +138,7 @@ public final class MockServer implements Runnable {
                         heartbeatMonitor.ping();
                         this.receivedBodies.add(body);
                         this.inbox.add(body);
+                        publisher.submit(body);
                         if (logger.isDebugEnabled()) {
                             logger.debug("RECEIVED BODY from channel '{}': {}", key.channel(), body);
                         }
@@ -164,6 +176,7 @@ public final class MockServer implements Runnable {
             throwable = t;
         } finally {
             Closeables.shutdownQuietly(executorService);
+            Closeables.closeQuietly(publisher);
             this.done = true;
             logger.info("*** KNX Mock Server [main] END ***");
         }
@@ -234,6 +247,7 @@ public final class MockServer implements Runnable {
 
     /**
      * Returns if the KNX mock server has been cancelled or interrupted.
+     * But the KNX mock server may be still running until the thread is done.
      *
      * @return {@code true} if cancelled/interrupted, otherwise {@code false}
      */
@@ -291,12 +305,6 @@ public final class MockServer implements Runnable {
         }
 
         return notInterrupted;
-//        // wait until N-th occurrence of service type is in received packets
-//        // while waiting it may happen that received bodies is changed, therefore, we pass it using a new list
-//        while (isRunning() && !this.contains(new ArrayList<>(this.receivedBodies), serviceType, occurrence)) {
-//            Sleeper.milliseconds(100);
-//            logger.trace("Waiting for service type: {}", serviceType);
-//        }
     }
 
     /**

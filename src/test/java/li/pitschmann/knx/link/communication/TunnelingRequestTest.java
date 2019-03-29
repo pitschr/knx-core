@@ -79,8 +79,8 @@ public class TunnelingRequestTest {
      * It is simply ignored.
      */
     @MockServerTest(
-            disconnectTrigger = "after-tunnelingTrigger",
-            tunnelingTrigger = "channel=control,cemi(1)={2900bce010c84c0f0300800c23}")
+            disconnectTrigger = "after-trigger",
+            requests = "channel=control,cemi(1)={2900bce010c84c0f0300800c23}")
     @DisplayName("Packet sent to wrong channel. Ignore.")
     public void testWrongChannel(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {

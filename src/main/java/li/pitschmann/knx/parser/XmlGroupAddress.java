@@ -25,15 +25,24 @@ import com.google.common.base.MoreObjects;
  *
  * <pre>{@code
  *   <GroupAddress Id="P-0501-0_GA-117" Address="1" Name="Sub Group - DPT 1" Description="1.* (1-bit)" DatapointType="DPT-1" Puid="174" />
+ *
+ *   <ComObjectInstanceRef RefId="M-00FA_A-7000-02-D08C_O-9_R-900" ReadFlag="Enabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Enabled" Priority="High" IsActive="true">
+ * 	   <Connectors />
+ *   </ComObjectInstanceRef>
  * }</pre>
  *
  * @author pitschr
  */
 public final class XmlGroupAddress {
     private String id;
-    private int address;
+    private String address;
     private String name;
     private String datapointType;
+    private String communicationFlag;
+    private String readFlag;
+    private String writeFlag;
+    private String transmitFlag;
+    private String updateFlag;
 
     public String getId() {
         return id;
@@ -43,11 +52,11 @@ public final class XmlGroupAddress {
         this.id = id;
     }
 
-    public int getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(int address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
@@ -67,6 +76,46 @@ public final class XmlGroupAddress {
         this.datapointType = datapointType;
     }
 
+    public String getCommunicationFlag() {
+        return communicationFlag;
+    }
+
+    public void setCommunicationFlag(String communicationFlag) {
+        this.communicationFlag = communicationFlag;
+    }
+
+    public String getReadFlag() {
+        return readFlag;
+    }
+
+    public void setReadFlag(String readFlag) {
+        this.readFlag = readFlag;
+    }
+
+    public String getWriteFlag() {
+        return writeFlag;
+    }
+
+    public void setWriteFlag(String writeFlag) {
+        this.writeFlag = writeFlag;
+    }
+
+    public String getTransmitFlag() {
+        return transmitFlag;
+    }
+
+    public void setTransmitFlag(String transmitFlag) {
+        this.transmitFlag = transmitFlag;
+    }
+
+    public String getUpdateFlag() {
+        return updateFlag;
+    }
+
+    public void setUpdateFlag(String updateFlag) {
+        this.updateFlag = updateFlag;
+    }
+
     @Override
     public String toString() {
         // @formatter:off
@@ -75,6 +124,11 @@ public final class XmlGroupAddress {
                 .add("address", address)
                 .add("name", name)
                 .add("datapointType", datapointType)
+                .add("communicationFlag", this.communicationFlag)
+                .add("readFlag", this.readFlag)
+                .add("writeFlag", this.writeFlag)
+                .add("transmitFlag", this.transmitFlag)
+                .add("updateFlag", this.updateFlag)
                 .toString();
         // @formatter:on
     }

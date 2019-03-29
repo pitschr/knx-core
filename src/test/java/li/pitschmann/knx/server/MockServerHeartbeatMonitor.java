@@ -44,6 +44,7 @@ class MockServerHeartbeatMonitor implements Runnable {
             Sleeper.seconds(1);
         }
         logger.info("*** KNX Mock Server [heartbeat] END *** ({})", System.currentTimeMillis() - lastHeartbeat.get());
+        this.mockServer.cancel();
     }
 
     public void ping() {

@@ -204,7 +204,7 @@ public class AbstractKnxQueueTest {
             assertThat(
                     Sleeper.milliseconds(
                             () -> appender.anyMatch(s -> s.contains("Error while processing KNX packets")),
-                            1000)
+                            3000)
             ).isTrue();
             Sleeper.seconds(1);
             // verifies if the notify plugins about error has been called

@@ -32,13 +32,29 @@ public class XmlGroupAddressTest {
     @DisplayName("Tests XmlGroupAddress#toString()")
     public void testToString() {
         final var xmlGroupAddress = new XmlGroupAddress();
-        xmlGroupAddress.setAddress(4711);
-        xmlGroupAddress.setDatapointType("DPT-TEST");
-        xmlGroupAddress.setId("GROUP_ADDRESS_ID");
-        xmlGroupAddress.setName("GroupAddress Name");
+        xmlGroupAddress.setAddress("ADDRESS");
+        xmlGroupAddress.setDatapointType("DPT");
+        xmlGroupAddress.setId("ID");
+        xmlGroupAddress.setName("NAME");
+        xmlGroupAddress.setCommunicationFlag("C");
+        xmlGroupAddress.setReadFlag("R");
+        xmlGroupAddress.setWriteFlag("W");
+        xmlGroupAddress.setTransmitFlag("T");
+        xmlGroupAddress.setUpdateFlag("U");
 
         // test toString()
-        assertThat(xmlGroupAddress).hasToString("XmlGroupAddress{id=GROUP_ADDRESS_ID, address=4711, name=GroupAddress Name, datapointType=DPT-TEST}");
+        assertThat(xmlGroupAddress).hasToString("XmlGroupAddress" +
+                "{" +
+                "id=ID, " +
+                "address=ADDRESS, " +
+                "name=NAME, " +
+                "datapointType=DPT, " +
+                "communicationFlag=C, " +
+                "readFlag=R, " +
+                "writeFlag=W, " +
+                "transmitFlag=T, " +
+                "updateFlag=U" +
+                "}");
     }
 
 }

@@ -60,9 +60,9 @@ public class PerformanceKnxTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device with N packets.
      */
-    @MockServerTest(tunnelingTrigger = "cemi(" + TIMES + ")={2E00BCE010FF0A96010081}")
+    @MockServerTest(requests = "cemi(" + TIMES + ")={2E00BCE010FF0A96010081}")
     @DisplayName("KNX Mock Server sending " + TIMES + "x Tunneling requests")
-    public void testSuccessPerformance(final MockServer mockServer) {
+    public void testSendByMockServer(final MockServer mockServer) {
 
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //

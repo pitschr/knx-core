@@ -66,7 +66,7 @@ public class StatisticPluginTest {
                         "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
                         "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
-                    "\"outbound\":{"+
+                    "\"outbound\":{" +
                         "\"total\":{\"packets\":0,\"bytes\":0}," +
                         "\"description\":{\"request\":0,\"response\":0}," +
                         "\"connect\":{\"request\":0,\"response\":0}," +
@@ -104,7 +104,7 @@ public class StatisticPluginTest {
                         "\"tunneling\":{\"request\":22,\"acknowledge\":24}," +
                         "\"disconnect\":{\"request\":26,\"response\":28}" +
                     "}," +
-                    "\"outbound\":{"+
+                    "\"outbound\":{" +
                         "\"total\":{\"packets\":12,\"bytes\":13}," +
                         "\"description\":{\"request\":17,\"response\":0}," +
                         "\"connect\":{\"request\":19,\"response\":0}," +

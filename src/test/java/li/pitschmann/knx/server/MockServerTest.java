@@ -90,6 +90,13 @@ public @interface MockServerTest {
     Class<? extends ResponseStrategy>[] tunnelingStrategy() default {DefaultTunnelingStrategy.class};
 
     /**
+     * Returns the path of KNX Project that is being used for communication strategy
+     *
+     * @return
+     */
+    String projectPath() default "";
+
+    /**
      * Trigger when disconnect request frame should be sent by KNX mock server
      * <p/>
      * <ul>
@@ -101,17 +108,19 @@ public @interface MockServerTest {
      * wait 100 milliseconds and then send disconnect frame)
      * </li>
      * </ul>
+     * <p>
+     * Default: No disconnect trigger from KNX mock server, awaiting disconnect from client
      *
      * @return trigger command sequence
      */
-    String[] disconnectTrigger() default {}; // default: no trigger for KNX mock server, disconnect by client
+    String[] disconnectTrigger() default {};
 
     /**
-     * Trigger when tunneling requests should be sent by KNX mock server.
+     * Defines list of requests to be sent by KNX mock server (e.g. tunneling requests)
      * <p/>
      * <ul>
-     * <li>If empty, no trigger is setup and no action taken by KNX mock server.</li>
-     * <li>If defined, the commands are parsed and tunneling requests are sent by KNX mock server<br>
+     * <li>If empty, no request is setup and no action taken by KNX mock server.</li>
+     * <li>If defined, the commands are parsed and request packets are sent by KNX mock server<br>
      * Example: {@code "wait-request(2)=TUNNELING_REQUEST", "wait=200", "cemi=0x01..", "wait=5000",
      * "repeat(10){cemi=0x02..}"}<br>
      * (Given example, the KNX mock server will wait for 2nd TUNNELING request frame from KNX client,
@@ -119,8 +128,9 @@ public @interface MockServerTest {
      * and then send tunneling request (CEMI=0x02..) 10-times.
      * </li>
      * </ul>
+     * Default: no requests
      *
-     * @return
+     * @return request command sequence
      */
-    String[] tunnelingTrigger() default {}; // default: no trigger
+    String[] requests() default {};
 }

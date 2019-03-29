@@ -16,19 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.server.trigger;
+package li.pitschmann.knx.server.action;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.server.MockServer;
 
 /**
- * A trigger rule for sending request
+ * A request mock action defining body that should be sent by KNX Mock Server
  */
-public class RequestTriggerRule implements TriggerRule {
+public class RequestMockAction implements MockAction {
     private final MockServer mockServer;
     private final Body body;
 
-    public RequestTriggerRule(final MockServer mockServer, final Body body) {
+    public RequestMockAction(final MockServer mockServer, final Body body) {
         this.mockServer = mockServer;
         this.body = body;
     }

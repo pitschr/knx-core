@@ -18,21 +18,17 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
 import li.pitschmann.test.TestHelpers;
-import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Flow;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -58,7 +54,7 @@ public class ExecutorsTest {
     @Test
     @DisplayName("Fixed Thread Pool with/without MDC")
     public void testFixedThreadPool() {
-        assertThat(Executors.newFixedThreadPool(1,true).getClass().getSimpleName()).isEqualTo("MdcThreadPoolExecutor");
+        assertThat(Executors.newFixedThreadPool(1, true).getClass().getSimpleName()).isEqualTo("MdcThreadPoolExecutor");
         assertThat(Executors.newFixedThreadPool(1, false).getClass().getSimpleName()).isEqualTo("ThreadPoolExecutor");
     }
 
@@ -140,7 +136,7 @@ public class ExecutorsTest {
         @Override
         public Integer call() throws Exception {
             MDC.put("key", "I am a new value!");
-            return 1+2;
+            return 1 + 2;
         }
     }
 

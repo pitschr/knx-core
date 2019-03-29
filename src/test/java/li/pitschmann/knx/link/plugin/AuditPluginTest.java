@@ -52,18 +52,19 @@ public class AuditPluginTest {
 
         assertLogLine(appender,
                 // @formatter:off
-                "{\"type\":\"incoming\"," + //
-                        "\"header\":{" +
-                            "\"totalLength\":9," +
-                            "\"raw\":\"0x06 10 02 05 00 09\"" +
-                        "},"+
-                        "\"body\":{"+
-                            "\"service\":{"+
-                                "\"code\":\"0x02 05\","+
-                                "\"text\":\"CONNECT_REQUEST\""+
-                            "},"+
-                            "\"raw\":\"0x11 22 33\""+
-                        "}"+
+                "{" +
+                    "\"type\":\"incoming\"," +
+                    "\"header\":{" +
+                        "\"totalLength\":9," +
+                        "\"raw\":\"0x06 10 02 05 00 09\"" +
+                    "}," +
+                    "\"body\":{" +
+                        "\"service\":{" +
+                            "\"code\":\"0x02 05\"," +
+                            "\"text\":\"CONNECT_REQUEST\"" +
+                        "}," +
+                        "\"raw\":\"0x11 22 33\"" +
+                    "}" +
                 "}"
                 // @formatter:on
         );
@@ -86,18 +87,19 @@ public class AuditPluginTest {
 
         assertLogLine(appender,
                 // @formatter:off
-                "{\"type\":\"outgoing\"," + //
-                        "\"header\":{" +
-                            "\"totalLength\":8," +
-                            "\"raw\":\"0x06 10 04 21 00 08\"" +
-                        "},"+
-                        "\"body\":{"+
-                            "\"service\":{"+
-                                "\"code\":\"0x04 21\","+
-                                "\"text\":\"TUNNELING_ACK\""+
-                            "},"+
-                            "\"raw\":\"0x22 33\""+
-                        "}"+
+                "{" +
+                    "\"type\":\"outgoing\"," + //
+                    "\"header\":{" +
+                        "\"totalLength\":8," +
+                        "\"raw\":\"0x06 10 04 21 00 08\"" +
+                    "}," +
+                    "\"body\":{" +
+                        "\"service\":{" +
+                            "\"code\":\"0x04 21\"," +
+                            "\"text\":\"TUNNELING_ACK\"" +
+                        "}," +
+                        "\"raw\":\"0x22 33\"" +
+                    "}" +
                 "}"
                 // @formatter:on
         );
@@ -134,12 +136,13 @@ public class AuditPluginTest {
 
         assertLogLine(appender,
                 // @formatter:off
-                "{\"type\":\"error\"," +
-                        "\"message\":\"I am a RuntimeException\"," +
-                        "\"stacktrace\":[" +
-                            "\"org.class.Foo.add(Foo.java:123)\"," +
-                            "\"org.class.Bar.addAll(Bar.java:456)\"" +
-                        "]" +
+                "{" +
+                    "\"type\":\"error\"," +
+                    "\"message\":\"I am a RuntimeException\"," +
+                    "\"stacktrace\":[" +
+                        "\"org.class.Foo.add(Foo.java:123)\"," +
+                        "\"org.class.Bar.addAll(Bar.java:456)\"" +
+                    "]" +
                 "}"
                 // @formatter:on
         );

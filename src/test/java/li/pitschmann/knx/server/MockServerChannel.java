@@ -24,14 +24,43 @@ import java.io.IOException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 
+/**
+ * Interface for KNX Mock Server Channel (UDP, TCP)
+ *
+ * @param <T>
+ */
 public interface MockServerChannel<T extends SelectableChannel> extends AutoCloseable {
 
+    /**
+     * Returns the current channel
+     *
+     * @return channel
+     */
     T getChannel();
 
+    /**
+     * Returns the current port where KNX mock server is listening
+     *
+     * @return port
+     */
     int getPort();
 
+    /**
+     * Reads {@link Body} from {@link SelectionKey}
+     *
+     * @param key contains channel for incoming traffic
+     * @return An instance of {@link Body}
+     * @throws IOException
+     */
     Body read(SelectionKey key) throws IOException;
 
+    /**
+     * Sends {@link Body} to given {@link SelectionKey}
+     *
+     * @param key  contains channel for outgoing traffic
+     * @param body body to be sent
+     * @throws IOException
+     */
     void send(SelectionKey key, Body body) throws IOException;
 
 }

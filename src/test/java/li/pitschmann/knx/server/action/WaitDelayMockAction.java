@@ -16,16 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.server.trigger;
+package li.pitschmann.knx.server.action;
+
+import li.pitschmann.utils.Sleeper;
 
 /**
- * A trigger rule interface if given criteria was meet
+ * A request mock action defining that KNX Mock Server should wait for {@code N} milliseconds (delay)
  */
-public interface TriggerRule {
-    /**
-     * Applies if the given criteria was meet to trigger
-     *
-     * @return {@code true} if to trigger, otherwise {@code false}
-     */
-    boolean apply();
+public class WaitDelayMockAction implements MockAction {
+    private final int delay;
+
+    public WaitDelayMockAction(final int delay) {
+        this.delay = delay;
+    }
+
+    public boolean apply() {
+        Sleeper.milliseconds(delay);
+        return true;
+    }
 }

@@ -16,25 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.server.trigger;
+package li.pitschmann.knx.server.action;
 
-import li.pitschmann.knx.server.MockServer;
-import li.pitschmann.knx.server.strategy.impl.DefaultDisconnectStrategy;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A trigger rule for sending a disconnect request
+ * A mock action defining that KNX Mock Server should wait until the occurrence of service type
+ * (by given {@link AtomicInteger} which is atomically updated outside of this class) is meet
  */
-public class DisconnectRequestTriggerRule implements TriggerRule {
-    private final MockServer mockServer;
+public final class WaitServiceTypeMockAction implements MockAction {
+    private final AtomicInteger atomicInteger;
+    private final int occurrence;
 
-    public DisconnectRequestTriggerRule(final MockServer mockServer) {
-        this.mockServer = mockServer;
+    public WaitServiceTypeMockAction(final AtomicInteger atomicInteger, final int occurrence) {
+        this.atomicInteger = atomicInteger;
+        this.occurrence = occurrence;
     }
 
-    @Override
     public boolean apply() {
-        final var mockRequest = new DefaultDisconnectStrategy().createRequest(this.mockServer, null);
-        this.mockServer.addToOutbox(mockRequest.getBody());
-        return true;
+        return atomicInteger.get() >= occurrence;
     }
 }

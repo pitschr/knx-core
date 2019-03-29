@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
+import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,9 @@ public class KnxprojParserTest {
     private static final Path CORRUPTED_NO_GROUPADDRESS_ADDRESS = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Address).knxproj");
     private static final Path CORRUPTED_NO_GROUPADDRESS_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Name).knxproj");
 
-
+    /**
+     * Tests if {@link XmlProject} has been parsed correctly
+     */
     @Test
     @DisplayName("(Good) Test KNX Project with 3-Level group addresses")
     public void testGoodProjectV14() {
@@ -53,27 +56,58 @@ public class KnxprojParserTest {
         assertThat(project.getId()).isEqualTo("P-0501");
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
+        assertThat(project.getGroupAddresses()).hasSize(83);
+    }
 
-        final var groupAddresses = project.getGroupAddresses();
-        assertThat(groupAddresses).hasSize(73);
+    /**
+     * Tests if {@link XmlGroupAddress} have been parsed correctly
+     */
+    @Test
+    @DisplayName("Test group address datapoint types")
+    public void testDataPoints() {
+        final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_V14).getGroupAddresses();
 
         // assert DPT-x group address
-        // address = 0/0/10 => 0000 0000 0000 1010 => 10
-        assertGroupAddress(groupAddresses, 0, "P-0501-0_GA-117", 10, "Sub Group - DPT 1", "DPT-1");
-        // address = 0/3/10 => 0000 0011 0000 1010 => 778
-        assertGroupAddress(groupAddresses, 11, "P-0501-0_GA-128", 778, "Sub Group - DPT 12", "DPT-12");
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1", "DPT-1");
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-128", GroupAddress.of(0, 3, 10), "Sub Group - DPT 12", "DPT-12");
 
         // assert DPST-x-y group address
-        // address = 1/0/10 => 0000 1000 0000 1010 => 2058
-        assertGroupAddress(groupAddresses, 16, "P-0501-0_GA-133", 2058, "Sub Group - DPST 1.001", "DPST-1-1");
-        // address = 1/2/20 => 0000 1010 0001 0100 => 2570
-        assertGroupAddress(groupAddresses, 26, "P-0501-0_GA-143", 2580, "Sub Group - DPST 11.001", "DPST-11-1");
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-133", GroupAddress.of(1, 0, 10), "Sub Group - DPST 1.001", "DPST-1-1");
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-143", GroupAddress.of(1, 2, 20), "Sub Group - DPST 11.001", "DPST-11-1");
 
         // assert group address without DPT
-        // address = 2/0/0 => 0001 0000 0000 0000 => 4096
-        assertGroupAddress(groupAddresses, 32, "P-0501-0_GA-149", 4096, "Sub Group - No DPT 1-byte", null);
-        // address = 2/3/0 => 0001 0011 0000 0000 => 4864
-        assertGroupAddress(groupAddresses, 35, "P-0501-0_GA-188", 4864, "Sub Group - No DPT 4-bytes", null);
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-149", GroupAddress.of(2, 0, 0), "Sub Group - No DPT 1-byte", null);
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-188", GroupAddress.of(2, 3, 0), "Sub Group - No DPT 4-bytes", null);
+    }
+
+    /**
+     * Tests if flags of {@link XmlGroupAddress} have been parsed correctly
+     */
+    @Test
+    @DisplayName("Test group address flags")
+    public void testGroupAddressFlags() {
+        final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_V14).getGroupAddresses();
+
+        // No Flags
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-150", false, false, false, false, false);
+        // Communication only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-151", true, false, false, false, false);
+        // Read only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-152", false, true, false, false, false);
+        // Write only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-153", false, false, true, false, false);
+        // Transmit only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-154", false, false, false, true, false);
+        // Update only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-155", false, false, false, false, true);
+        // Communication + Read
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-156", true, true, false, false, false);
+        // Communication + Write
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-157", true, false, true, false, false);
+        // Communication + Read + Write
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-158", true, true, true, false, false);
+        // All flags
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-159", true, true, true, true, true);
     }
 
     @Test
@@ -147,11 +181,20 @@ public class KnxprojParserTest {
         TestHelpers.assertThatNotInstantiable(KnxprojParser.class);
     }
 
-    private void assertGroupAddress(final List<XmlGroupAddress> groupAddresses, final int index, final String id, final int address, final String name, final String datapointType) {
-        final var groupAddress = groupAddresses.get(index);
+    private void assertGroupAddress(final List<XmlGroupAddress> groupAddresses, final String id, final GroupAddress address, final String name, final String datapointType) {
+        final var groupAddress = groupAddresses.stream().filter(xga -> id.equals(xga.getId())).findFirst().get();
         assertThat(groupAddress.getId()).isEqualTo(id);
-        assertThat(groupAddress.getAddress()).isEqualTo(address);
+        assertThat(groupAddress.getAddress()).isEqualTo(address.getAddress());
         assertThat(groupAddress.getName()).isEqualTo(name);
         assertThat(groupAddress.getDatapointType()).isEqualTo(datapointType);
+    }
+
+    private void assertGroupAddressFlags(final List<XmlGroupAddress> groupAddresses, final String id, final boolean communication, final boolean read, final boolean write, final boolean transmit, final boolean update) {
+        final var groupAddress = groupAddresses.stream().filter(xga -> id.equals(xga.getId())).findFirst().get();
+        assertThat(groupAddress.getCommunicationFlag()).isEqualTo(communication ? "Enabled" : null);
+        assertThat(groupAddress.getReadFlag()).isEqualTo(read ? "Enabled" : null);
+        assertThat(groupAddress.getWriteFlag()).isEqualTo(write ? "Enabled" : null);
+        assertThat(groupAddress.getTransmitFlag()).isEqualTo(transmit ? "Enabled" : null);
+        assertThat(groupAddress.getUpdateFlag()).isEqualTo(update ? "Enabled" : null);
     }
 }
