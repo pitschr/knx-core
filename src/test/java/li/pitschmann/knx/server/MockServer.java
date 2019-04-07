@@ -19,7 +19,6 @@
 package li.pitschmann.knx.server;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
@@ -34,18 +33,21 @@ import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.Closeable;
 import java.nio.channels.Selector;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,27 +61,52 @@ import static org.assertj.core.api.Assertions.assertThat;
  * This mock server is used to test and simulate the communication between
  * KNX client and KNX Net/IP device.
  */
-public final class MockServer implements Runnable {
+public final class MockServer implements Runnable, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(MockServer.class);
     private static final AtomicInteger globalChannelIdPool = new AtomicInteger();
     private final AtomicInteger tunnelingRequestSequence = new AtomicInteger();
-    private final BlockingQueue<Body> inbox = new LinkedBlockingDeque<>();
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
     private final List<Body> receivedBodies = Collections.synchronizedList(Lists.newLinkedList());
     private final List<Body> sentBodies = Collections.synchronizedList(Lists.newLinkedList());
     private final MockServerChannel serverChannel = new MockServerDatagramChannel();
-    private final MockServerTest mockServerTest;
+    private final MockServerTest mockServerAnnotation;
+    private final ExecutorService executorService;
     private HPAI hpai;
     private IndividualAddress individualAddress;
     private int channelId;
     private boolean ready;
     private boolean cancel;
-    private boolean done;
     private Throwable throwable;
-    private BaseKnxClient client;
+    private DefaultKnxClient client;
 
-    public MockServer(final MockServerTest mockServerTest) {
-        this.mockServerTest = mockServerTest;
+    private MockServer(final MockServerTest mockServerAnnotation) {
+        this.mockServerAnnotation = Objects.requireNonNull(mockServerAnnotation);
+        this.executorService = Executors.newSingleThreadExecutor(true);
+        this.executorService.execute(this);
+        this.executorService.shutdown();
+    }
+
+    /**
+     * Creates the KNX Mock Server and start it immediately
+     * <p/>
+     * The configuration of mock server is tried to be resolved using annotation
+     * {@link MockServerTest} and will call {@link #createStarted(MockServerTest)}.
+     *
+     * @param context
+     * @return started KNX Mock Server
+     */
+    public static MockServer createStarted(final @Nonnull ExtensionContext context) {
+        return createStarted(AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockServerTest.class).get());
+    }
+
+    /**
+     * Creates the KNX Mock Server and start it immediately
+     *
+     * @param mockServerAnnotation
+     * @return started KNX Mock Server
+     */
+    public static MockServer createStarted(final @Nonnull MockServerTest mockServerAnnotation) {
+        return new MockServer(Objects.requireNonNull(mockServerAnnotation));
     }
 
     @Override
@@ -101,15 +128,10 @@ public final class MockServer implements Runnable {
 
         final var publisher = new SubmissionPublisher<Body>();
         // Subscribe KNX Mock Server Logic (mandatory)
-        publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerTest)));
+        publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerAnnotation)));
 
         // Subscribe KNX Mock Server Communicator if project path is set
-        if (!Strings.isNullOrEmpty(mockServerTest.projectPath())) {
-            final var projectPath = Paths.get(mockServerTest.projectPath());
-            Preconditions.checkArgument(Files.isReadable(projectPath), "File '" + mockServerTest.projectPath() + "' doesn't exists or is not readable!");
-
-            publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerProjectLogic(this, projectPath)));
-        }
+        publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerProjectLogic(this)));
 
         try (final var selector = Selector.open();
              this.serverChannel) {
@@ -125,7 +147,7 @@ public final class MockServer implements Runnable {
             // mark mock server as "ready" for communication
             this.ready = true;
 
-            while (!isCancelled() && isRunning()) {
+            while (!isCancelled()) {
                 selector.select();
                 final var selectedKeys = selector.selectedKeys().iterator();
                 while (selectedKeys.hasNext()) {
@@ -137,7 +159,6 @@ public final class MockServer implements Runnable {
                         final var body = serverChannel.read(key);
                         heartbeatMonitor.ping();
                         this.receivedBodies.add(body);
-                        this.inbox.add(body);
                         publisher.submit(body);
                         if (logger.isDebugEnabled()) {
                             logger.debug("RECEIVED BODY from channel '{}': {}", key.channel(), body);
@@ -177,7 +198,6 @@ public final class MockServer implements Runnable {
         } finally {
             Closeables.shutdownQuietly(executorService);
             Closeables.closeQuietly(publisher);
-            this.done = true;
             logger.info("*** KNX Mock Server [main] END ***");
         }
     }
@@ -219,25 +239,6 @@ public final class MockServer implements Runnable {
     }
 
     /**
-     * Waits until the KNX mock server is ready (up to 5 seconds)
-     *
-     * @return {@code true} if mocks erver is ready, otherwise {@code false}
-     * (e.g. because it was not ready within 5 seconds)
-     */
-    public boolean waitReady() {
-        return Sleeper.milliseconds(100, () -> isReady(), 5000);
-    }
-
-    /**
-     * Returns if the KNX mock server is still running
-     *
-     * @return {@code true} if mock server is still running, otherwise {@code false}
-     */
-    public boolean isRunning() {
-        return !this.done;
-    }
-
-    /**
      * Cancels the KNX mock server and all KNX mock server related threads
      * are subject to be stopped immediately.
      */
@@ -261,7 +262,7 @@ public final class MockServer implements Runnable {
      * @return {@code true} if mock server was completed gracefully, otherwise {@code false}
      */
     public boolean waitDone() {
-        final var notInterrupted = Sleeper.milliseconds(100, () -> !isRunning(), 30000);
+        final var notInterrupted = Sleeper.milliseconds(100, () -> this.executorService.isTerminated(), 30000);
 
         if (!notInterrupted) {
             logger.error("It took too long for waitDone(), here are bodies which were received/sent:\n" +
@@ -292,7 +293,7 @@ public final class MockServer implements Runnable {
      * @param occurrence
      */
     public boolean waitForReceivedServiceType(final ServiceType serviceType, final int occurrence) {
-        final var notInterrupted = Sleeper.milliseconds(100, () -> isRunning() && this.contains(new ArrayList<>(this.receivedBodies), serviceType, occurrence), 30000);
+        final var notInterrupted = Sleeper.milliseconds(100, () -> !isCancelled() && this.contains(new ArrayList<>(this.receivedBodies), serviceType, occurrence), 30000);
 
         if (!notInterrupted) {
             logger.error("It took too long for 'waitForReceivedServiceType', here are bodies which were received/sent:\n" +
@@ -337,8 +338,8 @@ public final class MockServer implements Runnable {
      * @param bodyClasses
      */
     public final void assertReceivedPackets(final Iterable<Class<? extends Body>> bodyClasses) {
-        // set mock server as done because we are verifying the received packets
-        this.done = true;
+        // set mock server as closed because we are verifying the received packets
+        this.close();
         final var receivedBodiesCopy = this.getReceivedBodies();
         assertThat(receivedBodiesCopy).hasSameSizeAs(bodyClasses);
         assertThat(this.throwable).isNull(); // no throwable thrown during execution
@@ -411,9 +412,9 @@ public final class MockServer implements Runnable {
      *
      * @return new instance of {@link BaseKnxClient}
      */
-    public BaseKnxClient createTestClient() {
+    public DefaultKnxClient createTestClient() {
         Preconditions.checkArgument(this.client == null, "We already created a test client. Please reuse it!");
-        return this.client = new DefaultKnxClient(newConfigBuilder().build());
+        return this.client = DefaultKnxClient.createStarted(newConfigBuilder().build());
     }
 
     /**
@@ -421,7 +422,7 @@ public final class MockServer implements Runnable {
      *
      * @return current instance of {@link BaseKnxClient}, otherwise {@link IllegalStateException}
      */
-    public BaseKnxClient getTestClient() {
+    public DefaultKnxClient getTestClient() {
         Preconditions.checkState(this.client != null, "Please call 'createTestClient()' first");
         return this.client;
     }
@@ -435,6 +436,7 @@ public final class MockServer implements Runnable {
         Preconditions.checkArgument(getPort() > 0, "Knx Client cannot be returned when port is not defined.");
         // provide a different configuration (e.g. timeouts are too long for tests)
         return Configuration.create(Networker.getLocalhost(), getPort())
+                .setting("executor.pool.plugin", "3") // 3 instead of 10
                 .setting("executor.pool.communication", "3") // 3 instead of 10
                 .setting("timeout.request.description", "2000") // 1s instead of 10s
                 .setting("timeout.request.connect", "2000") // 1s instead of 10s
@@ -446,20 +448,17 @@ public final class MockServer implements Runnable {
     }
 
     /**
-     * Returns the inbox used by KNX mock server
-     *
-     * @return blocking queue with arrived bodies
-     */
-    BlockingQueue<Body> getInbox() {
-        return inbox;
-    }
-
-    /**
      * Adds {@link Body} to outbox queue
      *
      * @param body
      */
     public void addToOutbox(final @Nonnull Body body) {
         this.outbox.add(body);
+    }
+
+    @Override
+    public void close() {
+        this.cancel();
+        this.executorService.shutdownNow();
     }
 }

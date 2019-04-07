@@ -67,7 +67,7 @@ public class KnxMainWrite extends AbstractKnxMain {
 
         // start KNX communication
         LOG.trace("START");
-        try (final var client = new DefaultKnxClient(ipAddress)) {
+        try (final var client = DefaultKnxClient.createStarted(ipAddress)) {
             final var ackBodies = Lists.<Future<TunnelingAckBody>>newArrayList();
             Sleeper.seconds(1);
             for (final String value : values) {

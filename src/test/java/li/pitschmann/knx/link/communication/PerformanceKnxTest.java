@@ -72,7 +72,7 @@ public class PerformanceKnxTest {
                 .setting("interval.connectionstate", String.valueOf(Constants.Interval.CONNECTIONSTATE))
                 .build();
 
-        try (final var client = new DefaultKnxClient(config)) {
+        try (final var client = DefaultKnxClient.createStarted(config)) {
             // after N-times tunneling acknowledge sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK, TIMES);
         } catch (final Throwable t) {
@@ -125,7 +125,7 @@ public class PerformanceKnxTest {
                 .setting("interval.connectionstate", String.valueOf(Constants.Interval.CONNECTIONSTATE))
                 .build();
 
-        try (final var client = new DefaultKnxClient(config)) {
+        try (final var client = DefaultKnxClient.createStarted(config)) {
             final var groupAddress = GroupAddress.of(1, 2, 3);
             for (int i = 0; i < TIMES; i++) {
                 assertThat(client.readRequest(groupAddress).get()).isNotNull();

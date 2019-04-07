@@ -22,6 +22,7 @@ import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,7 @@ public final class GroupAddressTest {
      * Tests <strong>valid</strong> addresses for free-level group address structure
      */
     @Test
+    @DisplayName("Test free-level group address structure")
     public void testValidFreeLevel() {
         this.assertGroupAddressFreeLevel(1, new byte[]{0x00, 0x01});
         this.assertGroupAddressFreeLevel(4610, new byte[]{(byte) 0x12, (byte) 0x02});
@@ -47,6 +49,7 @@ public final class GroupAddressTest {
      * Tests <strong>valid</strong> addresses for level 2 group address structure
      */
     @Test
+    @DisplayName("Test 2-level group address structure")
     public void testValid2Level() {
         this.assertGroupAddress2Level(0, 1, new byte[]{0x00, 0x01});
         this.assertGroupAddress2Level(7, 1024, new byte[]{(byte) 0x3C, (byte) 0x00});
@@ -57,10 +60,31 @@ public final class GroupAddressTest {
      * Tests <strong>valid</strong> addresses for level 3 group address structure
      */
     @Test
+    @DisplayName("Test 3-level group address structure")
     public void testValid3Level() {
         this.assertGroupAddress3Level(0, 0, 1, new byte[]{0x00, 0x01});
         this.assertGroupAddress3Level(7, 3, 128, new byte[]{(byte) 0x3B, (byte) 0x80});
         this.assertGroupAddress3Level(31, 7, 255, new byte[]{(byte) 0xFF, (byte) 0xFF});
+    }
+
+    /**
+     * Tests {@link GroupAddress#of(String)} that is being parsed for given string
+     */
+    @Test
+    public void testAddressByString() {
+        assertThat(GroupAddress.of("1")).isEqualTo(GroupAddress.of(1));
+        assertThat(GroupAddress.of("65535")).isEqualTo(GroupAddress.of(65535));
+
+        assertThat(GroupAddress.of("0/1")).isEqualTo(GroupAddress.of(0, 1));
+        assertThat(GroupAddress.of("31/2047")).isEqualTo(GroupAddress.of(31, 2047));
+
+        assertThat(GroupAddress.of("0/0/1")).isEqualTo(GroupAddress.of(0, 0, 1));
+        assertThat(GroupAddress.of("31/7/255")).isEqualTo(GroupAddress.of(31, 7, 255));
+
+        // bad cases
+        assertThatThrownBy(() -> GroupAddress.of((String) null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> GroupAddress.of("foobar")).isInstanceOf(NumberFormatException.class);
+        assertThatThrownBy(() -> GroupAddress.of("0/0/0/0")).isInstanceOf(KnxIllegalArgumentException.class);
     }
 
     /**
@@ -69,7 +93,7 @@ public final class GroupAddressTest {
     @Test
     public void invalidValueOf() {
         // null
-        assertThatThrownBy(() -> GroupAddress.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addressRawData");
+        assertThatThrownBy(() -> GroupAddress.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addressRawData");
 
         // address should have 2 bytes
         assertThatThrownBy(() -> GroupAddress.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)

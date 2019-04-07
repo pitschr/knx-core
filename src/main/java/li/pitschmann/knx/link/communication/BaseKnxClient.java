@@ -42,21 +42,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class BaseKnxClient implements KnxClient {
     private final AtomicInteger sequence = new AtomicInteger();
-    private final InternalKnxClient clientInternal;
+    private final InternalKnxClient internalClient;
 
     /**
      * Starts KNX client with given configuration
      *
      * @param config
      */
-    public BaseKnxClient(final Configuration config) {
-        clientInternal = new InternalKnxClient(config);
+    protected BaseKnxClient(final Configuration config) {
+        internalClient = new InternalKnxClient(config);
 
         // notifies all plug-ins about initialization
-        clientInternal.notifyPlugins(this, config.getAllPlugins(), Plugin::onInitialization);
-
-        // start services for KNX communication
-        clientInternal.start();
+        internalClient.notifyPlugins(this, config.getAllPlugins(), Plugin::onInitialization);
     }
 
     /**
@@ -73,7 +70,7 @@ public class BaseKnxClient implements KnxClient {
      */
     public Future<TunnelingAckBody> writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
-        return this.clientInternal.send(TunnelingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+        return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
@@ -90,7 +87,7 @@ public class BaseKnxClient implements KnxClient {
      */
     public Future<TunnelingAckBody> writeRequest(final GroupAddress address, final byte[] apciData) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
-        return this.clientInternal.send(TunnelingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+        return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
@@ -106,7 +103,7 @@ public class BaseKnxClient implements KnxClient {
      */
     public Future<TunnelingAckBody> readRequest(final GroupAddress address) {
         final var cemi = CEMI.useDefaultForGroupValueRead(address);
-        return this.clientInternal.send(TunnelingRequestBody.create(this.clientInternal.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+        return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
@@ -118,38 +115,42 @@ public class BaseKnxClient implements KnxClient {
         return this.sequence.getAndUpdate(v -> (v + 1) % 256);
     }
 
+    protected InternalKnxClient getInternalClient() {
+        return this.internalClient;
+    }
+
     @Override
     public Configuration getConfig() {
-        return this.clientInternal.getConfig();
+        return this.internalClient.getConfig();
     }
 
     @Override
     public boolean isClosed() {
-        return this.clientInternal.isClosed();
+        return this.internalClient.isClosed();
     }
 
     @Override
     public KnxStatistic getStatistic() {
-        return this.clientInternal.getStatistic().asUnmodifiable();
+        return this.internalClient.getStatistic().asUnmodifiable();
     }
 
     @Override
     public KnxStatusPool getStatusPool() {
-        return this.clientInternal.getStatusPool();
+        return this.internalClient.getStatusPool();
     }
 
     @Override
     public void close() {
-        this.clientInternal.close();
+        this.internalClient.close();
     }
 
     @Override
     public void send(Body body) {
-        this.clientInternal.send(body);
+        this.internalClient.send(body);
     }
 
     @Override
     public <T extends ResponseBody> CompletableFuture<T> send(RequestBody requestBody, long timeout) {
-        return this.clientInternal.send(requestBody, timeout);
+        return this.internalClient.send(requestBody, timeout);
     }
 }

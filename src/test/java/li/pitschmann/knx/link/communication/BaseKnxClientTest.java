@@ -26,6 +26,7 @@ import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.server.MockServer;
 import li.pitschmann.knx.server.MockServerTest;
 import li.pitschmann.test.KnxBody;
+import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -69,11 +71,15 @@ public class BaseKnxClientTest {
             assertThat(statistic).isNotNull();
             assertThat(statistic.getClass().getSimpleName()).isEqualTo("UnmodifiableKnxStatistic");
 
+            // wait bit until the extension plugin has been invoked asynchronously
+            // it may rarely happen that verify(..) fails because onInitialization(..)
+            // was not called in time
+            Sleeper.milliseconds(() -> !mockingDetails(extensionPlugin).getInvocations().isEmpty(), 1000);
             // verify if the init method of extension plugin has been called and the parameter is
             // the client (and not e.g. internal client)
             final var argCaptor = ArgumentCaptor.forClass(KnxClient.class);
             verify(extensionPlugin).onInitialization(argCaptor.capture());
-            assertThat(argCaptor.getValue()).isSameAs(client);
+            assertThat(argCaptor.getValue()).isInstanceOf(BaseKnxClient.class).isSameAs(client);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         } finally {
@@ -82,13 +88,13 @@ public class BaseKnxClientTest {
     }
 
     /**
-     * Tests common methods for {@link BaseKnxClient}
+     * Tests read and write requests methods for {@link BaseKnxClient}
      *
      * @param mockServer
      */
     @MockServerTest
-    @DisplayName("Test write requests (incl. async)")
-    public void testWriteRequests(final MockServer mockServer) {
+    @DisplayName("Test read and write requests (incl. async)")
+    public void testReadAndWriteRequests(final MockServer mockServer) {
         final var groupAddress = GroupAddress.of(1, 2, 3);
 
         try (final var client = mockServer.createTestClient()) {

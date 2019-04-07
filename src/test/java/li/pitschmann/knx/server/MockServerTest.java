@@ -90,13 +90,6 @@ public @interface MockServerTest {
     Class<? extends ResponseStrategy>[] tunnelingStrategy() default {DefaultTunnelingStrategy.class};
 
     /**
-     * Returns the path of KNX Project that is being used for communication strategy
-     *
-     * @return
-     */
-    String projectPath() default "";
-
-    /**
      * Trigger when disconnect request frame should be sent by KNX mock server
      * <p/>
      * <ul>

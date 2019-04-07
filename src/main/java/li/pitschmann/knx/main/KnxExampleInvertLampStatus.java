@@ -54,10 +54,10 @@ public class KnxExampleInvertLampStatus extends AbstractKnxMain {
         LOG.debug("KNX Net/IP Address: {}", address);
 
         // 2nd Argument: Get Group Address
-        final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, AbstractKnxMain::parseGroupAddress);
+        final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, GroupAddress::of);
         LOG.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
 
-        try (final var client = new DefaultKnxClient(address)) {
+        try (final var client = DefaultKnxClient.createStarted(address)) {
             // Sends the read request
             // The returned instance is the acknowledge sent by KNX Net/IP device indicating that read request was received
             final var readRequestAck = client.readRequest(groupAddress).get();

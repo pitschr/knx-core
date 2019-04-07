@@ -26,21 +26,35 @@ import li.pitschmann.knx.link.Configuration;
  * @author PITSCHR
  */
 public final class DefaultKnxClient extends BaseKnxClient {
-    /**
-     * Starts KNX client with given address and default configuration
-     *
-     * @param address of KNX Net/IP device in IP address format
-     */
-    public DefaultKnxClient(final String address) {
-        this(Configuration.create(address).build());
-    }
 
     /**
      * Starts KNX client with given configuration
      *
      * @param config
      */
-    public DefaultKnxClient(final Configuration config) {
+    private DefaultKnxClient(final Configuration config) {
         super(config);
+    }
+
+    /**
+     * Creates the Base KNX Client
+     *
+     * @param address
+     * @return
+     */
+    public static DefaultKnxClient createStarted(final String address) {
+        return createStarted(Configuration.create(address).build());
+    }
+
+    /**
+     * Creates the Base KNX Client
+     *
+     * @param config
+     * @return
+     */
+    public static DefaultKnxClient createStarted(final Configuration config) {
+        final var client = new DefaultKnxClient(config);
+        client.getInternalClient().start();
+        return client;
     }
 }

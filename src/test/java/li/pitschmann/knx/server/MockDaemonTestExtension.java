@@ -37,18 +37,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Extension to start/stop the {@link MockServer}. It will be invoked using {@link MockServerTest} annotation.
+ * Extension to start/stop the {@link MockDaemon} (and {@link MockServer} indirectly).
+ * <p/>
+ * It will be invoked using {@link MockDaemonTest} annotation.
  *
  * @author PITSCHR
  */
-public class MockServerTestExtension
+public class MockDaemonTestExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-    private static final Logger LOG = LoggerFactory.getLogger(MockServerTestExtension.class);
-    private static final Map<ExtensionContext, MockServer> mockServers = new ConcurrentHashMap<>();
+    private static final Logger LOG = LoggerFactory.getLogger(MockDaemonTestExtension.class);
+    private static final Map<ExtensionContext, MockDaemon> mockDaemons = new ConcurrentHashMap<>();
     private static final AtomicInteger junitTestNr = new AtomicInteger();
 
     /**
-     * Initializes the {@link MockServer} and start
+     * Initializes the {@link MockDaemon} and start
      *
      * @param context
      */
@@ -60,35 +62,35 @@ public class MockServerTestExtension
         LOG.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
 
         // create and start
-        if (!mockServers.containsKey(context)) {
+        if (!mockDaemons.containsKey(context)) {
             final var stopwatch = Stopwatch.createStarted();
-            final var mockServer = MockServer.createStarted(context);
+            final var mockDaemon = MockDaemon.createStarted(context);
 
-            // wait until mock server is ready for receiving packets from client (wait up to 5 seconds)
-            if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 5000)) {
+            // wait until mock daemon is ready for receiving packets from client (wait up to 10 seconds)
+            if (!Sleeper.milliseconds(100, () -> mockDaemon.isReady(), 10000)) {
                 // it took longer than 5 seconds -> abort
-                throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
+                throw new RuntimeException("Could not start KNX Mock Daemon (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
             }
 
-            mockServers.put(context, mockServer);
-            LOG.debug("KNX Mock Server started.");
+            mockDaemons.put(context, mockDaemon);
+            LOG.debug("KNX Mock Daemon started.");
         } else {
-            throw new IllegalStateException("KNX Mock Server already running.");
+            throw new IllegalStateException("KNX Mock Daemon already running.");
         }
 
         LOG.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
     }
 
     /**
-     * Shuts down the executor service running {@link MockServer} after test
+     * Shuts down the executor service running {@link MockDaemon} after test
      *
      * @param context
      */
     @Override
-    public void afterTestExecution(final ExtensionContext context) {
+    public void afterTestExecution(final ExtensionContext context) throws Exception {
         LOG.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
         try {
-            final var gracefully = Closeables.closeQuietly(mockServers.remove(context));
+            final var gracefully = Closeables.closeQuietly(mockDaemons.remove(context));
             LOG.debug("Shutdown of executor service was gracefully?: {}", gracefully);
         } finally {
             LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
@@ -97,12 +99,12 @@ public class MockServerTestExtension
     }
 
     @Override
-    public MockServer resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return mockServers.get(context);
+    public MockDaemon resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+        return mockDaemons.get(context);
     }
 
     @Override
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return paramContext.getParameter().getType().equals(MockServer.class);
+        return paramContext.getParameter().getType().equals(MockDaemon.class);
     }
 }

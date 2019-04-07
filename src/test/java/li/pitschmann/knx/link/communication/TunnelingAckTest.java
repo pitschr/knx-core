@@ -30,6 +30,7 @@ import li.pitschmann.knx.server.MockServerTest;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -60,6 +61,7 @@ public class TunnelingAckTest {
             fail("Unexpected test state", t);
         }
 
+        // wait until mock server is done
         mockServer.waitDone();
 
         // assert packets

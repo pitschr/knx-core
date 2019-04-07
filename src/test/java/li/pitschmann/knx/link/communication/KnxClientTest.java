@@ -87,12 +87,23 @@ public class KnxClientTest {
         final var extensionPlugin = mock(ExtensionPlugin.class);
         configBuilder.plugin(extensionPlugin);
 
-        try (final var client = new DefaultKnxClient(configBuilder.build())) {
+        try (final var client = DefaultKnxClient.createStarted(configBuilder.build())) {
             // wait for first tunneling ack body sent by client
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+
+        // assert packets
+        mockServer.assertReceivedPackets(
+                DescriptionRequestBody.class,
+                ConnectRequestBody.class,
+                ConnectionStateRequestBody.class,
+                TunnelingAckBody.class,
+                DisconnectRequestBody.class);
+
+        // wait until mock server is done (replied disconnect response to KNX client)
+        mockServer.waitDone();
 
         // verify number of notifications to observer plug-in
         verify(observerPlugin, times(1)).onInitialization(any());
@@ -117,14 +128,6 @@ public class KnxClientTest {
         verify(extensionPlugin, times(1)).onInitialization(any());
         verify(extensionPlugin, times(1)).onStart();
         verify(extensionPlugin, times(1)).onShutdown();
-
-        // assert packets
-        mockServer.assertReceivedPackets(
-                DescriptionRequestBody.class,
-                ConnectRequestBody.class,
-                ConnectionStateRequestBody.class,
-                TunnelingAckBody.class,
-                DisconnectRequestBody.class);
     }
 
 

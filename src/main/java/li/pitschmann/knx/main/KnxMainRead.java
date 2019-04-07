@@ -50,7 +50,7 @@ public class KnxMainRead extends AbstractKnxMain {
         LOG.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get Group Address
-        final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, AbstractKnxMain::parseGroupAddress);
+        final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, GroupAddress::of);
         LOG.debug("Group Address: {}", groupAddress);
 
         // 3rd Argument: Number of requests for Group Address
@@ -59,7 +59,7 @@ public class KnxMainRead extends AbstractKnxMain {
 
         // start KNX communication
         LOG.trace("START");
-        try (final var client = new DefaultKnxClient(ipAddress)) {
+        try (final var client = DefaultKnxClient.createStarted(ipAddress)) {
             final var statusPool = client.getStatusPool();
             Sleeper.seconds(1);
             LOG.debug("========================================================================");

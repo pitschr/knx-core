@@ -107,7 +107,7 @@ own program. It looks basically like:
 ````
 // Creates KNX client and start communication with your KNX Net/IP.
 // The closure of KXN communication will be handled automatically by KNX client.
-try (final var client = new DefaultKnxClient("192.168.0.10")) {
+try (final var client = DefaultKnxClient.createStarted("192.168.0.10")) {
     // do your stuff you want to do ...
 } catch (final Throwable t) {
     // catch all throwable you want to handle here (optional)
@@ -131,7 +131,7 @@ public class KnxMain {
     private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
     
     public static void main(final String[] args) {     
-        try (final var client = new DefaultKnxClient(IP_ADDRESS)) {   
+        try (final var client = DefaultKnxClient.createStarted(IP_ADDRESS)) {   
             // switch on (boolean: true)
             client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(true));
             // wait 3 seconds
@@ -155,7 +155,7 @@ public class KnxMain {
     private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
     
     public static void main(final String[] args) {     
-        try (final var client = new DefaultKnxClient(IP_ADDRESS)) {   
+        try (final var client = DefaultKnxClient.createStarted(IP_ADDRESS)) {   
             // switch on (byte: 0000 0001)
             client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue((byte)0x01));
             // wait 3 seconds
@@ -179,7 +179,7 @@ public class KnxMain {
     private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
     
     public static void main(final String[] args) {     
-        try (final var client = new DefaultKnxClient(IP_ADDRESS)) {   
+        try (final var client = DefaultKnxClient.createStarted(IP_ADDRESS)) {   
             // switch on (will be parsed using DPT1#SWITCH)
             client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue("on"));
             // wait 3 seconds
@@ -204,7 +204,7 @@ public class KnxMain {
     private static final GroupAddress GROUP_ADDRESS = GroupAddress.of(1,2,3);
     
     public static void main(final String[] args) {     
-        try (final var client = new DefaultKnxClient(IP_ADDRESS)) {
+        try (final var client = DefaultKnxClient.createStarted(IP_ADDRESS)) {
             // Sends the read request
             // The returned instance is the acknowledge sent by KNX Net/IP indicating that read request was received
             final var readRequestAck = client.readRequest(GROUP_ADDRESS).get();

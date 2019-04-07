@@ -44,6 +44,39 @@ public final class GroupAddress extends KnxAddress {
     }
 
     /**
+     * Returns an instance of {@link GroupAddress} based on format:
+     * <ul>
+     * <li>{@code X    } (The range must be between 1 and 65535)</li>
+     * <li>{@code X/Y  } (The range must be between 0/1 and 31/2047)</li>
+     * <li>{@code X/Y/Z} (The range must be between 0/0/1 and 31/7/255)</li>
+     * </ul>
+     * This method will call, based on occurrence of {@code /} (slash) character,
+     * either {@link #of(int)}, {@link #of(int, int)} or {@link #of(int, int, int)}
+     *
+     * @param addressAsString
+     * @return An instance of {@link GroupAddress}
+     * or {@link KnxIllegalArgumentException} when a wrong format was provided
+     */
+    public static GroupAddress of(final String addressAsString) {
+        final String[] groupAddressAreas = addressAsString.split("/");
+        if (groupAddressAreas.length == 3) {
+            return of( //
+                    Integer.valueOf(groupAddressAreas[0]), //
+                    Integer.valueOf(groupAddressAreas[1]), //
+                    Integer.valueOf(groupAddressAreas[2]) //
+            );
+        } else if (groupAddressAreas.length == 2) {
+            return of( //
+                    Integer.valueOf(groupAddressAreas[0]), //
+                    Integer.valueOf(groupAddressAreas[1]) //
+            );
+        } else if (groupAddressAreas.length == 1) {
+            return of(Integer.valueOf(groupAddressAreas[0]));
+        }
+        throw new KnxIllegalArgumentException("Invalid Group Address provided: " + addressAsString);
+    }
+
+    /**
      * Returns an instance of {@link GroupAddress}
      *
      * @param bytes complete byte array for {@link GroupAddress}

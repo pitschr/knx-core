@@ -111,7 +111,7 @@ public class AbstractKnxQueueTest {
             assertThat(
                     Sleeper.milliseconds(
                             () -> appender.anyMatch(s -> s.contains("KNX packet with wrong channel retrieved")),
-                            1000)
+                            3000)
             ).isTrue();
         } finally {
             Closeables.shutdownQuietly(executor);

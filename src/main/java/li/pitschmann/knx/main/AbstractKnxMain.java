@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.main;
 
-import li.pitschmann.knx.link.body.address.GroupAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,35 +101,5 @@ public abstract class AbstractKnxMain {
         }
         // not found
         return defaultValues;
-    }
-
-    /**
-     * Converts from either {@code x/y/z} to a <strong>3-level</strong> {@link GroupAddress} or {@code x/y} to a
-     * <strong>2-level</strong> {@link GroupAddress}
-     * <p>
-     * For 3-level address the value range is {@code [0/0/1, 31/7/255]}<br>
-     * For 2-level address the value range is {@code [0/1, 31/2047]}<br>
-     * For Free-level address the value range is {@code [1, 65535]}<br>
-     *
-     * @param groupAddress
-     * @return {@link GroupAddress}
-     */
-    protected static GroupAddress parseGroupAddress(final String groupAddress) {
-        final String[] groupAddressAreas = groupAddress.split("/");
-        if (groupAddressAreas.length == 3) {
-            return GroupAddress.of( //
-                    Integer.valueOf(groupAddressAreas[0]), //
-                    Integer.valueOf(groupAddressAreas[1]), //
-                    Integer.valueOf(groupAddressAreas[2]) //
-            );
-        } else if (groupAddressAreas.length == 2) {
-            return GroupAddress.of( //
-                    Integer.valueOf(groupAddressAreas[0]), //
-                    Integer.valueOf(groupAddressAreas[1]) //
-            );
-        } else if (groupAddressAreas.length == 1) {
-            return GroupAddress.of(Integer.valueOf(groupAddressAreas[0]));
-        }
-        throw new IllegalArgumentException("Invalid Group Address provided: " + groupAddress);
     }
 }
