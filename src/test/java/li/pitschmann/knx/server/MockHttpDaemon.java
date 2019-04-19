@@ -18,14 +18,17 @@
 
 package li.pitschmann.knx.server;
 
+import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.daemon.AbstractHttpDaemon;
 import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Creates a new instance of KNX Mock Daemon
@@ -50,7 +53,17 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
      */
     public static MockHttpDaemon createStarted(final @Nonnull ExtensionContext context) {
         final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockDaemonTest.class).get();
+
+        // start mock server
+        final var stopwatch = Stopwatch.createStarted();
         final var mockServer = MockServer.createStarted(annotation.mockServer());
+        // wait until mock server is ready for receiving packets from client (wait up to 5 seconds)
+        if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 5000)) {
+            // it took longer than 5 seconds -> abort
+            throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
+        }
+
+        // define mock daemon
         final var mockDaemon = new MockHttpDaemon(mockServer.newConfigBuilder().build());
 
         // get next free port
@@ -62,7 +75,6 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
             throw new AssertionError("Could not find a free port!");
         }
 
-        System.out.println("Using port: " + port);
         // start mock daemon with a non-standard port
         mockDaemon.start(port);
         return mockDaemon;
