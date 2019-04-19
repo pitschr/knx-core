@@ -87,7 +87,7 @@ public final class Configuration {
      * @return {@link Builder}
      */
     public static Builder create(final InetAddress address) {
-        return create(address, Constants.Protocol.PORT);
+        return create(address, Constants.Default.KNX_PORT);
     }
 
     /**
@@ -198,6 +198,10 @@ public final class Configuration {
 
     public long getTimeoutAliveConnection() {
         return getSetting("timeout.alive.connectionstate", Constants.Timeouts.CONNECTION_ALIVE_TIME, Long::valueOf);
+    }
+
+    public int getDaemonPort() {
+        return getSetting("daemon.port.http", Constants.Default.HTTP_DAEMON_PORT, Integer::valueOf);
     }
 
     /**

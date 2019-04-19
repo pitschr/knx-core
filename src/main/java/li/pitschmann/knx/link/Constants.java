@@ -85,20 +85,6 @@ public interface Constants {
     }
 
     /**
-     * Protocol Constants according to the KNX specification
-     */
-    interface Protocol {
-        /**
-         * KNX/IP Port Number
-         */
-        int PORT = 3671;
-        /**
-         * KNX/IP System Setup Multicast Address
-         */
-        InetAddress MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
-    }
-
-    /**
      * Interval Constants
      */
     interface Interval {
@@ -117,6 +103,14 @@ public interface Constants {
      */
     interface Default {
         /**
+         * KNX/IP Port Number
+         */
+        int KNX_PORT = 3671;
+        /**
+         * KNX/IP System Setup Multicast Address
+         */
+        InetAddress KNX_MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
+        /**
          * Default size for Communicator Executor Pool Size
          */
         int COMMUNICATION_POOL_SIZE = 10;
@@ -124,5 +118,9 @@ public interface Constants {
          * Default size for Plugin Executor Pool Size
          */
         int PLUGIN_POOL_SIZE = 10;
+        /**
+         * Default port for HTTP Daemon (same as Pippo)
+         */
+        int HTTP_DAEMON_PORT = 8338;
     }
 }

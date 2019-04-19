@@ -78,6 +78,16 @@
                 <artifactId>pippo-gson</artifactId>
                 <version>${version.pippo}</version>
             </dependency>
+            <dependency>
+                <groupId>ro.pippo</groupId>
+                <artifactId>pippo-controller</artifactId>
+                <version>${version.pippo}</version>
+            </dependency>
+            <dependency>
+                <groupId>ro.pippo</groupId>
+                <artifactId>pippo-guice</artifactId>
+                <version>${version.pippo}</version>
+            </dependency>
             <!-- Logging -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -137,6 +147,14 @@
         <dependency>
             <groupId>ro.pippo</groupId>
             <artifactId>pippo-gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-controller</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-guice</artifactId>
         </dependency>
         <!-- Logging -->
         <dependency>

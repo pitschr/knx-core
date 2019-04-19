@@ -19,19 +19,16 @@
 package li.pitschmann.knx.daemon;
 
 import li.pitschmann.knx.link.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.net.http.HttpClient;
 
 /**
  * Default HTTP Daemon for KNX communication
  * <p/>
  * It will internally start a KNX client to communicate with the KNX Net/IP device.
  */
-public class DefaultHttpDaemon extends AbstractHttpDaemon {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultHttpDaemon.class);
-
+public final class DefaultHttpDaemon extends AbstractHttpDaemon {
     private DefaultHttpDaemon(final @Nonnull Configuration configuration) {
         super(configuration);
     }
@@ -51,7 +48,8 @@ public class DefaultHttpDaemon extends AbstractHttpDaemon {
     // TODO Remove later - it is used for testing purposes only
     public static void main(String[] args) {
         final var daemon = DefaultHttpDaemon.createStarted(Configuration.create("192.168.1.16").build());
-        final var httpClient = daemon.createHttpClient();
+        final var httpClient = HttpClient.newHttpClient();
+        daemon.toString();
         httpClient.toString(); // todo something
     }
 }

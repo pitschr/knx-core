@@ -19,10 +19,13 @@
 package li.pitschmann.knx.server;
 
 import li.pitschmann.knx.daemon.AbstractHttpDaemon;
+import li.pitschmann.knx.link.Configuration;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 /**
  * Creates a new instance of KNX Mock Daemon
@@ -30,12 +33,10 @@ import javax.annotation.Nonnull;
  * This will also start the KNX Mock Server ({@link MockServer}) in background which will be used
  * for communication with the KNX Net/IP device
  */
-public class MockDaemon extends AbstractHttpDaemon {
-    private final MockServer mockServer;
+public final class MockHttpDaemon extends AbstractHttpDaemon {
 
-    private MockDaemon(final @Nonnull MockServer mockServer) {
-        super(mockServer.newConfigBuilder().build());
-        this.mockServer = mockServer;
+    private MockHttpDaemon(final @Nonnull Configuration configuration) {
+        super(configuration);
     }
 
     /**
@@ -47,11 +48,22 @@ public class MockDaemon extends AbstractHttpDaemon {
      * @param context
      * @return started KNX Mock Daemon
      */
-    public static MockDaemon createStarted(final @Nonnull ExtensionContext context) {
+    public static MockHttpDaemon createStarted(final @Nonnull ExtensionContext context) {
         final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockDaemonTest.class).get();
         final var mockServer = MockServer.createStarted(annotation.mockServer());
-        final var mockDaemon = new MockDaemon(mockServer);
-        mockDaemon.start();
+        final var mockDaemon = new MockHttpDaemon(mockServer.newConfigBuilder().build());
+
+        // get next free port
+        final int port;
+        try {
+            port = new ServerSocket(0).getLocalPort();
+        } catch (IOException e) {
+            // should never happen
+            throw new AssertionError("Could not find a free port!");
+        }
+
+        // start mock daemon with a non-standard port
+        mockDaemon.start(port);
         return mockDaemon;
     }
 }

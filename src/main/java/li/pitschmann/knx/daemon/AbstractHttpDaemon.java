@@ -19,8 +19,11 @@
 package li.pitschmann.knx.daemon;
 
 import com.google.common.base.Preconditions;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -29,7 +32,9 @@ import ro.pippo.core.HttpConstants;
 import ro.pippo.core.Pippo;
 
 import javax.annotation.Nonnull;
-import java.net.http.HttpClient;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpRequest;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -41,6 +46,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(AbstractHttpDaemon.class);
     private final Configuration configuration;
     private ExecutorService executorService;
+    private int port;
     private boolean ready;
     private boolean cancel;
 
@@ -49,25 +55,35 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     }
 
     /**
-     * Starts the HTTP Daemon
+     * Starts the HTTP Daemon with default port (8338)
      */
-    protected void start() {
+    protected final void start() {
+        start(configuration.getDaemonPort());
+    }
+
+    /**
+     * Starts the HTTP Daemon
+     *
+     * @param port the port that should be used by HTTP Daemon
+     */
+    protected final void start(final int port) {
         Preconditions.checkState(this.executorService == null, "It seems the KNX Daemon is already started?");
+        this.port = port;
         this.executorService = Executors.newSingleThreadExecutor(true);
         this.executorService.execute(this);
         this.executorService.shutdown();
     }
 
     @Override
-    public void run() {
-        final var pippo = new Pippo(new KnxHttpApplication());
+    public final void run() {
+        final var pippo = new Pippo(new HttpDaemonApplication());
 
         try (final var client = DefaultKnxClient.createStarted(configuration)) {
-            ((KnxHttpApplication) pippo.getApplication()).setKnxClient(client);
+            ((HttpDaemonApplication) pippo.getApplication()).setKnxClient(client);
             pippo.getApplication().getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
-            pippo.start();
+            pippo.start(this.port);
             ready = true;
-            logger.debug("Http Daemon Server started: {}", client);
+            logger.debug("Http Daemon Server started at port {}: {}", port, client);
             while (!isCancelled() && Sleeper.seconds(1)) {
                 // sleep 1 second
                 logger.debug("ping...");
@@ -83,7 +99,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     /**
      * Cancels the KNX Daemon
      */
-    public void cancel() {
+    public final void cancel() {
         this.cancel = true;
     }
 
@@ -92,7 +108,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      *
      * @return {@code true} if cancelled/interrupted, otherwise {@code false}
      */
-    public boolean isCancelled() {
+    public final boolean isCancelled() {
         return cancel || Thread.currentThread().isInterrupted();
     }
 
@@ -101,22 +117,32 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      *
      * @return {@code true} if daemon and server is ready, otherwise {@code false}
      */
-    public boolean isReady() {
+    public final boolean isReady() {
         return this.ready;
     }
 
     /**
-     * Creates a new instance of {@link HttpClient} that is designed to communicate with the
-     * KNX Daemon directly
+     * Creates a new {@link HttpRequest.Builder} for requests to KNX Daemon.
+     * <p/>
+     * As we are using communicating via JSON only, the headers {@link HttpHeaders#ACCEPT},
+     * {@link HttpHeaders#CONTENT_TYPE} are pre-defined with {@link MediaType#JSON_UTF_8}
      *
-     * @return a new instance of {@link HttpClient}
+     * @param path the path to be requested to KNX Daemon
+     * @return Builder for HttpRequest
      */
-    public HttpClient createHttpClient() {
-        return HttpClient.newHttpClient();
+    public final HttpRequest.Builder newRequestBuilder(final String path) {
+        Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
+        try {
+            return HttpRequest.newBuilder(new URI("http://localhost:" + this.port + path))
+                    .header(HttpHeaders.ACCEPT, MediaType.JSON_UTF_8.toString())
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
+        } catch (URISyntaxException e) {
+            throw new KnxIllegalArgumentException("Invalid path provided: " + path);
+        }
     }
 
     @Override
-    public void close() {
+    public final void close() {
         this.cancel();
         this.executorService.shutdownNow();
     }

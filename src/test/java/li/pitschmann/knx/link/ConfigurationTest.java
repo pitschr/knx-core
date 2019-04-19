@@ -43,7 +43,7 @@ public class ConfigurationTest {
         final var config1 = Configuration.create("127.0.1.1").build();
         final var config1Endpoint = config1.getEndpoint();
         assertThat(config1Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
-        assertThat(config1Endpoint.getPort()).isEqualTo(Constants.Protocol.PORT);
+        assertThat(config1Endpoint.getPort()).isEqualTo(Constants.Default.KNX_PORT);
 
         // creates a new with port
         final var config2 = Configuration.create("127.0.1.2:4711").build();

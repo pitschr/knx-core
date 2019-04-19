@@ -37,20 +37,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Extension to start/stop the {@link MockDaemon} (and {@link MockServer} indirectly).
+ * Extension to start/stop the {@link MockHttpDaemon} (and {@link MockServer} indirectly).
  * <p/>
  * It will be invoked using {@link MockDaemonTest} annotation.
  *
  * @author PITSCHR
  */
-public class MockDaemonTestExtension
+public final class MockDaemonTestExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     private static final Logger LOG = LoggerFactory.getLogger(MockDaemonTestExtension.class);
-    private static final Map<ExtensionContext, MockDaemon> mockDaemons = new ConcurrentHashMap<>();
+    private static final Map<ExtensionContext, MockHttpDaemon> mockDaemons = new ConcurrentHashMap<>();
     private static final AtomicInteger junitTestNr = new AtomicInteger();
 
     /**
-     * Initializes the {@link MockDaemon} and start
+     * Initializes the {@link MockHttpDaemon} and start
      *
      * @param context
      */
@@ -64,7 +64,7 @@ public class MockDaemonTestExtension
         // create and start
         if (!mockDaemons.containsKey(context)) {
             final var stopwatch = Stopwatch.createStarted();
-            final var mockDaemon = MockDaemon.createStarted(context);
+            final var mockDaemon = MockHttpDaemon.createStarted(context);
 
             // wait until mock daemon is ready for receiving packets from client (wait up to 10 seconds)
             if (!Sleeper.milliseconds(100, () -> mockDaemon.isReady(), 10000)) {
@@ -82,7 +82,7 @@ public class MockDaemonTestExtension
     }
 
     /**
-     * Shuts down the executor service running {@link MockDaemon} after test
+     * Shuts down the executor service running {@link MockHttpDaemon} after test
      *
      * @param context
      */
@@ -99,12 +99,12 @@ public class MockDaemonTestExtension
     }
 
     @Override
-    public MockDaemon resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+    public MockHttpDaemon resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
         return mockDaemons.get(context);
     }
 
     @Override
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return paramContext.getParameter().getType().equals(MockDaemon.class);
+        return paramContext.getParameter().getType().equals(MockHttpDaemon.class);
     }
 }

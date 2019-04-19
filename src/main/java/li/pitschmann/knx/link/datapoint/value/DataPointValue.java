@@ -27,7 +27,7 @@ import li.pitschmann.knx.link.datapoint.DataPointType;
  */
 public interface DataPointValue<T extends DataPointType<?>> {
     /**
-     * Returns the current DPT instance
+     * Returns the current Data Point Type instance
      *
      * @return {@link DataPointType}
      */

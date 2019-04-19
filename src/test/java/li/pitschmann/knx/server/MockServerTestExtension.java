@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author PITSCHR
  */
-public class MockServerTestExtension
+public final class MockServerTestExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     private static final Logger LOG = LoggerFactory.getLogger(MockServerTestExtension.class);
     private static final Map<ExtensionContext, MockServer> mockServers = new ConcurrentHashMap<>();
