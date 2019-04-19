@@ -62,6 +62,7 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
             throw new AssertionError("Could not find a free port!");
         }
 
+        System.out.println("Using port: " + port);
         // start mock daemon with a non-standard port
         mockDaemon.start(port);
         return mockDaemon;
