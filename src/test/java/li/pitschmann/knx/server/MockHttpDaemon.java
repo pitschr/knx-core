@@ -86,6 +86,7 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
                 if (pre.getCause() instanceof RuntimeException) {
                     if (pre.getCause().getCause() instanceof BindException) {
                         log.warn("Could not start pippo because the port '{}' seems not be free yet (race-condition). Try with next attempt.", nextFreePort, pre);
+                        pippo.stop();
                         continue;
                     }
                 }
@@ -101,8 +102,8 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
      */
     private int getNextFreePort() {
         // get next free port
-        try {
-            return new ServerSocket(0).getLocalPort();
+        try (final var serverSocket = new ServerSocket(0)) {
+            return serverSocket.getLocalPort();
         } catch (IOException e) {
             // should never happen
             throw new AssertionError("Could not find a free port!");
