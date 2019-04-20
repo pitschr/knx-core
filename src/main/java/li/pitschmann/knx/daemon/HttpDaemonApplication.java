@@ -23,34 +23,25 @@ import com.google.inject.Guice;
 import com.google.inject.Provides;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
-import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.ControllerApplication;
-import ro.pippo.core.Pippo;
 import ro.pippo.guice.GuiceControllerFactory;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-// TODO Proper Implementation not done yet
+/**
+ * HTTP Application for KNX Http Daemon
+ *
+ * This loads the pippo relevant configuration, controllers, etc.
+ */
 public class HttpDaemonApplication extends ControllerApplication {
     private static final Logger logger = LoggerFactory.getLogger(HttpDaemonApplication.class);
     private DefaultKnxClient knxClient;
-
-    public static void main(String[] args) {
-        final var pippo = new Pippo(new HttpDaemonApplication());
-        pippo.start();
-        while (true) {
-            // leave it running
-            System.out.println("ping ...");
-            Sleeper.seconds(10);
-        }
-    }
 
     public void setKnxClient(DefaultKnxClient knxClient) {
         this.knxClient = knxClient;
     }
 
+    @SuppressWarnings("unchecked") // unchecked because of addControllers(..)
     @Override
     protected void onInit() {
         // sets the customized Gson engine
@@ -63,10 +54,9 @@ public class HttpDaemonApplication extends ControllerApplication {
                 return knxClient;
             }
         });
-
         setControllerFactory(new GuiceControllerFactory(injector));
 
-        // adds controller
+        // adds controller for endpoints
         addControllers(HttpDaemonController.class);
     }
 }

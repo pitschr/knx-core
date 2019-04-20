@@ -67,7 +67,8 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      * @param port the port that should be used by HTTP Daemon
      */
     protected final void start(final int port) {
-        Preconditions.checkState(this.executorService == null, "It seems the KNX Daemon is already started?");
+        Preconditions.checkState(this.executorService == null, "It seems the Http Daemon Server is already started?");
+        logger.debug("Start Http Daemon Server with port: {}", port);
         this.port = port;
         this.executorService = Executors.newSingleThreadExecutor(true);
         this.executorService.execute(this);
