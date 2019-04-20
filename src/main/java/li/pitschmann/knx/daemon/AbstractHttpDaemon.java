@@ -71,8 +71,9 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
         try (final var client = DefaultKnxClient.createStarted(configuration)) {
             ((HttpDaemonApplication) pippo.getApplication()).setKnxClient(client);
             pippo.getApplication().getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
-            port = getPort();
-            pippo.start(port);
+            startPippo(pippo);
+            // set port and state
+            port = pippo.getServer().getPort();
             ready = true;
             logger.debug("Http Daemon Server started at port {}: {}", port, client);
             while (!isCancelled() && Sleeper.seconds(1)) {
@@ -85,6 +86,15 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
             logger.debug("Http Daemon Server stopped.");
             pippo.stop();
         }
+    }
+
+    /**
+     * Starts the Pippo server. This method can be overridden.
+     *
+     * @param pippo
+     */
+    protected void startPippo(final Pippo pippo) {
+        pippo.start(configuration.getDaemonPort());
     }
 
     /**
@@ -120,21 +130,8 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      * @return actual port
      */
     public final int getPort() {
-        // port uninitialized?
-        if (port == -1) {
-            port = getDefaultPort(); // initialize
-        }
+        Preconditions.checkState(!isReady(), "Http Daemon Server is not ready yet!");
         return port;
-    }
-
-    /**
-     * Returns the default port for KNX Daemon and will be only called
-     * during initialization. This may be overridden.
-     *
-     * @return default port
-     */
-    protected int getDefaultPort() {
-        return configuration.getDaemonPort();
     }
 
     /**
@@ -149,7 +146,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     public final HttpRequest.Builder newRequestBuilder(final String path) {
         Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
         try {
-            return HttpRequest.newBuilder(new URI("http://localhost:" + this.port + path))
+            return HttpRequest.newBuilder(new URI("http://localhost:" + port + path))
                     .header(HttpHeaders.ACCEPT, MediaType.JSON_UTF_8.toString())
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
         } catch (URISyntaxException e) {

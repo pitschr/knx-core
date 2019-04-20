@@ -24,9 +24,14 @@ import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ro.pippo.core.Pippo;
+import ro.pippo.core.PippoRuntimeException;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +42,7 @@ import java.util.concurrent.TimeUnit;
  * for communication with the KNX Net/IP device
  */
 public final class MockHttpDaemon extends AbstractHttpDaemon {
+    private static final Logger log = LoggerFactory.getLogger(MockHttpDaemon.class);
 
     private MockHttpDaemon(final @Nonnull Configuration configuration) {
         super(configuration);
@@ -69,7 +75,31 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
     }
 
     @Override
-    public int getDefaultPort() {
+    protected void startPippo(Pippo pippo) {
+        for (int i=0; i<5; i++) {
+            int nextFreePort = getNextFreePort();
+            try {
+                pippo.start(nextFreePort);
+                log.debug("Pippo server started successfully on port: {}", pippo.getServer().getPort());
+                return;
+            } catch (PippoRuntimeException pre) {
+                if (pre.getCause() instanceof RuntimeException) {
+                    if (pre.getCause().getCause() instanceof BindException) {
+                        log.warn("Could not start pippo because the port '{}' seems not be free yet (race-condition). Try with next attempt.", nextFreePort);
+                        continue;
+                    }
+                }
+                throw pre;
+            }
+        }
+    }
+
+    /**
+     * Returns the next free port if applicable
+     *
+     * @return next free port
+     */
+    private int getNextFreePort() {
         // get next free port
         try {
             return new ServerSocket(0).getLocalPort();
