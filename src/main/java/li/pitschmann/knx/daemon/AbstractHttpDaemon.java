@@ -46,7 +46,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(AbstractHttpDaemon.class);
     private final Configuration configuration;
     private ExecutorService executorService;
-    private int port;
+    private int port = -1;
     private boolean ready;
     private boolean cancel;
 
@@ -55,21 +55,10 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     }
 
     /**
-     * Starts the HTTP Daemon with default port (8338)
+     * Starts the HTTP Daemon
      */
     protected final void start() {
-        start(configuration.getDaemonPort());
-    }
-
-    /**
-     * Starts the HTTP Daemon
-     *
-     * @param port the port that should be used by HTTP Daemon
-     */
-    protected final void start(final int port) {
         Preconditions.checkState(this.executorService == null, "It seems the Http Daemon Server is already started?");
-        logger.debug("Start Http Daemon Server with port: {}", port);
-        this.port = port;
         this.executorService = Executors.newSingleThreadExecutor(true);
         this.executorService.execute(this);
         this.executorService.shutdown();
@@ -82,7 +71,8 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
         try (final var client = DefaultKnxClient.createStarted(configuration)) {
             ((HttpDaemonApplication) pippo.getApplication()).setKnxClient(client);
             pippo.getApplication().getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
-            pippo.start(this.port);
+            port = getPort();
+            pippo.start(port);
             ready = true;
             logger.debug("Http Daemon Server started at port {}: {}", port, client);
             while (!isCancelled() && Sleeper.seconds(1)) {
@@ -99,9 +89,11 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
 
     /**
      * Cancels the KNX Daemon
+     * <p/>
+     * When cancelling it it will stop the KNX Daemon including KNX Client as background process
      */
     public final void cancel() {
-        this.cancel = true;
+        cancel = true;
     }
 
     /**
@@ -119,7 +111,30 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      * @return {@code true} if daemon and server is ready, otherwise {@code false}
      */
     public final boolean isReady() {
-        return this.ready;
+        return ready;
+    }
+
+    /**
+     * Returns the port for KNX Daemon
+     *
+     * @return actual port
+     */
+    public final int getPort() {
+        // port uninitialized?
+        if (port == -1) {
+            port = getDefaultPort(); // initialize
+        }
+        return port;
+    }
+
+    /**
+     * Returns the default port for KNX Daemon and will be only called
+     * during initialization. This may be overridden.
+     *
+     * @return default port
+     */
+    protected int getDefaultPort() {
+        return configuration.getDaemonPort();
     }
 
     /**
