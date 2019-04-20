@@ -30,7 +30,7 @@ import ro.pippo.guice.GuiceControllerFactory;
 
 /**
  * HTTP Application for KNX Http Daemon
- *
+ * <p>
  * This loads the pippo relevant configuration, controllers, etc.
  */
 public class HttpDaemonApplication extends ControllerApplication {

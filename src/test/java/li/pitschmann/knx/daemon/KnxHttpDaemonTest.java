@@ -26,7 +26,6 @@ import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.knx.server.MockDaemonTest;
 import li.pitschmann.knx.server.MockHttpDaemon;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 
 import java.net.http.HttpClient;

@@ -30,7 +30,6 @@ import li.pitschmann.knx.server.MockServerTest;
 import li.pitschmann.test.KnxBody;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.RepeatedTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;

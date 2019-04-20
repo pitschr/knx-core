@@ -1,7 +1,11 @@
 package li.pitschmann.knx.daemon;
 
 import com.google.inject.Inject;
-import li.pitschmann.knx.daemon.json.*;
+import li.pitschmann.knx.daemon.json.ReadRequest;
+import li.pitschmann.knx.daemon.json.ReadResponse;
+import li.pitschmann.knx.daemon.json.Status;
+import li.pitschmann.knx.daemon.json.WriteRequest;
+import li.pitschmann.knx.daemon.json.WriteResponse;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import org.slf4j.Logger;

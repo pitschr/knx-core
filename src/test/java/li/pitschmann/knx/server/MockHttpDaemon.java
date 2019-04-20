@@ -76,7 +76,7 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
 
     @Override
     protected void startPippo(Pippo pippo) {
-        for (int i=0; i<5; i++) {
+        for (int i = 0; i < 5; i++) {
             int nextFreePort = getNextFreePort();
             try {
                 pippo.start(nextFreePort);
