@@ -85,7 +85,7 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
             } catch (PippoRuntimeException pre) {
                 if (pre.getCause() instanceof RuntimeException) {
                     if (pre.getCause().getCause() instanceof BindException) {
-                        log.warn("Could not start pippo because the port '{}' seems not be free yet (race-condition). Try with next attempt.", nextFreePort);
+                        log.warn("Could not start pippo because the port '{}' seems not be free yet (race-condition). Try with next attempt.", nextFreePort, pre);
                         continue;
                     }
                 }
