@@ -26,6 +26,7 @@ import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.knx.server.MockDaemonTest;
 import li.pitschmann.knx.server.MockHttpDaemon;
+import li.pitschmann.knx.server.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 
 import java.net.http.HttpClient;
@@ -39,10 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class KnxHttpDaemonTest {
     /**
-     * TODO: only experimental! Test /read and /write endpoints
-     * TODO: /read and write should be POST
+     * Tests the combination of /read and /write requests
      */
-    @MockDaemonTest(value = "src/test/resources/parser/Project (3-Level, v14).knxproj")
+    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /read and /write endpoints for group address 0/0/10")
     public void testReadAndWrite(final MockHttpDaemon daemon) throws Exception {
         // get http client for requests
@@ -53,7 +53,6 @@ public class KnxHttpDaemonTest {
         // create read request for before and after write request
         final var readRequest = new ReadRequest();
         readRequest.setGroupAddress(groupAddress);
-        final var readHttpRequest = daemon.newRequestBuilder("/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
 
         // create write request
         final var writeRequest = new WriteRequest();
@@ -63,6 +62,7 @@ public class KnxHttpDaemonTest {
         final var writeHttpRequest = daemon.newRequestBuilder("/write").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(writeRequest))).build();
 
         // send read request #1
+        final var readHttpRequest = daemon.newRequestBuilder("/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
         final var responseBody = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
         assertThat(responseBody).isEqualTo("{\"dataPointType\":\"1.001\",\"raw\":[0],\"status\":\"OK\"}");
 
@@ -71,14 +71,17 @@ public class KnxHttpDaemonTest {
         assertThat(writeBody).isEqualTo("{\"status\":\"OK\"}");
 
         // send read request #2
-        final var responseBodyAfterWrite = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBodyAfterWrite).isEqualTo("{\"dataPointType\":\"1.001\",\"raw\":[1],\"status\":\"OK\"}");
+        // - group address: "1-bit (false)" which has been initialized with "false" contains now "true"
+        // - it contains the expand 'name' and 'description' which means that we request for group address name and description as well
+        final var readHttpRequestAfterWrite = daemon.newRequestBuilder("/read?expand=name,description").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var responseBodyAfterWrite = httpClient.send(readHttpRequestAfterWrite, HttpResponse.BodyHandlers.ofString()).body();
+        assertThat(responseBodyAfterWrite).isEqualTo("{\"name\":\"Sub Group - DPT 1 (0x00)\",\"description\":\"1-bit (false)\",\"dataPointType\":\"1.001\",\"raw\":[1],\"status\":\"OK\"}");
     }
 
     /**
      * Tests the /read endpoint for group addresses 0/0/59 and 1/3/47
      */
-    @MockDaemonTest(value = "src/test/resources/parser/Project (3-Level, v14).knxproj")
+    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /read endpoint for group addresses 0/0/59 and 1/3/47")
     public void testReadOnly(final MockHttpDaemon daemon) throws Exception {
         // get http client for requests
@@ -89,24 +92,24 @@ public class KnxHttpDaemonTest {
         //
         // create read request #1
         final var readRequest = new ReadRequest();
-        readRequest.setGroupAddress(GroupAddress.of(0, 0, 59));
+        readRequest.setGroupAddress(GroupAddress.of(0, 0, 56));
 
         // send read request #1
         final var httpRequest = daemon.newRequestBuilder("/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody).isEqualTo("{\"dataPointType\":\"1.001\",\"raw\":[-1],\"status\":\"OK\"}");
+        assertThat(responseBody).isEqualTo("{\"dataPointType\":\"5.001\",\"raw\":[-86],\"status\":\"OK\"}");
 
         //
         // Test #2
         //
         // create read request #2
         final var readRequest2 = new ReadRequest();
-        readRequest2.setGroupAddress(GroupAddress.of(1, 3, 47));
+        readRequest2.setGroupAddress(GroupAddress.of(0, 3, 47));
 
         // send read request #2
         final var httpRequest2 = daemon.newRequestBuilder("/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest2))).build();
         final var responseBody2 = httpClient.send(httpRequest2, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody2).isEqualTo("{\"dataPointType\":\"1.001\",\"raw\":[-64,-80,-96,-25],\"status\":\"OK\"}");
+        assertThat(responseBody2).isEqualTo("{\"dataPointType\":\"15.000\",\"raw\":[-64,-80,-96,-25],\"status\":\"OK\"}");
     }
 
     /**
@@ -115,7 +118,7 @@ public class KnxHttpDaemonTest {
      * @param daemon
      * @throws Exception
      */
-    @MockDaemonTest
+    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /write endpoint for group address 0/0/22")
     public void testWriteOnly(final MockHttpDaemon daemon) throws Exception {
         // get http client for requests

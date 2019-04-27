@@ -36,6 +36,7 @@ public class XmlGroupAddressTest {
         xmlGroupAddress.setDatapointType("DPT");
         xmlGroupAddress.setId("ID");
         xmlGroupAddress.setName("NAME");
+        xmlGroupAddress.setDescription("DESCRIPTION");
         xmlGroupAddress.setCommunicationFlag("C");
         xmlGroupAddress.setReadFlag("R");
         xmlGroupAddress.setWriteFlag("W");
@@ -48,6 +49,7 @@ public class XmlGroupAddressTest {
                 "id=ID, " +
                 "address=ADDRESS, " +
                 "name=NAME, " +
+                "description=DESCRIPTION, " +
                 "datapointType=DPT, " +
                 "communicationFlag=C, " +
                 "readFlag=R, " +

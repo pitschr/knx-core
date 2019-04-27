@@ -24,6 +24,7 @@ import com.google.common.net.MediaType;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
+import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import javax.annotation.Nonnull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -59,6 +61,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      */
     protected final void start() {
         Preconditions.checkState(this.executorService == null, "It seems the Http Daemon Server is already started?");
+        Preconditions.checkState(configuration.getProjectPath() != null, "Project Path is not provided!");
         this.executorService = Executors.newSingleThreadExecutor(true);
         this.executorService.execute(this);
         this.executorService.shutdown();
@@ -66,9 +69,12 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
 
     @Override
     public final void run() {
+        // define pippo anx xml project
         final var pippo = new Pippo(new HttpDaemonApplication());
+        final var xmlProject = KnxprojParser.parse(Objects.requireNonNull(configuration.getProjectPath()));
 
         try (final var client = DefaultKnxClient.createStarted(configuration)) {
+            ((HttpDaemonApplication) pippo.getApplication()).setXmlProject(xmlProject);
             ((HttpDaemonApplication) pippo.getApplication()).setKnxClient(client);
             pippo.getApplication().getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
             startPippo(pippo);

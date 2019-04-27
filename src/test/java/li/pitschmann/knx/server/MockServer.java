@@ -19,6 +19,7 @@
 package li.pitschmann.knx.server;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
@@ -29,24 +30,26 @@ import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.nio.channels.Selector;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.SubmissionPublisher;
@@ -79,34 +82,21 @@ public final class MockServer implements Runnable, Closeable {
     private Throwable throwable;
     private DefaultKnxClient client;
 
-    private MockServer(final MockServerTest mockServerAnnotation) {
-        this.mockServerAnnotation = Objects.requireNonNull(mockServerAnnotation);
-        this.executorService = Executors.newSingleThreadExecutor(true);
-        this.executorService.execute(this);
-        this.executorService.shutdown();
-    }
-
     /**
-     * Creates the KNX Mock Server and start it immediately
-     * <p/>
-     * The configuration of mock server is tried to be resolved using annotation
-     * {@link MockServerTest} and will call {@link #createStarted(MockServerTest)}.
-     *
-     * @param context
-     * @return started KNX Mock Server
-     */
-    public static MockServer createStarted(final @Nonnull ExtensionContext context) {
-        return createStarted(AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockServerTest.class).get());
-    }
-
-    /**
-     * Creates the KNX Mock Server and start it immediately
+     * Creates the KNX Mock Server and start it immediately based on test case configuration ( {@link MockServerTest} )
      *
      * @param mockServerAnnotation
      * @return started KNX Mock Server
      */
     public static MockServer createStarted(final @Nonnull MockServerTest mockServerAnnotation) {
         return new MockServer(Objects.requireNonNull(mockServerAnnotation));
+    }
+
+    private MockServer(final MockServerTest mockServerAnnotation) {
+        this.mockServerAnnotation = mockServerAnnotation;
+        this.executorService = Executors.newSingleThreadExecutor(true);
+        this.executorService.execute(this);
+        this.executorService.shutdown();
     }
 
     @Override
@@ -130,8 +120,13 @@ public final class MockServer implements Runnable, Closeable {
         // Subscribe KNX Mock Server Logic (mandatory)
         publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerAnnotation)));
 
-        // Subscribe KNX Mock Server Communicator if project path is set
-        publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerProjectLogic(this)));
+        // Subscribe KNX Mock Server Project Logic if KNX project path is defined
+        if (!Strings.isNullOrEmpty(mockServerAnnotation.projectPath())) {
+            final var xmlProjectPath = Paths.get(mockServerAnnotation.projectPath());
+            Preconditions.checkArgument(Files.exists(xmlProjectPath), "Project file doesn't exists at: %s", xmlProjectPath);
+            final var projectLogic = new MockServerProjectLogic(this, KnxprojParser.parse(xmlProjectPath));
+            publisher.subscribe(Executors.wrapSubscriberWithMDC(projectLogic));
+        }
 
         try (final var selector = Selector.open();
              this.serverChannel) {
@@ -376,7 +371,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return unmodifiable list of received bodies
      */
     public List<Body> getReceivedBodies() {
-        return Collections.unmodifiableList(this.receivedBodies);
+        return Collections.unmodifiableList(new ArrayList<>(this.receivedBodies));
     }
 
     /**
@@ -394,7 +389,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return unmodifiable list of sent bodies
      */
     public List<Body> getSentBodies() {
-        return Collections.unmodifiableList(this.sentBodies);
+        return Collections.unmodifiableList(new ArrayList<>(this.sentBodies));
     }
 
     /**

@@ -56,7 +56,7 @@ public class KnxprojParserTest {
         assertThat(project.getId()).isEqualTo("P-0501");
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
-        assertThat(project.getGroupAddresses()).hasSize(83);
+        assertThat(project.getGroupAddresses()).hasSize(189);
     }
 
     /**
@@ -68,16 +68,16 @@ public class KnxprojParserTest {
         final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_V14).getGroupAddresses();
 
         // assert DPT-x group address
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1", "DPT-1");
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-128", GroupAddress.of(0, 3, 10), "Sub Group - DPT 12", "DPT-12");
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1 (0x00)", "DPT-1");
+        assertGroupAddress(groupAddresses, "P-0501-0_GA-128", GroupAddress.of(0, 3, 10), "Sub Group - DPT 12 (0x00 00 00 00)", "DPT-12");
 
-        // assert DPST-x-y group address
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-133", GroupAddress.of(1, 0, 10), "Sub Group - DPST 1.001", "DPST-1-1");
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-143", GroupAddress.of(1, 2, 20), "Sub Group - DPST 11.001", "DPST-11-1");
-
-        // assert group address without DPT
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-149", GroupAddress.of(2, 0, 0), "Sub Group - No DPT 1-byte", null);
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-188", GroupAddress.of(2, 3, 0), "Sub Group - No DPT 4-bytes", null);
+//        // assert DPST-x-y group address TODO: Define DPST in XML Project File too
+//        assertGroupAddress(groupAddresses, "P-0501-0_GA-133", GroupAddress.of(1, 0, 10), "Sub Group - DPST 1.001 ", "DPST-1-1");
+//        assertGroupAddress(groupAddresses, "P-0501-0_GA-143", GroupAddress.of(1, 2, 20), "Sub Group - DPST 11.001", "DPST-11-1");
+//
+//        // assert group address without DPT TODO: Define No DPT in XML Project File too
+//        assertGroupAddress(groupAddresses, "P-0501-0_GA-149", GroupAddress.of(2, 0, 0), "Sub Group - No DPT 1-byte", null);
+//        assertGroupAddress(groupAddresses, "P-0501-0_GA-188", GroupAddress.of(2, 3, 0), "Sub Group - No DPT 4-bytes", null);
     }
 
     /**
@@ -154,11 +154,11 @@ public class KnxprojParserTest {
 
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_NAME))
                 .isInstanceOf(KnxprojParserException.class)
-                .hasMessage("Attribute <GroupAddress @Name /> not found.");
+                .hasMessageContaining("Attribute <GroupAddress @Name /> not found for: ");
 
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_ADDRESS))
                 .isInstanceOf(KnxprojParserException.class)
-                .hasMessage("Attribute <GroupAddress @Address /> not found.");
+                .hasMessageContaining("Attribute <GroupAddress @Address /> not found for: ");
     }
 
     /**

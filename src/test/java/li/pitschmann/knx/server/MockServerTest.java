@@ -126,4 +126,11 @@ public @interface MockServerTest {
      * @return request command sequence
      */
     String[] requests() default {};
+
+    /**
+     * Returns the path of KNX project path (*.knxproj)
+     *
+     * @return path of project if defined, otherwise empty
+     */
+    String projectPath() default "";
 }

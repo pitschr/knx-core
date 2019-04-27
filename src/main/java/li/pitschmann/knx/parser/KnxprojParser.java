@@ -183,12 +183,13 @@ public final class KnxprojParser {
                     () -> new KnxprojParserException("Attribute <GroupAddress @Id /> not found.")));
 
             groupAddress.setAddress(readAttributeValue(vtdNav, "Address",
-                    () -> new KnxprojParserException("Attribute <GroupAddress @Address /> not found.")));
+                    () -> new KnxprojParserException("Attribute <GroupAddress @Address /> not found for: " + groupAddress.getId())));
 
             groupAddress.setName(readAttributeValue(vtdNav, "Name",
-                    () -> new KnxprojParserException("Attribute <GroupAddress @Name /> not found.")));
+                    () -> new KnxprojParserException("Attribute <GroupAddress @Name /> not found for: " + groupAddress.getId())));
 
-            // obtain optional @DatapointType
+            // obtain optional @Description and @DatapointType
+            groupAddress.setDescription(readAttributeValue(vtdNav, "Description"));
             groupAddress.setDatapointType(readAttributeValue(vtdNav, "DatapointType"));
 
             // get flags (via ComObjectInstanceRef)
@@ -239,15 +240,27 @@ public final class KnxprojParser {
     }
 
     /**
-     * Returns value of required attribute
+     * Returns value of optional attribute
+     *
+     * @param vtdNav    current instance of {@link VTDNav}
+     * @param attribute attribute name to look up
+     * @return value of attribute, otherwise {@code null}
+     * @throws NavException navigation exception by VTD-XML
+     */
+    private static String readAttributeValue(final VTDNav vtdNav, final String attribute) throws NavException {
+        return readAttributeValue(vtdNav, attribute, (String)null);
+    }
+
+    /**
+     * Returns value of optional attribute
      *
      * @param vtdNav    current instance of {@link VTDNav}
      * @param attribute attribute name to look up
      * @return value of attribute, otherwise {@code defaultValue}
      * @throws NavException navigation exception by VTD-XML
      */
-    private static String readAttributeValue(final VTDNav vtdNav, final String attribute) throws NavException {
+    private static String readAttributeValue(final VTDNav vtdNav, final String attribute, final String defaultValue) throws NavException {
         final var index = vtdNav.getAttrVal(attribute);
-        return index > 0 ? vtdNav.toString(index) : null;
+        return index > 0 ? vtdNav.toString(index) : defaultValue;
     }
 }

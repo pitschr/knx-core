@@ -21,8 +21,11 @@ package li.pitschmann.knx.daemon;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
+import li.pitschmann.knx.daemon.controllers.ReadRequestController;
+import li.pitschmann.knx.daemon.controllers.WriteRequestController;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.parser.XmlProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.ControllerApplication;
@@ -36,9 +39,14 @@ import ro.pippo.guice.GuiceControllerFactory;
 public class HttpDaemonApplication extends ControllerApplication {
     private static final Logger logger = LoggerFactory.getLogger(HttpDaemonApplication.class);
     private DefaultKnxClient knxClient;
+    private XmlProject xmlProject;
 
     public void setKnxClient(DefaultKnxClient knxClient) {
         this.knxClient = knxClient;
+    }
+
+    public void setXmlProject(XmlProject xmlProject) {
+        this.xmlProject = xmlProject;
     }
 
     @SuppressWarnings("unchecked") // unchecked because of addControllers(..)
@@ -53,10 +61,15 @@ public class HttpDaemonApplication extends ControllerApplication {
             private final DefaultKnxClient providesKnxClient() {
                 return knxClient;
             }
+
+            @Provides
+            private final XmlProject providesXmlProject() {
+                return xmlProject;
+            }
         });
         setControllerFactory(new GuiceControllerFactory(injector));
 
         // adds controller for endpoints
-        addControllers(HttpDaemonController.class);
+        addControllers(ReadRequestController.class, WriteRequestController.class);
     }
 }

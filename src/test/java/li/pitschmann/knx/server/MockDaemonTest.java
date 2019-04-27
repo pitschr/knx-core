@@ -39,16 +39,9 @@ import java.lang.annotation.Target;
 @ExtendWith(MockDaemonTestExtension.class)
 public @interface MockDaemonTest {
     /**
-     * Returns the path of KNX Project that is being used for communication strategy
-     *
-     * @return path of *.knxproj file
-     */
-    String value() default "";
-
-    /**
      * Returns Mock Server Annotation
      *
      * @return MockServerTest annotation
      */
-    MockServerTest mockServer() default @MockServerTest;
+    MockServerTest value() default @MockServerTest;
 }

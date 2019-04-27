@@ -28,6 +28,8 @@ import li.pitschmann.utils.Networker;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -202,6 +204,10 @@ public final class Configuration {
 
     public int getDaemonPort() {
         return getSetting("daemon.port.http", Constants.Default.HTTP_DAEMON_PORT, Integer::valueOf);
+    }
+
+    public Path getProjectPath() {
+        return getSetting("daemon.path.knxproj", null, Paths::get);
     }
 
     /**

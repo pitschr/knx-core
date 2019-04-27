@@ -27,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -61,8 +62,9 @@ public final class MockServerTestExtension
 
         // create and start
         if (!mockServers.containsKey(context)) {
+            final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockServerTest.class).get();
             final var stopwatch = Stopwatch.createStarted();
-            final var mockServer = MockServer.createStarted(context);
+            final var mockServer = MockServer.createStarted(annotation);
 
             // wait until mock server is ready for receiving packets from client (wait up to 5 seconds)
             if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 5000)) {

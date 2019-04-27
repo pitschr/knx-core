@@ -81,7 +81,7 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
 
         // write to channel
         final var channel = (ByteChannel) key.channel();
-        LOG.trace("{}: Sending packet: {}", getId(), body);
+        LOG.debug("{}: Sending packet: {}", getId(), body);
         channel.write(ByteBuffer.wrap(packetToSend));
         LOG.trace("{}: Packet sent.", getId());
         this.getInternalClient().notifyPluginsOutgoingBody(body);
