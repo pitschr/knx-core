@@ -1,6 +1,6 @@
-sudo: false
-
 language: java
+dist: xenial
+sudo: false
 
 jdk:
   - openjdk11
@@ -17,6 +17,5 @@ branches:
 # Compiles, run test and code coverage
 script:
   - mvn clean test jacoco:report coveralls:report -Dlogback.configurationFile=logback-off.xml
-#  - mvn clean test -Dtest=li.pitschmann.knx.daemon.KnxHttpDaemonTest
 
 
