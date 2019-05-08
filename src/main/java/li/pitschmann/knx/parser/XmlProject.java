@@ -19,8 +19,10 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.body.address.GroupAddress;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * XML DTO holding KNX Project Information which were taken from '*.knxproj' file
@@ -83,6 +85,16 @@ public final class XmlProject {
 
     public void setGroupAddresses(List<XmlGroupAddress> groupAddresses) {
         this.groupAddresses = groupAddresses;
+    }
+
+    /**
+     * Returns the {@link XmlGroupAddress} for given {@link GroupAddress}
+     *
+     * @param groupAddress
+     * @return An instance of {@link Optional} for group address
+     */
+    public Optional<XmlGroupAddress> getGroupAddress(final GroupAddress groupAddress) {
+        return getGroupAddresses().stream().filter(x -> x.getAddress().equals(groupAddress.getAddress())).findFirst();
     }
 
     @Override

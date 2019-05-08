@@ -196,20 +196,24 @@ public final class GroupAddressTest {
         final var testByCreate = GroupAddress.of(address);
         final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
         final var testByValueOfRawData = GroupAddress.of(bytes);
+        final var testByString = GroupAddress.of(String.valueOf(address));
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
+        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(testByCreateRawData.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.GROUP);
+        assertThat(testByString.getAddressType()).isEqualTo(AddressType.GROUP);
 
         // check address print
         final var addressAsString = String.valueOf(address);
         assertThat(testByCreate.getAddress()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddress()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddress()).isEqualTo(addressAsString);
+        assertThat(testByString.getAddress()).isEqualTo(addressAsString);
 
         // toString
         assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s, rawData=%s}",
@@ -233,20 +237,24 @@ public final class GroupAddressTest {
         final var testByCreate = GroupAddress.of(main, sub);
         final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
         final var testByValueOfRawData = GroupAddress.of(bytes);
+        final var testByString = GroupAddress.of(main + "/" + sub);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
+        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(testByCreateRawData.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.GROUP);
+        assertThat(testByString.getAddressType()).isEqualTo(AddressType.GROUP);
 
         // check address print
         final var addressAsString = String.format("%s/%s", main, sub);
         assertThat(testByCreate.getAddressLevel2()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddressLevel2()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddressLevel2()).isEqualTo(addressAsString);
+        assertThat(testByString.getAddressLevel2()).isEqualTo(addressAsString);
 
         // toString
         assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s, rawData=%s}",
@@ -271,20 +279,24 @@ public final class GroupAddressTest {
         final var testByCreate = GroupAddress.of(main, middle, sub);
         final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
         final var testByValueOfRawData = GroupAddress.of(bytes);
+        final var testByString = GroupAddress.of(main + "/" + middle + "/" + sub);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
+        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(testByCreateRawData.getAddressType()).isEqualTo(AddressType.GROUP);
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.GROUP);
+        assertThat(testByString.getAddressType()).isEqualTo(AddressType.GROUP);
 
         // check address print
         final var addressAsString = String.format("%s/%s/%s", main, middle, sub);
         assertThat(testByCreate.getAddressLevel3()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddressLevel3()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddressLevel3()).isEqualTo(addressAsString);
+        assertThat(testByString.getAddressLevel3()).isEqualTo(addressAsString);
 
         // toString
         assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s, rawData=%s}",

@@ -1,6 +1,12 @@
 package li.pitschmann.knx.daemon.controllers;
 
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.parser.XmlProject;
 import ro.pippo.controller.Controller;
+
+import javax.annotation.Nonnull;
 
 /**
  * Abstract Controller containing common methods for concrete controller
@@ -9,6 +15,12 @@ import ro.pippo.controller.Controller;
 abstract class AbstractController extends Controller {
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String PARAMETER_EXPAND = "expand";
+
+    @Inject
+    private XmlProject xmlProject;
+
+    @Inject
+    private DefaultKnxClient knxClient;
 
     /**
      * Returns an array of expand parameters which are comma-separated
@@ -27,16 +39,28 @@ abstract class AbstractController extends Controller {
     /**
      * Checks if the given {@code name} expand parameter is in request.
      * Consider case-sensitivity.
+     * <p/>
+     * Special rule: if expand parameter contains '*' (star) then all parameters are subject to be considered
+     * and therefore the method will always return {@code true} in this case.
      *
      * @param name
      * @return {@code true} if searched expand parameter exists, otherwise {@code false}
      */
-    protected boolean containsExpand(final String name) {
+    protected boolean containsExpand(final @Nonnull String name) {
+        Preconditions.checkNotNull(name);
         for (final var expandParameter : getExpandParameters()) {
-            if (name.equals(expandParameter)) {
+            if ("*".equals(expandParameter) || name.equals(expandParameter)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public XmlProject getXmlProject() {
+        return xmlProject;
+    }
+
+    public DefaultKnxClient getKnxClient() {
+        return knxClient;
     }
 }

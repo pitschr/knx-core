@@ -69,14 +69,17 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
 
     @Override
     public final void run() {
-        // define pippo anx xml project
-        final var pippo = new Pippo(new HttpDaemonApplication());
         final var xmlProject = KnxprojParser.parse(Objects.requireNonNull(configuration.getProjectPath()));
+        Pippo pippo = null;
 
+        // define pippo, xml project and start KNX client
         try (final var client = DefaultKnxClient.createStarted(configuration)) {
-            ((HttpDaemonApplication) pippo.getApplication()).setXmlProject(xmlProject);
-            ((HttpDaemonApplication) pippo.getApplication()).setKnxClient(client);
-            pippo.getApplication().getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
+            final var httpDeaemonApplication = new HttpDaemonApplication();
+            httpDeaemonApplication.setXmlProject(xmlProject);
+            httpDeaemonApplication.setKnxClient(client);
+            httpDeaemonApplication.getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
+
+            pippo = new Pippo(httpDeaemonApplication);
             startPippo(pippo);
             // set port and state
             port = pippo.getServer().getPort();
@@ -90,7 +93,9 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
             logger.error("Something went wrong", t);
         } finally {
             logger.debug("Http Daemon Server stopped.");
-            pippo.stop();
+            if (pippo != null) {
+                pippo.stop();
+            }
         }
     }
 

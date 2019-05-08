@@ -61,7 +61,7 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
 
     /**
      * Initializes the Group Addresses
-     *
+     * <p>
      * For group addresses that contains "Sub Group - DPT" the initial value
      * are within "(" and ")" brackets, example:<br/>
      * <pre>

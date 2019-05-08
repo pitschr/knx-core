@@ -133,11 +133,6 @@ public final class ConnectionStateMonitor implements Runnable {
      * Sends out the {@link ConnectionStateRequestBody} packet.
      */
     private void sendConnectionStateRequest() {
-        if (this.client.isClosed()) {
-            LOG.debug("Send of connection state request is aborted, because client is requested to be closed.");
-            return;
-        }
-
         LOG.trace("Send connection state request now.");
 
         // create body

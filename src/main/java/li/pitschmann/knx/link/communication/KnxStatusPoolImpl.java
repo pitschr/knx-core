@@ -66,36 +66,6 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
     }
 
     /**
-     * Returns if the status for given {@link KnxAddress} is up to date immediately
-     *
-     * @param address {@link KnxAddress} for which the status should be returned
-     * @return {@code true} if status is up to date, otherwise {@code false} (not up to date)
-     */
-    public boolean isUpdated(final @Nonnull KnxAddress address) {
-        Preconditions.checkNotNull(address);
-        final var knxStatus = this.statusMap.get(address);
-        return knxStatus != null && !knxStatus.isDirty();
-    }
-
-    /**
-     * Returns if the status for given {@link KnxAddress} is or becomes up to date up to given {@code duration} and {@code unit}
-     *
-     * @param address  {@link KnxAddress} for which the status should be returned
-     * @param duration duration of time unit
-     * @param unit     time unit
-     * @return {@code true} if status is up to date, otherwise {@code false} when not being up to date within given time
-     */
-    public boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
-        Preconditions.checkNotNull(unit);
-        final var end = System.currentTimeMillis() + unit.toMillis(duration);
-        var valid = false;
-        do {
-            valid = isUpdated(address);
-        } while (!valid && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
-        return valid;
-    }
-
-    /**
      * Marks the status for given {@link KnxAddress} as dirty (not up to date)
      *
      * @param address {@link KnxAddress} for which the status should be marked as dirty
@@ -108,12 +78,16 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         }
     }
 
-    /**
-     * Returns the current status for given {@link KnxAddress}. May return the invalidated status.
-     *
-     * @param address {@link KnxAddress} for which the status should be returned
-     * @return {@link KnxStatusData} or {@code null} if no status was found for given address
-     */
+    public boolean isUpdated(final @Nonnull KnxAddress address) {
+        Preconditions.checkNotNull(address);
+        final var knxStatus = this.statusMap.get(address);
+        return knxStatus != null && !knxStatus.isDirty();
+    }
+
+    public boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
+        return getStatusFor(address, duration, unit, true) != null;
+    }
+
     public @Nullable
     KnxStatusData getStatusFor(final @Nonnull KnxAddress address) {
         Preconditions.checkNotNull(address);
@@ -124,13 +98,32 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         return statusData;
     }
 
-    /**
-     * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
-     *
-     * @param address
-     * @param dptId
-     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
-     */
+    public @Nullable
+    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
+        return getStatusFor(address, duration, unit, false);
+    }
+
+    public @Nullable
+    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
+        Preconditions.checkNotNull(address);
+        Preconditions.checkNotNull(unit);
+        final var end = System.currentTimeMillis() + unit.toMillis(duration);
+        KnxStatusData statusData = null;
+        do {
+            statusData = this.statusMap.get(address);
+        } while ((statusData==null || (mustUpToDate && statusData.isDirty())) && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
+
+        if (statusData == null) {
+            LOG.warn("No KNX status data found for address within defined time out: {}", address);
+            return null;
+        } else if (mustUpToDate && statusData.isDirty()) {
+            LOG.warn("No up-to-date KNX status data for address within defined timeout: {}", address);
+            return null;
+        } else {
+            return statusData;
+        }
+    }
+
     public @Nullable
     <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId) {
         final var statusData = this.getStatusFor(address);
@@ -141,13 +134,6 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         return null;
     }
 
-    /**
-     * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
-     *
-     * @param address
-     * @param dpt
-     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
-     */
     public @Nullable
     <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt) {
         final var statusData = this.getStatusFor(address);

@@ -1,19 +1,20 @@
 package li.pitschmann.knx.daemon.gson;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 
-import java.lang.reflect.Type;
-
 /**
- * Serializes the {@link GroupAddress} to a JSON format using Gson
+ * Serializes the {@link GroupAddress} to a JSON format
  */
-public final class GroupAddressJsonSerializer implements JsonSerializer<GroupAddress> {
+public final class GroupAddressJsonSerializer extends KnxAddressJsonSerializer<GroupAddress> {
     @Override
-    public JsonElement serialize(GroupAddress groupAddress, Type type, JsonSerializationContext jsonSerializationContext) {
-        return new JsonPrimitive(groupAddress.getAddress());
+    protected JsonElement createAddressJsonElement(final GroupAddress address) {
+        final var jsonObject = new JsonObject();
+        jsonObject.add("free_level", new JsonPrimitive(address.getAddress()));
+        jsonObject.add("two_level", new JsonPrimitive(address.getAddressLevel2()));
+        jsonObject.add("three_level", new JsonPrimitive(address.getAddressLevel3()));
+        return jsonObject;
     }
 }

@@ -66,9 +66,9 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param address
      * @param dataPointValue
-     * @return A {@link Future} containing {@link TunnelingAckBody} from KNX Net/IP device
+     * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    public Future<TunnelingAckBody> writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
+    public CompletableFuture<TunnelingAckBody> writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
         return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
@@ -83,9 +83,9 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param address
      * @param apciData
-     * @return A {@link Future} containing {@link TunnelingAckBody} from KNX Net/IP device
+     * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    public Future<TunnelingAckBody> writeRequest(final GroupAddress address, final byte[] apciData) {
+    public CompletableFuture<TunnelingAckBody> writeRequest(final GroupAddress address, final byte[] apciData) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
         return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
@@ -99,9 +99,9 @@ public class BaseKnxClient implements KnxClient {
      * set on KNX device.
      *
      * @param address
-     * @return A {@link Future} containing {@link TunnelingAckBody} from KNX Net/IP device
+     * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    public Future<TunnelingAckBody> readRequest(final GroupAddress address) {
+    public CompletableFuture<TunnelingAckBody> readRequest(final GroupAddress address) {
         final var cemi = CEMI.useDefaultForGroupValueRead(address);
         return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }

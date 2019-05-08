@@ -22,6 +22,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
 import li.pitschmann.knx.daemon.controllers.ReadRequestController;
+import li.pitschmann.knx.daemon.controllers.StatisticController;
+import li.pitschmann.knx.daemon.controllers.StatusController;
 import li.pitschmann.knx.daemon.controllers.WriteRequestController;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
@@ -52,9 +54,6 @@ public class HttpDaemonApplication extends ControllerApplication {
     @SuppressWarnings("unchecked") // unchecked because of addControllers(..)
     @Override
     protected void onInit() {
-        // sets the customized Gson engine
-        getContentTypeEngines().setContentTypeEngine(DaemonGsonEngine.INSTANCE);
-
         // create guice injector
         final var injector = Guice.createInjector(new AbstractModule() {
             @Provides
@@ -69,7 +68,15 @@ public class HttpDaemonApplication extends ControllerApplication {
         });
         setControllerFactory(new GuiceControllerFactory(injector));
 
+        // sets the customized Gson engine
+        getContentTypeEngines().setContentTypeEngine(DaemonGsonEngine.INSTANCE);
+
         // adds controller for endpoints
-        addControllers(ReadRequestController.class, WriteRequestController.class);
+        addControllers(
+                ReadRequestController.class, //
+                WriteRequestController.class, //
+                StatusController.class, //
+                StatisticController.class //
+        );
     }
 }

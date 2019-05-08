@@ -63,12 +63,12 @@ public final class MockDaemonTestExtension
 
         // create and start
         if (!mockDaemons.containsKey(context)) {
-            final var stopwatch = Stopwatch.createStarted();
             final var mockDaemon = MockHttpDaemon.createStarted(context);
 
-            // wait until mock daemon is ready for receiving packets from client (wait up to 10 seconds)
-            if (!Sleeper.milliseconds(100, () -> mockDaemon.isReady(), 10000)) {
-                // it took longer than 10 seconds -> abort
+            // wait until mock daemon is ready for receiving packets from client
+            final var stopwatch = Stopwatch.createStarted();
+            if (!Sleeper.milliseconds(100, () -> mockDaemon.isReady(), 20000)) {
+                // it took longer than 20 seconds -> abort
                 throw new RuntimeException("Could not start KNX Mock Daemon (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
             }
 

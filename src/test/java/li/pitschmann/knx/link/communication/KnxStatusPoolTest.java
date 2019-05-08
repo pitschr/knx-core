@@ -64,16 +64,44 @@ public class KnxStatusPoolTest {
     }
 
     /**
-     * Tests {@link KnxStatusPool#getStatusFor(KnxAddress)} for unknown
+     * Tests {@link KnxStatusPool#getStatusFor(KnxAddress)}, {@link KnxStatusPool#getStatusFor(KnxAddress, long, TimeUnit)}
+     * and {@link KnxStatusPool#getStatusFor(KnxAddress, long, TimeUnit, boolean)} for known group address
      */
     @Test
-    @DisplayName("Test getStatusFor(KnxAddress) for unknown")
+    @DisplayName("Test getStatusFor(KnxAddress) for known group address")
+    public void testGetStatusForKnown() {
+        final var pool = new KnxStatusPoolImpl();
+        pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
+
+        // found as it is known in status pool
+        assertThat(pool.getStatusFor(ADDRESS)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS, true)).isNotNull();
+
+        // set it as dirty
+        pool.setDirty(ADDRESS);
+
+        // should be able to find, because per default we don't filter for dirty/non-dirty
+        assertThat(pool.getStatusFor(ADDRESS)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS)).isNotNull();
+
+        // not found because the status data is marked as dirty
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS, true)).isNull();
+    }
+
+    /**
+     * Tests {@link KnxStatusPool#getStatusFor(KnxAddress)} for unknown group address
+     */
+    @Test
+    @DisplayName("Test getStatusFor(KnxAddress) for unknown group address")
     public void testGetStatusForUnknown() {
         final var pool = new KnxStatusPoolImpl();
         pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
 
         // not found because not known to status pool (IndividualAddress != GroupAddress)
         assertThat(pool.getStatusFor(GroupAddress.of(1, 2, 3))).isNull();
+        assertThat(pool.getStatusFor(GroupAddress.of(1, 2, 3), 30L, TimeUnit.MILLISECONDS)).isNull();
+        assertThat(pool.getStatusFor(GroupAddress.of(1, 2, 3), 30L, TimeUnit.MILLISECONDS, true)).isNull();
     }
 
     /**
@@ -154,13 +182,16 @@ public class KnxStatusPoolTest {
         pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
 
         // Scenario 1: test with unknown status
+        assertThat(pool.isUpdated(ADDRESS_UNKNOWN)).isFalse();
         assertThat(pool.isUpdated(ADDRESS_UNKNOWN, 30, TimeUnit.MILLISECONDS)).isFalse();
 
         // Scenario 2: test with known and updated status
+        assertThat(pool.isUpdated(ADDRESS)).isTrue();
         assertThat(pool.isUpdated(ADDRESS, 30, TimeUnit.MILLISECONDS)).isTrue();
 
         // Scenario 3: test with known and not updated status
         pool.setDirty(ADDRESS);
+        assertThat(pool.isUpdated(ADDRESS)).isFalse();
         assertThat(pool.isUpdated(ADDRESS, 30, TimeUnit.MILLISECONDS)).isFalse();
 
         // Scenario 4: test with invalid parameters

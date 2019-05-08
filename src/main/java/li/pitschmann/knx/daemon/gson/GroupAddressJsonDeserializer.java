@@ -1,19 +1,34 @@
 package li.pitschmann.knx.daemon.gson;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 
-import java.lang.reflect.Type;
-
 /**
- * De-Serializes the {@link GroupAddress} to a JSON format using Gson
+ * De-Serializes a JSON format of group address to an instance of {@link GroupAddress}
+ * <p/>
+ * Supported JSON formats:
+ * <pre>
+ * {"type":1,"raw":[15,19]}
+ * [15,59]
+ * 3899
+ * "3899"
+ * "1/1851"
+ * "1/7/59"
+ * </pre>
  */
-public final class GroupAddressJsonDeserializer implements JsonDeserializer<GroupAddress> {
+public final class GroupAddressJsonDeserializer extends KnxAddressJsonDeserializer<GroupAddress> {
     @Override
-    public GroupAddress deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        return GroupAddress.of(jsonElement.getAsString());
+    protected AddressType supportedAddressType() {
+        return AddressType.GROUP;
+    }
+
+    @Override
+    protected GroupAddress convert(byte[] addressArray) {
+        return GroupAddress.of(addressArray);
+    }
+
+    @Override
+    protected GroupAddress convert(String address) {
+        return GroupAddress.of(address);
     }
 }

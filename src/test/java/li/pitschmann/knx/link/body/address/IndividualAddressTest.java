@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.body.address;
 
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
@@ -48,7 +49,7 @@ public final class IndividualAddressTest {
     @Test
     public void invalidValueOf() {
         // null
-        assertThatThrownBy(() -> IndividualAddress.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addressRawData");
+        assertThatThrownBy(() -> IndividualAddress.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addressRawData");
 
         // address should have 2 bytes
         assertThatThrownBy(() -> IndividualAddress.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
@@ -60,6 +61,9 @@ public final class IndividualAddressTest {
      */
     @Test
     public void invalidCreate() {
+        // invalid format
+        assertThatThrownBy(() -> IndividualAddress.of("1.2.3.4")).isInstanceOf(KnxIllegalArgumentException.class).hasMessageStartingWith("Invalid Individual Address provided");
+
         // negative numbers
         assertThatThrownBy(() -> IndividualAddress.of(-1, 0, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("area");
         assertThatThrownBy(() -> IndividualAddress.of(0, -1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("line");
@@ -126,20 +130,24 @@ public final class IndividualAddressTest {
         final var testByCreate = IndividualAddress.of(area, line, device);
         final var testByCreateRawData = IndividualAddress.of(testByCreate.getRawData());
         final var testByValueOfRawData = IndividualAddress.of(bytes);
+        final var testByString = IndividualAddress.of(area + "." + line + "." + device);
 
         assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
         assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
+        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
         assertThat(testByCreateRawData.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
         assertThat(testByValueOfRawData.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
+        assertThat(testByString.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
 
         // check address print
         final var addressAsString = String.format("%s.%s.%s", area, line, device);
         assertThat(testByCreate.getAddress()).isEqualTo(addressAsString);
         assertThat(testByCreateRawData.getAddress()).isEqualTo(addressAsString);
         assertThat(testByValueOfRawData.getAddress()).isEqualTo(addressAsString);
+        assertThat(testByString.getAddress()).isEqualTo(addressAsString);
 
         // toString
         assertThat(testByCreate).hasToString(String.format("IndividualAddress{addressType=%s, address=%s, rawData=%s}", AddressType.INDIVIDUAL,

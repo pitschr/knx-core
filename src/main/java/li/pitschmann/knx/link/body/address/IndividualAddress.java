@@ -19,9 +19,11 @@
 package li.pitschmann.knx.link.body.address;
 
 import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -35,7 +37,7 @@ public final class IndividualAddress extends KnxAddress {
     private final int line;
     private final int device;
 
-    private IndividualAddress(final byte[] addressRawData) {
+    private IndividualAddress(final @Nonnull byte[] addressRawData) {
         super(addressRawData);
 
         // byte 0: xxxx ....
@@ -57,12 +59,36 @@ public final class IndividualAddress extends KnxAddress {
     }
 
     /**
+     * Returns an instance of {@link IndividualAddress} based on format:
+     * <ul>
+     * <li>{@code X.Y.Z} (The range must be between 0.0.0 and 15.15.255)</li>
+     * </ul>
+     * This method will split based of {@code .} delimiter and will call
+     * {@link #of(int, int, int)}
+     *
+     * @param addressAsString
+     * @return An instance of {@link IndividualAddress}
+     * or {@link KnxIllegalArgumentException} when a wrong format was provided
+     */
+    public static IndividualAddress of(final @Nonnull String addressAsString) {
+        final String[] individualAddressAreas = addressAsString.split("\\.");
+        if (individualAddressAreas.length == 3) {
+            return of( //
+                    Integer.valueOf(individualAddressAreas[0]), //
+                    Integer.valueOf(individualAddressAreas[1]), //
+                    Integer.valueOf(individualAddressAreas[2]) //
+            );
+        }
+        throw new KnxIllegalArgumentException("Invalid Individual Address provided: " + addressAsString);
+    }
+
+    /**
      * Returns an instance of {@link IndividualAddress}
      *
      * @param bytes complete byte array for {@link IndividualAddress}
      * @return immutable {@link IndividualAddress}
      */
-    public static IndividualAddress of(final byte[] bytes) {
+    public static IndividualAddress of(final @Nonnull byte[] bytes) {
         // no validation required, validation will be done in KnxAddress class
         return new IndividualAddress(bytes);
     }
@@ -70,9 +96,9 @@ public final class IndividualAddress extends KnxAddress {
     /**
      * Returns an instance of {@link IndividualAddress}
      *
-     * @param area
-     * @param line
-     * @param device
+     * @param area [0..15]
+     * @param line [0..15]
+     * @param device [0..255]
      * @return immutable {@link IndividualAddress}
      */
     public static IndividualAddress of(final int area, final int line, final int device) {
@@ -120,7 +146,7 @@ public final class IndividualAddress extends KnxAddress {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof IndividualAddress) {

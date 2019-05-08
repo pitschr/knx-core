@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.SubmissionPublisher;
@@ -82,6 +81,13 @@ public final class MockServer implements Runnable, Closeable {
     private Throwable throwable;
     private DefaultKnxClient client;
 
+    private MockServer(final MockServerTest mockServerAnnotation) {
+        this.mockServerAnnotation = mockServerAnnotation;
+        this.executorService = Executors.newSingleThreadExecutor(true);
+        this.executorService.execute(this);
+        this.executorService.shutdown();
+    }
+
     /**
      * Creates the KNX Mock Server and start it immediately based on test case configuration ( {@link MockServerTest} )
      *
@@ -90,13 +96,6 @@ public final class MockServer implements Runnable, Closeable {
      */
     public static MockServer createStarted(final @Nonnull MockServerTest mockServerAnnotation) {
         return new MockServer(Objects.requireNonNull(mockServerAnnotation));
-    }
-
-    private MockServer(final MockServerTest mockServerAnnotation) {
-        this.mockServerAnnotation = mockServerAnnotation;
-        this.executorService = Executors.newSingleThreadExecutor(true);
-        this.executorService.execute(this);
-        this.executorService.shutdown();
     }
 
     @Override

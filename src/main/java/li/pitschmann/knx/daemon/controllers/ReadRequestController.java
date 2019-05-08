@@ -1,12 +1,10 @@
 package li.pitschmann.knx.daemon.controllers;
 
-import com.google.inject.Inject;
 import li.pitschmann.knx.daemon.json.ReadRequest;
 import li.pitschmann.knx.daemon.json.ReadResponse;
 import li.pitschmann.knx.daemon.json.Status;
-import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import li.pitschmann.knx.parser.XmlProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Consumes;
@@ -24,12 +22,6 @@ import java.util.concurrent.TimeUnit;
 public final class ReadRequestController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(ReadRequestController.class);
 
-    @Inject
-    private XmlProject xmlProject;
-
-    @Inject
-    private DefaultKnxClient knxClient;
-
     /**
      * Endpoint for read request to be forwarded to KNX Net/IP device by KNX Daemon
      * <p/>
@@ -45,19 +37,51 @@ public final class ReadRequestController extends AbstractController {
     @Consumes(Consumes.JSON)
     @Produces(Produces.JSON)
     public ReadResponse readRequest(final @Body ReadRequest readRequest) {
-        log.debug("Http Read Request received: {}", readRequest);
-        getRequest().getParameter("expand");
+        log.trace("Http Read Request received: {}", readRequest);
+
         final var groupAddress = readRequest.getGroupAddress();
+
+        // check if GA is known
+        final var groupAddressOptional = getXmlProject().getGroupAddress(groupAddress);
+        if (!groupAddressOptional.isPresent()) {
+            log.warn("Could not find group address in XML project: {}", groupAddress);
+            final var response = new ReadResponse();
+            response.setStatus(Status.ERROR);
+            getResponse().notFound();
+            return response;
+        }
+
+        // found - group address is known, send read request
+        TunnelingAckBody ackBody = null;
+        try {
+            ackBody = getKnxClient().readRequest(groupAddress).get();
+        } catch (final ExecutionException | InterruptedException ex) {
+            log.error("Exception during sending read request", ex);
+        }
 
         final var response = new ReadResponse();
 
-        // check if GA is known
-        final var groupAddressObj = xmlProject.getGroupAddresses().stream().filter(x -> x.getAddress().equals(groupAddress.getAddress())).findFirst();
-        if (groupAddressObj.isPresent()) {
-            // found
-            final var xmlGroupAddress = groupAddressObj.get();
-            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
-            // we add name and description only if requested
+        // acknowledge not received?
+        if (ackBody == null) {
+            log.warn("No acknowledge received for read request: {}", readRequest);
+            response.setStatus(Status.ERROR);
+            getResponse().internalError();
+        }
+        // acknowledge received with error?
+        else if (ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
+            log.warn("Unexpected KNX acknowledge status '{}' received for read request: {}", ackBody.getStatus(), readRequest);
+            response.setStatus(Status.ERROR);
+            getResponse().internalError();
+        }
+        // everything OK
+        else {
+            log.debug("Acknowledge received for read request: {}", readRequest);
+            final var xmlGroupAddress = groupAddressOptional.get();
+
+            // we add dpt, name and description only if requested
+            if (containsExpand("dpt")) {
+                response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
+            }
             if (containsExpand("name")) {
                 response.setName(xmlGroupAddress.getName());
             }
@@ -65,42 +89,23 @@ public final class ReadRequestController extends AbstractController {
                 response.setDescription(xmlGroupAddress.getDescription());
             }
 
-            try {
-                final var ackBody = knxClient.readRequest(groupAddress).get();
-                if (ackBody == null) {
-                    log.warn("No acknowledge received for read request: {}", readRequest);
-                    response.setStatus(Status.ERROR);
-                    getResponse().status(HttpConstants.StatusCode.GATEWAY_TIMEOUT);
-                } else if (ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
-                    log.warn("Unexpected KNX status '{}' received for read request: {}", ackBody.getStatus(), readRequest);
-                    response.setStatus(Status.ERROR);
-                    getResponse().internalError();
-                } else if (knxClient.getStatusPool().isUpdated(groupAddress, 3, TimeUnit.SECONDS)) {
-                    final var knxStatus = knxClient.getStatusPool().getStatusFor(groupAddress);
-                    log.debug("KNX Status received for read request: {}", knxStatus);
+            if (containsExpand("raw")) {
+                // wait for response from KNX Net/IP device to obtain the most recent raw values
+                final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress, 3, TimeUnit.SECONDS, true);
+                if (knxStatusData != null) {
+                    log.debug("Status data found for group address: {}", groupAddress);
                     response.setStatus(Status.OK);
-                    response.setRaw(knxStatus.getApciData());
+                    response.setRaw(knxStatusData.getApciData());
                     getResponse().ok();
                 } else {
-                    log.warn("No response received for read request: {}", readRequest);
+                    log.warn("Status data not found for group address: {}", groupAddress);
                     response.setStatus(Status.ERROR);
                     getResponse().status(HttpConstants.StatusCode.GATEWAY_TIMEOUT);
                 }
-            } catch (ExecutionException executionEx) {
-                log.error("Exception during sending read request", executionEx);
-                response.setStatus(Status.ERROR);
-                getResponse().internalError();
-            } catch (InterruptedException ie) {
-                log.debug("Interrupted signal received while read request: {}", readRequest);
-                response.setStatus(Status.ERROR);
-                getResponse().serviceUnavailable();
+            } else {
+                response.setStatus(Status.OK);
+                getResponse().ok();
             }
-
-        } else {
-            log.warn("Could not find group address in XML project: {}", readRequest);
-            log.debug("Group Addresses: {}", xmlProject.getGroupAddresses());
-            response.setStatus(Status.ERROR);
-            getResponse().notFound();
         }
 
         return response;

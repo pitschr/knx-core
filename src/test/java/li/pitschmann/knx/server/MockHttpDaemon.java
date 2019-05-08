@@ -60,11 +60,11 @@ public final class MockHttpDaemon extends AbstractHttpDaemon {
     public static MockHttpDaemon createStarted(final @Nonnull ExtensionContext context) {
         final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockDaemonTest.class).get();
 
-        // start mock server and wait until it is ready (wait up to 5 seconds)
+        // start mock server and wait until it is ready
         final var stopwatch = Stopwatch.createStarted();
         final var mockServer = MockServer.createStarted(annotation.value());
-        if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 5000)) {
-            // it took longer than 5 seconds -> abort
+        if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 10000)) {
+            // it took longer than 10 seconds -> abort
             throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
         }
 
