@@ -1,9 +1,9 @@
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
 import com.google.inject.Inject;
-import li.pitschmann.knx.daemon.json.Status;
-import li.pitschmann.knx.daemon.json.WriteRequest;
-import li.pitschmann.knx.daemon.json.WriteResponse;
+import li.pitschmann.knx.daemon.v1.json.Status;
+import li.pitschmann.knx.daemon.v1.json.WriteRequest;
+import li.pitschmann.knx.daemon.v1.json.WriteResponse;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.parser.XmlProject;

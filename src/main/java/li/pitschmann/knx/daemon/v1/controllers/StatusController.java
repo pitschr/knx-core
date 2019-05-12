@@ -1,8 +1,8 @@
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
-import li.pitschmann.knx.daemon.json.Status;
-import li.pitschmann.knx.daemon.json.StatusRequest;
-import li.pitschmann.knx.daemon.json.StatusResponse;
+import li.pitschmann.knx.daemon.v1.json.Status;
+import li.pitschmann.knx.daemon.v1.json.StatusRequest;
+import li.pitschmann.knx.daemon.v1.json.StatusResponse;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

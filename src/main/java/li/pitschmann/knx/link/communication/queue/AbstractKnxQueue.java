@@ -41,7 +41,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * @author PITSCHR
  */
 public abstract class AbstractKnxQueue implements Runnable {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKnxQueue.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractKnxQueue.class);
     private final String id;
     private final InternalKnxClient internalClient;
     private final SelectableChannel channel;
@@ -65,7 +65,7 @@ public abstract class AbstractKnxQueue implements Runnable {
      */
     @Override
     public final void run() {
-        LOG.info("*** {}: START ***", id);
+        log.info("*** {}: START ***", id);
 
         try (final var selector = openSelector()) {
             // iterate until current thread is interrupted
@@ -83,27 +83,27 @@ public abstract class AbstractKnxQueue implements Runnable {
                         }
                     }
                 } catch (final KnxWrongChannelIdException wrongChannelIdException) {
-                    LOG.warn("{}: KNX packet with wrong channel retrieved: {}", id, wrongChannelIdException.getMessage());
+                    log.warn("{}: KNX packet with wrong channel retrieved: {}", id, wrongChannelIdException.getMessage());
                     // silently ignore and proceed with next packet
                 } catch (final InterruptedException ie) {
-                    LOG.debug("{}: Channel is interrupted: {}", id, selector);
+                    log.debug("{}: Channel is interrupted: {}", id, selector);
                     Thread.currentThread().interrupt();
                     // break loop as desired
                 } catch (final IOException ioe) {
                     throw ioe;
                     // break loop due exception
                 } catch (final Throwable e) {
-                    LOG.error("{}: Error while processing KNX packets.", id, e);
+                    log.error("{}: Error while processing KNX packets.", id, e);
                     this.internalClient.notifyPluginsError(e);
                     // proceed with next packet
                 }
             }
         } catch (final IOException ioe) {
-            LOG.error("{}: IOException for channel: {}", id, channel, ioe);
+            log.error("{}: IOException for channel: {}", id, channel, ioe);
             throw new KnxException(String.format("IOException in '%s'.", id), ioe);
             // throw to channel communicator
         } finally {
-            LOG.info("*** {}: END ***", id);
+            log.info("*** {}: END ***", id);
         }
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractKnxQueue implements Runnable {
 
         // prepare channel for non-blocking and register to selector
         channel.register(selector, interestOps());
-        LOG.trace("{}: Channel {} registered to selector: {}", this.id, channel, selector);
+        log.trace("{}: Channel {} registered to selector: {}", this.id, channel, selector);
 
         return selector;
     }

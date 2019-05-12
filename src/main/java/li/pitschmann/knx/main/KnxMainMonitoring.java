@@ -40,28 +40,28 @@ import java.util.concurrent.TimeUnit;
  * @author PITSCHR
  */
 public class KnxMainMonitoring extends AbstractKnxMain {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxMainMonitoring.class);
-    private static final Logger ROOT_LOGGER = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    private static final Logger log = LoggerFactory.getLogger(KnxMainMonitoring.class);
+    private static final Logger logRoot = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     private static final InetAddress DEFAULT_IP_ADDRESS = Networker.getByAddress("192.168.1.16");
 
     public static void main(final String[] args) {
-        // set level to Level#ALL for ROOT logger implementation
+        // set level to Level#ALL for ROOT log implementation
         final var logAll = getParameterValue(args, "-l", false, Boolean::parseBoolean);
         if (logAll) {
-            ((ch.qos.logback.classic.Logger) ROOT_LOGGER).setLevel(ch.qos.logback.classic.Level.ALL);
+            ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.ALL);
         }
-        LOG.debug("Log all: {}", logAll);
+        log.debug("Log all: {}", logAll);
 
         // Get KNX Net/IP Address
         final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Networker::getByAddress);
-        LOG.debug("KNX Net/IP Address: {}", ipAddress);
+        log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // Get Monitor Time in Seconds
         final var monitorTime = getParameterValue(args, "-t", Long.MAX_VALUE, Long::parseLong);
-        LOG.debug("Monitor Time: {}s", monitorTime);
+        log.debug("Monitor Time: {}s", monitorTime);
 
         // start KNX communication
-        LOG.trace("START");
+        log.trace("START");
 
         final var config = Configuration.create(ipAddress)//
                 .setting("timeout.request.connectionstate", "10000") //
@@ -70,20 +70,20 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            LOG.debug("========================================================================");
-            LOG.debug("MONITORING for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
-            LOG.debug("========================================================================");
+            log.debug("========================================================================");
+            log.debug("MONITORING for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
+            log.debug("========================================================================");
             final var sw = Stopwatch.createStarted();
             while (!client.isClosed() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
                 Sleeper.seconds(1);
             }
-            LOG.debug("========================================================================");
-            LOG.debug("STOP MONITORING");
-            LOG.debug("========================================================================");
+            log.debug("========================================================================");
+            log.debug("STOP MONITORING");
+            log.debug("========================================================================");
         } catch (final Throwable t) {
-            LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
+            log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         } finally {
-            LOG.trace("FINALLY");
+            log.trace("FINALLY");
         }
     }
 }

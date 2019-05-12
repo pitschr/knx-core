@@ -43,7 +43,7 @@ import java.util.function.Function;
  * @author PITSCHR
  */
 public class KnxMainWrite extends AbstractKnxMain {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxMainWrite.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxMainWrite.class);
     private static final String DEFAULT_IP_ADDRESS = "192.168.1.16";
     private static final List<GroupAddress> DEFAULT_GROUP_ADDRESSES = Lists.newArrayList( //
             GroupAddress.of(1, 2, 0), //
@@ -55,46 +55,46 @@ public class KnxMainWrite extends AbstractKnxMain {
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
         final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Function.identity());
-        LOG.debug("KNX Net/IP Address: {}", ipAddress);
+        log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get DPT
         final var dpt = getParameterValue(args, "-dpt", DEFAULT_DPT, String::valueOf);
-        LOG.debug("DPT: {}", dpt);
+        log.debug("DPT: {}", dpt);
 
         // 3rd..Nth Arguments: Get Values
         final var values = getParameterValues(args, "-c", DEFAULT_VALUES, String[]::new);
-        LOG.debug("Values: {}", Arrays.toString(values));
+        log.debug("Values: {}", Arrays.toString(values));
 
         // start KNX communication
-        LOG.trace("START");
+        log.trace("START");
         try (final var client = DefaultKnxClient.createStarted(ipAddress)) {
             final var ackBodies = Lists.<Future<TunnelingAckBody>>newArrayList();
             Sleeper.seconds(1);
             for (final String value : values) {
                 final var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
-                LOG.debug("========================================================================");
+                log.debug("========================================================================");
                 for (final GroupAddress groupAddress : DEFAULT_GROUP_ADDRESSES) {
                     final var future = client.writeRequest(groupAddress, dpValue);
                     ackBodies.add(future);
-                    LOG.debug("WRITE: {} - {}\nACK: {}", value, dpValue, future);
+                    log.debug("WRITE: {} - {}\nACK: {}", value, dpValue, future);
                 }
                 Sleeper.seconds(2);
-                LOG.debug("========================================================================");
+                log.debug("========================================================================");
             }
 
             // wait until completed
-            LOG.debug("WAIT UNTIL COMPLETED");
+            log.debug("WAIT UNTIL COMPLETED");
 
             for (final var ackBody : ackBodies) {
-                LOG.debug("DONE: {}", ackBody.isDone());
-                LOG.debug("GET : {}", ackBody.get());
+                log.debug("DONE: {}", ackBody.isDone());
+                log.debug("GET : {}", ackBody.get());
             }
-            LOG.debug("Statistic: {}", client.getStatistic());
-            LOG.debug("COMPLETED!");
+            log.debug("Statistic: {}", client.getStatistic());
+            log.debug("COMPLETED!");
         } catch (final Throwable t) {
-            LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
+            log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         } finally {
-            LOG.trace("FINALLY");
+            log.trace("FINALLY");
         }
     }
 }

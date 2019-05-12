@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  * @author PITSCHR
  */
 public final class StatisticPlugin implements ExtensionPlugin {
-    private static final Logger LOG = LoggerFactory.getLogger(StatisticPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(StatisticPlugin.class);
     private static final ExecutorService executor = Executors.newSingleThreadExecutor(true);
     private static final long DEFAULT_INTERVAL_MILLISECONDS = TimeUnit.MINUTES.toMillis(1); // 60000 ms
     private static final StatisticFormat DEFAULT_FORMAT = StatisticFormat.JSON;
@@ -91,7 +91,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
     public void onShutdown() {
         Closeables.shutdownQuietly(executor);
         // print last statistic
-        LOG.info(StatisticPlugin.this.getStatisticAsText());
+        log.info(StatisticPlugin.this.getStatisticAsText());
     }
 
     /**
@@ -249,7 +249,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
         @Override
         public void run() {
             do {
-                LOG.info(StatisticPlugin.this.getStatisticAsText());
+                log.info(StatisticPlugin.this.getStatisticAsText());
             } while (Sleeper.milliseconds(this.intervalMilliseconds));
         }
     }

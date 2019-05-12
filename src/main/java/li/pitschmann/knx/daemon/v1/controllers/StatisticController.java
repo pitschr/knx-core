@@ -1,4 +1,4 @@
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import org.slf4j.Logger;

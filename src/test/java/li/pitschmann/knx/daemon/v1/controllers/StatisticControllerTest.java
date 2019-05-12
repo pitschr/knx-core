@@ -16,12 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.server.MockDaemonTest;
 import li.pitschmann.knx.server.MockHttpDaemon;
 import li.pitschmann.knx.server.MockServerTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 
 import java.net.http.HttpClient;
@@ -39,7 +38,6 @@ public class StatisticControllerTest {
      * @param daemon
      * @throws Exception
      */
-    @Disabled
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /statistic endpoint")
     public void testStatistic(final MockHttpDaemon daemon) throws Exception {
@@ -47,32 +45,42 @@ public class StatisticControllerTest {
         final var httpClient = HttpClient.newHttpClient();
 
         // send write request
-        final var httpRequest = daemon.newRequestBuilder("/statistic").GET().build();
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/statistic").GET().build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
-
-        // TODO: JSON should be more pretty!
-        // TODO: we should not rely on the size of bytes (regular expression?)
 
         // @formatter:off
         assertThat(responseBody).isEqualTo(
                 "{" +
-                    "\"numberOfBodyReceivedMap\":{" +
-                        "\"class li.pitschmann.knx.link.body.DescriptionResponseBody\":1," +
-                        "\"class li.pitschmann.knx.link.body.ConnectionStateResponseBody\":1," +
-                        "\"class li.pitschmann.knx.link.body.ConnectResponseBody\":1" +
+                    "\"inbound\":{" +
+                        "\"total\":{" +
+                            "\"packets\":3," +
+                            "\"bytes\":224" +
+                        "}," +
+                        "\"description\":{\"request\":0,\"response\":1}," +
+                        "\"connect\":{\"request\":0,\"response\":1}," +
+                        "\"connection_state\":{\"request\":0,\"response\":1}," +
+                        "\"disconnect\":{\"request\":0,\"response\":0}," +
+                        "\"tunneling\":{\"request\":0,\"response\":0}" +
                     "}," +
-                    "\"numberOfBodySentMap\":{" +
-                        "\"class li.pitschmann.knx.link.body.DescriptionRequestBody\":1," +
-                        "\"class li.pitschmann.knx.link.body.ConnectRequestBody\":1," +
-                        "\"class li.pitschmann.knx.link.body.ConnectionStateRequestBody\":1" +
+                    "\"outbound\":{" +
+                        "\"total\":{" +
+                            "\"packets\":3," +
+                            "\"bytes\":182" +
+                        "}," +
+                        "\"description\":{\"request\":1,\"response\":0}," +
+                        "\"connect\":{\"request\":1,\"response\":0}," +
+                        "\"connection_state\":{\"request\":1,\"response\":0}," +
+                        "\"disconnect\":{\"request\":0,\"response\":0}," +
+                        "\"tunneling\":{\"request\":0,\"response\":0}" +
                     "}," +
-                    "\"numberOfBodyReceived\":3," +
-                    "\"numberOfBodySent\":3," +
-                    "\"numberOfBytesReceived\":224," +
-                    "\"numberOfBytesSent\":182," +
-                    "\"numberOfErrors\":0," +
-                    "\"errorRate\":0.0" +
-                "}");
+                    "\"error\":{" +
+                        "\"total\":{" +
+                            "\"packets\":0," +
+                            "\"rate\":0.0" +
+                        "}" +
+                    "}" +
+                "}"
+        );
         // @formatter:on
     }
 }

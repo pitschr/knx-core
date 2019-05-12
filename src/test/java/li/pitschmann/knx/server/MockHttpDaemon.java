@@ -42,8 +42,6 @@ import java.util.concurrent.TimeUnit;
  * for communication with the KNX Net/IP device
  */
 public final class MockHttpDaemon extends AbstractHttpDaemon {
-    private static final Logger log = LoggerFactory.getLogger(MockHttpDaemon.class);
-
     private MockHttpDaemon(final @Nonnull Configuration configuration) {
         super(configuration);
     }

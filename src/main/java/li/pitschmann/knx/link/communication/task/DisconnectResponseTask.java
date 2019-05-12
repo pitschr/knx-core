@@ -34,7 +34,7 @@ import java.util.concurrent.Flow.Subscription;
  * @author PITSCHR
  */
 public final class DisconnectResponseTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(DisconnectResponseTask.class);
+    private static final Logger log = LoggerFactory.getLogger(DisconnectResponseTask.class);
     private final InternalKnxClient client;
 
     public DisconnectResponseTask(final InternalKnxClient client) {
@@ -46,15 +46,15 @@ public final class DisconnectResponseTask implements Subscriber<Body> {
         // we are interested in disconnect response only
         if (body instanceof DisconnectResponseBody) {
             final var responseBody = (DisconnectResponseBody) body;
-            LOG.debug("Disconnect Response received: {}", responseBody);
+            log.debug("Disconnect Response received: {}", responseBody);
             this.client.getEventPool().disconnectEvent().setResponse(responseBody);
-            LOG.trace("Disconnect Response saved.");
+            log.trace("Disconnect Response saved.");
         }
     }
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Disconnect Response Task class", throwable);
+        log.error("Error during Disconnect Response Task class", throwable);
     }
 
     @Override

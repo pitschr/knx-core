@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * Helper class to close some objects silently or with additional functionality.
  */
 public final class Closeables {
-    private static final Logger LOG = LoggerFactory.getLogger(Closeables.class);
+    private static final Logger log = LoggerFactory.getLogger(Closeables.class);
 
     private Closeables() {
         throw new AssertionError("Do not touch me!");
@@ -44,14 +44,14 @@ public final class Closeables {
      * @return {@code true} if the close was gracefully, otherwise {@code false}
      */
     public static boolean closeQuietly(final @Nullable Channel channel) {
-        LOG.trace("Call 'closeQuietly(DatagramChannel)' method");
+        log.trace("Call 'closeQuietly(DatagramChannel)' method");
 
         var isOk = true;
         if (channel instanceof DatagramChannel) {
             try {
                 ((DatagramChannel) channel).disconnect();
             } catch (final Exception ex) {
-                LOG.warn("Exception caught during disconnect: {}", channel, ex);
+                log.warn("Exception caught during disconnect: {}", channel, ex);
                 isOk = false;
             }
         }
@@ -66,13 +66,13 @@ public final class Closeables {
      * @return {@code true} if the close was gracefully, otherwise {@code false}
      */
     public static boolean closeQuietly(final @Nullable AutoCloseable closeable) {
-        LOG.trace("Call 'closeQuietly(Closeable)' method");
+        log.trace("Call 'closeQuietly(Closeable)' method");
         var isOk = true;
         if (closeable != null) {
             try {
                 closeable.close();
             } catch (final Exception ex) {
-                LOG.warn("Exception caught during closing: {}", closeable, ex);
+                log.warn("Exception caught during closing: {}", closeable, ex);
                 isOk = false;
             }
         }
@@ -99,7 +99,7 @@ public final class Closeables {
      * @return {@code true} if the shutdown was gracefully, otherwise {@code false}
      */
     public static boolean shutdownQuietly(final @Nullable ExecutorService executorService, final long timeout, final @Nullable TimeUnit timeUnit) {
-        LOG.trace("Call 'shutdownQuietly(ExecutorService, long, TimeUnit)' method: {}, {}, {}", executorService, timeout, timeUnit);
+        log.trace("Call 'shutdownQuietly(ExecutorService, long, TimeUnit)' method: {}, {}, {}", executorService, timeout, timeUnit);
         var isOk = true;
         if (executorService != null) {
             executorService.shutdown();

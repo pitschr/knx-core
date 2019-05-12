@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  * @author PITSCHR
  */
 public final class KnxStatusPoolImpl implements KnxStatusPool {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxStatusPoolImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxStatusPoolImpl.class);
     private final Map<KnxAddress, KnxStatusData> statusMap = Maps.newHashMapWithExpectedSize(1024);
 
     /**
@@ -51,7 +51,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
      * @param statusData status data to be analyzed for pool
      */
     public void updateStatus(final @Nonnull KnxAddress address, final KnxStatusData statusData) {
-        LOG.trace("Update status by KNX address {}: {}", address, statusData);
+        log.trace("Update status by KNX address {}: {}", address, statusData);
         Preconditions.checkNotNull(address);
         this.statusMap.put(address, statusData);
     }
@@ -93,7 +93,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         Preconditions.checkNotNull(address);
         final var statusData = this.statusMap.get(address);
         if (statusData == null) {
-            LOG.warn("No KNX status data found for address: {}", address);
+            log.warn("No KNX status data found for address: {}", address);
         }
         return statusData;
     }
@@ -114,10 +114,10 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         } while ((statusData==null || (mustUpToDate && statusData.isDirty())) && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
 
         if (statusData == null) {
-            LOG.warn("No KNX status data found for address within defined time out: {}", address);
+            log.warn("No KNX status data found for address within defined time out: {}", address);
             return null;
         } else if (mustUpToDate && statusData.isDirty()) {
-            LOG.warn("No up-to-date KNX status data for address within defined timeout: {}", address);
+            log.warn("No up-to-date KNX status data for address within defined timeout: {}", address);
             return null;
         } else {
             return statusData;

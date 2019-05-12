@@ -40,9 +40,9 @@ import java.util.stream.Collectors;
  *
  * @author PITSCHR
  */
-public class MemoryLogExtension
+public final class MemoryLogExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-    private static final Logger LOG = LoggerFactory.getLogger(MemoryLogExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(MemoryLogExtension.class);
     private static final Map<ExtensionContext, MemoryAppender> memoryAppenders = new ConcurrentHashMap<>();
 
     @Override
@@ -56,28 +56,28 @@ public class MemoryLogExtension
     }
 
     /**
-     * Add {@link MemoryAppender} to the logger before test method execution
+     * Add {@link MemoryAppender} to the log before test method execution
      *
      * @param context
      */
     @Override
     public void beforeTestExecution(final ExtensionContext context) throws Exception {
         final var classes = getMemoryLogAnnotation(context).value();
-        LOG.debug("[{}] MemoryAppender added for classes: {}", context.getRequiredTestMethod(), classes);
+        log.debug("[{}] MemoryAppender added for classes: {}", context.getRequiredTestMethod(), classes);
         final var memoryAppender = new MemoryAppender();
         getLoggers(classes).forEach(memoryAppender::addForLogger);
         memoryAppenders.put(context, memoryAppender);
     }
 
     /**
-     * Detach {@link MemoryAppender} from logger after test method execution
+     * Detach {@link MemoryAppender} from log after test method execution
      *
      * @param context
      */
     @Override
     public void afterTestExecution(final ExtensionContext context) throws Exception {
         final var classes = getMemoryLogAnnotation(context).value();
-        LOG.debug("[{}] MemoryAppender detached for classes: {}", context.getRequiredTestMethod(), classes);
+        log.debug("[{}] MemoryAppender detached for classes: {}", context.getRequiredTestMethod(), classes);
         final var memoryAppender = memoryAppenders.remove(context);
         memoryAppender.reset();
         getLoggers(classes).forEach(memoryAppender::detachForLogger);

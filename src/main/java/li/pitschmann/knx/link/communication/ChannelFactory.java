@@ -37,7 +37,7 @@ import java.nio.channels.SelectableChannel;
  * @author PITSCHR
  */
 public final class ChannelFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(ChannelFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(ChannelFactory.class);
 
     private ChannelFactory() {
         throw new AssertionError("Don't touch me!");
@@ -53,7 +53,7 @@ public final class ChannelFactory {
      */
     public static SelectableChannel newDescriptionChannel(final @Nonnull Configuration config) {
         final var socketAddress = config.getEndpoint();
-        LOG.debug("Create new description channel for: {} (socket timeout: {}ms)", socketAddress,
+        log.debug("Create new description channel for: {} (socket timeout: {}ms)", socketAddress,
                 config.getSocketTimeoutControlChannel());
         return newDatagramChannel(config.getSocketTimeoutControlChannel(), socketAddress);
     }
@@ -68,7 +68,7 @@ public final class ChannelFactory {
      */
     public static SelectableChannel newControlChannel(final @Nonnull Configuration config) {
         final var socketAddress = config.getEndpoint();
-        LOG.debug("Create new control channel for: {} (socket timeout: {}ms)", socketAddress,
+        log.debug("Create new control channel for: {} (socket timeout: {}ms)", socketAddress,
                 config.getSocketTimeoutControlChannel());
         return newDatagramChannel(config.getSocketTimeoutControlChannel(), socketAddress);
     }
@@ -83,7 +83,7 @@ public final class ChannelFactory {
      */
     public static SelectableChannel newDataChannel(final @Nonnull Configuration config) {
         final var socketAddress = config.getEndpoint();
-        LOG.debug("Create new data channel for: {} (socket timeout: {}ms)", socketAddress, config.getSocketTimeoutDataChannel());
+        log.debug("Create new data channel for: {} (socket timeout: {}ms)", socketAddress, config.getSocketTimeoutDataChannel());
         return newDatagramChannel(config.getSocketTimeoutDataChannel(), socketAddress);
     }
 

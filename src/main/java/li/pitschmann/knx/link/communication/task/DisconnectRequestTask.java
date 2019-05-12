@@ -37,7 +37,7 @@ import java.util.concurrent.Flow.Subscription;
  * @author PITSCHR
  */
 public final class DisconnectRequestTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(DisconnectRequestTask.class);
+    private static final Logger log = LoggerFactory.getLogger(DisconnectRequestTask.class);
     private final InternalKnxClient client;
 
     public DisconnectRequestTask(InternalKnxClient client) {
@@ -48,15 +48,15 @@ public final class DisconnectRequestTask implements Subscriber<Body> {
     public void onNext(final Body body) {
         // we are interested in disconnect request only
         if (body instanceof DisconnectRequestBody) {
-            LOG.trace("Disconnect Request received");
+            log.trace("Disconnect Request received");
             final var requestBody = (DisconnectRequestBody) body;
 
             // create body
             final var responseBody = DisconnectResponseBody.create(this.client.getChannelId(), Status.E_NO_ERROR);
             this.client.getEventPool().disconnectEvent().setRequest(requestBody);
-            LOG.trace("Disconnect Request saved.");
+            log.trace("Disconnect Request saved.");
             this.client.getEventPool().disconnectEvent().setResponse(responseBody);
-            LOG.trace("Disconnect Response saved.");
+            log.trace("Disconnect Response saved.");
             try {
                 this.client.send(responseBody);
                 Sleeper.milliseconds(this.client.getConfig().getTimeoutDisconnectResponse());
@@ -69,7 +69,7 @@ public final class DisconnectRequestTask implements Subscriber<Body> {
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Disconnect Request Task class", throwable);
+        log.error("Error during Disconnect Request Task class", throwable);
     }
 
     @Override

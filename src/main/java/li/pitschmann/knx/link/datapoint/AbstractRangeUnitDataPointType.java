@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
  * @author PITSCHR
  */
 public abstract class AbstractRangeUnitDataPointType<T extends DataPointValue<?>, R extends Comparable<R>> extends AbstractDataPointType<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeUnitDataPointType.class);
     private final R lowerValue;
     private final R upperValue;
     private final String unit;
@@ -51,7 +50,7 @@ public abstract class AbstractRangeUnitDataPointType<T extends DataPointValue<?>
     public boolean isRangeClosed(final R value) {
         final var isWithinRange = value.compareTo(this.lowerValue) >= 0 && value.compareTo(this.upperValue) <= 0;
         if (!isWithinRange) {
-            LOG.warn("Value '{}' is not within [{}, {}] for DPT '{}'", value, this.lowerValue, this.upperValue, this.getClass().getSimpleName());
+            log.warn("Value '{}' is not within [{}, {}] for DPT '{}'", value, this.lowerValue, this.upperValue, this.getClass().getSimpleName());
         }
         return isWithinRange;
     }

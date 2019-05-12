@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  * @author PITSCHR
  */
 public abstract class AbstractDataPointType<V extends DataPointValue<?>> implements DataPointType<V> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataPointType.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final String id;
     private final String description;
 
@@ -122,16 +122,16 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         try {
             isCompatible = this.isCompatible(args);
         } catch (final Throwable t) {
-            LOG.debug("Throwable during isCompatible(String[]) check: {}: {}", t.getClass(), t.getMessage());
+            log.debug("Throwable during isCompatible(String[]) check: {}: {}", t.getClass(), t.getMessage());
             isCompatible = false;
         }
         if (!isCompatible) {
-            LOG.debug("Incompatible arguments for parse(String[]). Try with parse as hex string: {}", Arrays.toString(args));
+            log.debug("Incompatible arguments for parse(String[]). Try with parse as hex string: {}", Arrays.toString(args));
             try {
                 // it may be a hex string -> try to parse it!
                 return this.tryParseAsHexString(args);
             } catch (final Throwable t) {
-                LOG.warn("Could not parse hex string for following arguments: {}", Arrays.toString(args));
+                log.warn("Could not parse hex string for following arguments: {}", Arrays.toString(args));
                 throw new DataPointTypeIncompatibleSyntaxException(this, args);
             }
         }
@@ -140,11 +140,11 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         try {
             return this.parse(args);
         } catch (final Throwable throwable) {
-            LOG.debug("Could not parse following arguments: {}", Arrays.toString(args));
+            log.debug("Could not parse following arguments: {}", Arrays.toString(args));
             try {
                 return this.tryParseAsHexString(args);
             } catch (final Throwable throwable2) {
-                LOG.warn("Throwable during tryParseAsHexString(String[]): {}", throwable.getClass(), throwable2);
+                log.warn("Throwable during tryParseAsHexString(String[]): {}", throwable.getClass(), throwable2);
                 throw new DataPointTypeIncompatibleSyntaxException(this, args);
             }
         }

@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
-import li.pitschmann.knx.daemon.json.ReadRequest;
-import li.pitschmann.knx.daemon.json.StatusRequest;
+import li.pitschmann.knx.daemon.v1.json.ReadRequest;
+import li.pitschmann.knx.daemon.v1.json.StatusRequest;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.server.MockDaemonTest;
 import li.pitschmann.knx.server.MockHttpDaemon;
@@ -57,7 +57,7 @@ public class StatusControllerTest {
 
         // send status request #1 - we will get an error (not found) because we never requested for
         // this group address yet and therefore the status doesn't exists in the status pool yet
-        final var httpRequest = daemon.newRequestBuilder("/status").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/status").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
         final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
         assertThat(httpResponse.body()).isEqualTo("{\"status\":\"ERROR\"}");
@@ -65,7 +65,7 @@ public class StatusControllerTest {
         // send /read request
         final var readRequest = new ReadRequest();
         readRequest.setGroupAddress(groupAddress);
-        final var httpReadRequest = daemon.newRequestBuilder("/read?expand=raw").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var httpReadRequest = daemon.newRequestBuilder("/api/v1/read?expand=raw").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
         httpClient.send(httpReadRequest, HttpResponse.BodyHandlers.ofString());
 
         // re-request for status - we should get an successful message here
@@ -74,7 +74,7 @@ public class StatusControllerTest {
         assertThat(httpResponseAfterRead.body()).isEqualTo("{\"status\":\"OK\"}");
 
         // re-request for status but this time with all expand parameters
-        final var httpRequestAllExpands = daemon.newRequestBuilder("/status?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
+        final var httpRequestAllExpands = daemon.newRequestBuilder("/api/v1/status?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
         final var httpResponseAllExpands = httpClient.send(httpRequestAllExpands, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponseAllExpands.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
         // assert the body, the timestamp is validated against regular expression ...

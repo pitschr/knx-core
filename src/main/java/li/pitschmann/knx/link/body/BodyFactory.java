@@ -32,7 +32,7 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public final class BodyFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(BodyFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(BodyFactory.class);
 
     private BodyFactory() {
         throw new AssertionError("Do not touch me!");
@@ -100,7 +100,7 @@ public final class BodyFactory {
         } else if (serviceType == ServiceType.CONNECT_RESPONSE) {
             return (T) ConnectResponseBody.valueOf(bodyBytes);
         } else {
-            LOG.error("Unknown Body for ServiceType: {}", serviceType);
+            log.error("Unknown Body for ServiceType: {}", serviceType);
             throw new KnxUnknownBodyException(bodyBytes);
         }
     }

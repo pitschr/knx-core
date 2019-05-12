@@ -28,7 +28,7 @@ import java.lang.reflect.ParameterizedType;
  * Class Helper
  */
 public final class ClassHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(ClassHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(ClassHelper.class);
 
     private ClassHelper() {
         throw new AssertionError("Do not touch me!");
@@ -65,10 +65,10 @@ public final class ClassHelper {
             if (typeArguments.length > index) {
                 final var typeArgument = typeArguments[index];
                 if (typeArgument instanceof ParameterizedType) {
-                    LOG.trace("'ParameterizedType' for class {} and argument type index {}", clazz, index);
+                    log.trace("'ParameterizedType' for class {} and argument type index {}", clazz, index);
                     retClass = (Class<T>) ((ParameterizedType) typeArgument).getRawType();
                 } else if (typeArgument instanceof Class) {
-                    LOG.trace("'Class' for class {} and argument type index {}", clazz, index);
+                    log.trace("'Class' for class {} and argument type index {}", clazz, index);
                     retClass = (Class<T>) typeArgument;
                 } else {
                     throw new IllegalArgumentException(

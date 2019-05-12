@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * @author PITSCHR
  */
 public abstract class AbstractKnxMain {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKnxMain.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractKnxMain.class);
 
     /**
      * Returns the value of parameter if supplied
@@ -52,7 +52,7 @@ public abstract class AbstractKnxMain {
                     try {
                         return function.apply(args[i + 1]);
                     } catch (final Throwable t) {
-                        LOG.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], defaultValue);
+                        log.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], defaultValue);
                         // could not be parsed
                         return defaultValue;
                     }
@@ -88,11 +88,11 @@ public abstract class AbstractKnxMain {
                         }
                     }
 
-                    LOG.debug("Values [Start: {}, End: {}]", start, end);
+                    log.debug("Values [Start: {}, End: {}]", start, end);
                     try {
                         return Stream.of(args).skip(start).limit(end - start).toArray(function::apply);
                     } catch (final Throwable t) {
-                        LOG.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], Arrays.toString(defaultValues));
+                        log.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], Arrays.toString(defaultValues));
                         // could not be parsed
                         return defaultValues;
                     }

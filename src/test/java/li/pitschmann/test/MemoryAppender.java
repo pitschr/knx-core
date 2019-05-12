@@ -118,7 +118,7 @@ public final class MemoryAppender extends OutputStreamAppender<ILoggingEvent> {
     /**
      * Adds the {@link MemoryAppender} to given {@link Logger}
      *
-     * @param logger logger that should be attached with appender
+     * @param logger log that should be attached with appender
      */
     public final void addForLogger(final Logger logger) {
         final var loggerImpl = (ch.qos.logback.classic.Logger) logger;
@@ -133,7 +133,7 @@ public final class MemoryAppender extends OutputStreamAppender<ILoggingEvent> {
     /**
      * Detaches the {@link MemoryAppender} for given {@link Logger}
      *
-     * @param logger logger that should be attached with appender
+     * @param logger log that should be attached with appender
      */
     public final void detachForLogger(final Logger logger) {
         ((ch.qos.logback.classic.Logger) logger).detachAppender(this);

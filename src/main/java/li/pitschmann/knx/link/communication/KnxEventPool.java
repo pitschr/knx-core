@@ -45,7 +45,7 @@ import java.util.Map;
  * @author PITSCHR
  */
 public final class KnxEventPool {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxEventPool.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxEventPool.class);
     private static final int DEFAULT_TUNNELING_REQUEST_CAPACITY = 0xFF + 1; // 1 byte only according to KNX specification
     private final Map<Integer, KnxEventData<TunnelingRequestBody, TunnelingAckBody>> tunnelingMap;
     private final KnxEventData<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent = new KnxEventData<>();
@@ -126,7 +126,7 @@ public final class KnxEventPool {
         } else if (request instanceof DescriptionRequestBody) {
             return (KnxEventData<REQUEST, RESPONSE>) this.descriptionEvent;
         }
-        LOG.error("Request body is not supported for 'get(RequestBody)' method: {}", request);
+        log.error("Request body is not supported for 'get(RequestBody)' method: {}", request);
         throw new IllegalArgumentException("Request body is not supported.");
     }
 

@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutorService;
  * It will internally start a KNX client to communicate with the KNX Net/IP device.
  */
 public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractHttpDaemon.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Configuration configuration;
     private ExecutorService executorService;
     private int port = -1;
@@ -84,15 +84,15 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
             // set port and state
             port = pippo.getServer().getPort();
             ready = true;
-            logger.debug("Http Daemon Server started at port {}: {}", port, client);
+            log.debug("Http Daemon Server started at port {}: {}", port, client);
             while (!isCancelled() && Sleeper.seconds(1)) {
                 // sleep 1 second
-                logger.debug("ping...");
+                log.debug("ping...");
             }
         } catch (Throwable t) {
-            logger.error("Something went wrong", t);
+            log.error("Something went wrong", t);
         } finally {
-            logger.debug("Http Daemon Server stopped.");
+            log.debug("Http Daemon Server stopped.");
             if (pippo != null) {
                 pippo.stop();
             }

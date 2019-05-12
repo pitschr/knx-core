@@ -1,12 +1,12 @@
-package li.pitschmann.knx.daemon.json;
+package li.pitschmann.knx.daemon.v1.json;
 
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 
 /**
- * JSON for HTTP Read Request to KNX Daemon
+ * JSON for HTTP Status Request to KNX Daemon
  */
-public class ReadRequest {
+public class StatusRequest {
     private GroupAddress groupAddress;
 
     public GroupAddress getGroupAddress() {

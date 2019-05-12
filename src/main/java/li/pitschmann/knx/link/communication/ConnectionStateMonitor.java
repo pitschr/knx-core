@@ -37,7 +37,7 @@ import java.time.format.DateTimeFormatter;
  * @author PITSCHR
  */
 public final class ConnectionStateMonitor implements Runnable {
-    private static final Logger LOG = LoggerFactory.getLogger(ConnectionStateMonitor.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectionStateMonitor.class);
     /**
      * 500ms additional time buffer for response to minimize chance for an unnecessary loop
      */
@@ -54,7 +54,7 @@ public final class ConnectionStateMonitor implements Runnable {
 
     @Override
     public void run() {
-        LOG.trace("*** START ***");
+        log.trace("*** START ***");
 
         // send first packet
         this.sendConnectionStateRequest();
@@ -71,22 +71,22 @@ public final class ConnectionStateMonitor implements Runnable {
 
                 // duration between last response and now is bigger than connection alive -> disconnect
                 if (offsetLastResponse > this.client.getConfig().getTimeoutAliveConnection()) {
-                    LOG.error("Could not get connection state response since {} ms. Disconnection will be initiated. Last heartbeat was received at {}.",
+                    log.error("Could not get connection state response since {} ms. Disconnection will be initiated. Last heartbeat was received at {}.",
                             offsetLastResponse, DateTimeFormatter.ISO_INSTANT.format(lastResponseTime));
                     this.client.close();
                     break;
                 }
                 // is last request offset bigger than connection state request timeout?
                 else if (offsetLastRequest > this.client.getConfig().getTimeoutConnectionStateRequest()) {
-                    LOG.warn("Connection State Request to be sent again, last heartbeat was received at {}: {} ms.",
+                    log.warn("Connection State Request to be sent again, last heartbeat was received at {}: {} ms.",
                             DateTimeFormatter.ISO_INSTANT.format(lastResponseTime), offsetLastResponse);
                     // re-send request
                     this.sendConnectionStateRequest();
                 }
                 // offset is small to wait more...
                 else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("We are waiting for response (request: {}, response: {}): {} ms.",
+                    if (log.isDebugEnabled()) {
+                        log.debug("We are waiting for response (request: {}, response: {}): {} ms.",
                                 DateTimeFormatter.ISO_INSTANT.format(lastRequestTime),
                                 DateTimeFormatter.ISO_INSTANT.format(lastResponseTime), offsetLastResponse);
                     }
@@ -95,14 +95,14 @@ public final class ConnectionStateMonitor implements Runnable {
             } else {
                 // request time < response time -> we already got response
                 final var sleepTimeInMillis = this.client.getConfig().getIntervalConnectionState() - Duration.between(lastRequestTime, lastResponseTime).toMillis();
-                LOG.debug("Next connection state check will be done in {} ms.", sleepTimeInMillis);
+                log.debug("Next connection state check will be done in {} ms.", sleepTimeInMillis);
                 if (Sleeper.milliseconds(sleepTimeInMillis)) {
                     this.sendConnectionStateRequest();
                 }
             }
         }
 
-        LOG.trace("*** END *** (Client closed: {})", this.client.isClosed());
+        log.trace("*** END *** (Client closed: {})", this.client.isClosed());
     }
 
     /**
@@ -133,7 +133,7 @@ public final class ConnectionStateMonitor implements Runnable {
      * Sends out the {@link ConnectionStateRequestBody} packet.
      */
     private void sendConnectionStateRequest() {
-        LOG.trace("Send connection state request now.");
+        log.trace("Send connection state request now.");
 
         // create body
         final var requestBody = ConnectionStateRequestBody.create(this.client.getChannelId(), this.client.getControlHPAI());

@@ -1,4 +1,4 @@
-package li.pitschmann.knx.daemon.json;
+package li.pitschmann.knx.daemon.v1.json;
 
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.GroupAddress;

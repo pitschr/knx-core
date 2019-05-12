@@ -38,7 +38,7 @@ import java.nio.channels.SelectionKey;
  * @author PITSCHR
  */
 public final class KnxInboxQueue extends AbstractKnxQueue {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxInboxQueue.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxInboxQueue.class);
     private final ByteBuffer buff = ByteBuffer.allocate(256);
 
     /**
@@ -70,16 +70,16 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
      * @throws IOException exception while reading from {@link ByteChannel}
      */
     protected void action(final SelectionKey key) throws IOException {
-        LOG.trace("{}: Method 'action(SelectionKey)' called.", getId());
+        log.trace("{}: Method 'action(SelectionKey)' called.", getId());
 
         final byte[] receivedBytes;
         final var channel = (ByteChannel) key.channel();
         try {
-            LOG.trace("{}: Receiving packet.", getId());
+            log.trace("{}: Receiving packet.", getId());
             channel.read(buff);
             receivedBytes = buff.array();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("{}: Receiving packet: {}", getId(), ByteFormatter.formatHexAsString(receivedBytes));
+            if (log.isTraceEnabled()) {
+                log.trace("{}: Receiving packet: {}", getId(), ByteFormatter.formatHexAsString(receivedBytes));
             }
         } finally {
             buff.rewind();
@@ -90,9 +90,9 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
         // verify the channel id
         if (this.getInternalClient().verifyChannelId(body)) {
             // channel id is correct
-            if (LOG.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 final var header = Header.valueOf(receivedBytes);
-                LOG.debug("RECEIVE: {}\n" + //
+                log.debug("RECEIVE: {}\n" + //
                                 "----------------------------------------------------------------\n" + //
                                 "   Source: {}\n" + //
                                 "   Target: {} ({})\n" + //

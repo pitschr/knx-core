@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class MockDaemonTestExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-    private static final Logger LOG = LoggerFactory.getLogger(MockDaemonTestExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(MockDaemonTestExtension.class);
     private static final Map<ExtensionContext, MockHttpDaemon> mockDaemons = new ConcurrentHashMap<>();
     private static final AtomicInteger junitTestNr = new AtomicInteger();
 
@@ -59,7 +59,7 @@ public final class MockDaemonTestExtension
         MDC.put("junitClass", context.getRequiredTestClass().getSimpleName());
         MDC.put("junitMethod", context.getRequiredTestMethod().getName() + "-" + junitTestNr.incrementAndGet());
 
-        LOG.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
+        log.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
 
         // create and start
         if (!mockDaemons.containsKey(context)) {
@@ -73,12 +73,12 @@ public final class MockDaemonTestExtension
             }
 
             mockDaemons.put(context, mockDaemon);
-            LOG.debug("KNX Mock Daemon started.");
+            log.debug("KNX Mock Daemon started.");
         } else {
             throw new IllegalStateException("KNX Mock Daemon already running.");
         }
 
-        LOG.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+        log.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
     }
 
     /**
@@ -88,12 +88,12 @@ public final class MockDaemonTestExtension
      */
     @Override
     public void afterTestExecution(final ExtensionContext context) throws Exception {
-        LOG.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
+        log.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
         try {
             final var gracefully = Closeables.closeQuietly(mockDaemons.remove(context));
-            LOG.debug("Shutdown of executor service was gracefully?: {}", gracefully);
+            log.debug("Shutdown of executor service was gracefully?: {}", gracefully);
         } finally {
-            LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+            log.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
             MDC.clear();
         }
     }

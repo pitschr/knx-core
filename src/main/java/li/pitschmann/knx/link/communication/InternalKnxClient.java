@@ -78,7 +78,7 @@ import java.util.function.BiConsumer;
  * @author PITSCHR
  */
 public final class InternalKnxClient implements KnxClient {
-    private static final Logger LOG = LoggerFactory.getLogger(InternalKnxClient.class);
+    private static final Logger log = LoggerFactory.getLogger(InternalKnxClient.class);
     private final AtomicBoolean closed = new AtomicBoolean();
     private final Lock lock = new ReentrantLock();
     private final KnxEventPool eventPool = new KnxEventPool();
@@ -99,7 +99,7 @@ public final class InternalKnxClient implements KnxClient {
      * @param config an instance of {@link Configuration}
      */
     InternalKnxClient(final Configuration config) {
-        LOG.trace("Abstract KNX Client constructor");
+        log.trace("Abstract KNX Client constructor");
         // configuration
         this.config = config;
 
@@ -110,9 +110,9 @@ public final class InternalKnxClient implements KnxClient {
 
         // executors with fixed threads for communication and subscription
         this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
-        LOG.info("Plugin Executor created with size of {}: {}", config.getPluginExecutorPoolSize(), this.pluginExecutor);
-        LOG.info("Observer Plugins: {}", this.config.getObserverPlugins());
-        LOG.info("Extension Plugins: {}", this.config.getExtensionPlugins());
+        log.info("Plugin Executor created with size of {}: {}", config.getPluginExecutorPoolSize(), this.pluginExecutor);
+        log.info("Observer Plugins: {}", this.config.getObserverPlugins());
+        log.info("Extension Plugins: {}", this.config.getExtensionPlugins());
     }
 
     /**
@@ -122,14 +122,14 @@ public final class InternalKnxClient implements KnxClient {
         // validate
         try {
             if (this.verify()) {
-                LOG.info("Verification passed. Starting KNX services.");
+                log.info("Verification passed. Starting KNX services.");
                 this.startServices();
             } else {
                 throw new KnxNoTunnelingException(
                         "The remote device doesn't support TUNNELING. Please choose a remote device that supports TUNNELING.");
             }
         } catch (final Exception ex) {
-            LOG.error("Exception caught on 'start()' method.", ex);
+            log.error("Exception caught on 'start()' method.", ex);
             this.notifyPluginsError(ex);
             this.close();
             throw ex;
@@ -160,12 +160,12 @@ public final class InternalKnxClient implements KnxClient {
      * @return {@code true} if tunneling is supported by KNX Net/IP device and we can proceed with connect, otherwise {@code false}.
      */
     private boolean verify() {
-        LOG.trace("Call 'verify()' method.");
+        log.trace("Call 'verify()' method.");
         final var descriptionResponseBody = this.fetchDescriptionFromKNX();
 
         // get supported device families
         final var serviceFamilies = descriptionResponseBody.getSupportedDeviceFamilies().getServiceFamilies();
-        LOG.debug("Supported device families: {}", serviceFamilies);
+        log.debug("Supported device families: {}", serviceFamilies);
 
         // check if the remote device accepts TUNNELING
         return serviceFamilies.stream().anyMatch(f -> f.getFamily() == ServiceTypeFamily.TUNNELING);
@@ -189,9 +189,9 @@ public final class InternalKnxClient implements KnxClient {
 
             // logging
             final var endpoint = this.config.getEndpoint();
-            LOG.info("Remote Endpoint (KNX Net/IP)     : {}:{}", endpoint.getAddress().getHostAddress(), endpoint.getPort());
-            LOG.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
-            LOG.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
+            log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", endpoint.getAddress().getHostAddress(), endpoint.getPort());
+            log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
+            log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
 
             // channel executors
             // 1) Control Channel Receiver,
@@ -203,14 +203,14 @@ public final class InternalKnxClient implements KnxClient {
 
             // get channel for further communications
             this.channelId = this.fetchChannelIdFromKNX();
-            LOG.info("Channel ID received: {}", this.channelId);
+            log.info("Channel ID received: {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
             this.channelExecutor.submit(this.createConnectionStateMonitor());
 
             // do not accept more services anymore!
             this.channelExecutor.shutdown();
-            LOG.info("Channel Executor created: {}", this.channelExecutor);
+            log.info("Channel Executor created: {}", this.channelExecutor);
 
             // notifies the extension plug-in about start of service / communication
             this.notifyPlugins(this, this.config.getExtensionPlugins(), (p, c) -> p.onStart());
@@ -294,14 +294,14 @@ public final class InternalKnxClient implements KnxClient {
 
     @Override
     public final void close() {
-        LOG.trace("Method 'close()' called.");
+        log.trace("Method 'close()' called.");
 
         // already closed?
         if (this.closed.getAndSet(true)) {
-            LOG.debug("Already closed. Do nothing!");
+            log.debug("Already closed. Do nothing!");
             return;
         } else {
-            LOG.info("Client will be closed.");
+            log.info("Client will be closed.");
         }
 
         this.lock.lock();
@@ -314,32 +314,32 @@ public final class InternalKnxClient implements KnxClient {
             this.lock.unlock();
         }
 
-        LOG.trace("Method 'close()' completed.");
+        log.trace("Method 'close()' completed.");
     }
 
     /**
      * Closes the KNX communication, services and channels
      */
     private void stopServices() {
-        LOG.trace("Method 'stopServices()' called");
+        log.trace("Method 'stopServices()' called");
         var isOk = true;
         try {
             // Check if there is already a disconnect request present in the event pool.
             // 1) If exists, disconnect request came from KNX Net/IP device -> no disconnect request to sent
             // 2) If NOT exists, client is closing the communication and send disconnect request to KNX Net/IP device
             if (this.channelId > 0 && !this.eventPool.disconnectEvent().hasRequest()) {
-                LOG.trace("Control channel is still connected. Send disconnect request.");
+                log.trace("Control channel is still connected. Send disconnect request.");
                 // create body
                 final var requestBody = DisconnectRequestBody.create(this.channelId, this.controlHPAI);
                 try {
                     final var responseBody = this.send(requestBody, config.getTimeoutDisconnectRequest()).get();
                     if (responseBody != null) {
-                        LOG.debug("Disconnect Response Body retrieved: {}", responseBody);
+                        log.debug("Disconnect Response Body retrieved: {}", responseBody);
                     } else {
                         throw new KnxBodyNotReceivedException(DisconnectResponseBody.class);
                     }
                 } catch (KnxBodyNotReceivedException | InterruptedException | ExecutionException ex) {
-                    LOG.debug("No Disconnect Response Body retrieved. Continue with disconnect.");
+                    log.debug("No Disconnect Response Body retrieved. Continue with disconnect.");
                     isOk = false;
                 }
             }
@@ -347,12 +347,12 @@ public final class InternalKnxClient implements KnxClient {
             // close communicators
             isOk &= Closeables.closeQuietly(controlChannelCommunicator);
             isOk &= Closeables.closeQuietly(dataChannelCommunicator);
-            LOG.info("Channel Communicator stopped gracefully. Status: {}", isOk);
+            log.info("Channel Communicator stopped gracefully. Status: {}", isOk);
 
             // shutdown executors now
             isOk &= Closeables.shutdownQuietly(this.channelExecutor, 0, TimeUnit.SECONDS);
             isOk &= Closeables.shutdownQuietly(this.pluginExecutor, 10, TimeUnit.SECONDS);
-            LOG.info("KNX Services stopped gracefully. Status: {}", isOk);
+            log.info("KNX Services stopped gracefully. Status: {}", isOk);
         }
     }
 
@@ -425,16 +425,16 @@ public final class InternalKnxClient implements KnxClient {
      */
     protected <O, P extends Plugin> void notifyPlugins(final O obj, final List<P> plugins, BiConsumer<P, O> consumer) {
         if (this.pluginExecutor.isShutdown()) {
-            LOG.warn("Could not send to plug-ins because plugin executor is shutdown already: {}",
+            log.warn("Could not send to plug-ins because plugin executor is shutdown already: {}",
                     obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
         } else {
             for (final P plugin : plugins) {
                 CompletableFuture.runAsync(() -> {
-                    LOG.trace("Send to plugin: {}", plugin);
+                    log.trace("Send to plugin: {}", plugin);
                     try {
                         consumer.accept(plugin, obj);
                     } catch (final Exception ex) {
-                        LOG.debug("Exception during notifyPlugins(T, List<Plugin>, BiConsumer)", ex);
+                        log.debug("Exception during notifyPlugins(T, List<Plugin>, BiConsumer)", ex);
                     }
                 }, this.pluginExecutor);
             }
@@ -458,11 +458,11 @@ public final class InternalKnxClient implements KnxClient {
             final var actualChannelId = channelIdAwareBody.getChannelId();
             // skip check for ConnectResponseBody because it is the first time where we get channelId
             if (body instanceof ConnectResponseBody) {
-                LOG.debug("Channel ID in ConnectResponseBody isn't be checked because it is the first response with channel id.");
+                log.debug("Channel ID in ConnectResponseBody isn't be checked because it is the first response with channel id.");
             }
             // verify if channel id is the expected one
             else if (actualChannelId != this.channelId) {
-                LOG.warn("Wrong Channel ID received for body: {}", body);
+                log.warn("Wrong Channel ID received for body: {}", body);
                 throw new KnxWrongChannelIdException(channelIdAwareBody, this.channelId);
             }
         }
@@ -476,7 +476,7 @@ public final class InternalKnxClient implements KnxClient {
      * @return {@link DescriptionResponseBody}
      */
     private DescriptionResponseBody fetchDescriptionFromKNX() {
-        LOG.trace("Method 'fetchDescriptionFromKNX()' called.");
+        log.trace("Method 'fetchDescriptionFromKNX()' called.");
 
         // Description request / response is one-time task before establishing communication to KNX Net/IP device
         final var communicator = newDescriptionChannelCommunicator();
@@ -488,7 +488,7 @@ public final class InternalKnxClient implements KnxClient {
 
         // send description request
         final var descriptionRequestBody = DescriptionRequestBody.create();
-        LOG.debug("Request for description: {}", descriptionRequestBody);
+        log.debug("Request for description: {}", descriptionRequestBody);
 
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
         try (communicator) {
@@ -497,7 +497,7 @@ public final class InternalKnxClient implements KnxClient {
             Preconditions.checkState(descriptionResponseBody != null, descriptionResponseBody);
             return descriptionResponseBody;
         } catch (final Exception ex) {
-            LOG.error("Exception during fetch description from KNX Net/IP device", ex);
+            log.error("Exception during fetch description from KNX Net/IP device", ex);
             throw new KnxDescriptionNotReceivedException(descriptionRequestBody);
         } finally {
             Closeables.shutdownQuietly(es);
@@ -511,12 +511,12 @@ public final class InternalKnxClient implements KnxClient {
      * @throws KnxCommunicationException in case channel id could not be fetched due an error or timeout
      */
     private int fetchChannelIdFromKNX() {
-        LOG.trace("Method 'fetchChannelIdFromKNX()' called.");
+        log.trace("Method 'fetchChannelIdFromKNX()' called.");
 
         // create connect request and send it
         final var cri = ConnectionRequestInformation.create();
         final var connectRequestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
-        LOG.debug("Request for connect: {}", connectRequestBody);
+        log.debug("Request for connect: {}", connectRequestBody);
 
         try {
             final var connectResponseBody = this.<ConnectResponseBody>send(connectRequestBody, config.getTimeoutConnectRequest()).get();
@@ -524,7 +524,7 @@ public final class InternalKnxClient implements KnxClient {
             Preconditions.checkState(connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR, connectResponseBody);
             return connectResponseBody.getChannelId();
         } catch (final Exception ex) {
-            LOG.error("Exception during fetch channel id from KNX Net/IP device", ex);
+            log.error("Exception during fetch channel id from KNX Net/IP device", ex);
             throw new KnxChannelIdNotReceivedException(connectRequestBody);
         }
     }

@@ -62,7 +62,7 @@ import java.util.zip.ZipFile;
  * @author pitschr
  */
 public final class KnxprojParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KnxprojParser.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxprojParser.class);
     private static final String FILE_EXTENSION = ".knxproj";
 
     private KnxprojParser() {
@@ -79,7 +79,7 @@ public final class KnxprojParser {
         Preconditions.checkArgument(Files.exists(path), "File '" + path + "' doesn't exists.");
         Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION), "Only '" + FILE_EXTENSION + "' is supported.");
 
-        LOGGER.debug("File '{}' to be parsed.", path);
+        log.debug("File '{}' to be parsed.", path);
 
         final var sw = Stopwatch.createStarted();
         final XmlProject project;
@@ -93,7 +93,7 @@ public final class KnxprojParser {
         } catch (final IOException | VTDException ex) {
             throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
         }
-        LOGGER.info("KNX Project '{}' parse took {} ms:\n{}", path, sw.elapsed(TimeUnit.MILLISECONDS), project);
+        log.info("KNX Project '{}' parse took {} ms:\n{}", path, sw.elapsed(TimeUnit.MILLISECONDS), project);
 
         return project;
     }
@@ -111,12 +111,12 @@ public final class KnxprojParser {
         final var zipEntry = zipFile.stream().filter(f -> f.getName().matches("^P-\\d+/project\\.xml$"))
                 .findFirst()
                 .orElseThrow(() -> new KnxprojParserException("File 'project.xml' not found in ZIP file"));
-        LOGGER.debug("Project Information file found: {}", zipEntry.getName());
+        log.debug("Project Information file found: {}", zipEntry.getName());
 
         // convert InputStream into byte array (it will be closed automatically, when ZIP file is closed)
         final var bytes = ByteStreams.toByteArray(zipFile.getInputStream(zipEntry));
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Project Information stream:\n{}", new String(bytes, StandardCharsets.UTF_8));
+        if (log.isDebugEnabled()) {
+            log.debug("Project Information stream:\n{}", new String(bytes, StandardCharsets.UTF_8));
         }
 
         // create parser (without namespace, we don't need it for *.knxproj file)
@@ -155,12 +155,12 @@ public final class KnxprojParser {
         final var zipEntry = zipFile.stream().filter(f -> f.getName().matches("^P-\\d+/0\\.xml$"))
                 .findFirst()
                 .orElseThrow(() -> new KnxprojParserException("File '0.xml' not found in ZIP file"));
-        LOGGER.debug("Project Data file found: {}", zipEntry.getName());
+        log.debug("Project Data file found: {}", zipEntry.getName());
 
         // convert InputStream into byte array (it will be closed automatically, when ZIP file is closed)
         final var bytes = ByteStreams.toByteArray(zipFile.getInputStream(zipEntry));
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Project Data stream:\n{}", new String(bytes, StandardCharsets.UTF_8));
+        if (log.isDebugEnabled()) {
+            log.debug("Project Data stream:\n{}", new String(bytes, StandardCharsets.UTF_8));
         }
 
         // create parser (without namespace, we don't need it for *.knxproj file)

@@ -63,7 +63,7 @@ import javax.annotation.Nonnull;
  * @author PITSCHR
  */
 public final class DescriptionResponseBody extends AbstractMultiRawData implements ResponseBody, DescriptionChannelRelated {
-    private static final Logger LOG = LoggerFactory.getLogger(DescriptionResponseBody.class);
+    private static final Logger log = LoggerFactory.getLogger(DescriptionResponseBody.class);
     private final DeviceHardwareInformationDIB deviceHardwareInformation;
     private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;
     private final IPConfigDIB ipConfig;
@@ -177,7 +177,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             }
         }
 
-        LOG.debug("Position of DIB '{}': {}", descriptionType.getFriendlyName(), index);
+        log.debug("Position of DIB '{}': {}", descriptionType.getFriendlyName(), index);
         return index;
     }
 
@@ -193,8 +193,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
 
         if (index < 0) {
             // not found
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("DIB '{}' not found in: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(rawData));
+            if (log.isDebugEnabled()) {
+                log.debug("DIB '{}' not found in: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(rawData));
             }
             return null;
         } else {
@@ -202,8 +202,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             final var dibLength = Bytes.toUnsignedInt(rawData[index]);
             final var dibArray = new byte[dibLength];
             System.arraycopy(rawData, index, dibArray, 0, dibLength);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("DIB '{}' found: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(dibArray));
+            if (log.isDebugEnabled()) {
+                log.debug("DIB '{}' found: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(dibArray));
             }
             return dibArray;
         }

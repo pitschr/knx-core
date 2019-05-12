@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class MockServerTestExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-    private static final Logger LOG = LoggerFactory.getLogger(MockServerTestExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(MockServerTestExtension.class);
     private static final Map<ExtensionContext, MockServer> mockServers = new ConcurrentHashMap<>();
     private static final AtomicInteger junitTestNr = new AtomicInteger();
 
@@ -58,7 +58,7 @@ public final class MockServerTestExtension
         MDC.put("junitClass", context.getRequiredTestClass().getSimpleName());
         MDC.put("junitMethod", context.getRequiredTestMethod().getName() + "-" + junitTestNr.incrementAndGet());
 
-        LOG.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
+        log.debug("Method 'beforeTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
 
         // create and start
         if (!mockServers.containsKey(context)) {
@@ -73,12 +73,12 @@ public final class MockServerTestExtension
             }
 
             mockServers.put(context, mockServer);
-            LOG.debug("KNX Mock Server started.");
+            log.debug("KNX Mock Server started.");
         } else {
             throw new IllegalStateException("KNX Mock Server already running.");
         }
 
-        LOG.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+        log.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
     }
 
     /**
@@ -88,12 +88,12 @@ public final class MockServerTestExtension
      */
     @Override
     public void afterTestExecution(final ExtensionContext context) {
-        LOG.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
+        log.debug("Method 'afterTestExecution' invoked for test method '{}'.", context.getRequiredTestMethod());
         try {
             final var gracefully = Closeables.closeQuietly(mockServers.remove(context));
-            LOG.debug("Shutdown of executor service was gracefully?: {}", gracefully);
+            log.debug("Shutdown of executor service was gracefully?: {}", gracefully);
         } finally {
-            LOG.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+            log.debug("Method 'afterTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
             MDC.clear();
         }
     }

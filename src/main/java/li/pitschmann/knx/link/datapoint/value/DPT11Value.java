@@ -58,7 +58,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT11Value extends AbstractDataPointValue<DPT11> {
-    private static final Logger LOG = LoggerFactory.getLogger(DPT11Value.class);
+    private static final Logger log = LoggerFactory.getLogger(DPT11Value.class);
     private final LocalDate date;
     private final byte[] byteArray;
 
@@ -97,7 +97,7 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         final var fullYear = (year < 90 ? 2000 : 1900) + year;
 
         final var date = LocalDate.of(fullYear, month, day);
-        LOG.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
+        log.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
         return date;
     }
 
@@ -120,8 +120,8 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         final var yearAsByte = (byte) (date.getYear() % 100);
 
         final var bytes = new byte[]{dayAsByte, monthAsByte, yearAsByte};
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Bytes of '{}': {}", date, ByteFormatter.formatHexAsString(bytes));
+        if (log.isDebugEnabled()) {
+            log.debug("Bytes of '{}': {}", date, ByteFormatter.formatHexAsString(bytes));
         }
         return bytes;
     }

@@ -36,7 +36,7 @@ import java.util.concurrent.Flow.Subscription;
  * @author PITSCHR
  */
 public final class ConnectResponseTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(ConnectResponseTask.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectResponseTask.class);
     private final InternalKnxClient client;
     private Subscription subscription;
 
@@ -49,12 +49,12 @@ public final class ConnectResponseTask implements Subscriber<Body> {
         // we are interested in connect response only
         if (body instanceof ConnectResponseBody) {
             final var responseBody = (ConnectResponseBody) body;
-            LOG.debug("Connect Response received: {}", responseBody);
+            log.debug("Connect Response received: {}", responseBody);
             this.client.getEventPool().connectEvent().setResponse(responseBody);
-            LOG.trace("Connect Response saved.");
+            log.trace("Connect Response saved.");
             // now cancel the subscription as we only expect this frame once time at beginning only!
             this.subscription.cancel();
-            LOG.trace("Subscription for task '{}' cancelled.", this.getClass());
+            log.trace("Subscription for task '{}' cancelled.", this.getClass());
         } else {
             // at beginning we MUST receive the ConnectResponseBody otherwise something went wrong!
             throw new KnxBodyNotReceivedException(ConnectResponseBody.class);
@@ -63,7 +63,7 @@ public final class ConnectResponseTask implements Subscriber<Body> {
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Connect Response Task class", throwable);
+        log.error("Error during Connect Response Task class", throwable);
     }
 
     @Override

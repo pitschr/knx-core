@@ -1,4 +1,4 @@
-package li.pitschmann.knx.daemon.json;
+package li.pitschmann.knx.daemon.v1.json;
 
 /**
  * Status if the response is OK or erroneous

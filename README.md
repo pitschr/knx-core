@@ -208,7 +208,7 @@ public class KnxMain {
             // Sends the read request
             // The returned instance is the acknowledge sent by KNX Net/IP indicating that read request was received
             final var readRequestAck = client.readRequest(GROUP_ADDRESS).get();
-            LOG.debug("READ ACK: {}", readRequestAck);
+            log.debug("READ ACK: {}", readRequestAck);
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
@@ -217,21 +217,21 @@ public class KnxMain {
 
             // read lamp state
             final var lampStatus = client.getStatusPool().getValue(GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue();
-            LOG.debug("STATUS BEFORE SWITCH: {}", lampStatus);
+            log.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
             // Sends the write request
             // The returned instance is the acknowledge sent by KNX Net/IP indicating that write request was received
             final var writeRequestAck = client.writeRequest(GROUP_ADDRESS, DPT1.SWITCH.toValue(!lampStatus)).get();
-            LOG.debug("WRITE ACK: {}", writeRequestAck);
+            log.debug("WRITE ACK: {}", writeRequestAck);
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and write flags on KNX group address are set the state of lamp will be changed.
             // The state of lamp will be forwarded by the KNX Net/IP and status pool will be updated by KNX client
             client.getStatusPool().isUpdated(GROUP_ADDRESS, 1, TimeUnit.SECONDS);
 
-            LOG.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue());
+            log.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue());
         } catch (final Throwable t) {
-            LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
+            log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         }
     }
 }

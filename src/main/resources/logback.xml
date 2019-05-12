@@ -51,15 +51,15 @@
     -->
     <logger name="li.pitschmann.knx.main" level="DEBUG"/>
     <!--
-    <logger name="li.pitschmann.utils" level="WARN" />
-    <logger name="li.pitschmann.knx.link" level="TRACE" />
-    <logger name="li.pitschmann.knx.link.KnxMain" level="DEBUG" />
-    <logger name="li.pitschmann.knx.link.communication.task" level="TRACE" />
-    <logger name="li.pitschmann.knx.link.datapoint.DPT20" level="DEBUG" />
+    <log name="li.pitschmann.utils" level="WARN" />
+    <log name="li.pitschmann.knx.link" level="TRACE" />
+    <log name="li.pitschmann.knx.link.KnxMain" level="DEBUG" />
+    <log name="li.pitschmann.knx.link.communication.task" level="TRACE" />
+    <log name="li.pitschmann.knx.link.datapoint.DPT20" level="DEBUG" />
 
-    <logger name="li.pitschmann.knx.main" level="DEBUG" />
-    <logger name="li.pitschmann.knx.link.communication.Communicator" level="DEBUG" />
-    <logger name="li.pitschmann.knx.link.datapoint.DataPointTypeRegistry" level="ALL" />
+    <log name="li.pitschmann.knx.main" level="DEBUG" />
+    <log name="li.pitschmann.knx.link.communication.Communicator" level="DEBUG" />
+    <log name="li.pitschmann.knx.link.datapoint.DataPointTypeRegistry" level="ALL" />
       -->
     <logger name="li.pitschmann.knx.link.plugin.AuditPlugin" level="INFO" additivity="false">
         <appender-ref ref="AUDIT"/>

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import ro.pippo.gson.GsonEngine;
 
@@ -20,6 +21,7 @@ public final class DaemonGsonEngine extends GsonEngine {
                 .registerTypeAdapter(DataPointType.class, new DataPointTypeJsonSerializer())
                 .registerTypeAdapter(GroupAddress.class, new GroupAddressJsonSerializer())
                 .registerTypeAdapter(IndividualAddress.class, new IndividualAddressJsonSerializer())
+                .registerTypeHierarchyAdapter(KnxStatistic.class, new KnxStatisticJsonSerializer())
                 // de-serializers
                 .registerTypeAdapter(DataPointType.class, new DataPointTypeJsonDeserializer())
                 .registerTypeAdapter(GroupAddress.class, new GroupAddressJsonDeserializer())

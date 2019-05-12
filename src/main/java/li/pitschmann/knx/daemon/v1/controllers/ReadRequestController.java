@@ -1,8 +1,8 @@
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
-import li.pitschmann.knx.daemon.json.ReadRequest;
-import li.pitschmann.knx.daemon.json.ReadResponse;
-import li.pitschmann.knx.daemon.json.Status;
+import li.pitschmann.knx.daemon.v1.json.ReadRequest;
+import li.pitschmann.knx.daemon.v1.json.ReadResponse;
+import li.pitschmann.knx.daemon.v1.json.Status;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import org.slf4j.Logger;

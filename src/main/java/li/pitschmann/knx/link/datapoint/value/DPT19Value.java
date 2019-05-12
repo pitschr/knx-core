@@ -56,7 +56,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT19Value extends AbstractDataPointValue<DPT19> {
-    private static final Logger LOG = LoggerFactory.getLogger(DPT19Value.class);
+    private static final Logger log = LoggerFactory.getLogger(DPT19Value.class);
     private final DayOfWeek dayOfWeek;
     private final LocalDate date;
     private final LocalTime time;
@@ -100,7 +100,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         final var dayNr = (bytes[3] & 0xE0) >>> 5;
 
         final var dayOfWeek = dayNr == 0 ? null : DayOfWeek.of(dayNr);
-        LOG.debug("DayOfWeek of '{}': {}", ByteFormatter.formatHex(bytes), dayOfWeek);
+        log.debug("DayOfWeek of '{}': {}", ByteFormatter.formatHex(bytes), dayOfWeek);
         return dayOfWeek;
     }
 
@@ -121,7 +121,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         final var dayOfMonth = Bytes.toUnsignedInt(bytes[2]);
 
         final var date = LocalDate.of(year, month, dayOfMonth);
-        LOG.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
+        log.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
         return date;
     }
 
@@ -142,7 +142,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         final var second = Bytes.toUnsignedInt(bytes[5]);
 
         final var time = LocalTime.of(hour, minute, second);
-        LOG.debug("DateTime of '{}': {}", ByteFormatter.formatHex(bytes), time);
+        log.debug("DateTime of '{}': {}", ByteFormatter.formatHex(bytes), time);
         return time;
     }
 
@@ -183,8 +183,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
 
         final var bytes = new byte[]{yearAsByte, monthAsByte, dayOfMonthAsByte, (byte) (dayOfWeekAsByte | hourAsByte), minuteAsByte, secondAsByte,
                 byte6FlagsAsByte, byte7FlagsAsByte};
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Bytes of [DayOfWeek={}, Date={}, Time={}, Flags={}]: {}", dayOfWeek, date, time, flags, ByteFormatter.formatHexAsString(bytes));
+        if (log.isDebugEnabled()) {
+            log.debug("Bytes of [DayOfWeek={}, Date={}, Time={}, Flags={}]: {}", dayOfWeek, date, time, flags, ByteFormatter.formatHexAsString(bytes));
         }
         return bytes;
     }

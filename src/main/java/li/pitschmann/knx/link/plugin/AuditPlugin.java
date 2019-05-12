@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @author PITSCHR
  */
 public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
-    private static final Logger LOG = LoggerFactory.getLogger(AuditPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(AuditPlugin.class);
     private static final Gson gson = new Gson();
 
     // @formatter:off
@@ -103,7 +103,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.info(String.format(JSON_TEMPLATE_ERROR, //
+        log.info(String.format(JSON_TEMPLATE_ERROR, //
                 AuditType.ERROR, // #1
                 gson.toJson(throwable.getMessage()), // #2
                 Arrays.stream(throwable.getStackTrace()).map(e -> gson.toJson(e.toString())).collect(Collectors.joining(",")) // #3
@@ -118,7 +118,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private void auditBody(final @Nonnull AuditType type, final Body body) {
         final var header = Header.create(body);
-        LOG.info(String.format(JSON_TEMPLATE_BODY, //
+        log.info(String.format(JSON_TEMPLATE_BODY, //
                 type, // #1
                 ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes()), // #2
                 body.getServiceType().name(), // #3
@@ -134,7 +134,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param type audit type
      */
     private void auditSignal(final @Nonnull AuditType type) {
-        LOG.info(String.format(JSON_TEMPLATE_SIGNAL, type));
+        log.info(String.format(JSON_TEMPLATE_SIGNAL, type));
     }
 
     /**

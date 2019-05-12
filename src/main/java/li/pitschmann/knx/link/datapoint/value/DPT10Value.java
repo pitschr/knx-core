@@ -56,7 +56,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT10Value extends AbstractDataPointValue<DPT10> {
-    private static final Logger LOG = LoggerFactory.getLogger(DPT10Value.class);
+    private static final Logger log = LoggerFactory.getLogger(DPT10Value.class);
     private final DayOfWeek dayOfWeek;
     private final LocalTime time;
     private final byte[] byteArray;
@@ -91,8 +91,8 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         final var dayNr = (bytes[0] & 0xE0) >>> 5;
 
         final var dayOfWeek = dayNr == 0 ? null : DayOfWeek.of(dayNr);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("DayOfWeek of '{}': {}", ByteFormatter.formatHex(bytes), dayOfWeek);
+        if (log.isDebugEnabled()) {
+            log.debug("DayOfWeek of '{}': {}", ByteFormatter.formatHex(bytes), dayOfWeek);
         }
         return dayOfWeek;
     }
@@ -114,8 +114,8 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         final var second = Bytes.toUnsignedInt(bytes[2]);
 
         final var time = LocalTime.of(hour, minute, second);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Time of '{}': {}", ByteFormatter.formatHex(bytes), time);
+        if (log.isDebugEnabled()) {
+            log.debug("Time of '{}': {}", ByteFormatter.formatHex(bytes), time);
         }
         return time;
     }
@@ -139,8 +139,8 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         final var secondAsByte = (byte) time.getSecond();
 
         final var bytes = new byte[]{(byte) (dayOfWeekAsByte | hourAsByte), minuteAsByte, secondAsByte};
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Bytes of [DayOfWeek={}, LocalTime={}]: {}", dayOfWeek, time, ByteFormatter.formatHexAsString(bytes));
+        if (log.isDebugEnabled()) {
+            log.debug("Bytes of [DayOfWeek={}, LocalTime={}]: {}", dayOfWeek, time, ByteFormatter.formatHexAsString(bytes));
         }
         return bytes;
     }

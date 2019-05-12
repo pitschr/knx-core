@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author PITSCHR
  */
 public final class AuditDatabasePlugin implements ObserverPlugin {
-    private static final Logger LOG = LoggerFactory.getLogger(AuditDatabasePlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(AuditDatabasePlugin.class);
 
     public AuditDatabasePlugin(/* TODO database connectivity */) {
         // TODO Auto-generated constructor stub
@@ -64,7 +64,7 @@ public final class AuditDatabasePlugin implements ObserverPlugin {
 
     public void on(final String text, final Body item) {
         Sleeper.milliseconds(5000);
-        LOG.debug("TEXT TO {} (SLOW): {}", text, item);
+        log.debug("TEXT TO {} (SLOW): {}", text, item);
     }
 
     @Override

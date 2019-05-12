@@ -39,7 +39,7 @@ import java.util.Collection;
  * @author PITSCHR
  */
 public final class KnxOutboxQueue extends AbstractKnxQueue {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxOutboxQueue.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxOutboxQueue.class);
 
     /**
      * Constructor for KNX Outbox Queue
@@ -71,7 +71,7 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
      * @throws IOException          exception while writing to {@link ByteChannel}
      */
     protected void action(final SelectionKey key) throws InterruptedException, IOException {
-        LOG.trace("{}: Method 'action(SelectionKey)' called.", getId());
+        log.trace("{}: Method 'action(SelectionKey)' called.", getId());
 
         // get body from queue
         final var body = next();
@@ -81,13 +81,16 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
 
         // write to channel
         final var channel = (ByteChannel) key.channel();
-        LOG.debug("{}: Sending packet: {}", getId(), body);
+        log.debug("{}: Sending packet: {}", getId(), body);
+        if (!channel.isOpen()) {
+            log.warn("{}: Channel is not open", getId());
+        }
         channel.write(ByteBuffer.wrap(packetToSend));
-        LOG.trace("{}: Packet sent.", getId());
+        log.trace("{}: Packet sent.", getId());
         this.getInternalClient().notifyPluginsOutgoingBody(body);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("SEND: {}\n" + //
+        if (log.isDebugEnabled()) {
+            log.debug("SEND: {}\n" + //
                             "----------------------------------------------------------------\n" + //
                             "   Source:  {} ({})\n" + //
                             "   Target:  {}\n" + //

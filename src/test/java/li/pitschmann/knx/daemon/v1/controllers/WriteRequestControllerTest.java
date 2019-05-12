@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
-import li.pitschmann.knx.daemon.json.ReadRequest;
+import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.knx.server.MockDaemonTest;
 import li.pitschmann.knx.server.MockHttpDaemon;
 import li.pitschmann.knx.server.MockServerTest;
@@ -33,44 +34,30 @@ import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test class for {@link ReadRequestController}
+ * Test class for {@link WriteRequestController}
  */
-public class ReadRequestControllerTest {
+public class WriteRequestControllerTest {
     /**
-     * Tests the /read endpoint for group addresses 0/0/56 and 0/3/47
+     * Test /write endpoint for group address 0/0/22
+     *
+     * @param daemon
+     * @throws Exception
      */
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /read endpoint for group addresses 0/0/59 and 1/3/47")
-    public void testReadOnly(final MockHttpDaemon daemon) throws Exception {
+    @DisplayName("Test /write endpoint for group address 0/0/22")
+    public void testWriteOnly(final MockHttpDaemon daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
-        //
-        // Test #1
-        //
-        // create read request #1
-        final var readRequest = new ReadRequest();
-        readRequest.setGroupAddress(GroupAddress.of(0, 0, 56));
+        // create write request
+        final var writeRequest = new WriteRequest();
+        writeRequest.setGroupAddress(GroupAddress.of(0, 0, 22));
+        writeRequest.setDataPointType(DPT2.ALARM_CONTROL);
+        writeRequest.setValues("control", "false");
 
-        // send read request #1
-        final var httpRequest = daemon.newRequestBuilder("/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
+        // send write request
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(writeRequest))).build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
         assertThat(responseBody).isEqualTo("{\"status\":\"OK\"}");
-
-        //
-        // Test #2 (with dpt and raw data)
-        //
-        // create read request #2
-        final var readRequest2 = new ReadRequest();
-        readRequest2.setGroupAddress(GroupAddress.of(0, 3, 47));
-
-        // send read request #2
-        final var httpRequest2 = daemon.newRequestBuilder("/read?expand=dpt,raw").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest2))).build();
-        final var responseBody2 = httpClient.send(httpRequest2, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody2).isEqualTo("{" + //
-                "\"dataPointType\":\"15.000\"," + //
-                "\"raw\":[-64,-80,-96,-25]," + //
-                "\"status\":\"OK\"" + //
-                "}");
     }
 }

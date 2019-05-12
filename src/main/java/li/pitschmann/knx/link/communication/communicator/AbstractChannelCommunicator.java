@@ -54,7 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author PITSCHR
  */
 public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Body> implements Runnable {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractChannelCommunicator.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final String id;
     private final InternalKnxClient internalClient;
     private final AtomicBoolean closed = new AtomicBoolean();
@@ -70,23 +70,23 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         this.internalClient = client;
 
         this.channel = newChannel();
-        LOG.info("{}: Channel registered: {} (open: {}, registered: {}, blocking: {})", id, channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
+        log.info("{}: Channel registered: {} (open: {}, registered: {}, blocking: {})", id, channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
 
         // creates inbox and outbox queues
         this.inboxQueue = new KnxInboxQueue(id, internalClient, channel);
         this.outboxQueue = new KnxOutboxQueue(id, internalClient, channel);
-        LOG.trace("{}: Inbox and Outbox Queues created.", id);
+        log.trace("{}: Inbox and Outbox Queues created.", id);
 
         // creates queue executor
         this.queueExecutor = Executors.newFixedThreadPool(2, true);
         this.queueExecutor.submit(inboxQueue);
         this.queueExecutor.submit(outboxQueue);
         this.queueExecutor.shutdown();
-        LOG.info("{}: Queue Executor created: {}", id, this.queueExecutor);
+        log.info("{}: Queue Executor created: {}", id, this.queueExecutor);
 
         // creates executor for communication
         this.communicationExecutor = Executors.newFixedThreadPool(internalClient.getConfig().getCommunicationExecutorPoolSize(), true);
-        LOG.info("{}: Communication Executor created with size of {}: {}", id, internalClient.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
+        log.info("{}: Communication Executor created with size of {}: {}", id, internalClient.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
     }
 
     @Nonnull
@@ -104,33 +104,33 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
     @Override
     public void run() {
-        LOG.trace("*** {}: START ***", id);
+        log.trace("*** {}: START ***", id);
 
         while (!Thread.interrupted()) {
             try {
-                LOG.debug("{}: Waiting for next packet from channel", id);
+                log.debug("{}: Waiting for next packet from channel", id);
                 final var body = this.inboxQueue.next();
                 // accepted body
                 if (this.isCompatible(body)) {
-                    LOG.debug("{}: Body from channel to be sent to subscribers: {}", id, body);
+                    log.debug("{}: Body from channel to be sent to subscribers: {}", id, body);
                     this.submit(body);
                 }
                 // not accepted body
                 else {
-                    LOG.warn("{}: Body is not expected for this channel and therefore ignored: {}", id, body);
+                    log.warn("{}: Body is not expected for this channel and therefore ignored: {}", id, body);
                 }
             } catch (final InterruptedException ex) {
-                LOG.debug("{}: Channel receiver is cancelled.", id);
+                log.debug("{}: Channel receiver is cancelled.", id);
                 Thread.currentThread().interrupt();
             }
         }
 
-        LOG.trace("*** {}: END ***", id);
+        log.trace("*** {}: END ***", id);
     }
 
     @Override
     public void subscribe(Flow.Subscriber<? super Body> subscriber) {
-        LOG.debug("Subscriber added with MDC: {}", subscriber);
+        log.debug("Subscriber added with MDC: {}", subscriber);
         super.subscribe(Executors.wrapSubscriberWithMDC(subscriber));
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     public final void send(final @Nonnull Body body) {
         this.outboxQueue.send(body);
-        LOG.debug("{}: Body added to outbox queue: {}", id, body);
+        log.debug("{}: Body added to outbox queue: {}", id, body);
     }
 
     /**
@@ -180,7 +180,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
         // add request body to event pool
         eventPool.add(requestBody);
-        LOG.trace("{}: Request Body added to event pool.", id);
+        log.trace("{}: Request Body added to event pool.", id);
 
         // mark as dirty
         if (requestBody instanceof TunnelingRequestBody) {
@@ -212,9 +212,9 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
             responseBody = event.getResponse();
             if (responseBody == null) {
-                LOG.warn("{}: No response received yet for request ({}/{}): {}", id, attempts, totalAttempts, requestBody);
+                log.warn("{}: No response received yet for request ({}/{}): {}", id, attempts, totalAttempts, requestBody);
             } else {
-                LOG.debug("{}: Response received for request ({}/{}): {}, Response: {}", id, attempts, totalAttempts, requestBody, responseBody);
+                log.debug("{}: Response received for request ({}/{}): {}, Response: {}", id, attempts, totalAttempts, requestBody, responseBody);
             }
 
             // if no response and not interrupted try to repeat this step up to 'totalAttempts'
@@ -228,7 +228,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     @Override
     public void close() {
-        LOG.trace("{}: Method 'close()' invoked.", id);
+        log.trace("{}: Method 'close()' invoked.", id);
         if (!closed.getAndSet(true)) {
             super.close();
 
@@ -236,7 +236,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
             Closeables.closeQuietly(this.channel);
             Closeables.shutdownQuietly(this.queueExecutor);
             Closeables.shutdownQuietly(this.communicationExecutor);
-            LOG.debug("{}: Method 'close()' called.", id);
+            log.debug("{}: Method 'close()' called.", id);
         }
     }
 }

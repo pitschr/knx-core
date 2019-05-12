@@ -35,7 +35,7 @@ import java.util.concurrent.Flow.Subscription;
  * @author PITSCHR
  */
 public final class DescriptionResponseTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(DescriptionResponseTask.class);
+    private static final Logger log = LoggerFactory.getLogger(DescriptionResponseTask.class);
     private final InternalKnxClient client;
 
     public DescriptionResponseTask(final InternalKnxClient client) {
@@ -47,15 +47,15 @@ public final class DescriptionResponseTask implements Subscriber<Body> {
         // we are interested in description response only
         if (body instanceof DescriptionResponseBody) {
             final var responseBody = (DescriptionResponseBody) body;
-            LOG.debug("Description response received: {}", responseBody);
+            log.debug("Description response received: {}", responseBody);
             this.client.getEventPool().descriptionEvent().setResponse(responseBody);
-            LOG.trace("Description response saved.");
+            log.trace("Description response saved.");
         }
     }
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Description Response Task class", throwable);
+        log.error("Error during Description Response Task class", throwable);
     }
 
     @Override

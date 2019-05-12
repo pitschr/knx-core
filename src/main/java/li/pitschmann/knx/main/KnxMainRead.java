@@ -39,7 +39,7 @@ import java.util.function.Function;
  * @author PITSCHR
  */
 public class KnxMainRead extends AbstractKnxMain {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxMainRead.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxMainRead.class);
     private static final String DEFAULT_IP_ADDRESS = "192.168.1.16";
     private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
     private static final int DEFAULT_LOOPS = 50;
@@ -47,35 +47,35 @@ public class KnxMainRead extends AbstractKnxMain {
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
         final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Function.identity());
-        LOG.debug("KNX Net/IP Address: {}", ipAddress);
+        log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get Group Address
         final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, GroupAddress::of);
-        LOG.debug("Group Address: {}", groupAddress);
+        log.debug("Group Address: {}", groupAddress);
 
         // 3rd Argument: Number of requests for Group Address
         final var loops = getParameterValue(args, "-n", DEFAULT_LOOPS, Integer::valueOf);
-        LOG.debug("Loops: {}", loops);
+        log.debug("Loops: {}", loops);
 
         // start KNX communication
-        LOG.trace("START");
+        log.trace("START");
         try (final var client = DefaultKnxClient.createStarted(ipAddress)) {
             final var statusPool = client.getStatusPool();
             Sleeper.seconds(1);
-            LOG.debug("========================================================================");
-            LOG.debug("GROUP ADDRESS: 3-level: {}, 2-level: {}", groupAddress.getAddress(), groupAddress.getAddressLevel2());
-            LOG.debug("READ ACK: {}", client.readRequest(groupAddress).get());
+            log.debug("========================================================================");
+            log.debug("GROUP ADDRESS: 3-level: {}, 2-level: {}", groupAddress.getAddress(), groupAddress.getAddressLevel2());
+            log.debug("READ ACK: {}", client.readRequest(groupAddress).get());
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
             // KNX Net/IP device and status pool will be updated with the actual lamp status
             statusPool.isUpdated(groupAddress, 1, TimeUnit.SECONDS);
-            LOG.debug("STATUS (APCI Data): {}", ByteFormatter.formatHexAsString(statusPool.getStatusFor(groupAddress).getApciData()));
-            LOG.debug("========================================================================");
+            log.debug("STATUS (APCI Data): {}", ByteFormatter.formatHexAsString(statusPool.getStatusFor(groupAddress).getApciData()));
+            log.debug("========================================================================");
         } catch (final Throwable t) {
-            LOG.error("THROWABLE. Reason: {}", t.getMessage(), t);
+            log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         } finally {
-            LOG.trace("FINALLY");
+            log.trace("FINALLY");
         }
     }
 }

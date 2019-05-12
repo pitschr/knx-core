@@ -1,10 +1,11 @@
-package li.pitschmann.knx.daemon.controllers;
+package li.pitschmann.knx.daemon.v1.controllers;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.parser.XmlProject;
 import ro.pippo.controller.Controller;
+import ro.pippo.controller.Path;
 
 import javax.annotation.Nonnull;
 
@@ -12,6 +13,7 @@ import javax.annotation.Nonnull;
  * Abstract Controller containing common methods for concrete controller
  * implementations.
  */
+@Path("/api/v1")
 abstract class AbstractController extends Controller {
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String PARAMETER_EXPAND = "expand";

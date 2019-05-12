@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @author PITSCHR
  */
 public final class KnxStatisticImpl implements KnxStatistic {
-    private static final Logger LOG = LoggerFactory.getLogger(KnxStatisticImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(KnxStatisticImpl.class);
     /**
      * 14 bytes for Ethernet packet<br>
      * 20 bytes for IPV4<br>
@@ -56,7 +56,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
      * Default package-private constructor for {@link KnxStatisticImpl}
      */
     KnxStatisticImpl() {
-        LOG.trace("Default KNX Statistic object created.");
+        log.trace("Default KNX Statistic object created.");
     }
 
     @Override

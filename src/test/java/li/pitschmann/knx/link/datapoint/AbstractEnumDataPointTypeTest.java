@@ -24,7 +24,7 @@ package li.pitschmann.knx.link.datapoint;
  * @author PITSCHR
  */
 public abstract class AbstractEnumDataPointTypeTest implements DPTTest {
-    // private static final Logger LOG = LoggerFactory.getLogger(AbstractEnumDataPointTypeTest.class);
+    // private static final Logger log = LoggerFactory.getLogger(AbstractEnumDataPointTypeTest.class);
     //
 
     /**
@@ -63,7 +63,7 @@ public abstract class AbstractEnumDataPointTypeTest implements DPTTest {
     // final Set<Integer> knownHashCodes = new HashSet<>(1024);
     //
     // for (Class<?> enumClass : this.currentEnumClass().getDeclaredClasses()) {
-    // LOG.debug("Enum Class: {}", enumClass.getSimpleName());
+    // log.debug("Enum Class: {}", enumClass.getSimpleName());
     // numberOfDPTs++;
     // // iterate through all enum classes in DPT23
     // assertThat(enumClass.isEnum());
@@ -88,7 +88,7 @@ public abstract class AbstractEnumDataPointTypeTest implements DPTTest {
     //
     // // get DPT value
     // final DataPointEnumValue<?> dptValue = enumDpt.toValue();
-    // LOG.debug(" Enum Field: {}={}", enumField.getName(), dptValue);
+    // log.debug(" Enum Field: {}={}", enumField.getName(), dptValue);
     //
     // // Check hash code integrity
     // final int dpt20ValueHashCode = dptValue.hashCode();
@@ -118,13 +118,13 @@ public abstract class AbstractEnumDataPointTypeTest implements DPTTest {
     // assertThat(enumDpt.toByteArray()).containsExactly(byteArray);
     // assertThat(dptValue.toByteArray()).containsExactly(byteArray);
     // } else {
-    // LOG.trace(" Enum Field (not public): {}", enumField);
+    // log.trace(" Enum Field (not public): {}", enumField);
     // }
     // }
     // }
     //
-    // LOG.debug("Number of DPTs: {}", numberOfDPTs);
-    // LOG.debug("Number of DPT values: {}", numberOfValues);
+    // log.debug("Number of DPTs: {}", numberOfDPTs);
+    // log.debug("Number of DPT values: {}", numberOfValues);
     // }
     //
     // /**

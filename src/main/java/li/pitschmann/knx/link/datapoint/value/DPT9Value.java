@@ -46,7 +46,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT9Value extends AbstractDataPointValue<DPT9> {
-    private static final Logger LOG = LoggerFactory.getLogger(DPT9Value.class);
+    private static final Logger log = LoggerFactory.getLogger(DPT9Value.class);
     private final double floatingValue;
     private final byte[] byteArray;
 
@@ -132,7 +132,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
 
         // result: MMMM MMMM MMMM
         final var mantissa = (highByte | lowByte);
-        LOG.debug("Mantissa for value '{}' (high-byte={}, low-byte={}): {}", ByteFormatter.formatHexAsString(bytes), highByte, lowByte, mantissa);
+        log.debug("Mantissa for value '{}' (high-byte={}, low-byte={}): {}", ByteFormatter.formatHexAsString(bytes), highByte, lowByte, mantissa);
         return mantissa;
     }
 
@@ -161,21 +161,21 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
                 calcValue /= 2;
             }
         }
-        LOG.debug("Exponents for '{}': {}", value, exponent);
-        LOG.debug("Value after division for '{}': {}", value, calcValue);
+        log.debug("Exponents for '{}': {}", value, exponent);
+        log.debug("Value after division for '{}': {}", value, calcValue);
 
         final var mantissa = Math.round(calcValue) & 0x7FF;
-        LOG.debug("Mantissa for '{}': {}", value, mantissa);
+        log.debug("Mantissa for '{}': {}", value, mantissa);
         // M... ....
         var highByte = valueNegative ? (byte) 0x80 : 0x00;
         // .EEE ....
         highByte |= (exponent << 3);
         // .... MMMM
         highByte |= (mantissa >>> 8);
-        LOG.debug("High Byte for '{}': {} (unsigned: {})", value, highByte, Bytes.toUnsignedInt(highByte));
+        log.debug("High Byte for '{}': {} (unsigned: {})", value, highByte, Bytes.toUnsignedInt(highByte));
 
         final var lowByte = (byte) (mantissa & 0xFF);
-        LOG.debug("Low Byte for '{}': {} (unsigned: {})", value, lowByte, Bytes.toUnsignedInt(lowByte));
+        log.debug("Low Byte for '{}': {} (unsigned: {})", value, lowByte, Bytes.toUnsignedInt(lowByte));
 
         return new byte[]{highByte, lowByte};
     }

@@ -33,7 +33,7 @@ import java.util.concurrent.Flow.Subscription;
  * @author PITSCHR
  */
 public final class ConnectionStateResponseTask implements Subscriber<Body> {
-    private static final Logger LOG = LoggerFactory.getLogger(ConnectionStateResponseTask.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectionStateResponseTask.class);
     private final InternalKnxClient client;
 
     public ConnectionStateResponseTask(final InternalKnxClient client) {
@@ -45,15 +45,15 @@ public final class ConnectionStateResponseTask implements Subscriber<Body> {
         // we are interested in connection state response only
         if (body instanceof ConnectionStateResponseBody) {
             final var responseBody = (ConnectionStateResponseBody) body;
-            LOG.debug("Connection State Response received: {}", responseBody);
+            log.debug("Connection State Response received: {}", responseBody);
             this.client.getEventPool().connectionStateEvent().setResponse(responseBody);
-            LOG.trace("Connection State Response saved.");
+            log.trace("Connection State Response saved.");
         }
     }
 
     @Override
     public void onError(final Throwable throwable) {
-        LOG.error("Error during Connection State Response Task class", throwable);
+        log.error("Error during Connection State Response Task class", throwable);
     }
 
     @Override
