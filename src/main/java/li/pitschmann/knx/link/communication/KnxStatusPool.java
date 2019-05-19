@@ -24,6 +24,7 @@ import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -77,9 +78,9 @@ public interface KnxStatusPool {
      * Returns the status for given {@link KnxAddress} immediately if it exists already or up to
      * given {@code duration} and {@code unit}
      *
-     * @param address  {@link KnxAddress} for which the status should be returned
-     * @param duration duration of time unit
-     * @param unit     time unit
+     * @param address      {@link KnxAddress} for which the status should be returned
+     * @param duration     duration of time unit
+     * @param unit         time unit
      * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
      *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
      *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
@@ -89,13 +90,13 @@ public interface KnxStatusPool {
     KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate);
 
 
-        /**
-         * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
-         *
-         * @param address
-         * @param dptId
-         * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
-         */
+    /**
+     * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
+     *
+     * @param address
+     * @param dptId
+     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
+     */
     @Nullable
     <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId);
 
@@ -108,4 +109,12 @@ public interface KnxStatusPool {
      */
     @Nullable
     <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt);
+
+    /**
+     * Returns copy of current status map with {@link KnxAddress} as key and {@link KnxStatusData} as value
+     *
+     * @return an immutable map
+     */
+    @Nonnull
+    Map<KnxAddress, KnxStatusData> copyStatusMap();
 }

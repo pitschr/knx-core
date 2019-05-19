@@ -1,5 +1,6 @@
 package li.pitschmann.knx.daemon.v1.json;
 
+import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 
@@ -9,10 +10,19 @@ import java.time.Instant;
  * JSON status response
  */
 public class StatusResponse extends ReadResponse {
+    private GroupAddress groupAddress;
     private Instant timestamp;
     private KnxAddress sourceAddress;
     private APCI apci;
     private Boolean dirty;
+
+    public GroupAddress getGroupAddress() {
+        return groupAddress;
+    }
+
+    public void setGroupAddress(GroupAddress groupAddress) {
+        this.groupAddress = groupAddress;
+    }
 
     public Instant getTimestamp() {
         return timestamp;

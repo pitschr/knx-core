@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,23 +34,45 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Tests XmlProject#toString()")
     public void testToString() {
-        // create some addresses
+        // create some mock data
         final var xmlGroupAddress1 = mock(XmlGroupAddress.class);
         when(xmlGroupAddress1.toString()).thenReturn("xga1");
         final var xmlGroupAddress2 = mock(XmlGroupAddress.class);
         when(xmlGroupAddress2.toString()).thenReturn("xga2");
         final var xmlGroupAddress3 = mock(XmlGroupAddress.class);
         when(xmlGroupAddress3.toString()).thenReturn("xga3");
+        final var xmlGroupAddresses = Maps.<String, XmlGroupAddress>newLinkedHashMap();
+        xmlGroupAddresses.put("xga1-id", xmlGroupAddress1);
+        xmlGroupAddresses.put("xga2-id", xmlGroupAddress2);
+        xmlGroupAddresses.put("xga3-id", xmlGroupAddress3);
+
+        final var groupRange1 = mock(XmlGroupRange.class);
+        when(groupRange1.toString()).thenReturn("xgg1");
+        final var groupRange2 = mock(XmlGroupRange.class);
+        when(groupRange2.toString()).thenReturn("xgg2");
+        final var groupRanges = Maps.<String, XmlGroupRange>newLinkedHashMap();
+        groupRanges.put("xgg1-id", groupRange1);
+        groupRanges.put("xgg2-id", groupRange2);
 
         // given
         final var xmlProject = new XmlProject();
-        xmlProject.setGroupAddresses(Lists.newArrayList(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3));
+        xmlProject.setGroupAddressMap(xmlGroupAddresses);
         xmlProject.setGroupAddressStyle("GA_STYLE");
         xmlProject.setId("PROJECT_ID");
         xmlProject.setName("Project Name");
+        xmlProject.setGroupRangeMap(groupRanges);
 
+        // @formatter:off
         // test toString()
-        assertThat(xmlProject).hasToString("XmlProject{id=PROJECT_ID, name=Project Name, groupAddressStyle=GA_STYLE, groupAddresses=[xga1, xga2, xga3]}");
+        assertThat(xmlProject).hasToString("" +
+                "XmlProject{" +
+                    "id=PROJECT_ID, " +
+                    "name=Project Name, " +
+                    "groupAddressStyle=GA_STYLE, " +
+                    "groupAddressMap={xga1-id=xga1, xga2-id=xga2, xga3-id=xga3}, " +
+                    "groupRangeMap={xgg1-id=xgg1, xgg2-id=xgg2}" +
+                "}");
+        // @formatter:on
     }
 
 }

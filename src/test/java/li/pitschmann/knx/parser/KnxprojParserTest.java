@@ -119,7 +119,7 @@ public class KnxprojParserTest {
         assertThat(project.getId()).isEqualTo("P-0700");
         assertThat(project.getName()).isEqualTo("Project (Empty)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("Free");
-        assertThat(project.getGroupAddresses()).isEmpty();
+        assertThat(project.getGroupAddressMap()).isEmpty();
     }
 
     /**
@@ -147,6 +147,8 @@ public class KnxprojParserTest {
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE))
                 .isInstanceOf(KnxprojParserException.class)
                 .hasMessage("Attribute <ProjectInformation @GroupAddressStyle /> not found.");
+
+        // TODO ... corrupted GROUP RANGE ID, RANGESTART, RANGEEND and NAME
 
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_ID))
                 .isInstanceOf(KnxprojParserException.class)

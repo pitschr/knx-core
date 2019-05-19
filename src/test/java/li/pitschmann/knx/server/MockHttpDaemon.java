@@ -24,8 +24,6 @@ import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.core.Pippo;
 import ro.pippo.core.PippoRuntimeException;
 

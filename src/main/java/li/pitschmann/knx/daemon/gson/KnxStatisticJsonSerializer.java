@@ -2,7 +2,6 @@ package li.pitschmann.knx.daemon.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import li.pitschmann.knx.link.body.Body;
@@ -18,13 +17,11 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
-import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Serializes the {@link KnxStatistic} to a JSON format
@@ -80,6 +77,7 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
 
     /**
      * Returns a JSON pair of request and response
+     *
      * @param function
      * @param requestBodyClass
      * @param responseBodyClass

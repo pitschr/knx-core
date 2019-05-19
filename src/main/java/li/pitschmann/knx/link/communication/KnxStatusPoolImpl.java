@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.CEMI;
@@ -88,8 +89,8 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         return getStatusFor(address, duration, unit, true) != null;
     }
 
-    public @Nullable
-    KnxStatusData getStatusFor(final @Nonnull KnxAddress address) {
+    @Nullable
+    public KnxStatusData getStatusFor(final @Nonnull KnxAddress address) {
         Preconditions.checkNotNull(address);
         final var statusData = this.statusMap.get(address);
         if (statusData == null) {
@@ -98,20 +99,20 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         return statusData;
     }
 
-    public @Nullable
-    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
+    @Nullable
+    public KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
         return getStatusFor(address, duration, unit, false);
     }
 
-    public @Nullable
-    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
+    @Nullable
+    public KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
         Preconditions.checkNotNull(address);
         Preconditions.checkNotNull(unit);
         final var end = System.currentTimeMillis() + unit.toMillis(duration);
         KnxStatusData statusData = null;
         do {
             statusData = this.statusMap.get(address);
-        } while ((statusData==null || (mustUpToDate && statusData.isDirty())) && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
+        } while ((statusData == null || (mustUpToDate && statusData.isDirty())) && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
 
         if (statusData == null) {
             log.warn("No KNX status data found for address within defined time out: {}", address);
@@ -124,8 +125,8 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         }
     }
 
-    public @Nullable
-    <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId) {
+    @Nullable
+    public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId) {
         final var statusData = this.getStatusFor(address);
         if (statusData != null) {
             @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
@@ -134,13 +135,18 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         return null;
     }
 
-    public @Nullable
-    <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt) {
+    @Nullable
+    public <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt) {
         final var statusData = this.getStatusFor(address);
         if (statusData != null) {
             return dpt.toValue(statusData.getApciData());
         }
         return null;
+    }
+
+    @Nonnull
+    public Map<KnxAddress, KnxStatusData> copyStatusMap() {
+        return ImmutableMap.copyOf(this.statusMap);
     }
 
     @Override

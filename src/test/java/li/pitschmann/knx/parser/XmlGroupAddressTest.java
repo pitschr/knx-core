@@ -32,31 +32,35 @@ public class XmlGroupAddressTest {
     @DisplayName("Tests XmlGroupAddress#toString()")
     public void testToString() {
         final var xmlGroupAddress = new XmlGroupAddress();
-        xmlGroupAddress.setAddress("ADDRESS");
-        xmlGroupAddress.setDatapointType("DPT");
         xmlGroupAddress.setId("ID");
+        xmlGroupAddress.setParentId("PARENT_ID");
         xmlGroupAddress.setName("NAME");
+        xmlGroupAddress.setAddress("ADDRESS");
         xmlGroupAddress.setDescription("DESCRIPTION");
+        xmlGroupAddress.setDatapointType("DPT");
         xmlGroupAddress.setCommunicationFlag("C");
         xmlGroupAddress.setReadFlag("R");
         xmlGroupAddress.setWriteFlag("W");
         xmlGroupAddress.setTransmitFlag("T");
         xmlGroupAddress.setUpdateFlag("U");
 
+        // @formatter:off
         // test toString()
         assertThat(xmlGroupAddress).hasToString("XmlGroupAddress" +
                 "{" +
-                "id=ID, " +
-                "address=ADDRESS, " +
-                "name=NAME, " +
-                "description=DESCRIPTION, " +
-                "datapointType=DPT, " +
-                "communicationFlag=C, " +
-                "readFlag=R, " +
-                "writeFlag=W, " +
-                "transmitFlag=T, " +
-                "updateFlag=U" +
+                    "id=ID, " +
+                    "parentId=PARENT_ID, " +
+                    "address=ADDRESS, " +
+                    "name=NAME, " +
+                    "description=DESCRIPTION, " +
+                    "datapointType=DPT, " +
+                    "communicationFlag=C, " +
+                    "readFlag=R, " +
+                    "writeFlag=W, " +
+                    "transmitFlag=T, " +
+                    "updateFlag=U" +
                 "}");
+        // @formatter:on
     }
 
 }

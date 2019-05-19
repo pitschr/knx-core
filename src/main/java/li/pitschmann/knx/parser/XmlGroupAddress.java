@@ -35,6 +35,7 @@ import com.google.common.base.MoreObjects;
  */
 public final class XmlGroupAddress {
     private String id;
+    private String parentId;
     private String address;
     private String name;
     private String description;
@@ -51,6 +52,14 @@ public final class XmlGroupAddress {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getAddress() {
@@ -130,6 +139,7 @@ public final class XmlGroupAddress {
         // @formatter:off
         return MoreObjects.toStringHelper(this)
                 .add("id",id)
+                .add("parentId", parentId)
                 .add("address", address)
                 .add("name", name)
                 .add("description", description)

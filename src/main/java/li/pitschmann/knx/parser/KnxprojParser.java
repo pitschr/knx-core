@@ -20,6 +20,7 @@ package li.pitschmann.knx.parser;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
@@ -29,12 +30,14 @@ import com.ximpleware.VTDNav;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.zip.ZipFile;
@@ -84,12 +87,17 @@ public final class KnxprojParser {
         final var sw = Stopwatch.createStarted();
         final XmlProject project;
         try (final var zipFile = new ZipFile(path.toFile())) {
-            // get KNX group address data
-            final var groupAddresses = getKnxProjectGroupAddresses(zipFile);
-
             // get KNX project information
             project = getKnxProjectInformation(zipFile);
-            project.setGroupAddresses(groupAddresses);
+
+            // get KNX group ranges and addresses
+            final var groupRanges = parseGroupRanges(zipFile);
+            project.setGroupRangeMap(groupRanges);
+
+            final var groupAddresses = parseGroupAddresses(zipFile);
+            project.setGroupAddressMap(groupAddresses);
+
+            // TODO: Linking between group ranges and group addresses
         } catch (final IOException | VTDException ex) {
             throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
         }
@@ -107,17 +115,8 @@ public final class KnxprojParser {
      * @throws VTDException exception from VTD-XML
      */
     private static XmlProject getKnxProjectInformation(final ZipFile zipFile) throws IOException, VTDException {
-        // find 'project.xml' in ZIP file
-        final var zipEntry = zipFile.stream().filter(f -> f.getName().matches("^P-\\d+/project\\.xml$"))
-                .findFirst()
-                .orElseThrow(() -> new KnxprojParserException("File 'project.xml' not found in ZIP file"));
-        log.debug("Project Information file found: {}", zipEntry.getName());
-
-        // convert InputStream into byte array (it will be closed automatically, when ZIP file is closed)
-        final var bytes = ByteStreams.toByteArray(zipFile.getInputStream(zipEntry));
-        if (log.isDebugEnabled()) {
-            log.debug("Project Information stream:\n{}", new String(bytes, StandardCharsets.UTF_8));
-        }
+        // reads the 'project.xml' file from 'P-<digit>' folder
+        final var bytes = findAndReadToBytes(zipFile, "^P-\\d+/project\\.xml$");
 
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
@@ -143,25 +142,17 @@ public final class KnxprojParser {
     }
 
     /**
-     * Returns a list of {@link XmlGroupAddress} based on project information from '*.knxproj' file
+     * Returns a map of {@link XmlGroupRange} based on project information from '*.knxproj' file
      *
      * @param zipFile to be parsed
-     * @return list of KNX Group Addresses
-     * @throws IOException  I/O exception when reading ZIP stream
-     * @throws VTDException exception from VTD-XML
+     * @return map of KNX Group Ranges (id of map is group range id)
+     * @throws IOException
+     * @throws VTDException
      */
-    private static List<XmlGroupAddress> getKnxProjectGroupAddresses(final ZipFile zipFile) throws IOException, VTDException {
-        // find 'project.xml' in ZIP file
-        final var zipEntry = zipFile.stream().filter(f -> f.getName().matches("^P-\\d+/0\\.xml$"))
-                .findFirst()
-                .orElseThrow(() -> new KnxprojParserException("File '0.xml' not found in ZIP file"));
-        log.debug("Project Data file found: {}", zipEntry.getName());
-
-        // convert InputStream into byte array (it will be closed automatically, when ZIP file is closed)
-        final var bytes = ByteStreams.toByteArray(zipFile.getInputStream(zipEntry));
-        if (log.isDebugEnabled()) {
-            log.debug("Project Data stream:\n{}", new String(bytes, StandardCharsets.UTF_8));
-        }
+    @Nonnull
+    private static Map<String, XmlGroupRange> parseGroupRanges(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
+        // reads the '0.xml' file from 'P-<digit>' folder
+        final var bytes = findAndReadToBytes(zipFile, "^P-\\d+/0\\.xml$");
 
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
@@ -169,7 +160,93 @@ public final class KnxprojParser {
         vtdGen.parse(false);
         final var vtdNav = vtdGen.getNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
-        final var groupAddresses = new LinkedList<XmlGroupAddress>();
+        final var groupRanges = Maps.<String, XmlGroupRange>newLinkedHashMap();
+
+        // find all <GroupRange /> elements
+        vtdAutoPilot.selectXPath("/KNX/Project/Installations//GroupAddresses//GroupRange");
+
+        // iterate through all group ranges
+        while (vtdAutoPilot.evalXPath() != -1) {
+            final var groupRange = new XmlGroupRange();
+
+            // obtain required @Id, @RangeStart, @RangeEnd and @Name
+            groupRange.setId(readAttributeValue(vtdNav, "Id",
+                    () -> new KnxprojParserException("Attribute <GroupRange @Id /> not found.")));
+
+            groupRange.setRangeStart(Integer.parseInt(readAttributeValue(vtdNav, "RangeStart",
+                    () -> new KnxprojParserException("Attribute <GroupRange @RangeStart /> not found for: " + groupRange.getId()))));
+
+            groupRange.setRangeEnd(Integer.parseInt(readAttributeValue(vtdNav, "RangeEnd",
+                    () -> new KnxprojParserException("Attribute <GroupRange @RangeEnd /> not found for: " + groupRange.getId()))));
+
+            groupRange.setName(readAttributeValue(vtdNav, "Name",
+                    () -> new KnxprojParserException("Attribute <GroupRange @Name /> not found for: " + groupRange.getId())));
+
+            // add where?
+            final var currentIndex = vtdNav.getCurrentIndex();
+            if (vtdNav.toElement(VTDNav.PARENT) && vtdNav.matchElement("GroupRange")) {
+                // group range is not on main line
+                final var parentId = readAttributeValue(vtdNav, "Id",
+                        () -> new KnxprojParserException("Parent <GroupRange @Id /> not found."));
+                log.debug("Not a root level as parent element is {} ({}): {}", vtdNav.toRawString(vtdNav.getCurrentIndex()), parentId, groupRange);
+
+                // get parent group range from temporary map
+                final var parentGroupRange = Objects.requireNonNull(groupRanges.get(parentId));
+                // level of current group range is the level of parent group range plus 1
+                groupRange.setLevel(parentGroupRange.getLevel() + 1);
+                // add group range to parent range as child
+                parentGroupRange.getChildGroupRanges().add(groupRange);
+
+                // now back to GroupRange and then go to first child
+                vtdNav.recoverNode(currentIndex);
+
+                if (vtdNav.toElement(VTDNav.FIRST_CHILD, "GroupAddress")) {
+                    // moved to first child
+                    log.debug("Moved to first child of <GroupAddress /> of: {}", groupRange);
+
+                    do {
+                        final var childGroupAddressId = readAttributeValue(vtdNav, "Id",
+                                () -> new KnxprojParserException("Parent <GroupAddress @Id /> not found."));
+                        groupRange.getGroupAddressIds().add(childGroupAddressId);
+                        log.debug("<GroupAddress @Id /> '{}' added to group range '{}'", childGroupAddressId, groupRange.getId());
+                    } while (vtdNav.toElement(VTDNav.NEXT_SIBLING));
+                } else {
+                    log.debug("No <GroupAddress /> child found for: {}", groupRange);
+                }
+
+            } else {
+                // group range is on main line
+                log.debug("Root level as parent element is 'GroupRanges': {}", groupRange);
+                groupRange.setLevel(0);
+            }
+
+            groupRanges.put(groupRange.getId(), groupRange);
+        }
+
+        return groupRanges;
+    }
+
+
+    /**
+     * Returns a map of {@link XmlGroupAddress} based on project information from '*.knxproj' file
+     *
+     * @param zipFile to be parsed
+     * @return map of KNX Group Addresses (id of group address is the key)
+     * @throws IOException  I/O exception when reading ZIP stream
+     * @throws VTDException exception from VTD-XML
+     */
+    @Nonnull
+    private static Map<String, XmlGroupAddress> parseGroupAddresses(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
+        // reads the '0.xml' file from 'P-<digit>' folder
+        final var bytes = findAndReadToBytes(zipFile, "^P-\\d+/0\\.xml$");
+
+        // create parser (without namespace, we don't need it for *.knxproj file)
+        final var vtdGen = new VTDGen();
+        vtdGen.setDoc(bytes);
+        vtdGen.parse(false);
+        final var vtdNav = vtdGen.getNav();
+        final var vtdAutoPilot = new AutoPilot(vtdNav);
+        final var groupAddresses = Maps.<String, XmlGroupAddress>newLinkedHashMap();
 
         // find all <GroupAddress /> elements
         vtdAutoPilot.selectXPath("/KNX/Project/Installations/Installation/GroupAddresses//GroupAddress");
@@ -195,8 +272,16 @@ public final class KnxprojParser {
             // get flags (via ComObjectInstanceRef)
             readFlags(vtdNav.cloneNav(), groupAddress);
 
-            // add to list
-            groupAddresses.add(groupAddress);
+            // move to parent element and verify if it is 'GroupRange'
+            Preconditions.checkState(
+                    vtdNav.toElement(VTDNav.PARENT) && vtdNav.matchElement("GroupRange"),
+                    "Parent of <GroupAddress /> should be a <GroupRange />");
+
+            // we are currently on GroupRange level
+            groupAddress.setParentId(readAttributeValue(vtdNav, "Id",
+                    () -> new KnxprojParserException("Attribute <GroupRange @Id /> not found.")));
+
+            groupAddresses.put(groupAddress.getId(), groupAddress);
         }
 
         return groupAddresses;
@@ -248,7 +333,7 @@ public final class KnxprojParser {
      * @throws NavException navigation exception by VTD-XML
      */
     private static String readAttributeValue(final VTDNav vtdNav, final String attribute) throws NavException {
-        return readAttributeValue(vtdNav, attribute, (String)null);
+        return readAttributeValue(vtdNav, attribute, (String) null);
     }
 
     /**
@@ -262,5 +347,31 @@ public final class KnxprojParser {
     private static String readAttributeValue(final VTDNav vtdNav, final String attribute, final String defaultValue) throws NavException {
         final var index = vtdNav.getAttrVal(attribute);
         return index > 0 ? vtdNav.toString(index) : defaultValue;
+    }
+
+    /**
+     * Find file that matches the regular expression {@code filePathRegEx}, reads as {@link InputStream} and
+     * converts to a byte array. The internal open stream will be closed.
+     *
+     * @param zipFile
+     * @param filePathRegEx
+     * @return byte array
+     * @throws IOException
+     */
+    private static byte[] findAndReadToBytes(final ZipFile zipFile, final String filePathRegEx) throws IOException {
+        // find file that matches filePathRegEx in ZIP file
+        final var zipEntry = zipFile.stream().filter(f -> f.getName().matches(filePathRegEx))
+                .findFirst()
+                .orElseThrow(() -> new KnxprojParserException("File '" + filePathRegEx + "' not found in ZIP file"));
+        log.debug("File in ZIP File found: {}", zipEntry.getName());
+
+        byte[] bytes;
+        try (final var in = zipFile.getInputStream(zipEntry)) {
+            bytes = ByteStreams.toByteArray(in);
+            if (log.isDebugEnabled()) {
+                log.debug("Data stream from file '{}':\n{}", zipEntry.getName(), new String(bytes, StandardCharsets.UTF_8));
+            }
+        }
+        return bytes;
     }
 }

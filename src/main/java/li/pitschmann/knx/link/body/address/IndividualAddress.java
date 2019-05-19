@@ -96,8 +96,8 @@ public final class IndividualAddress extends KnxAddress {
     /**
      * Returns an instance of {@link IndividualAddress}
      *
-     * @param area [0..15]
-     * @param line [0..15]
+     * @param area   [0..15]
+     * @param line   [0..15]
      * @param device [0..255]
      * @return immutable {@link IndividualAddress}
      */

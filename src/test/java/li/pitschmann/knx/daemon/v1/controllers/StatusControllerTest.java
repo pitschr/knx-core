@@ -39,6 +39,24 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class StatusControllerTest {
     /**
+     * Test /status endpoint for all available status in KNX client pool
+     *
+     * @param daemon
+     * @throws Exception
+     */
+    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
+    @DisplayName("Test /status endpoint for all available status in KNX client pool")
+    public void testAllStatus(final MockHttpDaemon daemon) throws Exception {
+        // get http client for requests
+        final var httpClient = HttpClient.newHttpClient();
+        final var request = daemon.newRequestBuilder("/api/v1/status?expand=*").GET().build();
+        final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode()).isEqualTo(207);
+        assertThat(response.body()).isEqualTo("[]");
+    }
+
+    /**
      * Test /status endpoint for group address 0/0/22
      *
      * @param daemon
@@ -91,5 +109,29 @@ public class StatusControllerTest {
                         "\"raw\":[2]," + //
                         "\"status\":\"OK\"" + //
                         "}");
+
+        final var httpRequestAllStatus = daemon.newRequestBuilder("/api/v1/status?expand=name").GET().build();
+        final var httpResponseAllStatus = httpClient.send(httpRequestAllStatus, HttpResponse.BodyHandlers.ofString());
+        assertThat(httpResponseAllStatus.statusCode()).isEqualTo(207);
+        // assert the body
+        final var bodyAllStatus = httpResponseAllStatus.body();
+        // @formatter:off
+        assertThat(bodyAllStatus).isEqualTo(
+                "[" +
+                    "{" +
+                        "\"groupAddress\":{" +
+                            "\"type\":1," +
+                            "\"format\":{" +
+                                "\"free_level\":\"22\"," +
+                                "\"two_level\":\"0/22\"," +
+                                "\"three_level\":\"0/0/22\"" +
+                            "}," +
+                            "\"raw\":[0,22]" +
+                        "}," +
+                        "\"name\":\"Sub Group - DPT 2 (0x02)\"," +
+                        "\"status\":\"OK\"" +
+                    "}" +
+                "]");
+        // @formatter:on
     }
 }

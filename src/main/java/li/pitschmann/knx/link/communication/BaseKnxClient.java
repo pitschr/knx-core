@@ -32,7 +32,6 @@ import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.plugin.Plugin;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

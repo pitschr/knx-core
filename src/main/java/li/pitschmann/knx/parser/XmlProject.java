@@ -19,9 +19,16 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,22 +45,40 @@ import java.util.Optional;
  * @author pitschr
  */
 public final class XmlProject {
+    public static final Logger log = LoggerFactory.getLogger(XmlProject.class);
     /**
+     * ID of project
+     * <p>
      * <Project @Id />
      */
     private String id;
     /**
+     * Name of project
+     * <p>
      * <ProjectInformation @Name />
      */
     private String name;
     /**
+     * Style of Group Address (FreeLevel, TwoLevel, ThreeLevel)
+     * <p>
      * <ProjectInformation @GroupAddressStyle />
      */
     private String groupAddressStyle;
     /**
-     * List of KNX Group Addresses, taken from '*.knxproj' file
+     * Map of KNX Group Ranges taken from '*.knxproj' file
+     *
+     * <GroupRanges>
+     * <GroupRange />
+     * ...
+     * </GroupRanges>
      */
-    private List<XmlGroupAddress> groupAddresses;
+    private Map<String, XmlGroupRange> groupRangeMap;
+    /**
+     * Map of KNX Group Addresses, taken from '*.knxproj' file
+     * <p>
+     * <GroupAddress />
+     */
+    private Map<String, XmlGroupAddress> groupAddressMap;
 
     public String getId() {
         return id;
@@ -79,12 +104,29 @@ public final class XmlProject {
         this.groupAddressStyle = groupAddressStyle;
     }
 
-    public List<XmlGroupAddress> getGroupAddresses() {
-        return groupAddresses;
+    public Collection<XmlGroupAddress> getGroupAddressMap() {
+        return groupAddressMap.values();
     }
 
-    public void setGroupAddresses(List<XmlGroupAddress> groupAddresses) {
-        this.groupAddresses = groupAddresses;
+    public void setGroupAddressMap(Map<String, XmlGroupAddress> groupAddressMap) {
+        this.groupAddressMap = groupAddressMap;
+    }
+
+    public Map<String, XmlGroupRange> getGroupRangeMap() {
+        return groupRangeMap;
+    }
+
+    public void setGroupRangeMap(Map<String, XmlGroupRange> groupRangeMap) {
+        this.groupRangeMap = groupRangeMap;
+    }
+
+    /**
+     * Returns an immutable list of {@link XmlGroupAddress}
+     *
+     * @return immutable list of {@link XmlGroupAddress}
+     */
+    public List<XmlGroupAddress> getGroupAddresses() {
+        return ImmutableList.copyOf(this.groupAddressMap.values());
     }
 
     /**
@@ -93,8 +135,68 @@ public final class XmlProject {
      * @param groupAddress
      * @return An instance of {@link Optional} for group address
      */
+    @Nonnull
     public Optional<XmlGroupAddress> getGroupAddress(final GroupAddress groupAddress) {
         return getGroupAddresses().stream().filter(x -> x.getAddress().equals(groupAddress.getAddress())).findFirst();
+    }
+
+    /**
+     * Returns the {@link XmlGroupAddress} for given group address {@code id}
+     *
+     * @param id id of group address in KNX project file
+     * @return An instance of {@link Optional} for group address
+     */
+    @Nonnull
+    public Optional<XmlGroupAddress> getGroupAddressById(final String id) {
+        return Optional.ofNullable(groupAddressMap == null ? null : groupAddressMap.get(id));
+    }
+
+    /**
+     * Returns collection of {@link XmlGroupRange} for all main groups
+     *
+     * @return collection of {@link XmlGroupRange}, or empty list if not found
+     */
+    @Nonnull
+    public Collection<XmlGroupRange> getMainGroups() {
+        return Optional.ofNullable(groupRangeMap.values()).orElseGet(() -> Collections.emptyList());
+    }
+
+    /**
+     * Returns collection of {@link XmlGroupRange} for given {@code main} group
+     *
+     * @param main
+     * @return collection of {@link XmlGroupRange}, or empty list if not found
+     */
+    @Nonnull
+    public Collection<XmlGroupRange> getMiddleGroups(final int main) {
+        if (groupRangeMap == null || groupRangeMap.isEmpty()) {
+            log.warn("No main groups available");
+            return Collections.emptyList();
+        }
+
+        // find the group range with the proper range start (see GroupAddresses)
+        int startRange = Integer.valueOf(GroupAddress.of(main, 0).getAddress());
+        log.debug("Looking for start range '{}' in: {}", startRange, groupRangeMap);
+
+        XmlGroupRange xmlGroupRange = null;
+        for (final var groupRange : groupRangeMap.values()) {
+            if (groupRange.getRangeStart() == startRange) {
+                // found
+                xmlGroupRange = groupRange;
+                break;
+            }
+        }
+
+        // not found?
+        if (xmlGroupRange == null) {
+            log.warn("Main group '{}' not found in: {}", main, groupRangeMap.values());
+            return Collections.emptyList();
+        }
+        // otherwise found
+        else {
+            log.debug("Main group '{}' found: {}", main, xmlGroupRange);
+            return xmlGroupRange.getChildGroupRanges();
+        }
     }
 
     @Override
@@ -104,7 +206,8 @@ public final class XmlProject {
                 .add("id", this.id)
                 .add("name", this.name)
                 .add("groupAddressStyle", this.groupAddressStyle)
-                .add("groupAddresses", this.groupAddresses)
+                .add("groupAddressMap", this.groupAddressMap)
+                .add("groupRangeMap", this.groupRangeMap)
                 .toString();
         // @formatter:on
     }
