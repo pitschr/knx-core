@@ -130,6 +130,7 @@ public class PerformanceKnxTest {
             for (int i = 0; i < TIMES; i++) {
                 assertThat(client.readRequest(groupAddress).get()).isNotNull();
             }
+            mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, TIMES);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }

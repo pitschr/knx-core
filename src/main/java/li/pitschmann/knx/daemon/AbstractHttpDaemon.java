@@ -89,7 +89,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
                 // sleep 1 second
                 log.debug("ping...");
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             log.error("Something went wrong", t);
         } finally {
             log.debug("Http Daemon Server stopped.");

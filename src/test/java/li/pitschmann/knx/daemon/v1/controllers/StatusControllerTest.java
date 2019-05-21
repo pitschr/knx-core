@@ -134,4 +134,28 @@ public class StatusControllerTest {
                 "]");
         // @formatter:on
     }
+
+    /**
+     * Test /status endpoint for an unknown group address (0/0/255)
+     *
+     * @param daemon
+     * @throws Exception
+     */
+    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
+    @DisplayName("Test /status endpoint for unknown group address")
+    public void testStatusUnknownGroupAddress(final MockHttpDaemon daemon) throws Exception {
+        // get http client for requests
+        final var httpClient = HttpClient.newHttpClient();
+        final var groupAddress = GroupAddress.of(0, 0, 255); // unknown group address!
+
+        // create status request
+        final var statusRequest = new StatusRequest();
+        statusRequest.setGroupAddress(groupAddress);
+
+        // send status request for an unknown group address in XML project
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/status").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
+        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(httpResponse.body()).isEqualTo("{\"status\":\"ERROR\"}");
+    }
 }

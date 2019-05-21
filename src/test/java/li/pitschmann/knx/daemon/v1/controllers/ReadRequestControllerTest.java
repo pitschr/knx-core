@@ -25,6 +25,7 @@ import li.pitschmann.knx.server.MockDaemonTest;
 import li.pitschmann.knx.server.MockHttpDaemon;
 import li.pitschmann.knx.server.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
+import ro.pippo.core.HttpConstants;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -72,5 +73,25 @@ public class ReadRequestControllerTest {
                 "\"raw\":[-64,-80,-96,-25]," + //
                 "\"status\":\"OK\"" + //
                 "}");
+    }
+
+    /**
+     * Tests the /read endpoint for an unknown group addresses (0/0/255)
+     */
+    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/parser/Project (3-Level, v14).knxproj"))
+    @DisplayName("Test /read endpoint for an unknown group addresses")
+    public void testReadUnknownGroupAddress(final MockHttpDaemon daemon) throws Exception {
+        // get http client for requests
+        final var httpClient = HttpClient.newHttpClient();
+
+        // create read request
+        final var readRequest = new ReadRequest();
+        readRequest.setGroupAddress(GroupAddress.of(0, 0, 255));
+
+        // send read request
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(httpResponse.body()).isEqualTo("{\"status\":\"ERROR\"}");
     }
 }

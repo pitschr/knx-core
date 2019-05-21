@@ -22,6 +22,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
+import li.pitschmann.knx.daemon.v1.controllers.ProjectController;
 import li.pitschmann.knx.daemon.v1.controllers.ReadRequestController;
 import li.pitschmann.knx.daemon.v1.controllers.StatisticController;
 import li.pitschmann.knx.daemon.v1.controllers.StatusController;
@@ -73,7 +74,8 @@ public class HttpDaemonApplication extends ControllerApplication {
                 ReadRequestController.class, //
                 WriteRequestController.class, //
                 StatusController.class, //
-                StatisticController.class //
+                StatisticController.class, //
+                ProjectController.class
         );
     }
 }

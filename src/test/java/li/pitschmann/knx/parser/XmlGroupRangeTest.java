@@ -50,6 +50,15 @@ public class XmlGroupRangeTest {
         xmlGroupRange.setChildGroupRanges(Lists.newArrayList(xmlSubGroupRange1, xmlSubGroupRange2));
         xmlGroupRange.setGroupAddressIds(Lists.newArrayList("xga1-id", "xga2-id", "xga3-id"));
 
+        // check if setter/getter are working
+        assertThat(xmlGroupRange.getId()).isEqualTo("XGR-ID");
+        assertThat(xmlGroupRange.getLevel()).isEqualTo(4711);
+        assertThat(xmlGroupRange.getRangeStart()).isEqualTo(13);
+        assertThat(xmlGroupRange.getRangeEnd()).isEqualTo(17);
+        assertThat(xmlGroupRange.getName()).isEqualTo("XGR-NAME");
+        assertThat(xmlGroupRange.getChildGroupRanges()).hasSize(2);
+        assertThat(xmlGroupRange.getGroupAddressIds()).hasSize(3);
+
         // @formatter:off
         // test toString()
         assertThat(xmlGroupRange).hasToString("XmlGroupRange" +

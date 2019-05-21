@@ -44,6 +44,20 @@ public class XmlGroupAddressTest {
         xmlGroupAddress.setTransmitFlag("T");
         xmlGroupAddress.setUpdateFlag("U");
 
+        // check if setter/getter are working
+        assertThat(xmlGroupAddress.getId()).isEqualTo("ID");
+        assertThat(xmlGroupAddress.getParentId()).isEqualTo("PARENT_ID");
+        assertThat(xmlGroupAddress.getName()).isEqualTo("NAME");
+        assertThat(xmlGroupAddress.getAddress()).isEqualTo("ADDRESS");
+        assertThat(xmlGroupAddress.getDescription()).isEqualTo("DESCRIPTION");
+        assertThat(xmlGroupAddress.getDatapointType()).isEqualTo("DPT");
+        assertThat(xmlGroupAddress.getCommunicationFlag()).isEqualTo("C");
+        assertThat(xmlGroupAddress.getReadFlag()).isEqualTo("R");
+        assertThat(xmlGroupAddress.getWriteFlag()).isEqualTo("W");
+        assertThat(xmlGroupAddress.getTransmitFlag()).isEqualTo("T");
+        assertThat(xmlGroupAddress.getUpdateFlag()).isEqualTo("U");
+
+
         // @formatter:off
         // test toString()
         assertThat(xmlGroupAddress).hasToString("XmlGroupAddress" +

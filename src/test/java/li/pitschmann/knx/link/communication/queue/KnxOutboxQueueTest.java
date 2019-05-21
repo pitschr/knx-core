@@ -50,6 +50,7 @@ public class KnxOutboxQueueTest {
     public void testViaMock() throws Exception {
         final var clientMock = mock(InternalKnxClient.class);
         final var channelMock = mock(DatagramChannel.class);
+        when(channelMock.isOpen()).thenReturn(Boolean.TRUE);
 
         final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(channelMock);

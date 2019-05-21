@@ -3,7 +3,7 @@ package li.pitschmann.knx.daemon.v1.json;
 /**
  * Abstract Response with status for all JSON responses
  */
-public abstract class AbstractResponse {
+abstract class AbstractResponse {
     private Status status;
 
     public Status getStatus() {

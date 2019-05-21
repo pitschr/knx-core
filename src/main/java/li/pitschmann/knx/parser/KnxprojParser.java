@@ -166,6 +166,7 @@ public final class KnxprojParser {
         vtdAutoPilot.selectXPath("/KNX/Project/Installations//GroupAddresses//GroupRange");
 
         // iterate through all group ranges
+        final var tmpGroupRanges = Maps.<String, XmlGroupRange>newLinkedHashMap();
         while (vtdAutoPilot.evalXPath() != -1) {
             final var groupRange = new XmlGroupRange();
 
@@ -191,7 +192,7 @@ public final class KnxprojParser {
                 log.debug("Not a root level as parent element is {} ({}): {}", vtdNav.toRawString(vtdNav.getCurrentIndex()), parentId, groupRange);
 
                 // get parent group range from temporary map
-                final var parentGroupRange = Objects.requireNonNull(groupRanges.get(parentId));
+                final var parentGroupRange = Objects.requireNonNull(tmpGroupRanges.get(parentId));
                 // level of current group range is the level of parent group range plus 1
                 groupRange.setLevel(parentGroupRange.getLevel() + 1);
                 // add group range to parent range as child
@@ -218,9 +219,11 @@ public final class KnxprojParser {
                 // group range is on main line
                 log.debug("Root level as parent element is 'GroupRanges': {}", groupRange);
                 groupRange.setLevel(0);
+                groupRanges.put(groupRange.getId(), groupRange);
             }
 
-            groupRanges.put(groupRange.getId(), groupRange);
+            // add temporary group ranges for parent/child linking
+            tmpGroupRanges.put(groupRange.getId(), groupRange);
         }
 
         return groupRanges;

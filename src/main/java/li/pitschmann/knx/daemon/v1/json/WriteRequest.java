@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * JSON for HTTP Write Request to KNX Daemon
  */
-public class WriteRequest {
+public final class WriteRequest {
     private GroupAddress groupAddress;
     private DataPointType<?> dataPointType;
     private String[] values;

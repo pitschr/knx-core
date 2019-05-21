@@ -9,7 +9,7 @@ import java.time.Instant;
 /**
  * JSON status response
  */
-public class StatusResponse extends ReadResponse {
+public final class StatusResponse extends ReadResponse {
     private GroupAddress groupAddress;
     private Instant timestamp;
     private KnxAddress sourceAddress;

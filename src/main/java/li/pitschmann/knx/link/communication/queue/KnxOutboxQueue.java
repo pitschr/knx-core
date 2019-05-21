@@ -83,7 +83,8 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
         final var channel = (ByteChannel) key.channel();
         log.debug("{}: Sending packet: {}", getId(), body);
         if (!channel.isOpen()) {
-            log.warn("{}: Channel is not open", getId());
+            log.warn("{}: Channel is not open. Write aborted.", getId());
+            return;
         }
         channel.write(ByteBuffer.wrap(packetToSend));
         log.trace("{}: Packet sent.", getId());

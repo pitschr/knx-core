@@ -4,7 +4,6 @@ import li.pitschmann.knx.parser.XmlGroupRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.GET;
-import ro.pippo.controller.Path;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
 
@@ -15,11 +14,16 @@ import java.util.stream.Collectors;
 /**
  * Controller for data from KNX Project file
  */
-@Path("/project")
 public final class ProjectController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
-    @GET("/")
+    /**
+     * Returns the project overview
+     *
+     * @return
+     */
+    @GET("/project")
+    @Produces(Produces.JSON)
     public Object getProjectOverview() {
         log.trace("Request for project overview");
 
@@ -132,7 +136,8 @@ public final class ProjectController extends AbstractController {
      *
      * @return
      */
-    @GET("/group")
+    @GET("/project/groups")
+    @Produces(Produces.JSON)
     public List<XmlGroupRange> getMainGroups() {
         log.trace("Request for all main group in project");
 
@@ -165,7 +170,8 @@ public final class ProjectController extends AbstractController {
      *
      * @return
      */
-    @GET("/group/{main:\\d+}")
+    @GET("/project/groups/{main:\\d+}")
+    @Produces(Produces.JSON)
     public List<XmlGroupRange> getMiddleGroups(final @Param int main) {
         log.trace("Request for all middle group of main group '{}' in project", main);
 

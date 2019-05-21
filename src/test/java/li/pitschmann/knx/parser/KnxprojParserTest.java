@@ -43,6 +43,10 @@ public class KnxprojParserTest {
     private static final Path CORRUPTED_NO_GROUPADDRESS_ID = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Id).knxproj");
     private static final Path CORRUPTED_NO_GROUPADDRESS_ADDRESS = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Address).knxproj");
     private static final Path CORRUPTED_NO_GROUPADDRESS_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Name).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_ID = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange Id).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_START = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeStart).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_END = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeEnd).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange Name).knxproj");
 
     /**
      * Tests if {@link XmlProject} has been parsed correctly
@@ -128,6 +132,10 @@ public class KnxprojParserTest {
      * <li>Missing {@code @Id} on {@code <Project />}</li>
      * <li>Missing {@code @Name} on {@code <ProjectInformation />}</li>
      * <li>Missing {@code @GroupAddressStyle} on {@code <ProjectInformation />}</li>
+     * <li>Missing {@code @Id} on {@code <GroupRange />}</li>
+     * <li>Missing {@code @RangeStart} on {@code <GroupRange />}</li>
+     * <li>Missing {@code @RangeEnd} on {@code <GroupRange />}</li>
+     * <li>Missing {@code @Name} on {@code <GroupRange />}</li>
      * <li>Missing {@code @Id} on {@code <GroupAddress />}</li>
      * <li>Missing {@code @Name} on {@code <GroupAddress />}</li>
      * <li>Missing {@code @Address} on {@code <GroupAddress />}</li>
@@ -136,6 +144,9 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Corrupted) Test KNX project without mandatory attributes")
     public void testCorruptedProjectMissingAttributes() {
+        /*
+         * Corrupted Project (general)
+         */
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_PROJECT_ID))
                 .isInstanceOf(KnxprojParserException.class)
                 .hasMessage("Attribute <Project @Id /> not found.");
@@ -148,19 +159,39 @@ public class KnxprojParserTest {
                 .isInstanceOf(KnxprojParserException.class)
                 .hasMessage("Attribute <ProjectInformation @GroupAddressStyle /> not found.");
 
-        // TODO ... corrupted GROUP RANGE ID, RANGESTART, RANGEEND and NAME
+        /*
+         * Group Range Negative Tests
+         */
+        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_ID))
+                .isInstanceOf(KnxprojParserException.class)
+                .hasMessage("Attribute <GroupRange @Id /> not found.");
 
+        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_START))
+                .isInstanceOf(KnxprojParserException.class)
+                .hasMessage("Attribute <GroupRange @RangeStart /> not found for: P-0700-0_GR-1");
+
+        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_END))
+                .isInstanceOf(KnxprojParserException.class)
+                .hasMessage("Attribute <GroupRange @RangeEnd /> not found for: P-0700-0_GR-1");
+
+        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_NAME))
+                .isInstanceOf(KnxprojParserException.class)
+                .hasMessage("Attribute <GroupRange @Name /> not found for: P-0700-0_GR-1");
+
+        /*
+         * Group Address Negative Tests
+         */
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_ID))
                 .isInstanceOf(KnxprojParserException.class)
                 .hasMessage("Attribute <GroupAddress @Id /> not found.");
 
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_NAME))
                 .isInstanceOf(KnxprojParserException.class)
-                .hasMessageContaining("Attribute <GroupAddress @Name /> not found for: ");
+                .hasMessage("Attribute <GroupAddress @Name /> not found for: P-0700-0_GA-1");
 
         assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_ADDRESS))
                 .isInstanceOf(KnxprojParserException.class)
-                .hasMessageContaining("Attribute <GroupAddress @Address /> not found for: ");
+                .hasMessage("Attribute <GroupAddress @Address /> not found for: P-0700-0_GA-1");
     }
 
     /**

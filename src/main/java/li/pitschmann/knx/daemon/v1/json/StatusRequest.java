@@ -6,7 +6,7 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 /**
  * JSON for HTTP Status Request to KNX Daemon
  */
-public class StatusRequest {
+public final class StatusRequest {
     private GroupAddress groupAddress;
 
     public GroupAddress getGroupAddress() {
