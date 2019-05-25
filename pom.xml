@@ -213,6 +213,7 @@
                     <target>11</target>
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
+                        <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

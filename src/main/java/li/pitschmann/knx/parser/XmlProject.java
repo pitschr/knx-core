@@ -19,6 +19,7 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import org.slf4j.Logger;
@@ -165,18 +166,16 @@ public final class XmlProject {
      * Returns collection of {@link XmlGroupRange} for given {@code main} group
      *
      * @param main
-     * @return collection of {@link XmlGroupRange}, or empty list if not found
+     * @return collection of {@link XmlGroupRange}, or {@link IllegalArgumentException} list if not found
      */
     @Nonnull
-    public Collection<XmlGroupRange> getMiddleGroups(final int main) {
-        if (groupRangeMap == null || groupRangeMap.isEmpty()) {
-            log.warn("No main groups available");
-            return Collections.emptyList();
-        }
+    public XmlGroupRange getMainGroup(final int main) {
+        Preconditions.checkArgument(groupRangeMap!=null && !groupRangeMap.isEmpty(), "No main groups available");
 
         // find the group range with the proper range start (see GroupAddresses)
-        int startRange = Integer.valueOf(GroupAddress.of(main, 0).getAddress());
-        log.debug("Looking for start range '{}' in: {}", startRange, groupRangeMap);
+        // special rule for main group 0/-/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
+        int startRange = main==0 ? 1 : Integer.valueOf(GroupAddress.of(main, 0).getAddress());
+        log.debug("Looking for start range '{}' of group {}/-/- in: {}", startRange, main, groupRangeMap);
 
         XmlGroupRange xmlGroupRange = null;
         for (final var groupRange : groupRangeMap.values()) {
@@ -190,12 +189,41 @@ public final class XmlProject {
         // not found?
         if (xmlGroupRange == null) {
             log.warn("Main group '{}' not found in: {}", main, groupRangeMap.values());
-            return Collections.emptyList();
+            throw new IllegalArgumentException("Could not find main group '" + main + "'!");
         }
         // otherwise found
         else {
             log.debug("Main group '{}' found: {}", main, xmlGroupRange);
-            return xmlGroupRange.getChildGroupRanges();
+            return xmlGroupRange;
+        }
+    }
+
+    public XmlGroupRange getMiddleGroup(final int main, final int middle) {
+        final var mainGroup = getMainGroup(main);
+
+        // find the group range with the proper range start (see GroupAddresses)
+        // special rule for main group 0/-/- and middle group 0/0/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
+        int startRange = main==0 && middle==0 ? 1 : Integer.valueOf(GroupAddress.of(main, middle, 0).getAddress());
+        log.debug("Looking for start range '{}' of group {}/{}/- in: {}", startRange, main, middle, mainGroup);
+
+        XmlGroupRange xmlGroupRange = null;
+        for (final var groupRange : mainGroup.getChildGroupRanges()) {
+            if (groupRange.getRangeStart() == startRange) {
+                // found
+                xmlGroupRange = groupRange;
+                break;
+            }
+        }
+
+        // not found?
+        if (xmlGroupRange == null) {
+            log.warn("Main group '{}' not found in: {}", main, groupRangeMap.values());
+            throw new IllegalArgumentException("Could not find main group '" + main + "'!");
+        }
+        // otherwise found
+        else {
+            log.debug("Main group '{}' found: {}", main, xmlGroupRange);
+            return xmlGroupRange;
         }
     }
 

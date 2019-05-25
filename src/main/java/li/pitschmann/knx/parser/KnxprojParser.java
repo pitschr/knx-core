@@ -198,7 +198,7 @@ public final class KnxprojParser {
                 // add group range to parent range as child
                 parentGroupRange.getChildGroupRanges().add(groupRange);
 
-                // now back to GroupRange and then go to first child
+                // now back to child GroupRange and then go to first child 'GroupAddress'
                 vtdNav.recoverNode(currentIndex);
 
                 if (vtdNav.toElement(VTDNav.FIRST_CHILD, "GroupAddress")) {
@@ -210,11 +210,13 @@ public final class KnxprojParser {
                                 () -> new KnxprojParserException("Parent <GroupAddress @Id /> not found."));
                         groupRange.getGroupAddressIds().add(childGroupAddressId);
                         log.debug("<GroupAddress @Id /> '{}' added to group range '{}'", childGroupAddressId, groupRange.getId());
-                    } while (vtdNav.toElement(VTDNav.NEXT_SIBLING));
+                    } while (vtdNav.toElement(VTDNav.NEXT_SIBLING, "GroupAddress"));
                 } else {
                     log.debug("No <GroupAddress /> child found for: {}", groupRange);
                 }
 
+                // back to GroupRange
+                vtdNav.recoverNode(currentIndex);
             } else {
                 // group range is on main line
                 log.debug("Root level as parent element is 'GroupRanges': {}", groupRange);

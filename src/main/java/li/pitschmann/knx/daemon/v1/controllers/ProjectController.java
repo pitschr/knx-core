@@ -1,5 +1,7 @@
 package li.pitschmann.knx.daemon.v1.controllers;
 
+import com.google.common.base.Preconditions;
+import li.pitschmann.knx.daemon.v1.json.ProjectOverviewResponse;
 import li.pitschmann.knx.parser.XmlGroupRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +26,17 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project")
     @Produces(Produces.JSON)
-    public Object getProjectOverview() {
+    public ProjectOverviewResponse getProjectOverview() {
         log.trace("Request for project overview");
 
         final var xmlProject = getXmlProject();
 
         // get project data
-        xmlProject.getId();
-        xmlProject.getName();
-        xmlProject.getGroupAddressStyle();
-        // get number of group addresses
-        xmlProject.getGroupAddressMap().size();
-
-        return null;
+        final var response = new ProjectOverviewResponse();
+        response.setId(xmlProject.getId());
+        response.setName(xmlProject.getName());
+        response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+        return response;
     }
 
 
@@ -138,7 +138,7 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/groups")
     @Produces(Produces.JSON)
-    public List<XmlGroupRange> getMainGroups() {
+    public List<XmlGroupRange> getGroups() {
         log.trace("Request for all main group in project");
 
         final var xmlProject = getXmlProject();
@@ -160,43 +160,81 @@ public final class ProjectController extends AbstractController {
     }
 
     /**
-     * Returns the group addresses for 2nd group hierarchy level (middle)
+     * Returns the group addresses for a specific main level
+     * (1st hierarchy level)
      * <p/>
      * <ul>
-     * <li>Three Level: 0 .. 7</li>
+     * <li>Two Level: 0 .. 31</li>
+     * <li>Three Level: 0 .. 31</li>
+     * </ul>
+     * <p>
+     * Free Level is not supported (will return an empty list with HTTP bad request code)
+     *
+     * @return The main group which is an instance of {@link XmlGroupRange}
+     */
+    @GET("/project/groups/{main: \\d+}")
+    @Produces(Produces.JSON)
+    public XmlGroupRange getGroups(@Param int main) {
+        log.trace("Request for main group in project: {}", main);
+        Preconditions.checkArgument(main >= 0 && main <= 31,
+                "Invalid number of main group provided, should be within range [0-31]: " + main);
+
+        // valid main group number?
+        final var xmlProject = getXmlProject();
+
+        final var groupAddressStyle = xmlProject.getGroupAddressStyle();
+        if ("ThreeLevel".equals(groupAddressStyle) || "TwoLevel".equals(groupAddressStyle)) {
+            final var mainGroup = xmlProject.getMainGroup(main);
+            log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
+
+            getResponse().ok();
+            return mainGroup;
+        } else {
+            log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
+
+            getResponse().badRequest();
+            return null;
+        }
+    }
+
+    /**
+     * Returns the group addresses for a specific main and middle levels
+     * (1st and 2nd hierarchy levels)
+     * <p/>
+     * <ul>
+     * <li>Three Level: 0 .. 31 / 0 .. 7</li>
      * </ul>
      * <p>
      * Two Level and Free Level are not supported (will return an empty list with HTTP bad request code)
      *
-     * @return
+     * @return The main group which is an instance of {@link XmlGroupRange}
      */
-    @GET("/project/groups/{main:\\d+}")
+    @GET("/project/groups/{main: \\d+}/{middle: \\d+}")
     @Produces(Produces.JSON)
-    public List<XmlGroupRange> getMiddleGroups(final @Param int main) {
-        log.trace("Request for all middle group of main group '{}' in project", main);
+    public XmlGroupRange getGroups(@Param int main, @Param int middle) {
+        log.trace("Request for middle group of main group '{}' in project: {}", main);
+        Preconditions.checkArgument(main >= 0 && main <= 31,
+                "Invalid number of main group provided, should be within range [0-31]: " + main);
+        Preconditions.checkArgument(middle >= 0 && middle <= 7,
+                "Invalid number of middle group provided, should be within range [0-7]: " + middle);
 
         // valid main group number?
-        if (main >= 0 && main <= 7) {
-            final var xmlProject = getXmlProject();
+        final var xmlProject = getXmlProject();
 
-            final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-            if ("ThreeLevel".equals(groupAddressStyle)) {
-                final var start = getRequest().getParameter("start").toInt(0);
-                final var length = getRequest().getParameter("length").toInt(Integer.MAX_VALUE);
-                final var middleGroups = xmlProject.getMiddleGroups(main).stream().skip(start).limit(length).collect(Collectors.toList());
+        final var groupAddressStyle = xmlProject.getGroupAddressStyle();
+        if ("ThreeLevel".equals(groupAddressStyle)) {
+            final var middleGroup = xmlProject.getMiddleGroup(main, middle);
+            log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
 
-                log.debug("Request for get '/group' with parameters: start={}, length={}: {}", start, length, middleGroups);
-                getResponse().ok();
-                return middleGroups;
-            } else {
-                log.warn("Bad Request for get '/group' and group address style: {}", groupAddressStyle);
-                getResponse().badRequest();
-                return Collections.emptyList();
-            }
+            getResponse().ok();
+            return middleGroup;
         } else {
-            log.warn("Bad Request for get '/group' because main group number is outside of supported range [0..7]: {}", main);
+
+            log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
+
             getResponse().badRequest();
-            return Collections.emptyList();
+            return null;
         }
+
     }
 }
