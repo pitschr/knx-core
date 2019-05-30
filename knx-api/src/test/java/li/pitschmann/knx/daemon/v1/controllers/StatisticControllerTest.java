@@ -21,7 +21,6 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 
 import java.net.http.HttpClient;
@@ -32,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Test class for {@link StatisticController}
  */
-@Disabled
 public class StatisticControllerTest {
     /**
      * Test /statistic endpoint
