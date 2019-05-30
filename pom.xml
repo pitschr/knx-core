@@ -19,21 +19,36 @@
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- Maven -->
+    <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>li.pitschmann</groupId>
     <artifactId>knx-link</artifactId>
-    <!-- <version>${maven.build.timestamp}</version> -->
     <version>0.0.1-SNAPSHOT</version>
     <name>KNX Link</name>
     <description>Project for KNX Link</description>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
+
+    <!-- Sub Modules -->
+    <modules>
+        <module>knx-core</module>
+        <module>knx-api</module>
+    </modules>
+
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
 
     <!-- Properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
         <version.plugin.maven-compiler-plugin>3.8.0</version.plugin.maven-compiler-plugin>
+        <version.maven-source-plugin>3.1.0</version.maven-source-plugin>
+        <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
         <version.plugin.maven-surefire-plugin>2.22.1</version.plugin.maven-surefire-plugin>
         <version.plugin.maven-assembly-plugin>3.1.0</version.plugin.maven-assembly-plugin>
         <!-- Utilities -->
@@ -217,6 +232,37 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+
+            <!--
+            For Source Plugin
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${version.maven-source-plugin}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+
+            <!--
+            For Release
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${version.maven-release-plugin}</version>
+                <configuration>
+                    <goals>deploy</goals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>release-@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -229,39 +275,21 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <!--
-            For Code Coverage and submitting to Coveralls
+            Create JAR containing test classes
             -->
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${version.jacoco-maven-plugin}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>test-jar</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>li/pitschmann/knx/link/plugin/experimental/**</exclude>
-                        <exclude>li/pitschmann/knx/main/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>${version.coveralls-maven-plugin}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>2.3.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
             <!--
@@ -294,4 +322,62 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+        Travis Profile
+        ==============
+        If the 'env.TRAVIS' property is 'true' then it will consider the code coverage using JaCoCo maven plugin
+        and submits the result to coveralls.
+        -->
+        <profile>
+            <id>travis</id>
+            <activation>
+                <property>
+                    <name>env.TRAVIS</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!--
+                    For Code Coverage and submitting to Coveralls
+                    -->
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${version.jacoco-maven-plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <excludes>
+                                <exclude>li/pitschmann/knx/link/plugin/experimental/**</exclude>
+                                <exclude>li/pitschmann/knx/main/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>${version.coveralls-maven-plugin}</version>
+                        <!--
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.xml.bind</groupId>
+                                <artifactId>jaxb-api</artifactId>
+                                <version>2.3.1</version>
+                            </dependency>
+                        </dependencies>
+                        -->
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
