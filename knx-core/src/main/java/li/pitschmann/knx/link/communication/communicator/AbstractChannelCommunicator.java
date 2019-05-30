@@ -112,8 +112,12 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                 final var body = this.inboxQueue.next();
                 // accepted body
                 if (this.isCompatible(body)) {
-                    log.debug("{}: Body from channel to be sent to subscribers: {}", id, body);
-                    this.submit(body);
+                    if (this.isClosed()){
+                        log.warn("{}: Body not sent to subscribers because submission publisher is closed: {}", id, body);
+                    } else {
+                        log.debug("{}: Body from channel to be sent to subscribers: {}", id, body);
+                        this.submit(body);
+                    }
                 }
                 // not accepted body
                 else {
