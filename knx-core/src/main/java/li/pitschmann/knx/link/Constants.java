@@ -75,6 +75,10 @@ public interface Constants {
          */
         long CONNECTION_ALIVE_TIME = TimeUnit.SECONDS.toMillis(120);
         /**
+         * Timeout for Description Channel Socket
+         */
+        long DESCRIPTION_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        /**
          * Timeout for Control Channel Socket
          */
         long CONTROL_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);

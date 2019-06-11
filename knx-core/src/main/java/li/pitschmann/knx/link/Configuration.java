@@ -177,16 +177,15 @@ public final class Configuration {
     }
 
     public long getSocketTimeoutDescriptionChannel() {
-        // check if socket timeout is defined for description channel, otherwise fall back to timeout for control channel
-        return getSetting("timeout.socket.descriptionchannel", getSocketTimeoutControlChannel(), Long::valueOf);
+        return getSetting("timeout.socket.description", Constants.Timeouts.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     public long getSocketTimeoutControlChannel() {
-        return getSetting("timeout.socket.controlchannel", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("timeout.socket.control", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     public long getSocketTimeoutDataChannel() {
-        return getSetting("timeout.socket.datachannel", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("timeout.socket.data", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutDescriptionRequest() {
