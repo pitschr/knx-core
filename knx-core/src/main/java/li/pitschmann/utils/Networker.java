@@ -43,12 +43,16 @@ public final class Networker {
     }
 
     /**
-     * Returns {@link InetAddress} instance for localhost (127.0.0.1)
+     * Returns {@link InetAddress} instance for localhost
      *
      * @return
      */
-    public static InetAddress getLocalhost() {
-        return LOCALHOST;
+    public static InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (final UnknownHostException unknownHostException) {
+            return LOCALHOST;
+        }
     }
 
     /**
@@ -65,11 +69,15 @@ public final class Networker {
      * <p>
      * It is a wrapper of {@link InetAddress#getByAddress(byte[])} without throwing {@link UnknownHostException}.
      *
-     * @param addressAsString address expected in {@code aaa.bbb.ccc.ddd} format
+     * @param addressAsString address expected in {@code aaa.bbb.ccc.ddd} format (exceptional pattern: "localhost")
      * @return {@link InetAddress}
      * @throws IllegalArgumentException in case the given {@code addressAsString} is not valid
      */
     public static InetAddress getByAddress(final String addressAsString) {
+        if (addressAsString.equalsIgnoreCase("localhost")) {
+            return getLocalHost();
+        }
+
         // more strict implementation rather than InetAddress#getByName(String)
         final var blocks = StreamSupport.stream(Splitter.on('.').split(addressAsString).spliterator(), false).mapToInt(Integer::parseInt).toArray();
         Preconditions.checkArgument(blocks.length == 4);

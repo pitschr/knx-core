@@ -51,7 +51,13 @@ public final class Configuration {
 
     private Configuration(final Builder builder) {
         // endpoint of KNX Net/IP device
-        this.endpoint = new InetSocketAddress(builder.address, builder.port);
+        if (builder.address == null) {
+            // no address defined - look up for KNX Net/IP in same network
+            // TODO: implement discovery logic
+            throw new UnsupportedOperationException("Not implemented yet!");
+        } else {
+            this.endpoint = new InetSocketAddress(builder.address, builder.port);
+        }
         // settings
         this.settings = Collections.unmodifiableMap(builder.settings);
         // plugins
@@ -170,6 +176,11 @@ public final class Configuration {
         return getSetting("interval.event", Constants.Interval.EVENT, Long::valueOf);
     }
 
+    public long getSocketTimeoutDescriptionChannel() {
+        // check if socket timeout is defined for description channel, otherwise fall back to timeout for control channel
+        return getSetting("timeout.socket.descriptionchannel", getSocketTimeoutControlChannel(), Long::valueOf);
+    }
+
     public long getSocketTimeoutControlChannel() {
         return getSetting("timeout.socket.controlchannel", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
@@ -210,6 +221,18 @@ public final class Configuration {
         return getSetting("daemon.path.knxproj", null, Paths::get);
     }
 
+    public int getDescriptionChannelPort() {
+        return getSetting("client.channel.description.port", 0, Integer::valueOf);
+    }
+
+    public int getControlChannelPort() {
+        return getSetting("client.channel.control.port", 0, Integer::valueOf);
+    }
+
+    public int getDataChannelPort() {
+        return getSetting("client.channel.data.port", 0, Integer::valueOf);
+    }
+
     /**
      * Builder for the Configuration
      *
@@ -224,7 +247,15 @@ public final class Configuration {
         private Builder() {
         }
 
-        public Builder endpoint(final InetAddress address, final int port) {
+        /**
+         * Defines the endpoint of KNX Net/IP device call {@code create(..)} method to
+         * create a new builder and define the endpoint
+         *
+         * @param address
+         * @param port
+         * @return itself
+         */
+        private Builder endpoint(final InetAddress address, final int port) {
             Preconditions.checkNotNull(address);
             Preconditions.checkArgument(port > 0, "Illegal Port provided.");
 

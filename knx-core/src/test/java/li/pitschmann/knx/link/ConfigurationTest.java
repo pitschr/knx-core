@@ -58,7 +58,7 @@ public class ConfigurationTest {
     @Test
     @DisplayName("Tests configuration with plugins")
     public void testPlugins() {
-        final var configBuilder = Configuration.create(Networker.getLocalhost());
+        final var configBuilder = Configuration.create(Networker.getLocalHost());
 
         // add 13 observer plugins
         final var observerPlugin1 = mock(ObserverPlugin.class);

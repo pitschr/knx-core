@@ -68,13 +68,17 @@ public class KnxMainMonitoringWithPlugins extends AbstractKnxMain {
 
         final var config = Configuration.create(ipAddress)//
                 .plugin( //
-                        new AuditPlugin(), //
-                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
-                        new AuditDatabasePlugin() //
+                        new AuditPlugin() //, //
+                //        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
+                //        new AuditDatabasePlugin() //
                 ) //
                 .setting("timeout.request.connectionstate", "10000") //
                 .setting("interval.connectionstate", "30000") //
                 .setting("timeout.alive.connectionstate", "60000") //
+                //.setting("client.channel.address", "192.168.1.49") //
+                .setting("client.channel.description.port", "40001") //
+                .setting("client.channel.control.port", "40002") //
+                //.setting("client.channel.data.port", "40003") //
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {

@@ -429,7 +429,7 @@ public final class MockServer implements Runnable, Closeable {
     public Configuration.Builder newConfigBuilder() {
         Preconditions.checkArgument(getPort() > 0, "Knx Client cannot be returned when port is not defined.");
         // provide a different configuration (e.g. timeouts are too long for tests)
-        return Configuration.create(Networker.getLocalhost(), getPort())
+        return Configuration.create(Networker.getLocalHost(), getPort())
                 .setting("executor.pool.plugin", "3") // 3 instead of 10
                 .setting("executor.pool.communication", "3") // 3 instead of 10
                 .setting("timeout.request.description", "2000") // 1s instead of 10s

@@ -58,7 +58,7 @@ public class ChannelFactoryTest {
     public void testNewDescriptionChannel() throws SocketException {
         final var configMock = mock(Configuration.class);
         when(configMock.getEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
-        when(configMock.getSocketTimeoutControlChannel()).thenReturn(1000L);
+        when(configMock.getSocketTimeoutDescriptionChannel()).thenReturn(1000L);
 
         final var channel = ChannelFactory.newDescriptionChannel(configMock);
         assertThat(channel).isNotNull();
