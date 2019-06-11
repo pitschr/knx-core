@@ -52,12 +52,10 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newDescriptionChannel(final @Nonnull Configuration config) {
-        final var localPort = config.getDescriptionChannelPort();
         final var socketAddress = config.getEndpoint();
-        final var socketTimeout = config.getSocketTimeoutDescriptionChannel();
-        log.debug("Create new description channel for local {}: {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
-        return newDatagramChannel(config.getDescriptionChannelPort(), socketTimeout, socketAddress);
+        log.debug("Create new description channel for: {} (socket timeout: {}ms)", socketAddress,
+                config.getSocketTimeoutControlChannel());
+        return newDatagramChannel(config.getSocketTimeoutControlChannel(), socketAddress);
     }
 
     /**
@@ -69,12 +67,10 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newControlChannel(final @Nonnull Configuration config) {
-        final var localPort = config.getControlChannelPort();
         final var socketAddress = config.getEndpoint();
-        final var socketTimeout = config.getSocketTimeoutControlChannel();
-        log.debug("Create new control channel for local port {}: {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
-        return newDatagramChannel(localPort, socketTimeout, socketAddress);
+        log.debug("Create new control channel for: {} (socket timeout: {}ms)", socketAddress,
+                config.getSocketTimeoutControlChannel());
+        return newDatagramChannel(config.getSocketTimeoutControlChannel(), socketAddress);
     }
 
     /**
@@ -86,37 +82,29 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newDataChannel(final @Nonnull Configuration config) {
-        final var localPort = config.getDataChannelPort();
         final var socketAddress = config.getEndpoint();
-        final var socketTimeout = config.getSocketTimeoutDataChannel();
-        log.debug("Create new data channel for local port {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
-        return newDatagramChannel(localPort, socketTimeout, socketAddress);
+        log.debug("Create new data channel for: {} (socket timeout: {}ms)", socketAddress, config.getSocketTimeoutDataChannel());
+        return newDatagramChannel(config.getSocketTimeoutDataChannel(), socketAddress);
     }
 
     /**
      * Creates an UDP channel for communication
-     * <p/>
-     * See: {@link #newDatagramChannel(int, long, SocketAddress)} while local address and an
-     * ephemeral port will be picked up by the system and {@link SocketAddress} is {@code null} which means
-     * that the socket won't be connected yet
      *
      * @param socketTimeout socket timeout
      * @return a new instance of {@link DatagramChannel}
      */
     public static DatagramChannel newDatagramChannel(final long socketTimeout) {
-        return newDatagramChannel(0, socketTimeout, null);
+        return newDatagramChannel(socketTimeout, null);
     }
 
     /**
      * Creates an UDP channel for communication
      *
-     * @param localPort given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
      * @param socketTimeout socket timeout
      * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
      * @return a new instance of {@link DatagramChannel}
      */
-    public static DatagramChannel newDatagramChannel(final int localPort, final long socketTimeout, final @Nullable SocketAddress socketAddress) {
+    public static DatagramChannel newDatagramChannel(final long socketTimeout, final @Nullable SocketAddress socketAddress) {
         try {
             final var channel = DatagramChannel.open();
             channel.configureBlocking(false);
