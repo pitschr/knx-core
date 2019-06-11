@@ -51,7 +51,6 @@ public final class Networker {
         try {
             return InetAddress.getLocalHost();
         } catch (final UnknownHostException unknownHostException) {
-            unknownHostException.printStackTrace(); // TODO: check
             return LOCALHOST;
         }
     }
