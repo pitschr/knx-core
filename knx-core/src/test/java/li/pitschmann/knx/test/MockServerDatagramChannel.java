@@ -48,6 +48,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     private SocketAddress clientDescriptionSocketAddress;
     private SocketAddress clientControlSocketAddress;
     private SocketAddress clientDataSocketAddress;
+    private boolean useNAT;
 
     public MockServerDatagramChannel() {
         this.channel = ChannelFactory.newDatagramChannel(3000);
@@ -90,6 +91,9 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
             final var clientDataHPAI = connectRequestBody.getDataEndpoint();
             this.clientDataSocketAddress = new InetSocketAddress(clientDataHPAI.getAddress(), clientDataHPAI.getPort());
             logger.debug("Data Address   : {}", this.clientDataSocketAddress);
+
+            // if address is '0.0.0.0' assuming it is using NAT
+            this.useNAT = false; // disabled for now! clientControlHPAI.getAddress().isAnyLocalAddress();
         }
 
         return body;
@@ -113,9 +117,9 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
         final SocketAddress address;
         if (body instanceof DescriptionChannelRelated) {
             address = this.clientDescriptionSocketAddress;
-        } else if (body instanceof ControlChannelRelated) {
+        } else if (!useNAT && body instanceof ControlChannelRelated) {
             address = this.clientControlSocketAddress;
-        } else if (body instanceof DataChannelRelated) {
+        } else if (!useNAT && body instanceof DataChannelRelated) {
             address = this.clientDataSocketAddress;
         } else {
             // otherwise just use the sender form previous received diagram
