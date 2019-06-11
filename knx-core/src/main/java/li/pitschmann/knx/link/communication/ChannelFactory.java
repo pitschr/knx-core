@@ -121,7 +121,7 @@ public final class ChannelFactory {
             final var channel = DatagramChannel.open();
             channel.configureBlocking(false);
             final var socket = channel.socket();
-            socket.bind(new InetSocketAddress(localPort));
+            socket.bind(new InetSocketAddress(0));
             socket.setSoTimeout((int) socketTimeout);
             if (socketAddress != null) {
                 socket.connect(socketAddress);
