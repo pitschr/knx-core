@@ -29,11 +29,9 @@ import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -50,23 +48,13 @@ public class NetworkerTest {
      */
     @Test
     public void testLocalhost() {
-        final InetAddress inetAddress;
-        try {
-            inetAddress = InetAddress.getLocalHost();
-        } catch (final Throwable t) {
-            fail("Could not obtain the local host address", t);
-            throw new AssertionError();
-        }
-
-        final var hostAddress = inetAddress.getHostAddress();
-        final var hostAddressAsByteArray = Stream.of(hostAddress.split("\\.")).mapToInt(Integer::valueOf).toArray();
-
-        final var addr = Networker.getLocalHost();
-        assertThat(addr.getHostAddress()).isEqualTo(hostAddress);
-        assertThat(addr.getAddress()).containsExactly(hostAddressAsByteArray);
+        final var localHost = Networker.getLocalHost();
+        assertThat(localHost.getHostAddress()).isEqualTo("127.0.0.1");
+        assertThat(localHost.getAddress()).containsExactly(new byte[]{127, 0, 0, 1});
 
         // it should be always same instance
-        assertThat(Networker.getLocalHost()).isSameAs(addr);
+        assertThat(Networker.getLocalHost()).isSameAs(localHost);
+        assertThat(Networker.getByAddress("localhost")).isSameAs(localHost);
     }
 
     /**
