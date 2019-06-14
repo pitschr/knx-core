@@ -48,10 +48,10 @@ public final class Networker {
      * @return
      */
     public static InetAddress getLocalHost() {
-       // try {
-         //   return InetAddress.getLocalHost();
+        // try {
+        //   return InetAddress.getLocalHost();
         //} catch (final UnknownHostException unknownHostException) {
-            return LOCALHOST;
+        return LOCALHOST;
         //}
     }
 

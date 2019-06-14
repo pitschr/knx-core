@@ -19,8 +19,8 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.ConnectRequestBody;
-import li.pitschmann.knx.link.body.ConnectResponseBody;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import org.slf4j.Logger;
@@ -30,40 +30,40 @@ import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 /**
- * Listens to {@link ConnectResponseBody} frame that is sent by KNX Net/IP device to client when
- * {@link ConnectRequestBody} was sent.
+ * Listens to {@link SearchResponseBody} frame that is sent by KNX Net/IP device to client when
+ * {@link SearchRequestBody} was sent.
  *
  * @author PITSCHR
  */
-public final class ConnectResponseTask implements Subscriber<Body> {
-    private static final Logger log = LoggerFactory.getLogger(ConnectResponseTask.class);
+public final class SearchResponseTask implements Subscriber<Body> {
+    private static final Logger log = LoggerFactory.getLogger(SearchResponseTask.class);
     private final InternalKnxClient client;
     private Subscription subscription;
 
-    public ConnectResponseTask(final InternalKnxClient client) {
+    public SearchResponseTask(final InternalKnxClient client) {
         this.client = client;
     }
 
     @Override
     public void onNext(final Body body) {
-        // we are interested in connect response only
-        if (body instanceof ConnectResponseBody) {
-            final var responseBody = (ConnectResponseBody) body;
-            log.debug("Connect Response received: {}", responseBody);
-            this.client.getEventPool().connectEvent().setResponse(responseBody);
-            log.trace("Connect Response saved.");
+        // we are interested in search response only
+        if (body instanceof SearchResponseBody) {
+            final var responseBody = (SearchResponseBody) body;
+            log.debug("Search response received: {}", responseBody);
+            this.client.getEventPool().searchEvent().setResponse(responseBody);
+            log.trace("Search response saved.");
             // now cancel the subscription as we only expect this frame once time at beginning only!
             this.subscription.cancel();
-            log.trace("Subscription for connect frames cancelled.");
+            log.trace("Subscription for search frames cancelled.");
         } else {
-            // at beginning we MUST receive the ConnectResponseBody otherwise something went wrong!
-            throw new KnxBodyNotReceivedException(ConnectResponseBody.class);
+            // when using discovery then we MUST the SearchResponseBody otherwise something went wrong!
+            throw new KnxBodyNotReceivedException(SearchResponseBody.class);
         }
     }
 
     @Override
     public void onError(final Throwable throwable) {
-        log.error("Error during Connect Response Task class", throwable);
+        log.error("Error during Search Response Task class", throwable);
     }
 
     @Override

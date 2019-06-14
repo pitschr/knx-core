@@ -93,7 +93,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
             logger.debug("Data Address   : {}", this.clientDataSocketAddress);
 
             // if address is '0.0.0.0' assuming it is using NAT
-            this.useNAT = false; // disabled for now! clientControlHPAI.getAddress().isAnyLocalAddress();
+            this.useNAT = false; // disabled for now! clientControlHPAI.getRemoteAddress().isAnyLocalAddress();
         }
 
         return body;

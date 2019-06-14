@@ -25,10 +25,10 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
 import li.pitschmann.knx.test.strategy.impl.TunnelingWrongChannelIdStrategy;
-import li.pitschmann.knx.test.KnxBody;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.assertj.core.api.Assertions.assertThat;

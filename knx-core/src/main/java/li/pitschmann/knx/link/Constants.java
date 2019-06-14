@@ -36,6 +36,10 @@ public interface Constants {
      */
     interface Timeouts {
         /**
+         * KNX client shall wait for 10 seconds for a SEARCH_RESPONSE frame from KNX Net/IP device.
+         */
+        long SEARCH_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        /**
          * KNX client shall wait for 10 seconds for a DESCRIPTION_RESPONSE frame from KNX Net/IP device.
          */
         long DESCRIPTION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
@@ -74,6 +78,10 @@ public interface Constants {
          * client’s control endpoint.
          */
         long CONNECTION_ALIVE_TIME = TimeUnit.SECONDS.toMillis(120);
+        /**
+         * Timeout for Description Channel Socket
+         */
+        long DISCOVERY_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
         /**
          * Timeout for Description Channel Socket
          */

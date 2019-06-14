@@ -170,11 +170,11 @@ public final class XmlProject {
      */
     @Nonnull
     public XmlGroupRange getMainGroup(final int main) {
-        Preconditions.checkArgument(groupRangeMap!=null && !groupRangeMap.isEmpty(), "No main groups available");
+        Preconditions.checkArgument(groupRangeMap != null && !groupRangeMap.isEmpty(), "No main groups available");
 
         // find the group range with the proper range start (see GroupAddresses)
         // special rule for main group 0/-/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
-        int startRange = main==0 ? 1 : Integer.valueOf(GroupAddress.of(main, 0).getAddress());
+        int startRange = main == 0 ? 1 : Integer.valueOf(GroupAddress.of(main, 0).getAddress());
         log.debug("Looking for start range '{}' of group {}/-/- in: {}", startRange, main, groupRangeMap);
 
         XmlGroupRange xmlGroupRange = null;
@@ -203,7 +203,7 @@ public final class XmlProject {
 
         // find the group range with the proper range start (see GroupAddresses)
         // special rule for main group 0/-/- and middle group 0/0/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
-        int startRange = main==0 && middle==0 ? 1 : Integer.valueOf(GroupAddress.of(main, middle, 0).getAddress());
+        int startRange = main == 0 && middle == 0 ? 1 : Integer.valueOf(GroupAddress.of(main, middle, 0).getAddress());
         log.debug("Looking for start range '{}' of group {}/{}/- in: {}", startRange, main, middle, mainGroup);
 
         XmlGroupRange xmlGroupRange = null;

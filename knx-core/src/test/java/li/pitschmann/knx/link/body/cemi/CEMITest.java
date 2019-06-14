@@ -23,7 +23,6 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.datapoint.DPT7;
-import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
@@ -371,83 +370,6 @@ public final class CEMITest {
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, new byte[]{0x0c, 0x09});
         this.assertCEMI(cemiByValueOf, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 3,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, new byte[]{0x0c, 0x09});
-    }
-
-    /**
-     * Test for L_Data Indication, A_IndividualValue_Response
-     *
-     * <pre>
-     * cEMI
-     * messagecode: L_Data.ind (0x29)
-     * add information length: 0 octets
-     * Controlfield 1: 0xbc
-     * 1... .... = Frametype: 1
-     * ..1. .... = Repeat: 1
-     * ...1 .... = System-Broadcast: 1
-     * .... 11.. = Priority: 0x3
-     * .... ..0. = Acknowledge-Request: 0
-     * .... ...0 = Confirm-Flag: 0
-     * Controlfield 2: 0x60
-     * 0... .... = Destination address type: 0
-     * .110 .... = Hop count: 6
-     * .... 0000 = Extended Frame Format: 0x0
-     * Source Address 1.0.130
-     * Destination Address 6.3.67
-     * NPDU length: 3 octets
-     * 00.. .... = TPCI: UDT (Unnumbered Data Packet) (0x0)
-     * .... ..00  10.. .... = APCI: A_IndividualValue_Response (0x0140)
-     * data: 0b
-     * </pre>
-     */
-    @Test
-    public void testIndividualAddressResponse() {
-        final var additionalInfo = AdditionalInfo.empty();
-        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final var sourceAddress = IndividualAddress.of(1, 0, 130);
-        final var destinationAddress = IndividualAddress.of(6, 3, 67);
-
-        // exception expected
-        assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_RESPONSE, new byte[]{0x0b})).isInstanceOf(KnxException.class).hasMessage("Current APCI is not supported: " + APCI.INDIVIDUAL_ADDRESS_RESPONSE);
-    }
-
-    /**
-     * Test for L_Data Indication, A_IndivdualValue_Read*
-     *
-     * <pre>
-     * cEMI
-     * messagecode: L_Data.ind (0x29)
-     * add information length: 0 octets
-     * Controlfield 1: 0xbc
-     * 1... .... = Frametype: 1
-     * ..1. .... = Repeat: 1
-     * ...1 .... = System-Broadcast: 1
-     * .... 11.. = Priority: 0x3
-     * .... ..0. = Acknowledge-Request: 0
-     * .... ...0 = Confirm-Flag: 0
-     * Controlfield 2: 0x60
-     * 0... .... = Destination address type: 0
-     * .110 .... = Hop count: 6
-     * .... 0000 = Extended Frame Format: 0x0
-     * Source Address 1.0.130
-     * Destination Address 6.3.67
-     * NPDU length: 1 octet
-     * 00.. .... = TPCI: UDT (Unnumbered Data Packet) (0x0)
-     * .... ..01  00.. .... = APCI: A_IndividualValue_Read (0x0100)
-     * </pre>
-     */
-    @Test
-    public void testIndividualAddressRead() {
-        final var additionalInfo = AdditionalInfo.empty();
-        final var controlByte1 = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final var controlByte2 = ControlByte2.create(AddressType.INDIVIDUAL, 6, 0);
-        final var sourceAddress = IndividualAddress.of(1, 0, 130);
-        final var destinationAddress = IndividualAddress.of(6, 3, 67);
-
-        // exception expected
-        assertThatThrownBy(() -> CEMI.create(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.INDIVIDUAL_ADDRESS_READ, new byte[0])).isInstanceOf(KnxException.class).hasMessage("Current APCI is not supported: " + APCI.INDIVIDUAL_ADDRESS_READ);
     }
 
     /**

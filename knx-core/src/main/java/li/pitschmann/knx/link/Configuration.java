@@ -27,7 +27,6 @@ import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -37,13 +36,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * KNX specific configurations like KNX Net/IP device address. This class can be created once time only! A change
- * requires a restart of KNX client and its communication.
+ * KNX specific configurations like KNX Net/IP device address. This class can be created
+ * once time only and is immutable!
+ * <p/>
+ * At the moment, a change requires a restart of KNX client and its communication.
  *
  * @author PITSCHR
  */
 public final class Configuration {
-    private final InetSocketAddress endpoint;
+    private final InetAddress remoteAddress;
+    private final int remotePort;
     private final List<Plugin> allPlugins;
     private final List<ExtensionPlugin> extensionPlugins;
     private final List<ObserverPlugin> observerPlugins;
@@ -51,13 +53,8 @@ public final class Configuration {
 
     private Configuration(final Builder builder) {
         // endpoint of KNX Net/IP device
-        if (builder.address == null) {
-            // no address defined - look up for KNX Net/IP in same network
-            // TODO: implement discovery logic
-            throw new UnsupportedOperationException("Not implemented yet!");
-        } else {
-            this.endpoint = new InetSocketAddress(builder.address, builder.port);
-        }
+        this.remoteAddress = builder.address;
+        this.remotePort = builder.port;
         // settings
         this.settings = Collections.unmodifiableMap(builder.settings);
         // plugins
@@ -110,12 +107,21 @@ public final class Configuration {
     }
 
     /**
-     * Remote endpoint of KNX Net/IP device
+     * Remote address of KNX Net/IP device
      *
-     * @return {@link InetSocketAddress}
+     * @return {@link InetAddress}
      */
-    public InetSocketAddress getEndpoint() {
-        return this.endpoint;
+    public InetAddress getRemoteAddress() {
+        return this.remoteAddress;
+    }
+
+    /**
+     * Remote port of KNX Net/IP device
+     *
+     * @return port
+     */
+    public int getRemotePort() {
+        return this.remotePort;
     }
 
     /**
@@ -176,6 +182,10 @@ public final class Configuration {
         return getSetting("interval.event", Constants.Interval.EVENT, Long::valueOf);
     }
 
+    public long getSocketTimeoutDiscoveryChannel() {
+        return getSetting("timeout.socket.discovery", Constants.Timeouts.DISCOVERY_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    }
+
     public long getSocketTimeoutDescriptionChannel() {
         return getSetting("timeout.socket.description", Constants.Timeouts.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
@@ -186,6 +196,10 @@ public final class Configuration {
 
     public long getSocketTimeoutDataChannel() {
         return getSetting("timeout.socket.data", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    }
+
+    public long getTimeoutDiscoveryRequest() {
+        return getSetting("timeout.request.discovery", Constants.Timeouts.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutDescriptionRequest() {
@@ -218,6 +232,10 @@ public final class Configuration {
 
     public Path getProjectPath() {
         return getSetting("daemon.path.knxproj", null, Paths::get);
+    }
+
+    public int getDiscoveryChannelPort() {
+        return getSetting("client.channel.discovery.port", 0, Integer::valueOf);
     }
 
     public int getDescriptionChannelPort() {
@@ -256,7 +274,8 @@ public final class Configuration {
          */
         private Builder endpoint(final InetAddress address, final int port) {
             Preconditions.checkNotNull(address);
-            Preconditions.checkArgument(port > 0, "Illegal Port provided.");
+            // accept only 1024 .. 65535, other ports are reserved
+            Preconditions.checkArgument(port >= 1024 && port <= 65535, "Illegal Port provided.");
 
             this.address = address;
             this.port = port;

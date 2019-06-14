@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,17 +43,35 @@ public final class ChannelFactory {
     }
 
     /**
-     * Creates a channel for description communication (description)
-     * to the given socket address provided by {@link Configuration}
+     * Creates a channel for discovery communication to the given
+     * socket address provided by {@link InternalKnxClient}
      *
-     * @param config
+     * @param client
+     * @return a new instance of {@link DatagramChannel} for discovery related communication
+     * @throws KnxCommunicationException in case the channel could not be created
+     */
+    public static SelectableChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
+        // TODO: datagram should be sent via multicast?
+        final var localPort = client.getConfig().getDiscoveryChannelPort();
+        final var socketAddress = client.getRemoteEndpoint();
+        final var socketTimeout = client.getConfig().getSocketTimeoutDiscoveryChannel();
+        log.debug("Create new discovery channel for local {}: {}: {} (socket timeout: {}ms)", localPort,
+                socketAddress, socketTimeout);
+        return newDatagramChannel(localPort, socketTimeout, socketAddress);
+    }
+
+    /**
+     * Creates a channel for description communication (description) to the given
+     * socket address provided by {@link InternalKnxClient}
+     *
+     * @param client
      * @return a new instance of {@link DatagramChannel} for description related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    public static SelectableChannel newDescriptionChannel(final @Nonnull Configuration config) {
-        final var localPort = config.getDescriptionChannelPort();
-        final var socketAddress = config.getEndpoint();
-        final var socketTimeout = config.getSocketTimeoutDescriptionChannel();
+    public static SelectableChannel newDescriptionChannel(final @Nonnull InternalKnxClient client) {
+        final var localPort = client.getConfig().getDescriptionChannelPort();
+        final var socketAddress = client.getRemoteEndpoint();
+        final var socketTimeout = client.getConfig().getSocketTimeoutDescriptionChannel();
         log.debug("Create new description channel for local {}: {}: {} (socket timeout: {}ms)", localPort,
                 socketAddress, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress);
@@ -62,16 +79,16 @@ public final class ChannelFactory {
 
     /**
      * Creates a channel for control communication (connect, description, connection state, disconnect)
-     * to the given socket address provided by {@link Configuration}
+     * to the given socket address provided by {@link InternalKnxClient}
      *
-     * @param config
+     * @param client
      * @return a new instance of {@link DatagramChannel} for control-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    public static SelectableChannel newControlChannel(final @Nonnull Configuration config) {
-        final var localPort = config.getControlChannelPort();
-        final var socketAddress = config.getEndpoint();
-        final var socketTimeout = config.getSocketTimeoutControlChannel();
+    public static SelectableChannel newControlChannel(final @Nonnull InternalKnxClient client) {
+        final var localPort = client.getConfig().getControlChannelPort();
+        final var socketAddress = client.getRemoteEndpoint();
+        final var socketTimeout = client.getConfig().getSocketTimeoutControlChannel();
         log.debug("Create new control channel for local port {}: {}: {} (socket timeout: {}ms)", localPort,
                 socketAddress, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress);
@@ -79,16 +96,16 @@ public final class ChannelFactory {
 
     /**
      * Creates channel for data communication and connects to the given socket
-     * address provided by {@link Configuration}
+     * address provided by {@link InternalKnxClient}
      *
-     * @param config
+     * @param client
      * @return a new instance of {@link DatagramChannel} for data-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    public static SelectableChannel newDataChannel(final @Nonnull Configuration config) {
-        final var localPort = config.getDataChannelPort();
-        final var socketAddress = config.getEndpoint();
-        final var socketTimeout = config.getSocketTimeoutDataChannel();
+    public static SelectableChannel newDataChannel(final @Nonnull InternalKnxClient client) {
+        final var localPort = client.getConfig().getDataChannelPort();
+        final var socketAddress = client.getRemoteEndpoint();
+        final var socketTimeout = client.getConfig().getSocketTimeoutDataChannel();
         log.debug("Create new data channel for local port {}: {} (socket timeout: {}ms)", localPort,
                 socketAddress, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress);
@@ -111,7 +128,7 @@ public final class ChannelFactory {
     /**
      * Creates an UDP channel for communication
      *
-     * @param localPort given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
+     * @param localPort     given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
      * @param socketTimeout socket timeout
      * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
      * @return a new instance of {@link DatagramChannel}

@@ -39,7 +39,7 @@ public final class DataChannelCommunicator extends AbstractChannelCommunicator {
     @Override
     @Nonnull
     protected SelectableChannel newChannel() {
-        return ChannelFactory.newDataChannel(getInternalClient().getConfig());
+        return ChannelFactory.newDataChannel(getInternalClient());
     }
 
     @Override

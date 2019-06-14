@@ -98,7 +98,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(Subscription subscription) {
+    public void onSubscribe(final Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 }

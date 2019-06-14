@@ -29,6 +29,8 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import org.slf4j.Logger;
@@ -48,6 +50,7 @@ public final class KnxEventPool {
     private static final Logger log = LoggerFactory.getLogger(KnxEventPool.class);
     private static final int DEFAULT_TUNNELING_REQUEST_CAPACITY = 0xFF + 1; // 1 byte only according to KNX specification
     private final Map<Integer, KnxEventData<TunnelingRequestBody, TunnelingAckBody>> tunnelingMap;
+    private final KnxEventData<SearchRequestBody, SearchResponseBody> searchEvent = new KnxEventData<>();
     private final KnxEventData<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent = new KnxEventData<>();
     private final KnxEventData<ConnectRequestBody, ConnectResponseBody> connectEvent = new KnxEventData<>();
     private final KnxEventData<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent = new KnxEventData<>();
@@ -59,6 +62,15 @@ public final class KnxEventPool {
         for (var i = 0; i < DEFAULT_TUNNELING_REQUEST_CAPACITY; i++) {
             tunnelingMap.put(i, new KnxEventData<>());
         }
+    }
+
+    /**
+     * Returns {@link KnxEventData} for search request and response
+     *
+     * @return {@link KnxEventData}
+     */
+    public KnxEventData<SearchRequestBody, SearchResponseBody> searchEvent() {
+        return this.searchEvent;
     }
 
     /**
@@ -125,6 +137,8 @@ public final class KnxEventPool {
             return (KnxEventData<REQUEST, RESPONSE>) this.connectEvent;
         } else if (request instanceof DescriptionRequestBody) {
             return (KnxEventData<REQUEST, RESPONSE>) this.descriptionEvent;
+        } else if (request instanceof SearchRequestBody) {
+            return (KnxEventData<REQUEST, RESPONSE>) this.searchEvent;
         }
         log.error("Request body is not supported for 'get(RequestBody)' method: {}", request);
         throw new IllegalArgumentException("Request body is not supported.");

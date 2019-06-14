@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.communication.communicator;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
@@ -27,23 +27,23 @@ import javax.annotation.Nonnull;
 import java.nio.channels.SelectableChannel;
 
 /**
- * Communicator for control channel related packets
+ * Communicator for discovery channel related packets
  *
  * @author PITSCHR
  */
-public final class ControlChannelCommunicator extends AbstractChannelCommunicator {
-    public ControlChannelCommunicator(final InternalKnxClient client) {
-        super("ControlChannel", client);
+public final class DiscoveryChannelCommunicator extends AbstractChannelCommunicator {
+    public DiscoveryChannelCommunicator(final InternalKnxClient client) {
+        super("DiscoveryChannel", client);
     }
 
     @Override
     @Nonnull
     protected SelectableChannel newChannel() {
-        return ChannelFactory.newControlChannel(getInternalClient());
+        return ChannelFactory.newDiscoveryChannel(getInternalClient());
     }
 
     @Override
-    protected boolean isCompatible(Body body) {
-        return body instanceof ControlChannelRelated;
+    protected boolean isCompatible(final Body body) {
+        return body instanceof SearchResponseBody;
     }
 }

@@ -61,7 +61,10 @@ import li.pitschmann.utils.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -92,6 +95,7 @@ public final class InternalKnxClient implements KnxClient {
     private int channelId;
     private DataChannelCommunicator dataChannelCommunicator;
     private ControlChannelCommunicator controlChannelCommunicator;
+    private InetSocketAddress remoteEndpoint;
 
     /**
      * KNX client constructor (package protected)
@@ -102,7 +106,6 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Abstract KNX Client constructor");
         // configuration
         this.config = config;
-
         // statistics
         this.statistics = new KnxStatisticImpl();
         // status pool
@@ -119,6 +122,18 @@ public final class InternalKnxClient implements KnxClient {
      * Starts the services and notifies the plug-ins about initialization
      */
     protected final void start() {
+        // check if endpoint is defined - if not, look up for an available KNX Net/IP device
+        if (config.getRemoteAddress() == null) {
+            // TODO: Implement the discovery logic and pick up the first applicable KNX Net/IP device
+            // TODO: Must contain: TUNNELLING SERVICE
+            this.remoteEndpoint = null;
+            log.trace("Endpoint from discovery is taken: {}", this.remoteEndpoint);
+            throw new UnsupportedOperationException("Not supported yet. The remote address is null.");
+        } else {
+            this.remoteEndpoint = new InetSocketAddress(this.getConfig().getRemoteAddress(), this.getConfig().getRemotePort());
+            log.trace("Endpoint from configuration is taken: {}", this.remoteEndpoint);
+        }
+
         // validate
         try {
             if (this.verify()) {
@@ -149,6 +164,17 @@ public final class InternalKnxClient implements KnxClient {
     @Override
     public KnxStatusPoolImpl getStatusPool() {
         return this.statusPool;
+    }
+
+    /**
+     * Returns the remote endpoint. If specified by the config explicitly, the endpoint from config is taken,
+     * otherwise the endpoint has been discovered by the KNX client automatically.
+     *
+     * @return An instance of {@link InetSocketAddress}, it cannot be {@code null}
+     */
+    @Nonnull
+    public InetSocketAddress getRemoteEndpoint() {
+        return Objects.requireNonNull(this.remoteEndpoint);
     }
 
     /**
@@ -188,8 +214,7 @@ public final class InternalKnxClient implements KnxClient {
             this.channelId = -1;
 
             // logging
-            final var endpoint = this.config.getEndpoint();
-            log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", endpoint.getAddress().getHostAddress(), endpoint.getPort());
+            log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.config.getRemoteAddress(), this.config.getRemotePort());
             log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
             log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
 

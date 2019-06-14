@@ -1,0 +1,188 @@
+/*
+ * KNX Link - A library for KNX Net/IP communication
+ * Copyright (C) 2019 Pitschmann Christoph
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package li.pitschmann.knx.link.body;
+
+import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.AbstractMultiRawData;
+import li.pitschmann.knx.link.body.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.link.body.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.ByteFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+
+/**
+ * Body for Search Response
+ * <p/>
+ * The {@link ServiceType#SEARCH_RESPONSE} frame shall be sent by the KNXnet/IP
+ * Server as an answer to a received SEARCH_REQUEST frame. It shall be addressed
+ * to the KNXnet/IP Client’s discovery endpoint using the HPAI included in the
+ * received {@link ServiceType#SEARCH_REQUEST} frame.
+ * <p/>
+ * The HPAI of the KNXnet/IP Server’s own control endpoint shall be carried in the
+ * KNXnet/IP body of the SEARCH_RESPONSE frame along with the description of the
+ * device hardware and the supported service families. If the KNXnet/IP Server
+ * supports more than one KNX connection, the KNXnet/IP Server shall announce each
+ * of its own control endpoints in a single SEARCH_RESPONSE frame.
+ * <p/>
+ * At least two DIB structures shall be returned with information about the device capabilities on:
+ * {@link DeviceHardwareInformationDIB} and {@link SupportedDeviceFamiliesDIB}.
+ *
+ * <pre>
+ * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ * | HPAI                                                           |
+ * | Control endpoint                                               |
+ * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ * | DIB                                                           |
+ * | device hardware                                               |
+ * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ * | DIB                                                           |
+ * | supported service families                                    |
+ * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ * </pre>
+ *
+ * @author PITSCHR
+ */
+public final class SearchResponseBody extends AbstractMultiRawData implements ResponseBody, DiscoveryChannelRelated {
+    private static final Logger log = LoggerFactory.getLogger(SearchResponseBody.class);
+    /**
+     * Structure Length for {@link DisconnectResponseBody}
+     * <p>
+     * 2 bytes for contorl endpoint<br>
+     * 54 bytes for device hardware information<br>
+     * min. 2 bytes for supported service families<br>
+     */
+    private static final int STRUCTURE_MIN_LENGTH = 2 + 54 + 2;
+    /**
+     * Maximum Structure Length for {@link SupportedDeviceFamiliesDIB} is 254
+     */
+    private static final int STRUCTURE_MAX_LENGTH = 0xFE;
+    private final HPAI controlEndpoint;
+    private final DeviceHardwareInformationDIB deviceHardwareInformation;
+    private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;
+
+    private SearchResponseBody(final byte[] bytes) {
+        super(bytes);
+
+        this.controlEndpoint = HPAI.of(new byte[]{bytes[0], bytes[1]});
+        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(Arrays.copyOfRange(bytes, 2, 56));
+        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(Arrays.copyOfRange(bytes, 57, bytes.length));
+    }
+
+    /**
+     * Builds a new {@link SearchResponseBody} instance
+     *
+     * @param bytes complete byte array for {@link SearchResponseBody}
+     * @return immutable {@link SearchResponseBody}
+     */
+    public static SearchResponseBody valueOf(final byte[] bytes) {
+        return new SearchResponseBody(bytes);
+    }
+
+    /**
+     * Creates a new {@link SearchResponseBody} instance
+     *
+     * @param controlEndpoint
+     * @param deviceHardwareInformation
+     * @param supportedDeviceFamilies
+     * @return immutable {@link SearchResponseBody}
+     */
+    public static SearchResponseBody create(final HPAI controlEndpoint,
+                                            final DeviceHardwareInformationDIB deviceHardwareInformation,
+                                            final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
+        // validate
+        if (controlEndpoint == null) {
+            throw new KnxNullPointerException("controlEndpoint");
+        } else if (deviceHardwareInformation == null) {
+            throw new KnxNullPointerException("deviceHardwareInformation");
+        } else if (supportedDeviceFamilies == null) {
+            throw new KnxNullPointerException("supportedDeviceFamilies");
+        }
+
+        final var controlEndpointAsBytes = controlEndpoint.getRawData();
+        final var deviceHardwareInformationAsBytes = deviceHardwareInformation.getRawData();
+        final var deviceFamiliesAsBytes = supportedDeviceFamilies.getRawData();
+
+        final var totalLength = controlEndpointAsBytes.length + //
+                deviceHardwareInformationAsBytes.length + //
+                deviceFamiliesAsBytes.length;
+
+        // create bytes
+        final var bytes = new byte[totalLength];
+        bytes[0] = controlEndpointAsBytes[0];
+        bytes[1] = controlEndpointAsBytes[1];
+        var pos = 2;
+        System.arraycopy(deviceHardwareInformationAsBytes, 0, bytes, pos, deviceHardwareInformationAsBytes.length);
+        pos += deviceHardwareInformationAsBytes.length;
+        System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
+
+        return valueOf(bytes);
+    }
+
+    @Override
+    protected void validate(final byte[] rawData) {
+        if (rawData == null) {
+            throw new KnxNullPointerException("rawData");
+        } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
+            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
+        } else if (rawData.length % 2 != 0) {
+            throw new KnxIllegalArgumentException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
+                    rawData.length, ByteFormatter.formatHexAsString(rawData)));
+        }
+    }
+
+    @Override
+    @Nonnull
+    public ServiceType getServiceType() {
+        return ServiceType.SEARCH_RESPONSE;
+    }
+
+    public HPAI getControlEndpoint() {
+        return this.controlEndpoint;
+    }
+
+    public DeviceHardwareInformationDIB getDeviceInformation() {
+        return this.deviceHardwareInformation;
+    }
+
+    public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
+        return this.supportedDeviceFamilies;
+    }
+
+    @Override
+    public String toString(final boolean inclRawData) {
+        // @formatter:off
+        final var h = MoreObjects.toStringHelper(this)
+                .add("controlEndpoint", this.controlEndpoint.toString(false))
+                .add("deviceHardwareInformation", this.deviceHardwareInformation.toString(false))
+                .add("supportedDeviceFamilies", this.supportedDeviceFamilies.toString(false));
+        // @formatter:on
+        if (inclRawData) {
+            h.add("rawData", this.getRawDataAsHexString());
+        }
+        return h.toString();
+    }
+}

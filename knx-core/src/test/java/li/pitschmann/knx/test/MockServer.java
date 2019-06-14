@@ -432,10 +432,11 @@ public final class MockServer implements Runnable, Closeable {
         return Configuration.create(Networker.getLocalHost(), getPort())
                 .setting("executor.pool.plugin", "3") // 3 instead of 10
                 .setting("executor.pool.communication", "3") // 3 instead of 10
-                .setting("timeout.request.description", "2000") // 1s instead of 10s
-                .setting("timeout.request.connect", "2000") // 1s instead of 10s
-                .setting("timeout.request.disconnect", "2000") // 1s instead of 10s
-                .setting("timeout.request.connectionstate", "2000") // 1s instead of 10s
+                .setting("timeout.request.discovery", "2000") // 2s instead of 10s
+                .setting("timeout.request.description", "2000") // 2s instead of 10s
+                .setting("timeout.request.connect", "2000") // 2s instead of 10s
+                .setting("timeout.request.disconnect", "2000") // 2s instead of 10s
+                .setting("timeout.request.connectionstate", "2000") // 2s instead of 10s
                 .setting("interval.connectionstate", "6000") // 6s instead of 60s
                 .setting("timeout.alive.connectionstate", "12000") // 12s instead of 120s
                 ;

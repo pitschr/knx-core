@@ -41,15 +41,13 @@ public class ConfigurationTest {
     public void testCreate() {
         // creates a new one without port -> default KNX port will be used
         final var config1 = Configuration.create("127.0.1.1").build();
-        final var config1Endpoint = config1.getEndpoint();
-        assertThat(config1Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
-        assertThat(config1Endpoint.getPort()).isEqualTo(Constants.Default.KNX_PORT);
+        assertThat(config1.getRemoteAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
+        assertThat(config1.getRemotePort()).isEqualTo(Constants.Default.KNX_PORT);
 
         // creates a new with port
         final var config2 = Configuration.create("127.0.1.2:4711").build();
-        final var config2Endpoint = config2.getEndpoint();
-        assertThat(config2Endpoint.getAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 2));
-        assertThat(config2Endpoint.getPort()).isEqualTo(4711);
+        assertThat(config2.getRemoteAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 2));
+        assertThat(config2.getRemotePort()).isEqualTo(4711);
     }
 
     /**

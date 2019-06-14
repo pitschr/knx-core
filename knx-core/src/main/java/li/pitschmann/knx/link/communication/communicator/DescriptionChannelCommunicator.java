@@ -39,7 +39,7 @@ public final class DescriptionChannelCommunicator extends AbstractChannelCommuni
     @Override
     @Nonnull
     protected SelectableChannel newChannel() {
-        return ChannelFactory.newDescriptionChannel(getInternalClient().getConfig());
+        return ChannelFactory.newDescriptionChannel(getInternalClient());
     }
 
     @Override

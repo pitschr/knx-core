@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.body.dib;
 
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
@@ -103,7 +104,9 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
 
     @Override
     protected void validate(byte[] rawData) {
-        if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
+        if (rawData == null) {
+            throw new KnxNullPointerException("rawData");
+        } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
         } else if (rawData.length % 2 != 0) {
             throw new KnxIllegalArgumentException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",

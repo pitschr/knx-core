@@ -142,7 +142,7 @@ public final class CEMI extends AbstractMultiRawData {
         this.apci = APCI.valueOf(Bytes.toUnsignedInt((byte) (cemiRawData[npduIndex + 1] & 0x03), (byte) (cemiRawData[npduIndex + 2] & 0xC0)));
 
         // APCI data
-        if (this.apci == APCI.GROUP_VALUE_READ || this.apci == APCI.INDIVIDUAL_ADDRESS_READ) {
+        if (this.apci == APCI.GROUP_VALUE_READ) {
             // no data when APCI code is a read command
             this.apciData = new byte[0];
         } else if (this.npduLength == 1) {
@@ -345,7 +345,7 @@ public final class CEMI extends AbstractMultiRawData {
                     ByteFormatter.formatHexAsString(apciData));
         } else if ((destinationAddress instanceof GroupAddress && controlByte2.getAddressType() != AddressType.GROUP)
                 || (destinationAddress instanceof IndividualAddress && controlByte2.getAddressType() != AddressType.INDIVIDUAL)) {
-            throw new KnxIllegalArgumentException("Missconfiguration between address type in ControlByte2 and destination address type.",
+            throw new KnxIllegalArgumentException("Misconfiguration between address type in ControlByte2 and destination address type.",
                     controlByte2.getAddressType(), destinationAddress);
         }
 

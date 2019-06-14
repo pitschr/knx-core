@@ -25,9 +25,9 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
-import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 
