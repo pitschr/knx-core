@@ -21,8 +21,8 @@ package li.pitschmann.knx.link.communication.task;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventData;
 import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -98,11 +98,11 @@ public class TunnelingAckTaskTest {
         final var subscription = mock(Flow.Subscription.class);
 
         // 0 = (normal) not acknowledged
-        final var eventData = mock(KnxEventData.class);
+        final var eventData = mock(KnxSingleEvent.class);
         doReturn(eventData).when(eventPool).get(any(TunnelingAckBody.class));
 
         // 1 = already acknowledged
-        final var eventDataAcknowledgedAlready = mock(KnxEventData.class);
+        final var eventDataAcknowledgedAlready = mock(KnxSingleEvent.class);
         when(eventDataAcknowledgedAlready.hasResponse()).thenReturn(true);
         doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnelingAckBody) argThat(t -> ((TunnelingAckBody) t).getSequence() == 1));
 

@@ -38,7 +38,6 @@ import java.util.concurrent.Flow.Subscription;
 public final class SearchResponseTask implements Subscriber<Body> {
     private static final Logger log = LoggerFactory.getLogger(SearchResponseTask.class);
     private final InternalKnxClient client;
-    private Subscription subscription;
 
     public SearchResponseTask(final InternalKnxClient client) {
         this.client = client;
@@ -50,11 +49,8 @@ public final class SearchResponseTask implements Subscriber<Body> {
         if (body instanceof SearchResponseBody) {
             final var responseBody = (SearchResponseBody) body;
             log.debug("Search response received: {}", responseBody);
-            this.client.getEventPool().searchEvent().setResponse(responseBody);
+            this.client.getEventPool().searchEvent().addResponse(responseBody);
             log.trace("Search response saved.");
-            // now cancel the subscription as we only expect this frame once time at beginning only!
-            this.subscription.cancel();
-            log.trace("Subscription for search frames cancelled.");
         } else {
             // when using discovery then we MUST the SearchResponseBody otherwise something went wrong!
             throw new KnxBodyNotReceivedException(SearchResponseBody.class);
@@ -73,8 +69,7 @@ public final class SearchResponseTask implements Subscriber<Body> {
 
     @Override
     public void onSubscribe(final Subscription subscription) {
-        this.subscription = subscription;
-        this.subscription.request(1); // receive it only once time!
+        subscription.request(Long.MAX_VALUE);
     }
 
 }

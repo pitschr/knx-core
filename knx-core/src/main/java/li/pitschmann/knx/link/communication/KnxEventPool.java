@@ -33,6 +33,9 @@ import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.link.communication.event.KnxEvent;
+import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
+import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,63 +52,63 @@ import java.util.Map;
 public final class KnxEventPool {
     private static final Logger log = LoggerFactory.getLogger(KnxEventPool.class);
     private static final int DEFAULT_TUNNELING_REQUEST_CAPACITY = 0xFF + 1; // 1 byte only according to KNX specification
-    private final Map<Integer, KnxEventData<TunnelingRequestBody, TunnelingAckBody>> tunnelingMap;
-    private final KnxEventData<SearchRequestBody, SearchResponseBody> searchEvent = new KnxEventData<>();
-    private final KnxEventData<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent = new KnxEventData<>();
-    private final KnxEventData<ConnectRequestBody, ConnectResponseBody> connectEvent = new KnxEventData<>();
-    private final KnxEventData<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent = new KnxEventData<>();
-    private final KnxEventData<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent = new KnxEventData<>();
+    private final Map<Integer, KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody>> tunnelingMap;
+    private final KnxMultiEvent<SearchRequestBody, SearchResponseBody> searchEvent = new KnxMultiEvent<>();
+    private final KnxSingleEvent<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent = new KnxSingleEvent<>();
+    private final KnxSingleEvent<ConnectRequestBody, ConnectResponseBody> connectEvent = new KnxSingleEvent<>();
+    private final KnxSingleEvent<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent = new KnxSingleEvent<>();
+    private final KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent = new KnxSingleEvent<>();
 
     public KnxEventPool() {
-        // initialize tunneling map and fill with default KnxEventData entries (we will need it anyway)
+        // initialize tunneling map and fill with default KnxSingleEvent entries (we will need it anyway)
         tunnelingMap = Maps.newHashMapWithExpectedSize(DEFAULT_TUNNELING_REQUEST_CAPACITY);
         for (var i = 0; i < DEFAULT_TUNNELING_REQUEST_CAPACITY; i++) {
-            tunnelingMap.put(i, new KnxEventData<>());
+            tunnelingMap.put(i, new KnxSingleEvent<>());
         }
     }
 
     /**
-     * Returns {@link KnxEventData} for search request and response
+     * Returns list of {@link KnxMultiEvent} for single search request and multiple responses
      *
-     * @return {@link KnxEventData}
+     * @return {@link KnxMultiEvent}
      */
-    public KnxEventData<SearchRequestBody, SearchResponseBody> searchEvent() {
+    public KnxMultiEvent<SearchRequestBody, SearchResponseBody> searchEvent() {
         return this.searchEvent;
     }
 
     /**
-     * Returns {@link KnxEventData} for description request and response
+     * Returns {@link KnxSingleEvent} for description request and response
      *
-     * @return {@link KnxEventData}
+     * @return {@link KnxSingleEvent}
      */
-    public KnxEventData<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent() {
+    public KnxSingleEvent<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent() {
         return this.descriptionEvent;
     }
 
     /**
-     * Returns {@link KnxEventData} for connect request and response
+     * Returns {@link KnxSingleEvent} for connect request and response
      *
-     * @return {@link KnxEventData}
+     * @return {@link KnxSingleEvent}
      */
-    public KnxEventData<ConnectRequestBody, ConnectResponseBody> connectEvent() {
+    public KnxSingleEvent<ConnectRequestBody, ConnectResponseBody> connectEvent() {
         return this.connectEvent;
     }
 
     /**
-     * Returns {@link KnxEventData} for connection state request and response
+     * Returns {@link KnxSingleEvent} for connection state request and response
      *
-     * @return {@link KnxEventData}
+     * @return {@link KnxSingleEvent}
      */
-    public KnxEventData<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent() {
+    public KnxSingleEvent<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent() {
         return this.connectionStateEvent;
     }
 
     /**
-     * Returns {@link KnxEventData} for disconnect request and response
+     * Returns {@link KnxSingleEvent} for disconnect request and response
      *
-     * @return {@link KnxEventData}
+     * @return {@link KnxSingleEvent}
      */
-    public KnxEventData<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent() {
+    public KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent() {
         return this.disconnectEvent;
     }
 
@@ -119,39 +122,39 @@ public final class KnxEventPool {
     }
 
     /**
-     * Returns the {@link KnxEventData} for given {@link RequestBody} from event pool
+     * Returns the {@link KnxSingleEvent} for given {@link RequestBody} from event pool
      *
      * @param request
-     * @return {@link KnxEventData} or {@code IllegalArgumentException} if not supported
+     * @return {@link KnxSingleEvent} or {@code IllegalArgumentException} if not supported
      */
     @SuppressWarnings("unchecked")
     public @Nonnull
-    <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEventData<REQUEST, RESPONSE> get(final REQUEST request) {
+    <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEvent<REQUEST, RESPONSE> get(final REQUEST request) {
         if (request instanceof TunnelingRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.tunnelingMap.get(((TunnelingRequestBody) request).getSequence());
+            return (KnxSingleEvent<REQUEST, RESPONSE>) this.tunnelingMap.get(((TunnelingRequestBody) request).getSequence());
         } else if (request instanceof ConnectionStateRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.connectionStateEvent;
+            return (KnxSingleEvent<REQUEST, RESPONSE>) this.connectionStateEvent;
         } else if (request instanceof DisconnectRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.disconnectEvent;
+            return (KnxSingleEvent<REQUEST, RESPONSE>) this.disconnectEvent;
         } else if (request instanceof ConnectRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.connectEvent;
+            return (KnxSingleEvent<REQUEST, RESPONSE>) this.connectEvent;
         } else if (request instanceof DescriptionRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.descriptionEvent;
+            return (KnxSingleEvent<REQUEST, RESPONSE>) this.descriptionEvent;
         } else if (request instanceof SearchRequestBody) {
-            return (KnxEventData<REQUEST, RESPONSE>) this.searchEvent;
+            return (KnxMultiEvent<REQUEST, RESPONSE>) this.searchEvent;
         }
         log.error("Request body is not supported for 'get(RequestBody)' method: {}", request);
         throw new IllegalArgumentException("Request body is not supported.");
     }
 
     /**
-     * Returns the {@link KnxEventData} for given {@link TunnelingAckBody} from event pool
+     * Returns the {@link KnxSingleEvent} for given {@link TunnelingAckBody} from event pool
      *
      * @param acknowledge
-     * @return {@link KnxEventData}
+     * @return {@link KnxSingleEvent}
      */
     public @Nonnull
-    KnxEventData<TunnelingRequestBody, TunnelingAckBody> get(final TunnelingAckBody acknowledge) {
+    KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody> get(final TunnelingAckBody acknowledge) {
         return this.tunnelingMap.get(acknowledge.getSequence());
     }
 }

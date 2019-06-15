@@ -21,8 +21,8 @@ package li.pitschmann.knx.link.communication.task;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventData;
 import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -93,7 +93,7 @@ public class ConnectResponseTaskTest {
     private ConnectResponseTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
         final var eventPool = mock(KnxEventPool.class);
-        final var eventData = mock(KnxEventData.class);
+        final var eventData = mock(KnxSingleEvent.class);
         final var subscription = mock(Flow.Subscription.class);
 
         doReturn(eventData).when(eventPool).connectEvent();

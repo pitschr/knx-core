@@ -25,7 +25,7 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventData;
+import li.pitschmann.knx.link.communication.event.KnxEvent;
 import li.pitschmann.knx.link.communication.queue.KnxInboxQueue;
 import li.pitschmann.knx.link.communication.queue.KnxOutboxQueue;
 import li.pitschmann.utils.Closeables;
@@ -202,7 +202,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
             // iterate for event response
             final var start = System.currentTimeMillis();
-            KnxEventData<RequestBody, T> event;
+            KnxEvent<RequestBody, T> event;
             do {
                 event = eventPool.get(requestBody);
             }
