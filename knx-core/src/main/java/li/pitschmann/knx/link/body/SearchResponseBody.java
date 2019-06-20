@@ -87,9 +87,13 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     private SearchResponseBody(final byte[] bytes) {
         super(bytes);
 
-        this.controlEndpoint = HPAI.of(new byte[]{bytes[0], bytes[1]});
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(Arrays.copyOfRange(bytes, 2, 56));
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(Arrays.copyOfRange(bytes, 57, bytes.length));
+        int pos = 0;
+        // HPAI .. 8 bytes
+        this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, pos, pos += HPAI.KNXNET_HPAI_LENGTH));
+        // Device Hardware Information .. 54 bytes
+        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(Arrays.copyOfRange(bytes, pos, pos += DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
+        // Supported Device Families
+        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(Arrays.copyOfRange(bytes, pos, bytes.length));
     }
 
     /**

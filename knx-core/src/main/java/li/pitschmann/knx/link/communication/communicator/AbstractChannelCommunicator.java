@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
+import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ControlChannelRelated;
 import li.pitschmann.knx.link.body.DataChannelRelated;
@@ -26,8 +27,10 @@ import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.event.KnxEvent;
-import li.pitschmann.knx.link.communication.queue.KnxInboxQueue;
-import li.pitschmann.knx.link.communication.queue.KnxOutboxQueue;
+import li.pitschmann.knx.link.communication.queue.AbstractInboxQueue;
+import li.pitschmann.knx.link.communication.queue.AbstractOutboxQueue;
+import li.pitschmann.knx.link.communication.queue.DefaultInboxQueue;
+import li.pitschmann.knx.link.communication.queue.DefaultOutboxQueue;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
@@ -35,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -62,8 +66,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     private final ExecutorService communicationExecutor;
 
     private final SelectableChannel channel;
-    private final KnxInboxQueue inboxQueue;
-    private final KnxOutboxQueue outboxQueue;
+    private final AbstractInboxQueue<? extends ByteChannel> inboxQueue;
+    private final AbstractOutboxQueue<? extends ByteChannel> outboxQueue;
 
     protected AbstractChannelCommunicator(final String id, final InternalKnxClient client) {
         this.id = "Communicator[" + id + "]";
@@ -73,9 +77,9 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         log.info("{}: Channel registered: {} (open: {}, registered: {}, blocking: {})", id, channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
 
         // creates inbox and outbox queues
-        this.inboxQueue = new KnxInboxQueue(id, internalClient, channel);
-        this.outboxQueue = new KnxOutboxQueue(id, internalClient, channel);
-        log.trace("{}: Inbox and Outbox Queues created.", id);
+        this.inboxQueue = createInboxQueue();
+        this.outboxQueue = createOutboxQueue();
+        log.trace("{}: Inbox and Outbox Queues created: InboxQueue={}, OutboxQueue={}.", this.id, this.inboxQueue, this.outboxQueue);
 
         // creates queue executor
         this.queueExecutor = Executors.newFixedThreadPool(2, true);
@@ -91,6 +95,28 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
     @Nonnull
     protected abstract SelectableChannel newChannel();
+
+    /**
+     * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
+     *
+     * @return new instance of {@link AbstractInboxQueue}
+     */
+    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue() {
+        Preconditions.checkNotNull(this.internalClient);
+        Preconditions.checkNotNull(this.channel);
+        return new DefaultInboxQueue(this.internalClient, this.channel);
+    }
+
+    /**
+     * Creates a new instance of {@link AbstractOutboxQueue} that should be used by this communicator
+     *
+     * @return new instance of {@link AbstractOutboxQueue}
+     */
+    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue() {
+        Preconditions.checkNotNull(this.internalClient);
+        Preconditions.checkNotNull(this.channel);
+        return new DefaultOutboxQueue(this.internalClient, this.channel);
+    }
 
     @Nonnull
     public InternalKnxClient getInternalClient() {

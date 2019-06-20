@@ -33,23 +33,23 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 
 /**
- * Inbox Queue for KNX receiving packets from KNX Net/IP device
+ * Abstract Inbox Queue for KNX receiving packets from KNX Net/IP device
  *
+ * @param <T> ByteChannel as default channel type
  * @author PITSCHR
  */
-public final class KnxInboxQueue extends AbstractKnxQueue {
-    private static final Logger log = LoggerFactory.getLogger(KnxInboxQueue.class);
+public abstract class AbstractInboxQueue<T extends ByteChannel> extends AbstractKnxQueue<T> {
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final ByteBuffer buff = ByteBuffer.allocate(256);
 
     /**
      * Constructor for KNX Inbox Queue
      *
-     * @param id             the identifier for queue
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public KnxInboxQueue(final String id, final InternalKnxClient internalClient, final SelectableChannel channel) {
-        super("KnxInboxQueue[" + id + "]", internalClient, channel);
+    public AbstractInboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
+        super(internalClient, channel);
     }
 
     @Override
@@ -70,16 +70,16 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
      * @throws IOException exception while reading from {@link ByteChannel}
      */
     protected void action(final SelectionKey key) throws IOException {
-        log.trace("{}: Method 'action(SelectionKey)' called.", getId());
+        log.trace("Method 'action(SelectionKey)' called.");
 
         final byte[] receivedBytes;
-        final var channel = (ByteChannel) key.channel();
+        final var channel = getChannel(key);
         try {
-            log.trace("{}: Receiving packet.", getId());
-            channel.read(buff);
+            log.trace("Receiving packet.");
+            receive(channel, buff);
             receivedBytes = buff.array();
             if (log.isTraceEnabled()) {
-                log.trace("{}: Receiving packet: {}", getId(), ByteFormatter.formatHexAsString(receivedBytes));
+                log.trace("Receiving packet: {}", ByteFormatter.formatHexAsString(receivedBytes));
             }
         } finally {
             buff.rewind();
@@ -100,9 +100,12 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
                                 "   Header: {}\n" + //
                                 "   Body:   {}\n" + //
                                 "----------------------------------------------------------------", //
-                        body.getServiceType().name(), Networker.getRemoteAddressAsString(channel),
-                        Networker.getLocalAddressAsString(channel), getId(),
-                        ByteFormatter.formatHexAsString(receivedBytes), header, body);
+                        body.getServiceType().name(), //
+                        Networker.getRemoteAddressAsString(channel), //
+                        Networker.getLocalAddressAsString(channel), //
+                        ByteFormatter.formatHexAsString(receivedBytes), //
+                        header, //
+                        body);
             }
 
             // add body to queue
@@ -110,4 +113,13 @@ public final class KnxInboxQueue extends AbstractKnxQueue {
             this.getInternalClient().notifyPluginsIncomingBody(body);
         }
     }
+
+    /**
+     * Reads the bytes from given {@code channel} into {@link ByteBuffer}
+     *
+     * @param channel
+     * @param bb
+     * @throws IOException
+     */
+    protected abstract void receive(final T channel, final ByteBuffer bb) throws IOException;
 }

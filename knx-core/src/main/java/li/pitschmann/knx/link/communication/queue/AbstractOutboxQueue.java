@@ -34,22 +34,22 @@ import java.nio.channels.SelectionKey;
 import java.util.Collection;
 
 /**
- * Outbox Queue for KNX packets to be sent to KNX Net/IP device
+ * Abstract Outbox Queue for KNX packets to be sent to KNX Net/IP device
  *
+ * @param <T> ByteChannel as default channel type
  * @author PITSCHR
  */
-public final class KnxOutboxQueue extends AbstractKnxQueue {
-    private static final Logger log = LoggerFactory.getLogger(KnxOutboxQueue.class);
+public abstract class AbstractOutboxQueue<T extends ByteChannel> extends AbstractKnxQueue<T> {
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Constructor for KNX Outbox Queue
      *
-     * @param id             the identifier for queue
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public KnxOutboxQueue(final String id, final InternalKnxClient internalClient, final SelectableChannel channel) {
-        super("KnxOutboxQueue[" + id + "]", internalClient, channel);
+    public AbstractOutboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
+        super(internalClient, channel);
     }
 
     @Override
@@ -71,7 +71,7 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
      * @throws IOException          exception while writing to {@link ByteChannel}
      */
     protected void action(final SelectionKey key) throws InterruptedException, IOException {
-        log.trace("{}: Method 'action(SelectionKey)' called.", getId());
+        log.trace("Method 'action(SelectionKey)' called.");
 
         // get body from queue
         final var body = next();
@@ -80,14 +80,14 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
         final var packetToSend = body.getRawData(true);
 
         // write to channel
-        final var channel = (ByteChannel) key.channel();
-        log.debug("{}: Sending packet: {}", getId(), body);
+        final var channel = getChannel(key);
+        log.debug("Sending packet: {}", body);
         if (!channel.isOpen()) {
-            log.warn("{}: Channel is not open. Write aborted.", getId());
+            log.warn("Channel is not open. Write aborted.");
             return;
         }
-        channel.write(ByteBuffer.wrap(packetToSend));
-        log.trace("{}: Packet sent.", getId());
+        send(channel, ByteBuffer.wrap(packetToSend));
+        log.trace("Packet sent.");
         this.getInternalClient().notifyPluginsOutgoingBody(body);
 
         if (log.isDebugEnabled()) {
@@ -99,9 +99,12 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
                             "   Header:  {}\n" + //
                             "   Body:    {}\n" + //
                             "----------------------------------------------------------------", //
-                    body.getServiceType().name(), Networker.getLocalAddressAsString(channel), getId(),
-                    Networker.getRemoteAddressAsString(channel),
-                    ByteFormatter.formatHexAsString(packetToSend), Header.create(body), body);
+                    body.getServiceType().name(), //
+                    Networker.getLocalAddressAsString(channel), //
+                    Networker.getRemoteAddressAsString(channel), //
+                    ByteFormatter.formatHexAsString(packetToSend), //
+                    Header.create(body), //
+                    body);
         }
     }
 
@@ -116,4 +119,12 @@ public final class KnxOutboxQueue extends AbstractKnxQueue {
         return add(body);
     }
 
+
+    /**
+     * Sends the given byte arrays to {@code channel}
+     *
+     * @param channel
+     * @throws IOException
+     */
+    protected abstract void send(final T channel, final ByteBuffer bb) throws IOException;
 }

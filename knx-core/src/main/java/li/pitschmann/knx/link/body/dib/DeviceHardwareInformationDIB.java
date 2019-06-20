@@ -96,7 +96,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
      * 6 bytes for KNX device MAC address<br>
      * 30 bytes for Device Friendly Name<br>
      */
-    private static final int STRUCTURE_LENGTH = 54;
+    public static final int STRUCTURE_LENGTH = 54;
     private final MediumType mediumType;
     private final boolean programmingMode;
     private final IndividualAddress individualAddress;

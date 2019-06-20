@@ -22,7 +22,6 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.test.KnxBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -31,111 +30,117 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link KnxOutboxQueue}
+ * Test for {@link DefaultInboxQueue}
  *
  * @author PITSCHR
  */
-public class KnxOutboxQueueTest {
+public class DefaultInboxQueueTest {
 
     /**
-     * Test a successful outgoing packet from client
+     * Test a successful incoming packet from KNX Net/IP device to client
      */
     @Test
-    @DisplayName("Test successful outgoing KNX packet")
+    @DisplayName("Test successful incoming KNX packet")
     public void testViaMock() throws Exception {
-        final var clientMock = mock(InternalKnxClient.class);
-        final var channelMock = mock(DatagramChannel.class);
-        when(channelMock.isOpen()).thenReturn(Boolean.TRUE);
-
-        final var selectionKeyMock = mock(SelectionKey.class);
-        when(selectionKeyMock.channel()).thenReturn(channelMock);
-
         // Tunneling Request Body is used for test
         final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
+        final var clientMock = mock(InternalKnxClient.class);
+        when(clientMock.verifyChannelId(body)).thenReturn(true);
+
+        // fill the byte buffer when channel#read(..) is called
+        final var channelMock = mock(DatagramChannel.class);
+        when(channelMock.read(any(ByteBuffer.class))).thenAnswer(invocation -> {
+            final var byteBuffer = invocation.<ByteBuffer>getArgument(0);
+            byteBuffer.put(body.getRawData(true));
+            return 0;
+        });
+
         // add body to outbox queue
-        final var queue = new KnxOutboxQueue("outboxQueue", clientMock, null); // channel is not relevant here
-        queue.send(body);
+        final var queue = new DefaultInboxQueue(clientMock, null); // channel is not relevant here
 
         // execute (this will pick up the body from outbox queue and write to channel)
+        final var selectionKeyMock = mock(SelectionKey.class);
+        when(selectionKeyMock.channel()).thenReturn(channelMock);
         queue.action(selectionKeyMock);
 
         // verify
-        // - bytes are written
-        // - outgoing body notification
-        // capture what is written to channel
-        final var byteBufferCaptor = ArgumentCaptor.forClass(ByteBuffer.class);
-        verify(channelMock).write(byteBufferCaptor.capture());
-        assertThat(byteBufferCaptor.getValue().array()).containsExactly(body.getRawData(true));
-        verify(clientMock).notifyPluginsOutgoingBody(body);
+        // - add body is in inbox queue
+        // - incoming body notification
+        assertThat(queue.next()).isEqualTo(body);
+        verify(clientMock).notifyPluginsIncomingBody(body);
     }
 
     /**
-     * Test a successful outgoing packet from client to KNX Net/IP device via Channel
+     * Test a successful incoming packet from KNX Net/IP device to client
      */
     @Test
-    @DisplayName("Test successful outgoing KNX packet (through channel)")
+    @DisplayName("Test successful incoming KNX packet (through channel)")
     public void testViaChannel() throws Exception {
+        // create & connect channel
         final var localChannel = fakeChannel();
         final var remoteChannel = fakeChannel();
-
-        // connect channel
         localChannel.connect(new InetSocketAddress("localhost", remoteChannel.socket().getLocalPort()));
         remoteChannel.connect(new InetSocketAddress("localhost", localChannel.socket().getLocalPort()));
-
-        final var clientMock = mock(InternalKnxClient.class);
-        final var selectionKeyMock = mock(SelectionKey.class);
-        when(selectionKeyMock.channel()).thenReturn(localChannel);
 
         // Tunneling Request Body is used for test
         final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
-        // add body to outbox queue
-        final var queue = new KnxOutboxQueue("outboxQueue", clientMock, localChannel);
-        queue.send(body);
+        final var clientMock = mock(InternalKnxClient.class);
+        when(clientMock.verifyChannelId(body)).thenReturn(true);
 
-        // execute (this will pick up the body from outbox queue and write to remote channel)
+        // add body to outbox queue
+        final var queue = new DefaultInboxQueue(clientMock, localChannel);
+
+        // write body data to remote channel
+        remoteChannel.send(ByteBuffer.wrap(body.getRawData(true)), localChannel.getLocalAddress());
+
+        // execute (this will pick up the body from outbox queue and write to channel)
+        final var selectionKeyMock = mock(SelectionKey.class);
+        when(selectionKeyMock.channel()).thenReturn(localChannel);
         queue.action(selectionKeyMock);
 
-        // verify if remote channel got those bytes
-        final var bb = ByteBuffer.allocate(body.getRawData(true).length);
-        remoteChannel.read(bb);
-        assertThat(bb.array()).containsExactly(body.getRawData(true));
+        // verify
+        // - add body is in inbox queue
+        // - incoming body notification
+        assertThat(queue.next()).isEqualTo(body);
+        verify(clientMock).notifyPluginsIncomingBody(body);
     }
 
     /**
-     * Tests the {@link KnxOutboxQueue#interestOps()}
+     * Tests the {@link DefaultOutboxQueue#interestOps()}
      */
     @Test
     @DisplayName("Test for interest ops")
     public void testInterestOpsAndKeyValidity() {
-        final var queue = new KnxOutboxQueue(null, null, null); // args are not relevant for this test
+        final var queue = new DefaultInboxQueue(null, null); // args are not relevant for this test
 
-        // verify if interest op is WRITE only
-        assertThat(queue.interestOps()).isEqualTo(SelectionKey.OP_WRITE);
+        // verify if interest op is READ only
+        assertThat(queue.interestOps()).isEqualTo(SelectionKey.OP_READ);
     }
 
     /**
-     * Tests the {@link KnxOutboxQueue#valid(SelectionKey)}
+     * Tests the {@link DefaultInboxQueue#valid(SelectionKey)}
      */
     @Test
     @DisplayName("Test for key validity")
     public void testKeyValidity() {
-        final var queue = new KnxOutboxQueue(null, null, null); // args are not relevant for this test
+        final var queue = new DefaultInboxQueue(null, null); // args are not relevant for this test
 
-        // verify validity of the key (should be 'valid' + 'writable')
+        // verify validity of the key (should be 'valid' + 'readable')
         final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(mock(DatagramChannel.class));
         assertThat(queue.valid(selectionKeyMock)).isFalse();
-        when(selectionKeyMock.isWritable()).thenReturn(true);
+        when(selectionKeyMock.isReadable()).thenReturn(true);
         assertThat(queue.valid(selectionKeyMock)).isFalse();
         when(selectionKeyMock.isValid()).thenReturn(true);
-        assertThat(queue.valid(selectionKeyMock)).isTrue(); // it is true only when 'valid' + 'writable' is set
+        assertThat(queue.valid(selectionKeyMock)).isTrue(); // it is true only when 'valid' + 'readable' is set
     }
 
     /**

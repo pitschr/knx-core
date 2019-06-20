@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.StandardProtocolFamily;
+import java.net.StandardSocketOptions;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 
@@ -51,13 +54,18 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static SelectableChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
-        // TODO: datagram should be sent via multicast?
         final var localPort = client.getConfig().getDiscoveryChannelPort();
-        final var socketAddress = client.getRemoteEndpoint();
+        final var socketAddress = new InetSocketAddress(Constants.Default.KNX_PORT);
         final var socketTimeout = client.getConfig().getSocketTimeoutDiscoveryChannel();
         log.debug("Create new discovery channel for local {}: {}: {} (socket timeout: {}ms)", localPort,
                 socketAddress, socketTimeout);
-        return newDatagramChannel(localPort, socketTimeout, socketAddress);
+        final var channel = newDatagramChannel(localPort, socketTimeout, null);
+        try {
+            channel.setOption(StandardSocketOptions.IP_MULTICAST_TTL, 4); // max 4 hops should be enough!
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return channel;
     }
 
     /**
@@ -135,7 +143,7 @@ public final class ChannelFactory {
      */
     public static DatagramChannel newDatagramChannel(final int localPort, final long socketTimeout, final @Nullable SocketAddress socketAddress) {
         try {
-            final var channel = DatagramChannel.open();
+            final var channel = DatagramChannel.open(StandardProtocolFamily.INET);
             channel.configureBlocking(false);
             final var socket = channel.socket();
             socket.bind(new InetSocketAddress(localPort));

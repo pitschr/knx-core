@@ -28,7 +28,7 @@ import li.pitschmann.knx.link.Configuration;
 public final class DefaultKnxClient extends BaseKnxClient {
 
     /**
-     * Starts KNX client with given configuration
+     * Starts Default KNX client with given configuration
      *
      * @param config
      */
@@ -37,7 +37,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
     }
 
     /**
-     * Creates the Base KNX Client
+     * Creates the Default KNX Client
      *
      * @param address
      * @return
@@ -47,13 +47,14 @@ public final class DefaultKnxClient extends BaseKnxClient {
     }
 
     /**
-     * Creates the Base KNX Client
+     * Creates the Default KNX Client
      *
      * @param config
      * @return
      */
     public static DefaultKnxClient createStarted(final Configuration config) {
         final var client = new DefaultKnxClient(config);
+        // start communication
         client.getInternalClient().start();
         return client;
     }

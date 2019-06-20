@@ -99,6 +99,10 @@ public final class BodyFactory {
             return (T) ConnectRequestBody.valueOf(bodyBytes);
         } else if (serviceType == ServiceType.CONNECT_RESPONSE) {
             return (T) ConnectResponseBody.valueOf(bodyBytes);
+        } else if (serviceType == ServiceType.SEARCH_REQUEST) {
+            return (T) SearchRequestBody.valueOf(bodyBytes);
+        } else if (serviceType == ServiceType.SEARCH_RESPONSE) {
+            return (T) SearchResponseBody.valueOf(bodyBytes);
         } else {
             log.error("Unknown Body for ServiceType: {}", serviceType);
             throw new KnxUnknownBodyException(bodyBytes);

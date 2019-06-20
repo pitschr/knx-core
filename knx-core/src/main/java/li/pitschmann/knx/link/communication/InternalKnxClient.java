@@ -33,6 +33,8 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.link.body.hpai.HPAI;
@@ -41,17 +43,20 @@ import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunic
 import li.pitschmann.knx.link.communication.communicator.ControlChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.DataChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.DescriptionChannelCommunicator;
+import li.pitschmann.knx.link.communication.communicator.DiscoveryChannelCommunicator;
 import li.pitschmann.knx.link.communication.task.ConnectResponseTask;
 import li.pitschmann.knx.link.communication.task.ConnectionStateResponseTask;
 import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
 import li.pitschmann.knx.link.communication.task.DisconnectRequestTask;
 import li.pitschmann.knx.link.communication.task.DisconnectResponseTask;
+import li.pitschmann.knx.link.communication.task.SearchResponseTask;
 import li.pitschmann.knx.link.communication.task.TunnelingAckTask;
 import li.pitschmann.knx.link.communication.task.TunnelingRequestTask;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
+import li.pitschmann.knx.link.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -245,15 +250,32 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     /**
+     * Creates a new instance of {@link DescriptionChannelCommunicator} for discovery channel communication
+     * and forwards the KNX packets to subscribed tasks.
+     * <p>
+     * Following subscribers are:
+     * <ul>
+     * <li>{@link SearchResponseTask} receiving the search frames</li>
+     * </ul>
+     *
+     * @return {@link DiscoveryChannelCommunicator}
+     */
+    private DiscoveryChannelCommunicator newDiscoveryChannelCommunicator() {
+        final var communicator = new DiscoveryChannelCommunicator(this);
+        communicator.subscribe(new SearchResponseTask(this));
+        return communicator;
+    }
+
+    /**
      * Creates a new instance of {@link DescriptionChannelCommunicator} for description channel communication
      * and forwards the KNX packets to subscribed tasks.
      * <p>
      * Following subscribers are:
      * <ul>
-     * <li>{@link DescriptionResponseTask} receiving the description, only once</li>
+     * <li>{@link DescriptionResponseTask} receiving the description frames</li>
      * </ul>
      *
-     * @return {@link ControlChannelCommunicator}
+     * @return {@link DescriptionChannelCommunicator}
      */
     private DescriptionChannelCommunicator newDescriptionChannelCommunicator() {
         final var communicator = new DescriptionChannelCommunicator(this);
@@ -512,18 +534,55 @@ public final class InternalKnxClient implements KnxClient {
         es.shutdown();
 
         // send description request
-        final var descriptionRequestBody = DescriptionRequestBody.create();
-        log.debug("Request for description: {}", descriptionRequestBody);
+        final var request = DescriptionRequestBody.create();
+        log.debug("Request for description: {}", request);
 
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
         try (communicator) {
-            final var descriptionResponseBody = communicator.<DescriptionResponseBody>send(descriptionRequestBody, config.getTimeoutDescriptionRequest()).get();
+            final var response = communicator.<DescriptionResponseBody>send(request, config.getTimeoutDescriptionRequest()).get();
             // check status
-            Preconditions.checkState(descriptionResponseBody != null, descriptionResponseBody);
-            return descriptionResponseBody;
+            Preconditions.checkState(response != null, response);
+            return response;
         } catch (final Exception ex) {
             log.error("Exception during fetch description from KNX Net/IP device", ex);
-            throw new KnxDescriptionNotReceivedException(descriptionRequestBody);
+            throw new KnxDescriptionNotReceivedException(request);
+        } finally {
+            Closeables.shutdownQuietly(es);
+        }
+    }
+
+    /**
+     * Returns the discovery response body containing available KNX Net/IP devices including device information,
+     * supported device capabilities.
+     * <p>
+     * TODO: Code duplication with {@link #fetchDescriptionFromKNX()} ?
+     *
+     * @return First {@link SearchResponseBody} (subsequent should be requested by {@link KnxEventPool})
+     */
+    private SearchResponseBody fetchDiscoveryFromKNX() {
+        log.trace("Method 'fetchDiscoveryFromKNX()' called.");
+
+        // Search request / response is one-time task to auto-find all available KNX Net/IP device
+        final var communicator = newDiscoveryChannelCommunicator();
+
+        // Create executor service for discovery communication
+        final var es = Executors.newSingleThreadExecutor(true);
+        es.execute(communicator);
+        es.shutdown();
+
+        // send search request
+        final var request = SearchRequestBody.create(HPAI.of(communicator.getChannel()));
+        log.debug("Request for search: {}", request);
+
+        // It opens a new channel for discovery communication and processing. Afterwards it will be shutdown.
+        try (communicator) {
+            final var response = communicator.<SearchResponseBody>send(request, config.getTimeoutDiscoveryRequest()).get();
+            // check status
+            Preconditions.checkState(response != null, response);
+            return response;
+        } catch (final Exception ex) {
+            log.error("Exception during fetch discovery frames from KNX Net/IP device", ex);
+            throw new KnxDiscoveryNotReceivedException(request);
         } finally {
             Closeables.shutdownQuietly(es);
         }
