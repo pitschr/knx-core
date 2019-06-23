@@ -31,19 +31,19 @@ import java.nio.channels.SelectableChannel;
  *
  * @author PITSCHR
  */
-public final class DataChannelCommunicator extends AbstractChannelCommunicator {
-    public DataChannelCommunicator(final InternalKnxClient client) {
-        super("DataChannel", client);
+public final class DataChannelCommunicator extends AbstractChannelCommunicator<SelectableChannel> {
+    public DataChannelCommunicator(final @Nonnull InternalKnxClient client) {
+        super(client);
     }
 
     @Override
     @Nonnull
-    protected SelectableChannel newChannel() {
-        return ChannelFactory.newDataChannel(getInternalClient());
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
+        return ChannelFactory.newDataChannel(internalClient);
     }
 
     @Override
-    protected boolean isCompatible(final Body body) {
+    protected boolean isCompatible(final @Nonnull Body body) {
         return body instanceof DataChannelRelated;
     }
 }

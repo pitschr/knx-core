@@ -28,6 +28,8 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.utils.Bytes;
@@ -36,6 +38,8 @@ import li.pitschmann.utils.Bytes;
  * Some KNX bodies and hex-strings for testing purposes only
  */
 public final class KnxBody {
+    public static final String SEARCH_REQUEST = "06100201000e0801c0a80118f8eb";
+    public static final String SEARCH_RESPONSE = "06100202004a0801c0a8011d0e573601020000000000000000000000e000170c00000000000065696264206f6e2057697265476174650000000000000000000000000000060202010401";
     public static final String DESCRIPTION_REQUEST = "06100203000e0801000000000000";
     public static final String DESCRIPTION_RESPONSE = "06100204004636010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f75746572000000000000000000000000000a020201030104010501";
     public static final String CONNECT_REQUEST = "06100205001a0801c0a80118e54e0801c0a80118e54f04040200";
@@ -48,6 +52,8 @@ public final class KnxBody {
     public static final String TUNNELING_ACK = "06100421000a04071b00";
     public static final String TUNNELING_REQUEST_2 = "06100420001704070b002900bce010aa4c090300800c82";
     public static final String TUNNELING_ACK_2 = "06100421000a04070b00";
+    public static final SearchRequestBody SEARCH_REQUEST_BODY = toBody(SEARCH_REQUEST);
+    public static final SearchResponseBody SEARCH_RESPONSE_BODY = toBody(SEARCH_RESPONSE);
     public static final DescriptionRequestBody DESCRIPTION_REQUEST_BODY = toBody(DESCRIPTION_REQUEST);
     public static final DescriptionResponseBody DESCRIPTION_RESPONSE_BODY = toBody(DESCRIPTION_RESPONSE);
     public static final ConnectRequestBody CONNECT_REQUEST_BODY = toBody(CONNECT_REQUEST);

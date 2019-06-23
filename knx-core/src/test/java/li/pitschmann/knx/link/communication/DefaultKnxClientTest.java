@@ -32,6 +32,7 @@ import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
 import li.pitschmann.knx.test.strategy.IgnoreStrategy;
 import org.junit.jupiter.api.DisplayName;
+//import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.spy;
@@ -176,4 +177,15 @@ public class DefaultKnxClientTest {
             fail("Unexpected test state", t);
         }
     }
+
+//    /**
+//     * Test {@link DefaultKnxClient#createStarted()}
+//     */
+//    @MockServerTest
+//    @Test
+//    public void testCreateStartedNoArg() {
+//        // TODO
+//        // DefaultKnxClient.createStarted()
+////        fail("implement");
+//    }
 }

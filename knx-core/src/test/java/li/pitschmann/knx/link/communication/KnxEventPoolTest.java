@@ -48,6 +48,7 @@ public class KnxEventPoolTest {
     public void testEvents() {
         final var pool = new KnxEventPool();
 
+        assertThat(pool.searchEvent()).isNotNull().isSameAs(pool.get(KnxBody.SEARCH_REQUEST_BODY));
         assertThat(pool.descriptionEvent()).isNotNull().isSameAs(pool.get(KnxBody.DESCRIPTION_REQUEST_BODY));
         assertThat(pool.connectEvent()).isNotNull().isSameAs(pool.get(KnxBody.CONNECT_REQUEST_BODY));
         assertThat(pool.connectionStateEvent()).isNotNull().isSameAs(pool.get(KnxBody.CONNECTION_STATE_REQUEST_BODY));

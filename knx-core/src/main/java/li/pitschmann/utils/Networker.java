@@ -20,14 +20,27 @@ package li.pitschmann.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.NetworkChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 /**
@@ -36,6 +49,7 @@ import java.util.stream.StreamSupport;
  * @author PITSCHR
  */
 public final class Networker {
+    private static final Logger log = LoggerFactory.getLogger(Networker.class);
     private static final InetAddress LOCALHOST = Networker.getByAddress(127, 0, 0, 1);
 
     private Networker() {
@@ -48,11 +62,7 @@ public final class Networker {
      * @return
      */
     public static InetAddress getLocalHost() {
-        // try {
-        //   return InetAddress.getLocalHost();
-        //} catch (final UnknownHostException unknownHostException) {
         return LOCALHOST;
-        //}
     }
 
     /**
@@ -165,5 +175,73 @@ public final class Networker {
         } catch (final Exception ex) {
             return "Error[" + ex.getMessage() + "]";
         }
+    }
+
+    /**
+     * Converts from {@link HPAI} containing address and port to {@link InetSocketAddress}
+     *
+     * @param hpai
+     * @return A new {@link InetSocketAddress} instance
+     */
+    public static InetSocketAddress toInetSocketAddress(final @Nonnull HPAI hpai) {
+        return new InetSocketAddress(hpai.getAddress(), hpai.getPort());
+    }
+
+    /**
+     * Returns all applicable network interfaces including inet addresses for KNX communication
+     *
+     * @return map of network interfaces with list of {@link InetAddress}, in case of issue an empty map is returned
+     */
+    @Nonnull
+    public static Map<NetworkInterface, List<InetAddress>> getNetworkInterfaces() {
+        final var networkInterfaceMap = new LinkedHashMap<NetworkInterface, List<InetAddress>>();
+
+        try {
+            final var interfaces = NetworkInterface.getNetworkInterfaces();
+            var loopAddressAlreadyFound = false;
+            while (interfaces.hasMoreElements()) {
+                final var ni = interfaces.nextElement();
+
+                if (!ni.isUp()) {
+                    log.trace("Network Interface is not up. Ignored: {}", ni);
+                    continue;
+                }
+
+                final var inetAddressesToAdd = new LinkedList<InetAddress>();
+                final var addresses = ni.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+
+                    // without NAT we only keep IPv4-Addresses
+                    if (address instanceof Inet4Address) {
+                        log.trace("NetworkInterface: {} ({})", ni, address);
+                        // keep only one loopback address
+                        if (address.isLoopbackAddress()) {
+                            // loopback address found
+                            if (!loopAddressAlreadyFound) {
+                                // this is the first loop back address -> add it
+                                inetAddressesToAdd.add(address);
+                                loopAddressAlreadyFound = true;
+                            } else {
+                                log.trace("Loopback address already found. Ignore: {}", address);
+                            }
+                        } else {
+                            // no loopback address -> add it
+                            inetAddressesToAdd.add(address);
+                        }
+                    } else {
+                        log.trace("Ignore non-IP4 Address: {}", address);
+                    }
+
+                    if (!inetAddressesToAdd.isEmpty()) {
+                        networkInterfaceMap.put(ni, Collections.unmodifiableList(inetAddressesToAdd));
+                    }
+                }
+            }
+        } catch (final SocketException se) {
+            log.error("Error during getting network interfaces", se);
+        }
+
+        return Collections.unmodifiableMap(networkInterfaceMap);
     }
 }

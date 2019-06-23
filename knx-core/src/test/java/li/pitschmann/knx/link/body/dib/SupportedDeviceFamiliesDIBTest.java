@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.body.dib;
 
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
@@ -96,6 +97,10 @@ public final class SupportedDeviceFamiliesDIBTest {
      */
     @Test
     public void invalidCases() {
+        // null check
+        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(null)).isInstanceOf(KnxNullPointerException.class)
+                .hasMessageContaining("rawData");
+
         // specific for supported device families DIB
         assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("divisible by two");

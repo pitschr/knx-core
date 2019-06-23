@@ -18,13 +18,18 @@
 
 package li.pitschmann.utils;
 
+import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.FileChannel;
@@ -158,6 +163,47 @@ public class NetworkerTest {
         // test "Error"
         final var fileChannelMock = mock(FileChannel.class);
         assertThat(Networker.getLocalAddressAsString(fileChannelMock)).isEqualTo("Error[Unsupported channel type]");
+    }
+
+    /**
+     * Tests {@link Networker#toInetSocketAddress(HPAI)}
+     */
+    @Test
+    @DisplayName("Test conversion from HPAI to InetSocketAddress")
+    public void testToInetSocketAddress() {
+        final var address = Networker.getByAddress(1, 2, 3, 4);
+        final var port = 5678;
+        final var hpai = HPAI.of(HostProtocol.IPV4_UDP, address, port);
+        final var socketAddress = Networker.toInetSocketAddress(hpai);
+
+        assertThat(socketAddress.getAddress()).isEqualTo(address);
+        assertThat(socketAddress.getPort()).isEqualTo(port);
+    }
+
+    /**
+     * Tests {@link Networker#getNetworkInterfaces()} returning a map of {@link NetworkInterface} as key
+     * and list of {@link Inet4Address} as values.
+     */
+    @Test
+    @DisplayName("Test gathering the network interfaces including IPv4 addresses")
+    public void testNetworkInterfaces() throws SocketException {
+        final var netInterfaces = Networker.getNetworkInterfaces();
+
+        // at least one network interface available
+        assertThat(netInterfaces).isNotEmpty();
+
+        // all network interfaces should be up + list of addresses should be IPv4 only
+        for (final var netInterface : netInterfaces.entrySet()) {
+            assertThat(netInterface.getKey().isUp()).isTrue();
+            for (final var address : netInterface.getValue()) {
+                System.out.println(address); // keep it to look how it looks on TravisCI
+                assertThat(address).isInstanceOf(Inet4Address.class);
+            }
+        }
+
+        // should contain only one loopback address
+        final var numberOfLoopbackAddress = netInterfaces.values().stream().flatMap(v -> v.stream()).filter(InetAddress::isLoopbackAddress).count();
+        assertThat(numberOfLoopbackAddress).isEqualTo(1);
     }
 
     /**

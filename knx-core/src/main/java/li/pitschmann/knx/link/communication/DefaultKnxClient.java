@@ -28,7 +28,7 @@ import li.pitschmann.knx.link.Configuration;
 public final class DefaultKnxClient extends BaseKnxClient {
 
     /**
-     * Starts Default KNX client with given configuration
+     * Starts Default KNX client with {@link Configuration}
      *
      * @param config
      */
@@ -37,7 +37,18 @@ public final class DefaultKnxClient extends BaseKnxClient {
     }
 
     /**
-     * Creates the Default KNX Client
+     * Creates the Default KNX Client without endpoint address. The look up for an
+     * applicable KNX Net/IP device will be using KNX discovery service on a broadcast
+     * address according to the KXN specification.
+     *
+     * @return
+     */
+    public static DefaultKnxClient createStarted() {
+        return createStarted("");
+    }
+
+    /**
+     * Creates the Default KNX Client with pre-defined endpoint {@code address}
      *
      * @param address
      * @return
@@ -47,7 +58,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
     }
 
     /**
-     * Creates the Default KNX Client
+     * Creates the Default KNX Client with {@link Configuration} instance
      *
      * @param config
      * @return

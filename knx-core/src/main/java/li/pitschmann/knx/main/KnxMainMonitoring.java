@@ -26,7 +26,6 @@ import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 public class KnxMainMonitoring extends AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(KnxMainMonitoring.class);
     private static final Logger logRoot = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    private static final InetAddress DEFAULT_IP_ADDRESS = Networker.getByAddress("192.168.1.16");
 
     public static void main(final String[] args) {
         // set level to Level#ALL for ROOT log implementation
@@ -53,7 +51,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         log.debug("Log all: {}", logAll);
 
         // Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Networker::getByAddress);
+        final var ipAddress = getParameterValue(args, "-r", null, Networker::getByAddress);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // Get Monitor Time in Seconds

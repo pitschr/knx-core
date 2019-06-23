@@ -72,7 +72,12 @@ public final class Configuration {
      * @return {@link Builder}
      */
     public static Builder create(final String address) {
-        if (address.contains(":")) {
+        // if address is null/blank then no address is provided and will be picked up using discovery approach
+        if (address == null || address.isBlank()) {
+            return create();
+        }
+        // address contains ':' character -> assuming it is <host>:<port>
+        else if (address.contains(":")) {
             final var addressSplitted = address.split(":");
             Preconditions.checkArgument(addressSplitted.length == 2, "Unsupported Address provided.");
 
@@ -80,7 +85,9 @@ public final class Configuration {
             final var port = Integer.parseInt(addressSplitted[1]);
 
             return create(Networker.getByAddress(host), port);
-        } else {
+        }
+        // otherwise assume it is full address (the default KNX port will be used)
+        else {
             return create(Networker.getByAddress(address));
         }
     }
@@ -103,7 +110,21 @@ public final class Configuration {
      * @return {@link Builder}
      */
     public static Builder create(final InetAddress address, final int port) {
-        return new Builder().endpoint(address, port);
+        if (address == null) {
+            return create();
+        } else {
+            return new Builder().endpoint(address, port);
+        }
+    }
+
+    /**
+     * Creates a Builder for a customized configuration.
+     * The endpoint of KNX Net/IP device will be discovered and the first applicable device is taken
+     *
+     * @return {@link Builder}
+     */
+    public static Builder create() {
+        return new Builder();
     }
 
     /**

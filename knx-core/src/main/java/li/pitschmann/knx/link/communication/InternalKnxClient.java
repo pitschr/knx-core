@@ -63,11 +63,13 @@ import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
+import li.pitschmann.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
+import java.nio.channels.SelectableChannel;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -129,14 +131,12 @@ public final class InternalKnxClient implements KnxClient {
     protected final void start() {
         // check if endpoint is defined - if not, look up for an available KNX Net/IP device
         if (config.getRemoteAddress() == null) {
-            // TODO: Implement the discovery logic and pick up the first applicable KNX Net/IP device
-            // TODO: Must contain: TUNNELLING SERVICE
-            this.remoteEndpoint = null;
-            log.trace("Endpoint from discovery is taken: {}", this.remoteEndpoint);
-            throw new UnsupportedOperationException("Not supported yet. The remote address is null.");
+            final var discoveryResponse = this.fetchDiscoveryFromKNX();
+            this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getDiscoveryEndpoint());
+            log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());
         } else {
             this.remoteEndpoint = new InetSocketAddress(this.getConfig().getRemoteAddress(), this.getConfig().getRemotePort());
-            log.trace("Endpoint from configuration is taken: {}", this.remoteEndpoint);
+            log.debug("Endpoint from configuration is taken: {}", this.remoteEndpoint);
         }
 
         // validate
@@ -219,7 +219,7 @@ public final class InternalKnxClient implements KnxClient {
             this.channelId = -1;
 
             // logging
-            log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.config.getRemoteAddress(), this.config.getRemotePort());
+            log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.remoteEndpoint.getAddress().getHostAddress(), this.remoteEndpoint.getPort());
             log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
             log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
 
@@ -423,7 +423,7 @@ public final class InternalKnxClient implements KnxClient {
         return this.closed.get();
     }
 
-    private AbstractChannelCommunicator getChannelCommunciator(final Body body) {
+    private AbstractChannelCommunicator<? extends SelectableChannel> getChannelCommunciator(final Body body) {
         if (body instanceof DataChannelRelated) {
             return this.dataChannelCommunicator;
         } else if (body instanceof ControlChannelRelated) {
@@ -554,8 +554,6 @@ public final class InternalKnxClient implements KnxClient {
     /**
      * Returns the discovery response body containing available KNX Net/IP devices including device information,
      * supported device capabilities.
-     * <p>
-     * TODO: Code duplication with {@link #fetchDescriptionFromKNX()} ?
      *
      * @return First {@link SearchResponseBody} (subsequent should be requested by {@link KnxEventPool})
      */
@@ -619,7 +617,7 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     @Override
-    public final <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout) {
+    public final <U extends ResponseBody> CompletableFuture<U> send(final RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunciator(requestBody).send(requestBody, msTimeout);
     }
 }

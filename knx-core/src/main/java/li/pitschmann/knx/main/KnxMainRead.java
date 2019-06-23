@@ -40,13 +40,12 @@ import java.util.function.Function;
  */
 public class KnxMainRead extends AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(KnxMainRead.class);
-    private static final String DEFAULT_IP_ADDRESS = "192.168.1.16";
     private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
     private static final int DEFAULT_LOOPS = 50;
 
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Function.identity());
+        final var ipAddress = getParameterValue(args, "-r", null, Function.identity());
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get Group Address

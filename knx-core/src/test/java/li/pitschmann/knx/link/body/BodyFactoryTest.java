@@ -133,6 +133,26 @@ public class BodyFactoryTest {
                 // Body
                 0x07, 0x00, 0x08, 0x01, (byte) 0xC0, (byte) 0xA8, 0x01, 0x10, 0x0E, 0x57, 0x04, 0x04, (byte) 0xFF, (byte) 0xF2};
 
+        byte[] searchReqBytes = new byte[]{ //
+                // Header
+                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                0x02, 0x01, // Search Request
+                0x00, 0x0E, // Total Length Octets
+                // Body
+                0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x18, (byte) 0xf8, (byte) 0xeb};
+
+        byte[] searchResBytes = new byte[]{ //
+                // Header
+                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                0x02, 0x02, // Search Response
+                0x00, 0x4a, // Total Length Octets
+                // Body
+                0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x1d, 0x0e, 0x57, 0x36, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0xe0, 0x00, 0x17, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x65, 0x69, 0x62, 0x64, 0x20, 0x6f, 0x6e, 0x20, 0x57, 0x69, 0x72, 0x65, 0x47, 0x61, 0x74, 0x65,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x02,
+                0x02, 0x01, 0x04, 0x01};
+
         // bodies
         assertThat(BodyFactory.valueOf(tunReqBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
         assertThat(BodyFactory.valueOf(tunAckBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
@@ -148,6 +168,9 @@ public class BodyFactoryTest {
 
         assertThat(BodyFactory.valueOf(connectReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
         assertThat(BodyFactory.valueOf(connectResBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
+
+        assertThat(BodyFactory.valueOf(searchReqBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
+        assertThat(BodyFactory.valueOf(searchResBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
     }
 
     /**

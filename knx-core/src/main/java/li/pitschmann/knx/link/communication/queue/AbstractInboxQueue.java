@@ -95,7 +95,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
                 log.debug("RECEIVE: {}\n" + //
                                 "----------------------------------------------------------------\n" + //
                                 "   Source: {}\n" + //
-                                "   Target: {} ({})\n" + //
+                                "   Target: {}\n" + //
                                 "   Raw:    {}\n" + //
                                 "   Header: {}\n" + //
                                 "   Body:   {}\n" + //

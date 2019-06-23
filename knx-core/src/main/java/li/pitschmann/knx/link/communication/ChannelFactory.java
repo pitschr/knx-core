@@ -53,17 +53,17 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for discovery related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    public static SelectableChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
+    public static DatagramChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
         final var localPort = client.getConfig().getDiscoveryChannelPort();
         final var socketAddress = new InetSocketAddress(Constants.Default.KNX_PORT);
         final var socketTimeout = client.getConfig().getSocketTimeoutDiscoveryChannel();
-        log.debug("Create new discovery channel for local {}: {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
+        log.debug("Create new discovery channel for local: {} (local port: {}, socket timeout: {} ms)",
+                socketAddress, localPort, socketTimeout);
         final var channel = newDatagramChannel(localPort, socketTimeout, null);
         try {
             channel.setOption(StandardSocketOptions.IP_MULTICAST_TTL, 4); // max 4 hops should be enough!
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (final IOException e) {
+            throw new KnxCommunicationException("Exception occurred during creating discovery channel", e);
         }
         return channel;
     }
@@ -80,8 +80,8 @@ public final class ChannelFactory {
         final var localPort = client.getConfig().getDescriptionChannelPort();
         final var socketAddress = client.getRemoteEndpoint();
         final var socketTimeout = client.getConfig().getSocketTimeoutDescriptionChannel();
-        log.debug("Create new description channel for local {}: {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
+        log.debug("Create new description channel for local: {} (local port: {}, socket timeout: {} ms)",
+                socketAddress, localPort, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress);
     }
 
@@ -97,8 +97,8 @@ public final class ChannelFactory {
         final var localPort = client.getConfig().getControlChannelPort();
         final var socketAddress = client.getRemoteEndpoint();
         final var socketTimeout = client.getConfig().getSocketTimeoutControlChannel();
-        log.debug("Create new control channel for local port {}: {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
+        log.debug("Create new control channel for local: {} (local port: {}, socket timeout: {} ms)",
+                socketAddress, localPort, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress);
     }
 
@@ -114,8 +114,8 @@ public final class ChannelFactory {
         final var localPort = client.getConfig().getDataChannelPort();
         final var socketAddress = client.getRemoteEndpoint();
         final var socketTimeout = client.getConfig().getSocketTimeoutDataChannel();
-        log.debug("Create new data channel for local port {}: {} (socket timeout: {}ms)", localPort,
-                socketAddress, socketTimeout);
+        log.debug("Create new data channel for local: {} (local port: {}, socket timeout: {} ms)",
+                socketAddress, localPort, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress);
     }
 

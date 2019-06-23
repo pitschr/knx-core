@@ -93,7 +93,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
         if (log.isDebugEnabled()) {
             log.debug("SEND: {}\n" + //
                             "----------------------------------------------------------------\n" + //
-                            "   Source:  {} ({})\n" + //
+                            "   Source:  {}\n" + //
                             "   Target:  {}\n" + //
                             "   Raw:     {}\n" + //
                             "   Header:  {}\n" + //

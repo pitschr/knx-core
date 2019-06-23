@@ -18,20 +18,22 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 
 /**
- * Discovery Inbox Queue for KNX receiving discovery packets from KNX Net/IP device.
+ * Discovery Outbox Queue for KNX discovery packets to be sent to KNX Net/IP device
  * This class is special because the discovery communication is based on broadcast.
  *
  * @author PITSCHR
  */
-public class KnxDiscoveryInboxQueue extends AbstractInboxQueue<DatagramChannel> {
+public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChannel> {
 
     /**
      * Constructor for KNX Discovery Inbox Queue
@@ -39,12 +41,12 @@ public class KnxDiscoveryInboxQueue extends AbstractInboxQueue<DatagramChannel> 
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public KnxDiscoveryInboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
+    public DiscoveryOutboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
         super(internalClient, channel);
     }
 
     @Override
-    protected void receive(final DatagramChannel channel, final ByteBuffer bb) throws IOException {
-        channel.receive(bb);
+    protected void send(final DatagramChannel channel, final ByteBuffer bb) throws IOException {
+        channel.send(bb, new InetSocketAddress(Constants.Default.KNX_MULTICAST_ADDRESS, Constants.Default.KNX_PORT));
     }
 }

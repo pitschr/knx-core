@@ -44,7 +44,6 @@ import java.util.function.Function;
  */
 public class KnxMainWrite extends AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(KnxMainWrite.class);
-    private static final String DEFAULT_IP_ADDRESS = "192.168.1.16";
     private static final List<GroupAddress> DEFAULT_GROUP_ADDRESSES = Lists.newArrayList( //
             GroupAddress.of(1, 2, 0), //
             GroupAddress.of(1, 2, 50)
@@ -54,7 +53,7 @@ public class KnxMainWrite extends AbstractKnxMain {
 
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", DEFAULT_IP_ADDRESS, Function.identity());
+        final var ipAddress = getParameterValue(args, "-r", null, Function.identity());
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get DPT
