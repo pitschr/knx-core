@@ -130,12 +130,12 @@ public final class InternalKnxClient implements KnxClient {
      */
     protected final void start() {
         // check if endpoint is defined - if not, look up for an available KNX Net/IP device
-        if (config.getRemoteAddress() == null) {
+        if (config.getRemoteControlAddress() == null) {
             final var discoveryResponse = this.fetchDiscoveryFromKNX();
-            this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getDiscoveryEndpoint());
+            this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getControlEndpoint());
             log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());
         } else {
-            this.remoteEndpoint = new InetSocketAddress(this.getConfig().getRemoteAddress(), this.getConfig().getRemotePort());
+            this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
             log.debug("Endpoint from configuration is taken: {}", this.remoteEndpoint);
         }
 

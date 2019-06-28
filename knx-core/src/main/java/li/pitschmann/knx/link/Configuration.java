@@ -44,17 +44,17 @@ import java.util.stream.Collectors;
  * @author PITSCHR
  */
 public final class Configuration {
-    private final InetAddress remoteAddress;
-    private final int remotePort;
+    private final InetAddress remoteControlAddress;
+    private final Integer remoteControlPort;
     private final List<Plugin> allPlugins;
     private final List<ExtensionPlugin> extensionPlugins;
     private final List<ObserverPlugin> observerPlugins;
     private final Map<String, String> settings;
 
     private Configuration(final Builder builder) {
-        // endpoint of KNX Net/IP device
-        this.remoteAddress = builder.address;
-        this.remotePort = builder.port;
+        // control endpoint
+        this.remoteControlAddress = builder.remoteControlAddress;
+        this.remoteControlPort = builder.remoteControlPort;
         // settings
         this.settings = Collections.unmodifiableMap(builder.settings);
         // plugins
@@ -68,7 +68,7 @@ public final class Configuration {
     /**
      * Creates a Builder for a customized configuration
      *
-     * @param address
+     * @param address remote control address (and port)
      * @return {@link Builder}
      */
     public static Builder create(final String address) {
@@ -95,7 +95,7 @@ public final class Configuration {
     /**
      * Creates a Builder for a customized configuration
      *
-     * @param address
+     * @param address remote control address
      * @return {@link Builder}
      */
     public static Builder create(final InetAddress address) {
@@ -105,15 +105,15 @@ public final class Configuration {
     /**
      * Creates a Builder for a customized configuration
      *
-     * @param address
-     * @param port
+     * @param address remote control address
+     * @param port    remote control port
      * @return {@link Builder}
      */
     public static Builder create(final InetAddress address, final int port) {
         if (address == null) {
             return create();
         } else {
-            return new Builder().endpoint(address, port);
+            return new Builder().control(address, port);
         }
     }
 
@@ -128,21 +128,21 @@ public final class Configuration {
     }
 
     /**
-     * Remote address of KNX Net/IP device
+     * Remote Control Endpoint address of KNX Net/IP device to be connected
      *
      * @return {@link InetAddress}
      */
-    public InetAddress getRemoteAddress() {
-        return this.remoteAddress;
+    public InetAddress getRemoteControlAddress() {
+        return this.remoteControlAddress;
     }
 
     /**
-     * Remote port of KNX Net/IP device
+     * Remote Control Endpoint port of KNX Net/IP device to be connected
      *
      * @return port
      */
-    public int getRemotePort() {
-        return this.remotePort;
+    public int getRemoteControlPort() {
+        return getSetting(this.remoteControlPort, Constants.Default.KNX_PORT);
     }
 
     /**
@@ -185,6 +185,38 @@ public final class Configuration {
     private <T> T getSetting(final String key, final T defaultValue, Function<String, T> function) {
         final var value = this.settings.get(key);
         return value == null ? defaultValue : function.apply(value);
+    }
+
+    /**
+     * Returns the setting for given {@code value}. Defaults back to {@code defaultValue} in case the
+     * value is {@code null}
+     *
+     * @param value        configuration value
+     * @param defaultValue used if configuration value is absent
+     * @param <T>
+     * @return the value of configuration
+     */
+    private <T> T getSetting(final T value, final T defaultValue) {
+        return value == null ? defaultValue : value;
+    }
+
+
+    /**
+     * Remote Discovery Endpoint address to find KNX Net/IP devices
+     *
+     * @return {@link InetAddress}
+     */
+    public InetAddress getRemoteDiscoveryAddress() {
+        return getSetting("endpoint.discovery.address", Constants.Default.KNX_MULTICAST_ADDRESS, Networker::getByAddress);
+    }
+
+    /**
+     * Remote Discovery Endpoint port to find KNX Net/IP devices
+     *
+     * @return port
+     */
+    public int getRemoteDiscoveryPort() {
+        return getSetting("endpoint.discovery.port", Constants.Default.KNX_PORT, Integer::valueOf);
     }
 
     public int getPluginExecutorPoolSize() {
@@ -279,27 +311,27 @@ public final class Configuration {
     public static class Builder {
         private final List<Plugin> plugins = Lists.newLinkedList();
         private final Map<String, String> settings = Maps.newHashMap();
-        private InetAddress address;
-        private int port;
+        private InetAddress remoteControlAddress;
+        private Integer remoteControlPort;
 
         private Builder() {
+            // empty
         }
 
         /**
-         * Defines the endpoint of KNX Net/IP device call {@code create(..)} method to
-         * create a new builder and define the endpoint
+         * Defines the control endpoint of KNX Net/IP device
          *
-         * @param address
-         * @param port
-         * @return itself
+         * @param address remote control endpoint address
+         * @param port    remote control endpoint port
+         * @return myself
          */
-        private Builder endpoint(final InetAddress address, final int port) {
+        private Builder control(final InetAddress address, final int port) {
             Preconditions.checkNotNull(address);
             // accept only 1024 .. 65535, other ports are reserved
-            Preconditions.checkArgument(port >= 1024 && port <= 65535, "Illegal Port provided.");
+            Preconditions.checkArgument(port >= 1024 && port <= 65535, "Illegal Port for endpoint provided.");
 
-            this.address = address;
-            this.port = port;
+            this.remoteControlAddress = address;
+            this.remoteControlPort = port;
             return this;
         }
 

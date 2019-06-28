@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
 import java.io.IOException;
@@ -34,6 +33,7 @@ import java.nio.channels.SelectableChannel;
  * @author PITSCHR
  */
 public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChannel> {
+    private final InetSocketAddress discoverySocketAddress;
 
     /**
      * Constructor for KNX Discovery Inbox Queue
@@ -43,10 +43,13 @@ public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChan
      */
     public DiscoveryOutboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
         super(internalClient, channel);
+
+        final var config = internalClient.getConfig();
+        discoverySocketAddress = new InetSocketAddress(config.getRemoteDiscoveryAddress(), config.getRemoteDiscoveryPort());
     }
 
     @Override
     protected void send(final DatagramChannel channel, final ByteBuffer bb) throws IOException {
-        channel.send(bb, new InetSocketAddress(Constants.Default.KNX_MULTICAST_ADDRESS, Constants.Default.KNX_PORT));
+        channel.send(bb, discoverySocketAddress);
     }
 }

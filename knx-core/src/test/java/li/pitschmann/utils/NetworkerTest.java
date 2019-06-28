@@ -196,7 +196,6 @@ public class NetworkerTest {
         for (final var netInterface : netInterfaces.entrySet()) {
             assertThat(netInterface.getKey().isUp()).isTrue();
             for (final var address : netInterface.getValue()) {
-                System.out.println(address); // keep it to look how it looks on TravisCI
                 assertThat(address).isInstanceOf(Inet4Address.class);
             }
         }

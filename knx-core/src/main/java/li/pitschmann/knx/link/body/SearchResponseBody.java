@@ -52,8 +52,8 @@ import java.util.Arrays;
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- * | HPAI                                                           |
- * | discovery endpoint                                               |
+ * | HPAI                                                          |
+ * | control endpoint                                              |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * | DIB                                                           |
  * | device hardware                                               |
@@ -67,18 +67,18 @@ import java.util.Arrays;
  */
 public final class SearchResponseBody extends AbstractMultiRawData implements ResponseBody, DiscoveryChannelRelated {
     /**
-     * Structure Length for {@link DisconnectResponseBody}
+     * Structure Length for {@link SearchResponseBody}
      * <p>
-     * 2 bytes for contorl endpoint<br>
+     * 2 bytes for control endpoint<br>
      * 54 bytes for device hardware information<br>
      * min. 2 bytes for supported service families<br>
      */
     private static final int STRUCTURE_MIN_LENGTH = 2 + 54 + 2;
     /**
-     * Maximum Structure Length for {@link SupportedDeviceFamiliesDIB} is 254
+     * Maximum Structure Length for {@link SearchResponseBody} is 254
      */
     private static final int STRUCTURE_MAX_LENGTH = 0xFE;
-    private final HPAI discoveryEndpoint;
+    private final HPAI controlEndpoint;
     private final DeviceHardwareInformationDIB deviceHardwareInformation;
     private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;
 
@@ -87,7 +87,7 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
 
         int pos = 0;
         // HPAI .. 8 bytes
-        this.discoveryEndpoint = HPAI.of(Arrays.copyOfRange(bytes, pos, pos += HPAI.KNXNET_HPAI_LENGTH));
+        this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, pos, pos += HPAI.KNXNET_HPAI_LENGTH));
         // Device Hardware Information .. 54 bytes
         this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(Arrays.copyOfRange(bytes, pos, pos += DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
         // Supported Device Families
@@ -107,36 +107,36 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     /**
      * Creates a new {@link SearchResponseBody} instance
      *
-     * @param discoveryEndpoint
+     * @param controlEndpoint
      * @param deviceHardwareInformation
      * @param supportedDeviceFamilies
      * @return immutable {@link SearchResponseBody}
      */
-    public static SearchResponseBody create(final HPAI discoveryEndpoint,
+    public static SearchResponseBody create(final HPAI controlEndpoint,
                                             final DeviceHardwareInformationDIB deviceHardwareInformation,
                                             final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
         // validate
-        if (discoveryEndpoint == null) {
-            throw new KnxNullPointerException("discoveryEndpoint");
+        if (controlEndpoint == null) {
+            throw new KnxNullPointerException("controlEndpoint");
         } else if (deviceHardwareInformation == null) {
             throw new KnxNullPointerException("deviceHardwareInformation");
         } else if (supportedDeviceFamilies == null) {
             throw new KnxNullPointerException("supportedDeviceFamilies");
         }
 
-        final var discoveryEndpointAsBytes = discoveryEndpoint.getRawData();
+        final var controlEndpointAsBytes = controlEndpoint.getRawData();
         final var deviceHardwareInformationAsBytes = deviceHardwareInformation.getRawData();
         final var deviceFamiliesAsBytes = supportedDeviceFamilies.getRawData();
 
-        final var totalLength = discoveryEndpointAsBytes.length + //
+        final var totalLength = controlEndpointAsBytes.length + //
                 deviceHardwareInformationAsBytes.length + //
                 deviceFamiliesAsBytes.length;
 
         // create bytes
         final var bytes = new byte[totalLength];
         var pos = 0;
-        System.arraycopy(discoveryEndpointAsBytes, 0, bytes, pos, discoveryEndpointAsBytes.length);
-        pos += discoveryEndpointAsBytes.length;
+        System.arraycopy(controlEndpointAsBytes, 0, bytes, pos, controlEndpointAsBytes.length);
+        pos += controlEndpointAsBytes.length;
         System.arraycopy(deviceHardwareInformationAsBytes, 0, bytes, pos, deviceHardwareInformationAsBytes.length);
         pos += deviceHardwareInformationAsBytes.length;
         System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
@@ -170,8 +170,8 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
         return ServiceType.SEARCH_RESPONSE;
     }
 
-    public HPAI getDiscoveryEndpoint() {
-        return this.discoveryEndpoint;
+    public HPAI getControlEndpoint() {
+        return this.controlEndpoint;
     }
 
     public DeviceHardwareInformationDIB getDeviceInformation() {
@@ -186,7 +186,7 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     public String toString(final boolean inclRawData) {
         // @formatter:off
         final var h = MoreObjects.toStringHelper(this)
-                .add("discoveryEndpoint", this.discoveryEndpoint.toString(false))
+                .add("controlEndpoint", this.controlEndpoint.toString(false))
                 .add("deviceHardwareInformation", this.deviceHardwareInformation.toString(false))
                 .add("supportedDeviceFamilies", this.supportedDeviceFamilies.toString(false));
         // @formatter:on

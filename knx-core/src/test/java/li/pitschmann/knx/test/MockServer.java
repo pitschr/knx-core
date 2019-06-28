@@ -66,6 +66,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class MockServer implements Runnable, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(MockServer.class);
     private static final AtomicInteger globalChannelIdPool = new AtomicInteger();
+    //    private static final ExecutorService broadcastExecutorService;
     private final AtomicInteger tunnelingRequestSequence = new AtomicInteger();
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
     private final List<Body> receivedBodies = Collections.synchronizedList(Lists.newLinkedList());
@@ -80,6 +81,20 @@ public final class MockServer implements Runnable, Closeable {
     private boolean cancel;
     private Throwable throwable;
     private DefaultKnxClient client;
+
+//    static {
+//        // setup broadcast service once time for JVM
+//        broadcastExecutorService = Executors.newSingleThreadExecutor(true);
+//        broadcastExecutorService.execute(new MockServerBroadcastMonitor());
+//        broadcastExecutorService.shutdown();
+//        // add shutdown hook to stop the broadcast service
+//        Runtime.getRuntime().addShutdownHook(new Thread() {
+//            @Override
+//            public void run() {
+//                Closeables.shutdownQuietly(broadcastExecutorService);
+//            }
+//        });
+//    }
 
     private MockServer(final MockServerTest mockServerAnnotation) {
         this.mockServerAnnotation = mockServerAnnotation;
@@ -428,8 +443,21 @@ public final class MockServer implements Runnable, Closeable {
      */
     public Configuration.Builder newConfigBuilder() {
         Preconditions.checkArgument(getPort() > 0, "Knx Client cannot be returned when port is not defined.");
+
+        final Configuration.Builder configBuilder;
+        if (mockServerAnnotation.useDiscovery()) {
+            configBuilder = Configuration.create()
+                    .setting("endpoint.discovery.port", "12345"); // TODO: replace by discovery endpoint port
+            logger.info("Discovery service will be used for mock server");
+        } else {
+            final var address = Networker.getLocalHost();
+            final var port = getPort();
+            configBuilder = Configuration.create(address, port);
+            logger.info("Discovery service will NOT be used for mock server. Endpoint: {}:{}", address, port);
+        }
+
         // provide a different configuration (e.g. timeouts are too long for tests)
-        return Configuration.create(Networker.getLocalHost(), getPort())
+        return configBuilder
                 .setting("executor.pool.plugin", "3") // 3 instead of 10
                 .setting("executor.pool.communication", "3") // 3 instead of 10
                 .setting("timeout.request.discovery", "2000") // 2s instead of 10s
