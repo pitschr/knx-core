@@ -66,14 +66,17 @@ public final class MockServerTestExtension
             final var stopwatch = Stopwatch.createStarted();
             final var mockServer = MockServer.createStarted(annotation);
 
-            // wait until mock server is ready for receiving packets from client (wait up to 5 seconds)
-            if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 5000)) {
+            // wait until mock server is ready for receiving packets from client
+            //   -> wait up to 15 seconds because joining UDP packets may be time-consuming when tests are executed in parallel
+            //   -> wait up to 5 seconds otherwise
+            final var waitMilliseconds = annotation.useDiscovery() ? 30000 : 5000;
+            if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), waitMilliseconds)) {
                 // it took longer than 5 seconds -> abort
                 throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
             }
 
             mockServers.put(context, mockServer);
-            log.debug("KNX Mock Server started.");
+            log.debug("KNX Mock Server started (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         } else {
             throw new IllegalStateException("KNX Mock Server already running.");
         }

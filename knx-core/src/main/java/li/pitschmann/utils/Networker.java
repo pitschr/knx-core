@@ -21,10 +21,12 @@ package li.pitschmann.utils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import li.pitschmann.knx.link.body.hpai.HPAI;
+import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -34,6 +36,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.MembershipKey;
+import java.nio.channels.MulticastChannel;
 import java.nio.channels.NetworkChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Collections;
@@ -41,6 +45,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -51,6 +56,7 @@ import java.util.stream.StreamSupport;
 public final class Networker {
     private static final Logger log = LoggerFactory.getLogger(Networker.class);
     private static final InetAddress LOCALHOST = Networker.getByAddress(127, 0, 0, 1);
+    private static Map<NetworkInterface, List<InetAddress>> networkInterfaceMap;
 
     private Networker() {
         throw new AssertionError("Do not touch me!");
@@ -194,7 +200,13 @@ public final class Networker {
      */
     @Nonnull
     public static Map<NetworkInterface, List<InetAddress>> getNetworkInterfaces() {
-        final var networkInterfaceMap = new LinkedHashMap<NetworkInterface, List<InetAddress>>();
+        // return network interface map from cache if possible
+        if (networkInterfaceMap != null) {
+            return networkInterfaceMap;
+        }
+
+        // not cached yet -> create!
+        final var tmpMap = new LinkedHashMap<NetworkInterface, List<InetAddress>>();
 
         try {
             final var interfaces = NetworkInterface.getNetworkInterfaces();
@@ -234,7 +246,7 @@ public final class Networker {
                     }
 
                     if (!inetAddressesToAdd.isEmpty()) {
-                        networkInterfaceMap.put(ni, Collections.unmodifiableList(inetAddressesToAdd));
+                        tmpMap.put(ni, Collections.unmodifiableList(inetAddressesToAdd));
                     }
                 }
             }
@@ -242,6 +254,27 @@ public final class Networker {
             log.error("Error during getting network interfaces", se);
         }
 
-        return Collections.unmodifiableMap(networkInterfaceMap);
+        return networkInterfaceMap = Collections.unmodifiableMap(tmpMap);
+    }
+
+    /**
+     * Joins the multicast address for all network interfaces returned by {@link #getNetworkInterfaces()}
+     *
+     * @param channel channel to join
+     * @param group   multicast address to be joined
+     * @return list of {@link MembershipKey} where the multicast group was joined
+     */
+    public static List<MembershipKey> joinChannels(final MulticastChannel channel, final InetAddress group) {
+        // add all applicable network interfaces for discovery and join the multicast group
+        // the membership keys will be return to allow to leave the joined multicast groups
+        // by dropping of membership
+        return getNetworkInterfaces().keySet().stream().map(ni -> {
+            log.debug("Network Interface to join multicast address: {}", ni);
+            try {
+                return channel.join(group, ni);
+            } catch (final IOException e) {
+                throw new KnxCommunicationException("I/O exception during joining network interface: " + ni, e);
+            }
+        }).collect(Collectors.toUnmodifiableList());
     }
 }

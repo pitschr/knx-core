@@ -70,6 +70,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
         this.commandParser = new MockServerCommandParser(mockServer, this);
 
         // registering response strategy
+        registerResponseStrategies(ServiceType.SEARCH_REQUEST, testAnnotation.discoveryStrategy());
         registerResponseStrategies(ServiceType.DESCRIPTION_REQUEST, testAnnotation.descriptionStrategy());
         registerResponseStrategies(ServiceType.CONNECT_REQUEST, testAnnotation.connectStrategy());
         registerResponseStrategies(ServiceType.CONNECTION_STATE_REQUEST, testAnnotation.connectionStateStrategy());

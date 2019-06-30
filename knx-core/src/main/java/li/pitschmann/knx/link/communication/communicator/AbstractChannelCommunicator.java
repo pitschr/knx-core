@@ -126,11 +126,6 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
     }
 
     @Nonnull
-    public InternalKnxClient getInternalClient() {
-        return internalClient;
-    }
-
-    @Nonnull
     public C getChannel() {
         return channel;
     }

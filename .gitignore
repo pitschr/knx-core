@@ -7,4 +7,4 @@ target
 
 # Ignore 'log' files
 *.log
-*.log.gz
+*.log.*.gz
