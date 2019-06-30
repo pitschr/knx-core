@@ -55,17 +55,10 @@ public final class DiscoveryChannelCommunicator extends AbstractChannelCommunica
         // creates new channel
         final var channel = ChannelFactory.newDiscoveryChannel(internalClient);
 
-        // add all applicable network interfaces for discovery and join the multicast group
-        // the membership keys will be kept to leave the joined multicast group by dropping
-        // the membership -> see cleanUp() method.
-        this.membershipKeys = Networker.getNetworkInterfaces().keySet().stream().map(ni -> {
-            log.debug("Network Interface to join multicast address: {}", ni);
-            try {
-                return channel.join(Constants.Default.KNX_MULTICAST_ADDRESS, ni);
-            } catch (final IOException e) {
-                throw new KnxCommunicationException("I/O exception during joining network interface: " + ni, e);
-            }
-        }).collect(Collectors.toUnmodifiableList());
+        // join channels, the membership keys will be used for laving the joined
+        // multicast groups -> see cleanUp() method.
+        this.membershipKeys = Networker.joinChannels(channel, Constants.Default.KNX_MULTICAST_ADDRESS);
+
         return channel;
     }
 

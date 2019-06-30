@@ -26,6 +26,8 @@ import li.pitschmann.knx.link.body.ControlChannelRelated;
 import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.DescriptionChannelRelated;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
+import li.pitschmann.knx.link.body.DiscoveryChannelRelated;
+import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.utils.Closeables;
@@ -35,9 +37,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketOption;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Mock Server Channel for UDP ({@link DatagramChannel}) communication
@@ -45,13 +51,16 @@ import java.nio.channels.SelectionKey;
 public final class MockServerDatagramChannel implements MockServerChannel<DatagramChannel> {
     private final static Logger logger = LoggerFactory.getLogger(MockServerDatagramChannel.class);
     private final DatagramChannel channel;
+    private SocketAddress clientDiscoverySocketAddress;
     private SocketAddress clientDescriptionSocketAddress;
     private SocketAddress clientControlSocketAddress;
     private SocketAddress clientDataSocketAddress;
     private boolean useNAT;
 
     public MockServerDatagramChannel() {
-        this.channel = ChannelFactory.newDatagramChannel(3000);
+        // as mock server is used to test locally
+        final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 0);
+        this.channel = ChannelFactory.newDatagramChannel(0, 3000, null, socketOptions);
     }
 
     @Override
@@ -75,8 +84,13 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
             key.attach(address);
         }
 
+        // update client discovery address if SearchRequestBody from client is received
+        if (body instanceof SearchRequestBody) {
+            this.clientDiscoverySocketAddress = address;
+            logger.debug("Discovery Address: {}", this.clientDiscoverySocketAddress);
+        }
         // update client description address if DescriptionRequestBody from client is received
-        if (body instanceof DescriptionRequestBody) {
+        else if (body instanceof DescriptionRequestBody) {
             this.clientDescriptionSocketAddress = address;
             logger.debug("Description Address: {}", this.clientDescriptionSocketAddress);
         }
@@ -115,7 +129,9 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
 
         // choose address based on body channel-relation
         final SocketAddress address;
-        if (body instanceof DescriptionChannelRelated) {
+        if (body instanceof DiscoveryChannelRelated) {
+            address = this.clientDiscoverySocketAddress;
+        } else if (body instanceof DescriptionChannelRelated) {
             address = this.clientDescriptionSocketAddress;
         } else if (!useNAT && body instanceof ControlChannelRelated) {
             address = this.clientControlSocketAddress;

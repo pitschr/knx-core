@@ -23,6 +23,7 @@ import li.pitschmann.knx.test.strategy.impl.DefaultConnectStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultConnectionStateStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultDescriptionStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultDisconnectStrategy;
+import li.pitschmann.knx.test.strategy.impl.DefaultDiscoveryStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultTunnelingStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +45,13 @@ import java.lang.annotation.Target;
 @Test
 @ExtendWith(MockServerTestExtension.class)
 public @interface MockServerTest {
+    /**
+     * Discovery strategy
+     * <p/>
+     * Default: {@link DefaultDiscoveryStrategy}
+     */
+    Class<? extends ResponseStrategy>[] discoveryStrategy() default {DefaultDiscoveryStrategy.class};
+
     /**
      * Description strategy
      * <p/>

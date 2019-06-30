@@ -13,7 +13,7 @@ cache:
 branches:
   only:
     - master
-    - master-split
+    - master-discovery
 
 # Compiles, run test and code coverage
 script:

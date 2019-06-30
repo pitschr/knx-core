@@ -58,11 +58,11 @@ public final class ChannelFactory {
     public static DatagramChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
         final var config = client.getConfig();
         final var localPort = config.getDiscoveryChannelPort();
-        final var socketAddress = config.getRemoteDiscoveryPort();
         final var socketTimeout = config.getSocketTimeoutDiscoveryChannel();
-        log.debug("Create new discovery channel for local: {} (local port: {}, socket timeout: {} ms)",
-                socketAddress, localPort, socketTimeout);
-        final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 4);
+        final var timeToLive = config.getDiscoveryMulticastTTL();
+        log.debug("Create new discovery channel (local port: {}, socket timeout: {} ms, Time-To-Live (TTL): {})",
+                localPort, socketTimeout, timeToLive);
+        final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, timeToLive);
         return newDatagramChannel(localPort, socketTimeout, null, socketOptions);
     }
 

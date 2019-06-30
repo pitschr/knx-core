@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -40,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
+import java.nio.channels.MembershipKey;
+import java.nio.channels.MulticastChannel;
 import java.nio.channels.Selector;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -66,7 +69,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class MockServer implements Runnable, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(MockServer.class);
     private static final AtomicInteger globalChannelIdPool = new AtomicInteger();
-    //    private static final ExecutorService broadcastExecutorService;
     private final AtomicInteger tunnelingRequestSequence = new AtomicInteger();
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
     private final List<Body> receivedBodies = Collections.synchronizedList(Lists.newLinkedList());
@@ -81,20 +83,7 @@ public final class MockServer implements Runnable, Closeable {
     private boolean cancel;
     private Throwable throwable;
     private DefaultKnxClient client;
-
-//    static {
-//        // setup broadcast service once time for JVM
-//        broadcastExecutorService = Executors.newSingleThreadExecutor(true);
-//        broadcastExecutorService.execute(new MockServerBroadcastMonitor());
-//        broadcastExecutorService.shutdown();
-//        // add shutdown hook to stop the broadcast service
-//        Runtime.getRuntime().addShutdownHook(new Thread() {
-//            @Override
-//            public void run() {
-//                Closeables.shutdownQuietly(broadcastExecutorService);
-//            }
-//        });
-//    }
+    private List<MembershipKey> membershipKeys;
 
     private MockServer(final MockServerTest mockServerAnnotation) {
         this.mockServerAnnotation = mockServerAnnotation;
@@ -123,6 +112,12 @@ public final class MockServer implements Runnable, Closeable {
         // generate channel id [0 .. 255]
         this.channelId = globalChannelIdPool.incrementAndGet() % 256;
         logger.info("Mock Server Channel ID: {}", this.channelId);
+        // Join Discovery Multicast Service if necessary
+        if (mockServerAnnotation.useDiscovery()) {
+            Preconditions.checkArgument(this.serverChannel.getChannel() instanceof MulticastChannel);
+            this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), Constants.Default.KNX_MULTICAST_ADDRESS);
+            logger.debug("Membership Keys: {}", membershipKeys);
+        }
 
         // Start executor service heartbeat monitor
         final var executorService = Executors.newSingleThreadExecutor(true);
@@ -205,6 +200,11 @@ public final class MockServer implements Runnable, Closeable {
             logger.error("Throwable during KNX mock server", t);
             throwable = t;
         } finally {
+            // drop membership keys if it exists
+            if (this.membershipKeys != null) {
+                //membershipKeys.stream().forEach(key -> key.drop());
+            }
+
             Closeables.shutdownQuietly(executorService);
             Closeables.closeQuietly(publisher);
             logger.info("*** KNX Mock Server [main] END ***");
@@ -447,7 +447,8 @@ public final class MockServer implements Runnable, Closeable {
         final Configuration.Builder configBuilder;
         if (mockServerAnnotation.useDiscovery()) {
             configBuilder = Configuration.create()
-                    .setting("endpoint.discovery.port", "12345"); // TODO: replace by discovery endpoint port
+                    .setting("endpoint.discovery.port", String.valueOf(this.serverChannel.getPort()))
+                    .setting("client.channel.discovery.ttl", "0");
             logger.info("Discovery service will be used for mock server");
         } else {
             final var address = Networker.getLocalHost();

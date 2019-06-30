@@ -291,6 +291,10 @@ public final class Configuration {
         return getSetting("client.channel.discovery.port", 0, Integer::valueOf);
     }
 
+    public int getDiscoveryMulticastTTL() {
+        return getSetting("client.channel.discovery.ttl", 4, Integer::valueOf);
+    }
+
     public int getDescriptionChannelPort() {
         return getSetting("client.channel.description.port", 0, Integer::valueOf);
     }
