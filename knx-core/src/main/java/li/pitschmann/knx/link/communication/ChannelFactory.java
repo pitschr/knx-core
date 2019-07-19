@@ -122,20 +122,6 @@ public final class ChannelFactory {
 
     /**
      * Creates an UDP channel for communication
-     * <p/>
-     * See: {@link #newDatagramChannel(int, long, SocketAddress, Map)} while local address and an
-     * ephemeral port will be picked up by the system and {@link SocketAddress} is {@code null} which means
-     * that the socket won't be connected yet
-     *
-     * @param socketTimeout socket timeout
-     * @return a new instance of {@link DatagramChannel}
-     */
-    public static DatagramChannel newDatagramChannel(final long socketTimeout) {
-        return newDatagramChannel(0, socketTimeout, null, null);
-    }
-
-    /**
-     * Creates an UDP channel for communication
      *
      * @param localPort     given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
      * @param socketTimeout socket timeout

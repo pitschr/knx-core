@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public class KnxprojParserTest {
     private static final Path KNX_PROJECT_V14 = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
+    private static final Path KNX_PROJECT_FREELEVEL_V14 = Paths.get("src/test/resources/parser/Project (Free-Level, v14).knxproj");
     private static final Path GOOD_EMPTY_PROJECT = Paths.get("src/test/resources/parser/Empty Project (No Group Addresses).knxproj");
     private static final Path CORRUPTED_FILE = Paths.get("src/test/resources/parser/Corrupted Project (Incomplete).knxproj");
     private static final Path CORRUPTED_NO_PROJECT_ID = Paths.get("src/test/resources/parser/Corrupted Project (No Project Id).knxproj");
@@ -47,13 +49,14 @@ public class KnxprojParserTest {
     private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_START = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeStart).knxproj");
     private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_END = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeEnd).knxproj");
     private static final Path CORRUPTED_NO_GROUPRANGE_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange Name).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_GROUPADDRESS_ID = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange GroupAddress Id).knxproj");
 
     /**
-     * Tests if {@link XmlProject} has been parsed correctly
+     * Tests if {@link XmlProject} (3-Level) has been parsed correctly
      */
     @Test
     @DisplayName("(Good) Test KNX Project with 3-Level group addresses")
-    public void testGoodProjectV14() {
+    public void testThreeLevelProjectV14() {
         final var project = KnxprojParser.parse(KNX_PROJECT_V14);
 
         assertThat(project).isNotNull();
@@ -61,6 +64,54 @@ public class KnxprojParserTest {
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(project.getGroupAddresses()).hasSize(189);
+
+        // ---------------------
+        // Range Group Check
+        // ---------------------
+        final var rangeMap = project.getGroupRangeMap();
+        assertThat(rangeMap).hasSize(3);
+
+        // Main Group: 0
+        final var mainGroup0 = rangeMap.get("P-0501-0_GR-47");
+        assertThat(mainGroup0.getChildGroupRanges()).hasSize(8);
+        assertThat(mainGroup0.getGroupAddresses()).isEmpty();
+        final var subGroup0_0 = mainGroup0.getChildGroupRanges().get(0);
+        assertThat(subGroup0_0.getChildGroupRanges()).isEmpty();
+        assertThat(subGroup0_0.getGroupAddresses()).hasSize(46);
+
+        // Main Group: 1
+        final var mainGroup1 = rangeMap.get("P-0501-0_GR-67");
+        assertThat(mainGroup1.getChildGroupRanges()).hasSize(5);
+        assertThat(mainGroup1.getGroupAddresses()).isEmpty();
+        final var subGroup1_2 = mainGroup1.getChildGroupRanges().get(2);
+        assertThat(subGroup1_2.getChildGroupRanges()).isEmpty();
+        assertThat(subGroup1_2.getGroupAddresses()).hasSize(3);
+
+        // Main Group: 2
+        final var mainGroup2 = rangeMap.get("P-0501-0_GR-69");
+        assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
+        assertThat(mainGroup2.getGroupAddresses()).isEmpty();
+        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group addresses in knxproj file is not ordered)
+        assertThat(subGroup2_0.getChildGroupRanges()).isEmpty();
+        assertThat(subGroup2_0.getGroupAddresses()).hasSize(11);
+    }
+
+    /**
+     * Tests if {@link XmlProject} (Free-Level) has been parsed correctly
+     */
+    @Test
+    @DisplayName("(Good) Test KNX Project with Free-Level group addresses")
+    public void testFreeLevelProjectV14() {
+        final var project = KnxprojParser.parse(KNX_PROJECT_FREELEVEL_V14);
+
+        assertThat(project).isNotNull();
+        assertThat(project.getId()).isEqualTo("P-06EF");
+        assertThat(project.getName()).isEqualTo("Project (Free-Level)");
+        assertThat(project.getGroupAddressStyle()).isEqualTo("Free");
+        assertThat(project.getGroupAddresses()).hasSize(7);
+        assertThat(project.getGroupRangeMap()).hasSize(2);
+        assertThat(project.getGroupRangeMap().get("P-06EF-0_GR-3").getGroupAddresses()).hasSize(3);
+        assertThat(project.getGroupRangeMap().get("P-06EF-0_GR-4").getGroupAddresses()).hasSize(4);
     }
 
     /**

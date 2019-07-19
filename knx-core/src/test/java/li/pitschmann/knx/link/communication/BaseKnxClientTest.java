@@ -92,7 +92,7 @@ public class BaseKnxClientTest {
      *
      * @param mockServer
      */
-    @MockServerTest(useDiscovery = true)
+    @MockServerTest
     @DisplayName("Test read and write requests (incl. async)")
     public void testReadAndWriteRequests(final MockServer mockServer) {
         final var groupAddress = GroupAddress.of(1, 2, 3);

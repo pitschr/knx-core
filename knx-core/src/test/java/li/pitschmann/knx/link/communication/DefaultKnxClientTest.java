@@ -176,15 +176,4 @@ public class DefaultKnxClientTest {
             fail("Unexpected test state", t);
         }
     }
-
-//    /**
-//     * Test {@link DefaultKnxClient#createStarted()}
-//     */
-//    @MockServerTest
-//    @Test
-//    public void testCreateStartedNoArg() {
-//        // TODO
-//        // DefaultKnxClient.createStarted()
-////        fail("implement");
-//    }
 }

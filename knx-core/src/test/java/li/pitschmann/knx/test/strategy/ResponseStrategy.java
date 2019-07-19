@@ -22,6 +22,8 @@ import li.pitschmann.knx.test.MockRequest;
 import li.pitschmann.knx.test.MockResponse;
 import li.pitschmann.knx.test.MockServer;
 
+import javax.annotation.Nonnull;
+
 /**
  * Response Strategy defining what should be done when
  * KNX mock server get a request from KNX Net/IP client
@@ -34,5 +36,6 @@ public interface ResponseStrategy {
      * @param request
      * @return a mocked response
      */
+    @Nonnull
     MockResponse createResponse(MockServer mockServer, MockRequest request);
 }

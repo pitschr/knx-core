@@ -40,6 +40,14 @@ public class XmlGroupRangeTest {
         final var xmlSubGroupRange2 = mock(XmlGroupRange.class);
         when(xmlSubGroupRange2.toString()).thenReturn("xsg2");
 
+        // group addresses
+        final var xmlGroupAddress1 = mock(XmlGroupAddress.class);
+        when(xmlGroupAddress1.toString()).thenReturn("xga1-id");
+        final var xmlGroupAddress2 = mock(XmlGroupAddress.class);
+        when(xmlGroupAddress2.toString()).thenReturn("xga2-id");
+        final var xmlGroupAddress3 = mock(XmlGroupAddress.class);
+        when(xmlGroupAddress3.toString()).thenReturn("xga3-id");
+
         // current group range
         final var xmlGroupRange = new XmlGroupRange();
         xmlGroupRange.setId("XGR-ID");
@@ -48,7 +56,7 @@ public class XmlGroupRangeTest {
         xmlGroupRange.setRangeEnd(17);
         xmlGroupRange.setName("XGR-NAME");
         xmlGroupRange.setChildGroupRanges(Lists.newArrayList(xmlSubGroupRange1, xmlSubGroupRange2));
-        xmlGroupRange.setGroupAddressIds(Lists.newArrayList("xga1-id", "xga2-id", "xga3-id"));
+        xmlGroupRange.setGroupAddresses(Lists.newArrayList(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3));
 
         // check if setter/getter are working
         assertThat(xmlGroupRange.getId()).isEqualTo("XGR-ID");
@@ -57,7 +65,7 @@ public class XmlGroupRangeTest {
         assertThat(xmlGroupRange.getRangeEnd()).isEqualTo(17);
         assertThat(xmlGroupRange.getName()).isEqualTo("XGR-NAME");
         assertThat(xmlGroupRange.getChildGroupRanges()).hasSize(2);
-        assertThat(xmlGroupRange.getGroupAddressIds()).hasSize(3);
+        assertThat(xmlGroupRange.getGroupAddresses()).hasSize(3);
 
         // @formatter:off
         // test toString()
@@ -69,7 +77,7 @@ public class XmlGroupRangeTest {
                     "rangeEnd=17, " +
                     "name=XGR-NAME, " +
                     "childGroupRanges=[xsg1, xsg2], " +
-                    "groupAddressIds=[xga1-id, xga2-id, xga3-id]" +
+                    "groupAddresses=[xga1-id, xga2-id, xga3-id]" +
                 "}");
         // @formatter:on
     }

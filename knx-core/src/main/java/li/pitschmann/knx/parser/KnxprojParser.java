@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -97,7 +98,7 @@ public final class KnxprojParser {
             final var groupAddresses = parseGroupAddresses(zipFile);
             project.setGroupAddressMap(groupAddresses);
 
-            // TODO: Linking between group ranges and group addresses
+            linkGroupRangeAndAddresses(groupRanges, groupAddresses);
         } catch (final IOException | VTDException ex) {
             throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
         }
@@ -116,7 +117,7 @@ public final class KnxprojParser {
      */
     private static XmlProject getKnxProjectInformation(final ZipFile zipFile) throws IOException, VTDException {
         // reads the 'project.xml' file from 'P-<digit>' folder
-        final var bytes = findAndReadToBytes(zipFile, "^P-\\d+/project\\.xml$");
+        final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/project\\.xml$");
 
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
@@ -152,7 +153,7 @@ public final class KnxprojParser {
     @Nonnull
     private static Map<String, XmlGroupRange> parseGroupRanges(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
         // reads the '0.xml' file from 'P-<digit>' folder
-        final var bytes = findAndReadToBytes(zipFile, "^P-\\d+/0\\.xml$");
+        final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
 
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
@@ -183,12 +184,12 @@ public final class KnxprojParser {
             groupRange.setName(readAttributeValue(vtdNav, "Name",
                     () -> new KnxprojParserException("Attribute <GroupRange @Name /> not found for: " + groupRange.getId())));
 
-            // add where?
-            final var currentIndex = vtdNav.getCurrentIndex();
+            // if main line: add GroupRange to root
+            // otherwise add GroupRange as a child of parent GroupRange
             if (vtdNav.toElement(VTDNav.PARENT) && vtdNav.matchElement("GroupRange")) {
                 // group range is not on main line
-                final var parentId = readAttributeValue(vtdNav, "Id",
-                        () -> new KnxprojParserException("Parent <GroupRange @Id /> not found."));
+                // we know that <GroupRange @Id /> exists, because it is already checked few lines above
+                final var parentId = Objects.requireNonNull(readAttributeValue(vtdNav, "Id"));
                 log.debug("Not a root level as parent element is {} ({}): {}", vtdNav.toRawString(vtdNav.getCurrentIndex()), parentId, groupRange);
 
                 // get parent group range from temporary map
@@ -197,26 +198,6 @@ public final class KnxprojParser {
                 groupRange.setLevel(parentGroupRange.getLevel() + 1);
                 // add group range to parent range as child
                 parentGroupRange.getChildGroupRanges().add(groupRange);
-
-                // now back to child GroupRange and then go to first child 'GroupAddress'
-                vtdNav.recoverNode(currentIndex);
-
-                if (vtdNav.toElement(VTDNav.FIRST_CHILD, "GroupAddress")) {
-                    // moved to first child
-                    log.debug("Moved to first child of <GroupAddress /> of: {}", groupRange);
-
-                    do {
-                        final var childGroupAddressId = readAttributeValue(vtdNav, "Id",
-                                () -> new KnxprojParserException("Parent <GroupAddress @Id /> not found."));
-                        groupRange.getGroupAddressIds().add(childGroupAddressId);
-                        log.debug("<GroupAddress @Id /> '{}' added to group range '{}'", childGroupAddressId, groupRange.getId());
-                    } while (vtdNav.toElement(VTDNav.NEXT_SIBLING, "GroupAddress"));
-                } else {
-                    log.debug("No <GroupAddress /> child found for: {}", groupRange);
-                }
-
-                // back to GroupRange
-                vtdNav.recoverNode(currentIndex);
             } else {
                 // group range is on main line
                 log.debug("Root level as parent element is 'GroupRanges': {}", groupRange);
@@ -243,7 +224,7 @@ public final class KnxprojParser {
     @Nonnull
     private static Map<String, XmlGroupAddress> parseGroupAddresses(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
         // reads the '0.xml' file from 'P-<digit>' folder
-        final var bytes = findAndReadToBytes(zipFile, "^P-\\d+/0\\.xml$");
+        final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
 
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
@@ -283,13 +264,35 @@ public final class KnxprojParser {
                     "Parent of <GroupAddress /> should be a <GroupRange />");
 
             // we are currently on GroupRange level
-            groupAddress.setParentId(readAttributeValue(vtdNav, "Id",
-                    () -> new KnxprojParserException("Attribute <GroupRange @Id /> not found.")));
+            // GroupRange Id cannot be empty because we already checked it in 'parseGroupRanges' method
+            groupAddress.setParentId(Objects.requireNonNull(readAttributeValue(vtdNav, "Id")));
 
             groupAddresses.put(groupAddress.getId(), groupAddress);
         }
 
         return groupAddresses;
+    }
+
+    /**
+     * Creates a link between {@link XmlGroupRange} and {@link XmlGroupAddress}
+     *
+     * @param xmlGroupRangeMap
+     * @param xmlGroupAddressMap
+     */
+    private static void linkGroupRangeAndAddresses(final @Nonnull Map<String, XmlGroupRange> xmlGroupRangeMap, final @Nonnull Map<String, XmlGroupAddress> xmlGroupAddressMap) {
+        // create a flat map of group ranges for easier linking
+        final var allGroupRangeFlatted = new HashMap<String, XmlGroupRange>(xmlGroupRangeMap.size() * 8); // # main groups * 8 middle groups
+        // add all main ranges
+        allGroupRangeFlatted.putAll(xmlGroupRangeMap);
+        // add all sub ranges
+        xmlGroupRangeMap.values().stream()
+                .flatMap(range -> range.getChildGroupRanges().stream())
+                .forEach(range -> allGroupRangeFlatted.put(range.getId(), range));
+
+        // now iterate through all group addresses
+        for (final var groupAddress : xmlGroupAddressMap.values()) {
+            allGroupRangeFlatted.get(groupAddress.getParentId()).getGroupAddresses().add(groupAddress);
+        }
     }
 
     /**

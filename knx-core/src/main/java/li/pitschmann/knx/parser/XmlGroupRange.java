@@ -43,7 +43,7 @@ public final class XmlGroupRange {
     private int rangeEnd;
     private String name;
     private List<XmlGroupRange> childGroupRanges = Lists.newLinkedList();
-    private List<String> groupAddressIds = Lists.newLinkedList();
+    private List<XmlGroupAddress> groupAddresses = Lists.newLinkedList();
 
     public String getId() {
         return id;
@@ -93,12 +93,12 @@ public final class XmlGroupRange {
         this.childGroupRanges = childGroupRanges;
     }
 
-    public List<String> getGroupAddressIds() {
-        return groupAddressIds;
+    public List<XmlGroupAddress> getGroupAddresses() {
+        return groupAddresses;
     }
 
-    public void setGroupAddressIds(List<String> groupAddressIds) {
-        this.groupAddressIds = groupAddressIds;
+    public void setGroupAddresses(List<XmlGroupAddress> groupAddresses) {
+        this.groupAddresses = groupAddresses;
     }
 
     @Override
@@ -111,7 +111,7 @@ public final class XmlGroupRange {
                 .add("rangeEnd", rangeEnd)
                 .add("name", name)
                 .add("childGroupRanges", childGroupRanges)
-                .add("groupAddressIds", groupAddressIds)
+                .add("groupAddresses", groupAddresses)
                 .toString();
         // @formatter:on
     }
