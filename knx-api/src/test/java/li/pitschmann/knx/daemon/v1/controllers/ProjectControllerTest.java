@@ -114,7 +114,7 @@ public class ProjectControllerTest {
         assertThatJson(body).node("childGroupRanges").isArray().hasSize(2);
         assertThatJson(body).node("childGroupRanges[0].id").isEqualTo("P-0501-0_GR-70");
         assertThatJson(body).node("childGroupRanges[1].id").isEqualTo("P-0501-0_GR-72");
-        assertThatJson(body).node("groupAddressIds").isArray().isEmpty();
+        assertThatJson(body).node("groupAddresses").isArray().isEmpty();
     }
 
     /**
@@ -141,6 +141,6 @@ public class ProjectControllerTest {
         assertThatJson(body).isObject();
         assertThatJson(body).node("id").isEqualTo("P-0501-0_GR-51");
         assertThatJson(body).node("childGroupRanges").isArray().isEmpty();
-        assertThatJson(body).node("groupAddressIds").isArray().hasSize(40);
+        assertThatJson(body).node("groupAddresses").isArray().hasSize(40);
     }
 }
