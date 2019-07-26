@@ -28,111 +28,119 @@ import java.util.concurrent.TimeUnit;
  *
  * @author PITSCHR
  */
-public interface Constants {
+public final class Constants {
+    private Constants() {}
+
     /**
      * Timeout Constants
      *
      * @author PITSCHR
      */
-    interface Timeouts {
+    public static final class Timeouts {
+        private Timeouts() {}
+
         /**
          * KNX client shall wait for 10 seconds for a SEARCH_RESPONSE frame from KNX Net/IP device.
          */
-        long SEARCH_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        public static final long SEARCH_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         /**
          * KNX client shall wait for 10 seconds for a DESCRIPTION_RESPONSE frame from KNX Net/IP device.
          */
-        long DESCRIPTION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        public static final long DESCRIPTION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         /**
          * KNX client shall wait for 10 seconds for a CONNECT_RESPONSE frame from KNX Net/IP device.
          */
-        long CONNECT_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        public static final long CONNECT_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         /**
          * KNX client shall wait for 5 seconds for a DISCONNECT_RESPONSE frame from KNX Net/IP device.
          */
-        long DISCONNECT_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+        public static final long DISCONNECT_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
         /**
          * KNX client shall wait for 1 seconds after sending a DISCONNECT_RESPONSE frame to KNX Net/IP device.
          */
-        long DISCONNECT_RESPONSE_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+        public static final long DISCONNECT_RESPONSE_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
          * KNX client shall wait for 10 seconds for a CONNECTION_STATE_RESPONSE frame from KNX Net/IP device.
          */
-        long CONNECTIONSTATE_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        public static final long CONNECTIONSTATE_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         // /**
         //  * KNX client shall wait for 10 seconds for a DEVICE_CONFIGURATION_RESPONSE frame from KNX Net/IP device.
         //  */
-        // long DEVICE_CONFIGURATION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        // public static final long DEVICE_CONFIGURATION_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
         // /**
         //  * KNX client shall wait for 1 second for a control request frame to KNX Net/IP device.
         //  */
-        // long CONTROL_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+        // public static final long CONTROL_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
          * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
          * KNX Net/IP device.
          */
-        long DATA_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+        public static final long DATA_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
          * If the KNX Net/IP device does not receive a heartbeat request within 120 seconds of the last correctly
          * received message frame, the server shall terminate the connection by sending a DISCONNECT_REQUEST to the
          * client’s control endpoint.
          */
-        long CONNECTION_ALIVE_TIME = TimeUnit.SECONDS.toMillis(120);
+        public static final long CONNECTION_ALIVE_TIME = TimeUnit.SECONDS.toMillis(120);
         /**
          * Timeout for Description Channel Socket
          */
-        long DISCOVERY_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        public static final long DISCOVERY_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
         /**
          * Timeout for Description Channel Socket
          */
-        long DESCRIPTION_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        public static final long DESCRIPTION_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
         /**
          * Timeout for Control Channel Socket
          */
-        long CONTROL_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        public static final long CONTROL_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
         /**
          * Timeout for Data Channel Socket
          */
-        long DATA_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        public static final long DATA_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
     }
 
     /**
      * Interval Constants
      */
-    interface Interval {
+    public static final class Interval {
+        private Interval() {}
+
         /**
          * Number of connection state request attempts before KNX connection will be disconnected.
          */
-        long CONNECTIONSTATE = TimeUnit.SECONDS.toMillis(60);
+        public static final long CONNECTIONSTATE = TimeUnit.SECONDS.toMillis(60);
         /**
          * Interval of look up for event pool (e.g. if request/ack received)
          */
-        long EVENT = 10L;
+        public static final long EVENT = 10L;
     }
 
     /**
      * Default Constants
      */
-    interface Default {
+    public static final class Default {
+        private Default() {}
+
         /**
          * KNX/IP Port Number
          */
-        int KNX_PORT = 3671;
+        public static final int KNX_PORT = 3671;
         /**
          * KNX/IP System Setup Multicast Address
          */
-        InetAddress KNX_MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
+        public static final InetAddress KNX_MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
         /**
          * Default size for Communicator Executor Pool Size
          */
-        int COMMUNICATION_POOL_SIZE = 10;
+        public static final int COMMUNICATION_POOL_SIZE = 10;
         /**
          * Default size for Plugin Executor Pool Size
          */
-        int PLUGIN_POOL_SIZE = 10;
+        public static final int PLUGIN_POOL_SIZE = 10;
         /**
          * Default port for HTTP Daemon (same as Pippo)
          */
-        int HTTP_DAEMON_PORT = 8338;
+        public static final int HTTP_DAEMON_PORT = 8338;
     }
 }

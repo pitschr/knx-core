@@ -20,7 +20,7 @@ public final class WriteRequest {
         return groupAddress;
     }
 
-    public void setGroupAddress(GroupAddress groupAddress) {
+    public void setGroupAddress(final GroupAddress groupAddress) {
         this.groupAddress = groupAddress;
     }
 
@@ -28,7 +28,7 @@ public final class WriteRequest {
         return dataPointType;
     }
 
-    public void setDataPointType(DataPointType<?> dataPointType) {
+    public void setDataPointType(final DataPointType<?> dataPointType) {
         this.dataPointType = dataPointType;
     }
 
@@ -36,7 +36,7 @@ public final class WriteRequest {
         return values;
     }
 
-    public void setValues(String... values) {
+    public void setValues(final String... values) {
         this.values = values;
     }
 

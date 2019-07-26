@@ -98,6 +98,7 @@ public final class KnxprojParser {
             final var groupAddresses = parseGroupAddresses(zipFile);
             project.setGroupAddressMap(groupAddresses);
 
+            // links the KNX group ranges with KNX group addresses
             linkGroupRangeAndAddresses(groupRanges, groupAddresses);
         } catch (final IOException | VTDException ex) {
             throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
@@ -167,7 +168,6 @@ public final class KnxprojParser {
         vtdAutoPilot.selectXPath("/KNX/Project/Installations//GroupAddresses//GroupRange");
 
         // iterate through all group ranges
-        final var tmpGroupRanges = Maps.<String, XmlGroupRange>newLinkedHashMap();
         while (vtdAutoPilot.evalXPath() != -1) {
             final var groupRange = new XmlGroupRange();
 
@@ -184,29 +184,23 @@ public final class KnxprojParser {
             groupRange.setName(readAttributeValue(vtdNav, "Name",
                     () -> new KnxprojParserException("Attribute <GroupRange @Name /> not found for: " + groupRange.getId())));
 
-            // if main line: add GroupRange to root
-            // otherwise add GroupRange as a child of parent GroupRange
+            // check if group range is on main level (below <GroupRanges /> element)
             if (vtdNav.toElement(VTDNav.PARENT) && vtdNav.matchElement("GroupRange")) {
-                // group range is not on main line
+                // current group range is not on main level
+
                 // we know that <GroupRange @Id /> exists, because it is already checked few lines above
                 final var parentId = Objects.requireNonNull(readAttributeValue(vtdNav, "Id"));
-                log.debug("Not a root level as parent element is {} ({}): {}", vtdNav.toRawString(vtdNav.getCurrentIndex()), parentId, groupRange);
-
-                // get parent group range from temporary map
-                final var parentGroupRange = Objects.requireNonNull(tmpGroupRanges.get(parentId));
-                // level of current group range is the level of parent group range plus 1
-                groupRange.setLevel(parentGroupRange.getLevel() + 1);
-                // add group range to parent range as child
-                parentGroupRange.getChildGroupRanges().add(groupRange);
+                if (log.isDebugEnabled()) {
+                    log.debug("Not a root level as parent element is {} ({}): {}", vtdNav.toRawString(vtdNav.getCurrentIndex()), parentId, groupRange);
+                }
+                groupRange.setParentId(parentId);
             } else {
-                // group range is on main line
+                // current group range is on main line
                 log.debug("Root level as parent element is 'GroupRanges': {}", groupRange);
-                groupRange.setLevel(0);
-                groupRanges.put(groupRange.getId(), groupRange);
+                groupRange.setParentId(null);
             }
 
-            // add temporary group ranges for parent/child linking
-            tmpGroupRanges.put(groupRange.getId(), groupRange);
+            groupRanges.put(groupRange.getId(), groupRange);
         }
 
         return groupRanges;
@@ -280,19 +274,15 @@ public final class KnxprojParser {
      * @param xmlGroupAddressMap
      */
     private static void linkGroupRangeAndAddresses(final @Nonnull Map<String, XmlGroupRange> xmlGroupRangeMap, final @Nonnull Map<String, XmlGroupAddress> xmlGroupAddressMap) {
-        // create a flat map of group ranges for easier linking
-        final var allGroupRangeFlatted = new HashMap<String, XmlGroupRange>(xmlGroupRangeMap.size() * 8); // # main groups * 8 middle groups
-        // add all main ranges
-        allGroupRangeFlatted.putAll(xmlGroupRangeMap);
-        // add all sub ranges
-        xmlGroupRangeMap.values().stream()
-                .flatMap(range -> range.getChildGroupRanges().stream())
-                .forEach(range -> allGroupRangeFlatted.put(range.getId(), range));
+        // link Group Range (parent) with Group Ranges (child)
+        xmlGroupRangeMap.values().forEach(xgr -> {
+            if (xgr.getParentId()!=null) {
+                xmlGroupRangeMap.get(xgr.getParentId()).getChildGroupRanges().add(xgr);
+            }
+        });
 
-        // now iterate through all group addresses
-        for (final var groupAddress : xmlGroupAddressMap.values()) {
-            allGroupRangeFlatted.get(groupAddress.getParentId()).getGroupAddresses().add(groupAddress);
-        }
+        // link Group Range with Group Addresses
+        xmlGroupAddressMap.values().forEach(xga -> xmlGroupRangeMap.get(xga.getParentId()).getGroupAddresses().add(xga));
     }
 
     /**
@@ -307,7 +297,7 @@ public final class KnxprojParser {
         // select xpath and evaluate
         vtdAutoPilot.selectXPath("//ComObjectInstanceRef[Connectors/Send[@GroupAddressRefId='" + groupAddress.getId() + "']]");
         vtdAutoPilot.evalXPath();
-        // read flags
+        // flags
         groupAddress.setCommunicationFlag(readAttributeValue(vtdNav, "CommunicationFlag"));
         groupAddress.setReadFlag(readAttributeValue(vtdNav, "ReadFlag"));
         groupAddress.setWriteFlag(readAttributeValue(vtdNav, "WriteFlag"));

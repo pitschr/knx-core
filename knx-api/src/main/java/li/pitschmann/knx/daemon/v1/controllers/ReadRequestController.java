@@ -42,8 +42,8 @@ public final class ReadRequestController extends AbstractController {
         final var groupAddress = readRequest.getGroupAddress();
 
         // check if GA is known
-        final var groupAddressOptional = getXmlProject().getGroupAddress(groupAddress);
-        if (!groupAddressOptional.isPresent()) {
+        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+        if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
             final var response = new ReadResponse();
             response.setStatus(Status.ERROR);
@@ -76,7 +76,6 @@ public final class ReadRequestController extends AbstractController {
         // everything OK
         else {
             log.debug("Acknowledge received for read request: {}", readRequest);
-            final var xmlGroupAddress = groupAddressOptional.get();
 
             // we add dpt, name and description only if requested
             if (containsExpand("dpt")) {

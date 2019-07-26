@@ -194,7 +194,7 @@ public final class Bytes {
      * @param b0
      * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
      */
-    public static long toSignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) {
+    public static long toSignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) { // NOSONAR
         return toSignedLong(new byte[]{b7, b6, b5, b4, b3, b2, b1, b0});
     }
 
@@ -236,7 +236,7 @@ public final class Bytes {
      * @param b0
      * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
      */
-    public static long toUnsignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) {
+    public static long toUnsignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) { // NOSONAR
         return toUnsignedLong(new byte[]{b7, b6, b5, b4, b3, b2, b1, b0});
     }
 
@@ -427,8 +427,8 @@ public final class Bytes {
      * @param b0
      * @return one byte
      */
-    public static byte toByte(final boolean b7, final boolean b6, final boolean b5, final boolean b4, final boolean b3, final boolean b2,
-                              final boolean b1, final boolean b0) {
+    public static byte toByte(final boolean b7, final boolean b6, final boolean b5, final boolean b4,    // NOSONAR
+                              final boolean b3, final boolean b2, final boolean b1, final boolean b0) {
         var b = (byte) 0x00;
         if (b7) {
             b |= 0x80;

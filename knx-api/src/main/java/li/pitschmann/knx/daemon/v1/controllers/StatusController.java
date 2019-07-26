@@ -42,12 +42,12 @@ public final class StatusController extends AbstractController {
             // Group Address? If not, skip it!
             if (entry.getKey() instanceof GroupAddress) {
                 final var groupAddress = (GroupAddress) entry.getKey();
-                final var xmlGroupAddressOptional = getXmlProject().getGroupAddress(groupAddress);
+                final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
                 final var response = new StatusResponse();
                 response.setGroupAddress(groupAddress);
-                if (xmlGroupAddressOptional.isPresent()) {
+                if (xmlGroupAddress != null) {
                     log.debug("Found group address in XML project: {}", groupAddress);
-                    fill(response, xmlGroupAddressOptional.get(), groupAddress, entry.getValue());
+                    fill(response, xmlGroupAddress, groupAddress, entry.getValue());
                 } else {
                     log.warn("Could not find group address in XML project: {}", groupAddress);
                     response.setStatus(Status.ERROR);
@@ -78,8 +78,8 @@ public final class StatusController extends AbstractController {
         final var groupAddress = statusRequest.getGroupAddress();
 
         // check if GA is known
-        final var groupAddressOptional = getXmlProject().getGroupAddress(groupAddress);
-        if (!groupAddressOptional.isPresent()) {
+        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+        if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
             final var response = new StatusResponse();
             response.setStatus(Status.ERROR);
@@ -90,7 +90,7 @@ public final class StatusController extends AbstractController {
             final var response = new StatusResponse();
             final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress);
             // fill all relevant properties
-            fill(response, groupAddressOptional.get(), groupAddress, knxStatusData);
+            fill(response, xmlGroupAddress, groupAddress, knxStatusData);
             return response;
         }
     }

@@ -126,7 +126,9 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
             isCompatible = false;
         }
         if (!isCompatible) {
-            log.debug("Incompatible arguments for parse(String[]). Try with parse as hex string: {}", Arrays.toString(args));
+            if (log.isDebugEnabled()) {
+                log.debug("Incompatible arguments for parse(String[]). Try with parse as hex string: {}", Arrays.toString(args));
+            }
             try {
                 // it may be a hex string -> try to parse it!
                 return this.tryParseAsHexString(args);
@@ -179,7 +181,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * not well-formatted for hex string
      */
     private V tryParseAsHexString(final String[] args) {
-        Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string starting with '0x' expected.");
+        Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string starting with '0x' expected: %s", args[0]);
         final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
         return this.toValue(Bytes.toByteArray(joinedString));
     }
@@ -278,7 +280,8 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         if (obj == this) {
             return true;
         } else if (obj instanceof AbstractDataPointType) {
-            return this.id.equals(((AbstractDataPointType<?>) obj).id);
+            final var other = AbstractDataPointType.class.cast(obj);
+            return this.id.equals(other.id);
         }
         return false;
     }

@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
+import com.google.common.collect.Iterables;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -68,11 +68,12 @@ public class KnxprojParserTest {
         // ---------------------
         // Range Group Check
         // ---------------------
-        final var rangeMap = project.getGroupRangeMap();
-        assertThat(rangeMap).hasSize(3);
+        final var xmlGroupRanges = project.getMainGroups();
+        assertThat(xmlGroupRanges).hasSize(3);
 
         // Main Group: 0
-        final var mainGroup0 = rangeMap.get("P-0501-0_GR-47");
+        final var mainGroup0 = Iterables.get(xmlGroupRanges, 0);
+        assertThat(mainGroup0.getId()).isEqualTo("P-0501-0_GR-47");
         assertThat(mainGroup0.getChildGroupRanges()).hasSize(8);
         assertThat(mainGroup0.getGroupAddresses()).isEmpty();
         final var subGroup0_0 = mainGroup0.getChildGroupRanges().get(0);
@@ -80,7 +81,8 @@ public class KnxprojParserTest {
         assertThat(subGroup0_0.getGroupAddresses()).hasSize(46);
 
         // Main Group: 1
-        final var mainGroup1 = rangeMap.get("P-0501-0_GR-67");
+        final var mainGroup1 = Iterables.get(xmlGroupRanges, 1);
+        assertThat(mainGroup1.getId()).isEqualTo("P-0501-0_GR-67");
         assertThat(mainGroup1.getChildGroupRanges()).hasSize(5);
         assertThat(mainGroup1.getGroupAddresses()).isEmpty();
         final var subGroup1_2 = mainGroup1.getChildGroupRanges().get(2);
@@ -88,7 +90,8 @@ public class KnxprojParserTest {
         assertThat(subGroup1_2.getGroupAddresses()).hasSize(3);
 
         // Main Group: 2
-        final var mainGroup2 = rangeMap.get("P-0501-0_GR-69");
+        final var mainGroup2 = Iterables.get(xmlGroupRanges, 2);
+        assertThat(mainGroup2.getId()).isEqualTo("P-0501-0_GR-69");
         assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
         assertThat(mainGroup2.getGroupAddresses()).isEmpty();
         final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group addresses in knxproj file is not ordered)
@@ -109,9 +112,9 @@ public class KnxprojParserTest {
         assertThat(project.getName()).isEqualTo("Project (Free-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("Free");
         assertThat(project.getGroupAddresses()).hasSize(7);
-        assertThat(project.getGroupRangeMap()).hasSize(2);
-        assertThat(project.getGroupRangeMap().get("P-06EF-0_GR-3").getGroupAddresses()).hasSize(3);
-        assertThat(project.getGroupRangeMap().get("P-06EF-0_GR-4").getGroupAddresses()).hasSize(4);
+        assertThat(project.getGroupRanges()).hasSize(2);
+        assertThat(project.getGroupRangeById("P-06EF-0_GR-3").getGroupAddresses()).hasSize(3);
+        assertThat(project.getGroupRangeById("P-06EF-0_GR-4").getGroupAddresses()).hasSize(4);
     }
 
     /**
@@ -174,7 +177,7 @@ public class KnxprojParserTest {
         assertThat(project.getId()).isEqualTo("P-0700");
         assertThat(project.getName()).isEqualTo("Project (Empty)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("Free");
-        assertThat(project.getGroupAddressMap()).isEmpty();
+        assertThat(project.getGroupAddresses()).isEmpty();
     }
 
     /**
@@ -265,7 +268,7 @@ public class KnxprojParserTest {
         TestHelpers.assertThatNotInstantiable(KnxprojParser.class);
     }
 
-    private void assertGroupAddress(final List<XmlGroupAddress> groupAddresses, final String id, final GroupAddress address, final String name, final String datapointType) {
+    private void assertGroupAddress(final Collection<XmlGroupAddress> groupAddresses, final String id, final GroupAddress address, final String name, final String datapointType) {
         final var groupAddress = groupAddresses.stream().filter(xga -> id.equals(xga.getId())).findFirst().get();
         assertThat(groupAddress.getId()).isEqualTo(id);
         assertThat(groupAddress.getAddress()).isEqualTo(address.getAddress());
@@ -273,7 +276,7 @@ public class KnxprojParserTest {
         assertThat(groupAddress.getDatapointType()).isEqualTo(datapointType);
     }
 
-    private void assertGroupAddressFlags(final List<XmlGroupAddress> groupAddresses, final String id, final boolean communication, final boolean read, final boolean write, final boolean transmit, final boolean update) {
+    private void assertGroupAddressFlags(final Collection<XmlGroupAddress> groupAddresses, final String id, final boolean communication, final boolean read, final boolean write, final boolean transmit, final boolean update) {
         final var groupAddress = groupAddresses.stream().filter(xga -> id.equals(xga.getId())).findFirst().get();
         assertThat(groupAddress.getCommunicationFlag()).isEqualTo(communication ? "Enabled" : null);
         assertThat(groupAddress.getReadFlag()).isEqualTo(read ? "Enabled" : null);

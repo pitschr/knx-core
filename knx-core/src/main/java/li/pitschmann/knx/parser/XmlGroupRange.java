@@ -38,6 +38,7 @@ import java.util.List;
  */
 public final class XmlGroupRange {
     private String id;
+    private String parentId;
     private int level;
     private int rangeStart;
     private int rangeEnd;
@@ -51,6 +52,14 @@ public final class XmlGroupRange {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public int getLevel() {

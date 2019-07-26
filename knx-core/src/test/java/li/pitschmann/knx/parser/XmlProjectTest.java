@@ -36,11 +36,14 @@ public class XmlProjectTest {
     public void testToString() {
         // create some mock data
         final var xmlGroupAddress1 = mock(XmlGroupAddress.class);
-        when(xmlGroupAddress1.toString()).thenReturn("xga1");
+        when(xmlGroupAddress1.toString()).thenReturn("xga1"); // only for #toString() simulation
+        when(xmlGroupAddress1.getAddress()).thenReturn("1"); // needed for internal mapping (will be converted to int)
         final var xmlGroupAddress2 = mock(XmlGroupAddress.class);
         when(xmlGroupAddress2.toString()).thenReturn("xga2");
+        when(xmlGroupAddress2.getAddress()).thenReturn("2");
         final var xmlGroupAddress3 = mock(XmlGroupAddress.class);
         when(xmlGroupAddress3.toString()).thenReturn("xga3");
+        when(xmlGroupAddress3.getAddress()).thenReturn("3");
         final var xmlGroupAddresses = Maps.<String, XmlGroupAddress>newLinkedHashMap();
         xmlGroupAddresses.put("xga1-id", xmlGroupAddress1);
         xmlGroupAddresses.put("xga2-id", xmlGroupAddress2);
@@ -59,7 +62,7 @@ public class XmlProjectTest {
         xmlProject.setGroupAddressMap(xmlGroupAddresses);
         xmlProject.setGroupAddressStyle("GA_STYLE");
         xmlProject.setId("PROJECT_ID");
-        xmlProject.setName("Project Name");
+        xmlProject.setName("PROJECT_NAME");
         xmlProject.setGroupRangeMap(groupRanges);
 
         // @formatter:off
@@ -67,7 +70,7 @@ public class XmlProjectTest {
         assertThat(xmlProject).hasToString("" +
                 "XmlProject{" +
                     "id=PROJECT_ID, " +
-                    "name=Project Name, " +
+                    "name=PROJECT_NAME, " +
                     "groupAddressStyle=GA_STYLE, " +
                     "groupAddressMap={xga1-id=xga1, xga2-id=xga2, xga3-id=xga3}, " +
                     "groupRangeMap={xgg1-id=xgg1, xgg2-id=xgg2}" +

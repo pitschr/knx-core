@@ -23,19 +23,14 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.queue.AbstractOutboxQueue;
 import li.pitschmann.knx.link.communication.queue.DiscoveryInboxQueue;
 import li.pitschmann.knx.link.communication.queue.DiscoveryOutboxQueue;
-import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.channels.ByteChannel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.MembershipKey;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Communicator for discovery channel related packets
@@ -64,7 +59,7 @@ public final class DiscoveryChannelCommunicator extends AbstractChannelCommunica
 
     @Override
     protected void cleanUp() {
-        membershipKeys.stream().forEach(key -> key.drop());
+        membershipKeys.stream().forEach(MembershipKey::drop);
         log.debug("Membership of all multicast groups dropped.");
     }
 
@@ -76,7 +71,7 @@ public final class DiscoveryChannelCommunicator extends AbstractChannelCommunica
 
     @Override
     @Nonnull
-    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull DatagramChannel channel) {
+    protected DiscoveryOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull DatagramChannel channel) {
         return new DiscoveryOutboxQueue(internalClient, channel);
     }
 

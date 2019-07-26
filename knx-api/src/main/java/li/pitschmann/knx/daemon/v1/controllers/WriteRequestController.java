@@ -46,8 +46,8 @@ public final class WriteRequestController extends AbstractController {
         final var groupAddress = writeRequest.getGroupAddress();
 
         // check if GA is known
-        final var groupAddressOptional = getXmlProject().getGroupAddress(groupAddress);
-        if (!groupAddressOptional.isPresent()) {
+        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+        if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
             final var response = new WriteResponse();
             response.setStatus(Status.ERROR);

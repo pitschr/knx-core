@@ -38,7 +38,8 @@ public final class ClassHelper {
      * Returns the generic type class (default index: {@code 0}) from super class of given {@code clazz}
      *
      * @param clazz
-     * @return {@code Class<?>} if found
+     * @param <T>
+     * @return {@code Class<T>} if found
      * @throws IllegalArgumentException in case the class has no generic type class
      */
     public static @Nullable

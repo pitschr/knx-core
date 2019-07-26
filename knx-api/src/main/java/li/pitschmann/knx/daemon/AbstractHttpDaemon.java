@@ -141,7 +141,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
      * @return actual port
      */
     public final int getPort() {
-        Preconditions.checkState(!isReady(), "Http Daemon Server is not ready yet!");
+        Preconditions.checkState(isReady(), "Http Daemon Server is not ready yet!");
         return port;
     }
 

@@ -226,6 +226,7 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
                         <arg>-parameters</arg>
@@ -274,6 +275,9 @@
                         <version>${version.junit-jupiter-engine}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
             </plugin>
 
             <!--

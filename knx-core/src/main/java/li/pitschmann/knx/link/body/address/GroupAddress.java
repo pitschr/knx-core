@@ -184,7 +184,16 @@ public final class GroupAddress extends KnxAddress {
      */
     @Override
     public String getAddress() {
-        return String.valueOf(Bytes.toUnsignedInt(this.address[0], this.address[1]));
+        return String.valueOf(getAddressAsInt());
+    }
+
+    /**
+     * Returns Group Address in Free-Level as an int
+     *
+     * @return group address as int (free-level)
+     */
+    public int getAddressAsInt() {
+        return Bytes.toUnsignedInt(this.address[0], this.address[1]);
     }
 
     /**

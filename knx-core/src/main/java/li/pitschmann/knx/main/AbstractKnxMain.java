@@ -34,6 +34,8 @@ import java.util.stream.Stream;
 public abstract class AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(AbstractKnxMain.class);
 
+    protected AbstractKnxMain() {}
+
     /**
      * Returns the value of parameter if supplied
      *

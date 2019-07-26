@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.test;
 
-import java.lang.reflect.Constructor;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public final class TestHelpers {
@@ -35,7 +33,7 @@ public final class TestHelpers {
     public static void assertThatNotInstantiable(final Class<?> classToTest) {
         // DPT21Value should not be instantiable
         assertThatThrownBy(() -> {
-            Constructor<?> ctor = classToTest.getDeclaredConstructor();
+            final var ctor = classToTest.getDeclaredConstructor();
             ctor.trySetAccessible();
             ctor.newInstance();
         }).hasCauseInstanceOf(AssertionError.class);

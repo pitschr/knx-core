@@ -199,7 +199,7 @@ public final class Networker {
      * @return map of network interfaces with list of {@link InetAddress}, in case of issue an empty map is returned
      */
     @Nonnull
-    public static Map<NetworkInterface, List<InetAddress>> getNetworkInterfaces() {
+    public static Map<NetworkInterface, List<InetAddress>> getNetworkInterfaces() { // NOSONAR
         // return network interface map from cache if possible
         if (networkInterfaceMap != null) {
             return networkInterfaceMap;
@@ -254,7 +254,8 @@ public final class Networker {
             log.error("Error during getting network interfaces", se);
         }
 
-        return networkInterfaceMap = Collections.unmodifiableMap(tmpMap);
+        networkInterfaceMap = Collections.unmodifiableMap(tmpMap);
+        return networkInterfaceMap;
     }
 
     /**

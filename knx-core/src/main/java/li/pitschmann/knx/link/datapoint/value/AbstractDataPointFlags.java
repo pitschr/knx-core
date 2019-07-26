@@ -71,7 +71,7 @@ abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extend
         if (obj == this) {
             return true;
         } else if (obj != null && this.getClass().equals(obj.getClass())) {
-            AbstractDataPointFlags<?> other = (AbstractDataPointFlags<?>) obj;
+            final var other = this.getClass().cast(obj);
             return Objects.equals(this.getDPT(), other.getDPT()) && Arrays.compare(this.bytes, other.bytes) == 0;
         }
         return false;
