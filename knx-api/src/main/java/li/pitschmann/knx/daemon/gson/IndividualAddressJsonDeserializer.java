@@ -13,7 +13,7 @@ import li.pitschmann.knx.link.body.address.IndividualAddress;
  * "12.3.45"
  * </pre>
  */
-public final class IndividualAddressJsonDeserializer extends KnxAddressJsonDeserializer<IndividualAddress> {
+public final class IndividualAddressJsonDeserializer extends AbstractKnxAddressJsonDeserializer<IndividualAddress> {
     @Override
     protected AddressType supportedAddressType() {
         return AddressType.INDIVIDUAL;

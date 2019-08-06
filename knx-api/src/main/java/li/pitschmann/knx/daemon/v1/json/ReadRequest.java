@@ -1,6 +1,5 @@
 package li.pitschmann.knx.daemon.v1.json;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 
 /**
@@ -13,14 +12,7 @@ public final class ReadRequest {
         return groupAddress;
     }
 
-    public void setGroupAddress(GroupAddress groupAddress) {
+    public void setGroupAddress(final GroupAddress groupAddress) {
         this.groupAddress = groupAddress;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this) //
-                .add("groupAddress", this.groupAddress) //
-                .toString();
     }
 }

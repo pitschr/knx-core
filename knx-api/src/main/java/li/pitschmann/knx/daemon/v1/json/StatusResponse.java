@@ -20,7 +20,7 @@ public final class StatusResponse extends ReadResponse {
         return groupAddress;
     }
 
-    public void setGroupAddress(GroupAddress groupAddress) {
+    public void setGroupAddress(final GroupAddress groupAddress) {
         this.groupAddress = groupAddress;
     }
 
@@ -28,7 +28,7 @@ public final class StatusResponse extends ReadResponse {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
+    public void setTimestamp(final Instant timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -36,7 +36,7 @@ public final class StatusResponse extends ReadResponse {
         return sourceAddress;
     }
 
-    public void setSourceAddress(KnxAddress sourceAddress) {
+    public void setSourceAddress(final KnxAddress sourceAddress) {
         this.sourceAddress = sourceAddress;
     }
 
@@ -44,7 +44,7 @@ public final class StatusResponse extends ReadResponse {
         return apci;
     }
 
-    public void setApci(APCI apci) {
+    public void setApci(final APCI apci) {
         this.apci = apci;
     }
 
@@ -52,7 +52,7 @@ public final class StatusResponse extends ReadResponse {
         return dirty;
     }
 
-    public void setDirty(Boolean dirty) {
+    public void setDirty(final Boolean dirty) {
         this.dirty = dirty;
     }
 }

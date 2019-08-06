@@ -21,7 +21,11 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.StatusRequest;
+import li.pitschmann.knx.daemon.v1.json.StatusResponse;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
+import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
@@ -31,6 +35,7 @@ import ro.pippo.core.HttpConstants;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,6 +57,7 @@ public class StatusControllerTest {
         final var request = daemon.newRequestBuilder("/api/v1/status?expand=*").GET().build();
         final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+        // verify response
         assertThat(response.statusCode()).isEqualTo(207);
         assertThat(response.body()).isEqualTo("[]");
     }
@@ -69,20 +75,25 @@ public class StatusControllerTest {
         final var httpClient = HttpClient.newHttpClient();
         final var groupAddress = GroupAddress.of(0, 0, 22);
 
-        // create status request
+        // create status and read requests
         final var statusRequest = new StatusRequest();
         statusRequest.setGroupAddress(groupAddress);
+
+        final var readRequest = new ReadRequest();
+        readRequest.setGroupAddress(groupAddress);
+
+        //
+        // Request #1
+        //
 
         // send status request #1 - we will get an error (not found) because we never requested for
         // this group address yet and therefore the status doesn't exists in the status pool yet
         final var httpRequest = daemon.newRequestBuilder("/api/v1/status").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
-        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-        assertThat(httpResponse.body()).isEqualTo("{\"status\":\"ERROR\"}");
+        final var httpResponseBeforeRead = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(httpResponseBeforeRead.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(httpResponseBeforeRead.body()).isEqualTo("{\"status\":\"ERROR\"}");
 
         // send /read request
-        final var readRequest = new ReadRequest();
-        readRequest.setGroupAddress(groupAddress);
         final var httpReadRequest = daemon.newRequestBuilder("/api/v1/read?expand=raw").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
         httpClient.send(httpReadRequest, HttpResponse.BodyHandlers.ofString());
 
@@ -91,28 +102,38 @@ public class StatusControllerTest {
         assertThat(httpResponseAfterRead.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(httpResponseAfterRead.body()).isEqualTo("{\"status\":\"OK\"}");
 
+        //
+        // Request #2
+        //
+
         // re-request for status but this time with all expand parameters
         final var httpRequestAllExpands = daemon.newRequestBuilder("/api/v1/status?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(statusRequest))).build();
         final var httpResponseAllExpands = httpClient.send(httpRequestAllExpands, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponseAllExpands.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        // assert the body, the timestamp is validated against regular expression ...
-        final var bodyAllExpands = httpResponseAllExpands.body();
-        assertThat(bodyAllExpands).containsPattern("^\\{" + //
-                "\"timestamp\":\\{\"seconds\":\\d+,\"nanos\":\\d+\\},");
-        // ... rest is static
-        assertThat(bodyAllExpands).endsWith(
-                "\"sourceAddress\":{\"type\":0,\"format\":\"0.0.0\",\"raw\":[0,0]}," + //
-                        "\"apci\":\"GROUP_VALUE_RESPONSE\"," + //
-                        "\"name\":\"Sub Group - DPT 2 (0x02)\"," + //
-                        "\"description\":\"1-bit, controlled (control, false)\"," + //
-                        "\"dataPointType\":\"2.001\"," + //
-                        "\"raw\":[2]," + //
-                        "\"status\":\"OK\"" + //
-                        "}");
 
-        final var httpRequestAllStatus = daemon.newRequestBuilder("/api/v1/status?expand=name").GET().build();
+        final var httpResponseAllExpandsObj = DaemonGsonEngine.INSTANCE.fromString(httpResponseAllExpands.body(), StatusResponse.class);
+        assertThat(httpResponseAllExpandsObj.getName()).isEqualTo("Sub Group - DPT 2 (0x02)");
+        assertThat(httpResponseAllExpandsObj.getDescription()).isEqualTo("1-bit, controlled (control, false)");
+        assertThat(httpResponseAllExpandsObj.getDataPointType()).isEqualTo(DPT2.SWITCH_CONTROL);
+        assertThat(httpResponseAllExpandsObj.getRaw()).containsExactly(0x02);
+        assertThat(httpResponseAllExpandsObj.getGroupAddress().getAddressLevel3()).isEqualTo("0/0/22");
+        assertThat(httpResponseAllExpandsObj.getTimestamp()).isNotNull();
+        assertThat(httpResponseAllExpandsObj.getSourceAddress()).isInstanceOf(IndividualAddress.class);
+        assertThat(httpResponseAllExpandsObj.getApci()).isEqualTo(APCI.GROUP_VALUE_RESPONSE);
+        assertThat(httpResponseAllExpandsObj.isDirty()).isFalse();
+
+        //
+        // Request #3
+        //
+
+        final var httpRequestAllStatus = daemon.newRequestBuilder("/api/v1/status?expand=groupAddress,name").GET().build();
         final var httpResponseAllStatus = httpClient.send(httpRequestAllStatus, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponseAllStatus.statusCode()).isEqualTo(207);
+
+        @SuppressWarnings("unchecked")
+        final var httpResponseAllStatusObj = (List<StatusResponse>)DaemonGsonEngine.INSTANCE.fromString(httpResponseAllStatus.body(), List.class);
+        assertThat(httpResponseAllStatusObj).hasSize(1);
+
         // assert the body
         final var bodyAllStatus = httpResponseAllStatus.body();
         // @formatter:off

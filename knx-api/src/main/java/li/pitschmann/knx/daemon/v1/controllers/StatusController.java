@@ -4,7 +4,6 @@ import li.pitschmann.knx.daemon.v1.json.Status;
 import li.pitschmann.knx.daemon.v1.json.StatusRequest;
 import li.pitschmann.knx.daemon.v1.json.StatusResponse;
 import li.pitschmann.knx.link.body.address.GroupAddress;
-import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.communication.KnxStatusData;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.parser.XmlGroupAddress;
@@ -18,7 +17,6 @@ import ro.pippo.controller.extractor.Body;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controller for requesting the KNX client status pool
@@ -38,13 +36,12 @@ public final class StatusController extends AbstractController {
 
         final var statusMap = getKnxClient().getStatusPool().copyStatusMap();
         final var responses = new ArrayList<StatusResponse>(statusMap.size());
-        for (Map.Entry<KnxAddress, KnxStatusData> entry : statusMap.entrySet()) {
+        for (final var entry : statusMap.entrySet()) {
             // Group Address? If not, skip it!
             if (entry.getKey() instanceof GroupAddress) {
                 final var groupAddress = (GroupAddress) entry.getKey();
                 final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
                 final var response = new StatusResponse();
-                response.setGroupAddress(groupAddress);
                 if (xmlGroupAddress != null) {
                     log.debug("Found group address in XML project: {}", groupAddress);
                     fill(response, xmlGroupAddress, groupAddress, entry.getValue());
@@ -123,6 +120,9 @@ public final class StatusController extends AbstractController {
             response.setStatus(Status.OK);
             getResponse().ok();
 
+            if (containsExpand("groupAddress")) {
+                response.setGroupAddress(groupAddress);
+            }
             if (containsExpand("timestamp")) {
                 response.setTimestamp(knxStatusData.getTimestamp());
             }
@@ -134,6 +134,9 @@ public final class StatusController extends AbstractController {
             }
             if (containsExpand("raw")) {
                 response.setRaw(knxStatusData.getApciData());
+            }
+            if (containsExpand("dirty")) {
+                response.setDirty(knxStatusData.isDirty());
             }
         }
     }

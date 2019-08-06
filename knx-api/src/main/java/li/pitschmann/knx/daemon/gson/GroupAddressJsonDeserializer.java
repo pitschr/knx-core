@@ -16,7 +16,7 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
  * "1/7/59"
  * </pre>
  */
-public final class GroupAddressJsonDeserializer extends KnxAddressJsonDeserializer<GroupAddress> {
+public final class GroupAddressJsonDeserializer extends AbstractKnxAddressJsonDeserializer<GroupAddress> {
     @Override
     protected AddressType supportedAddressType() {
         return AddressType.GROUP;

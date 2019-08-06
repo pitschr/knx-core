@@ -20,7 +20,9 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.json.ReadRequest;
+import li.pitschmann.knx.daemon.v1.json.ReadResponse;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.datapoint.DPT12;
 import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
@@ -38,10 +40,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ReadRequestControllerTest {
     /**
-     * Tests the /read endpoint for group addresses 0/0/56 and 0/3/47
+     * Tests the /read endpoint for group addresses 0/0/56, 0/3/47 and 1/2/25
      */
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /read endpoint for group addresses 0/0/59 and 1/3/47")
+    @DisplayName("Test /read endpoint for group addresses 0/0/59, 0/3/47 and 1/2/25")
     public void testReadOnly(final MockHttpDaemon daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
@@ -57,6 +59,7 @@ public class ReadRequestControllerTest {
         final var httpRequest = daemon.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
         assertThat(responseBody).isEqualTo("{\"status\":\"OK\"}");
+        final var response = DaemonGsonEngine.INSTANCE.fromString(responseBody, ReadResponse.class);
 
         //
         // Test #2 (with dpt and raw data)
@@ -73,6 +76,26 @@ public class ReadRequestControllerTest {
                 "\"raw\":[-64,-80,-96,-25]," + //
                 "\"status\":\"OK\"" + //
                 "}");
+
+        //
+        // Test #3 (with all parameters)
+        //
+        // create read request #3
+        final var readRequest3 = new ReadRequest();
+        readRequest3.setGroupAddress(GroupAddress.of(0,3,18));
+
+        final var httpRequest3 = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest3))).build();
+        final var responseBody3 = DaemonGsonEngine.INSTANCE.fromString(httpClient.send(httpRequest3, HttpResponse.BodyHandlers.ofString()).body(), ReadResponse.class);
+        assertThat(responseBody3.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
+        assertThat(responseBody3.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
+        assertThat(responseBody3.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
+        assertThat(responseBody3.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
+        assertThat(responseBody3).hasToString(
+                String.format("ReadResponse{name=%s, description=%s, dataPointType=%s, raw=0x80 02 70 FF}",
+                        responseBody3.getName(), //
+                        responseBody3.getDescription(), //
+                        responseBody3.getDataPointType() //
+                ));
     }
 
     /**

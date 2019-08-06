@@ -8,7 +8,7 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 /**
  * Serializes the {@link GroupAddress} to a JSON format
  */
-public final class GroupAddressJsonSerializer extends KnxAddressJsonSerializer<GroupAddress> {
+public final class GroupAddressJsonSerializer extends AbstractKnxAddressJsonSerializer<GroupAddress> {
     @Override
     protected JsonElement createAddressJsonElement(final GroupAddress address) {
         final var jsonObject = new JsonObject();
