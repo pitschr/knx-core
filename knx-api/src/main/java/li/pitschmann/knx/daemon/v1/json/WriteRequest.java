@@ -1,11 +1,7 @@
 package li.pitschmann.knx.daemon.v1.json;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DataPointType;
-import li.pitschmann.utils.ByteFormatter;
-
-import java.util.Arrays;
 
 /**
  * JSON for HTTP Write Request to KNX Daemon
@@ -46,15 +42,5 @@ public final class WriteRequest {
 
     public void setRaw(byte[] raw) {
         this.raw = raw;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this) //
-                .add("groupAddress", groupAddress) //
-                .add("dataPointType", dataPointType) //
-                .add("values", Arrays.toString(values)) //
-                .add("raw", ByteFormatter.formatHexAsString(raw)) //
-                .toString();
     }
 }

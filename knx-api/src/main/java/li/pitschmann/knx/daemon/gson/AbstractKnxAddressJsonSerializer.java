@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 /**
  * Serializes the {@link KnxAddress} to a JSON format
  */
-public abstract class KnxAddressJsonSerializer<T extends KnxAddress> implements JsonSerializer<T> {
+public abstract class AbstractKnxAddressJsonSerializer<T extends KnxAddress> implements JsonSerializer<T> {
 
     @Override
     public JsonElement serialize(T address, Type type, JsonSerializationContext jsonSerializationContext) {

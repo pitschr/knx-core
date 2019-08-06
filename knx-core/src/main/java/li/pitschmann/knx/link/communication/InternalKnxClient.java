@@ -129,18 +129,18 @@ public final class InternalKnxClient implements KnxClient {
      * Starts the services and notifies the plug-ins about initialization
      */
     protected final void start() {
-        // check if endpoint is defined - if not, look up for an available KNX Net/IP device
-        if (config.getRemoteControlAddress() == null) {
-            final var discoveryResponse = this.fetchDiscoveryFromKNX();
-            this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getControlEndpoint());
-            log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());
-        } else {
-            this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
-            log.debug("Endpoint from configuration is taken: {}", this.remoteEndpoint);
-        }
-
-        // validate
         try {
+            // check if endpoint is defined - if not, look up for an available KNX Net/IP device
+            if (config.getRemoteControlAddress() == null) {
+                final var discoveryResponse = this.fetchDiscoveryFromKNX();
+                this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getControlEndpoint());
+                log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());
+            } else {
+                this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
+                log.debug("Endpoint from configuration is taken: {}", this.remoteEndpoint);
+            }
+
+            // validate
             if (this.verify()) {
                 log.info("Verification passed. Starting KNX services.");
                 this.startServices();
