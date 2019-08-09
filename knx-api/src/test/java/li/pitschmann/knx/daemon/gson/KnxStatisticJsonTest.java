@@ -68,6 +68,7 @@ public class KnxStatisticJsonTest {
                     "}," +
                     "\"outbound\":{" +
                         "\"total\":{\"packets\":0,\"bytes\":0}," +
+                        "\"search\":{\"request\":0,\"response\":0}," +
                         "\"description\":{\"request\":0,\"response\":0}," +
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connection_state\":{\"request\":0,\"response\":0}," +
@@ -99,7 +100,7 @@ public class KnxStatisticJsonTest {
                 "{" +
                     "\"inbound\":{" +
                         "\"total\":{\"packets\":923,\"bytes\":1027}," +
-                        "\"search\":{\"request\":26,\"response\":52}," +
+                        "\"search\":{\"request\":13,\"response\":39}," +
                         "\"description\":{\"request\":65,\"response\":91}," +
                         "\"connect\":{\"request\":117,\"response\":143}," +
                         "\"connection_state\":{\"request\":169,\"response\":195}," +
@@ -108,6 +109,7 @@ public class KnxStatisticJsonTest {
                     "}," +
                     "\"outbound\":{" +
                         "\"total\":{\"packets\":949,\"bytes\":1079}," +
+                        "\"search\":{\"request\":26,\"response\":52}," +
                         "\"description\":{\"request\":78,\"response\":104}," +
                         "\"connect\":{\"request\":130,\"response\":156}," +
                         "\"connection_state\":{\"request\":182,\"response\":208}," +
