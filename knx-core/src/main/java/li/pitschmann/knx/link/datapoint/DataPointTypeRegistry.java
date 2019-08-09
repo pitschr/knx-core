@@ -44,8 +44,8 @@ import java.util.stream.Stream;
  */
 public final class DataPointTypeRegistry {
     private static final Logger log = LoggerFactory.getLogger(DataPointTypeRegistry.class);
-    private static final Map<String, DataPointType<?>> dataPointTypeMap = Maps.newHashMapWithExpectedSize(1024);
-    private static final Map<Enum<?>, DPTEnumValue<?>> dataPointEnumMap = Maps.newHashMapWithExpectedSize(1024);
+    private static final Map<String, DataPointType> dataPointTypeMap = Maps.newHashMapWithExpectedSize(1024);
+    private static final Map<Enum, DPTEnumValue> dataPointEnumMap = Maps.newHashMapWithExpectedSize(1024);
 
     static {
         // add DPT fields
@@ -165,7 +165,7 @@ public final class DataPointTypeRegistry {
             try {
                 Preconditions.checkArgument(!dataPointTypeMap.containsKey(fieldAnnotation.id()), String.format(
                         "Data Point Type key '%s' is already registered. Please check your DPT implementation!", fieldAnnotation.id()));
-                final var fieldInstance = (DataPointType<?>) field.get(null);
+                final var fieldInstance = (DataPointType) field.get(null);
                 dataPointTypeMap.put(fieldAnnotation.id(), fieldInstance);
 
                 // register DPT-x and DPST-x-y format as well which are used in '*.knxproj' file
@@ -194,7 +194,7 @@ public final class DataPointTypeRegistry {
      * @return
      */
     public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
-        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = (DPTEnumValue<T>) dataPointEnumMap.get(e);
+        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(e);
         if (dpt == null) {
             throw new KnxEnumNotFoundException("Could not find enum data point type for: " + e);
         }
@@ -207,7 +207,7 @@ public final class DataPointTypeRegistry {
      * @param id
      * @return {@link DataPointType}
      */
-    public static <T extends DataPointType<?>> T getDataPointType(final String id) {
+    public static <T extends DataPointType> T getDataPointType(final String id) {
         @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(id);
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);

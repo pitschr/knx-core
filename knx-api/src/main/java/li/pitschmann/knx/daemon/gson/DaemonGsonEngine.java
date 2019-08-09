@@ -19,15 +19,15 @@ public final class DaemonGsonEngine extends GsonEngine {
     private DaemonGsonEngine() {
         gson = new GsonBuilder()
                 // serializers
-                .registerTypeAdapter(DataPointType.class, new DataPointTypeJsonSerializer())
-                .registerTypeAdapter(GroupAddress.class, new GroupAddressJsonSerializer())
-                .registerTypeAdapter(IndividualAddress.class, new IndividualAddressJsonSerializer())
-                .registerTypeHierarchyAdapter(KnxStatistic.class, new KnxStatisticJsonSerializer())
+                .registerTypeAdapter(DataPointType.class, DataPointTypeJsonSerializer.INSTANCE)
+                .registerTypeAdapter(GroupAddress.class, GroupAddressJsonSerializer.INSTANCE)
+                .registerTypeAdapter(IndividualAddress.class, IndividualAddressJsonSerializer.INSTANCE)
+                .registerTypeHierarchyAdapter(KnxStatistic.class, KnxStatisticJsonSerializer.INSTANCE)
                 // de-serializers
-                .registerTypeAdapter(DataPointType.class, new DataPointTypeJsonDeserializer())
-                .registerTypeAdapter(GroupAddress.class, new GroupAddressJsonDeserializer())
-                .registerTypeAdapter(IndividualAddress.class, new IndividualAddressJsonDeserializer())
-                .registerTypeAdapter(KnxAddress.class, new KnxAddressJsonDeserializer())
+                .registerTypeAdapter(DataPointType.class, DataPointTypeJsonDeserializer.INSTANCE)
+                .registerTypeAdapter(GroupAddress.class, GroupAddressJsonDeserializer.INSTANCE)
+                .registerTypeAdapter(IndividualAddress.class, IndividualAddressJsonDeserializer.INSTANCE)
+                .registerTypeAdapter(KnxAddress.class, KnxAddressJsonDeserializer.INSTANCE)
                 .create();
     }
 

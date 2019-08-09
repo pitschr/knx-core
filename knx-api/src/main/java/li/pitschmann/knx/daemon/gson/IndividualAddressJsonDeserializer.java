@@ -14,18 +14,24 @@ import li.pitschmann.knx.link.body.address.IndividualAddress;
  * </pre>
  */
 public final class IndividualAddressJsonDeserializer extends AbstractKnxAddressJsonDeserializer<IndividualAddress> {
+    public static final IndividualAddressJsonDeserializer INSTANCE = new IndividualAddressJsonDeserializer();
+
+    private IndividualAddressJsonDeserializer() {
+        // private constructor
+    }
+
     @Override
     protected AddressType supportedAddressType() {
         return AddressType.INDIVIDUAL;
     }
 
     @Override
-    protected IndividualAddress convert(byte[] addressArray) {
+    protected IndividualAddress convert(final byte[] addressArray) {
         return IndividualAddress.of(addressArray);
     }
 
     @Override
-    protected IndividualAddress convert(String address) {
+    protected IndividualAddress convert(final String address) {
         return IndividualAddress.of(address);
     }
 }

@@ -10,7 +10,7 @@ import li.pitschmann.utils.ByteFormatter;
 public class ReadResponse extends AbstractResponse {
     private String name;
     private String description;
-    private DataPointType<?> dataPointType;
+    private DataPointType dataPointType;
     private byte[] raw;
 
     public String getName() {
@@ -29,11 +29,11 @@ public class ReadResponse extends AbstractResponse {
         this.description = description;
     }
 
-    public DataPointType<?> getDataPointType() {
+    public DataPointType getDataPointType() {
         return dataPointType;
     }
 
-    public void setDataPointType(DataPointType<?> dataPointType) {
+    public void setDataPointType(DataPointType dataPointType) {
         this.dataPointType = dataPointType;
     }
 

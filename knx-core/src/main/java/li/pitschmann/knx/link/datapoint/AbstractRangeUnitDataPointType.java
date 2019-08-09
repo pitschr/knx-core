@@ -25,7 +25,7 @@ import li.pitschmann.knx.link.datapoint.value.DataPointValue;
  *
  * @author PITSCHR
  */
-public abstract class AbstractRangeUnitDataPointType<T extends DataPointValue<?>, R extends Comparable<R>> extends AbstractDataPointType<T> {
+public abstract class AbstractRangeUnitDataPointType<V extends DataPointValue<?>, R extends Comparable<R>> extends AbstractDataPointType<V> {
     private final R lowerValue;
     private final R upperValue;
     private final String unit;

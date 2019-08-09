@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 
@@ -21,7 +20,7 @@ import java.lang.reflect.Type;
  */
 public abstract class AbstractKnxAddressJsonDeserializer<T extends KnxAddress> implements JsonDeserializer<T> {
     @Override
-    public T deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public T deserialize(final JsonElement jsonElement, final Type type, final JsonDeserializationContext jsonDeserializationContext) {
         // is json element a json object
         if (jsonElement.isJsonObject()) {
             final var jsonObject = (JsonObject) jsonElement;
@@ -47,7 +46,8 @@ public abstract class AbstractKnxAddressJsonDeserializer<T extends KnxAddress> i
                 return convert(String.valueOf(jsonPrimitive.getAsInt()));
             }
         }
-        throw new UnsupportedOperationException("Given JSON is not supported: " + jsonElement);
+        // otherwise give up...
+        throw new UnsupportedOperationException("Given JSON format is not supported: " + jsonElement);
     }
 
     private byte[] convertJsonArrayToByteArray(final JsonArray jsonArray) {

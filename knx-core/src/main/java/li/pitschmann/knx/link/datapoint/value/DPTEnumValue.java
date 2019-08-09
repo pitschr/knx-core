@@ -102,7 +102,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
         if (obj == this) {
             return true;
         } else if (obj instanceof DPTEnumValue) {
-            final var other = DPTEnumValue.class.cast(obj);
+            final var other = (DPTEnumValue) obj;
             return Objects.equals(this.dpt, other.dpt) //
                     && Objects.equals(this.enumField, other.enumField);
         }

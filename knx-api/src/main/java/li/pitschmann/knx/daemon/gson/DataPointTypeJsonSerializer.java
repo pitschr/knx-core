@@ -12,6 +12,12 @@ import java.lang.reflect.Type;
  * Serializes the {@link DataPointType} to a JSON format using Gson
  */
 public final class DataPointTypeJsonSerializer implements JsonSerializer<DataPointType<?>> {
+    public static final DataPointTypeJsonSerializer INSTANCE = new DataPointTypeJsonSerializer();
+
+    private DataPointTypeJsonSerializer() {
+        // private-constructor
+    }
+
     @Override
     public JsonElement serialize(DataPointType<?> dataPointType, Type type, JsonSerializationContext jsonSerializationContext) {
         return new JsonPrimitive(dataPointType.getId());
