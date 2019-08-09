@@ -15,6 +15,8 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxStatistic;
@@ -27,6 +29,12 @@ import java.util.function.Function;
  * Serializes the {@link KnxStatistic} to a JSON format
  */
 public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStatistic> {
+    public static final KnxStatisticJsonSerializer INSTANCE = new KnxStatisticJsonSerializer();
+
+    private KnxStatisticJsonSerializer() {
+        // private-constructor
+    }
+
     @Override
     public JsonElement serialize(final KnxStatistic src, final Type typeOfSrc, final JsonSerializationContext context) {
         final var jsonStatistic = new JsonObject();
@@ -38,7 +46,8 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
 
         final var inbound = new JsonObject();
         inbound.add("total", inboundTotal);
-        final Function<Class<? extends Body>, Long> receivedFunction = (clazz) -> src.getNumberOfBodyReceived(clazz);
+        final Function<Class<? extends Body>, Long> receivedFunction = src::getNumberOfBodyReceived;
+        inbound.add("search", getRequestResponsePair(receivedFunction, SearchRequestBody.class, SearchResponseBody.class));
         inbound.add("description", getRequestResponsePair(receivedFunction, DescriptionRequestBody.class, DescriptionResponseBody.class));
         inbound.add("connect", getRequestResponsePair(receivedFunction, ConnectRequestBody.class, ConnectResponseBody.class));
         inbound.add("connection_state", getRequestResponsePair(receivedFunction, ConnectionStateRequestBody.class, ConnectionStateResponseBody.class));
@@ -52,7 +61,8 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
 
         final var outbound = new JsonObject();
         outbound.add("total", outboundTotal);
-        final Function<Class<? extends Body>, Long> sentFunction = (clazz) -> src.getNumberOfBodySent(clazz);
+        final Function<Class<? extends Body>, Long> sentFunction = src::getNumberOfBodySent;
+        outbound.add("search", getRequestResponsePair(sentFunction, SearchRequestBody.class, SearchResponseBody.class));
         outbound.add("description", getRequestResponsePair(sentFunction, DescriptionRequestBody.class, DescriptionResponseBody.class));
         outbound.add("connect", getRequestResponsePair(sentFunction, ConnectRequestBody.class, ConnectResponseBody.class));
         outbound.add("connection_state", getRequestResponsePair(sentFunction, ConnectionStateRequestBody.class, ConnectionStateResponseBody.class));

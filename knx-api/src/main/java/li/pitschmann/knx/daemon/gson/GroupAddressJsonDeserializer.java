@@ -17,18 +17,24 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
  * </pre>
  */
 public final class GroupAddressJsonDeserializer extends AbstractKnxAddressJsonDeserializer<GroupAddress> {
+    public static final GroupAddressJsonDeserializer INSTANCE = new GroupAddressJsonDeserializer();
+
+    private GroupAddressJsonDeserializer() {
+        // private constructor
+    }
+
     @Override
     protected AddressType supportedAddressType() {
         return AddressType.GROUP;
     }
 
     @Override
-    protected GroupAddress convert(byte[] addressArray) {
+    protected GroupAddress convert(final byte[] addressArray) {
         return GroupAddress.of(addressArray);
     }
 
     @Override
-    protected GroupAddress convert(String address) {
+    protected GroupAddress convert(final String address) {
         return GroupAddress.of(address);
     }
 }

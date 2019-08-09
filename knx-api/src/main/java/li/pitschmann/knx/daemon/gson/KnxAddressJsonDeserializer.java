@@ -1,42 +1,52 @@
 package li.pitschmann.knx.daemon.gson;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.KnxAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 
 /**
  * De-Serializes a JSON format of knx address to a sub-type of {@link KnxAddress}
+ * <p/>
+ * Currently supported are {@link AddressType#INDIVIDUAL} and {@link AddressType#GROUP} which will
+ * call either {@link IndividualAddressJsonDeserializer} or {@link GroupAddressJsonDeserializer}, respectively.
  *
  * <code>
- * {"type":1,"address":[0,22]}
+ * {"type":1, ... }
  * </code>
  */
-public class KnxAddressJsonDeserializer implements JsonDeserializer<KnxAddress> {
-    private static final GroupAddressJsonDeserializer GROUP_ADDRESS_DESERIALIZER = new GroupAddressJsonDeserializer();
-    private static final IndividualAddressJsonDeserializer INDIVIDUAL_ADDRESS_DESERIALIZER = new IndividualAddressJsonDeserializer();
+public final class KnxAddressJsonDeserializer implements JsonDeserializer<KnxAddress> {
+    public static final KnxAddressJsonDeserializer INSTANCE = new KnxAddressJsonDeserializer();
+    private static final Logger log = LoggerFactory.getLogger(KnxAddressJsonDeserializer.class);
+
+    public KnxAddressJsonDeserializer() {
+        // private constructor
+    }
 
     @Override
-    public KnxAddress deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        // is json element a json object
-        if (jsonElement.isJsonObject()) {
-            final var jsonObject = (JsonObject) jsonElement;
+    public KnxAddress deserialize(final JsonElement jsonElement, final Type type, final JsonDeserializationContext jsonDeserializationContext) {
+        Preconditions.checkArgument(jsonElement.isJsonObject(), "JSON Element should be a JsonObject.");
 
-            // get address type
-            final var addressType = jsonObject.getAsJsonPrimitive("type").getAsInt();
+        final var jsonObject = (JsonObject) jsonElement;
 
-            // deserialize based on address type
-            if (addressType == AddressType.GROUP.getCode()) {
-                return GROUP_ADDRESS_DESERIALIZER.deserialize(jsonElement, type, jsonDeserializationContext);
-            } else if (addressType == AddressType.INDIVIDUAL.getCode()) {
-                return INDIVIDUAL_ADDRESS_DESERIALIZER.deserialize(jsonElement, type, jsonDeserializationContext);
-            }
+        // get address type
+        final var addressType = jsonObject.getAsJsonPrimitive("type").getAsInt();
+        log.debug("Address Type is: {}", addressType);
+
+        // deserialize based on address type
+        if (addressType == AddressType.GROUP.getCode()) {
+            return GroupAddressJsonDeserializer.INSTANCE.deserialize(jsonElement, type, jsonDeserializationContext);
+        } else if (addressType == AddressType.INDIVIDUAL.getCode()) {
+            return IndividualAddressJsonDeserializer.INSTANCE.deserialize(jsonElement, type, jsonDeserializationContext);
         }
-        throw new UnsupportedOperationException("Given JSON is not supported: " + jsonElement);
+
+        throw new UnsupportedOperationException("Given JSON type is not supported: " + jsonElement);
     }
 }

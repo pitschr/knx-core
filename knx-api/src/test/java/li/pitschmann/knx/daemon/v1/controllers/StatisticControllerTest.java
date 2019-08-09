@@ -56,6 +56,7 @@ public class StatisticControllerTest {
                             "\"packets\":3," +
                             "\"bytes\":224" +
                         "}," +
+                        "\"search\":{\"request\":0,\"response\":0}," +
                         "\"description\":{\"request\":0,\"response\":1}," +
                         "\"connect\":{\"request\":0,\"response\":1}," +
                         "\"connection_state\":{\"request\":0,\"response\":1}," +
@@ -67,6 +68,7 @@ public class StatisticControllerTest {
                             "\"packets\":3," +
                             "\"bytes\":182" +
                         "}," +
+                        "\"search\":{\"request\":0,\"response\":0}," +
                         "\"description\":{\"request\":1,\"response\":0}," +
                         "\"connect\":{\"request\":1,\"response\":0}," +
                         "\"connection_state\":{\"request\":1,\"response\":0}," +

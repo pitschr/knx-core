@@ -280,7 +280,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         if (obj == this) {
             return true;
         } else if (obj instanceof AbstractDataPointType) {
-            final var other = AbstractDataPointType.class.cast(obj);
+            final var other = (AbstractDataPointType) obj;
             return this.id.equals(other.id);
         }
         return false;
