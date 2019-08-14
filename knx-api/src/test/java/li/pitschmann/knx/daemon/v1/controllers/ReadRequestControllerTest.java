@@ -23,6 +23,8 @@ import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT12;
+import li.pitschmann.knx.parser.XmlGroupAddress;
+import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
@@ -34,11 +36,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link ReadRequestController}
  */
-public class ReadRequestControllerTest {
+public class ReadRequestControllerTest extends AbstractControllerTest {
     /**
      * Tests the /read endpoint for group addresses 0/0/56, 0/3/47 and 1/2/25
      */
@@ -82,7 +86,7 @@ public class ReadRequestControllerTest {
         //
         // create read request #3
         final var readRequest3 = new ReadRequest();
-        readRequest3.setGroupAddress(GroupAddress.of(0,3,18));
+        readRequest3.setGroupAddress(GroupAddress.of(0, 3, 18));
 
         final var httpRequest3 = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest3))).build();
         final var responseBody3 = DaemonGsonEngine.INSTANCE.fromString(httpClient.send(httpRequest3, HttpResponse.BodyHandlers.ofString()).body(), ReadResponse.class);
@@ -117,4 +121,22 @@ public class ReadRequestControllerTest {
         assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
         assertThat(httpResponse.body()).isEqualTo("{\"status\":\"ERROR\"}");
     }
+
+    //    @Test
+    public void test() {
+        final XmlProject xmlProject = getXmlProject(x -> {
+            final var xmlGroupAddress = new XmlGroupAddress();
+            xmlGroupAddress.setName("Test Name");
+            when(x.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddress);
+        });
+
+        final var controller = newController(ReadRequestController.class, null, xmlProject, null);
+
+        final var request = new ReadRequest();
+        request.setGroupAddress(GroupAddress.of(1, 2, 3));
+        final var response = controller.readRequest(request);
+
+        assertThat(response).isInstanceOf(ReadResponse.class);
+    }
+
 }
