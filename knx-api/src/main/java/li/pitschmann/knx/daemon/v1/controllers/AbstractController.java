@@ -31,7 +31,7 @@ abstract class AbstractController extends Controller {
      */
     protected String[] getExpandParameters() {
         final var expandParameter = getRequest().getParameter(PARAMETER_EXPAND);
-        if (expandParameter.isNull()) {
+        if (expandParameter == null || expandParameter.isNull()) {
             return EMPTY_STRING_ARRAY;
         } else {
             return expandParameter.toString().split(",");

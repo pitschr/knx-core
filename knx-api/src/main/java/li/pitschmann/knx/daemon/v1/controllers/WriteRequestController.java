@@ -1,7 +1,6 @@
 package li.pitschmann.knx.daemon.v1.controllers;
 
 import com.google.inject.Inject;
-import li.pitschmann.knx.daemon.v1.json.Status;
 import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.daemon.v1.json.WriteResponse;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
@@ -14,8 +13,6 @@ import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Body;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Controller for write requests
@@ -50,7 +47,6 @@ public final class WriteRequestController extends AbstractController {
         if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
             final var response = new WriteResponse();
-            response.setStatus(Status.ERROR);
             getResponse().notFound();
             return response;
         }
@@ -63,7 +59,6 @@ public final class WriteRequestController extends AbstractController {
             if (dpt == null || dptValues == null || dptValues.length == 0) {
                 log.error("No DPT or/and DPT values defined for write request: {}", writeRequest);
                 final var response = new WriteResponse();
-                response.setStatus(Status.ERROR);
                 getResponse().badRequest();
                 return response;
             } else {
@@ -77,29 +72,22 @@ public final class WriteRequestController extends AbstractController {
         TunnelingAckBody ackBody = null;
         try {
             ackBody = knxClient.writeRequest(groupAddress, rawToWrite).get();
-        } catch (final ExecutionException | InterruptedException ex) {
+        } catch (final Exception ex) {
             log.error("Exception during sending write request", ex);
         }
 
         final var response = new WriteResponse();
 
-        // acknowledge not received?
-        if (ackBody == null) {
-            log.warn("No acknowledge received for write request: {}", writeRequest);
-            response.setStatus(Status.ERROR);
-            getResponse().internalError();
-        }
-        // acknowledge received with error?
-        else if (ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
-            log.warn("Unexpected acknowledge status '{}' received for write request: {}", ackBody.getStatus(), writeRequest);
-            response.setStatus(Status.ERROR);
+        // acknowledge not received or received with error?
+        if (ackBody == null
+                || ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
+            log.warn("No or unexpected acknowledge received for write request: {}", ackBody);
             getResponse().internalError();
         }
         // everything OK
         else {
             log.debug("Acknowledge received for write request: {}", writeRequest);
-            response.setStatus(Status.OK);
-            getResponse().ok();
+            getResponse().accepted();
         }
 
         return response;

@@ -7,7 +7,7 @@ import li.pitschmann.utils.ByteFormatter;
 /**
  * JSON read response
  */
-public class ReadResponse extends AbstractResponse {
+public class ReadResponse {
     private String name;
     private String description;
     private DataPointType dataPointType;

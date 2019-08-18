@@ -21,22 +21,29 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import ro.pippo.core.HttpConstants;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link WriteRequestController}
  */
-public class WriteRequestControllerTest {
+public class WriteRequestControllerTest extends AbstractControllerTest {
     /**
      * Test /write endpoint for group address 0/0/22
      *
@@ -44,8 +51,8 @@ public class WriteRequestControllerTest {
      * @throws Exception
      */
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /write endpoint for group address 0/0/22")
-    public void testWriteOnly(final MockHttpDaemon daemon) throws Exception {
+    @DisplayName("OK: Write Request for group address 0/0/22")
+    public void testWrite(final MockHttpDaemon daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
@@ -58,6 +65,93 @@ public class WriteRequestControllerTest {
         // send write request
         final var httpRequest = daemon.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(writeRequest))).build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody).isEqualTo("{\"status\":\"OK\"}");
+        assertThat(responseBody).isEqualTo("{}");
+    }
+
+    /**
+     * An erroneous Write Request without DPT and raw data.
+     */
+    @Test
+    @DisplayName("Error: Write Request endpoint without DPT and raw data")
+    public void testWriteMissingDptAndRawData() {
+        final var controller = newController(WriteRequestController.class);
+        final var groupAddress = GroupAddress.of(4, 7, 28);
+
+        //
+        // Verification
+        //
+
+        final var request = new WriteRequest();
+        request.setGroupAddress(groupAddress);
+
+        final var response = controller.writeRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(responseJson).isEqualTo("{}");
+    }
+
+    /**
+     * Write Request for an existing group address in XML project file,
+     * but no ack body could be found (or retrieved yet) due a thrown
+     * exception.
+     */
+    @Test
+    @DisplayName("Error: Write Request without found ack body due a thrown exception from KNX client")
+    public void testWriteException() {
+        final var controller = newController(WriteRequestController.class);
+        final var groupAddress = randomGroupAddress();
+
+        //
+        // Mocking
+        //
+
+        // mock no ack body was found - an execution exception is thrown instead
+        try {
+            when(controller.getKnxClient().writeRequest(groupAddress, new byte[0]).get()).thenThrow(new ExecutionException(null));
+        } catch (final Throwable t) {
+            fail(t);
+        }
+
+        //
+        // Verification
+        //
+
+        final var request = new WriteRequest();
+        request.setGroupAddress(groupAddress);
+        request.setDataPointType(DPT1.SWITCH);
+        request.setValues("true");
+
+        final var response = controller.writeRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
+        assertThat(responseJson).isEqualTo("{}");
+    }
+
+    /**
+     * Tests the write endpoint for an unknown group address
+     */
+    @Test
+    @DisplayName("Error: Write Request for an unknown group address")
+    public void testWriteUnknownGroupAddress() {
+        final var controller = newController(WriteRequestController.class);
+
+        //
+        // Mocking
+        //
+
+        // mock an non-existing xml group address
+        when(controller.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+
+        //
+        // Verification
+        //
+
+        final var request = new WriteRequest();
+        request.setGroupAddress(randomGroupAddress());
+
+        final var response = controller.writeRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(responseJson).isEqualTo("{}");
     }
 }

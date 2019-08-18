@@ -2,7 +2,6 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
-import li.pitschmann.knx.daemon.v1.json.Status;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Body;
 import ro.pippo.core.HttpConstants;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,7 +44,6 @@ public final class ReadRequestController extends AbstractController {
         if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
             final var response = new ReadResponse();
-            response.setStatus(Status.ERROR);
             getResponse().notFound();
             return response;
         }
@@ -55,22 +52,16 @@ public final class ReadRequestController extends AbstractController {
         TunnelingAckBody ackBody = null;
         try {
             ackBody = getKnxClient().readRequest(groupAddress).get();
-        } catch (final ExecutionException | InterruptedException ex) {
+        } catch (final Exception ex) {
             log.error("Exception during sending read request", ex);
         }
 
         final var response = new ReadResponse();
 
-        // acknowledge not received?
-        if (ackBody == null) {
-            log.warn("No acknowledge received for read request: {}", readRequest);
-            response.setStatus(Status.ERROR);
-            getResponse().internalError();
-        }
-        // acknowledge received with error?
-        else if (ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
-            log.warn("Unexpected KNX acknowledge status '{}' received for read request: {}", ackBody.getStatus(), readRequest);
-            response.setStatus(Status.ERROR);
+        // acknowledge not received or received with error?
+        if (ackBody == null
+                || ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
+            log.warn("No or unexpected acknowledge received for read request: {}", ackBody);
             getResponse().internalError();
         }
         // everything OK
@@ -93,16 +84,13 @@ public final class ReadRequestController extends AbstractController {
                 final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress, 3, TimeUnit.SECONDS, true);
                 if (knxStatusData != null) {
                     log.debug("Status data found for group address: {}", groupAddress);
-                    response.setStatus(Status.OK);
                     response.setRaw(knxStatusData.getApciData());
                     getResponse().ok();
                 } else {
                     log.warn("Status data not found for group address: {}", groupAddress);
-                    response.setStatus(Status.ERROR);
                     getResponse().status(HttpConstants.StatusCode.GATEWAY_TIMEOUT);
                 }
             } else {
-                response.setStatus(Status.OK);
                 getResponse().ok();
             }
         }

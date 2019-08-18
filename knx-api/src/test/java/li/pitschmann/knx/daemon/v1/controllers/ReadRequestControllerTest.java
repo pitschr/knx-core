@@ -21,122 +21,186 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
+import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT12;
-import li.pitschmann.knx.parser.XmlGroupAddress;
-import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
 
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link ReadRequestController}
  */
 public class ReadRequestControllerTest extends AbstractControllerTest {
+
     /**
      * Tests the /read endpoint for group addresses 0/0/56, 0/3/47 and 1/2/25
      */
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /read endpoint for group addresses 0/0/59, 0/3/47 and 1/2/25")
+    @DisplayName("OK: Read Request for group addresses 0/0/59, 0/3/47 and 1/2/25")
     public void testReadOnly(final MockHttpDaemon daemon) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
+        // create read request
+        final var request = new ReadRequest();
+        request.setGroupAddress(GroupAddress.of(0, 3, 18));
 
-        //
-        // Test #1
-        //
-        // create read request #1
-        final var readRequest = new ReadRequest();
-        readRequest.setGroupAddress(GroupAddress.of(0, 0, 56));
-
-        // send read request #1
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
-        final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody).isEqualTo("{\"status\":\"OK\"}");
-        final var response = DaemonGsonEngine.INSTANCE.fromString(responseBody, ReadResponse.class);
-
-        //
-        // Test #2 (with dpt and raw data)
-        //
-        // create read request #2
-        final var readRequest2 = new ReadRequest();
-        readRequest2.setGroupAddress(GroupAddress.of(0, 3, 47));
-
-        // send read request #2
-        final var httpRequest2 = daemon.newRequestBuilder("/api/v1/read?expand=dpt,raw").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest2))).build();
-        final var responseBody2 = httpClient.send(httpRequest2, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody2).isEqualTo("{" + //
-                "\"dataPointType\":\"15.000\"," + //
-                "\"raw\":[-64,-80,-96,-25]," + //
-                "\"status\":\"OK\"" + //
-                "}");
-
-        //
-        // Test #3 (with all parameters)
-        //
-        // create read request #3
-        final var readRequest3 = new ReadRequest();
-        readRequest3.setGroupAddress(GroupAddress.of(0, 3, 18));
-
-        final var httpRequest3 = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest3))).build();
-        final var responseBody3 = DaemonGsonEngine.INSTANCE.fromString(httpClient.send(httpRequest3, HttpResponse.BodyHandlers.ofString()).body(), ReadResponse.class);
-        assertThat(responseBody3.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
-        assertThat(responseBody3.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
-        assertThat(responseBody3.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
-        assertThat(responseBody3.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
-        assertThat(responseBody3).hasToString(
+        // do a call with all parameters
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(request))).build();
+        final var response = DaemonGsonEngine.INSTANCE.fromString(httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body(), ReadResponse.class);
+        assertThat(response.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
+        assertThat(response.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
+        assertThat(response.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
+        assertThat(response.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
+        assertThat(response).hasToString(
                 String.format("ReadResponse{name=%s, description=%s, dataPointType=%s, raw=0x80 02 70 FF}",
-                        responseBody3.getName(), //
-                        responseBody3.getDescription(), //
-                        responseBody3.getDataPointType() //
+                        response.getName(), //
+                        response.getDescription(), //
+                        response.getDataPointType() //
                 ));
     }
 
     /**
-     * Tests the /read endpoint for an unknown group addresses (0/0/255)
+     * Read Request for an existing group address. No expand parameters, will return the minimal response
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /read endpoint for an unknown group addresses")
-    public void testReadUnknownGroupAddress(final MockHttpDaemon daemon) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
+    @Test
+    @DisplayName("OK: Read Request for group address without any expand parameters (minimal response)")
+    public void testReadMinimal() {
+        final var controller = newController(ReadRequestController.class);
+        final var groupAddress = randomGroupAddress();
 
-        // create read request
-        final var readRequest = new ReadRequest();
-        readRequest.setGroupAddress(GroupAddress.of(0, 0, 255));
+        //
+        // Mocking
+        //
 
-        // send read request
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
-        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-        assertThat(httpResponse.body()).isEqualTo("{\"status\":\"ERROR\"}");
-    }
+        // mock retrieve tunneling ack status with no error
+        try {
+            when(controller.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
+        } catch (final Throwable t) {
+            fail(t);
+        }
 
-    //    @Test
-    public void test() {
-        final XmlProject xmlProject = getXmlProject(x -> {
-            final var xmlGroupAddress = new XmlGroupAddress();
-            xmlGroupAddress.setName("Test Name");
-            when(x.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddress);
-        });
-
-        final var controller = newController(ReadRequestController.class, null, xmlProject, null);
+        //
+        // Verification
+        //
 
         final var request = new ReadRequest();
-        request.setGroupAddress(GroupAddress.of(1, 2, 3));
-        final var response = controller.readRequest(request);
+        request.setGroupAddress(groupAddress);
 
-        assertThat(response).isInstanceOf(ReadResponse.class);
+        final var response = controller.readRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(responseJson).isEqualTo("{}");
     }
 
+    /**
+     * Read Request for an existing group address in XML project file,
+     * but no ack body could be found (or retrieved yet) due a thrown
+     * exception.
+     */
+    @Test
+    @DisplayName("Error: Read Request without found ack body due a thrown exception from KNX client")
+    public void testReadException() {
+        final var controller = newController(ReadRequestController.class);
+        final var groupAddress = randomGroupAddress();
+
+        //
+        // Mocking
+        //
+
+        // mock no ack body was found - an execution exception is thrown instead
+        try {
+            when(controller.getKnxClient().readRequest(groupAddress).get()).thenThrow(new ExecutionException(null));
+        } catch (final Throwable t) {
+            fail(t);
+        }
+
+        //
+        // Verification
+        //
+
+        final var request = new ReadRequest();
+        request.setGroupAddress(groupAddress);
+
+        final var response = controller.readRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
+        assertThat(responseJson).isEqualTo("{}");
+    }
+
+    /**
+     * Read Request causing an internal timeout because KNX client didn't receive a response
+     * from KNX Net/IP device yet (and therefore no status data available in the status pool).
+     */
+    @Test
+    @DisplayName("Error: Read Request without available KNX status data from KNX Client (internal timeout)")
+    public void testReadInternalTimeout() {
+        final var controller = newController(ReadRequestController.class);
+        final var groupAddress = randomGroupAddress();
+
+        //
+        // Mocking
+        //
+
+        // mock 'raw' expand parameter to retrieve response for raw metadata
+        doReturn(true).when(controller).containsExpand("raw");
+
+        // mock retrieve tunneling ack status with no error
+        try {
+            when(controller.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
+        } catch (final Throwable t) {
+            fail(t);
+        }
+
+        //
+        // Verification
+        //
+
+        final var request = new ReadRequest();
+        request.setGroupAddress(groupAddress);
+
+        final var response = controller.readRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.GATEWAY_TIMEOUT);
+        assertThat(responseJson).isEqualTo("{}");
+    }
+
+    /**
+     * Tests the read endpoint for an unknown group address
+     */
+    @Test
+    @DisplayName("Error: Read Request for an unknown group address")
+    public void testReadUnknownGroupAddress() {
+        final var controller = newController(ReadRequestController.class);
+
+        //
+        // Mocking
+        //
+
+        // mock an non-existing xml group address
+        when(controller.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+
+        //
+        // Verification
+        //
+
+        final var request = new ReadRequest();
+        request.setGroupAddress(randomGroupAddress());
+
+        final var response = controller.readRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(responseJson).isEqualTo("{}");
+    }
 }

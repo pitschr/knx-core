@@ -10,11 +10,20 @@ import java.time.Instant;
  * JSON status response
  */
 public final class StatusResponse extends ReadResponse {
+    private Status status;
     private GroupAddress groupAddress;
     private Instant timestamp;
     private KnxAddress sourceAddress;
     private APCI apci;
     private Boolean dirty;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public GroupAddress getGroupAddress() {
         return groupAddress;
