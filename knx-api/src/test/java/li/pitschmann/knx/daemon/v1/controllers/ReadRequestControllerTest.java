@@ -64,6 +64,7 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
 
         // verify ReadResponse
         final var readResponse = DaemonGsonEngine.INSTANCE.fromString(httpResponse.body(), ReadResponse.class);
+        assertThat(readResponse.getGroupAddress()).isEqualTo(groupAddress);
         assertThat(readResponse.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
         assertThat(readResponse.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
         assertThat(readResponse.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
