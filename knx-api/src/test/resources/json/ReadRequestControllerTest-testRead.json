@@ -1,0 +1,23 @@
+{
+  "groupAddress": {
+    "type": 1,
+    "format": {
+      "free_level": "786",
+      "two_level": "0/786",
+      "three_level": "0/3/18"
+    },
+    "raw": [
+      3,
+      18
+    ]
+  },
+  "name": "Sub Group - DPT 12 (0x80 02 70 FF)",
+  "description": "4-bytes, unsigned (2147643647)",
+  "dataPointType": "12.001",
+  "raw": [
+    -128,
+    2,
+    112,
+    -1
+  ]
+}

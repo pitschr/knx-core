@@ -63,11 +63,11 @@ public class KnxHttpDaemonTest {
         // send read request #1
         final var readHttpRequest = daemon.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
         final var responseBody = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody).isEqualTo("{\"status\":\"OK\"}");
+        assertThat(responseBody).isEqualTo("{}");
 
         // write 0x01
         final var writeBody = httpClient.send(writeHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(writeBody).isEqualTo("{\"status\":\"OK\"}");
+        assertThat(writeBody).isEqualTo("{}");
 
         // send read request #2
         // - group address: "1-bit (false)" which has been initialized with "false" contains now "true"
@@ -78,8 +78,7 @@ public class KnxHttpDaemonTest {
                 "\"name\":\"Sub Group - DPT 1 (0x00)\"," + //
                 "\"description\":\"1-bit (false)\"," + //
                 "\"dataPointType\":\"1.001\"," + //
-                "\"raw\":[1]," + //
-                "\"status\":\"OK\"" + //
+                "\"raw\":[1]" + //
                 "}");
     }
 }

@@ -3,7 +3,7 @@ package li.pitschmann.knx.daemon.v1.json;
 /**
  * JSON project overview response
  */
-public final class ProjectOverviewResponse extends AbstractResponse {
+public final class ProjectOverviewResponse {
     private String id;
     private String name;
     private String groupAddressStyle;

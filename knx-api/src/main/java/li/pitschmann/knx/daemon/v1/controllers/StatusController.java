@@ -7,14 +7,14 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.KnxStatusData;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.parser.XmlGroupAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Body;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
  * Controller for requesting the KNX client status pool
  */
 public final class StatusController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(StatusController.class);
+    private static final StatusResponse EMPTY_RESPONSE = new StatusResponse();
 
     /**
      * Endpoint for all statuses
@@ -31,7 +31,7 @@ public final class StatusController extends AbstractController {
      */
     @GET("/status")
     @Produces(Produces.JSON)
-    public List<StatusResponse> getStatus() {
+    public List<StatusResponse> statusAll() {
         log.trace("Http Status request for all available group addresses received");
 
         final var statusMap = getKnxClient().getStatusPool().copyStatusMap();
@@ -44,10 +44,9 @@ public final class StatusController extends AbstractController {
                 final var response = new StatusResponse();
                 if (xmlGroupAddress != null) {
                     log.debug("Found group address in XML project: {}", groupAddress);
-                    fill(response, xmlGroupAddress, groupAddress, entry.getValue());
+                    fill(response, groupAddress, xmlGroupAddress, entry.getValue());
                 } else {
-                    log.warn("Could not find group address in XML project: {}", groupAddress);
-                    response.setStatus(Status.ERROR);
+                    fill(response, groupAddress, null, null);
                 }
                 responses.add(response);
             }
@@ -69,7 +68,7 @@ public final class StatusController extends AbstractController {
     @POST("/status")
     @Consumes(Consumes.JSON)
     @Produces(Produces.JSON)
-    public StatusResponse getStatus(final @Body StatusRequest statusRequest) {
+    public StatusResponse statusRequest(final @Body StatusRequest statusRequest) {
         log.trace("Http Status Request received: {}", statusRequest);
 
         final var groupAddress = statusRequest.getGroupAddress();
@@ -77,51 +76,65 @@ public final class StatusController extends AbstractController {
         // check if GA is known
         final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
         if (xmlGroupAddress == null) {
-            log.warn("Could not find group address in XML project: {}", groupAddress);
-            final var response = new StatusResponse();
-            response.setStatus(Status.ERROR);
-            getResponse().notFound();
-            return response;
-        } else {
-            // GA is known
-            final var response = new StatusResponse();
-            final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress);
-            // fill all relevant properties
-            fill(response, xmlGroupAddress, groupAddress, knxStatusData);
-            return response;
+            getResponse().badRequest();
+            return EMPTY_RESPONSE;
         }
+
+        // check if there is status data available in status pool
+        final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress);
+
+        if (knxStatusData == null) {
+            log.warn("Status data not found for group address: {}", groupAddress);
+            getResponse().notFound();
+            return EMPTY_RESPONSE;
+        }
+
+        // group address is known in XML project and there is status data available
+        // fill all relevant properties
+        final var response = new StatusResponse();
+        fill(response, groupAddress, xmlGroupAddress, knxStatusData);
+        getResponse().ok();
+        return response;
     }
 
     /**
      * Fill the given {@link StatusResponse} with data that is requested by {@code expand} parameter
      *
      * @param response
-     * @param xmlGroupAddress
      * @param groupAddress
+     * @param xmlGroupAddress
      * @param knxStatusData
      */
-    private void fill(final StatusResponse response, final XmlGroupAddress xmlGroupAddress, final GroupAddress groupAddress, final KnxStatusData knxStatusData) {
-        if (containsExpand("dpt")) {
-            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
-        }
-        if (containsExpand("name")) {
-            response.setName(xmlGroupAddress.getName());
-        }
-        if (containsExpand("description")) {
-            response.setDescription(xmlGroupAddress.getDescription());
-        }
+    private void fill(final @Nonnull StatusResponse response, final @Nonnull GroupAddress groupAddress, final @Nullable XmlGroupAddress xmlGroupAddress, final @Nullable KnxStatusData knxStatusData) {
 
+        boolean isOK = true;
+        if (xmlGroupAddress == null) {
+            log.warn("Could not find group address in XML project: {}", groupAddress);
+            isOK = false;
+        }
         if (knxStatusData == null) {
             log.warn("No status data found for group address: {}", groupAddress);
-            response.setStatus(Status.ERROR);
-            getResponse().notFound();
-        } else {
-            log.debug("Status data found for group address: {}", groupAddress);
-            response.setStatus(Status.OK);
-            getResponse().ok();
+            isOK = false;
+        }
 
-            if (containsExpand("groupAddress")) {
-                response.setGroupAddress(groupAddress);
+        // status and group address is always displayed
+        if (containsExpand("status")) {
+            response.setStatus(isOK ? Status.OK : Status.ERROR);
+        }
+        if (containsExpand("groupAddress")) {
+            response.setGroupAddress(groupAddress);
+        }
+
+        // other are displayed only when data are available
+        if (isOK) {
+            if (containsExpand("dpt")) {
+                response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
+            }
+            if (containsExpand("name")) {
+                response.setName(xmlGroupAddress.getName());
+            }
+            if (containsExpand("description")) {
+                response.setDescription(xmlGroupAddress.getDescription());
             }
             if (containsExpand("timestamp")) {
                 response.setTimestamp(knxStatusData.getTimestamp());
@@ -139,5 +152,6 @@ public final class StatusController extends AbstractController {
                 response.setDirty(knxStatusData.isDirty());
             }
         }
+
     }
 }
