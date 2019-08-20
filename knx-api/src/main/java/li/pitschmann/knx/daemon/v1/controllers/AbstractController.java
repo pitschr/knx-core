@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.parser.XmlProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.Path;
 
@@ -15,6 +17,7 @@ import javax.annotation.Nonnull;
  */
 @Path("/api/v1")
 abstract class AbstractController extends Controller {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String PARAMETER_EXPAND = "expand";
 

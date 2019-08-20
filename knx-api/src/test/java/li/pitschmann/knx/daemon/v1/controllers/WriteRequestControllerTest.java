@@ -151,7 +151,7 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
 
         final var response = controller.writeRequest(request);
         final var responseJson = asJson(response);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
         assertThat(responseJson).isEqualTo("{}");
     }
 }

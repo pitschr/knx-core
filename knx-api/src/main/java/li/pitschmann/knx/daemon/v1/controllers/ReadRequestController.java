@@ -4,8 +4,6 @@ import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;
@@ -18,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * Controller for read requests
  */
 public final class ReadRequestController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(ReadRequestController.class);
+    private static final ReadResponse EMPTY_RESPONSE = new ReadResponse();
 
     /**
      * Endpoint for read request to be forwarded to KNX Net/IP device by KNX Daemon
@@ -43,57 +41,56 @@ public final class ReadRequestController extends AbstractController {
         final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
         if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
-            final var response = new ReadResponse();
-            getResponse().notFound();
-            return response;
+            getResponse().badRequest();
+            return EMPTY_RESPONSE;
         }
 
         // found - group address is known, send read request
         TunnelingAckBody ackBody = null;
         try {
             ackBody = getKnxClient().readRequest(groupAddress).get();
+            log.debug("Acknowledge received for read request: {}", readRequest);
         } catch (final Exception ex) {
             log.error("Exception during sending read request", ex);
         }
-
-        final var response = new ReadResponse();
 
         // acknowledge not received or received with error?
         if (ackBody == null
                 || ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
             log.warn("No or unexpected acknowledge received for read request: {}", ackBody);
             getResponse().internalError();
+            return EMPTY_RESPONSE;
         }
+
+        // wait for response from KNX Net/IP device to obtain the most recent raw values
+        final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress, 3, TimeUnit.SECONDS, true);
+        if (knxStatusData == null) {
+            log.warn("Status data not found for group address: {}", groupAddress);
+            getResponse().notFound();
+            return EMPTY_RESPONSE;
+        }
+
         // everything OK
-        else {
-            log.debug("Acknowledge received for read request: {}", readRequest);
-
-            // we add dpt, name and description only if requested
-            if (containsExpand("dpt")) {
-                response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
-            }
-            if (containsExpand("name")) {
-                response.setName(xmlGroupAddress.getName());
-            }
-            if (containsExpand("description")) {
-                response.setDescription(xmlGroupAddress.getDescription());
-            }
-
-            if (containsExpand("raw")) {
-                // wait for response from KNX Net/IP device to obtain the most recent raw values
-                final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress, 3, TimeUnit.SECONDS, true);
-                if (knxStatusData != null) {
-                    log.debug("Status data found for group address: {}", groupAddress);
-                    response.setRaw(knxStatusData.getApciData());
-                    getResponse().ok();
-                } else {
-                    log.warn("Status data not found for group address: {}", groupAddress);
-                    getResponse().status(HttpConstants.StatusCode.GATEWAY_TIMEOUT);
-                }
-            } else {
-                getResponse().ok();
-            }
+        log.debug("Status data found for group address: {}", groupAddress);
+        final var response = new ReadResponse();
+        // we add group address, dpt, name and description only if requested
+        if (containsExpand("groupAddress")) {
+            response.setGroupAddress(groupAddress);
         }
+        if (containsExpand("dpt")) {
+            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
+        }
+        if (containsExpand("name")) {
+            response.setName(xmlGroupAddress.getName());
+        }
+        if (containsExpand("description")) {
+            response.setDescription(xmlGroupAddress.getDescription());
+        }
+        if (containsExpand("raw")) {
+            response.setRaw(knxStatusData.getApciData());
+        }
+
+        getResponse().ok();
 
         return response;
     }

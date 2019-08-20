@@ -30,12 +30,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
 
+import java.time.Instant;
 import java.util.LinkedHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,9 +75,6 @@ public class StatusControllerTest extends AbstractControllerTest {
         // Mocking
         //
 
-        // mock all expand parameters
-        doReturn(true).when(controller).containsExpand(anyString());
-
         // mock status map with some entries
         // - three with known group addresses in the XML project file
         // - one with unknown group address in the XML project file
@@ -87,35 +83,51 @@ public class StatusControllerTest extends AbstractControllerTest {
         final var sourceGroupAddress = IndividualAddress.of(15, 15, 255);
 
         final var knxAddress0 = GroupAddress.of(0, 1, 2);
-        final var knxStatusData0 = new KnxStatusData(sourceGroupAddress, APCI.GROUP_VALUE_READ, new byte[]{0x01});
+        final var knxStatusData0 = mock(KnxStatusData.class);
+        when(knxStatusData0.getTimestamp()).thenReturn(Instant.ofEpochMilli(123456));
+        when(knxStatusData0.getSourceAddress()).thenReturn(sourceGroupAddress);
+        when(knxStatusData0.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData0.getApciData()).thenReturn(new byte[]{0x01});
         statusMap.put(knxAddress0, knxStatusData0);
 
         final var knxAddress1 = GroupAddress.of(1, 2, 3);
-        final var knxStatusData1 = new KnxStatusData(sourceGroupAddress, APCI.GROUP_VALUE_WRITE, new byte[]{0x23});
+        final var knxStatusData1 = mock(KnxStatusData.class);
+        when(knxStatusData1.getTimestamp()).thenReturn(Instant.ofEpochMilli(234567));
+        when(knxStatusData1.getSourceAddress()).thenReturn(sourceGroupAddress);
+        when(knxStatusData1.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
+        when(knxStatusData1.getApciData()).thenReturn(new byte[]{0x23});
         statusMap.put(knxAddress1, knxStatusData1);
 
         final var knxAddress2 = GroupAddress.of(2, 3, 4);
-        final var knxStatusData2 = new KnxStatusData(sourceGroupAddress, APCI.GROUP_VALUE_RESPONSE, new byte[]{0x56, 0x78});
+        final var knxStatusData2 = mock(KnxStatusData.class);
+        when(knxStatusData2.getTimestamp()).thenReturn(Instant.ofEpochMilli(345678));
+        when(knxStatusData2.getSourceAddress()).thenReturn(sourceGroupAddress);
+        when(knxStatusData2.getApci()).thenReturn(APCI.GROUP_VALUE_RESPONSE);
+        when(knxStatusData2.getApciData()).thenReturn(new byte[]{0x56, 0x7E});
         statusMap.put(knxAddress2, knxStatusData2);
 
         final var knxAddress3 = GroupAddress.of(3, 4, 5);
-        final var knxStatusData3 = new KnxStatusData(sourceGroupAddress, APCI.GROUP_VALUE_READ, new byte[]{0x69, 0x0A, 0x4E});
+        final var knxStatusData3 = mock(KnxStatusData.class);
+        when(knxStatusData3.getTimestamp()).thenReturn(Instant.ofEpochMilli(456789));
+        when(knxStatusData3.getSourceAddress()).thenReturn(sourceGroupAddress);
+        when(knxStatusData3.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData3.getApciData()).thenReturn(new byte[]{0x69, 0x0A, 0x4E});
         statusMap.put(knxAddress3, knxStatusData3);
 
         final var xmlGroupAddress0 = new XmlGroupAddress();
-        xmlGroupAddress0.setDatapointType("1.001"); // DPT1.Switch
+        xmlGroupAddress0.setDatapointType("1.001");
         xmlGroupAddress0.setName("DPT1.Switch Name");
         xmlGroupAddress0.setDescription("DPT1.Switch Description");
         when(controller.getXmlProject().getGroupAddress(knxAddress0)).thenReturn(xmlGroupAddress0);
 
         final var xmlGroupAddress1 = new XmlGroupAddress();
-        xmlGroupAddress1.setDatapointType("5.010"); // DPT5.1-Octet Unsigned
+        xmlGroupAddress1.setDatapointType("5.010");
         xmlGroupAddress1.setName("DPT5.1-Octet Unsigned Name");
         xmlGroupAddress1.setDescription("DPT5.1-Octet Unsigned Description");
         when(controller.getXmlProject().getGroupAddress(knxAddress1)).thenReturn(xmlGroupAddress1);
 
         final var xmlGroupAddress2 = new XmlGroupAddress();
-        xmlGroupAddress2.setDatapointType("7.001"); // DPT7.2-Octet Unsigned
+        xmlGroupAddress2.setDatapointType("7.001");
         xmlGroupAddress2.setName("DPT7.2-Octet Unsigned Name");
         xmlGroupAddress2.setDescription("DPT7.2-Octet Unsigned Description");
         when(controller.getXmlProject().getGroupAddress(knxAddress2)).thenReturn(xmlGroupAddress2);
@@ -137,24 +149,9 @@ public class StatusControllerTest extends AbstractControllerTest {
         assertThat(response.get(1).getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
         assertThat(response.get(2).getDescription()).isEqualTo("DPT7.2-Octet Unsigned Description");
         assertThat(response.get(3).getStatus()).isEqualTo(Status.ERROR);
-
-        // now verify with only one expand parameter
-        doReturn(false).when(controller).containsExpand(anyString());
-        doReturn(true).when(controller).containsExpand("name");
-
-        assertThat(asJson(controller.statusAll())).isEqualTo(
-                // @formatter:off
-                "[" +
-                    "{\"name\":\"DPT1.Switch Name\"}," +
-                    "{\"name\":\"DPT5.1-Octet Unsigned Name\"}," +
-                    "{\"name\":\"DPT7.2-Octet Unsigned Name\"}," +
-                    "{}" +
-                "]"
-                // @formatter:on
-        );
+        assertThat(asJson(controller.statusAll())).isEqualTo(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
 
     }
-
 
     /**
      * Tests the status endpoint for a known group address
@@ -163,7 +160,8 @@ public class StatusControllerTest extends AbstractControllerTest {
     @DisplayName("OK: Status Request for a known group address")
     public void testSingleStatus() {
         final var controller = newController(StatusController.class);
-        final var groupAddress = randomGroupAddress();
+        final var groupAddress = GroupAddress.of(7, 7, 78);
+        final var sourceAddress = IndividualAddress.of(15, 14, 13);
 
         //
         // Mocking
@@ -171,6 +169,10 @@ public class StatusControllerTest extends AbstractControllerTest {
 
         // mock an existing KNX status data in status pool
         final var knxStatusData = mock(KnxStatusData.class);
+        when(knxStatusData.getTimestamp()).thenReturn(Instant.ofEpochMilli(9876543));
+        when(knxStatusData.getSourceAddress()).thenReturn(sourceAddress);
+        when(knxStatusData.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData.getApciData()).thenReturn(new byte[]{0x77, 0x43, 0x21});
         when(controller.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
 
         //
@@ -183,6 +185,37 @@ public class StatusControllerTest extends AbstractControllerTest {
         final var response = controller.statusRequest(request);
         final var responseJson = asJson(response);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testSingleStatus.json"));
+    }
+
+    /**
+     * Tests the status endpoint for a known group address but status
+     * is not available in the status pool (yet)
+     */
+    @Test
+    @DisplayName("ERROR: Status Request for a known group address but unknown to status pool")
+    public void testSingleStatusNoStatus() {
+        final var controller = newController(StatusController.class);
+        final var groupAddress = GroupAddress.of(7, 7, 88);
+        final var sourceAddress = IndividualAddress.of(14, 13, 12);
+
+        //
+        // Mocking
+        //
+
+        // mock a non-existing KNX status data in status pool
+        when(controller.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(null);
+
+        //
+        // Verification
+        //
+
+        final var request = new StatusRequest();
+        request.setGroupAddress(groupAddress);
+
+        final var response = controller.statusRequest(request);
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
         assertThat(responseJson).isEqualTo("{}");
     }
 
@@ -193,13 +226,11 @@ public class StatusControllerTest extends AbstractControllerTest {
     @DisplayName("Error: Status Request an unknown group address")
     public void testWriteUnknownGroupAddress() {
         final var controller = newController(StatusController.class);
+        final var groupAddress = randomGroupAddress();
 
         //
         // Mocking
         //
-
-        // mock the expand 'status' parameter
-        doReturn(true).when(controller).containsExpand("status");
 
         // mock an non-existing xml group address
         when(controller.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
@@ -209,11 +240,11 @@ public class StatusControllerTest extends AbstractControllerTest {
         //
 
         final var request = new StatusRequest();
-        request.setGroupAddress(randomGroupAddress());
+        request.setGroupAddress(groupAddress);
 
         final var response = controller.statusRequest(request);
         final var responseJson = asJson(response);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-        assertThat(responseJson).isEqualTo("{\"status\":\"ERROR\"}");
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(responseJson).isEqualTo("{}");
     }
 }

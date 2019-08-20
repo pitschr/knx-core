@@ -1,0 +1,123 @@
+[
+  {
+    "status": "OK",
+    "timestamp": {
+      "seconds": 123,
+      "nanos": 456000000
+    },
+    "sourceAddress": {
+      "type": 0,
+      "format": "15.15.255",
+      "raw": [
+        -1,
+        -1
+      ]
+    },
+    "apci": "GROUP_VALUE_READ",
+    "dirty": false,
+    "groupAddress": {
+      "type": 1,
+      "format": {
+        "free_level": "258",
+        "two_level": "0/258",
+        "three_level": "0/1/2"
+      },
+      "raw": [
+        1,
+        2
+      ]
+    },
+    "name": "DPT1.Switch Name",
+    "description": "DPT1.Switch Description",
+    "dataPointType": "1.001",
+    "raw": [
+      1
+    ]
+  },
+  {
+    "status": "OK",
+    "timestamp": {
+      "seconds": 234,
+      "nanos": 567000000
+    },
+    "sourceAddress": {
+      "type": 0,
+      "format": "15.15.255",
+      "raw": [
+        -1,
+        -1
+      ]
+    },
+    "apci": "GROUP_VALUE_WRITE",
+    "dirty": false,
+    "groupAddress": {
+      "type": 1,
+      "format": {
+        "free_level": "2563",
+        "two_level": "1/515",
+        "three_level": "1/2/3"
+      },
+      "raw": [
+        10,
+        3
+      ]
+    },
+    "name": "DPT5.1-Octet Unsigned Name",
+    "description": "DPT5.1-Octet Unsigned Description",
+    "dataPointType": "5.010",
+    "raw": [
+      35
+    ]
+  },
+  {
+    "status": "OK",
+    "timestamp": {
+      "seconds": 345,
+      "nanos": 678000000
+    },
+    "sourceAddress": {
+      "type": 0,
+      "format": "15.15.255",
+      "raw": [
+        -1,
+        -1
+      ]
+    },
+    "apci": "GROUP_VALUE_RESPONSE",
+    "dirty": false,
+    "groupAddress": {
+      "type": 1,
+      "format": {
+        "free_level": "4868",
+        "two_level": "2/772",
+        "three_level": "2/3/4"
+      },
+      "raw": [
+        19,
+        4
+      ]
+    },
+    "name": "DPT7.2-Octet Unsigned Name",
+    "description": "DPT7.2-Octet Unsigned Description",
+    "dataPointType": "7.001",
+    "raw": [
+      86,
+      126
+    ]
+  },
+  {
+    "status": "ERROR",
+    "groupAddress": {
+      "type": 1,
+      "format": {
+        "free_level": "7173",
+        "two_level": "3/1029",
+        "three_level": "3/4/5"
+      },
+      "raw": [
+        28,
+        5
+      ]
+    }
+  }
+]

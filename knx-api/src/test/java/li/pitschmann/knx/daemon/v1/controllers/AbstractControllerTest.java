@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.daemon.v1.controllers;
 
+import com.google.gson.JsonParser;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -30,7 +31,8 @@ import li.pitschmann.knx.link.communication.KnxStatusPool;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlProject;
-import ro.pippo.controller.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.core.Messages;
 import ro.pippo.core.PippoSettings;
@@ -42,13 +44,20 @@ import ro.pippo.core.route.RouteContext;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -57,23 +66,23 @@ import static org.mockito.Mockito.when;
  * Abstract Controller Test for testing purposes
  */
 public abstract class AbstractControllerTest {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final HttpClient httpClient = HttpClient.newHttpClient();
 
-
     /**
-     * Creates a new instance of {@link Controller}
+     * Creates a new instance of {@link AbstractController}
      *
      * @param controller
      * @param knxClient    the default KNX client, if {@code null} falls back to {@link #getDefaultKnxClient()}
      * @param xmlProject   the XML client, if {@code null} falls back to {@link #getDefaultXmlProject()}
      * @param routeContext the route context, if {@code null} falls back to {@link #getDefaultRouteContext()}
      * @param <T>
-     * @return new instance of {@link Controller}
+     * @return new instance of {@link AbstractController}
      */
-    protected final <T extends Controller> T newController(final @Nonnull Class<T> controller,
-                                                           final @Nullable DefaultKnxClient knxClient,
-                                                           final @Nullable XmlProject xmlProject,
-                                                           final @Nullable RouteContext routeContext) {
+    protected final <T extends AbstractController> T newController(final @Nonnull Class<T> controller,
+                                                                   final @Nullable DefaultKnxClient knxClient,
+                                                                   final @Nullable XmlProject xmlProject,
+                                                                   final @Nullable RouteContext routeContext) {
         try {
             // Create a new instance of controller
             final T obj = controller.getDeclaredConstructor().newInstance();
@@ -101,7 +110,9 @@ public abstract class AbstractControllerTest {
             // be injected by Pippo Framework
             final var routeContextInternal = routeContext == null ? getDefaultRouteContext() : routeContext;
             final var spyObject = spy(obj);
+
             when(spyObject.getRouteContext()).thenReturn(routeContextInternal);
+            doReturn(true).when(spyObject).containsExpand(anyString());
 
             return spyObject;
         } catch (final Exception e) {
@@ -110,14 +121,15 @@ public abstract class AbstractControllerTest {
     }
 
     /**
-     * Creates a new instnace of {@link Controller} with default values from {@link #getDefaultKnxClient()},
-     * {@link #getDefaultXmlProject()} and {@link #getDefaultRouteContext()}
+     * Creates a new instance of {@link AbstractController} with default values
+     * from {@link #getDefaultKnxClient()}, {@link #getDefaultXmlProject()} and
+     * {@link #getDefaultRouteContext()}
      *
      * @param controller
      * @param <T>
-     * @return new instance of {@link Controller}
+     * @return new instance of {@link AbstractController}
      */
-    protected final <T extends Controller> T newController(final @Nonnull Class<T> controller) {
+    protected final <T extends AbstractController> T newController(final @Nonnull Class<T> controller) {
         return newController(controller, null, null, null);
     }
 
@@ -207,6 +219,9 @@ public abstract class AbstractControllerTest {
         final var xmlProject = mock(XmlProject.class);
 
         final var xmlGroupAddress = mock(XmlGroupAddress.class);
+        when(xmlGroupAddress.getDatapointType()).thenReturn("1.001");
+        when(xmlGroupAddress.getName()).thenReturn("DPT1.Switch Name");
+        when(xmlGroupAddress.getDescription()).thenReturn("DPT1.Switch Description");
         when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddress);
 
         if (consumer != null) {
@@ -253,5 +268,29 @@ public abstract class AbstractControllerTest {
         }
 
         return routeContext;
+    }
+
+    /**
+     * Reads the given test resource on {@code filePath} and returns the content
+     * as an UTF-8 compliant String representation.
+     *
+     * @param filePath
+     * @return content (UTF-8 decoded)
+     */
+    protected final String readJsonFile(final String filePath) {
+        log.debug("File: {}", filePath);
+        try {
+            final var path = Paths.get(AbstractControllerTest.class.getResource(filePath).toURI());
+            if (Files.isReadable(path)) {
+                final var content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+                log.debug("Content of file '{}': {}", filePath, content);
+                // minify json
+                return new JsonParser().parse(content).toString();
+            }
+            throw new AssertionError("File not found or cannot be read: " + filePath);
+        } catch (final URISyntaxException | IOException ex) {
+            fail(ex);
+            throw new AssertionError(ex);
+        }
     }
 }

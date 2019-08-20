@@ -7,8 +7,6 @@ import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.ByteFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;
@@ -18,7 +16,7 @@ import ro.pippo.controller.extractor.Body;
  * Controller for write requests
  */
 public final class WriteRequestController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(WriteRequestController.class);
+    private static final WriteResponse EMPTY_RESPONSE = new WriteResponse();
 
     @Inject
     private XmlProject xmlProject;
@@ -46,9 +44,8 @@ public final class WriteRequestController extends AbstractController {
         final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
         if (xmlGroupAddress == null) {
             log.warn("Could not find group address in XML project: {}", groupAddress);
-            final var response = new WriteResponse();
-            getResponse().notFound();
-            return response;
+            getResponse().badRequest();
+            return EMPTY_RESPONSE;
         }
 
         // found - group address is known, resolve the raw data for write request to KNX Net/IP device
@@ -76,8 +73,6 @@ public final class WriteRequestController extends AbstractController {
             log.error("Exception during sending write request", ex);
         }
 
-        final var response = new WriteResponse();
-
         // acknowledge not received or received with error?
         if (ackBody == null
                 || ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
@@ -90,6 +85,6 @@ public final class WriteRequestController extends AbstractController {
             getResponse().accepted();
         }
 
-        return response;
+        return EMPTY_RESPONSE;
     }
 }

@@ -38,7 +38,6 @@ import java.util.concurrent.ExecutionException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 /**
@@ -47,61 +46,37 @@ import static org.mockito.Mockito.when;
 public class ReadRequestControllerTest extends AbstractControllerTest {
 
     /**
-     * Tests the /read endpoint for group addresses 0/0/56, 0/3/47 and 1/2/25
+     * Tests the /read endpoint for group addresses using KNX mock server
      */
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("OK: Read Request for group addresses 0/0/59, 0/3/47 and 1/2/25")
-    public void testReadOnly(final MockHttpDaemon daemon) throws Exception {
+    @DisplayName("OK: Read Request for group addresses using KNX mock server")
+    public void testRead(final MockHttpDaemon daemon) throws Exception {
+        final var groupAddress = GroupAddress.of(0, 3, 18);
+
         // create read request
-        final var request = new ReadRequest();
-        request.setGroupAddress(GroupAddress.of(0, 3, 18));
-
-        // do a call with all parameters
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(request))).build();
-        final var response = DaemonGsonEngine.INSTANCE.fromString(httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body(), ReadResponse.class);
-        assertThat(response.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
-        assertThat(response.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
-        assertThat(response.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
-        assertThat(response.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
-        assertThat(response).hasToString(
-                String.format("ReadResponse{name=%s, description=%s, dataPointType=%s, raw=0x80 02 70 FF}",
-                        response.getName(), //
-                        response.getDescription(), //
-                        response.getDataPointType() //
-                ));
-    }
-
-    /**
-     * Read Request for an existing group address. No expand parameters, will return the minimal response
-     */
-    @Test
-    @DisplayName("OK: Read Request for group address without any expand parameters (minimal response)")
-    public void testReadMinimal() {
-        final var controller = newController(ReadRequestController.class);
-        final var groupAddress = randomGroupAddress();
-
-        //
-        // Mocking
-        //
-
-        // mock retrieve tunneling ack status with no error
-        try {
-            when(controller.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
-        } catch (final Throwable t) {
-            fail(t);
-        }
-
-        //
-        // Verification
-        //
-
         final var request = new ReadRequest();
         request.setGroupAddress(groupAddress);
 
-        final var response = controller.readRequest(request);
-        final var responseJson = asJson(response);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(responseJson).isEqualTo("{}");
+        // do a call with all parameters
+        final var httpRequest = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(request))).build();
+        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
+
+        // verify ReadResponse
+        final var readResponse = DaemonGsonEngine.INSTANCE.fromString(httpResponse.body(), ReadResponse.class);
+        assertThat(readResponse.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
+        assertThat(readResponse.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
+        assertThat(readResponse.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
+        assertThat(readResponse.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
+        assertThat(readResponse).hasToString(
+                String.format("ReadResponse{name=%s, description=%s, dataPointType=%s, raw=0x80 02 70 FF}",
+                        readResponse.getName(), //
+                        readResponse.getDescription(), //
+                        readResponse.getDataPointType() //
+                ));
+
+        // verify json
+        assertThat(asJson(readResponse)).isEqualTo(readJsonFile("/json/ReadRequestControllerTest-testRead.json"));
     }
 
     /**
@@ -153,9 +128,6 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
         // Mocking
         //
 
-        // mock 'raw' expand parameter to retrieve response for raw metadata
-        doReturn(true).when(controller).containsExpand("raw");
-
         // mock retrieve tunneling ack status with no error
         try {
             when(controller.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
@@ -172,7 +144,7 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
 
         final var response = controller.readRequest(request);
         final var responseJson = asJson(response);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.GATEWAY_TIMEOUT);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
         assertThat(responseJson).isEqualTo("{}");
     }
 
@@ -183,6 +155,7 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
     @DisplayName("Error: Read Request for an unknown group address")
     public void testReadUnknownGroupAddress() {
         final var controller = newController(ReadRequestController.class);
+        final var groupAddress = randomGroupAddress();
 
         //
         // Mocking
@@ -196,11 +169,11 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
         //
 
         final var request = new ReadRequest();
-        request.setGroupAddress(randomGroupAddress());
+        request.setGroupAddress(groupAddress);
 
         final var response = controller.readRequest(request);
         final var responseJson = asJson(response);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
         assertThat(responseJson).isEqualTo("{}");
     }
 }

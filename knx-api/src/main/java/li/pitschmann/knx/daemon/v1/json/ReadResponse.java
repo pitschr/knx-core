@@ -1,6 +1,7 @@
 package li.pitschmann.knx.daemon.v1.json;
 
 import com.google.common.base.MoreObjects;
+import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.utils.ByteFormatter;
 
@@ -8,10 +9,19 @@ import li.pitschmann.utils.ByteFormatter;
  * JSON read response
  */
 public class ReadResponse {
+    private GroupAddress groupAddress;
     private String name;
     private String description;
     private DataPointType dataPointType;
     private byte[] raw;
+
+    public GroupAddress getGroupAddress() {
+        return groupAddress;
+    }
+
+    public void setGroupAddress(GroupAddress groupAddress) {
+        this.groupAddress = groupAddress;
+    }
 
     public String getName() {
         return name;
