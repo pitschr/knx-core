@@ -1,0 +1,29 @@
+[
+  {
+    "id": "GR-0",
+    "name": "GR-NAME-0",
+    "level": 0,
+    "range": {
+      "start": 0,
+      "end": 9
+    }
+  },
+  {
+    "id": "GR-1",
+    "name": "GR-NAME-1",
+    "level": 0,
+    "range": {
+      "start": 10,
+      "end": 19
+    }
+  },
+  {
+    "id": "GR-2",
+    "name": "GR-NAME-2",
+    "level": 0,
+    "range": {
+      "start": 20,
+      "end": 29
+    }
+  }
+]

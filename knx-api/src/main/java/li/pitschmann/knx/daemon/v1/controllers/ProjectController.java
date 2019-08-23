@@ -3,8 +3,6 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import com.google.common.base.Preconditions;
 import li.pitschmann.knx.daemon.v1.json.ProjectOverviewResponse;
 import li.pitschmann.knx.parser.XmlGroupRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
  * Controller for data from KNX Project file
  */
 public final class ProjectController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
     /**
      * Returns the project overview
@@ -26,16 +23,31 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project")
     @Produces(Produces.JSON)
-    public ProjectOverviewResponse getProjectOverview() {
+    public ProjectOverviewResponse projectOverview() {
         log.trace("Request for project overview");
 
         final var xmlProject = getXmlProject();
 
         // get project data
         final var response = new ProjectOverviewResponse();
-        response.setId(xmlProject.getId());
-        response.setName(xmlProject.getName());
-        response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+        if (containsExpand("id")) {
+            response.setId(xmlProject.getId());
+        }
+        if (containsExpand("name")) {
+            response.setName(xmlProject.getName());
+        }
+        if (containsExpand("groupAddressStyle")) {
+            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+        }
+        if (containsExpand("numberOfGroupAddresses")) {
+            response.setNumberOfGroupAddresses(xmlProject.getGroupAddresses().size());
+        }
+        if (containsExpand("numberOfGroupRanges")) {
+            response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
+        }
+
+        getResponse().ok();
+
         return response;
     }
 
@@ -138,7 +150,7 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/groups")
     @Produces(Produces.JSON)
-    public List<XmlGroupRange> getGroups() {
+    public List<XmlGroupRange> mainGroups() {
         log.trace("Request for all main group in project");
 
         final var xmlProject = getXmlProject();
@@ -153,8 +165,9 @@ public final class ProjectController extends AbstractController {
             getResponse().ok();
             return xmlProject.getMainGroups().stream().skip(start).limit(length).collect(Collectors.toList());
         } else {
-            getResponse().badRequest();
             log.warn("Bad Request for get '/group' and group address style: {}", groupAddressStyle);
+
+            getResponse().badRequest();
             return Collections.emptyList();
         }
     }

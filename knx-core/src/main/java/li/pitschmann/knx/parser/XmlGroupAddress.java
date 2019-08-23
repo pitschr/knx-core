@@ -39,7 +39,8 @@ public final class XmlGroupAddress {
     private String address;
     private String name;
     private String description;
-    private String datapointType;
+    private String dataPointType;
+
     private String communicationFlag;
     private String readFlag;
     private String writeFlag;
@@ -86,12 +87,12 @@ public final class XmlGroupAddress {
         this.description = description;
     }
 
-    public String getDatapointType() {
-        return datapointType;
+    public String getDataPointType() {
+        return dataPointType;
     }
 
-    public void setDatapointType(final String datapointType) {
-        this.datapointType = datapointType;
+    public void setDataPointType(final String dataPointType) {
+        this.dataPointType = dataPointType;
     }
 
     public String getCommunicationFlag() {
@@ -143,7 +144,7 @@ public final class XmlGroupAddress {
                 .add("address", address)
                 .add("name", name)
                 .add("description", description)
-                .add("datapointType", datapointType)
+                .add("dataPointType", dataPointType)
                 .add("communicationFlag", this.communicationFlag)
                 .add("readFlag", this.readFlag)
                 .add("writeFlag", this.writeFlag)

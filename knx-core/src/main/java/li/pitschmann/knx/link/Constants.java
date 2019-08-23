@@ -29,7 +29,8 @@ import java.util.concurrent.TimeUnit;
  * @author PITSCHR
  */
 public final class Constants {
-    private Constants() {}
+    private Constants() {
+    }
 
     /**
      * Timeout Constants
@@ -37,8 +38,6 @@ public final class Constants {
      * @author PITSCHR
      */
     public static final class Timeouts {
-        private Timeouts() {}
-
         /**
          * KNX client shall wait for 10 seconds for a SEARCH_RESPONSE frame from KNX Net/IP device.
          */
@@ -63,6 +62,11 @@ public final class Constants {
          * KNX client shall wait for 10 seconds for a CONNECTION_STATE_RESPONSE frame from KNX Net/IP device.
          */
         public static final long CONNECTIONSTATE_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        /**
+         * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
+         * KNX Net/IP device.
+         */
+        public static final long DATA_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         // /**
         //  * KNX client shall wait for 10 seconds for a DEVICE_CONFIGURATION_RESPONSE frame from KNX Net/IP device.
         //  */
@@ -71,11 +75,6 @@ public final class Constants {
         //  * KNX client shall wait for 1 second for a control request frame to KNX Net/IP device.
         //  */
         // public static final long CONTROL_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-        /**
-         * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
-         * KNX Net/IP device.
-         */
-        public static final long DATA_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
         /**
          * If the KNX Net/IP device does not receive a heartbeat request within 120 seconds of the last correctly
          * received message frame, the server shall terminate the connection by sending a DISCONNECT_REQUEST to the
@@ -98,14 +97,14 @@ public final class Constants {
          * Timeout for Data Channel Socket
          */
         public static final long DATA_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        private Timeouts() {
+        }
     }
 
     /**
      * Interval Constants
      */
     public static final class Interval {
-        private Interval() {}
-
         /**
          * Number of connection state request attempts before KNX connection will be disconnected.
          */
@@ -114,14 +113,14 @@ public final class Constants {
          * Interval of look up for event pool (e.g. if request/ack received)
          */
         public static final long EVENT = 10L;
+        private Interval() {
+        }
     }
 
     /**
      * Default Constants
      */
     public static final class Default {
-        private Default() {}
-
         /**
          * KNX/IP Port Number
          */
@@ -142,5 +141,7 @@ public final class Constants {
          * Default port for HTTP Daemon (same as Pippo)
          */
         public static final int HTTP_DAEMON_PORT = 8338;
+        private Default() {
+        }
     }
 }

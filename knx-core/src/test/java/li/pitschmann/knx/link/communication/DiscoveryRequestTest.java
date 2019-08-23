@@ -21,7 +21,6 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
-import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.exceptions.KnxDiscoveryNotReceivedException;

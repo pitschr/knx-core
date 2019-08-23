@@ -16,10 +16,10 @@ import java.lang.reflect.Type;
 public abstract class AbstractKnxAddressJsonSerializer<T extends KnxAddress> implements JsonSerializer<T> {
 
     @Override
-    public JsonElement serialize(T address, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(final T address, final Type type, final JsonSerializationContext jsonSerializationContext) {
         final var jsonObject = new JsonObject();
         // address type
-        jsonObject.add("type", new JsonPrimitive(address.getAddressType().getCode()));
+        jsonObject.addProperty("type", address.getAddressType().getCode());
 
         // address in human format
         jsonObject.add("format", createAddressJsonElement(address));

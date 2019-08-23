@@ -16,7 +16,8 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
     <!-- Parent Project -->
     <parent>
         <groupId>li.pitschmann</groupId>
@@ -33,7 +34,7 @@
     <description>KNX Core (Client, DPTs, ...)</description>
 
     <!-- No special dependencies -->
-    <dependencies />
+    <dependencies/>
 
 </project>
 

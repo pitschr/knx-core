@@ -115,19 +115,19 @@ public class StatusControllerTest extends AbstractControllerTest {
         statusMap.put(knxAddress3, knxStatusData3);
 
         final var xmlGroupAddress0 = new XmlGroupAddress();
-        xmlGroupAddress0.setDatapointType("1.001");
+        xmlGroupAddress0.setDataPointType("1.001");
         xmlGroupAddress0.setName("DPT1.Switch Name");
         xmlGroupAddress0.setDescription("DPT1.Switch Description");
         when(controller.getXmlProject().getGroupAddress(knxAddress0)).thenReturn(xmlGroupAddress0);
 
         final var xmlGroupAddress1 = new XmlGroupAddress();
-        xmlGroupAddress1.setDatapointType("5.010");
+        xmlGroupAddress1.setDataPointType("5.010");
         xmlGroupAddress1.setName("DPT5.1-Octet Unsigned Name");
         xmlGroupAddress1.setDescription("DPT5.1-Octet Unsigned Description");
         when(controller.getXmlProject().getGroupAddress(knxAddress1)).thenReturn(xmlGroupAddress1);
 
         final var xmlGroupAddress2 = new XmlGroupAddress();
-        xmlGroupAddress2.setDatapointType("7.001");
+        xmlGroupAddress2.setDataPointType("7.001");
         xmlGroupAddress2.setName("DPT7.2-Octet Unsigned Name");
         xmlGroupAddress2.setDescription("DPT7.2-Octet Unsigned Description");
         when(controller.getXmlProject().getGroupAddress(knxAddress2)).thenReturn(xmlGroupAddress2);
@@ -150,7 +150,6 @@ public class StatusControllerTest extends AbstractControllerTest {
         assertThat(response.get(2).getDescription()).isEqualTo("DPT7.2-Octet Unsigned Description");
         assertThat(response.get(3).getStatus()).isEqualTo(Status.ERROR);
         assertThat(asJson(controller.statusAll())).isEqualTo(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
-
     }
 
     /**
@@ -166,6 +165,12 @@ public class StatusControllerTest extends AbstractControllerTest {
         //
         // Mocking
         //
+
+        final var xmlGroupAddress = new XmlGroupAddress();
+        xmlGroupAddress.setDataPointType("1.001");
+        xmlGroupAddress.setName("DPT1.Switch Name");
+        xmlGroupAddress.setDescription("DPT1.Switch Description");
+        when(controller.getXmlProject().getGroupAddress(groupAddress)).thenReturn(xmlGroupAddress);
 
         // mock an existing KNX status data in status pool
         final var knxStatusData = mock(KnxStatusData.class);
@@ -197,7 +202,6 @@ public class StatusControllerTest extends AbstractControllerTest {
     public void testSingleStatusNoStatus() {
         final var controller = newController(StatusController.class);
         final var groupAddress = GroupAddress.of(7, 7, 88);
-        final var sourceAddress = IndividualAddress.of(14, 13, 12);
 
         //
         // Mocking

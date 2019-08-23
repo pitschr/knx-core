@@ -39,10 +39,11 @@ import java.util.List;
 public final class XmlGroupRange {
     private String id;
     private String parentId;
+    private String name;
     private int level;
     private int rangeStart;
     private int rangeEnd;
-    private String name;
+
     private List<XmlGroupRange> childGroupRanges = Lists.newLinkedList();
     private List<XmlGroupAddress> groupAddresses = Lists.newLinkedList();
 
@@ -60,6 +61,14 @@ public final class XmlGroupRange {
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getLevel() {
@@ -84,14 +93,6 @@ public final class XmlGroupRange {
 
     public void setRangeStart(int rangeStart) {
         this.rangeStart = rangeStart;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<XmlGroupRange> getChildGroupRanges() {

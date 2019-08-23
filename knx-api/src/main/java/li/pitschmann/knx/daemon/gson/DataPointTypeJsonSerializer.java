@@ -19,7 +19,7 @@ public final class DataPointTypeJsonSerializer implements JsonSerializer<DataPoi
     }
 
     @Override
-    public JsonElement serialize(DataPointType<?> dataPointType, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(final DataPointType<?> dataPointType, final Type type, final JsonSerializationContext jsonSerializationContext) {
         return new JsonPrimitive(dataPointType.getId());
     }
 }

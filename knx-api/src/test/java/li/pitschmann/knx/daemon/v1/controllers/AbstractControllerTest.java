@@ -30,11 +30,13 @@ import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.communication.KnxStatusPool;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.parser.XmlGroupAddress;
+import li.pitschmann.knx.parser.XmlGroupRange;
 import li.pitschmann.knx.parser.XmlProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.core.Messages;
+import ro.pippo.core.ParameterValue;
 import ro.pippo.core.PippoSettings;
 import ro.pippo.core.Request;
 import ro.pippo.core.Response;
@@ -50,9 +52,12 @@ import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -217,12 +222,47 @@ public abstract class AbstractControllerTest {
      */
     protected XmlProject getXmlProject(final @Nullable Consumer<XmlProject> consumer) {
         final var xmlProject = mock(XmlProject.class);
+        final var xmlGroupAddressMock = mock(XmlGroupAddress.class);
 
-        final var xmlGroupAddress = mock(XmlGroupAddress.class);
-        when(xmlGroupAddress.getDatapointType()).thenReturn("1.001");
-        when(xmlGroupAddress.getName()).thenReturn("DPT1.Switch Name");
-        when(xmlGroupAddress.getDescription()).thenReturn("DPT1.Switch Description");
-        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddress);
+        when(xmlProject.getId()).thenReturn("P-012F");
+        when(xmlProject.getName()).thenReturn("Test Project Name");
+        when(xmlProject.getGroupAddressStyle()).thenReturn("ThreeLevel");
+        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddressMock);
+
+        // XML Group Addresses
+        final var xmlGroupAddresses = new ArrayList<XmlGroupAddress>(12);
+        for (var i = 0; i < 12; i++) {
+            final var xmlGroupAddress = new XmlGroupAddress();
+            xmlGroupAddress.setId("GA-" + i);
+            xmlGroupAddress.setName("GA-NAME-" + i);
+            xmlGroupAddress.setDescription("GA-DESC-" + i);
+            xmlGroupAddress.setParentId("GR-CHILD-" + (i % 3));
+            xmlGroupAddresses.add(xmlGroupAddress);
+        }
+        when(xmlProject.getGroupAddresses()).thenReturn(xmlGroupAddresses);
+
+        // XML Group Ranges
+        final var xmlGroupRanges = new ArrayList<XmlGroupRange>(3);
+        for (var i = 0; i < 3; i++) {
+            final var xmlGroupRange = new XmlGroupRange();
+            xmlGroupRange.setId("GR-" + i);
+            xmlGroupRange.setName("GR-NAME-" + i);
+            xmlGroupRange.setRangeStart(i * 10);
+            xmlGroupRange.setRangeEnd(i * 10 + 9);
+            xmlGroupRanges.add(xmlGroupRange);
+
+            // XML Group Range Child
+            final var xmlGroupRangeChild = new XmlGroupRange();
+            xmlGroupRangeChild.setId("GR-CHILD-" + i);
+            xmlGroupRangeChild.setName("GR-CHILD-NAME-" + i);
+            xmlGroupRangeChild.setLevel(1);
+            xmlGroupRangeChild.setRangeStart(i * 10 + 1);
+            xmlGroupRangeChild.setRangeEnd(i * 10 + 8);
+            xmlGroupRangeChild.setGroupAddresses(xmlGroupAddresses.stream().filter(xga -> xga.getParentId().equals(xmlGroupRangeChild.getId())).collect(Collectors.toList()));
+            xmlGroupRange.setChildGroupRanges(Collections.singletonList(xmlGroupRangeChild));
+        }
+        when(xmlProject.getGroupRanges()).thenReturn(xmlGroupRanges);
+        when(xmlProject.getMainGroups()).thenReturn(xmlGroupRanges.stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toList()));
 
         if (consumer != null) {
             consumer.accept(xmlProject);
@@ -262,6 +302,8 @@ public abstract class AbstractControllerTest {
         when(routeContext.getApplication()).thenReturn(application);
         when(routeContext.getMessages()).thenReturn(messages);
         when(routeContext.getSettings()).thenReturn(settings);
+
+        when(request.getParameter(anyString())).thenReturn(new ParameterValue());
 
         if (consumer != null) {
             consumer.accept(routeContext);

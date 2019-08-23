@@ -7,7 +7,11 @@ import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.datapoint.DataPointType;
+import li.pitschmann.knx.parser.XmlGroupAddress;
+import li.pitschmann.knx.parser.XmlGroupRange;
 import ro.pippo.gson.GsonEngine;
+
+import java.time.Instant;
 
 /**
  * A customized {@link GsonEngine} with that adds needs for KNX Daemon
@@ -19,9 +23,12 @@ public final class DaemonGsonEngine extends GsonEngine {
     private DaemonGsonEngine() {
         gson = new GsonBuilder()
                 // serializers
+                .registerTypeAdapter(Instant.class, InstantJsonSerializer.INSTANCE)
                 .registerTypeAdapter(DataPointType.class, DataPointTypeJsonSerializer.INSTANCE)
                 .registerTypeAdapter(GroupAddress.class, GroupAddressJsonSerializer.INSTANCE)
                 .registerTypeAdapter(IndividualAddress.class, IndividualAddressJsonSerializer.INSTANCE)
+                .registerTypeAdapter(XmlGroupAddress.class, XmlGroupAddressJsonSerializer.INSTANCE)
+                .registerTypeAdapter(XmlGroupRange.class, XmlGroupRangeJsonSerializer.INSTANCE)
                 .registerTypeHierarchyAdapter(KnxStatistic.class, KnxStatisticJsonSerializer.INSTANCE)
                 // de-serializers
                 .registerTypeAdapter(DataPointType.class, DataPointTypeJsonDeserializer.INSTANCE)
