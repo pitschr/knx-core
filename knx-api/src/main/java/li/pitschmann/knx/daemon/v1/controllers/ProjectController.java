@@ -2,6 +2,7 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import com.google.common.base.Preconditions;
 import li.pitschmann.knx.daemon.v1.json.ProjectOverviewResponse;
+import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupRange;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
@@ -177,17 +178,16 @@ public final class ProjectController extends AbstractController {
      * (1st hierarchy level)
      * <p/>
      * <ul>
-     * <li>Two Level: 0 .. 31</li>
      * <li>Three Level: 0 .. 31</li>
      * </ul>
      * <p>
-     * Free Level is not supported (will return an empty list with HTTP bad request code)
+     * Two Level and Free Level are not supported (will return an empty list with HTTP bad request code)
      *
      * @return The main group which is an instance of {@link XmlGroupRange}
      */
     @GET("/project/groups/{main: \\d+}")
     @Produces(Produces.JSON)
-    public XmlGroupRange getGroups(@Param int main) {
+    public List<XmlGroupRange> getGroups(@Param int main) {
         log.trace("Request for main group in project: {}", main);
         Preconditions.checkArgument(main >= 0 && main <= 31,
                 "Invalid number of main group provided, should be within range [0-31]: " + main);
@@ -196,12 +196,12 @@ public final class ProjectController extends AbstractController {
         final var xmlProject = getXmlProject();
 
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("ThreeLevel".equals(groupAddressStyle) || "TwoLevel".equals(groupAddressStyle)) {
+        if ("ThreeLevel".equals(groupAddressStyle)) {
             final var mainGroup = xmlProject.getMainGroup(main);
             log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
 
             getResponse().ok();
-            return mainGroup;
+            return mainGroup.getChildGroupRanges();
         } else {
             log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
 
@@ -224,7 +224,7 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/groups/{main: \\d+}/{middle: \\d+}")
     @Produces(Produces.JSON)
-    public XmlGroupRange getGroups(@Param int main, @Param int middle) {
+    public List<XmlGroupAddress> getAddresses(@Param int main, @Param int middle) {
         log.trace("Request for middle group of main group '{}' in project: {}", main);
         Preconditions.checkArgument(main >= 0 && main <= 31,
                 "Invalid number of main group provided, should be within range [0-31]: " + main);
@@ -240,7 +240,7 @@ public final class ProjectController extends AbstractController {
             log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
 
             getResponse().ok();
-            return middleGroup;
+            return middleGroup.getGroupAddresses();
         } else {
 
             log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);

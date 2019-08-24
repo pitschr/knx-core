@@ -237,6 +237,8 @@ public abstract class AbstractControllerTest {
             xmlGroupAddress.setName("GA-NAME-" + i);
             xmlGroupAddress.setDescription("GA-DESC-" + i);
             xmlGroupAddress.setParentId("GR-CHILD-" + (i % 3));
+            xmlGroupAddress.setAddress(String.valueOf((i % 3) * 10 + i + 1));
+            xmlGroupAddress.setDataPointType("1.001");
             xmlGroupAddresses.add(xmlGroupAddress);
         }
         when(xmlProject.getGroupAddresses()).thenReturn(xmlGroupAddresses);
@@ -260,6 +262,9 @@ public abstract class AbstractControllerTest {
             xmlGroupRangeChild.setRangeEnd(i * 10 + 8);
             xmlGroupRangeChild.setGroupAddresses(xmlGroupAddresses.stream().filter(xga -> xga.getParentId().equals(xmlGroupRangeChild.getId())).collect(Collectors.toList()));
             xmlGroupRange.setChildGroupRanges(Collections.singletonList(xmlGroupRangeChild));
+
+            when(xmlProject.getMainGroup(i)).thenReturn(xmlGroupRange);
+            when(xmlProject.getMiddleGroup(i, 0)).thenReturn(xmlGroupRangeChild);
         }
         when(xmlProject.getGroupRanges()).thenReturn(xmlGroupRanges);
         when(xmlProject.getMainGroups()).thenReturn(xmlGroupRanges.stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toList()));

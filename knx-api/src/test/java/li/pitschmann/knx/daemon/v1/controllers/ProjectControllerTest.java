@@ -58,7 +58,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
      */
     @Test
     @DisplayName("OK: Get all main groups from XML project")
-    public void testMainGroups() {
+    public void testMainGroupRanges() {
         final var controller = newController(ProjectController.class);
 
         //
@@ -70,7 +70,49 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
         final var responseJson = asJson(response);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroups.json"));
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroupRanges.json"));
+    }
+
+    /**
+     * Tests the returned range groups of range group (0/*) from XML project
+     */
+    @Test
+    @DisplayName("OK: Get all child range groups of main range group from XML project")
+    public void testSubGroupRanges() {
+        final var controller = newController(ProjectController.class);
+
+        //
+        // Verification
+        //
+
+        final var response = controller.getGroups(0);
+        assertThat(response).hasSize(1);
+        assertThat(response.get(0).getChildGroupRanges()).hasSize(0);
+        assertThat(response.get(0).getGroupAddresses()).hasSize(4);
+
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testSubGroupRanges.json"));
+    }
+
+    /**
+     * Tests the returned group addresses of range group (0/0/*) from XML project
+     */
+    @Test
+    @DisplayName("OK: Get all group addresses of range group (0/0/*) from XML project")
+    public void testGroupAddresses() {
+        final var controller = newController(ProjectController.class);
+
+        //
+        // Verification
+        //
+
+        final var response = controller.getAddresses(0, 0);
+        assertThat(response).hasSize(4);
+
+        final var responseJson = asJson(response);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddresses.json"));
     }
 
 //    /**

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "GA-0",
+    "name": "GA-NAME-0",
+    "description": "GA-DESC-0",
+    "address": {
+      "type": 1,
+      "format": {
+        "free_level": "1",
+        "two_level": "0/1",
+        "three_level": "0/0/1"
+      },
+      "raw": [
+        0,
+        1
+      ]
+    },
+    "dataPointType": "1.001"
+  },
+  {
+    "id": "GA-3",
+    "name": "GA-NAME-3",
+    "description": "GA-DESC-3",
+    "address": {
+      "type": 1,
+      "format": {
+        "free_level": "4",
+        "two_level": "0/4",
+        "three_level": "0/0/4"
+      },
+      "raw": [
+        0,
+        4
+      ]
+    },
+    "dataPointType": "1.001"
+  },
+  {
+    "id": "GA-6",
+    "name": "GA-NAME-6",
+    "description": "GA-DESC-6",
+    "address": {
+      "type": 1,
+      "format": {
+        "free_level": "7",
+        "two_level": "0/7",
+        "three_level": "0/0/7"
+      },
+      "raw": [
+        0,
+        7
+      ]
+    },
+    "dataPointType": "1.001"
+  },
+  {
+    "id": "GA-9",
+    "name": "GA-NAME-9",
+    "description": "GA-DESC-9",
+    "address": {
+      "type": 1,
+      "format": {
+        "free_level": "10",
+        "two_level": "0/10",
+        "three_level": "0/0/10"
+      },
+      "raw": [
+        0,
+        10
+      ]
+    },
+    "dataPointType": "1.001"
+  }
+]

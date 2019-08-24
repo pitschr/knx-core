@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.SearchResponseBody;
 
 /**
  * Exception when discovery information could not be received by KNX Net/IP device.
@@ -27,8 +28,21 @@ import li.pitschmann.knx.link.body.Body;
  * @author PITSCHR
  */
 public final class KnxDiscoveryNotReceivedException extends KnxCommunicationException {
+    private final SearchRequestBody requestBody;
+    private final SearchResponseBody responseBody;
 
-    public KnxDiscoveryNotReceivedException(final Body body) {
-        super(String.format("Could not get discovery from KNX Net/IP device: %s", body));
+    public KnxDiscoveryNotReceivedException(final SearchRequestBody requestBody, final SearchResponseBody responseBody, final Throwable cause) {
+        super(String.format("Could not get discovery from KNX Net/IP device (request=%s, response=%s)", requestBody, responseBody), cause);
+
+        this.requestBody = requestBody;
+        this.responseBody = responseBody;
+    }
+
+    public SearchRequestBody getRequestBody() {
+        return requestBody;
+    }
+
+    public SearchResponseBody getResponseBody() {
+        return responseBody;
     }
 }

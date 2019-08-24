@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
+import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.MockServer;
@@ -33,6 +34,7 @@ import li.pitschmann.knx.test.strategy.impl.ConnectNoMoreConnectionsStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultConnectStrategy;
 import org.junit.jupiter.api.DisplayName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -51,6 +53,8 @@ public class ConnectRequestTest {
             mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
+            assertThat(e.getRequestBody()).isNotNull();
+            assertThat(e.getResponseBody()).isNull(); // null because of no response
             // OK - we can abort mock server
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
@@ -75,6 +79,9 @@ public class ConnectRequestTest {
             mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
+            assertThat(e.getRequestBody()).isNotNull();
+            assertThat(e.getResponseBody()).isNotNull();
+            assertThat(e.getResponseBody().getStatus()).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
             // OK - we can abort mock server
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

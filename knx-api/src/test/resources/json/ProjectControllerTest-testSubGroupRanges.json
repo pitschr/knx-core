@@ -1,0 +1,11 @@
+[
+  {
+    "id": "GR-CHILD-0",
+    "name": "GR-CHILD-NAME-0",
+    "level": 1,
+    "range": {
+      "start": 1,
+      "end": 8
+    }
+  }
+]

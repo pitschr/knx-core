@@ -569,18 +569,19 @@ public final class InternalKnxClient implements KnxClient {
         es.shutdown();
 
         // send search request
-        final var request = SearchRequestBody.create(HPAI.of(communicator.getChannel()));
-        log.debug("Request for search: {}", request);
+        final var requestBody = SearchRequestBody.create(HPAI.of(communicator.getChannel()));
+        log.debug("Request for search: {}", requestBody);
 
         // It opens a new channel for discovery communication and processing. Afterwards it will be shutdown.
+        SearchResponseBody responseBody = null;
         try (communicator) {
-            final var response = communicator.<SearchResponseBody>send(request, config.getTimeoutDiscoveryRequest()).get();
+            responseBody = communicator.<SearchResponseBody>send(requestBody, config.getTimeoutDiscoveryRequest()).get();
             // check status
-            Preconditions.checkState(response != null, response);
-            return response;
+            Preconditions.checkState(responseBody != null, responseBody);
+            return responseBody;
         } catch (final Exception ex) {
             log.error("Exception during fetch discovery frames from KNX Net/IP device", ex);
-            throw new KnxDiscoveryNotReceivedException(request);
+            throw new KnxDiscoveryNotReceivedException(requestBody, responseBody, ex);
         } finally {
             Closeables.shutdownQuietly(es);
         }
@@ -597,17 +598,18 @@ public final class InternalKnxClient implements KnxClient {
 
         // create connect request and send it
         final var cri = ConnectionRequestInformation.create();
-        final var connectRequestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
-        log.debug("Request for connect: {}", connectRequestBody);
+        final var requestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
+        log.debug("Request for connect: {}", requestBody);
 
+        ConnectResponseBody responseBody = null;
         try {
-            final var connectResponseBody = this.<ConnectResponseBody>send(connectRequestBody, config.getTimeoutConnectRequest()).get();
+            responseBody = this.<ConnectResponseBody>send(requestBody, config.getTimeoutConnectRequest()).get();
             // check status
-            Preconditions.checkState(connectResponseBody != null && connectResponseBody.getStatus() == Status.E_NO_ERROR, connectResponseBody);
-            return connectResponseBody.getChannelId();
+            Preconditions.checkState(responseBody != null && responseBody.getStatus() == Status.E_NO_ERROR, responseBody);
+            return responseBody.getChannelId();
         } catch (final Exception ex) {
             log.error("Exception during fetch channel id from KNX Net/IP device", ex);
-            throw new KnxChannelIdNotReceivedException(connectRequestBody);
+            throw new KnxChannelIdNotReceivedException(requestBody, responseBody, ex);
         }
     }
 
