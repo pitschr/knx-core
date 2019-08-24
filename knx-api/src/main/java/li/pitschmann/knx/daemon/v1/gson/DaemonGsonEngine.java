@@ -1,4 +1,4 @@
-package li.pitschmann.knx.daemon.gson;
+package li.pitschmann.knx.daemon.v1.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

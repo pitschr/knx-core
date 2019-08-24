@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.daemon.gson;
+package li.pitschmann.knx.daemon.v1.gson;
 
 import com.google.gson.JsonParser;
 import li.pitschmann.knx.link.body.address.GroupAddress;

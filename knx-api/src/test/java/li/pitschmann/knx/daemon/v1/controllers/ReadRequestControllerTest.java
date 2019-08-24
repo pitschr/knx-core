@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
+import li.pitschmann.knx.daemon.v1.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
 import li.pitschmann.knx.link.body.Status;

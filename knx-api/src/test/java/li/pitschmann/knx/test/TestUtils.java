@@ -19,7 +19,7 @@
 package li.pitschmann.knx.test;
 
 import com.google.gson.JsonParser;
-import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
+import li.pitschmann.knx.daemon.v1.gson.DaemonGsonEngine;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

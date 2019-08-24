@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
+import li.pitschmann.knx.daemon.v1.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT1;

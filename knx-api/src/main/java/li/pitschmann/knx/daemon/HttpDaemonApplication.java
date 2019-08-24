@@ -21,7 +21,7 @@ package li.pitschmann.knx.daemon;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
-import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
+import li.pitschmann.knx.daemon.v1.gson.DaemonGsonEngine;
 import li.pitschmann.knx.daemon.v1.controllers.ProjectController;
 import li.pitschmann.knx.daemon.v1.controllers.ReadRequestController;
 import li.pitschmann.knx.daemon.v1.controllers.StatisticController;
