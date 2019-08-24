@@ -37,13 +37,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketOption;
 import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Mock Server Channel for UDP ({@link DatagramChannel}) communication

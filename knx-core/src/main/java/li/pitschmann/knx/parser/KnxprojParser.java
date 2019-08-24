@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -247,7 +246,7 @@ public final class KnxprojParser {
 
             // obtain optional @Description and @DatapointType
             groupAddress.setDescription(readAttributeValue(vtdNav, "Description"));
-            groupAddress.setDatapointType(readAttributeValue(vtdNav, "DatapointType"));
+            groupAddress.setDataPointType(readAttributeValue(vtdNav, "DatapointType"));
 
             // get flags (via ComObjectInstanceRef)
             readFlags(vtdNav.cloneNav(), groupAddress);
@@ -276,7 +275,7 @@ public final class KnxprojParser {
     private static void linkGroupRangeAndAddresses(final @Nonnull Map<String, XmlGroupRange> xmlGroupRangeMap, final @Nonnull Map<String, XmlGroupAddress> xmlGroupAddressMap) {
         // link Group Range (parent) with Group Ranges (child)
         xmlGroupRangeMap.values().forEach(xgr -> {
-            if (xgr.getParentId()!=null) {
+            if (xgr.getParentId() != null) {
                 xmlGroupRangeMap.get(xgr.getParentId()).getChildGroupRanges().add(xgr);
             }
         });

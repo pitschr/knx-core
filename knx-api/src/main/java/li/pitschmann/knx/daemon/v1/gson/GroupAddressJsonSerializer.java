@@ -1,8 +1,7 @@
-package li.pitschmann.knx.daemon.gson;
+package li.pitschmann.knx.daemon.v1.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 
 /**
@@ -18,9 +17,9 @@ public final class GroupAddressJsonSerializer extends AbstractKnxAddressJsonSeri
     @Override
     protected JsonElement createAddressJsonElement(final GroupAddress address) {
         final var jsonObject = new JsonObject();
-        jsonObject.add("free_level", new JsonPrimitive(address.getAddress()));
-        jsonObject.add("two_level", new JsonPrimitive(address.getAddressLevel2()));
-        jsonObject.add("three_level", new JsonPrimitive(address.getAddressLevel3()));
+        jsonObject.addProperty("free_level", address.getAddress());
+        jsonObject.addProperty("two_level", address.getAddressLevel2());
+        jsonObject.addProperty("three_level", address.getAddressLevel3());
         return jsonObject;
     }
 }

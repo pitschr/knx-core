@@ -1,4 +1,4 @@
-package li.pitschmann.knx.daemon.gson;
+package li.pitschmann.knx.daemon.v1.gson;
 
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.IndividualAddress;

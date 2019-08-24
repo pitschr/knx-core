@@ -37,7 +37,7 @@ public class XmlGroupAddressTest {
         xmlGroupAddress.setName("NAME");
         xmlGroupAddress.setAddress("ADDRESS");
         xmlGroupAddress.setDescription("DESCRIPTION");
-        xmlGroupAddress.setDatapointType("DPT");
+        xmlGroupAddress.setDataPointType("DPT");
         xmlGroupAddress.setCommunicationFlag("C");
         xmlGroupAddress.setReadFlag("R");
         xmlGroupAddress.setWriteFlag("W");
@@ -50,7 +50,7 @@ public class XmlGroupAddressTest {
         assertThat(xmlGroupAddress.getName()).isEqualTo("NAME");
         assertThat(xmlGroupAddress.getAddress()).isEqualTo("ADDRESS");
         assertThat(xmlGroupAddress.getDescription()).isEqualTo("DESCRIPTION");
-        assertThat(xmlGroupAddress.getDatapointType()).isEqualTo("DPT");
+        assertThat(xmlGroupAddress.getDataPointType()).isEqualTo("DPT");
         assertThat(xmlGroupAddress.getCommunicationFlag()).isEqualTo("C");
         assertThat(xmlGroupAddress.getReadFlag()).isEqualTo("R");
         assertThat(xmlGroupAddress.getWriteFlag()).isEqualTo("W");
@@ -67,7 +67,7 @@ public class XmlGroupAddressTest {
                     "address=ADDRESS, " +
                     "name=NAME, " +
                     "description=DESCRIPTION, " +
-                    "datapointType=DPT, " +
+                    "dataPointType=DPT, " +
                     "communicationFlag=C, " +
                     "readFlag=R, " +
                     "writeFlag=W, " +

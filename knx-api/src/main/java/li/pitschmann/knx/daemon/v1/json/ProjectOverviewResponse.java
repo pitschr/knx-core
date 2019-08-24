@@ -7,6 +7,8 @@ public final class ProjectOverviewResponse {
     private String id;
     private String name;
     private String groupAddressStyle;
+    private int numberOfGroupAddresses;
+    private int numberOfGroupRanges;
 
     public String getId() {
         return id;
@@ -30,5 +32,21 @@ public final class ProjectOverviewResponse {
 
     public void setGroupAddressStyle(String groupAddressStyle) {
         this.groupAddressStyle = groupAddressStyle;
+    }
+
+    public int getNumberOfGroupAddresses() {
+        return numberOfGroupAddresses;
+    }
+
+    public void setNumberOfGroupAddresses(int numberOfGroupAddresses) {
+        this.numberOfGroupAddresses = numberOfGroupAddresses;
+    }
+
+    public int getNumberOfGroupRanges() {
+        return numberOfGroupRanges;
+    }
+
+    public void setNumberOfGroupRanges(int numberOfGroupRanges) {
+        this.numberOfGroupRanges = numberOfGroupRanges;
     }
 }

@@ -2,9 +2,8 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import com.google.common.base.Preconditions;
 import li.pitschmann.knx.daemon.v1.json.ProjectOverviewResponse;
+import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
  * Controller for data from KNX Project file
  */
 public final class ProjectController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
     /**
      * Returns the project overview
@@ -26,16 +24,31 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project")
     @Produces(Produces.JSON)
-    public ProjectOverviewResponse getProjectOverview() {
+    public ProjectOverviewResponse projectOverview() {
         log.trace("Request for project overview");
 
         final var xmlProject = getXmlProject();
 
         // get project data
         final var response = new ProjectOverviewResponse();
-        response.setId(xmlProject.getId());
-        response.setName(xmlProject.getName());
-        response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+        if (containsExpand("id")) {
+            response.setId(xmlProject.getId());
+        }
+        if (containsExpand("name")) {
+            response.setName(xmlProject.getName());
+        }
+        if (containsExpand("groupAddressStyle")) {
+            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+        }
+        if (containsExpand("numberOfGroupAddresses")) {
+            response.setNumberOfGroupAddresses(xmlProject.getGroupAddresses().size());
+        }
+        if (containsExpand("numberOfGroupRanges")) {
+            response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
+        }
+
+        getResponse().ok();
+
         return response;
     }
 
@@ -138,14 +151,14 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/groups")
     @Produces(Produces.JSON)
-    public List<XmlGroupRange> getGroups() {
+    public List<XmlGroupRange> mainGroups() {
         log.trace("Request for all main group in project");
 
         final var xmlProject = getXmlProject();
 
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("ThreeLevel".equals(groupAddressStyle)
-                || "TwoLevel".equals(groupAddressStyle)) {
+        if ("TwoLevel".equals(groupAddressStyle)
+                ||"ThreeLevel".equals(groupAddressStyle)) {
 
             final int start = getRequest().getParameter("start").toInt(0);
             final int length = getRequest().getParameter("length").toInt(Integer.MAX_VALUE);
@@ -153,8 +166,9 @@ public final class ProjectController extends AbstractController {
             getResponse().ok();
             return xmlProject.getMainGroups().stream().skip(start).limit(length).collect(Collectors.toList());
         } else {
-            getResponse().badRequest();
             log.warn("Bad Request for get '/group' and group address style: {}", groupAddressStyle);
+
+            getResponse().badRequest();
             return Collections.emptyList();
         }
     }
@@ -164,17 +178,16 @@ public final class ProjectController extends AbstractController {
      * (1st hierarchy level)
      * <p/>
      * <ul>
-     * <li>Two Level: 0 .. 31</li>
      * <li>Three Level: 0 .. 31</li>
      * </ul>
      * <p>
-     * Free Level is not supported (will return an empty list with HTTP bad request code)
+     * Two Level and Free Level are not supported (will return an empty list with HTTP bad request code)
      *
      * @return The main group which is an instance of {@link XmlGroupRange}
      */
     @GET("/project/groups/{main: \\d+}")
     @Produces(Produces.JSON)
-    public XmlGroupRange getGroups(@Param int main) {
+    public List<XmlGroupRange> getGroups(@Param int main) {
         log.trace("Request for main group in project: {}", main);
         Preconditions.checkArgument(main >= 0 && main <= 31,
                 "Invalid number of main group provided, should be within range [0-31]: " + main);
@@ -183,12 +196,12 @@ public final class ProjectController extends AbstractController {
         final var xmlProject = getXmlProject();
 
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("ThreeLevel".equals(groupAddressStyle) || "TwoLevel".equals(groupAddressStyle)) {
+        if ("ThreeLevel".equals(groupAddressStyle)) {
             final var mainGroup = xmlProject.getMainGroup(main);
             log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
 
             getResponse().ok();
-            return mainGroup;
+            return mainGroup.getChildGroupRanges();
         } else {
             log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
 
@@ -211,7 +224,7 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/groups/{main: \\d+}/{middle: \\d+}")
     @Produces(Produces.JSON)
-    public XmlGroupRange getGroups(@Param int main, @Param int middle) {
+    public List<XmlGroupAddress> getAddresses(@Param int main, @Param int middle) {
         log.trace("Request for middle group of main group '{}' in project: {}", main);
         Preconditions.checkArgument(main >= 0 && main <= 31,
                 "Invalid number of main group provided, should be within range [0-31]: " + main);
@@ -227,7 +240,7 @@ public final class ProjectController extends AbstractController {
             log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
 
             getResponse().ok();
-            return middleGroup;
+            return middleGroup.getGroupAddresses();
         } else {
 
             log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);

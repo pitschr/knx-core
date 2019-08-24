@@ -17,9 +17,9 @@ import javax.annotation.Nonnull;
  */
 @Path("/api/v1")
 abstract class AbstractController extends Controller {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String PARAMETER_EXPAND = "expand";
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
     private XmlProject xmlProject;

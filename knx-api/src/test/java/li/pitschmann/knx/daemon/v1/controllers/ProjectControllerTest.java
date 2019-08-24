@@ -18,129 +18,100 @@
 
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import li.pitschmann.knx.test.MockDaemonTest;
-import li.pitschmann.knx.test.MockHttpDaemon;
-import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
+import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
-
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static li.pitschmann.knx.test.TestUtils.asJson;
+import static li.pitschmann.knx.test.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class for {@link ProjectController}
  */
 public class ProjectControllerTest {
+
     /**
-     * Test {@code /project} endpoint to get project related data (overview)
-     *
-     * @param daemon
-     * @throws Exception
+     * Tests the project overview endpoint for general project information
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /project endpoint to obtain project related data (overview)")
-    public void testProjectOverview(final MockHttpDaemon daemon) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
+    @ControllerTest(value = ProjectController.class, projectPath = "src/test/resources/Project (3-Level, v14).knxproj")
+    @DisplayName("OK: Get XML project related data overview")
+    public void testOverview(final Controller controller) {
+        var projectController = (ProjectController) controller;
 
-        // send request
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/project").GET().build();
-        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        //
+        // Verification
+        //
 
-        // validate status and the first group range IDs
-        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        final var body = httpResponse.body();
-        // @formatter:off
-        assertThat(body).isEqualTo(
-                "{" +
-                        "\"id\":\"P-0501\"," +
-                        "\"name\":\"Project (3-Level)\"," +
-                        "\"groupAddressStyle\":\"ThreeLevel\"" +
-                "}");
-        // @formatter:on
+        final var response = projectController.projectOverview();
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response.getId()).isEqualTo("P-0501");
+        assertThat(response.getName()).isEqualTo("Project (3-Level)");
+        assertThat(response.getGroupAddressStyle()).isEqualTo("ThreeLevel");
+        assertThat(response.getNumberOfGroupAddresses()).isEqualTo(189);
+        assertThat(response.getNumberOfGroupRanges()).isEqualTo(18);
+
+        final var responseJson = asJson(response);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testOverview.json"));
     }
 
     /**
-     * Test {@code /project/groups} endpoint to get the main address group (1st level)
-     *
-     * @param daemon
-     * @throws Exception
+     * Tests the returned main groups from XML project
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /project/groups endpoint to get main address group")
-    public void testMainGroups(final MockHttpDaemon daemon) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
+    @ControllerTest(value = ProjectController.class, projectPath = "src/test/resources/Project (3-Level, v14).knxproj")
+    @DisplayName("OK: Get all main groups from XML project")
+    public void testMainGroupRanges(final Controller controller) {
+        final var projectController = (ProjectController) controller;
 
-        // send request
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/project/groups").GET().build();
-        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        //
+        // Verification
+        //
 
-        // validate status and the first group range IDs
-        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        final var body = httpResponse.body();
-        assertThatJson(body).isArray().hasSize(3);
-        assertThatJson(body).node("[0].id").isEqualTo("P-0501-0_GR-47");
-        assertThatJson(body).node("[1].id").isEqualTo("P-0501-0_GR-67");
-        assertThatJson(body).node("[2].id").isEqualTo("P-0501-0_GR-69");
-    }
+        final var response = projectController.mainGroups();
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response).hasSize(3);
 
-
-    /**
-     * Test {@code /project/groups/<main>} endpoint to get the middle address group of
-     * given main address group (2nd level)
-     *
-     * @param daemon
-     * @throws Exception
-     */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /project/groups/{main} endpoint to get main address group")
-    public void testMainGroup(final MockHttpDaemon daemon) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
-
-        // send request (for main group 2/-/-)
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/project/groups/2").GET().build();
-        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
-        // validate status and the first group range IDs
-        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        final var body = httpResponse.body();
-        assertThatJson(body).isObject();
-        assertThatJson(body).node("id").isEqualTo("P-0501-0_GR-69");
-        assertThatJson(body).node("childGroupRanges").isArray().hasSize(2);
-        assertThatJson(body).node("childGroupRanges[0].id").isEqualTo("P-0501-0_GR-70");
-        assertThatJson(body).node("childGroupRanges[1].id").isEqualTo("P-0501-0_GR-72");
-        assertThatJson(body).node("groupAddresses").isArray().isEmpty();
+        final var responseJson = asJson(response);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroupRanges.json"));
     }
 
     /**
-     * Test {@code /project/groups/<main>/<middle>} endpoint to get the middle address group of
-     * given main address group (2nd level)
-     *
-     * @param daemon
-     * @throws Exception
+     * Tests the returned range groups of range group (0/*) from XML project
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
-    @DisplayName("Test /project/groups/{main}/{middle} endpoint to get main address group")
-    public void testMiddleGroups(final MockHttpDaemon daemon) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
+    @ControllerTest(value = ProjectController.class, projectPath = "src/test/resources/Project (3-Level, v14).knxproj")
+    @DisplayName("OK: Get all child range groups of main range group from XML project")
+    public void testSubGroupRanges(final Controller controller) {
+        final var projectController = (ProjectController) controller;
 
-        // send request (for main group 0/3/-)
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/project/groups/0/3").GET().build();
-        final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        //
+        // Verification
+        //
 
-        // validate status and the first group range IDs
-        assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        final var body = httpResponse.body();
+        final var response = projectController.getGroups(0);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response).hasSize(8);
 
-        assertThatJson(body).isObject();
-        assertThatJson(body).node("id").isEqualTo("P-0501-0_GR-51");
-        assertThatJson(body).node("childGroupRanges").isArray().isEmpty();
-        assertThatJson(body).node("groupAddresses").isArray().hasSize(40);
+        final var responseJson = asJson(response);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testSubGroupRanges.json"));
+    }
+
+    /**
+     * Tests the returned group addresses of range group (0/0/*) from XML project
+     */
+    @ControllerTest(value = ProjectController.class, projectPath = "src/test/resources/Project (3-Level, v14).knxproj")
+    @DisplayName("OK: Get all group addresses of range group (0/0/*) from XML project")
+    public void testGroupAddresses(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getAddresses(0, 0);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response).hasSize(46);
+
+        final var responseJson = asJson(response);
+        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddresses.json"));
     }
 }

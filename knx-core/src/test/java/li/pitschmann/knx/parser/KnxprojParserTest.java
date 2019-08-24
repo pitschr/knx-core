@@ -64,6 +64,7 @@ public class KnxprojParserTest {
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(project.getGroupAddresses()).hasSize(189);
+        assertThat(project.getGroupRanges()).hasSize(18);
 
         // ---------------------
         // Range Group Check
@@ -273,7 +274,7 @@ public class KnxprojParserTest {
         assertThat(groupAddress.getId()).isEqualTo(id);
         assertThat(groupAddress.getAddress()).isEqualTo(address.getAddress());
         assertThat(groupAddress.getName()).isEqualTo(name);
-        assertThat(groupAddress.getDatapointType()).isEqualTo(datapointType);
+        assertThat(groupAddress.getDataPointType()).isEqualTo(datapointType);
     }
 
     private void assertGroupAddressFlags(final Collection<XmlGroupAddress> groupAddresses, final String id, final boolean communication, final boolean read, final boolean write, final boolean transmit, final boolean update) {

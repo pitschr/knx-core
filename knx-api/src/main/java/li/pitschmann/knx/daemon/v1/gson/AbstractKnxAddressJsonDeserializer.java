@@ -1,4 +1,4 @@
-package li.pitschmann.knx.daemon.gson;
+package li.pitschmann.knx.daemon.v1.gson;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;

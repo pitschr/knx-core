@@ -8,7 +8,6 @@ import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Body;
-import ro.pippo.core.HttpConstants;
 
 import java.util.concurrent.TimeUnit;
 
@@ -78,7 +77,7 @@ public final class ReadRequestController extends AbstractController {
             response.setGroupAddress(groupAddress);
         }
         if (containsExpand("dpt")) {
-            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
+            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
         }
         if (containsExpand("name")) {
             response.setName(xmlGroupAddress.getName());

@@ -21,7 +21,6 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
-import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.exceptions.KnxDiscoveryNotReceivedException;
@@ -31,6 +30,7 @@ import li.pitschmann.knx.test.MockServerTest;
 import li.pitschmann.knx.test.strategy.IgnoreStrategy;
 import org.junit.jupiter.api.DisplayName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -81,6 +81,8 @@ public class DiscoveryRequestTest {
             mockServer.waitDone();
             fail("Unexpected test state");
         } catch (final KnxDiscoveryNotReceivedException e) {
+            assertThat(e.getRequestBody()).isNotNull();
+            assertThat(e.getResponseBody()).isNull(); // null because of no response
             // OK - abort mock server
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

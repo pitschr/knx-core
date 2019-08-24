@@ -128,7 +128,7 @@ public final class StatusController extends AbstractController {
         // other are displayed only when data are available
         if (isOK) {
             if (containsExpand("dpt")) {
-                response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDatapointType()));
+                response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
             }
             if (containsExpand("name")) {
                 response.setName(xmlGroupAddress.getName());
