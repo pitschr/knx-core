@@ -22,6 +22,7 @@ import com.google.common.base.Strings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
+import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
@@ -174,6 +175,8 @@ public final class ControllerTestExtension
 
         final var readAckBody = mock(TunnelingAckBody.class);
         final var writeAckBody = mock(TunnelingAckBody.class);
+        when(readAckBody.getStatus()).thenReturn(Status.E_NO_ERROR);
+        when(writeAckBody.getStatus()).thenReturn(Status.E_NO_ERROR);
         try {
             when(readCompletableFuture.get()).thenReturn(readAckBody);
             when(writeCompletableFuture.get()).thenReturn(writeAckBody);

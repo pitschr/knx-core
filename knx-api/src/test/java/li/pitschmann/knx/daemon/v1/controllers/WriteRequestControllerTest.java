@@ -71,6 +71,30 @@ public class WriteRequestControllerTest {
     }
 
     /**
+     * Test /write request for group 0/0/23 with raw data. Using raw data we do not need DPT information.
+     */
+    @ControllerTest(WriteRequestController.class)
+    @DisplayName("OK: Write Request endpoint using raw data")
+    public void testWriteUsingRawData(final Controller controller) {
+        final var writeRequestController = (WriteRequestController) controller;
+        final var groupAddress = GroupAddress.of(0, 0, 23);
+
+        //
+        // Verification
+        //
+
+        final var request = new WriteRequest();
+        request.setGroupAddress(groupAddress);
+        request.setRaw(new byte[] { 0x01 });
+
+        final var response = writeRequestController.writeRequest(request);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
+
+        final var responseJson = asJson(response);
+        assertThat(responseJson).isEqualTo("{}");
+    }
+
+    /**
      * An erroneous Write Request without DPT and raw data.
      */
     @ControllerTest(WriteRequestController.class)

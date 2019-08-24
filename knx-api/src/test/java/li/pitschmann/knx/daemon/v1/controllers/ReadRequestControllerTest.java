@@ -137,17 +137,6 @@ public class ReadRequestControllerTest {
         final var groupAddress = randomGroupAddress();
 
         //
-        // Mocking
-        //
-
-        // mock retrieve tunneling ack status with no error
-        try {
-            when(readRequestController.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
-        } catch (final Throwable t) {
-            fail(t);
-        }
-
-        //
         // Verification
         //
 

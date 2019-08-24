@@ -157,8 +157,8 @@ public final class ProjectController extends AbstractController {
         final var xmlProject = getXmlProject();
 
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("ThreeLevel".equals(groupAddressStyle)
-                || "TwoLevel".equals(groupAddressStyle)) {
+        if ("TwoLevel".equals(groupAddressStyle)
+                ||"ThreeLevel".equals(groupAddressStyle)) {
 
             final int start = getRequest().getParameter("start").toInt(0);
             final int length = getRequest().getParameter("length").toInt(Integer.MAX_VALUE);

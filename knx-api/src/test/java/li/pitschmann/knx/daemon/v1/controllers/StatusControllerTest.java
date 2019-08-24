@@ -193,6 +193,11 @@ public class StatusControllerTest {
 
         final var response = statusController.statusRequest(request);
         assertThat(statusController.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response.getStatus()).isEqualTo(Status.OK);
+        assertThat(response.getTimestamp()).isNotNull();
+        assertThat(response.getSourceAddress()).isEqualTo(sourceAddress);
+        assertThat(response.getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
+        assertThat(response.isDirty()).isFalse();
 
         final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testSingleStatus.json"));
@@ -254,6 +259,11 @@ public class StatusControllerTest {
 
         final var response = statusController.statusRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(response.getStatus()).isNull();
+        assertThat(response.getTimestamp()).isNull();
+        assertThat(response.getSourceAddress()).isNull();
+        assertThat(response.getApci()).isNull();
+        assertThat(response.isDirty()).isNull();
 
         final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
