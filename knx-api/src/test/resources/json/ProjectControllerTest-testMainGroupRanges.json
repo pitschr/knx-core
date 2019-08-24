@@ -1,29 +1,29 @@
 [
   {
-    "id": "GR-0",
-    "name": "GR-NAME-0",
+    "id": "P-0501-0_GR-47",
+    "name": "Main Group - DPT",
     "level": 0,
     "range": {
-      "start": 0,
-      "end": 9
+      "start": 1,
+      "end": 2047
     }
   },
   {
-    "id": "GR-1",
-    "name": "GR-NAME-1",
+    "id": "P-0501-0_GR-67",
+    "name": "Main Group - Flags",
     "level": 0,
     "range": {
-      "start": 10,
-      "end": 19
+      "start": 2048,
+      "end": 4095
     }
   },
   {
-    "id": "GR-2",
-    "name": "GR-NAME-2",
+    "id": "P-0501-0_GR-69",
+    "name": "Main Group - Text / Encoding",
     "level": 0,
     "range": {
-      "start": 20,
-      "end": 29
+      "start": 4096,
+      "end": 6143
     }
   }
 ]

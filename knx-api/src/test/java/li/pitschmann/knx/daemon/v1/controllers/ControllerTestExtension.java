@@ -18,22 +18,31 @@
 
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import com.google.gson.JsonParser;
+import com.google.common.base.Strings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
-import li.pitschmann.knx.daemon.gson.DaemonGsonEngine;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.communication.KnxStatusPool;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupRange;
 import li.pitschmann.knx.parser.XmlProject;
+import li.pitschmann.knx.test.MockDaemonTest;
+import li.pitschmann.knx.test.MockHttpDaemon;
+import li.pitschmann.knx.test.MockServer;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ro.pippo.controller.Controller;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.core.Messages;
 import ro.pippo.core.ParameterValue;
@@ -46,21 +55,14 @@ import ro.pippo.core.route.RouteContext;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -68,32 +70,50 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
- * Abstract Controller Test for testing purposes
+ * Extension to start/stop the {@link MockHttpDaemon} (and {@link MockServer} indirectly).
+ * <p/>
+ * It will be invoked using {@link MockDaemonTest} annotation.
+ *
+ * @author PITSCHR
  */
-public abstract class AbstractControllerTest {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final HttpClient httpClient = HttpClient.newHttpClient();
+public final class ControllerTestExtension
+        implements ParameterResolver {
+    private static final Logger log = LoggerFactory.getLogger(ControllerTestExtension.class);
+
+    @Override
+    public Controller resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+        final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ControllerTest.class).get();
+        return newController(annotation);
+    }
+
+    @Override
+    public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+        return paramContext.getParameter().getType().isAssignableFrom(Controller.class);
+    }
+
 
     /**
      * Creates a new instance of {@link AbstractController}
      *
-     * @param controller
-     * @param knxClient    the default KNX client, if {@code null} falls back to {@link #getDefaultKnxClient()}
-     * @param xmlProject   the XML client, if {@code null} falls back to {@link #getDefaultXmlProject()}
-     * @param routeContext the route context, if {@code null} falls back to {@link #getDefaultRouteContext()}
+     * @param annotation
      * @param <T>
      * @return new instance of {@link AbstractController}
      */
-    protected final <T extends AbstractController> T newController(final @Nonnull Class<T> controller,
-                                                                   final @Nullable DefaultKnxClient knxClient,
-                                                                   final @Nullable XmlProject xmlProject,
-                                                                   final @Nullable RouteContext routeContext) {
+    protected final <T extends AbstractController> T newController(final @Nonnull ControllerTest annotation) {
+        // Load XML Project
+        final XmlProject xmlProject;
+        if (!Strings.isNullOrEmpty(annotation.projectPath())) {
+            final var xmlProjectPath = Paths.get(annotation.projectPath());
+            xmlProject = KnxprojParser.parse(xmlProjectPath);
+        } else {
+            xmlProject = getDefaultXmlProject();
+        }
+
         try {
             // Create a new instance of controller
-            final T obj = controller.getDeclaredConstructor().newInstance();
+            @SuppressWarnings("unchecked") final T obj = ((Class<T>) annotation.value()).getDeclaredConstructor().newInstance();
 
-            final var injectKnxClient = knxClient == null ? getDefaultKnxClient() : knxClient;
-            final var injectXmlProject = xmlProject == null ? getDefaultXmlProject() : xmlProject;
+            final var injectKnxClient = getDefaultKnxClient();
 
             // create guice injector
             final var injector = Guice.createInjector(new AbstractModule() {
@@ -104,7 +124,7 @@ public abstract class AbstractControllerTest {
 
                 @Provides
                 private final XmlProject providesXmlProject() {
-                    return injectXmlProject;
+                    return xmlProject;
                 }
             });
 
@@ -113,7 +133,7 @@ public abstract class AbstractControllerTest {
 
             // apply the route context to the controller instance as RouteContext won't
             // be injected by Pippo Framework
-            final var routeContextInternal = routeContext == null ? getDefaultRouteContext() : routeContext;
+            final var routeContextInternal = getDefaultRouteContext();
             final var spyObject = spy(obj);
 
             when(spyObject.getRouteContext()).thenReturn(routeContextInternal);
@@ -123,40 +143,6 @@ public abstract class AbstractControllerTest {
         } catch (final Exception e) {
             throw new AssertionError(e);
         }
-    }
-
-    /**
-     * Creates a new instance of {@link AbstractController} with default values
-     * from {@link #getDefaultKnxClient()}, {@link #getDefaultXmlProject()} and
-     * {@link #getDefaultRouteContext()}
-     *
-     * @param controller
-     * @param <T>
-     * @return new instance of {@link AbstractController}
-     */
-    protected final <T extends AbstractController> T newController(final @Nonnull Class<T> controller) {
-        return newController(controller, null, null, null);
-    }
-
-    /**
-     * Returns the given response object as JSON
-     *
-     * @param response
-     * @return json
-     */
-    protected final String asJson(final @Nonnull Object response) {
-        return DaemonGsonEngine.INSTANCE.toString(response);
-    }
-
-    /**
-     * Randomize a {@link GroupAddress}. The group address should not matter in the unit testing.
-     *
-     * @return
-     */
-    protected final GroupAddress randomGroupAddress() {
-        // a range between between 1 and 65535
-        int randomInt = new Random().nextInt(65534) + 1;
-        return GroupAddress.of(randomInt);
     }
 
     /**
@@ -202,6 +188,7 @@ public abstract class AbstractControllerTest {
         if (consumer != null) {
             consumer.accept(knxClient);
         }
+
         return knxClient;
     }
 
@@ -222,56 +209,39 @@ public abstract class AbstractControllerTest {
      */
     protected XmlProject getXmlProject(final @Nullable Consumer<XmlProject> consumer) {
         final var xmlProject = mock(XmlProject.class);
-        final var xmlGroupAddressMock = mock(XmlGroupAddress.class);
-
-        when(xmlProject.getId()).thenReturn("P-012F");
-        when(xmlProject.getName()).thenReturn("Test Project Name");
-        when(xmlProject.getGroupAddressStyle()).thenReturn("ThreeLevel");
-        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddressMock);
 
         // XML Group Addresses
-        final var xmlGroupAddresses = new ArrayList<XmlGroupAddress>(12);
-        for (var i = 0; i < 12; i++) {
-            final var xmlGroupAddress = new XmlGroupAddress();
-            xmlGroupAddress.setId("GA-" + i);
-            xmlGroupAddress.setName("GA-NAME-" + i);
-            xmlGroupAddress.setDescription("GA-DESC-" + i);
-            xmlGroupAddress.setParentId("GR-CHILD-" + (i % 3));
-            xmlGroupAddress.setAddress(String.valueOf((i % 3) * 10 + i + 1));
-            xmlGroupAddress.setDataPointType("1.001");
-            xmlGroupAddresses.add(xmlGroupAddress);
+        final var xmlGroupAddressMock = mock(XmlGroupAddress.class);
+        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(xmlGroupAddressMock);
+
+        final var xmlGroupAddressesMock = new ArrayList<XmlGroupAddress>();
+        for (var i = 0; i < 10; i++) {
+            xmlGroupAddressesMock.add(mock(XmlGroupAddress.class));
         }
-        when(xmlProject.getGroupAddresses()).thenReturn(xmlGroupAddresses);
+        when(xmlProject.getGroupAddresses()).thenReturn(xmlGroupAddressesMock);
 
         // XML Group Ranges
-        final var xmlGroupRanges = new ArrayList<XmlGroupRange>(3);
+        final var xmlMainGroupRangeMock = mock(XmlGroupRange.class);
+        when(xmlProject.getMainGroup(anyInt())).thenReturn(xmlMainGroupRangeMock);
+
+        final var xmlMiddleGroupRangeMock = mock(XmlGroupRange.class);
+        when(xmlProject.getMiddleGroup(anyInt(), anyInt())).thenReturn(xmlMiddleGroupRangeMock);
+
+        final var xmlMainGroupRangesMock = new ArrayList<XmlGroupRange>();
         for (var i = 0; i < 3; i++) {
-            final var xmlGroupRange = new XmlGroupRange();
-            xmlGroupRange.setId("GR-" + i);
-            xmlGroupRange.setName("GR-NAME-" + i);
-            xmlGroupRange.setRangeStart(i * 10);
-            xmlGroupRange.setRangeEnd(i * 10 + 9);
-            xmlGroupRanges.add(xmlGroupRange);
-
-            // XML Group Range Child
-            final var xmlGroupRangeChild = new XmlGroupRange();
-            xmlGroupRangeChild.setId("GR-CHILD-" + i);
-            xmlGroupRangeChild.setName("GR-CHILD-NAME-" + i);
-            xmlGroupRangeChild.setLevel(1);
-            xmlGroupRangeChild.setRangeStart(i * 10 + 1);
-            xmlGroupRangeChild.setRangeEnd(i * 10 + 8);
-            xmlGroupRangeChild.setGroupAddresses(xmlGroupAddresses.stream().filter(xga -> xga.getParentId().equals(xmlGroupRangeChild.getId())).collect(Collectors.toList()));
-            xmlGroupRange.setChildGroupRanges(Collections.singletonList(xmlGroupRangeChild));
-
-            when(xmlProject.getMainGroup(i)).thenReturn(xmlGroupRange);
-            when(xmlProject.getMiddleGroup(i, 0)).thenReturn(xmlGroupRangeChild);
+            xmlMainGroupRangesMock.add(mock(XmlGroupRange.class));
         }
-        when(xmlProject.getGroupRanges()).thenReturn(xmlGroupRanges);
-        when(xmlProject.getMainGroups()).thenReturn(xmlGroupRanges.stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toList()));
+        when(xmlProject.getMainGroups()).thenReturn(xmlMainGroupRangesMock);
+
+        final var xmlGroupRangesMock = new ArrayList<XmlGroupRange>();
+        xmlGroupRangesMock.addAll(xmlMainGroupRangesMock);
+        xmlGroupRangesMock.add(xmlMiddleGroupRangeMock);
+        when(xmlProject.getGroupRanges()).thenReturn(xmlGroupRangesMock);
 
         if (consumer != null) {
             consumer.accept(xmlProject);
         }
+
         return xmlProject;
     }
 
@@ -315,29 +285,5 @@ public abstract class AbstractControllerTest {
         }
 
         return routeContext;
-    }
-
-    /**
-     * Reads the given test resource on {@code filePath} and returns the content
-     * as an UTF-8 compliant String representation.
-     *
-     * @param filePath
-     * @return content (UTF-8 decoded)
-     */
-    protected final String readJsonFile(final String filePath) {
-        log.debug("File: {}", filePath);
-        try {
-            final var path = Paths.get(AbstractControllerTest.class.getResource(filePath).toURI());
-            if (Files.isReadable(path)) {
-                final var content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-                log.debug("Content of file '{}': {}", filePath, content);
-                // minify json
-                return new JsonParser().parse(content).toString();
-            }
-            throw new AssertionError("File not found or cannot be read: " + filePath);
-        } catch (final URISyntaxException | IOException ex) {
-            fail(ex);
-            throw new AssertionError(ex);
-        }
     }
 }

@@ -64,6 +64,7 @@ public class KnxprojParserTest {
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
         assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(project.getGroupAddresses()).hasSize(189);
+        assertThat(project.getGroupRanges()).hasSize(18);
 
         // ---------------------
         // Range Group Check

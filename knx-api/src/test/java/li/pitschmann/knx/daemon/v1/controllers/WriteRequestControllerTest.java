@@ -27,7 +27,7 @@ import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
 
 import java.net.http.HttpClient;
@@ -35,6 +35,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
+import static li.pitschmann.knx.test.TestUtils.asJson;
+import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +45,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test class for {@link WriteRequestController}
  */
-public class WriteRequestControllerTest extends AbstractControllerTest {
+public class WriteRequestControllerTest {
     /**
      * Test /write endpoint for group address 0/0/22
      *
@@ -71,10 +73,10 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
     /**
      * An erroneous Write Request without DPT and raw data.
      */
-    @Test
+    @ControllerTest(WriteRequestController.class)
     @DisplayName("Error: Write Request endpoint without DPT and raw data")
-    public void testWriteMissingDptAndRawData() {
-        final var controller = newController(WriteRequestController.class);
+    public void testWriteMissingDptAndRawData(final Controller controller) {
+        final var writeRequestController = (WriteRequestController) controller;
         final var groupAddress = GroupAddress.of(4, 7, 28);
 
         //
@@ -84,9 +86,10 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
         final var request = new WriteRequest();
         request.setGroupAddress(groupAddress);
 
-        final var response = controller.writeRequest(request);
-        final var responseJson = asJson(response);
+        final var response = writeRequestController.writeRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+
+        final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
     }
 
@@ -95,10 +98,10 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
      * but no ack body could be found (or retrieved yet) due a thrown
      * exception.
      */
-    @Test
+    @ControllerTest(WriteRequestController.class)
     @DisplayName("Error: Write Request without found ack body due a thrown exception from KNX client")
-    public void testWriteException() {
-        final var controller = newController(WriteRequestController.class);
+    public void testWriteException(final Controller controller) {
+        final var writeRequestController = (WriteRequestController) controller;
         final var groupAddress = randomGroupAddress();
 
         //
@@ -107,7 +110,7 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
 
         // mock no ack body was found - an execution exception is thrown instead
         try {
-            when(controller.getKnxClient().writeRequest(groupAddress, new byte[0]).get()).thenThrow(new ExecutionException(null));
+            when(writeRequestController.getKnxClient().writeRequest(groupAddress, new byte[0]).get()).thenThrow(new ExecutionException(null));
         } catch (final Throwable t) {
             fail(t);
         }
@@ -121,26 +124,27 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
         request.setDataPointType(DPT1.SWITCH);
         request.setValues("true");
 
-        final var response = controller.writeRequest(request);
-        final var responseJson = asJson(response);
+        final var response = writeRequestController.writeRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
+
+        final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
     }
 
     /**
      * Tests the write endpoint for an unknown group address
      */
-    @Test
+    @ControllerTest(WriteRequestController.class)
     @DisplayName("Error: Write Request for an unknown group address")
-    public void testWriteUnknownGroupAddress() {
-        final var controller = newController(WriteRequestController.class);
+    public void testWriteUnknownGroupAddress(final Controller controller) {
+        final var writeRequestController = (WriteRequestController) controller;
 
         //
         // Mocking
         //
 
         // mock an non-existing xml group address
-        when(controller.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+        when(writeRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
         //
         // Verification
@@ -149,9 +153,10 @@ public class WriteRequestControllerTest extends AbstractControllerTest {
         final var request = new WriteRequest();
         request.setGroupAddress(randomGroupAddress());
 
-        final var response = controller.writeRequest(request);
-        final var responseJson = asJson(response);
+        final var response = writeRequestController.writeRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+
+        final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
     }
 }

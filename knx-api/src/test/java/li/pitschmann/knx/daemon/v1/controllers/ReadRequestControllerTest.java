@@ -28,13 +28,17 @@ import li.pitschmann.knx.test.MockDaemonTest;
 import li.pitschmann.knx.test.MockHttpDaemon;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
 
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
+import static li.pitschmann.knx.test.TestUtils.asJson;
+import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
+import static li.pitschmann.knx.test.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +47,8 @@ import static org.mockito.Mockito.when;
 /**
  * Test class for {@link ReadRequestController}
  */
-public class ReadRequestControllerTest extends AbstractControllerTest {
+public class ReadRequestControllerTest {
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
 
     /**
      * Tests the /read endpoint for group addresses using KNX mock server
@@ -85,10 +90,10 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
      * but no ack body could be found (or retrieved yet) due a thrown
      * exception.
      */
-    @Test
+    @ControllerTest(ReadRequestController.class)
     @DisplayName("Error: Read Request without found ack body due a thrown exception from KNX client")
-    public void testReadException() {
-        final var controller = newController(ReadRequestController.class);
+    public void testReadException(final Controller controller) {
+        final var readRequestController = (ReadRequestController) controller;
         final var groupAddress = randomGroupAddress();
 
         //
@@ -97,7 +102,7 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
 
         // mock no ack body was found - an execution exception is thrown instead
         try {
-            when(controller.getKnxClient().readRequest(groupAddress).get()).thenThrow(new ExecutionException(null));
+            when(readRequestController.getKnxClient().readRequest(groupAddress).get()).thenThrow(new ExecutionException(null));
         } catch (final Throwable t) {
             fail(t);
         }
@@ -109,9 +114,15 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
         final var request = new ReadRequest();
         request.setGroupAddress(groupAddress);
 
-        final var response = controller.readRequest(request);
-        final var responseJson = asJson(response);
+        final var response = readRequestController.readRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getRaw()).isNull();
+
+        final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
     }
 
@@ -119,10 +130,10 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
      * Read Request causing an internal timeout because KNX client didn't receive a response
      * from KNX Net/IP device yet (and therefore no status data available in the status pool).
      */
-    @Test
+    @ControllerTest(ReadRequestController.class)
     @DisplayName("Error: Read Request without available KNX status data from KNX Client (internal timeout)")
-    public void testReadInternalTimeout() {
-        final var controller = newController(ReadRequestController.class);
+    public void testReadInternalTimeout(final Controller controller) {
+        final var readRequestController = (ReadRequestController) controller;
         final var groupAddress = randomGroupAddress();
 
         //
@@ -131,7 +142,7 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
 
         // mock retrieve tunneling ack status with no error
         try {
-            when(controller.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
+            when(readRequestController.getKnxClient().readRequest(groupAddress).get().getStatus()).thenReturn(Status.E_NO_ERROR);
         } catch (final Throwable t) {
             fail(t);
         }
@@ -143,19 +154,25 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
         final var request = new ReadRequest();
         request.setGroupAddress(groupAddress);
 
-        final var response = controller.readRequest(request);
-        final var responseJson = asJson(response);
+        final var response = readRequestController.readRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getRaw()).isNull();
+
+        final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
     }
 
     /**
      * Tests the read endpoint for an unknown group address
      */
-    @Test
+    @ControllerTest(ReadRequestController.class)
     @DisplayName("Error: Read Request for an unknown group address")
-    public void testReadUnknownGroupAddress() {
-        final var controller = newController(ReadRequestController.class);
+    public void testReadUnknownGroupAddress(final Controller controller) {
+        final var readRequestController = (ReadRequestController) controller;
         final var groupAddress = randomGroupAddress();
 
         //
@@ -163,7 +180,7 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
         //
 
         // mock an non-existing xml group address
-        when(controller.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+        when(readRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
         //
         // Verification
@@ -172,9 +189,15 @@ public class ReadRequestControllerTest extends AbstractControllerTest {
         final var request = new ReadRequest();
         request.setGroupAddress(groupAddress);
 
-        final var response = controller.readRequest(request);
-        final var responseJson = asJson(response);
+        final var response = readRequestController.readRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getRaw()).isNull();
+
+        final var responseJson = asJson(response);
         assertThat(responseJson).isEqualTo("{}");
     }
 }
