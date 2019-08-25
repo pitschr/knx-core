@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -44,26 +44,23 @@ public class XmlProjectTest {
         final var xmlGroupAddress3 = mock(XmlGroupAddress.class);
         when(xmlGroupAddress3.toString()).thenReturn("xga3");
         when(xmlGroupAddress3.getAddress()).thenReturn("3");
-        final var xmlGroupAddresses = Maps.<String, XmlGroupAddress>newLinkedHashMap();
-        xmlGroupAddresses.put("xga1-id", xmlGroupAddress1);
-        xmlGroupAddresses.put("xga2-id", xmlGroupAddress2);
-        xmlGroupAddresses.put("xga3-id", xmlGroupAddress3);
+        final var xmlGroupAddresses = Lists.newArrayList(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3);
 
         final var groupRange1 = mock(XmlGroupRange.class);
+        when(groupRange1.getId()).thenReturn("xgg1-id");
         when(groupRange1.toString()).thenReturn("xgg1");
         final var groupRange2 = mock(XmlGroupRange.class);
+        when(groupRange2.getId()).thenReturn("xgg2-id");
         when(groupRange2.toString()).thenReturn("xgg2");
-        final var groupRanges = Maps.<String, XmlGroupRange>newLinkedHashMap();
-        groupRanges.put("xgg1-id", groupRange1);
-        groupRanges.put("xgg2-id", groupRange2);
+        final var groupRanges = Lists.newArrayList(groupRange1, groupRange2);
 
         // given
         final var xmlProject = new XmlProject();
-        xmlProject.setGroupAddressMap(xmlGroupAddresses);
         xmlProject.setGroupAddressStyle("GA_STYLE");
         xmlProject.setId("PROJECT_ID");
         xmlProject.setName("PROJECT_NAME");
-        xmlProject.setGroupRangeMap(groupRanges);
+        xmlProject.setGroupRanges(groupRanges);
+        xmlProject.setGroupAddresses(xmlGroupAddresses);
 
         // @formatter:off
         // test toString()

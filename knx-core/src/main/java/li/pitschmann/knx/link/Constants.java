@@ -97,6 +97,7 @@ public final class Constants {
          * Timeout for Data Channel Socket
          */
         public static final long DATA_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+
         private Timeouts() {
         }
     }
@@ -113,6 +114,7 @@ public final class Constants {
          * Interval of look up for event pool (e.g. if request/ack received)
          */
         public static final long EVENT = 10L;
+
         private Interval() {
         }
     }
@@ -141,6 +143,7 @@ public final class Constants {
          * Default port for HTTP Daemon (same as Pippo)
          */
         public static final int HTTP_DAEMON_PORT = 8338;
+
         private Default() {
         }
     }
