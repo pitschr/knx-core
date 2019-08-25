@@ -36,14 +36,17 @@ public class XmlProjectTest {
     public void testToString() {
         // create some mock data
         final var xmlGroupAddress1 = mock(XmlGroupAddress.class);
-        when(xmlGroupAddress1.toString()).thenReturn("xga1"); // only for #toString() simulation
+        when(xmlGroupAddress1.getId()).thenReturn("xga1-id");
         when(xmlGroupAddress1.getAddress()).thenReturn("1"); // needed for internal mapping (will be converted to int)
+        when(xmlGroupAddress1.toString()).thenReturn("xga1"); // only for #toString() simulation
         final var xmlGroupAddress2 = mock(XmlGroupAddress.class);
-        when(xmlGroupAddress2.toString()).thenReturn("xga2");
+        when(xmlGroupAddress2.getId()).thenReturn("xga2-id");
         when(xmlGroupAddress2.getAddress()).thenReturn("2");
+        when(xmlGroupAddress2.toString()).thenReturn("xga2");
         final var xmlGroupAddress3 = mock(XmlGroupAddress.class);
-        when(xmlGroupAddress3.toString()).thenReturn("xga3");
+        when(xmlGroupAddress3.getId()).thenReturn("xga3-id");
         when(xmlGroupAddress3.getAddress()).thenReturn("3");
+        when(xmlGroupAddress3.toString()).thenReturn("xga3");
         final var xmlGroupAddresses = Lists.newArrayList(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3);
 
         final var groupRange1 = mock(XmlGroupRange.class);
