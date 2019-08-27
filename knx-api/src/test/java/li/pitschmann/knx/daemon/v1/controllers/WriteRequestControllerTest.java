@@ -85,7 +85,7 @@ public class WriteRequestControllerTest {
 
         final var request = new WriteRequest();
         request.setGroupAddress(groupAddress);
-        request.setRaw(new byte[] { 0x01 });
+        request.setRaw(new byte[]{0x01});
 
         final var response = writeRequestController.writeRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);

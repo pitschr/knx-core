@@ -1,9 +1,9 @@
 package li.pitschmann.knx.daemon.v1.json;
 
 /**
- * JSON project overview response
+ * JSON response about *.knxproj Project structure
  */
-public final class ProjectOverviewResponse {
+public final class ProjectStructureRequest {
     private String id;
     private String name;
     private String groupAddressStyle;

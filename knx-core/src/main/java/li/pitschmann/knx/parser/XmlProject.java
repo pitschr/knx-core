@@ -20,7 +20,6 @@ package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +28,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -67,27 +68,29 @@ public final class XmlProject {
      */
     private String groupAddressStyle;
     /**
-     * Map of KNX Group Ranges taken from '*.knxproj' file. Key is by Id (e.g. P-06EF-0_GR-4)
+     * <strong>Unsorted Map</strong> of KNX Group Ranges taken from '*.knxproj' file. Key is by Id (e.g. P-06EF-0_GR-4)
      * <pre>{@code
      * <GroupRanges>
-     *   <GroupRange />
-     *   ...
+     *   <GroupRange Id="..." />
      * </GroupRanges>
      * }</pre>
      */
     private Map<String, XmlGroupRange> groupRangeMap;
     /**
-     * Map of KNX Group Addresses by Key Id (e.g. P-06EF-0_GA-3) , taken from '*.knxproj' file
+     * <strong>Unsorted Map</strong> of KNX Group Addresses by Key {@code Id} (e.g. P-06EF-0_GA-3), taken from '*.knxproj' file.
      * <p/>
      * {@code <GroupAddresses Id="..." />}
      */
     private Map<String, XmlGroupAddress> groupAddressMap;
     /**
-     * Map of KNX Group Addresses by Key Address (e.g. 1025), taken from '*.knxproj' file.
+     * <strong>Sorted Map</strong> of KNX Group Addresses by {@code Address} (e.g. 1025), taken from '*.knxproj' file.
+     * The key of map is the address as an integer and sorted by the key.
      * <p/>
      * {@code <GroupAddresses Address="..." />}
+     * <p/>
+     * The group address in KNX is unique.
      */
-    private Map<Integer, XmlGroupAddress> groupAddressMapByGA;
+    private Map<Integer, XmlGroupAddress> groupAddressMapSortedByGA;
 
     public String getId() {
         return id;
@@ -114,34 +117,6 @@ public final class XmlProject {
     }
 
     /**
-     * Sets the Group Address map. It will internally create two maps whereas one key is the Id taken from '*.knxproj'
-     * file for further linking, and the another key is the group address that is used by.
-     *
-     * @param groupAddressMap
-     */
-    public void setGroupAddressMap(final @Nonnull Map<String, XmlGroupAddress> groupAddressMap) {
-        // 1st map whereas key is the Id
-        this.groupAddressMap = ImmutableMap.copyOf(groupAddressMap);
-        // 2nd map whereas key is the group address itself
-        this.groupAddressMapByGA = this.groupAddressMap.values().stream()
-                .collect(
-                        Collectors.toUnmodifiableMap(
-                                xga -> Integer.parseInt(xga.getAddress()), // parses address to integer
-                                Function.identity() // the xml group address itself
-                        )
-                );
-    }
-
-    /**
-     * Sets the Group Range map
-     *
-     * @param groupRangeMap
-     */
-    public void setGroupRangeMap(final @Nonnull Map<String, XmlGroupRange> groupRangeMap) {
-        this.groupRangeMap = ImmutableMap.copyOf(groupRangeMap);
-    }
-
-    /**
      * Returns an unmodifiable collection of {@link XmlGroupRange}
      *
      * @return unmodifiable collection of {@link XmlGroupRange}
@@ -152,13 +127,68 @@ public final class XmlProject {
     }
 
     /**
+     * Sets the group ranges by given collection of {@link XmlGroupRange}.
+     * Internally it will be converted into a map for faster lookup by id.
+     *
+     * @param groupRanges
+     */
+    public void setGroupRanges(final @Nonnull Collection<XmlGroupRange> groupRanges) {
+        this.groupRangeMap = groupRanges.stream()
+                .collect(
+                        Collectors.toMap(
+                                XmlGroupRange::getId, // key is the XML GroupRange ID
+                                Function.identity(), // element itself
+                                (x, y) -> x,
+                                LinkedHashMap::new // keep the order
+                        )
+                );
+    }
+
+    /**
      * Returns an unmodifiable collection of {@link XmlGroupAddress}
      *
      * @return unmodifiable collection of {@link XmlGroupAddress}
      */
     @Nonnull
     public Collection<XmlGroupAddress> getGroupAddresses() {
-        return Collections.unmodifiableCollection(this.groupAddressMap.values());
+        return Collections.unmodifiableCollection(this.groupAddressMapSortedByGA.values());
+    }
+
+    /**
+     * Sets the group addresses by the given collection of {@link XmlGroupAddress}
+     * Internally it will create two maps:<br>
+     * <ol>
+     * <li>one map, whereas key is the Id taken from '*.knxproj'</li>
+     * <li>one map, whereas key is the KNX group address (unique as integer)</li>
+     * </ol>
+     * Using those two maps we can find the group address quickly by id from XML Project file
+     * or by the KNX group address.
+     *
+     * @param groupAddressMap
+     */
+    public void setGroupAddresses(final @Nonnull Collection<XmlGroupAddress> groupAddressMap) {
+        // 1st map whereas key is the XML GroupAddress Id
+        this.groupAddressMap = groupAddressMap.stream()
+                .collect(
+                        Collectors.toMap(
+                                XmlGroupAddress::getId, // key is the XML GroupAddress ID
+                                Function.identity() // element itself
+                        )
+                );
+
+        // 2nd map whereas key is the KNX GroupAddress in Integer format and is sorted by the integer group address
+        this.groupAddressMapSortedByGA = groupAddressMap.stream()
+                .sorted(
+                        Comparator.comparingInt(x -> Integer.parseInt(x.getAddress())) // sort by KNX group address
+                )
+                .collect(
+                        Collectors.toMap(
+                                x -> Integer.parseInt(x.getAddress()), // key is the KNX group address (as an integer)
+                                Function.identity(), // element itself
+                                (x, y) -> x,
+                                LinkedHashMap::new // keep the order
+                        )
+                );
     }
 
     /**
@@ -181,7 +211,7 @@ public final class XmlProject {
      */
     @Nullable
     public XmlGroupAddress getGroupAddress(final int address) {
-        return this.groupAddressMapByGA.get(address);
+        return this.groupAddressMapSortedByGA.get(address);
     }
 
     /**

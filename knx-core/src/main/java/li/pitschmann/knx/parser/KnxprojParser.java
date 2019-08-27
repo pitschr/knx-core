@@ -20,7 +20,7 @@ package li.pitschmann.knx.parser;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
@@ -36,7 +36,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -92,13 +93,13 @@ public final class KnxprojParser {
 
             // get KNX group ranges and addresses
             final var groupRanges = parseGroupRanges(zipFile);
-            project.setGroupRangeMap(groupRanges);
+            project.setGroupRanges(groupRanges);
 
             final var groupAddresses = parseGroupAddresses(zipFile);
-            project.setGroupAddressMap(groupAddresses);
+            project.setGroupAddresses(groupAddresses);
 
             // links the KNX group ranges with KNX group addresses
-            linkGroupRangeAndAddresses(groupRanges, groupAddresses);
+            linkGroupRangeAndAddresses(project);
         } catch (final IOException | VTDException ex) {
             throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
         }
@@ -143,15 +144,16 @@ public final class KnxprojParser {
     }
 
     /**
-     * Returns a map of {@link XmlGroupRange} based on project information from '*.knxproj' file
+     * Returns a list of {@link XmlGroupRange} based on project information from '*.knxproj' file in the same order
+     * which is written in the '*.knxproj' file.
      *
      * @param zipFile to be parsed
-     * @return map of KNX Group Ranges (id of map is group range id)
+     * @return list of KNX Group Ranges
      * @throws IOException
      * @throws VTDException
      */
     @Nonnull
-    private static Map<String, XmlGroupRange> parseGroupRanges(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
+    private static List<XmlGroupRange> parseGroupRanges(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
         // reads the '0.xml' file from 'P-<digit>' folder
         final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
 
@@ -161,7 +163,11 @@ public final class KnxprojParser {
         vtdGen.parse(false);
         final var vtdNav = vtdGen.getNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
-        final var groupRanges = Maps.<String, XmlGroupRange>newLinkedHashMap();
+        final var groupRanges = Lists.<XmlGroupRange>newLinkedList();
+
+        vtdAutoPilot.selectXPath("/KNX/Project/Installations//GroupAddresses/GroupRanges");
+        vtdAutoPilot.evalXPath();
+        final var rootGroupRangesDepth = vtdNav.getCurrentDepth() + 1; // +1 because we don't want to count <GroupRanges /> itself
 
         // find all <GroupRange /> elements
         vtdAutoPilot.selectXPath("/KNX/Project/Installations//GroupAddresses//GroupRange");
@@ -183,6 +189,8 @@ public final class KnxprojParser {
             groupRange.setName(readAttributeValue(vtdNav, "Name",
                     () -> new KnxprojParserException("Attribute <GroupRange @Name /> not found for: " + groupRange.getId())));
 
+            groupRange.setLevel(vtdNav.getCurrentDepth() - rootGroupRangesDepth);
+
             // check if group range is on main level (below <GroupRanges /> element)
             if (vtdNav.toElement(VTDNav.PARENT) && vtdNav.matchElement("GroupRange")) {
                 // current group range is not on main level
@@ -199,7 +207,7 @@ public final class KnxprojParser {
                 groupRange.setParentId(null);
             }
 
-            groupRanges.put(groupRange.getId(), groupRange);
+            groupRanges.add(groupRange);
         }
 
         return groupRanges;
@@ -215,7 +223,7 @@ public final class KnxprojParser {
      * @throws VTDException exception from VTD-XML
      */
     @Nonnull
-    private static Map<String, XmlGroupAddress> parseGroupAddresses(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
+    private static List<XmlGroupAddress> parseGroupAddresses(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
         // reads the '0.xml' file from 'P-<digit>' folder
         final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
 
@@ -225,7 +233,7 @@ public final class KnxprojParser {
         vtdGen.parse(false);
         final var vtdNav = vtdGen.getNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
-        final var groupAddresses = Maps.<String, XmlGroupAddress>newLinkedHashMap();
+        final var groupAddresses = new LinkedList<XmlGroupAddress>();
 
         // find all <GroupAddress /> elements
         vtdAutoPilot.selectXPath("/KNX/Project/Installations/Installation/GroupAddresses//GroupAddress");
@@ -260,7 +268,7 @@ public final class KnxprojParser {
             // GroupRange Id cannot be empty because we already checked it in 'parseGroupRanges' method
             groupAddress.setParentId(Objects.requireNonNull(readAttributeValue(vtdNav, "Id")));
 
-            groupAddresses.put(groupAddress.getId(), groupAddress);
+            groupAddresses.add(groupAddress);
         }
 
         return groupAddresses;
@@ -269,19 +277,18 @@ public final class KnxprojParser {
     /**
      * Creates a link between {@link XmlGroupRange} and {@link XmlGroupAddress}
      *
-     * @param xmlGroupRangeMap
-     * @param xmlGroupAddressMap
+     * @param xmlProject
      */
-    private static void linkGroupRangeAndAddresses(final @Nonnull Map<String, XmlGroupRange> xmlGroupRangeMap, final @Nonnull Map<String, XmlGroupAddress> xmlGroupAddressMap) {
+    private static void linkGroupRangeAndAddresses(final @Nonnull XmlProject xmlProject) {
         // link Group Range (parent) with Group Ranges (child)
-        xmlGroupRangeMap.values().forEach(xgr -> {
+        xmlProject.getGroupRanges().forEach(xgr -> {
             if (xgr.getParentId() != null) {
-                xmlGroupRangeMap.get(xgr.getParentId()).getChildGroupRanges().add(xgr);
+                xmlProject.getGroupRangeById(xgr.getParentId()).getChildGroupRanges().add(xgr);
             }
         });
 
         // link Group Range with Group Addresses
-        xmlGroupAddressMap.values().forEach(xga -> xmlGroupRangeMap.get(xga.getParentId()).getGroupAddresses().add(xga));
+        xmlProject.getGroupAddresses().forEach(xga -> xmlProject.getGroupRangeById(xga.getParentId()).getGroupAddresses().add(xga));
     }
 
     /**
