@@ -8,11 +8,7 @@ import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controller for project-specific endpoints to return some data
@@ -68,21 +64,16 @@ public final class ProjectController extends AbstractController {
         log.trace("Request for all main group in project");
 
         final var xmlProject = getXmlProject();
-
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("TwoLevel".equals(groupAddressStyle)
-                || "ThreeLevel".equals(groupAddressStyle)) {
-            final var mainGroups = xmlProject.getMainGroups();
-            log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroups);
+        Preconditions.checkArgument(
+                "ThreeLevel".equals(groupAddressStyle) ||
+                        "TwoLevel".equals(groupAddressStyle));
 
-            getResponse().ok();
-            return limitAndGetAsList(mainGroups);
-        } else {
-            log.warn("Bad Request for get '/group' and group address style: {}", groupAddressStyle);
+        final var mainGroups = xmlProject.getMainGroups();
+        log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroups);
 
-            getResponse().badRequest();
-            return Collections.emptyList();
-        }
+        getResponse().ok();
+        return limitAndGetAsList(mainGroups);
     }
 
     /**
@@ -100,24 +91,14 @@ public final class ProjectController extends AbstractController {
         log.trace("Request for main group in project: {}", main);
         checkArgumentMainGroup(main);
 
-        // valid main group number?
         final var xmlProject = getXmlProject();
+        Preconditions.checkArgument("ThreeLevel".equals(xmlProject.getGroupAddressStyle()));
 
-        final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("ThreeLevel".equals(groupAddressStyle)) {
-            final var mainGroup = xmlProject.getMainGroup(main);
-            log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
+        final var mainGroup = xmlProject.getMainGroup(main);
+        log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
 
-            getResponse().ok();
-            return limitAndGetAsList(mainGroup.getChildGroupRanges());
-
-            // return mainGroup.getChildGroupRanges();
-        } else {
-            log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
-
-            getResponse().badRequest();
-            return null;
-        }
+        getResponse().ok();
+        return limitAndGetAsList(mainGroup.getChildGroupRanges());
     }
 
     /**
@@ -136,20 +117,13 @@ public final class ProjectController extends AbstractController {
         checkArgumentMainGroup(main);
 
         final var xmlProject = getXmlProject();
-        final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("TwoLevel".equals(groupAddressStyle)) {
-            final var middleGroup = xmlProject.getMainGroup(main);
-            log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
+        Preconditions.checkArgument("TwoLevel".equals(xmlProject.getGroupAddressStyle()));
 
-            getResponse().ok();
-            return limitAndGetAsList(middleGroup.getGroupAddresses());
-        } else {
-            log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
+        final var middleGroup = xmlProject.getMainGroup(main);
+        log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
 
-            getResponse().badRequest();
-            return null;
-        }
-
+        getResponse().ok();
+        return limitAndGetAsList(middleGroup.getGroupAddresses());
     }
 
     /**
@@ -170,43 +144,13 @@ public final class ProjectController extends AbstractController {
         checkArgumentMiddleGroup(middle);
 
         final var xmlProject = getXmlProject();
-        final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        if ("ThreeLevel".equals(groupAddressStyle)) {
-            final var middleGroup = xmlProject.getMiddleGroup(main, middle);
-            log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
+        Preconditions.checkArgument("ThreeLevel".equals(xmlProject.getGroupAddressStyle()));
 
-            getResponse().ok();
-            return limitAndGetAsList(middleGroup.getGroupAddresses());
-        } else {
-            log.warn("Bad Request for get '{}' and group address style: {}", getRequest().getPath(), groupAddressStyle);
+        final var middleGroup = xmlProject.getMiddleGroup(main, middle);
+        log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
 
-            getResponse().badRequest();
-            return null;
-        }
-
-    }
-
-    /**
-     * Returns a range of {@code T} elements from {@link Collection}.
-     * May be limited using {@code start} and {@code length} request parameters.
-     *
-     * @param collection
-     * @param <T>
-     * @return a new list of elements from {@link Collection}
-     */
-    private <T> List<T> limitAndGetAsList(final Collection<T> collection) {
-        final int start = getRequest().getParameter("start").toInt(0);
-        final int length = getRequest().getParameter("limit").toInt(Integer.MAX_VALUE);
-
-        if (start == 0 && length == Integer.MAX_VALUE) {
-            log.trace("No range defined.");
-            // no limit
-            return new ArrayList<>(collection);
-        } else {
-            log.trace("Range defined: start={}, limit={}", start, length);
-            // limit
-            return collection.stream().skip(start).limit(length).collect(Collectors.toList());
-        }
+        getResponse().ok();
+        return limitAndGetAsList(middleGroup.getGroupAddresses());
     }
 
     private void checkArgumentMainGroup(final int main) {
