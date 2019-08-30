@@ -13,6 +13,7 @@ public class ReadResponse {
     private String name;
     private String description;
     private DataPointType dataPointType;
+    private String value;
     private byte[] raw;
 
     public GroupAddress getGroupAddress() {
@@ -45,6 +46,14 @@ public class ReadResponse {
 
     public void setDataPointType(DataPointType dataPointType) {
         this.dataPointType = dataPointType;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public byte[] getRaw() {

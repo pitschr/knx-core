@@ -37,10 +37,10 @@ public final class DPT4ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0x41, 'A');
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0x5A, 'Z');
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0xE4, 'ä');
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0xF6, 'ö');
+        this.assertValue(DPT4.ISO_8859_1, (byte) 0x41, 'A', "char 'A'");
+        this.assertValue(DPT4.ISO_8859_1, (byte) 0x5A, 'Z', "char 'Z'");
+        this.assertValue(DPT4.ISO_8859_1, (byte) 0xE4, 'ä', "char 'ä'");
+        this.assertValue(DPT4.ISO_8859_1, (byte) 0xF6, 'ö', "char 'ö'");
     }
 
     /**
@@ -49,17 +49,18 @@ public final class DPT4ValueTest {
     @Test
     public void testFailures() {
         // step code must be between 0..7
-        assertThatThrownBy(() -> this.assertValue(DPT4.ASCII, (byte) 0xE4, 'ä')).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> this.assertValue(DPT4.ASCII, (byte) 0xE4, 'ä', "char 'ä'")).isInstanceOf(KnxException.class)
                 .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0xE4");
     }
 
-    private void assertValue(final DPT4 dpt, final byte b, final char character) {
+    private void assertValue(final DPT4 dpt, final byte b, final char character, final String text) {
         final var dptValue = new DPT4Value(dpt, character);
         final var dptValueByByte = new DPT4Value(dpt, b);
 
         // instance methods
         assertThat(dptValue.getCharacter()).isEqualTo(character);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT4Value.toByteArray(character)).containsExactly(b);

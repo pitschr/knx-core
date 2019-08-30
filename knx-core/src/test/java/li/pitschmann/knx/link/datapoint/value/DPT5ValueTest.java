@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT5;
 import li.pitschmann.utils.ByteFormatter;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,21 +36,23 @@ public final class DPT5ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x29, 41, 41);
-        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85, 133, 133);
+        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x29, 41, 41, "41 pulses");
+        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85, 133, 133, "133 pulses");
+        this.assertValue(DPT5.TARIFF_INFORMATION, (byte) 0x73, 115, 115, "115");
 
-        this.assertValue(DPT5.ANGLE, (byte) 0x29, 41, DPT5.ANGLE.getCalcuationFunction().apply(41));
-        this.assertValue(DPT5.SCALING, (byte) 0x2D, 45, DPT5.SCALING.getCalcuationFunction().apply(45));
+        this.assertValue(DPT5.ANGLE, (byte) 0x29, 41, 57.88235294117647d, "57.882353 °");
+        this.assertValue(DPT5.SCALING, (byte) 0x2D, 45, 17.647058823529413d, "17.647059 %");
     }
 
-    private void assertValue(final DPT5 dpt, final byte b, final int rawUnsignedValue, final double unsignedValue) {
+    private void assertValue(final DPT5 dpt, final byte b, final int rawUnsignedValue, final double unsignedValue, final String text) {
         final var dptValue = new DPT5Value(dpt, rawUnsignedValue);
         final var dptValueByByte = new DPT5Value(dpt, b);
 
         // instance methods
-        assertThat(dptValue.getUnsignedValue()).isEqualTo(unsignedValue);
+        assertThat(dptValue.getUnsignedValue()).isCloseTo(unsignedValue, Offset.offset(0.000001));
         assertThat(dptValue.getRawUnsignedValue()).isEqualTo(rawUnsignedValue);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT5Value.toByteArray(rawUnsignedValue)).containsExactly(b);

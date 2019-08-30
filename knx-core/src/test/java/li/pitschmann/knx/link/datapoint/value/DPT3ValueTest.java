@@ -41,8 +41,9 @@ public final class DPT3ValueTest {
     public void test() {
         for (var stepCode = 0; stepCode < 7; stepCode++) {
             final var stepInterval = StepInterval.ofCode(stepCode);
-            this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) stepCode, false, stepCode, stepInterval);
-            this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) (0x08 | stepCode), true, stepCode, stepInterval);
+            final var stepIntervalText = stepInterval.toText();
+            this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) stepCode, false, stepCode, stepInterval, stepIntervalText);
+            this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) (0x08 | stepCode), true, stepCode, stepInterval, "controlled '" + stepIntervalText + "'");
         }
     }
 
@@ -60,7 +61,7 @@ public final class DPT3ValueTest {
 
     }
 
-    private void assertValue(final DPT3 dpt, final byte b, final boolean controlled, final int stepCode, final StepInterval stepInterval) {
+    private void assertValue(final DPT3 dpt, final byte b, final boolean controlled, final int stepCode, final StepInterval stepInterval, final String text) {
         final var dptValue = new DPT3Value(dpt, controlled, stepCode);
         final var dptValueByByte = new DPT3Value(dpt, b);
         final var dptvalueByStepInterval = new DPT3Value(dpt, controlled, stepInterval);
@@ -70,6 +71,7 @@ public final class DPT3ValueTest {
         assertThat(dptValue.getStepCode()).isEqualTo(stepCode);
         assertThat(dptValue.getStepInterval()).isEqualTo(stepInterval);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT3Value.toByteArray(controlled, stepCode)).containsExactly(b);

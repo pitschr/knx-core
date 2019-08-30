@@ -35,18 +35,18 @@ public final class DPT2ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x00, false, false, "false");
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x01, false, true, "true");
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x02, true, false, "false");
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x03, true, true, "true");
+        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x00, false, false, "false", "false");
+        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x01, false, true, "true", "true");
+        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x02, true, false, "false", "controlled 'false'");
+        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x03, true, true, "true", "controlled 'true'");
 
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x00, false, false, "off");
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x01, false, true, "on");
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x02, true, false, "off");
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x03, true, true, "on");
+        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x00, false, false, "off", "off");
+        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x01, false, true, "on", "on");
+        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x02, true, false, "off", "controlled 'off'");
+        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x03, true, true, "on", "controlled 'on'");
     }
 
-    private void assertValue(final DPT2 dpt, final byte b, final boolean controlled, final boolean booleanValue, final String booleanText) {
+    private void assertValue(final DPT2 dpt, final byte b, final boolean controlled, final boolean booleanValue, final String booleanText, final String text) {
         final var dptValue = new DPT2Value(dpt, controlled, booleanValue);
         final var dptValueByByte = new DPT2Value(dpt, b);
 
@@ -55,6 +55,7 @@ public final class DPT2ValueTest {
         assertThat(dptValue.getBooleanValue()).isEqualTo(booleanValue);
         assertThat(dptValue.getBooleanText()).isEqualTo(booleanText);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT2Value.toByteArray(controlled, booleanValue)).containsExactly(b);

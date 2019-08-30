@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import static li.pitschmann.knx.test.TestUtils.asJson;
 import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
 import static li.pitschmann.knx.test.TestUtils.readJsonFile;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,6 +73,7 @@ public class ReadRequestControllerTest {
         assertThat(readResponse.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
         assertThat(readResponse.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
         assertThat(readResponse.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
+        assertThat(readResponse.getValue()).isEqualTo("2147643647 pulses");
         assertThat(readResponse.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
         assertThat(readResponse).hasToString(
                 String.format("ReadResponse{name=%s, description=%s, dataPointType=%s, raw=0x80 02 70 FF}",
@@ -81,7 +83,8 @@ public class ReadRequestControllerTest {
                 ));
 
         // verify json
-        assertThat(asJson(readResponse)).isEqualTo(readJsonFile("/json/ReadRequestControllerTest-testRead.json"));
+        final var responseJson = asJson(readResponse);
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ReadRequestControllerTest-testRead.json"));
     }
 
     /**
@@ -119,10 +122,11 @@ public class ReadRequestControllerTest {
         assertThat(response.getName()).isNull();
         assertThat(response.getDescription()).isNull();
         assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
         assertThat(response.getRaw()).isNull();
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 
     /**
@@ -148,10 +152,11 @@ public class ReadRequestControllerTest {
         assertThat(response.getName()).isNull();
         assertThat(response.getDescription()).isNull();
         assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
         assertThat(response.getRaw()).isNull();
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 
     /**
@@ -183,9 +188,10 @@ public class ReadRequestControllerTest {
         assertThat(response.getName()).isNull();
         assertThat(response.getDescription()).isNull();
         assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
         assertThat(response.getRaw()).isNull();
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 }

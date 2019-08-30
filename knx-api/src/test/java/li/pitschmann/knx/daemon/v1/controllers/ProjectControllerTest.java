@@ -26,6 +26,7 @@ import ro.pippo.core.ParameterValue;
 
 import static li.pitschmann.knx.test.TestUtils.asJson;
 import static li.pitschmann.knx.test.TestUtils.readJsonFile;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +59,7 @@ public class ProjectControllerTest {
         assertThat(response.getNumberOfGroupRanges()).isEqualTo(18);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testProjectStructure.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testProjectStructure.json"));
     }
 
     /**
@@ -81,7 +82,7 @@ public class ProjectControllerTest {
         }
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroups.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroups.json"));
     }
 
     /**
@@ -104,7 +105,7 @@ public class ProjectControllerTest {
         }
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMiddleGroups.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMiddleGroups.json"));
     }
 
     /**
@@ -124,7 +125,7 @@ public class ProjectControllerTest {
         assertThat(response).hasSize(46);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddresses.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddresses.json"));
     }
 
     /**
@@ -158,6 +159,6 @@ public class ProjectControllerTest {
         // 0/0/23 .. and more skipped (or not available)
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddressesWithLimit.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddressesWithLimit.json"));
     }
 }

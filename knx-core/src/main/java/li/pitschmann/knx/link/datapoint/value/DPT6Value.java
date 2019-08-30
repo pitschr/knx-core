@@ -25,6 +25,8 @@ import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -44,13 +46,13 @@ import java.util.Objects;
 public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     private final int relativeSignedValue;
 
-    public DPT6Value(final DPT6 dpt, final byte b) {
+    public DPT6Value(final @Nonnull DPT6 dpt, final byte b) {
         super(dpt);
         // relative signed value
         this.relativeSignedValue = b;
     }
 
-    public DPT6Value(final DPT6 dpt, final int value) {
+    public DPT6Value(final @Nonnull DPT6 dpt, final int value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.relativeSignedValue = value;
@@ -70,11 +72,19 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         return this.relativeSignedValue;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.relativeSignedValue);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return getValueAsText(getRelativeSignedValue(), getDPT().getUnit());
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -87,7 +97,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT6Value) {
@@ -156,6 +166,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
          * @param mode
          * @return byte array
          */
+        @Nonnull
         public static byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
             return new byte[]{toByte(a, b, c, d, e, mode)};
         }
@@ -167,17 +178,19 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
             return (this.b & (0x80 >> bit)) != 0;
         }
 
+        @Nonnull
         public Mode getMode() {
             return Mode.of(this.b & 0x07);
         }
 
+        @Nonnull
         @Override
         public byte[] toByteArray() {
             return new byte[]{this.b};
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final @Nullable Object obj) {
             if (obj == this) {
                 return true;
             } else if (obj instanceof StatusMode) {
@@ -217,6 +230,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
                 this.value = value;
             }
 
+            @Nonnull
             private static Mode of(final int code) {
                 if (code == Mode.MODE_0.value) {
                     return Mode.MODE_0;

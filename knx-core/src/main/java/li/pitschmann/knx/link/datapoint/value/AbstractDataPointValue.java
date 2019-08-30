@@ -18,9 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
+import com.google.common.base.Strings;
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -33,31 +36,66 @@ import java.math.RoundingMode;
 abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implements DataPointValue<T> {
     private final T dpt;
 
-    public AbstractDataPointValue(final T dpt) {
+    public AbstractDataPointValue(final @Nonnull T dpt) {
         if (dpt == null) {
             throw new KnxNullPointerException("dpt");
         }
         this.dpt = dpt;
     }
 
+    @Nonnull
     protected static String getValueAsText(final double value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
+    @Nonnull
+    protected static String getValueAsText(final double value, final @Nullable String unit) {
+        return getValueAsText(value) + getUnitAsSuffix(unit);
+    }
+
+    @Nonnull
     protected static String getValueAsText(final float value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
+    @Nonnull
+    protected static String getValueAsText(final float value, final @Nullable String unit) {
+        return getValueAsText(value) + getUnitAsSuffix(unit);
+    }
+
+    @Nonnull
     protected static String getValueAsText(final int value) {
         return Integer.toString(value);
     }
 
+    @Nonnull
+    protected static String getValueAsText(final int value, final @Nullable String unit) {
+        return getValueAsText(value) + getUnitAsSuffix(unit);
+    }
+
+    @Nonnull
     protected static String getValueAsText(final long value) {
         return Long.toString(value);
     }
 
+    @Nonnull
+    protected static String getValueAsText(final long value, final @Nullable String unit) {
+        return getValueAsText(value) + getUnitAsSuffix(unit);
+    }
+
+    @Nonnull
     protected static String getValueAsText(final Object value) {
         return String.valueOf(value);
+    }
+
+    @Nonnull
+    protected static String getValueAsText(final Object value, final @Nullable String unit) {
+        return getValueAsText(value) + getUnitAsSuffix(unit);
+    }
+
+    @Nonnull
+    private static String getUnitAsSuffix(final @Nullable String unit) {
+        return Strings.isNullOrEmpty(unit) ? "" : " " + unit;
     }
 
     /**
@@ -65,6 +103,7 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
      *
      * @return
      */
+    @Nonnull
     @Override
     public T getDPT() {
         return this.dpt;

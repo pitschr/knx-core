@@ -27,6 +27,8 @@ import li.pitschmann.knx.link.datapoint.DataPointTypeEnum;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -49,22 +51,24 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
      * @param value
      * @param description
      */
-    public DPTEnumValue(final DPTEnum<T> dpEnum, final T enumField, final int value, final String description) {
+    public DPTEnumValue(final @Nonnull DPTEnum<T> dpEnum, final @Nonnull T enumField, final int value, final @Nullable String description) {
         Preconditions.checkNotNull(dpEnum);
         Preconditions.checkNotNull(enumField);
         Preconditions.checkArgument(value >= 0 && value <= 0xFF, "Value should be between 0 and 255.");
         this.dpt = dpEnum;
         this.enumField = enumField;
         this.value = value;
-        this.description = description;
+        this.description = Objects.requireNonNullElse(description, "");
         this.byteArray = new byte[]{(byte) (this.value & 0xFF)};
     }
 
+    @Nonnull
     @Override
     public DPTEnum<T> getDPT() {
         return this.dpt;
     }
 
+    @Nonnull
     public T getEnumField() {
         return this.enumField;
     }
@@ -74,16 +78,25 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
         return this.value;
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return this.description;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray;
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return getDescription();
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -98,7 +111,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPTEnumValue) {

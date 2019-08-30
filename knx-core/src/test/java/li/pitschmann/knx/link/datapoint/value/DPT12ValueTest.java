@@ -36,8 +36,9 @@ public final class DPT12ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x31, 0x47, 0x58}, 691095384L);
-        this.assertValue(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xF4, (byte) 0xAB, (byte) 0xC9, (byte) 0xD4}, 4104899028L);
+        this.assertValue(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x31, 0x47, 0x58}, 691095384L, "691095384 pulses");
+        this.assertValue(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xF4, (byte) 0xAB, (byte) 0xC9, (byte) 0xD4}, 4104899028L, "4104899028 pulses");
+        this.assertValue(DPT12.VOLUME_M3, new byte[]{0x03, 0x06, 0x25, 0x6F}, 50734447L, "50734447 m³");
     }
 
     /**
@@ -48,13 +49,14 @@ public final class DPT12ValueTest {
         assertThatThrownBy(() -> new DPT12Value(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[0])).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final DPT12 dpt, final byte[] bytes, final long unsignedValue) {
+    private void assertValue(final DPT12 dpt, final byte[] bytes, final long unsignedValue, final String text) {
         final var dptValue = new DPT12Value(dpt, unsignedValue);
         final var dptValueByByte = new DPT12Value(dpt, bytes);
 
         // instance methods
         assertThat(dptValue.getUnsignedValue()).isEqualTo(unsignedValue);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT12Value.toByteArray(unsignedValue)).containsExactly(bytes);

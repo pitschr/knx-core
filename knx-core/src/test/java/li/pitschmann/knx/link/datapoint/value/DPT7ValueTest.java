@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT7;
 import li.pitschmann.utils.ByteFormatter;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,12 +37,11 @@ public final class DPT7ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x23}, 10531, 10531);
-        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xC9, (byte) 0xD4}, 51668, 51668);
+        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x23}, 10531, 10531, "10531 pulses");
+        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xC9, (byte) 0xD4}, 51668, 51668, "51668 pulses");
 
-        this.assertValue(DPT7.TIME_PERIOD_10MS, new byte[]{0x58, (byte) 0xF3}, 22771, DPT7.TIME_PERIOD_10MS.getCalculationFunction().apply(22771));
-        this.assertValue(DPT7.TIME_PERIOD_100MS, new byte[]{(byte) 0xEA, 0x32}, 59954,
-                DPT7.TIME_PERIOD_100MS.getCalculationFunction().apply(59954));
+        this.assertValue(DPT7.TIME_PERIOD_10MS, new byte[]{0x58, (byte) 0xF3}, 22771, 227.71d, "227.71 ms");
+        this.assertValue(DPT7.TIME_PERIOD_100MS, new byte[]{(byte) 0xEA, 0x32}, 59954, 5995.4d, "5995.4 ms");
     }
 
     /**
@@ -52,14 +52,15 @@ public final class DPT7ValueTest {
         assertThatThrownBy(() -> new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[0])).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final DPT7 dpt, final byte[] bytes, final int rawUnsignedValue, final double unsignedValue) {
+    private void assertValue(final DPT7 dpt, final byte[] bytes, final int rawUnsignedValue, final double unsignedValue, final String text) {
         final var dptValue = new DPT7Value(dpt, rawUnsignedValue);
         final var dptValueByByte = new DPT7Value(dpt, bytes);
 
         // instance methods
-        assertThat(dptValue.getUnsignedValue()).isEqualTo(unsignedValue);
+        assertThat(dptValue.getUnsignedValue()).isCloseTo(unsignedValue, Offset.offset(0.000001));
         assertThat(dptValue.getRawUnsignedValue()).isEqualTo(rawUnsignedValue);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT7Value.toByteArray(rawUnsignedValue)).containsExactly(bytes);

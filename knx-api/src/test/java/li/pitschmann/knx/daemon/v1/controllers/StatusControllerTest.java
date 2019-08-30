@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import static li.pitschmann.knx.test.TestUtils.asJson;
 import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
 import static li.pitschmann.knx.test.TestUtils.readJsonFile;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -63,7 +64,7 @@ public class StatusControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(207); // http code 207 = Multi Status
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("[]");
+        assertThatJson(responseJson).isEqualTo("[]");
     }
 
     /**
@@ -153,7 +154,7 @@ public class StatusControllerTest {
         assertThat(response.get(3).getStatus()).isEqualTo(Status.ERROR);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
     }
 
     /**
@@ -200,7 +201,7 @@ public class StatusControllerTest {
         assertThat(response.isDirty()).isFalse();
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testSingleStatus.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testSingleStatus.json"));
     }
 
     /**
@@ -231,7 +232,7 @@ public class StatusControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 
     /**
@@ -266,6 +267,6 @@ public class StatusControllerTest {
         assertThat(response.isDirty()).isNull();
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 }

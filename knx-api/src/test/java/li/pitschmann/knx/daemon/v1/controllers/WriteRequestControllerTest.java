@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 
 import static li.pitschmann.knx.test.TestUtils.asJson;
 import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,7 +92,7 @@ public class WriteRequestControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 
     /**
@@ -114,7 +115,7 @@ public class WriteRequestControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 
     /**
@@ -152,7 +153,7 @@ public class WriteRequestControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 
     /**
@@ -181,6 +182,6 @@ public class WriteRequestControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
 
         final var responseJson = asJson(response);
-        assertThat(responseJson).isEqualTo("{}");
+        assertThatJson(responseJson).isEqualTo("{}");
     }
 }

@@ -23,6 +23,8 @@ import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -35,16 +37,18 @@ import java.util.Objects;
 abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extends AbstractDataPointValue<T> {
     private final byte[] bytes;
 
-    protected AbstractDataPointFlags(final T dpt, final byte[] bytes) {
+    protected AbstractDataPointFlags(final @Nonnull T dpt, final @Nonnull byte[] bytes) {
         super(dpt);
         this.bytes = bytes;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.bytes.clone();
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -67,7 +71,7 @@ abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extend
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj != null && this.getClass().equals(obj.getClass())) {

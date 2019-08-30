@@ -23,6 +23,8 @@ import li.pitschmann.knx.link.datapoint.DPT4;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.util.Objects;
@@ -43,7 +45,7 @@ import java.util.Objects;
 public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     private final char character;
 
-    public DPT4Value(final DPT4 dpt, final byte b) {
+    public DPT4Value(final @Nonnull DPT4 dpt, final byte b) {
         super(dpt);
         // character
         try {
@@ -54,7 +56,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         }
     }
 
-    public DPT4Value(final DPT4 dpt, final char character) {
+    public DPT4Value(final @Nonnull DPT4 dpt, final char character) {
         super(dpt);
         this.character = character;
     }
@@ -65,6 +67,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
      * @param character
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final char character) {
         return new byte[]{(byte) character};
     }
@@ -73,11 +76,19 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         return this.character;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.character);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return String.format("char '%c'", getCharacter());
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -90,7 +101,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT4Value) {
