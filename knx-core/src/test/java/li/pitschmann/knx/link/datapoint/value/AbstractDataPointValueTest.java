@@ -20,7 +20,6 @@ package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
 import li.pitschmann.knx.link.datapoint.DPT1;
-import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,7 +72,7 @@ public class AbstractDataPointValueTest {
      */
     @Test
     public void testFailures() {
-        assertThatThrownBy(() -> new TestDataPointValue(null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> new TestDataPointValue(null)).isInstanceOf(NullPointerException.class);
     }
 
     /**

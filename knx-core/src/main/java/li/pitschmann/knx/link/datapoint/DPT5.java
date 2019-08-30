@@ -37,7 +37,7 @@ import java.util.function.Function;
  *
  * @author PITSCHR
  */
-public final class DPT5 extends AbstractRangeUnitDataPointType<DPT5Value, Integer> {
+public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
     /**
      * <strong>5.001</strong> Scaling (%)
      *

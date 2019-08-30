@@ -20,49 +20,43 @@ package li.pitschmann.knx.link.datapoint;
 
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * {@link AbstractDataPointType} extended class with range and unit
+ * {@link AbstractDataPointType} extended class with range
  *
  * @author PITSCHR
  */
-public abstract class AbstractRangeUnitDataPointType<V extends DataPointValue<?>, R extends Comparable<R>> extends AbstractDataPointType<V> {
+public abstract class AbstractRangeDataPointType<V extends DataPointValue<?>, R extends Comparable<R>> extends AbstractDataPointType<V> {
     private final R lowerValue;
     private final R upperValue;
-    private final String unit;
 
-    public AbstractRangeUnitDataPointType(final String id, final String description, final R lowerValue, final R upperValue, final String unit) {
-        super(id, description);
+    public AbstractRangeDataPointType(final @Nonnull String id,
+                                      final @Nonnull String description,
+                                      final @Nonnull R lowerValue,
+                                      final @Nonnull R upperValue,
+                                      final @Nullable String unit) {
+        super(id, description, unit);
         this.lowerValue = lowerValue;
         this.upperValue = upperValue;
-        this.unit = unit;
     }
 
+    @Nonnull
     public R getLowerValue() {
         return this.lowerValue;
     }
 
+    @Nonnull
     public R getUpperValue() {
         return this.upperValue;
     }
 
-    public boolean isRangeClosed(final R value) {
+    public final boolean isRangeClosed(final R value) {
         final var isWithinRange = value.compareTo(this.lowerValue) >= 0 && value.compareTo(this.upperValue) <= 0;
         if (!isWithinRange) {
             log.warn("Value '{}' is not within [{}, {}] for DPT '{}'", value, this.lowerValue, this.upperValue, this.getClass().getSimpleName());
         }
         return isWithinRange;
-    }
-
-    public String getUnit() {
-        return this.unit;
-    }
-
-    @Override
-    public String getDescription() {
-        if (this.unit == null) {
-            return super.getDescription();
-        } else {
-            return super.getDescription() + " (" + this.unit + ")";
-        }
     }
 }

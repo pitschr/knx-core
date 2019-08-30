@@ -90,6 +90,9 @@ public final class ReadRequestController extends AbstractController {
         if (containsExpand("value")) {
             response.setValue(dpt.toValue(knxStatusData.getApciData()).toText());
         }
+        if (containsExpand("unit")) {
+            response.setUnit(dpt.getUnit());
+        }
         if (containsExpand("raw")) {
             response.setRaw(knxStatusData.getApciData());
         }

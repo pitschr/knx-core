@@ -13,6 +13,7 @@ public class ReadResponse {
     private String name;
     private String description;
     private DataPointType dataPointType;
+    private String unit;
     private String value;
     private byte[] raw;
 
@@ -46,6 +47,14 @@ public class ReadResponse {
 
     public void setDataPointType(DataPointType dataPointType) {
         this.dataPointType = dataPointType;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getValue() {

@@ -29,8 +29,10 @@ import li.pitschmann.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,20 +47,38 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final String id;
     private final String description;
+    private final String unit;
 
-    public AbstractDataPointType(final String id, final String description) {
-        this.id = id;
-        this.description = description;
+    public AbstractDataPointType(final @Nonnull String id, final @Nonnull String description) {
+        this(id, description, null);
     }
 
+    public AbstractDataPointType(final @Nonnull String id, final @Nonnull String description, final @Nullable String unit) {
+        this.id = Objects.requireNonNull(id);
+        this.description = Objects.requireNonNull(description);
+        this.unit = unit;
+    }
+
+    @Nonnull
     @Override
-    public String getId() {
+    public final String getId() {
         return this.id;
     }
 
+    @Nonnull
     @Override
-    public String getDescription() {
-        return this.description;
+    public final String getDescription() {
+        if (this.unit == null) {
+            return this.description;
+        } else {
+            return this.description + " (" + this.unit + ")";
+        }
+    }
+
+    @Nonnull
+    @Override
+    public final String getUnit() {
+        return this.unit == null ? "" : this.unit;
     }
 
     /**
@@ -68,8 +88,10 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    public final V toValue(final byte[] bytes) {
-        // generic validation
+    @Nonnull
+    public final V toValue(final @Nonnull byte[] bytes) {
+        Preconditions.checkNotNull(bytes, "No byte array provided for conversion to data point value object.");
+
         if (bytes == null) {
             throw new KnxNullPointerException("bytes");
         }
@@ -112,11 +134,10 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    public final V toValue(final String[] args) {
-        // generic validation
-        if (args == null) {
-            throw new KnxNullPointerException("args");
-        }
+    @Nonnull
+    public final V toValue(final @Nonnull String[] args) {
+        Preconditions.checkNotNull(args, "No arguments provided for conversion to data point value object.");
+
         // not compatible?
         boolean isCompatible;
         try {
@@ -180,7 +201,8 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value if success. It may throw a {@link IllegalArgumentException} in case the {@code args} is
      * not well-formatted for hex string
      */
-    private V tryParseAsHexString(final String[] args) {
+    @Nonnull
+    private V tryParseAsHexString(final @Nonnull String[] args) {
         Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string starting with '0x' expected: %s", args[0]);
         final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
         return this.toValue(Bytes.toByteArray(joinedString));
@@ -193,8 +215,8 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @param enumClass
      * @return first matching enumeration constant, {@code null} if not found
      */
-    protected final @Nullable
-    <E extends Enum<E>> E findByEnumConstant(final String[] args, final Class<E> enumClass) {
+    @Nullable
+    protected final <E extends Enum<E>> E findByEnumConstant(final @Nonnull String[] args, final @Nonnull Class<E> enumClass) {
         for (var i = 0; i < args.length; i++) {
             final var arg = args[i].toUpperCase();
             for (final var enumConstant : enumClass.getEnumConstants()) {
@@ -212,10 +234,10 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @param args
      * @param pattern
      * @param function if found then convert to desired object instance
-     * @return found and converted object instance, otherwise {@link IllegalArgumentException} if not found
+     * @return found and converted object instance, otherwise {@code null} if not found
      */
-    protected final @Nullable
-    <T> T findByPattern(final String[] args, final Pattern pattern, final Function<String, T> function) {
+    @Nullable
+    protected final <T> T findByPattern(final @Nonnull String[] args, final @Nonnull Pattern pattern, final @Nonnull Function<String, T> function) {
         return findByPattern(args, pattern, function, null);
     }
 
@@ -225,11 +247,11 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @param args
      * @param pattern
      * @param function     if found then convert to desired object instance
-     * @param defaultValue value to be returned in case the pattern could not be found, if {@code null} is provided an {@link IllegalArgumentException} will be thrown.
-     * @return found and converted object instance, otherwise {@code defaultValue} if not found or {@link IllegalArgumentException}
+     * @param defaultValue value to be returned in case the pattern could not be found
+     * @return found and converted object instance, otherwise {@code defaultValue} if not found
      */
-    protected final @Nullable
-    <T> T findByPattern(final String[] args, final Pattern pattern, final Function<String, T> function, final T defaultValue) {
+    @Nullable
+    protected final <T> T findByPattern(final @Nonnull String[] args, final @Nonnull Pattern pattern, final @Nonnull Function<String, T> function, final @Nullable T defaultValue) {
         for (var i = 0; i < args.length; i++) {
             if (pattern.matcher(args[i]).matches()) {
                 return function.apply(args[i]);
@@ -246,7 +268,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @param moreSearchStrings
      * @return {@code true} if found, otherwise {@code false}
      */
-    protected final boolean findByString(final String[] args, final String searchString, final String... moreSearchStrings) {
+    protected final boolean findByString(final @Nonnull String[] args, final @Nonnull String searchString, final String... moreSearchStrings) {
         for (var i = 0; i < args.length; i++) {
             if (searchString.equalsIgnoreCase(args[i])) {
                 return true;
@@ -260,6 +282,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         return false; // not found
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -276,7 +299,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @param obj return {@code true} if equals, otherwise {@code false}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof AbstractDataPointType) {

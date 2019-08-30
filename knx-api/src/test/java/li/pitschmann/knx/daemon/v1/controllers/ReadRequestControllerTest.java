@@ -73,7 +73,8 @@ public class ReadRequestControllerTest {
         assertThat(readResponse.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
         assertThat(readResponse.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");
         assertThat(readResponse.getDataPointType()).isEqualTo(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT);
-        assertThat(readResponse.getValue()).isEqualTo("2147643647 pulses");
+        assertThat(readResponse.getValue()).isEqualTo("2147643647");
+        assertThat(readResponse.getUnit()).isEqualTo("pulses");
         assertThat(readResponse.getRaw()).containsExactly(0x80, 0x02, 0x70, 0xFF);
         assertThat(readResponse).hasToString(
                 String.format("ReadResponse{name=%s, description=%s, dataPointType=%s, raw=0x80 02 70 FF}",

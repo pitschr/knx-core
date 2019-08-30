@@ -211,15 +211,16 @@ public final class DPT21ValueTest {
      */
     @Test
     public void testStatusRoomCoolingController() {
-        this.assertStatusRoomCoolingController((byte) 0x00, false);
-        this.assertStatusRoomCoolingController((byte) 0x01, true);
+        this.assertStatusRoomCoolingController((byte) 0x00, false, "no fault");
+        this.assertStatusRoomCoolingController((byte) 0x01, true, "fault");
     }
 
-    private void assertStatusRoomCoolingController(final byte b, final boolean bool) {
+    private void assertStatusRoomCoolingController(final byte b, final boolean bool, final String text) {
         final var dptValue = new StatusRoomCoolingController(bool);
         assertThat(new StatusRoomCoolingController(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool);
+        assertThat(dptValue.toText()).isEqualTo(text);
     }
 
     /**

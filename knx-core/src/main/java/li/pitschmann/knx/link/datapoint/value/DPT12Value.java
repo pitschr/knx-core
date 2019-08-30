@@ -94,7 +94,7 @@ public final class DPT12Value extends AbstractDataPointValue<DPT12> {
     @Nonnull
     @Override
     public String toText() {
-        return getValueAsText(getUnsignedValue(), getDPT().getUnit());
+        return getValueAsText(getUnsignedValue());
     }
 
     @Nonnull

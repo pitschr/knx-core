@@ -18,14 +18,13 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.Strings;
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
-import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 /**
  * Abstract implementation of {@link DataPointValue}
@@ -37,10 +36,7 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
     private final T dpt;
 
     public AbstractDataPointValue(final @Nonnull T dpt) {
-        if (dpt == null) {
-            throw new KnxNullPointerException("dpt");
-        }
-        this.dpt = dpt;
+        this.dpt = Objects.requireNonNull(dpt);
     }
 
     @Nonnull
@@ -49,18 +45,8 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
     }
 
     @Nonnull
-    protected static String getValueAsText(final double value, final @Nullable String unit) {
-        return getValueAsText(value) + getUnitAsSuffix(unit);
-    }
-
-    @Nonnull
     protected static String getValueAsText(final float value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
-    }
-
-    @Nonnull
-    protected static String getValueAsText(final float value, final @Nullable String unit) {
-        return getValueAsText(value) + getUnitAsSuffix(unit);
     }
 
     @Nonnull
@@ -69,33 +55,13 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
     }
 
     @Nonnull
-    protected static String getValueAsText(final int value, final @Nullable String unit) {
-        return getValueAsText(value) + getUnitAsSuffix(unit);
-    }
-
-    @Nonnull
     protected static String getValueAsText(final long value) {
         return Long.toString(value);
     }
 
     @Nonnull
-    protected static String getValueAsText(final long value, final @Nullable String unit) {
-        return getValueAsText(value) + getUnitAsSuffix(unit);
-    }
-
-    @Nonnull
-    protected static String getValueAsText(final Object value) {
+    protected static String getValueAsText(final @Nullable Object value) {
         return String.valueOf(value);
-    }
-
-    @Nonnull
-    protected static String getValueAsText(final Object value, final @Nullable String unit) {
-        return getValueAsText(value) + getUnitAsSuffix(unit);
-    }
-
-    @Nonnull
-    private static String getUnitAsSuffix(final @Nullable String unit) {
-        return Strings.isNullOrEmpty(unit) ? "" : " " + unit;
     }
 
     /**

@@ -37,11 +37,11 @@ public final class DPT7ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x23}, 10531, 10531, "10531 pulses");
-        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xC9, (byte) 0xD4}, 51668, 51668, "51668 pulses");
+        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x23}, 10531, 10531, "10531");
+        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xC9, (byte) 0xD4}, 51668, 51668, "51668");
 
-        this.assertValue(DPT7.TIME_PERIOD_10MS, new byte[]{0x58, (byte) 0xF3}, 22771, 227.71d, "227.71 ms");
-        this.assertValue(DPT7.TIME_PERIOD_100MS, new byte[]{(byte) 0xEA, 0x32}, 59954, 5995.4d, "5995.4 ms");
+        this.assertValue(DPT7.TIME_PERIOD_10MS, new byte[]{0x58, (byte) 0xF3}, 22771, 227.71d, "227.71");
+        this.assertValue(DPT7.TIME_PERIOD_100MS, new byte[]{(byte) 0xEA, 0x32}, 59954, 5995.4d, "5995.4");
     }
 
     /**

@@ -197,7 +197,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
     @Nonnull
     @Override
     public String toText() {
-        return getValueAsText(getFloatingValue(), getDPT().getUnit());
+        return getValueAsText(getFloatingValue());
     }
 
     @Nonnull

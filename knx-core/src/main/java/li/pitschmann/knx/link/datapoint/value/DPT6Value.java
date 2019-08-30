@@ -81,7 +81,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     @Nonnull
     @Override
     public String toText() {
-        return getValueAsText(getRelativeSignedValue(), getDPT().getUnit());
+        return getValueAsText(getRelativeSignedValue());
     }
 
     @Nonnull

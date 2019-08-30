@@ -36,7 +36,7 @@ import li.pitschmann.utils.Bytes;
  *
  * @author PITSCHR
  */
-public final class DPT6 extends AbstractRangeUnitDataPointType<DPT6Value, Integer> {
+public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
     /**
      * <strong>6.001</strong> Percent (%)
      *

@@ -66,7 +66,6 @@ public interface DataPointType<V extends DataPointValue<?>> {
      *
      * @return id
      */
-    @Nonnull
     String getId();
 
     /**
@@ -74,8 +73,14 @@ public interface DataPointType<V extends DataPointValue<?>> {
      *
      * @return description
      */
-    @Nonnull
     String getDescription();
+
+    /**
+     * Returns the unit
+     *
+     * @return unit
+     */
+    String getUnit();
 
     /**
      * Returns a {@link DataPointValue} for specified byte array.
@@ -84,8 +89,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    @Nonnull
-    V toValue(@Nonnull byte[] bytes);
+    V toValue(byte[] bytes);
 
     /**
      * Returns a {@link DataPointValue} for specified byte variable array.
@@ -98,7 +102,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
     @Nonnull
-    default V toValue(final @Nonnull byte b, final byte... moreBytes) {
+    default V toValue(final byte b, final byte... moreBytes) {
         if (moreBytes.length == 0) {
             return toValue(new byte[]{b});
         } else {
@@ -119,8 +123,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    @Nonnull
-    V toValue(@Nonnull String[] args);
+    V toValue(String[] args);
 
     /**
      * Returns a {@link DataPointValue} for specified variable string arguments.

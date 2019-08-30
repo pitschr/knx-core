@@ -36,9 +36,9 @@ public final class DPT9ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT9.TEMPERATURE, new byte[]{0x67, 0x44}, 76185.6, "76185.6 °C");
-        this.assertValue(DPT9.TIME_DIFFERENCE_SECONDS, new byte[]{0x0C, 0x5C}, 22.32, "22.32 s");
-        this.assertValue(DPT9.VOLTAGE, new byte[]{(byte) 0xE1, (byte) 0xA5}, -66641.92, "-66641.92 mV");
+        this.assertValue(DPT9.TEMPERATURE, new byte[]{0x67, 0x44}, 76185.6, "76185.6");
+        this.assertValue(DPT9.TIME_DIFFERENCE_SECONDS, new byte[]{0x0C, 0x5C}, 22.32, "22.32");
+        this.assertValue(DPT9.VOLTAGE, new byte[]{(byte) 0xE1, (byte) 0xA5}, -66641.92, "-66641.92");
     }
 
     /**

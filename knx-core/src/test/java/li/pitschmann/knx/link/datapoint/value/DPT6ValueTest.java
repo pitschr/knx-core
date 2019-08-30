@@ -40,9 +40,10 @@ public final class DPT6ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x29, 41, "41 pulses");
-        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0xEA, -22, "-22 pulses");
-        this.assertValue(DPT6.PERCENT, (byte) 0x45, 69, "69 %");
+        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x29, 41, "41");
+        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0xEA, -22, "-22");
+
+        this.assertValue(DPT6.PERCENT, (byte) 0x45, 69, "69");
     }
 
     private void assertValue(final DPT6 dpt, final byte b, final int relativeSignedValue, final String text) {

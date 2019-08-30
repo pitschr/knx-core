@@ -36,12 +36,12 @@ public final class DPT5ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x29, 41, 41, "41 pulses");
-        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85, 133, 133, "133 pulses");
+        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x29, 41, 41, "41");
+        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85, 133, 133, "133");
         this.assertValue(DPT5.TARIFF_INFORMATION, (byte) 0x73, 115, 115, "115");
 
-        this.assertValue(DPT5.ANGLE, (byte) 0x29, 41, 57.88235294117647d, "57.882353 °");
-        this.assertValue(DPT5.SCALING, (byte) 0x2D, 45, 17.647058823529413d, "17.647059 %");
+        this.assertValue(DPT5.ANGLE, (byte) 0x29, 41, 57.88235294117647d, "57.882353");
+        this.assertValue(DPT5.SCALING, (byte) 0x2D, 45, 17.647058823529413d, "17.647059");
     }
 
     private void assertValue(final DPT5 dpt, final byte b, final int rawUnsignedValue, final double unsignedValue, final String text) {

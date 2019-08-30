@@ -36,11 +36,11 @@ public final class DPT8ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x6B, (byte) 0xA2}, 27554, 27554, "27554 pulses");
-        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0xE1, (byte) 0xA5}, -7771, -7771, "-7771 pulses");
+        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x6B, (byte) 0xA2}, 27554, 27554, "27554");
+        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0xE1, (byte) 0xA5}, -7771, -7771, "-7771");
 
-        this.assertValue(DPT8.DELTA_TIME_10MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 73.22, "73.22 ms");
-        this.assertValue(DPT8.DELTA_TIME_100MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 732.2, "732.2 ms");
+        this.assertValue(DPT8.DELTA_TIME_10MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 73.22, "73.22");
+        this.assertValue(DPT8.DELTA_TIME_100MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 732.2, "732.2");
     }
 
     /**
