@@ -26,11 +26,15 @@ import li.pitschmann.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -63,7 +67,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     private final Flags flags;
     private final byte[] byteArray;
 
-    public DPT19Value(final byte[] bytes) {
+    public DPT19Value(final @Nonnull byte[] bytes) {
         super(DPT19.DATE_TIME);
         Preconditions.checkArgument(bytes.length == 8);
 
@@ -74,7 +78,10 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         this.byteArray = bytes;
     }
 
-    public DPT19Value(final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
+    public DPT19Value(final @Nullable DayOfWeek dayOfWeek,
+                      final @Nonnull LocalDate date,
+                      final @Nonnull LocalTime time,
+                      final @Nullable Flags flags) {
         super(DPT19.DATE_TIME);
         Preconditions.checkNotNull(date);
         Preconditions.checkNotNull(time);
@@ -94,8 +101,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * @param bytes
      * @return {@link DayOfWeek}, if no-day then return {@code null}
      */
-    private static @Nullable
-    DayOfWeek toDayOfWeek(final byte[] bytes) {
+    @Nullable
+    private static DayOfWeek toDayOfWeek(final @Nonnull byte[] bytes) {
         // byte 3: day of week
         final var dayNr = (bytes[3] & 0xE0) >>> 5;
 
@@ -110,7 +117,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * @param bytes
      * @return {@link LocalDate}
      */
-    private static LocalDate toLocalDate(final byte[] bytes) {
+    @Nonnull
+    private static LocalDate toLocalDate(final @Nonnull byte[] bytes) {
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
         final var year = Bytes.toUnsignedInt(bytes[0]) + 1900;
 
@@ -131,7 +139,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * @param bytes
      * @return {@link LocalTime}
      */
-    private static LocalTime toLocalTime(final byte[] bytes) {
+    @Nonnull
+    private static LocalTime toLocalTime(final @Nonnull byte[] bytes) {
         // byte 3: hour (day of week is done separately)
         final var hour = bytes[3] & 0x1F;
 
@@ -155,7 +164,11 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * @param flags
      * @return byte array
      */
-    public static byte[] toByteArray(final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
+    @Nonnull
+    public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek,
+                                     final @Nonnull LocalDate date,
+                                     final @Nonnull LocalTime time,
+                                     final @Nullable Flags flags) {
         Preconditions.checkArgument(date.getYear() >= 1900 && date.getYear() <= 2155, "Year must be between '1900..2155'. Got: " + date.getYear());
 
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
@@ -189,28 +202,49 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         return bytes;
     }
 
-    public @Nullable
-    DayOfWeek getDayOfWeek() {
+    @Nullable
+    public DayOfWeek getDayOfWeek() {
         return this.dayOfWeek;
     }
 
+    @Nonnull
     public LocalDate getDate() {
         return this.date;
     }
 
+    @Nonnull
     public LocalTime getTime() {
         return this.time;
     }
 
+    @Nonnull
     public Flags getFlags() {
         return this.flags;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        final var sb = new StringBuilder(50);
+        final var dayOfWeek = getDayOfWeek();
+        if (dayOfWeek != null) {
+            sb.append(dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())).append(", ");
+        }
+        sb.append(getDate().format(DateTimeFormatter.ISO_DATE))
+                .append(' ')
+                .append(getTime().format(DateTimeFormatter.ISO_TIME))
+                .append(", flags: ")
+                .append(getFlags().toText());
+        return sb.toString();
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -226,7 +260,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT19Value) {
@@ -267,7 +301,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          * @param bytes
          * @return new instance of {@link Flags}
          */
-        public Flags(final byte[] bytes) {
+        public Flags(final @Nonnull byte[] bytes) {
             Preconditions.checkArgument(bytes != null && bytes.length == 2, "The length of bytes must be 2 (actual: " + (bytes == null ? 0 : bytes.length) + ")");
 
             // byte 6
@@ -395,10 +429,21 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          *
          * @return two-byte array
          */
+        @Nonnull
         public byte[] getAsBytes() {
             return new byte[]{this.getByte6(), this.getByte7()};
         }
 
+        /**
+         * Returns the Flag as string representation
+         *
+         * @return flag as string
+         */
+        public String toText() {
+            return ByteFormatter.formatHexAsString(getAsBytes());
+        }
+
+        @Nonnull
         @Override
         public String toString() {
             // @formatter:off
@@ -419,7 +464,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final @Nullable Object obj) {
             if (obj == this) {
                 return true;
             } else if (obj instanceof Flags) {

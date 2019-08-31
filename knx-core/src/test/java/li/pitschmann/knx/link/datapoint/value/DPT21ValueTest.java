@@ -335,7 +335,7 @@ public final class DPT21ValueTest {
      */
     @Test
     public void testChannelActivation8() {
-        this.assertChannelActivation8((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false}, "-");
+        this.assertChannelActivation8((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false}, "no channels active");
         this.assertChannelActivation8((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false}, "1");
         this.assertChannelActivation8((byte) 0x02, new boolean[]{false, true, false, false, false, false, false, false}, "2");
         this.assertChannelActivation8((byte) 0x04, new boolean[]{false, false, true, false, false, false, false, false}, "3");

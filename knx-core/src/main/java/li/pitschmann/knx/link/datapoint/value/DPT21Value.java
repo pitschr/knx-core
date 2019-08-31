@@ -507,7 +507,7 @@ public final class DPT21Value {
                     sb.append((i + 1));
                 }
             }
-            return sb.length() == 0 ? "-" : sb.toString();
+            return sb.length() == 0 ? "no channels active" : sb.toString();
         }
     }
 }

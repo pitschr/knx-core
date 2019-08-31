@@ -23,6 +23,8 @@ import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT15;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -67,7 +69,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
     private final byte[] accessIdentificationData;
     private final Flags flags;
 
-    public DPT15Value(final byte[] bytes) {
+    public DPT15Value(final @Nonnull byte[] bytes) {
         super(DPT15.ACCESS_DATA);
         Preconditions.checkArgument(bytes.length == 4);
         // access identification data (byte 0 + byte 1 + byte 2)
@@ -77,13 +79,13 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         this.flags = new Flags(bytes[3]);
     }
 
-    public DPT15Value(final byte[] accessIdentificationData, final Flags flags) {
+    public DPT15Value(final @Nonnull byte[] accessIdentificationData, final @Nonnull Flags flags) {
         super(DPT15.ACCESS_DATA);
         Preconditions.checkArgument(accessIdentificationData.length == 3);
         // access identification data
         this.accessIdentificationData = getAccessIdentificationData(accessIdentificationData);
         // flags
-        this.flags = flags;
+        this.flags = Objects.requireNonNull(flags);
     }
 
     /**
@@ -93,7 +95,8 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @param accessIdentificationData
      * @return 3 byte array / 24 bits array
      */
-    private static byte[] getAccessIdentificationData(final byte[] accessIdentificationData) {
+    @Nonnull
+    private static byte[] getAccessIdentificationData(final @Nonnull byte[] accessIdentificationData) {
         Preconditions.checkArgument(accessIdentificationData.length <= 3, "Access Identification Data must be 3 bytes or less.");
         byte[] newData = new byte[3];
         System.arraycopy(accessIdentificationData, 0, newData, newData.length - accessIdentificationData.length, accessIdentificationData.length);
@@ -107,6 +110,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @param flags
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
         // ensure that access identification data is 24bits
         byte[] accessIdentificationDataEnsured = getAccessIdentificationData(accessIdentificationData);
@@ -118,19 +122,39 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
                 flags.getAsByte()};
     }
 
+    @Nonnull
     public byte[] getAccessIdentificationData() {
         return this.accessIdentificationData.clone();
     }
 
+    /**
+     * Returns the flags for DPT15Value. See: {@link Flags}
+     *
+     * @return flags
+     */
+    @Nonnull
     public Flags getFlags() {
         return this.flags;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.accessIdentificationData, this.flags);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        final var sb = new StringBuilder(30);
+        sb.append("data: ")
+                .append(ByteFormatter.formatHexAsString(this.accessIdentificationData))
+                .append(", flags: ")
+                .append(this.flags.toText());
+        return sb.toString();
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -143,8 +167,9 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         // @formatter:on
     }
 
+    @Nonnull
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT15Value) {
@@ -250,6 +275,12 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
             return b;
         }
 
+        @Nonnull
+        public String toText() {
+            return ByteFormatter.formatHex(getAsByte());
+        }
+
+        @Nonnull
         @Override
         public String toString() {
             // @formatter:off
@@ -264,7 +295,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final @Nullable Object obj) {
             if (obj == this) {
                 return true;
             } else if (obj instanceof Flags) {

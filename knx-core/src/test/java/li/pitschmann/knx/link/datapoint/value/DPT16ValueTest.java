@@ -40,37 +40,59 @@ public final class DPT16ValueTest {
      */
     @Test
     public void test() {
-        // Space: 12345678901234
-        // Text : "             "
-        this.assertValue(DPT16.ASCII, Bytes.padRight(new byte[0], (byte) 0x20, 14), "              ");
-
+        // Space:  12345678901234
+        // Text : "              "
+        this.assertValue(
+                DPT16.ASCII,
+                Bytes.padRight(new byte[0], (byte) 0x20, 14),
+                "              "
+        );
         // Space: 12345678901234
         // Text : Hello World!
-        this.assertValue(DPT16.ASCII, new byte[]{0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C, 0x64, 0x21}, "Hello World!");
-
+        this.assertValue(
+                DPT16.ASCII,
+                new byte[]{
+                        0x48, 0x65, 0x6C, 0x6C,
+                        0x6F, 0x20, 0x57, 0x6F,
+                        0x72, 0x6C, 0x64, 0x21
+                },
+                "Hello World!"
+        );
         // Space: 12345678901234
         // Text : @
-        this.assertValue(DPT16.ASCII, new byte[]{0x40}, "@");
-
+        this.assertValue(
+                DPT16.ASCII,
+                new byte[]{0x40},
+                 "@"
+        );
         // Space: 12345678901234
         // Text : ÄÖÜäöü¡¿«»ßØ÷¤
-        this.assertValue(DPT16.ISO_8859_1, new byte[]{(byte) 0xC4, (byte) 0xD6, (byte) 0xDC, (byte) 0xE4, (byte) 0xF6, (byte) 0xFC, (byte) 0xA1,
-                (byte) 0xBF, (byte) 0xAB, (byte) 0xBB, (byte) 0xDF, (byte) 0xD8, (byte) 0xF7, (byte) 0xA4}, "ÄÖÜäöü¡¿«»ßØ÷¤");
+        this.assertValue(
+                DPT16.ISO_8859_1,
+                new byte[]{
+                        (byte) 0xC4, (byte) 0xD6, (byte) 0xDC, (byte) 0xE4,
+                        (byte) 0xF6, (byte) 0xFC, (byte) 0xA1, (byte) 0xBF,
+                        (byte) 0xAB, (byte) 0xBB, (byte) 0xDF, (byte) 0xD8,
+                        (byte) 0xF7, (byte) 0xA4
+                },
+                "ÄÖÜäöü¡¿«»ßØ÷¤"
+        );
     }
 
-    private void assertValue(final DPT16 dpt, final byte[] textAsBytes, final String text) {
-        final var dptValue = new DPT16Value(dpt, text);
+    private void assertValue(final DPT16 dpt, final byte[] textAsBytes, final String characters) {
+        final var dptValue = new DPT16Value(dpt, characters);
         final var dptValueByByte = new DPT16Value(dpt, textAsBytes);
 
         // fills out the right padding with zero bytes (0x00)
         final var bytesWith14Length = Bytes.padRight(textAsBytes, (byte) 0x00, 14);
 
         // instance methods
-        assertThat(dptValue.getText()).isEqualTo(text);
+        assertThat(dptValue.getCharacters()).isEqualTo(characters);
         assertThat(dptValue.toByteArray()).containsExactly(bytesWith14Length);
+        assertThat(dptValue.toText()).isEqualTo(characters);
 
         // class methods
-        assertThat(DPT16Value.toByteArray(text, dpt.getCharset())).containsExactly(bytesWith14Length);
+        assertThat(DPT16Value.toByteArray(characters, dpt.getCharset())).containsExactly(bytesWith14Length);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
@@ -84,12 +106,12 @@ public final class DPT16ValueTest {
         if (dpt == DPT16.ISO_8859_1) {
             assertThat(dptValue).isNotEqualTo(new DPT16Value(anotherDPT, "abc"));
         } else {
-            assertThat(dptValue).isNotEqualTo(new DPT16Value(anotherDPT, text));
+            assertThat(dptValue).isNotEqualTo(new DPT16Value(anotherDPT, characters));
         }
-        assertThat(dptValue).isNotEqualTo(new DPT16Value(dpt, text.substring(1)));
+        assertThat(dptValue).isNotEqualTo(new DPT16Value(dpt, characters.substring(1)));
 
         // toString
-        final var toString = String.format("DPT16Value{dpt=%s, text=%s, byteArray=%s}", dpt, text, ByteFormatter.formatHexAsString(bytesWith14Length));
+        final var toString = String.format("DPT16Value{dpt=%s, characters=%s, byteArray=%s}", dpt, characters, ByteFormatter.formatHexAsString(bytesWith14Length));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
     }
@@ -108,7 +130,7 @@ public final class DPT16ValueTest {
         final var dptValueEmptyByByte = new DPT16Value(dpt, new byte[0]);
 
         // instance methods
-        assertThat(dptValueNull.getText()).isEmpty();
+        assertThat(dptValueNull.getCharacters()).isEmpty();
         assertThat(dptValueNull.toByteArray()).containsExactly(emptyBytes);
 
         // class methods
@@ -132,7 +154,7 @@ public final class DPT16ValueTest {
         assertThat(dptValueNull).isNotEqualTo(new DPT16Value(dpt, " "));
 
         // toString
-        final var toString = String.format("DPT16Value{dpt=%s, text=, byteArray=0x00 00 00 00 00 00 00 00 00 00 00 00 00 00}", dpt);
+        final var toString = String.format("DPT16Value{dpt=%s, characters=, byteArray=0x00 00 00 00 00 00 00 00 00 00 00 00 00 00}", dpt);
         assertThat(dptValueNull).hasToString(toString);
         assertThat(dptValueNullByByte).hasToString(toString);
         assertThat(dptValueEmpty).hasToString(toString);
@@ -155,8 +177,8 @@ public final class DPT16ValueTest {
                 .hasMessageStartingWith("The length of bytes is too long");
         // text longer than 14 characters are not accepted
         assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, "123456789012345")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("The length of text is too long");
+                .hasMessageStartingWith("The length of characters is too long");
         assertThatThrownBy(() -> DPT16.ASCII.toByteArray("123456789012345")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("The length of text is too long");
+                .hasMessageStartingWith("The length of characters is too long");
     }
 }

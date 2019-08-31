@@ -22,6 +22,8 @@ import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT22;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+
 /**
  * Data Point Value for {@link DPT22} (22.xxx)
  *
@@ -229,6 +231,30 @@ public final class DPT22Value {
         public boolean isChannelActive(final int channel) {
             Preconditions.checkArgument(channel >= 1 && channel <= 16, "Channel must be between 1 and 16 (actual: " + channel + ")");
             return this.isSet(channel - 1);
+        }
+
+        /**
+         * Returns human-friendly representation of active channels.
+         * <p/>
+         * If only channel 1 is active, then "1" is returned.<br/>
+         * If channel 1, 3 and 8 is active, then "1, 3, 8" is returned.<br/>
+         *
+         * @return human-friendly representation of active channels
+         */
+        @Nonnull
+        @Override
+        public String toText() {
+            // return list of channels (e.g. "channel 1" if only channel is
+            final var sb = new StringBuffer(25);
+            for (var i = 0; i < 16; i++) {
+                if (this.isSet(i)) {
+                    if (sb.length() != 0) {
+                        sb.append(", ");
+                    }
+                    sb.append((i + 1));
+                }
+            }
+            return sb.length() == 0 ? "no channels active" : sb.toString();
         }
     }
 }

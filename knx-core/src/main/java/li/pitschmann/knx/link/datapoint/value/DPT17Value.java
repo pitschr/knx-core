@@ -24,6 +24,8 @@ import li.pitschmann.knx.link.datapoint.DPT17;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -59,6 +61,7 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
      * @param sceneNumber
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final int sceneNumber) {
         return new byte[]{(byte) sceneNumber};
     }
@@ -67,11 +70,19 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
         return this.sceneNumber;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.sceneNumber);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return "scene " + getSceneNumber();
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -84,7 +95,7 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT17Value) {

@@ -58,7 +58,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
         this.dpt = dpEnum;
         this.enumField = enumField;
         this.value = value;
-        this.description = Objects.requireNonNullElse(description, "");
+        this.description = Objects.toString(description, "");
         this.byteArray = new byte[]{(byte) (this.value & 0xFF)};
     }
 
