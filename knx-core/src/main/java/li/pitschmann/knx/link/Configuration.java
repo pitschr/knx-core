@@ -307,6 +307,10 @@ public final class Configuration {
         return getSetting("client.channel.data.port", 0, Integer::valueOf);
     }
 
+    public boolean isNatEnabled() {
+        return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
+    }
+
     /**
      * Builder for the Configuration
      *

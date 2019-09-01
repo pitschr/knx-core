@@ -76,8 +76,7 @@ public final class DiscoveryChannelCommunicator extends AbstractChannelCommunica
     }
 
     @Override
-    @Nonnull
-    protected boolean isCompatible(final @Nonnull Body body) {
+    public boolean isCompatible(final @Nonnull Body body) {
         return body instanceof SearchResponseBody;
     }
 }

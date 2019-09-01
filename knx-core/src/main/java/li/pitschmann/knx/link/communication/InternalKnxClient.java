@@ -19,14 +19,13 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.ChannelIdAware;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
-import li.pitschmann.knx.link.body.ControlChannelRelated;
-import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
@@ -40,6 +39,7 @@ import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
+import li.pitschmann.knx.link.communication.communicator.ControlAndDataChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.ControlChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.DataChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.DescriptionChannelCommunicator;
@@ -70,11 +70,14 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectableChannel;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Flow;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -92,16 +95,15 @@ public final class InternalKnxClient implements KnxClient {
     private final AtomicBoolean closed = new AtomicBoolean();
     private final Lock lock = new ReentrantLock();
     private final KnxEventPool eventPool = new KnxEventPool();
-    private final KnxStatisticImpl statistics;
-    private final KnxStatusPoolImpl statusPool;
+    private final KnxStatisticImpl statistics = new KnxStatisticImpl();
+    private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
     private final Configuration config;
     private final ExecutorService pluginExecutor;
+    private List<AbstractChannelCommunicator<SelectableChannel>> channelCommunicators = Collections.emptyList();
     private ExecutorService channelExecutor;
     private HPAI controlHPAI;
     private HPAI dataHPAI;
-    private int channelId;
-    private DataChannelCommunicator dataChannelCommunicator;
-    private ControlChannelCommunicator controlChannelCommunicator;
+    private int channelId = -1;
     private InetSocketAddress remoteEndpoint;
 
     /**
@@ -113,10 +115,6 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Abstract KNX Client constructor");
         // configuration
         this.config = config;
-        // statistics
-        this.statistics = new KnxStatisticImpl();
-        // status pool
-        this.statusPool = new KnxStatusPoolImpl();
 
         // executors with fixed threads for communication and subscription
         this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
@@ -129,6 +127,8 @@ public final class InternalKnxClient implements KnxClient {
      * Starts the services and notifies the plug-ins about initialization
      */
     protected final void start() {
+        Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
+
         try {
             // check if endpoint is defined - if not, look up for an available KNX Net/IP device
             if (config.getRemoteControlAddress() == null) {
@@ -209,27 +209,43 @@ public final class InternalKnxClient implements KnxClient {
     private void startServices() {
         this.lock.lock();
         try {
+            // some pre-checks
+            Preconditions.checkState(this.channelId == -1);
+            Preconditions.checkState(this.controlHPAI == null);
+            Preconditions.checkState(this.dataHPAI == null);
 
-            // communicators, HPAIs, KNX event pool
-            this.controlChannelCommunicator = newControlChannelCommunicator();
-            this.dataChannelCommunicator = newDataChannelCommunciator();
-            this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
-            this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());
+            if (this.config.isNatEnabled()) {
+                // NAT is enabled -> only one communicator for control and data related packets
+                final var controlAndDataChannelCommunicator = new ControlAndDataChannelCommunicator(this);
+                subscribersForDataChannel().forEach(controlAndDataChannelCommunicator::subscribe);
+                subscribersForControlChannel().forEach(controlAndDataChannelCommunicator::subscribe);
 
-            this.channelId = -1;
+                this.controlHPAI = HPAI.useDefault();
+                this.dataHPAI = HPAI.useDefault();
+
+                this.channelCommunicators = ImmutableList.of(controlAndDataChannelCommunicator);
+            } else {
+                // NAT is not enabled -> two communicators (one for control, and one for data related packets)
+                final var controlChannelCommunicator = new ControlChannelCommunicator(this);
+                subscribersForControlChannel().forEach(controlChannelCommunicator::subscribe);
+                final var dataChannelCommunicator = new DataChannelCommunicator(this);
+                subscribersForDataChannel().forEach(dataChannelCommunicator::subscribe);
+
+                this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
+                this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());
+
+                this.channelCommunicators = ImmutableList.of(dataChannelCommunicator, controlChannelCommunicator);
+            }
 
             // logging
             log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.remoteEndpoint.getAddress().getHostAddress(), this.remoteEndpoint.getPort());
             log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
             log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
+            log.info("NAT Enabled                      : {}", this.config.isNatEnabled());
 
             // channel executors
-            // 1) Control Channel Receiver,
-            // 2) Data Channel Receiver and
-            // 3) Connection State Monitor
             this.channelExecutor = Executors.newFixedThreadPool(3, true);
-            this.channelExecutor.execute(controlChannelCommunicator);
-            this.channelExecutor.execute(dataChannelCommunicator);
+            this.channelCommunicators.forEach(channelExecutor::execute);
 
             // get channel for further communications
             this.channelId = this.fetchChannelIdFromKNX();
@@ -284,8 +300,7 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     /**
-     * Creates a new instance of {@link ControlChannelCommunicator} for control channel communication
-     * and forwards the KNX packets to subscribed tasks.
+     * Returns a list of {@link Flow.Subscriber} that is suited for control channel communicators
      * <p>
      * Following subscribers are:
      * <ul>
@@ -296,20 +311,19 @@ public final class InternalKnxClient implements KnxClient {
      * client</li>
      * </ul>
      *
-     * @return {@link ControlChannelCommunicator}
+     * @return unmodifiable list of subscribers
      */
-    private ControlChannelCommunicator newControlChannelCommunicator() {
-        final var communicator = new ControlChannelCommunicator(this);
-        communicator.subscribe(new ConnectResponseTask(this));
-        communicator.subscribe(new ConnectionStateResponseTask(this));
-        communicator.subscribe(new DisconnectRequestTask(this));
-        communicator.subscribe(new DisconnectResponseTask(this));
-        return communicator;
+    private List<Flow.Subscriber<Body>> subscribersForControlChannel() {
+        final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
+        subscribers.add(new ConnectResponseTask(this));
+        subscribers.add(new ConnectionStateResponseTask(this));
+        subscribers.add(new DisconnectRequestTask(this));
+        subscribers.add(new DisconnectResponseTask(this));
+        return Collections.unmodifiableList(subscribers);
     }
 
     /**
-     * Creates a new instance of {@link DataChannelCommunicator} for data channel communication
-     * and forwards the KNX packets to subscribed tasks.
+     * Returns a list of {@link Flow.Subscriber} that is suited for data channel communicators
      * <p>
      * Following subscribers are:
      * <ul>
@@ -318,13 +332,13 @@ public final class InternalKnxClient implements KnxClient {
      * <li>{@link TunnelingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
      * </ul>
      *
-     * @return {@link DataChannelCommunicator}
+     * @return unmodifiable list of subscribers
      */
-    private DataChannelCommunicator newDataChannelCommunciator() {
-        final var communicator = new DataChannelCommunicator(this);
-        communicator.subscribe(new TunnelingRequestTask(this));
-        communicator.subscribe(new TunnelingAckTask(this));
-        return communicator;
+    private List<Flow.Subscriber<Body>> subscribersForDataChannel() {
+        final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
+        subscribers.add(new TunnelingRequestTask(this));
+        subscribers.add(new TunnelingAckTask(this));
+        return Collections.unmodifiableList(subscribers);
     }
 
     /**
@@ -391,9 +405,15 @@ public final class InternalKnxClient implements KnxClient {
                 }
             }
         } finally {
-            // close communicators
-            isOk &= Closeables.closeQuietly(controlChannelCommunicator);
-            isOk &= Closeables.closeQuietly(dataChannelCommunicator);
+            // resets the communication information
+            this.channelId = -1;
+            this.controlHPAI = null;
+            this.dataHPAI = null;
+
+            // close channel communicators
+            for (final var channelCommunicator : this.channelCommunicators) {
+                isOk &= Closeables.closeQuietly(channelCommunicator);
+            }
             log.info("Channel Communicator stopped gracefully. Status: {}", isOk);
 
             // shutdown executors now
@@ -423,14 +443,19 @@ public final class InternalKnxClient implements KnxClient {
         return this.closed.get();
     }
 
-    private AbstractChannelCommunicator<? extends SelectableChannel> getChannelCommunciator(final Body body) {
-        if (body instanceof DataChannelRelated) {
-            return this.dataChannelCommunicator;
-        } else if (body instanceof ControlChannelRelated) {
-            return this.controlChannelCommunicator;
-        } else {
-            throw new IllegalArgumentException("No channel relation defined for body. I do not know to which channel communicator the body belongs to: " + body);
+    /**
+     * Finds the responsible channel communicator for the given {@code body}
+     *
+     * @param body
+     * @return responsible channel communicator, otherwise {@link IllegalArgumentException} if no suitable communicator was found
+     */
+    private AbstractChannelCommunicator<SelectableChannel> getChannelCommunicator(final Body body) {
+        for (final var channelCommunicator : channelCommunicators) {
+            if (channelCommunicator.isCompatible(body)) {
+                return channelCommunicator;
+            }
         }
+        throw new IllegalArgumentException("No channel relation defined for body. I do not know to which channel communicator the body belongs to: " + body);
     }
 
     /**
@@ -615,11 +640,11 @@ public final class InternalKnxClient implements KnxClient {
 
     @Override
     public final void send(final Body body) {
-        this.getChannelCommunciator(body).send(body);
+        this.getChannelCommunicator(body).send(body);
     }
 
     @Override
     public final <U extends ResponseBody> CompletableFuture<U> send(final RequestBody requestBody, final long msTimeout) {
-        return this.getChannelCommunciator(requestBody).send(requestBody, msTimeout);
+        return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
     }
 }

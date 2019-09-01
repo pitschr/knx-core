@@ -67,6 +67,16 @@ public abstract class AbstractKnxMain {
     }
 
     /**
+     * Returns the value if parameter exists
+     *
+     * @param args
+     * @param parameterName
+     * @return {@code true} if parameter was found, otherwise {@code false}
+     */
+    protected static boolean existsParameter(final String[] args, final String parameterName) {
+        return Arrays.stream(args).anyMatch(arg -> parameterName.equalsIgnoreCase(arg));
+    }
+    /**
      * Returns the value of parameter if supplied
      *
      * @param args

@@ -19,7 +19,8 @@
 package li.pitschmann.knx.link.communication.communicator;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.DescriptionResponseBody;
+import li.pitschmann.knx.link.body.ControlChannelRelated;
+import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
@@ -27,23 +28,27 @@ import javax.annotation.Nonnull;
 import java.nio.channels.SelectableChannel;
 
 /**
- * Communicator for description channel related packets
+ * Communicator for control <strong>AND</strong> data channel related packets.
+ * <p/>
+ * When using NAT then control and data packets are going over the same channel.
  *
  * @author PITSCHR
  */
-public final class DescriptionChannelCommunicator extends AbstractChannelCommunicator<SelectableChannel> {
-    public DescriptionChannelCommunicator(final @Nonnull InternalKnxClient client) {
+public final class ControlAndDataChannelCommunicator extends AbstractChannelCommunicator<SelectableChannel> {
+    public ControlAndDataChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
     }
 
     @Override
     @Nonnull
     protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
-        return ChannelFactory.newDescriptionChannel(internalClient);
+        // we will use the control channel for data as well
+        return ChannelFactory.newControlChannel(internalClient);
     }
 
     @Override
     public boolean isCompatible(final @Nonnull Body body) {
-        return body instanceof DescriptionResponseBody;
+        return body instanceof ControlChannelRelated
+                || body instanceof DataChannelRelated;
     }
 }

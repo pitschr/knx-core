@@ -109,7 +109,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     /**
      * Converts characters to byte array
      *
-     * @param characters    may not be longer than 14 characters
+     * @param characters may not be longer than 14 characters
      * @param charset
      * @return byte array
      */

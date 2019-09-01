@@ -23,7 +23,6 @@ import li.pitschmann.knx.link.datapoint.value.DPT1Value;
 import li.pitschmann.knx.link.datapoint.value.DPT2Value;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import org.junit.jupiter.api.Test;
 
@@ -134,6 +133,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
         public TestDataPointType() {
             super("ID", "Description");
         }
+
         public TestDataPointType(final String unit) {
             super("ID", "Description", unit);
         }

@@ -63,7 +63,7 @@ public final class DPT16ValueTest {
         this.assertValue(
                 DPT16.ASCII,
                 new byte[]{0x40},
-                 "@"
+                "@"
         );
         // Space: 12345678901234
         // Text : ÄÖÜäöü¡¿«»ßØ÷¤
