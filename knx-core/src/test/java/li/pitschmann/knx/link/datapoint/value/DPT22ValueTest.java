@@ -146,31 +146,35 @@ public final class DPT22ValueTest {
     @Test
     public void testChannelActivation16() {
         // @formatter:off
-        this.assertChannelActivation16(new byte[2], new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
+        this.assertChannelActivation16(new byte[2], new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}, "no channels active");
 
         // b0 .. b7
-        this.assertChannelActivation16(new byte[]{0x00, 0x01}, new boolean[]{true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, 0x02}, new boolean[]{false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, 0x04}, new boolean[]{false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, 0x08}, new boolean[]{false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, 0x10}, new boolean[]{false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, 0x20}, new boolean[]{false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, 0x40}, new boolean[]{false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x00, (byte) 0x80}, new boolean[]{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false});
+        this.assertChannelActivation16(new byte[]{0x00, 0x01}, new boolean[]{true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}, "1");
+        this.assertChannelActivation16(new byte[]{0x00, 0x02}, new boolean[]{false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false}, "2");
+        this.assertChannelActivation16(new byte[]{0x00, 0x04}, new boolean[]{false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false}, "3");
+        this.assertChannelActivation16(new byte[]{0x00, 0x08}, new boolean[]{false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false}, "4");
+        this.assertChannelActivation16(new byte[]{0x00, 0x10}, new boolean[]{false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false}, "5");
+        this.assertChannelActivation16(new byte[]{0x00, 0x20}, new boolean[]{false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false}, "6");
+        this.assertChannelActivation16(new byte[]{0x00, 0x40}, new boolean[]{false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false}, "7");
+        this.assertChannelActivation16(new byte[]{0x00, (byte) 0x80}, new boolean[]{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false}, "8");
 
         // b8 .. b15
-        this.assertChannelActivation16(new byte[]{0x01, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x02, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x04, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x08, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x10, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false});
-        this.assertChannelActivation16(new byte[]{0x20, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false});
-        this.assertChannelActivation16(new byte[]{0x40, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false});
-        this.assertChannelActivation16(new byte[]{(byte) 0x80, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true});
+        this.assertChannelActivation16(new byte[]{0x01, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false}, "9");
+        this.assertChannelActivation16(new byte[]{0x02, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false}, "10");
+        this.assertChannelActivation16(new byte[]{0x04, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false}, "11");
+        this.assertChannelActivation16(new byte[]{0x08, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false}, "12");
+        this.assertChannelActivation16(new byte[]{0x10, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false}, "13");
+        this.assertChannelActivation16(new byte[]{0x20, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false}, "14");
+        this.assertChannelActivation16(new byte[]{0x40, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false}, "15");
+        this.assertChannelActivation16(new byte[]{(byte) 0x80, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true}, "16");
+
+        // multiple channels
+        this.assertChannelActivation16(new byte[]{0x58, 0x08}, new boolean[]{false, false, false, true, false, false, false, false, false, false, false, true, true, false, true, false}, "4, 12, 13, 15");
+        this.assertChannelActivation16(new byte[]{(byte) 0x81, 0x07}, new boolean[]{true, true, true, false, false, false, false, false, true, false, false, false, false, false, false, true}, "1, 2, 3, 9, 16");
         //@formatter:on
     }
 
-    private void assertChannelActivation16(final byte[] bytes, final boolean[] bool) {
+    private void assertChannelActivation16(final byte[] bytes, final boolean[] bool, final String text) {
         final var dptValue = new ChannelActivation16(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7], bool[8],
                 bool[9], bool[10], bool[11], bool[12], bool[13], bool[14], bool[15]);
         assertThat(new ChannelActivation16(bytes)).isEqualTo(dptValue);
@@ -178,6 +182,7 @@ public final class DPT22ValueTest {
         for (var i = 0; i < 16; i++) {
             assertThat(dptValue.isChannelActive(i + 1)).isEqualTo(bool[i]);
         }
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         assertThatThrownBy(() -> dptValue.isChannelActive(0)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Channel must be between 1 and 16");

@@ -37,11 +37,36 @@ public final class DPT15ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(new byte[]{0x00, 0x00, 0x00, 0x00}, new byte[3], new Flags(false, false, false, false, 0));
-        this.assertValue(new byte[]{0x11, 0x22, 0x33, 0x0F}, new byte[]{0x11, 0x22, 0x33}, new Flags(false, false, false, false, 0x0F));
-        this.assertValue(new byte[]{0x44, 0x55, 0x66, (byte) 0xff}, new byte[]{0x44, 0x55, 0x66}, new Flags(true, true, true, true, 0x0F));
-        this.assertValue(new byte[]{0x22, 0x44, 0x11, (byte) 0xA3}, new byte[]{0x22, 0x44, 0x11}, new Flags(true, false, true, false, 0x03));
-        this.assertValue(new byte[]{0x33, 0x77, 0x00, (byte) 0x5C}, new byte[]{0x33, 0x77, 0x00}, new Flags(false, true, false, true, 0x0C));
+        this.assertValue(
+                new byte[]{0x00, 0x00, 0x00, 0x00},
+                new byte[3],
+                new Flags(false, false, false, false, 0),
+                "data: 0x00 00 00, flags: 0x00"
+        );
+        this.assertValue(
+                new byte[]{0x11, 0x22, 0x33, 0x0F},
+                new byte[]{0x11, 0x22, 0x33},
+                new Flags(false, false, false, false, 0x0F),
+                "data: 0x11 22 33, flags: 0x0F"
+        );
+        this.assertValue(
+                new byte[]{0x44, 0x55, 0x66, (byte) 0xFF},
+                new byte[]{0x44, 0x55, 0x66},
+                new Flags(true, true, true, true, 0x0F),
+                "data: 0x44 55 66, flags: 0xFF"
+        );
+        this.assertValue(
+                new byte[]{0x22, 0x44, 0x11, (byte) 0xA3},
+                new byte[]{0x22, 0x44, 0x11},
+                new Flags(true, false, true, false, 0x03),
+                "data: 0x22 44 11, flags: 0xA3"
+        );
+        this.assertValue(
+                new byte[]{0x33, 0x77, 0x00, (byte) 0x5C},
+                new byte[]{0x33, 0x77, 0x00},
+                new Flags(false, true, false, true, 0x0C),
+                "data: 0x33 77 00, flags: 0x5C"
+        );
     }
 
     /**
@@ -53,7 +78,7 @@ public final class DPT15ValueTest {
         assertThatThrownBy(() -> new DPT15Value(new byte[0], null)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final byte[] bytes, final byte[] accessIdentificationData, final Flags flags) {
+    private void assertValue(final byte[] bytes, final byte[] accessIdentificationData, final Flags flags, final String text) {
         final var dptValue = new DPT15Value(accessIdentificationData, flags);
         final var dptValueByByte = new DPT15Value(bytes);
 
@@ -61,6 +86,7 @@ public final class DPT15ValueTest {
         assertThat(dptValue.getAccessIdentificationData()).containsExactly(accessIdentificationData);
         assertThat(dptValue.getFlags()).isEqualTo(flags);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT15Value.toByteArray(accessIdentificationData, flags)).containsExactly(bytes);

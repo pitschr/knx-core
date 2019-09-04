@@ -36,7 +36,7 @@ import li.pitschmann.utils.Bytes;
  *
  * @author PITSCHR
  */
-public final class DPT6 extends AbstractRangeUnitDataPointType<DPT6Value, Integer> {
+public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
     /**
      * <strong>6.001</strong> Percent (%)
      *
@@ -69,7 +69,7 @@ public final class DPT6 extends AbstractRangeUnitDataPointType<DPT6Value, Intege
      * </pre>
      */
     @KnxDataPointType(id = "6.010", description = "Value 1 Octet Signed Count")
-    public static final DPT6 VALUE_1_OCTET_COUNT = new DPT6("6.010", "Value 1 Octet Signed Count", -128, 127, "pulse");
+    public static final DPT6 VALUE_1_OCTET_COUNT = new DPT6("6.010", "Value 1 Octet Signed Count", -128, 127, "pulses");
 
     /**
      * <strong>6.020</strong> Status Mode

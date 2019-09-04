@@ -43,42 +43,56 @@ public final class DPT19ValueTest {
     @Test
     public void test() {
         // no day, 1900-01-01 00:00:00
-        this.assertValue(new byte[]{0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00}, //
+        this.assertValue(
+                new byte[]{0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00}, //
                 null, //
                 LocalDate.of(1900, 1, 1), //
                 LocalTime.of(0, 0, 0), //
-                new Flags(false, false, false, false, false, false, false, false, false));
-        // monday, 1950-02-03 6:15:20
+                new Flags(false, false, false, false, false, false, false, false, false),
+                "1900-01-01 00:00:00, flags: 0x00 00"
+        );
+        // monday, 1950-02-03 06:15:20
         // monday => 001. ....
         // hour 6 => ...0 0110
-        this.assertValue(new byte[]{0x32, 0x02, 0x03, 0x26, 0x0f, 0x14, (byte) 0xAA, (byte) 0x80}, //
+        this.assertValue(
+                new byte[]{0x32, 0x02, 0x03, 0x26, 0x0f, 0x14, (byte) 0xAA, (byte) 0x80}, //
                 DayOfWeek.MONDAY, //
                 LocalDate.of(1950, 2, 3), //
                 LocalTime.of(6, 15, 20), //
-                new Flags(true, false, true, false, true, false, true, false, true));
+                new Flags(true, false, true, false, true, false, true, false, true),
+                "Monday, 1950-02-03 06:15:20, flags: 0xAA 80"
+        );
         // wednesday, 2000-04-05 12:30:45
         // wednesday => 011. ....
         // hour 12 ===> ...0 1100
-        this.assertValue(new byte[]{0x64, 0x04, 0x05, 0x6c, 0x1e, 0x2d, 0x55, 0x00}, //
+        this.assertValue(
+                new byte[]{0x64, 0x04, 0x05, 0x6c, 0x1e, 0x2d, 0x55, 0x00}, //
                 DayOfWeek.WEDNESDAY, //
                 LocalDate.of(2000, 4, 5), //
                 LocalTime.of(12, 30, 45), //
-                new Flags(false, true, false, true, false, true, false, true, false));
+                new Flags(false, true, false, true, false, true, false, true, false),
+                "Wednesday, 2000-04-05 12:30:45, flags: 0x55 00"
+        );
         // sunday, 2155-12-30 23:59:59
         // sunday ==> 111. ....
         // hour 23 => ...1 0111
-        this.assertValue(new byte[]{(byte) 0xff, 0x0c, 0x1e, (byte) 0xf7, 0x3b, 0x3b, (byte) 0xff, (byte) 0x80}, //
+        this.assertValue(
+                new byte[]{(byte) 0xff, 0x0c, 0x1e, (byte) 0xf7, 0x3b, 0x3b, (byte) 0xff, (byte) 0x80}, //
                 DayOfWeek.SUNDAY, //
                 LocalDate.of(2155, 12, 30), //
                 LocalTime.of(23, 59, 59), //
-                new Flags(true, true, true, true, true, true, true, true, true));
+                new Flags(true, true, true, true, true, true, true, true, true),
+                "Sunday, 2155-12-30 23:59:59, flags: 0xFF 80");
 
         // no flags, sunday, 2155-12-30 23:59:59
-        this.assertValue(new byte[]{(byte) 0xff, 0x0c, 0x1e, (byte) 0xf7, 0x3b, 0x3b, 0x00, 0x00}, //
+        this.assertValue(
+                new byte[]{(byte) 0xff, 0x0c, 0x1e, (byte) 0xf7, 0x3b, 0x3b, 0x00, 0x00}, //
                 DayOfWeek.SUNDAY, //
                 LocalDate.of(2155, 12, 30), //
                 LocalTime.of(23, 59, 59), //
-                null);
+                null,
+                "Sunday, 2155-12-30 23:59:59, flags: 0x00 00"
+        );
     }
 
     /**
@@ -98,7 +112,7 @@ public final class DPT19ValueTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final byte[] bytes, final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
+    private void assertValue(final byte[] bytes, final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags, final String text) {
         final var flagsNotNull = Objects.requireNonNullElse(flags, Flags.NO_FLAGS);
 
         final var dptValue = new DPT19Value(dayOfWeek, date, time, flags);
@@ -111,6 +125,7 @@ public final class DPT19ValueTest {
         assertThat(dptValue.getTime()).isEqualTo(time);
         assertThat(dptValue.getFlags()).isEqualTo(flagsNotNull);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT19Value.toByteArray(dayOfWeek, date, time, flagsNotNull)).containsExactly(bytes);

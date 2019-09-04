@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DataPointType;
+import li.pitschmann.utils.ByteFormatter;
 
 /**
  * Interface for Data Point Value implementations
@@ -36,7 +37,18 @@ public interface DataPointValue<T extends DataPointType<?>> {
     /**
      * Returns the current Data Point Value as a byte array.
      *
-     * @return byte array.
+     * @return byte array
      */
     byte[] toByteArray();
+
+    /**
+     * Returns the human-friendly text representation of Data Point Value
+     * <p/>
+     * <strong>This text is not STABLE and should only be used for display purposes only!</strong>
+     *
+     * @return text
+     */
+    default String toText() {
+        return ByteFormatter.formatHexAsString(toByteArray());
+    }
 }

@@ -19,10 +19,12 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
-import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 /**
  * Abstract implementation of {@link DataPointValue}
@@ -33,30 +35,32 @@ import java.math.RoundingMode;
 abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implements DataPointValue<T> {
     private final T dpt;
 
-    public AbstractDataPointValue(final T dpt) {
-        if (dpt == null) {
-            throw new KnxNullPointerException("dpt");
-        }
-        this.dpt = dpt;
+    public AbstractDataPointValue(final @Nonnull T dpt) {
+        this.dpt = Objects.requireNonNull(dpt);
     }
 
+    @Nonnull
     protected static String getValueAsText(final double value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
+    @Nonnull
     protected static String getValueAsText(final float value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
+    @Nonnull
     protected static String getValueAsText(final int value) {
         return Integer.toString(value);
     }
 
+    @Nonnull
     protected static String getValueAsText(final long value) {
         return Long.toString(value);
     }
 
-    protected static String getValueAsText(final Object value) {
+    @Nonnull
+    protected static String getValueAsText(final @Nullable Object value) {
         return String.valueOf(value);
     }
 
@@ -65,6 +69,7 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
      *
      * @return
      */
+    @Nonnull
     @Override
     public T getDPT() {
         return this.dpt;

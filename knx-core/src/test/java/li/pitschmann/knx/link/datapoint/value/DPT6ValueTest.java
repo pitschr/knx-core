@@ -40,17 +40,20 @@ public final class DPT6ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x29, 41);
-        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0xEA, -22);
+        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x29, 41, "41");
+        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0xEA, -22, "-22");
+
+        this.assertValue(DPT6.PERCENT, (byte) 0x45, 69, "69");
     }
 
-    private void assertValue(final DPT6 dpt, final byte b, final int relativeSignedValue) {
+    private void assertValue(final DPT6 dpt, final byte b, final int relativeSignedValue, final String text) {
         final var dptValue = new DPT6Value(dpt, relativeSignedValue);
         final var dptValueByByte = new DPT6Value(dpt, b);
 
         // instance methods
         assertThat(dptValue.getRelativeSignedValue()).isEqualTo(relativeSignedValue);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT6Value.toByteArray(relativeSignedValue)).containsExactly(b);
@@ -63,8 +66,9 @@ public final class DPT6ValueTest {
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT6Value(DPT6.PERCENT, relativeSignedValue));
         assertThat(dptValue).isNotEqualTo(new DPT6Value(dpt, relativeSignedValue + 1));
+        final var anotherDpt = DPT6.PERCENT.equals(dptValue.getDPT()) ? DPT6.VALUE_1_OCTET_COUNT : DPT6.PERCENT;
+        assertThat(dptValue).isNotEqualTo(new DPT6Value(anotherDpt, relativeSignedValue));
 
         // toString
         final var toString = String.format("DPT6Value{dpt=%s, relativeSignedValue=%s, byteArray=%s}", dpt, relativeSignedValue,

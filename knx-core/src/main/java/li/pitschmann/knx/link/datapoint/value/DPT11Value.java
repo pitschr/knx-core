@@ -26,7 +26,10 @@ import li.pitschmann.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
@@ -62,14 +65,14 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
     private final LocalDate date;
     private final byte[] byteArray;
 
-    public DPT11Value(final byte[] bytes) {
+    public DPT11Value(final @Nonnull byte[] bytes) {
         super(DPT11.DATE);
         Preconditions.checkArgument(bytes.length == 3);
         this.date = toLocalDate(bytes);
         this.byteArray = bytes;
     }
 
-    public DPT11Value(final LocalDate date) {
+    public DPT11Value(final @Nonnull LocalDate date) {
         super(DPT11.DATE);
         Preconditions.checkNotNull(date);
         Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
@@ -83,7 +86,8 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      * @param bytes
      * @return {@link LocalDate}
      */
-    private static LocalDate toLocalDate(final byte[] bytes) {
+    @Nonnull
+    private static LocalDate toLocalDate(final @Nonnull byte[] bytes) {
         // day
         final var day = Bytes.toUnsignedInt(bytes[0]);
 
@@ -107,7 +111,8 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      * @param date
      * @return byte array
      */
-    public static byte[] toByteArray(final LocalDate date) {
+    @Nonnull
+    public static byte[] toByteArray(final @Nonnull LocalDate date) {
         Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
 
         // byte 0: day
@@ -126,15 +131,24 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         return bytes;
     }
 
+    @Nonnull
     public LocalDate getDate() {
         return this.date;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return getDate().format(DateTimeFormatter.ISO_DATE);
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -147,7 +161,7 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT11Value) {

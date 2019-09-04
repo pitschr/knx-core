@@ -23,6 +23,8 @@ import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT13;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.function.Function;
@@ -48,7 +50,7 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
     private final int rawSignedValue;
     private final byte[] byteArray;
 
-    public DPT13Value(final DPT13 dpt, final byte[] bytes) {
+    public DPT13Value(final @Nonnull DPT13 dpt, final @Nonnull byte[] bytes) {
         super(dpt);
         Preconditions.checkArgument(bytes.length == 4);
         // signed value
@@ -56,7 +58,7 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
         this.byteArray = bytes;
     }
 
-    public DPT13Value(final DPT13 dpt, final int value) {
+    public DPT13Value(final @Nonnull DPT13 dpt, final int value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.rawSignedValue = value;
@@ -69,6 +71,7 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
      * @param value
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final int value) {
         return new byte[]{ //
                 (byte) (value >> 24), //
@@ -90,11 +93,19 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
         return this.rawSignedValue;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return getValueAsText(getSignedValue());
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -108,7 +119,7 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT13Value) {

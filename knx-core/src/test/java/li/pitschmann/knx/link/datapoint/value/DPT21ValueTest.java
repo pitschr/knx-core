@@ -124,15 +124,16 @@ public final class DPT21ValueTest {
      */
     @Test
     public void testForcingSignalCooling() {
-        this.assertForcingSignalCooling((byte) 0x00, false);
-        this.assertForcingSignalCooling((byte) 0x01, true);
+        this.assertForcingSignalCooling((byte) 0x00, false, "not forced");
+        this.assertForcingSignalCooling((byte) 0x01, true, "forced");
     }
 
-    private void assertForcingSignalCooling(final byte b, final boolean bool) {
+    private void assertForcingSignalCooling(final byte b, final boolean bool, final String text) {
         final var dptValue = new ForcingSignalCooling(bool);
         assertThat(new ForcingSignalCooling(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isForceRequest()).isEqualTo(bool);
+        assertThat(dptValue.toText()).isEqualTo(text);
     }
 
     /**
@@ -210,15 +211,16 @@ public final class DPT21ValueTest {
      */
     @Test
     public void testStatusRoomCoolingController() {
-        this.assertStatusRoomCoolingController((byte) 0x00, false);
-        this.assertStatusRoomCoolingController((byte) 0x01, true);
+        this.assertStatusRoomCoolingController((byte) 0x00, false, "no fault");
+        this.assertStatusRoomCoolingController((byte) 0x01, true, "fault");
     }
 
-    private void assertStatusRoomCoolingController(final byte b, final boolean bool) {
+    private void assertStatusRoomCoolingController(final byte b, final boolean bool, final String text) {
         final var dptValue = new StatusRoomCoolingController(bool);
         assertThat(new StatusRoomCoolingController(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool);
+        assertThat(dptValue.toText()).isEqualTo(text);
     }
 
     /**
@@ -316,15 +318,16 @@ public final class DPT21ValueTest {
      */
     @Test
     public void testSecurityReport() {
-        this.assertSecurityReport((byte) 0x00, false);
-        this.assertSecurityReport((byte) 0x01, true);
+        this.assertSecurityReport((byte) 0x00, false, "no failure");
+        this.assertSecurityReport((byte) 0x01, true, "failure");
     }
 
-    private void assertSecurityReport(final byte b, final boolean bool) {
+    private void assertSecurityReport(final byte b, final boolean bool, final String text) {
         final var dptValue = new SecurityReport(bool);
         assertThat(new SecurityReport(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFailure()).isEqualTo(bool);
+        assertThat(dptValue.toText()).isEqualTo(text);
     }
 
     /**
@@ -332,24 +335,29 @@ public final class DPT21ValueTest {
      */
     @Test
     public void testChannelActivation8() {
-        this.assertChannelActivation8((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false});
-        this.assertChannelActivation8((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false});
-        this.assertChannelActivation8((byte) 0x02, new boolean[]{false, true, false, false, false, false, false, false});
-        this.assertChannelActivation8((byte) 0x04, new boolean[]{false, false, true, false, false, false, false, false});
-        this.assertChannelActivation8((byte) 0x08, new boolean[]{false, false, false, true, false, false, false, false});
-        this.assertChannelActivation8((byte) 0x10, new boolean[]{false, false, false, false, true, false, false, false});
-        this.assertChannelActivation8((byte) 0x20, new boolean[]{false, false, false, false, false, true, false, false});
-        this.assertChannelActivation8((byte) 0x40, new boolean[]{false, false, false, false, false, false, true, false});
-        this.assertChannelActivation8((byte) 0x80, new boolean[]{false, false, false, false, false, false, false, true});
+        this.assertChannelActivation8((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false}, "no channels active");
+        this.assertChannelActivation8((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false}, "1");
+        this.assertChannelActivation8((byte) 0x02, new boolean[]{false, true, false, false, false, false, false, false}, "2");
+        this.assertChannelActivation8((byte) 0x04, new boolean[]{false, false, true, false, false, false, false, false}, "3");
+        this.assertChannelActivation8((byte) 0x08, new boolean[]{false, false, false, true, false, false, false, false}, "4");
+        this.assertChannelActivation8((byte) 0x10, new boolean[]{false, false, false, false, true, false, false, false}, "5");
+        this.assertChannelActivation8((byte) 0x20, new boolean[]{false, false, false, false, false, true, false, false}, "6");
+        this.assertChannelActivation8((byte) 0x40, new boolean[]{false, false, false, false, false, false, true, false}, "7");
+        this.assertChannelActivation8((byte) 0x80, new boolean[]{false, false, false, false, false, false, false, true}, "8");
+
+        // multiple channels
+        this.assertChannelActivation8((byte) 0x87, new boolean[]{true, true, true, false, false, false, false, true}, "1, 2, 3, 8");
+        this.assertChannelActivation8((byte) 0xFF, new boolean[]{true, true, true, true, true, true, true, true}, "1, 2, 3, 4, 5, 6, 7, 8");
     }
 
-    private void assertChannelActivation8(final byte b, final boolean[] bool) {
+    private void assertChannelActivation8(final byte b, final boolean[] bool, final String text) {
         final var dptValue = new ChannelActivation8(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
         assertThat(new ChannelActivation8(b)).isEqualTo(dptValue);
 
         for (var i = 0; i < 8; i++) {
             assertThat(dptValue.isChannelActive(i + 1)).isEqualTo(bool[i]);
         }
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         assertThatThrownBy(() -> dptValue.isChannelActive(0)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Channel must be between 1 and 8");

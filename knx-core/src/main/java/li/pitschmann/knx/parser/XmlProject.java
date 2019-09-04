@@ -243,14 +243,14 @@ public final class XmlProject {
      */
     @Nonnull
     public Collection<XmlGroupRange> getMainGroups() {
-        return groupRangeMap.values().stream().filter(xgr -> xgr.getParentId() == null).collect(Collectors.toUnmodifiableList());
+        return groupRangeMap.values().stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toUnmodifiableList());
     }
 
     /**
-     * Returns collection of {@link XmlGroupRange} for given {@code main} group
+     * Returns the XML Group Range for given {@code main} group
      *
      * @param main
-     * @return collection of {@link XmlGroupRange}, or {@link IllegalArgumentException} list if not found
+     * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
     @Nonnull
     public XmlGroupRange getMainGroup(final int main) {
@@ -261,10 +261,10 @@ public final class XmlProject {
         int startRange = main == 0 ? 1 : Integer.valueOf(GroupAddress.of(main, 0).getAddress());
         log.debug("Looking for start range '{}' of group {}/-/- in: {}", startRange, main, groupRangeMap);
 
+        final var mainGroups = getMainGroups();
         XmlGroupRange xmlGroupRange = null;
-        for (final var groupRange : groupRangeMap.values()) {
+        for (final var groupRange : mainGroups) {
             if (groupRange.getRangeStart() == startRange) {
-                // found
                 xmlGroupRange = groupRange;
                 break;
             }
@@ -272,7 +272,7 @@ public final class XmlProject {
 
         // not found?
         if (xmlGroupRange == null) {
-            log.warn("Main group '{}' not found in: {}", main, groupRangeMap.values());
+            log.warn("Main group '{}' not found in: {}", main, mainGroups);
             throw new IllegalArgumentException("Could not find main group '" + main + "'!");
         }
         // otherwise found
@@ -282,6 +282,14 @@ public final class XmlProject {
         }
     }
 
+    /**
+     * Returns the XML Group Range for given {@code main/middle} group
+     *
+     * @param main
+     * @param middle
+     * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
+     */
+    @Nonnull
     public XmlGroupRange getMiddleGroup(final int main, final int middle) {
         final var mainGroup = getMainGroup(main);
 
@@ -290,8 +298,9 @@ public final class XmlProject {
         int startRange = main == 0 && middle == 0 ? 1 : Integer.valueOf(GroupAddress.of(main, middle, 0).getAddress());
         log.debug("Looking for start range '{}' of group {}/{}/- in: {}", startRange, main, middle, mainGroup);
 
+        final var childGroups = mainGroup.getChildGroupRanges();
         XmlGroupRange xmlGroupRange = null;
-        for (final var groupRange : mainGroup.getChildGroupRanges()) {
+        for (final var groupRange : childGroups) {
             if (groupRange.getRangeStart() == startRange) {
                 // found
                 xmlGroupRange = groupRange;
@@ -301,7 +310,7 @@ public final class XmlProject {
 
         // not found?
         if (xmlGroupRange == null) {
-            log.warn("Main group '{}' not found in: {}", main, groupRangeMap.values());
+            log.warn("Main group '{}' not found in: {}", main, childGroups);
             throw new IllegalArgumentException("Could not find main group '" + main + "'!");
         }
         // otherwise found

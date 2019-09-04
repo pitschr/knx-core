@@ -43,7 +43,7 @@ public final class DataChannelCommunicator extends AbstractChannelCommunicator<S
     }
 
     @Override
-    protected boolean isCompatible(final @Nonnull Body body) {
+    public boolean isCompatible(final @Nonnull Body body) {
         return body instanceof DataChannelRelated;
     }
 }

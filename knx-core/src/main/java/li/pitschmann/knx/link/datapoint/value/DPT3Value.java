@@ -24,6 +24,8 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -49,7 +51,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
     private final boolean controlled;
     private final int stepCode;
 
-    public DPT3Value(final DPT3 dpt, final byte b) {
+    public DPT3Value(final @Nonnull DPT3 dpt, final byte b) {
         super(dpt);
         // bit 4 = controlled
         this.controlled = (b & 0x08) != 0x00;
@@ -57,7 +59,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         this.stepCode = b & 0x07;
     }
 
-    public DPT3Value(final DPT3 dpt, final boolean controlled, final int stepCode) {
+    public DPT3Value(final @Nonnull DPT3 dpt, final boolean controlled, final int stepCode) {
         super(dpt);
         // validate
         if (stepCode < 0 || stepCode > 7) {
@@ -68,7 +70,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         this.stepCode = stepCode;
     }
 
-    public DPT3Value(final DPT3 dpt, final boolean controlled, final StepInterval stepInterval) {
+    public DPT3Value(final @Nonnull DPT3 dpt, final boolean controlled, final @Nonnull StepInterval stepInterval) {
         super(dpt);
         // validate
         if (stepInterval == null) {
@@ -86,6 +88,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
      * @param stepCode
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final boolean controlled, final int stepCode) {
         var b = (byte) stepCode;
         if (controlled) {
@@ -102,15 +105,29 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         return this.stepCode;
     }
 
+    @Nonnull
     public StepInterval getStepInterval() {
         return StepInterval.ofCode(this.stepCode);
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.stepCode);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        final var stepIntervalText = getStepInterval().toText();
+        if (isControlled()) {
+            return String.format("controlled '%s'", stepIntervalText);
+        } else {
+            return stepIntervalText;
+        }
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -125,7 +142,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT3Value) {
@@ -151,40 +168,42 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         /**
          * Step 000b: STOP
          */
-        STOP(0x00),
+        STOP(0x00, "0 (stop)"),
         /**
          * Step 001b: 100%
          */
-        PERCENT_100(0x01),
+        PERCENT_100(0x01, "1 (100%)"),
         /**
          * Step 010b: 50%
          */
-        PERCENT_50(0x02),
+        PERCENT_50(0x02, "2 (50%)"),
         /**
          * Step 011b: 25%
          */
-        PERCENT_25(0x03),
+        PERCENT_25(0x03, "3 (25%)"),
         /**
          * Step 100b: 12%
          */
-        PERCENT_12(0x04),
+        PERCENT_12(0x04, "4 (12%)"),
         /**
          * Step 101b: 6%
          */
-        PERCENT_6(0x05),
+        PERCENT_6(0x05, "5 (6%)"),
         /**
          * Step 110b: 3%
          */
-        PERCENT_3(0x06),
+        PERCENT_3(0x06, "6 (3%)"),
         /**
          * Step 111b: 1%
          */
-        PERCENT_1(0x07);
+        PERCENT_1(0x07, "7 (1%)");
 
         private final int stepCode;
+        private final String text;
 
-        StepInterval(int stepCode) {
+        StepInterval(final int stepCode, final String text) {
             this.stepCode = stepCode;
+            this.text = text;
         }
 
         /**
@@ -208,6 +227,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
          * @param interval number of interval in range of [1 .. 64]
          * @return {@link StepInterval}
          */
+        @Nonnull
         public static StepInterval ofInterval(final int interval) {
             // validate
             if (interval < 0 || interval > 64) {
@@ -255,6 +275,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
          * @param percent number of percent in range of [1f .. 100f]
          * @return {@link StepInterval}
          */
+        @Nonnull
         public static StepInterval ofPercent(final float percent) {
             // validate
             if (percent < 0f || percent > 100f) {
@@ -298,6 +319,18 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
 
         public int getStepCode() {
             return this.stepCode;
+        }
+
+        /**
+         * Returns the human-friendly text representation of Step Interval
+         * <p/>
+         * <strong>This text is not STABLE and should only be used for display purposes only!</strong>
+         *
+         * @return human-friendy representation of Step Interval
+         */
+        @Nonnull
+        public String toText() {
+            return this.text;
         }
     }
 }

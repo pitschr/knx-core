@@ -50,6 +50,7 @@ public final class DPT1ValueTest {
         assertThat(dptValue.getBooleanValue()).isEqualTo(booleanValue);
         assertThat(dptValue.getBooleanText()).isEqualTo(booleanText);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(booleanText);
 
         // class methods
         assertThat(DPT1Value.toByteArray(booleanValue)).containsExactly(b);

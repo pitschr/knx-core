@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT14;
 import li.pitschmann.utils.ByteFormatter;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,8 +37,8 @@ public final class DPT14ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT14.ANGLE_DEGREE, new byte[]{0x53, 0x38, 0x67, 0x44}, 7.9200649216E11);
-        this.assertValue(DPT14.ANGLE_DEGREE, new byte[]{(byte) 0xC7, (byte) 0x7F, (byte) 0x9A, (byte) 0xED}, -65434.92578125);
+        this.assertValue(DPT14.ANGLE_DEGREE, new byte[]{0x53, 0x38, 0x67, 0x44}, 7.9200649216E11, "792006492160");
+        this.assertValue(DPT14.ANGLE_DEGREE, new byte[]{(byte) 0xC7, (byte) 0x7F, (byte) 0x9A, (byte) 0xED}, -65434.92578125, "-65434.925781");
     }
 
     /**
@@ -48,13 +49,14 @@ public final class DPT14ValueTest {
         assertThatThrownBy(() -> new DPT14Value(DPT14.ANGLE_DEGREE, new byte[0])).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final DPT14 dpt, final byte[] bytes, final double floatingValue) {
+    private void assertValue(final DPT14 dpt, final byte[] bytes, final double floatingValue, final String text) {
         final var dptValue = new DPT14Value(dpt, floatingValue);
         final var dptValueByByte = new DPT14Value(dpt, bytes);
 
         // instance methods
-        assertThat(dptValue.getFloatingValue()).isEqualTo(floatingValue);
+        assertThat(dptValue.getFloatingValue()).isCloseTo(floatingValue, Offset.offset(0.000001));
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT14Value.toFloatingValue(bytes)).isEqualTo(floatingValue);

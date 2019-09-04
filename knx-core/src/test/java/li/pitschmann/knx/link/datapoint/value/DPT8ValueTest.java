@@ -36,11 +36,11 @@ public final class DPT8ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x6B, (byte) 0xA2}, 27554, 27554);
-        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0xE1, (byte) 0xA5}, -7771, -7771);
+        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x6B, (byte) 0xA2}, 27554, 27554, "27554");
+        this.assertValue(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0xE1, (byte) 0xA5}, -7771, -7771, "-7771");
 
-        this.assertValue(DPT8.DELTA_TIME_10MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 73.22);
-        this.assertValue(DPT8.DELTA_TIME_100MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 732.2);
+        this.assertValue(DPT8.DELTA_TIME_10MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 73.22, "73.22");
+        this.assertValue(DPT8.DELTA_TIME_100MS, new byte[]{0x1C, (byte) 0x9A}, 7322, 732.2, "732.2");
     }
 
     /**
@@ -51,7 +51,7 @@ public final class DPT8ValueTest {
         assertThatThrownBy(() -> new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[0])).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final DPT8 dpt, final byte[] bytes, final int rawSignedValue, final double signedValue) {
+    private void assertValue(final DPT8 dpt, final byte[] bytes, final int rawSignedValue, final double signedValue, final String text) {
         final var dptValue = new DPT8Value(dpt, rawSignedValue);
         final var dptValueByByte = new DPT8Value(dpt, bytes);
 
@@ -59,6 +59,7 @@ public final class DPT8ValueTest {
         assertThat(dptValue.getRawSignedValue()).isEqualTo(rawSignedValue);
         assertThat(dptValue.getSignedValue()).isEqualTo(signedValue);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT8Value.toByteArray(rawSignedValue)).containsExactly(bytes);

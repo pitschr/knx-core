@@ -36,23 +36,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public final class DPT10ValueTest {
     /**
      * Test {@link DPT10Value}
+     * <p/>
+     * Hint: If this test is failing because of wrong date translation, then check if environment variable
+     * {@code -Duser.language=en -Duser.country=US} is set
      */
     @Test
     public void test() {
         // no day, 00:00:00
-        this.assertValue(new byte[]{0x00, 0x00, 0x00}, null, LocalTime.of(0, 0, 0));
+        this.assertValue(new byte[]{0x00, 0x00, 0x00}, null, LocalTime.of(0, 0, 0), "00:00:00");
         // monday, 6:15:20
         // monday => 001. ....
         // hour 6 => ...0 0110
-        this.assertValue(new byte[]{(byte) 0x26, (byte) 0x0f, (byte) 0x14}, DayOfWeek.MONDAY, LocalTime.of(6, 15, 20));
+        this.assertValue(new byte[]{(byte) 0x26, (byte) 0x0f, (byte) 0x14}, DayOfWeek.MONDAY, LocalTime.of(6, 15, 20), "Monday, 06:15:20");
         // wednesday, 12:30:45
         // wednesday => 011. ....
         // hour 12 ===> ...0 1100
-        this.assertValue(new byte[]{(byte) 0x6c, (byte) 0x1e, (byte) 0x2d}, DayOfWeek.WEDNESDAY, LocalTime.of(12, 30, 45));
+        this.assertValue(new byte[]{(byte) 0x6c, (byte) 0x1e, (byte) 0x2d}, DayOfWeek.WEDNESDAY, LocalTime.of(12, 30, 45), "Wednesday, 12:30:45");
         // sunday, 23:59:59
         // sunday ==> 111. ....
         // hour 23 => ...1 0111
-        this.assertValue(new byte[]{(byte) 0xf7, (byte) 0x3b, (byte) 0x3b}, DayOfWeek.SUNDAY, LocalTime.of(23, 59, 59));
+        this.assertValue(new byte[]{(byte) 0xf7, (byte) 0x3b, (byte) 0x3b}, DayOfWeek.SUNDAY, LocalTime.of(23, 59, 59), "Sunday, 23:59:59");
     }
 
     /**
@@ -63,7 +66,7 @@ public final class DPT10ValueTest {
         assertThatThrownBy(() -> new DPT10Value(new byte[0])).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final byte[] bytes, final DayOfWeek dayOfWeek, final LocalTime time) {
+    private void assertValue(final byte[] bytes, final DayOfWeek dayOfWeek, final LocalTime time, final String text) {
         final var dptValue = new DPT10Value(dayOfWeek, time);
         final var dptValueByByte = new DPT10Value(bytes);
 
@@ -71,6 +74,7 @@ public final class DPT10ValueTest {
         assertThat(dptValue.getDayOfWeek()).isEqualTo(dayOfWeek);
         assertThat(dptValue.getTime()).isEqualTo(time);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT10Value.toByteArray(dayOfWeek, time)).containsExactly(bytes);

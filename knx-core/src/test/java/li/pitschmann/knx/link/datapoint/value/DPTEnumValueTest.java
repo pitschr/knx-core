@@ -51,6 +51,7 @@ public final class DPTEnumValueTest {
         assertThat(priorityHigh.getValue()).isEqualTo(0);
         assertThat(priorityHigh.getDescription()).isEqualTo("high");
         assertThat(priorityHigh.toByteArray()).containsExactly(0x00);
+        assertThat(priorityHigh.toText()).isEqualTo("high");
 
         // equals (here we only compare DPT and enum field
         assertThat(priorityHigh).isEqualTo(priorityHigh);

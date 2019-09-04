@@ -172,7 +172,7 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @param body
      * @return {@code true} if compatible, otherwise {@code false}
      */
-    protected abstract boolean isCompatible(final @Nonnull Body body);
+    public abstract boolean isCompatible(final @Nonnull Body body);
 
     /**
      * Send {@link Body} to the outbox queue

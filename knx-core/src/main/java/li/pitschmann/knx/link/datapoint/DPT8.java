@@ -36,7 +36,7 @@ import java.util.function.Function;
  *
  * @author PITSCHR
  */
-public final class DPT8 extends AbstractRangeUnitDataPointType<DPT8Value, Integer> {
+public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
     /**
      * <strong>8.001</strong> Value 2-octet signed count
      *

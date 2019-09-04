@@ -35,17 +35,18 @@ public final class DPT17ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue((byte) 0x09, 9);
-        this.assertValue((byte) 0x29, 41);
+        this.assertValue((byte) 0x09, 9, "scene 9");
+        this.assertValue((byte) 0x29, 41, "scene 41");
     }
 
-    private void assertValue(final byte b, final int sceneNumber) {
+    private void assertValue(final byte b, final int sceneNumber, final String text) {
         final var dptValue = new DPT17Value(sceneNumber);
         final var dptValueByByte = new DPT17Value(b);
 
         // instance methods
         assertThat(dptValue.getSceneNumber()).isEqualTo(sceneNumber);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT17Value.toByteArray(sceneNumber)).containsExactly(b);

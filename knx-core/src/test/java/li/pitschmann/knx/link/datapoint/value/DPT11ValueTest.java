@@ -39,15 +39,15 @@ public final class DPT11ValueTest {
     @Test
     public void test() {
         // day = 1, month = 1, year = 90 (=1990)
-        this.assertValue(new byte[]{0x01, 0x01, 0x5a}, LocalDate.of(1990, 1, 1));
+        this.assertValue(new byte[]{0x01, 0x01, 0x5a}, LocalDate.of(1990, 1, 1), "1990-01-01");
         // day = 9, month = 3, year = 91 (=1991)
-        this.assertValue(new byte[]{0x09, 0x03, 0x5b}, LocalDate.of(1991, 3, 9));
+        this.assertValue(new byte[]{0x09, 0x03, 0x5b}, LocalDate.of(1991, 3, 9), "1991-03-09");
         // day = 18, month = 6, year = 99 (=1999)
-        this.assertValue(new byte[]{0x12, 0x06, 0x63}, LocalDate.of(1999, 6, 18));
+        this.assertValue(new byte[]{0x12, 0x06, 0x63}, LocalDate.of(1999, 6, 18), "1999-06-18");
         // day = 27, month = 9, year = 50 (=2050)
-        this.assertValue(new byte[]{0x1b, 0x09, 0x32}, LocalDate.of(2050, 9, 27));
+        this.assertValue(new byte[]{0x1b, 0x09, 0x32}, LocalDate.of(2050, 9, 27), "2050-09-27");
         // day = 30, month = 12, year = 89 (=2089)
-        this.assertValue(new byte[]{0x1e, 0x0c, 0x59}, LocalDate.of(2089, 12, 30));
+        this.assertValue(new byte[]{0x1e, 0x0c, 0x59}, LocalDate.of(2089, 12, 30), "2089-12-30");
     }
 
     /**
@@ -64,13 +64,14 @@ public final class DPT11ValueTest {
         assertThatThrownBy(() -> DPT11Value.toByteArray(LocalDate.of(2090, 1, 1))).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private void assertValue(final byte[] bytes, final LocalDate date) {
+    private void assertValue(final byte[] bytes, final LocalDate date, final String text) {
         final var dptValue = new DPT11Value(date);
         final var dptValueByByte = new DPT11Value(bytes);
 
         // instance methods
         assertThat(dptValue.getDate()).isEqualTo(date);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT11Value.toByteArray(date)).containsExactly(bytes);

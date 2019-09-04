@@ -35,11 +35,11 @@ public final class DPT18ValueTest {
      */
     @Test
     public void test() {
-        this.assertValue((byte) 0x87, true, 7);
-        this.assertValue((byte) 0x29, false, 41);
+        this.assertValue((byte) 0x87, true, 7, "controlled 'scene 7'");
+        this.assertValue((byte) 0x29, false, 41, "scene 41");
     }
 
-    private void assertValue(final byte b, final boolean controlled, final int sceneNumber) {
+    private void assertValue(final byte b, final boolean controlled, final int sceneNumber, final String text) {
         final var dptValue = new DPT18Value(controlled, sceneNumber);
         final var dptValueByByte = new DPT18Value(b);
 
@@ -47,6 +47,7 @@ public final class DPT18ValueTest {
         assertThat(dptValue.isControlled()).isEqualTo(controlled);
         assertThat(dptValue.getSceneNumber()).isEqualTo(sceneNumber);
         assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(dptValue.toText()).isEqualTo(text);
 
         // class methods
         assertThat(DPT18Value.toByteArray(controlled, sceneNumber)).containsExactly(b);

@@ -24,6 +24,8 @@ import li.pitschmann.knx.link.datapoint.DPT5;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -44,13 +46,13 @@ import java.util.function.Function;
 public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     private int rawUnsignedValue;
 
-    public DPT5Value(final DPT5 dpt, final byte b) {
+    public DPT5Value(final @Nonnull DPT5 dpt, final byte b) {
         super(dpt);
         // unsigned value
         this.rawUnsignedValue = Bytes.toUnsignedInt(b);
     }
 
-    public DPT5Value(final DPT5 dpt, final int value) {
+    public DPT5Value(final @Nonnull DPT5 dpt, final int value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.rawUnsignedValue = value;
@@ -62,6 +64,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
      * @param value
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) value};
     }
@@ -79,11 +82,19 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
         return this.rawUnsignedValue;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.rawUnsignedValue);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return getValueAsText(getUnsignedValue());
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -97,7 +108,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT5Value) {

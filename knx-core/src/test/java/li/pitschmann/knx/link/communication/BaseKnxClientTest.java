@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT1;
@@ -30,6 +31,7 @@ import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +57,7 @@ public class BaseKnxClientTest {
      * @param mockServer
      */
     @MockServerTest
-    @DisplayName("Check Base KNX Client")
+    @DisplayName("OK: Check Base KNX Client")
     public void testCommonMethods(final MockServer mockServer) {
         // mock extension plugin to verify if the init method is invoked with correct client instance
         final var extensionPlugin = mock(ExtensionPlugin.class);
@@ -88,16 +90,41 @@ public class BaseKnxClientTest {
     }
 
     /**
-     * Tests read and write requests methods for {@link BaseKnxClient}
+     * Tests read and write requests methods for {@link BaseKnxClient} using
+     * default behavior (NAT = not enabled)
      *
      * @param mockServer
      */
     @MockServerTest
-    @DisplayName("Test read and write requests (incl. async)")
+    @DisplayName("OK: Test read and write requests (incl. async)")
     public void testReadAndWriteRequests(final MockServer mockServer) {
+        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().build());
+    }
+
+    /**
+     * Tests read and write requests methods for {@link BaseKnxClient} using
+     * enabled NAT (non-default behavior)
+     *
+     * @param mockServer
+     */
+    @MockServerTest
+    @DisplayName("OK: Test read and write requests (incl. async) over NAT")
+    public void testReadAndWriteRequestsOverNAT(final MockServer mockServer) {
+        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting("client.nat.enabled", "true").build());
+    }
+
+    /**
+     * Tests read and write requests methods for {@link BaseKnxClient} using a
+     * specific configuration which is defined via {@code configBuilder} function.
+     *
+     * @param mockServer
+     * @param configBuilder defines which configuration should be used
+     */
+    private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Configuration> configBuilder) {
         final var groupAddress = GroupAddress.of(1, 2, 3);
 
-        try (final var client = mockServer.createTestClient()) {
+        final var config = configBuilder.apply(mockServer);
+        try (final var client = DefaultKnxClient.createStarted(config)) {
             // async read request
             client.readRequest(groupAddress).get();
             // async write request with DPT

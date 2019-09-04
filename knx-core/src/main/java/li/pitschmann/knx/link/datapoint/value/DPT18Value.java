@@ -23,6 +23,8 @@ import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT18;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -68,6 +70,7 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
      * @param sceneNumber
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final boolean controlled, final int sceneNumber) {
         final var controlledAsByte = controlled ? (byte) 0x80 : 0x00;
         final var sceneNumberAsByte = (byte) sceneNumber;
@@ -83,11 +86,23 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
         return this.sceneNumber;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.sceneNumber);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        if (isControlled()) {
+            return String.format("controlled 'scene %s'", getSceneNumber());
+        } else {
+            return "scene " + getSceneNumber();
+        }
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -101,7 +116,7 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT18Value) {

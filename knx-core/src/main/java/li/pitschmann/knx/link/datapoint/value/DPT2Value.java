@@ -22,6 +22,7 @@ import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -42,7 +43,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
     private final boolean controlled;
     private final boolean booleanValue;
 
-    public DPT2Value(final DPT2 dpt, final byte b) {
+    public DPT2Value(final @Nonnull DPT2 dpt, final byte b) {
         super(dpt);
         // bit 1 = controlled
         this.controlled = (b & 0x02) != 0x00;
@@ -50,7 +51,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         this.booleanValue = (b & 0x01) != 0x00;
     }
 
-    public DPT2Value(final DPT2 dpt, final boolean controlled, final boolean booleanValue) {
+    public DPT2Value(final @Nonnull DPT2 dpt, final boolean controlled, final boolean booleanValue) {
         super(dpt);
         this.controlled = controlled;
         this.booleanValue = booleanValue;
@@ -63,6 +64,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
      * @param booleanValue
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final boolean controlled, final boolean booleanValue) {
         var b = (byte) 0x00;
         if (controlled) {
@@ -82,15 +84,28 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         return this.booleanValue;
     }
 
+    @Nonnull
     public String getBooleanText() {
         return this.getDPT().getDPT1().getTextFor(this.booleanValue);
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.booleanValue);
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        if (isControlled()) {
+            return String.format("controlled '%s'", getBooleanText());
+        } else {
+            return getBooleanText();
+        }
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -105,7 +120,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nonnull Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT2Value) {

@@ -49,6 +49,15 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
     }
 
     /**
+     * Returns the human friendly text of value
+     *
+     * @return
+     */
+    default String toText() {
+        return toValue().getDescription();
+    }
+
+    /**
      * Returns the id
      *
      * @return id

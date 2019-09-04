@@ -97,15 +97,20 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
             final var connectRequestBody = (ConnectRequestBody) body;
             // fetch the control and data ports
             final var clientControlHPAI = connectRequestBody.getControlEndpoint();
-            this.clientControlSocketAddress = new InetSocketAddress(clientControlHPAI.getAddress(), clientControlHPAI.getPort());
-            logger.debug("Control Address: {}", this.clientControlSocketAddress);
-
             final var clientDataHPAI = connectRequestBody.getDataEndpoint();
-            this.clientDataSocketAddress = new InetSocketAddress(clientDataHPAI.getAddress(), clientDataHPAI.getPort());
-            logger.debug("Data Address   : {}", this.clientDataSocketAddress);
 
-            // if address is '0.0.0.0' assuming it is using NAT
-            this.useNAT = false; // disabled for now! clientControlHPAI.getRemoteControlAddress().isAnyLocalAddress();
+            // NAT?
+            if (clientControlHPAI.getAddress().isAnyLocalAddress()) {
+                // NAT is used
+                this.clientControlSocketAddress = address;
+                this.clientDataSocketAddress = address;
+            } else {
+                // NAT is not used
+                this.clientControlSocketAddress = new InetSocketAddress(clientControlHPAI.getAddress(), clientControlHPAI.getPort());
+                this.clientDataSocketAddress = new InetSocketAddress(clientDataHPAI.getAddress(), clientDataHPAI.getPort());
+            }
+            logger.debug("Control Address: {}", this.clientControlSocketAddress);
+            logger.debug("Data Address   : {}", this.clientDataSocketAddress);
         }
 
         return body;

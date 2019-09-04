@@ -23,7 +23,6 @@ import li.pitschmann.knx.link.datapoint.value.DPT1Value;
 import li.pitschmann.knx.link.datapoint.value.DPT2Value;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +43,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
         final var dpt = DPT1.SWITCH;
 
         // general failures
-        assertThatThrownBy(() -> dpt.toValue((byte[]) null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> dpt.toValue((byte[]) null)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
@@ -57,7 +56,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
         assertThat(dpt.toValue(new String[]{"0xaa", "0xbb", "0xcc", "0xdd"})).isInstanceOf(DataPointValue.class);
 
         // parse failures
-        assertThatThrownBy(() -> dpt.toValue((String[]) null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> dpt.toValue((String[]) null)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[]{"xx", "yy"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[]{"a", "b", "c"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
     }
@@ -68,6 +67,20 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
 
         // parse (unsupported!)
         assertThatThrownBy(() -> dpt.toValue(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+    }
+
+    /**
+     * Tests {@link AbstractDataPointType#getUnit()} and {@link AbstractDataPointType#getDescription()}
+     */
+    @Test
+    public void testUnitAndDescriptions() {
+        final var dptWithoutUnit = new TestDataPointType();
+        assertThat(dptWithoutUnit.getUnit()).isNotNull().isEmpty(); // should not be null
+        assertThat(dptWithoutUnit.getDescription()).isEqualTo("Description");
+
+        final var dptWithUnit = new TestDataPointType("unit");
+        assertThat(dptWithUnit.getUnit()).isEqualTo("unit");
+        assertThat(dptWithUnit.getDescription()).isEqualTo("Description (unit)");
     }
 
     /**
@@ -119,6 +132,10 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
 
         public TestDataPointType() {
             super("ID", "Description");
+        }
+
+        public TestDataPointType(final String unit) {
+            super("ID", "Description", unit);
         }
 
         @Override

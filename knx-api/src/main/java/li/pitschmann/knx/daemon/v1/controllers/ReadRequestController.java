@@ -72,18 +72,26 @@ public final class ReadRequestController extends AbstractController {
         // everything OK
         log.debug("Status data found for group address: {}", groupAddress);
         final var response = new ReadResponse();
+        final var dpt = DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
+
         // we add group address, dpt, name and description only if requested
         if (containsExpand("groupAddress")) {
             response.setGroupAddress(groupAddress);
         }
         if (containsExpand("dpt")) {
-            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
+            response.setDataPointType(dpt);
         }
         if (containsExpand("name")) {
             response.setName(xmlGroupAddress.getName());
         }
         if (containsExpand("description")) {
             response.setDescription(xmlGroupAddress.getDescription());
+        }
+        if (containsExpand("value")) {
+            response.setValue(dpt.toValue(knxStatusData.getApciData()).toText());
+        }
+        if (containsExpand("unit")) {
+            response.setUnit(dpt.getUnit());
         }
         if (containsExpand("raw")) {
             response.setRaw(knxStatusData.getApciData());

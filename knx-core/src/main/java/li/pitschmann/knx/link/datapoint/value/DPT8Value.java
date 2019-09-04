@@ -24,6 +24,8 @@ import li.pitschmann.knx.link.datapoint.DPT8;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -45,14 +47,14 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
     private final int rawSignedValue;
     private final byte[] byteArray;
 
-    public DPT8Value(final DPT8 dpt, final byte[] bytes) {
+    public DPT8Value(final @Nonnull DPT8 dpt, final @Nonnull byte[] bytes) {
         super(dpt);
         Preconditions.checkArgument(bytes.length == 2);
         this.rawSignedValue = Bytes.toSignedShort(bytes[0], bytes[1]);
         this.byteArray = bytes;
     }
 
-    public DPT8Value(final DPT8 dpt, final int value) {
+    public DPT8Value(final @Nonnull DPT8 dpt, final int value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.rawSignedValue = value;
@@ -65,6 +67,7 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
      * @param value
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) (value >>> 8), (byte) value};
     }
@@ -82,11 +85,19 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
         return this.rawSignedValue;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
+    @Nonnull
+    @Override
+    public String toText() {
+        return getValueAsText(getSignedValue());
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -100,7 +111,7 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT8Value) {

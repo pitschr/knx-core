@@ -26,6 +26,8 @@ import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -53,27 +55,29 @@ import java.util.Objects;
  *              +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * Format:     14 octets (A<sub>112</sub>)
  * </pre>
- * <p>
- * These Data Point Types are used to transmit strings of textual characters. The length is fixed to 14 octets. The
- * contents are filled starting from the most significant octet. Each octet shall be encoded as specified for the chosen
- * character set, as defined in clause 0. If the string to be transmitted is smaller then 14 octets, unused trailing
+ * <p/>
+ * These Data Point Types are used to transmit strings of characters. The length is fixed
+ * to 14 octets. The contents are filled starting from the most significant octet. Each
+ * octet shall be encoded as specified for the chosen character set, as defined in clause 0.
+ * <p/>
+ * If the string to be transmitted is smaller then 14 octets, unused trailing
  * octets in the character string shall be set to NULL (00h).
- * <p>
+ * <p/>
  * Example:<br>
  * "KNX is OK" is encoded as follows: "0x4B 4E 58 20 69 73 20 4F 4B 00 00 00 00 00"
  *
  * @author PITSCHR
  */
 public final class DPT16Value extends AbstractDataPointValue<DPT16> {
-    private final String text;
+    private final String characters;
     private final byte[] byteArray;
 
-    public DPT16Value(final DPT16 dpt, final byte[] bytes) {
+    public DPT16Value(final @Nonnull DPT16 dpt, final @Nullable byte[] bytes) {
         super(dpt);
 
-        // text
+        // characters
         if (bytes == null || bytes.length == 0) {
-            this.text = "";
+            this.characters = "";
             this.byteArray = new byte[14];
         } else if (bytes.length > 14) {
             throw new IllegalArgumentException(
@@ -84,7 +88,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
             try {
                 char[] chars = new char[newBytes.length];
                 dpt.getCharsetDecoder().decode(ByteBuffer.wrap(newBytes)).get(chars);
-                this.text = new String(chars);
+                this.characters = new String(chars);
             } catch (CharacterCodingException e) {
                 throw new KnxException(String.format("Issue during decoding charset '%s' with value: %s (original: %s)", dpt.getCharset(),
                         ByteFormatter.formatHexAsString(newBytes), ByteFormatter.formatHexAsString(bytes)), e);
@@ -94,72 +98,87 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         }
     }
 
-    public DPT16Value(final DPT16 dpt, final String text) {
+    public DPT16Value(final @Nonnull DPT16 dpt, final @Nullable String characters) {
         super(dpt);
-        Preconditions.checkArgument(text == null || text.length() <= 14,
-                String.format("The length of text is too long (expected up to 14 characters): %s", text));
-        this.text = Objects.toString(text, "");
-        this.byteArray = toByteArray(text, dpt.getCharset());
+        Preconditions.checkArgument(characters == null || characters.length() <= 14,
+                String.format("The length of characters is too long (expected up to 14 characters): %s", characters));
+        this.characters = Objects.toString(characters, "");
+        this.byteArray = toByteArray(characters, dpt.getCharset());
     }
 
     /**
-     * Converts text to byte array
+     * Converts characters to byte array
      *
-     * @param text    may not be longer than 14 characters
+     * @param characters may not be longer than 14 characters
      * @param charset
      * @return byte array
      */
-    public static byte[] toByteArray(final String text, final Charset charset) {
-        if (Strings.isNullOrEmpty(text)) {
+    @Nonnull
+    public static byte[] toByteArray(final String characters, final Charset charset) {
+        if (Strings.isNullOrEmpty(characters)) {
             return new byte[14];
-        } else if (text.length() > 14) {
-            throw new IllegalArgumentException(String.format("The length of text is too long (expected up to 14 chars): %s", text));
-        } else if (charset.newEncoder().canEncode(text)) {
-            byte[] textAsBytes = text.getBytes(charset);
-            if (textAsBytes.length < 14) {
-                textAsBytes = Bytes.padRight(textAsBytes, (byte) 0x00, 14);
+        } else if (characters.length() > 14) {
+            throw new IllegalArgumentException(String.format("The length of characters is too long (expected up to 14 chars): %s", characters));
+        } else if (charset.newEncoder().canEncode(characters)) {
+            byte[] characterAsBytes = characters.getBytes(charset);
+            if (characterAsBytes.length < 14) {
+                characterAsBytes = Bytes.padRight(characterAsBytes, (byte) 0x00, 14);
             }
-            return textAsBytes;
+            return characterAsBytes;
         } else {
-            throw new KnxException(String.format("The text '%s' contains a character which is not compatible with charset '%s'.", text, charset),
+            throw new KnxException(String.format("The characters '%s' contains a character which is not compatible with charset '%s'.", characters, charset),
                     new CharacterCodingException());
         }
     }
 
-    public String getText() {
-        return this.text;
+    @Nonnull
+    public String getCharacters() {
+        return this.characters;
     }
 
+    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
+    /**
+     * Returns the characters. It is synonym call for to {@link #getCharacters()}.
+     *
+     * @return characters
+     */
+    @Nonnull
+    @Override
+    public String toText() {
+        return getCharacters();
+    }
+
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
         return MoreObjects.toStringHelper(DPT16Value.class)
                 .add("dpt", this.getDPT())
-                .add("text", this.text)
+                .add("characters", this.characters)
                 .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
                 .toString();
         // @formatter:on
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT16Value) {
             final var other = (DPT16Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.text, other.text);
+                    && Objects.equals(this.characters, other.characters);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.text);
+        return Objects.hash(this.getDPT(), this.characters);
     }
 }

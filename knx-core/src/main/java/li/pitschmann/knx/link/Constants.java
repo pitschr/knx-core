@@ -143,6 +143,10 @@ public final class Constants {
          * Default port for HTTP Daemon (same as Pippo)
          */
         public static final int HTTP_DAEMON_PORT = 8338;
+        /**
+         * Default value if NAT should be enabled
+         */
+        public static final boolean NAT_ENABLED = false;
 
         private Default() {
         }

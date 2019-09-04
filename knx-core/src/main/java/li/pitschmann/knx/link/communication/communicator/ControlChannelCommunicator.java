@@ -43,7 +43,7 @@ public final class ControlChannelCommunicator extends AbstractChannelCommunicato
     }
 
     @Override
-    protected boolean isCompatible(final @Nonnull Body body) {
+    public boolean isCompatible(final @Nonnull Body body) {
         return body instanceof ControlChannelRelated;
     }
 }
