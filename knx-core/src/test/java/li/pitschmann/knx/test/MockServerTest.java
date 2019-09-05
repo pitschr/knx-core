@@ -149,4 +149,13 @@ public @interface MockServerTest {
      * @return {@code true} if discovery service should be used, otherwise {@code false}
      */
     boolean useDiscovery() default false;
+
+    /**
+     * Uses the port for discovery service on mock server side.
+     * <p/>
+     * By default a random free port is used.
+     *
+     * @return port to be used by discovery service
+     */
+    int discoveryPort() default 0;
 }

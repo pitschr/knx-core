@@ -73,7 +73,7 @@ public final class MockServer implements Runnable, Closeable {
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
     private final List<Body> receivedBodies = Collections.synchronizedList(Lists.newLinkedList());
     private final List<Body> sentBodies = Collections.synchronizedList(Lists.newLinkedList());
-    private final MockServerChannel serverChannel = new MockServerDatagramChannel();
+    private final MockServerChannel serverChannel;
     private final MockServerTest mockServerAnnotation;
     private final ExecutorService executorService;
     private HPAI hpai;
@@ -87,6 +87,9 @@ public final class MockServer implements Runnable, Closeable {
 
     private MockServer(final MockServerTest mockServerAnnotation) {
         this.mockServerAnnotation = mockServerAnnotation;
+
+        this.serverChannel = new MockServerDatagramChannel(mockServerAnnotation);
+
         this.executorService = Executors.newSingleThreadExecutor(true);
         this.executorService.execute(this);
         this.executorService.shutdown();

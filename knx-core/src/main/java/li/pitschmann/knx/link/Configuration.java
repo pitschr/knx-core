@@ -131,11 +131,11 @@ public final class Configuration {
     }
 
     /**
-     * Remote Control Endpoint address of KNX Net/IP device to be connected
+     * Remote Control Endpoint address of KNX Net/IP device to be connected.
      *
-     * @return {@link InetAddress}
+     * @return {@link InetAddress}, if {@code null} then no endpoint is used and discovery service will be used.
      */
-    @Nonnull
+    @Nullable
     public InetAddress getRemoteControlAddress() {
         return this.remoteControlAddress;
     }
