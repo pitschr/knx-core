@@ -110,11 +110,11 @@ public class SearchRequestBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> SearchRequestBody.of((HPAI)null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SearchRequestBody.of((HPAI) null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("discoveryEndpoint");
 
         // invalid raw data length
-        assertThatThrownBy(() -> SearchRequestBody.of((byte[])null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> SearchRequestBody.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
         assertThatThrownBy(() -> SearchRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }

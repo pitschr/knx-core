@@ -86,7 +86,7 @@ public final class Bytes {
      * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
      */
     public static short toUnsignedShort(final @Nullable byte[] bytes) {
-        if (bytes==null) {
+        if (bytes == null) {
             return 0;
         }
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);

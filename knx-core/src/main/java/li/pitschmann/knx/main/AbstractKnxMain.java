@@ -82,6 +82,7 @@ public abstract class AbstractKnxMain {
                                              final @Nonnull String parameterName) {
         return Arrays.stream(args).anyMatch(arg -> parameterName.equalsIgnoreCase(arg));
     }
+
     /**
      * Returns the value of parameter if supplied
      *
@@ -96,7 +97,7 @@ public abstract class AbstractKnxMain {
                                                 final @Nonnull String parameterName,
                                                 final @Nonnull IntFunction<T[]> function,
                                                 final @Nullable T[] defaultValues
-                                                ) {
+    ) {
         for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {
                 // found - next arguments should be the values

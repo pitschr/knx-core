@@ -126,6 +126,14 @@ public class DataPointTypeRegistryTest {
         TestHelpers.assertThatNotInstantiable(DataPointTypeRegistry.class);
     }
 
+
+    /**
+     * Test Enumeration Class for {@link #testGetDataPointTypeFailure()} test method.
+     */
+    private enum TestEnum implements DataPointTypeEnum<TestEnum> {
+        UNKNOWN
+    }
+
     /*
      * DATA POINT TYPE TEST CLASSES
      */
@@ -234,10 +242,6 @@ public class DataPointTypeRegistryTest {
             // dummy invoke to avoid automatic clean up by IDE
             NO_ANNOTATION.toString();
         }
-    }
-
-    private enum TestEnum implements DataPointTypeEnum<TestEnum> {
-        UNKNOWN;
     }
 }
 

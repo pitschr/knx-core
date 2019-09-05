@@ -66,8 +66,8 @@ public final class ConnectionResponseDataTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> ConnectionResponseData.of((byte[])null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crdRawData");
-        assertThatThrownBy(() -> ConnectionResponseData.of((IndividualAddress)null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("address");
+        assertThatThrownBy(() -> ConnectionResponseData.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crdRawData");
+        assertThatThrownBy(() -> ConnectionResponseData.of((IndividualAddress) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("address");
 
         // out of range
         assertThatThrownBy(() -> ConnectionResponseData.of(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class)

@@ -68,7 +68,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
@@ -595,7 +594,7 @@ public final class InternalKnxClient implements KnxClient {
      * supported device capabilities.
      *
      * @return First {@link SearchResponseBody} (subsequent should be requested by {@link KnxEventPool}),
-     *          otherwise {@link KnxDiscoveryNotReceivedException} will be thrown
+     * otherwise {@link KnxDiscoveryNotReceivedException} will be thrown
      */
     @Nonnull
     private SearchResponseBody fetchDiscoveryFromKNX() {

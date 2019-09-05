@@ -109,11 +109,11 @@ public class DescriptionRequestBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> DescriptionRequestBody.of((HPAI)null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> DescriptionRequestBody.of((HPAI) null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("controlEndpoint");
 
         // invalid raw data length
-        assertThatThrownBy(() -> DescriptionRequestBody.of((byte[])null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> DescriptionRequestBody.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
         assertThatThrownBy(() -> DescriptionRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }

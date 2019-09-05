@@ -87,7 +87,7 @@ public final class HeaderTest {
         // test with no service type
         assertThatThrownBy(() -> Header.of(null, -1)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("serviceType");
         // test with no body
-        assertThatThrownBy(() -> Header.of((Body)null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("body");
+        assertThatThrownBy(() -> Header.of((Body) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("body");
         // test with illegal total length (underflow)
         assertThatThrownBy(() -> Header.of(ServiceType.CONNECT_REQUEST, -1)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("totalLength");
@@ -96,7 +96,7 @@ public final class HeaderTest {
                 .hasMessageContaining("totalLength");
 
         // test with illegal bytes
-        assertThatThrownBy(() -> Header.of((byte[])null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> Header.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class);
         // test with empty bytes
         assertThatThrownBy(() -> Header.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class);
         // test with small header size ( < 6 bytes)

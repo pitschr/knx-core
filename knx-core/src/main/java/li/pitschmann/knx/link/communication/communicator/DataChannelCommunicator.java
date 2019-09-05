@@ -42,6 +42,7 @@ public final class DataChannelCommunicator extends AbstractChannelCommunicator<S
     protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
         return ChannelFactory.newDataChannel(internalClient);
     }
+
     @Override
     public boolean isCompatible(final @Nullable Body body) {
         return body instanceof DataChannelRelated;

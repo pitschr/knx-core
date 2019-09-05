@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.exceptions.KnxException;

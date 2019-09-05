@@ -51,7 +51,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         log.debug("Log all: {}", logAll);
 
         // Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", Networker::getByAddress, null );
+        final var ipAddress = getParameterValue(args, "-r", Networker::getByAddress, null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // Get Monitor Time in Seconds

@@ -133,7 +133,8 @@ public final class KnxEventPool {
      * @return {@link KnxSingleEvent} or {@code IllegalArgumentException} if not supported
      */
     @SuppressWarnings("unchecked")
-    @Nonnull public <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEvent<REQUEST, RESPONSE> get(final @Nonnull REQUEST request) {
+    @Nonnull
+    public <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEvent<REQUEST, RESPONSE> get(final @Nonnull REQUEST request) {
         if (request instanceof TunnelingRequestBody) {
             return (KnxSingleEvent<REQUEST, RESPONSE>) this.tunnelingMap.get(((TunnelingRequestBody) request).getSequence());
         } else if (request instanceof ConnectionStateRequestBody) {
