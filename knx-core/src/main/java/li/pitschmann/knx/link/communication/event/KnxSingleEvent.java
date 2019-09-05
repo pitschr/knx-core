@@ -22,6 +22,8 @@ import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Instant;
 
 /**
@@ -35,21 +37,23 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
     private RequestEvent<REQUEST> requestEvent;
     private ResponseEvent<RESPONSE> responseEvent;
 
+    @Nullable
     public REQUEST getRequest() {
         return requestEvent == null ? null : requestEvent.getRequest();
     }
 
-    public void setRequest(final REQUEST request) {
+    public void setRequest(final @Nonnull REQUEST request) {
         final var newRequestEvent = new RequestEvent<REQUEST>();
         newRequestEvent.setRequest(request);
         this.requestEvent = newRequestEvent;
     }
 
+    @Nullable
     public RESPONSE getResponse() {
         return responseEvent == null ? null : responseEvent.getResponse();
     }
 
-    public void setResponse(final RESPONSE response) {
+    public void setResponse(final @Nonnull RESPONSE response) {
         final var newEvent = new ResponseEvent<RESPONSE>();
         newEvent.setResponse(response);
         this.responseEvent = newEvent;
@@ -63,16 +67,19 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
         return responseEvent != null;
     }
 
+    @Nullable
     @Override
     public Instant getRequestTime() {
         return requestEvent == null ? null : requestEvent.getRequestTime();
     }
 
+    @Nullable
     @Override
     public Instant getResponseTime() {
         return responseEvent == null ? null : responseEvent.getResponseTime();
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this) //

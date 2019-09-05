@@ -21,6 +21,7 @@ package li.pitschmann.knx.link.body.dib;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -68,7 +69,7 @@ public final class ManufacturerDataDIB extends AbstractDIB {
     private final int manufacturerId;
     private final byte[] manufacturerSpecificData;
 
-    private ManufacturerDataDIB(byte[] rawData) {
+    private ManufacturerDataDIB(final @Nonnull byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -89,9 +90,10 @@ public final class ManufacturerDataDIB extends AbstractDIB {
      * Builds a new {@link ManufacturerDataDIB} instance
      *
      * @param bytes complete byte array for {@link ManufacturerDataDIB}
-     * @return immutable {@link ManufacturerDataDIB}
+     * @return a new immutable {@link ManufacturerDataDIB}
      */
-    public static ManufacturerDataDIB valueOf(final byte[] bytes) {
+    @Nonnull
+    public static ManufacturerDataDIB of(final byte[] bytes) {
         return new ManufacturerDataDIB(bytes);
     }
 
@@ -99,12 +101,13 @@ public final class ManufacturerDataDIB extends AbstractDIB {
         return this.manufacturerId;
     }
 
+    @Nonnull
     public byte[] getManufacturerSpecificData() {
         return this.manufacturerSpecificData.clone();
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
         }

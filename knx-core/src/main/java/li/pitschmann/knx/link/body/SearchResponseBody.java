@@ -82,25 +82,26 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     private final DeviceHardwareInformationDIB deviceHardwareInformation;
     private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;
 
-    private SearchResponseBody(final byte[] bytes) {
+    private SearchResponseBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         int pos = 0;
         // HPAI .. 8 bytes
         this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, pos, pos += HPAI.KNXNET_HPAI_LENGTH));
         // Device Hardware Information .. 54 bytes
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(Arrays.copyOfRange(bytes, pos, pos += DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
+        this.deviceHardwareInformation = DeviceHardwareInformationDIB.of(Arrays.copyOfRange(bytes, pos, pos += DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
         // Supported Device Families
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(Arrays.copyOfRange(bytes, pos, bytes.length));
+        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.of(Arrays.copyOfRange(bytes, pos, bytes.length));
     }
 
     /**
      * Builds a new {@link SearchResponseBody} instance
      *
      * @param bytes complete byte array for {@link SearchResponseBody}
-     * @return immutable {@link SearchResponseBody}
+     * @return a new immutable {@link SearchResponseBody}
      */
-    public static SearchResponseBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static SearchResponseBody of(final @Nonnull byte[] bytes) {
         return new SearchResponseBody(bytes);
     }
 
@@ -110,11 +111,12 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
      * @param controlEndpoint
      * @param deviceHardwareInformation
      * @param supportedDeviceFamilies
-     * @return immutable {@link SearchResponseBody}
+     * @return a new immutable {@link SearchResponseBody}
      */
-    public static SearchResponseBody create(final HPAI controlEndpoint,
-                                            final DeviceHardwareInformationDIB deviceHardwareInformation,
-                                            final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
+    @Nonnull
+    public static SearchResponseBody of(final @Nonnull HPAI controlEndpoint,
+                                        final @Nonnull DeviceHardwareInformationDIB deviceHardwareInformation,
+                                        final @Nonnull SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -141,11 +143,11 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
         pos += deviceHardwareInformationAsBytes.length;
         System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
@@ -164,24 +166,28 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_RESPONSE;
     }
 
+    @Nonnull
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
+    @Nonnull
     public DeviceHardwareInformationDIB getDeviceInformation() {
         return this.deviceHardwareInformation;
     }
 
+    @Nonnull
     public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
         return this.supportedDeviceFamilies;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

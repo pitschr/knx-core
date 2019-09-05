@@ -62,7 +62,6 @@ public final class APCITest extends AbstractKnxEnumTest<APCI> {
         assertThat(APCI.valueOf(0xC0)).isEqualTo(APCI.INDIVIDUAL_ADDRESS_WRITE);
         assertThat(APCI.valueOf(0x100)).isEqualTo(APCI.INDIVIDUAL_ADDRESS_READ);
         assertThat(APCI.valueOf(0x140)).isEqualTo(APCI.INDIVIDUAL_ADDRESS_RESPONSE);
-
     }
 
     @Test

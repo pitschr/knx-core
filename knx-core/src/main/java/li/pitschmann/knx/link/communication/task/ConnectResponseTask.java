@@ -26,6 +26,9 @@ import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
@@ -40,12 +43,12 @@ public final class ConnectResponseTask implements Subscriber<Body> {
     private final InternalKnxClient client;
     private Subscription subscription;
 
-    public ConnectResponseTask(final InternalKnxClient client) {
-        this.client = client;
+    public ConnectResponseTask(final @Nonnull InternalKnxClient client) {
+        this.client = Objects.requireNonNull(client);
     }
 
     @Override
-    public void onNext(final Body body) {
+    public void onNext(final @Nonnull Body body) {
         // we are interested in connect response only
         if (body instanceof ConnectResponseBody) {
             final var responseBody = (ConnectResponseBody) body;
@@ -62,7 +65,7 @@ public final class ConnectResponseTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nullable Throwable throwable) {
         log.error("Error during Connect Response Task class", throwable);
     }
 
@@ -72,7 +75,7 @@ public final class ConnectResponseTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(final Subscription subscription) {
+    public void onSubscribe(final @Nonnull Subscription subscription) {
         this.subscription = subscription;
         this.subscription.request(1); // receive it only once time!
     }

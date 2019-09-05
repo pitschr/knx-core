@@ -31,6 +31,8 @@ import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.plugin.Plugin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,7 +50,7 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param config
      */
-    protected BaseKnxClient(final Configuration config) {
+    protected BaseKnxClient(final @Nonnull Configuration config) {
         internalClient = new InternalKnxClient(config);
 
         // notifies all plug-ins about initialization
@@ -67,9 +69,10 @@ public class BaseKnxClient implements KnxClient {
      * @param dataPointValue
      * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    public CompletableFuture<TunnelingAckBody> writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
+    @Nonnull
+    public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
-        return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+        return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
@@ -84,9 +87,10 @@ public class BaseKnxClient implements KnxClient {
      * @param apciData
      * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    public CompletableFuture<TunnelingAckBody> writeRequest(final GroupAddress address, final byte[] apciData) {
+    @Nonnull
+    public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
-        return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+        return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
@@ -100,9 +104,10 @@ public class BaseKnxClient implements KnxClient {
      * @param address
      * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    public CompletableFuture<TunnelingAckBody> readRequest(final GroupAddress address) {
+    @Nonnull
+    public CompletableFuture<TunnelingAckBody> readRequest(final @Nonnull GroupAddress address) {
         final var cemi = CEMI.useDefaultForGroupValueRead(address);
-        return this.internalClient.send(TunnelingRequestBody.create(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+        return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
     /**
@@ -114,10 +119,12 @@ public class BaseKnxClient implements KnxClient {
         return this.sequence.getAndUpdate(v -> (v + 1) % 256);
     }
 
+    @Nonnull
     protected InternalKnxClient getInternalClient() {
         return this.internalClient;
     }
 
+    @Nonnull
     @Override
     public Configuration getConfig() {
         return this.internalClient.getConfig();
@@ -128,11 +135,13 @@ public class BaseKnxClient implements KnxClient {
         return this.internalClient.isClosed();
     }
 
+    @Nonnull
     @Override
     public KnxStatistic getStatistic() {
         return this.internalClient.getStatistic().asUnmodifiable();
     }
 
+    @Nonnull
     @Override
     public KnxStatusPool getStatusPool() {
         return this.internalClient.getStatusPool();
@@ -144,12 +153,13 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public void send(Body body) {
+    public void send(final @Nonnull Body body) {
         this.internalClient.send(body);
     }
 
+    @Nonnull
     @Override
-    public <T extends ResponseBody> CompletableFuture<T> send(RequestBody requestBody, long timeout) {
+    public <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, long timeout) {
         return this.internalClient.send(requestBody, timeout);
     }
 }

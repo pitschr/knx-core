@@ -18,5 +18,6 @@ branches:
 # Compiles, run test and code coverage
 script:
   - mvn clean test jacoco:report coveralls:report -Dlogback.configurationFile=logback-off.xml
+  # For testing: - mvn clean test -Dtest=li.pitschmann.knx.link.communication.DefaultKnxClientTest#testInstantiationViaDiscovery
 
 

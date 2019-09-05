@@ -20,6 +20,7 @@ package li.pitschmann.utils;
 
 import com.google.common.base.Preconditions;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -71,7 +72,7 @@ public final class Sleeper {
      * @param unit     unit of timeout
      * @return {@code true} in case the sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
-    public static boolean sleep(long duration, final TimeUnit unit) {
+    public static boolean sleep(long duration, final @Nonnull TimeUnit unit) {
         return milliseconds(unit.toMillis(duration));
     }
 
@@ -84,7 +85,7 @@ public final class Sleeper {
      * @param timeout  timeout in milliseconds
      * @return {@code true} in case the criteria was meet and sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
-    public static boolean milliseconds(final Supplier<Boolean> supplier, long timeout) {
+    public static boolean milliseconds(final @Nonnull Supplier<Boolean> supplier, long timeout) {
         return milliseconds(10, supplier, timeout);
     }
 
@@ -96,7 +97,7 @@ public final class Sleeper {
      * @param timeout  timeout in milliseconds
      * @return {@code true} in case the criteria was meet and sleep has <strong>not</strong> been interrupted, otherwise {@code false}
      */
-    public static boolean milliseconds(long interval, final Supplier<Boolean> supplier, long timeout) {
+    public static boolean milliseconds(long interval, @Nonnull final Supplier<Boolean> supplier, long timeout) {
         Preconditions.checkArgument(interval < timeout, "Interval cannot be bigger than timeout");
 
         final var end = System.currentTimeMillis() + timeout;

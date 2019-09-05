@@ -67,7 +67,7 @@ public class DefaultDisconnectStrategy implements DisconnectStrategy {
         final var channelId = getChannelId(mockServer);
         final var hpai = getHPAI(mockServer);
 
-        return new MockRequest(DisconnectRequestBody.create(channelId, hpai));
+        return new MockRequest(DisconnectRequestBody.of(channelId, hpai));
     }
 
     @Override
@@ -75,6 +75,6 @@ public class DefaultDisconnectStrategy implements DisconnectStrategy {
         final var channelId = getChannelId(mockServer);
         final var status = getStatus();
 
-        return new MockResponse(DisconnectResponseBody.create(channelId, status));
+        return new MockResponse(DisconnectResponseBody.of(channelId, status));
     }
 }

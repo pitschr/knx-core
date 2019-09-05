@@ -48,7 +48,7 @@ public final class BodyFactory {
      * @throws KnxUnknownBodyException in case the body is not known
      */
     public static <T extends Body> T valueOf(final byte[] headerAndBodyBytes) {
-        final var header = Header.valueOf(headerAndBodyBytes);
+        final var header = Header.of(headerAndBodyBytes);
         return valueOf(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
     }
 
@@ -80,29 +80,29 @@ public final class BodyFactory {
     public static <T extends Body> T valueOf(final ServiceType serviceType, final byte[] bodyBytes) {
         // try to find the correct body
         if (serviceType == ServiceType.TUNNELING_REQUEST) {
-            return (T) TunnelingRequestBody.valueOf(bodyBytes);
+            return (T) TunnelingRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.TUNNELING_ACK) {
-            return (T) TunnelingAckBody.valueOf(bodyBytes);
+            return (T) TunnelingAckBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECTION_STATE_REQUEST) {
-            return (T) ConnectionStateRequestBody.valueOf(bodyBytes);
+            return (T) ConnectionStateRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECTION_STATE_RESPONSE) {
-            return (T) ConnectionStateResponseBody.valueOf(bodyBytes);
+            return (T) ConnectionStateResponseBody.of(bodyBytes);
         } else if (serviceType == ServiceType.DISCONNECT_REQUEST) {
-            return (T) DisconnectRequestBody.valueOf(bodyBytes);
+            return (T) DisconnectRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.DISCONNECT_RESPONSE) {
-            return (T) DisconnectResponseBody.valueOf(bodyBytes);
+            return (T) DisconnectResponseBody.of(bodyBytes);
         } else if (serviceType == ServiceType.DESCRIPTION_REQUEST) {
-            return (T) DescriptionRequestBody.valueOf(bodyBytes);
+            return (T) DescriptionRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.DESCRIPTION_RESPONSE) {
-            return (T) DescriptionResponseBody.valueOf(bodyBytes);
+            return (T) DescriptionResponseBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECT_REQUEST) {
-            return (T) ConnectRequestBody.valueOf(bodyBytes);
+            return (T) ConnectRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECT_RESPONSE) {
-            return (T) ConnectResponseBody.valueOf(bodyBytes);
+            return (T) ConnectResponseBody.of(bodyBytes);
         } else if (serviceType == ServiceType.SEARCH_REQUEST) {
-            return (T) SearchRequestBody.valueOf(bodyBytes);
+            return (T) SearchRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.SEARCH_RESPONSE) {
-            return (T) SearchResponseBody.valueOf(bodyBytes);
+            return (T) SearchResponseBody.of(bodyBytes);
         } else {
             log.error("Unknown Body for ServiceType: {}", serviceType);
             throw new KnxUnknownBodyException(bodyBytes);

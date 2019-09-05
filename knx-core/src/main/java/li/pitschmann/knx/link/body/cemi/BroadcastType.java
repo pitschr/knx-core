@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.KnxByteEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum BroadcastType implements KnxByteEnum {
@@ -40,6 +41,14 @@ public enum BroadcastType implements KnxByteEnum {
         this.friendlyName = friendlyName;
     }
 
+    /**
+     * A matching {@link BroadcastType} for the given {@code code}
+     *
+     * @param code
+     * @return existing {@link BroadcastType}, or {@link KnxEnumNotFoundException} if no {@link BroadcastType}
+     * for given {@code code} exists
+     */
+    @Nonnull
     public static BroadcastType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(BroadcastType.class, code));
@@ -50,11 +59,13 @@ public enum BroadcastType implements KnxByteEnum {
         return this.code;
     }
 
+    @Nonnull
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

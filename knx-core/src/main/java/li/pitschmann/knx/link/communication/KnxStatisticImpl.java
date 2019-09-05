@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.body.Body;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -101,7 +102,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
      *
      * @param body
      */
-    public void onIncomingBody(final Body body) {
+    public void onIncomingBody(final @Nonnull Body body) {
         this.numberOfBodyReceived.incrementAndGet();
         this.numberOfBodyReceivedMap.computeIfAbsent(body.getClass(), s -> new AtomicLong()).incrementAndGet();
         this.numberOfBytesReceived.addAndGet(body.getRawData().length + KNX_PACKET_SIZE);
@@ -112,7 +113,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
      *
      * @param body
      */
-    public void onOutgoingBody(final Body body) {
+    public void onOutgoingBody(final @Nonnull Body body) {
         this.numberOfBodySent.incrementAndGet();
         this.numberOfBodySentMap.computeIfAbsent(body.getClass(), s -> new AtomicLong()).incrementAndGet();
         this.numberOfBytesSent.addAndGet(body.getRawData().length + KNX_PACKET_SIZE);
@@ -121,9 +122,9 @@ public final class KnxStatisticImpl implements KnxStatistic {
     /**
      * (internal) Updates the statistics about error
      *
-     * @param throwable
+     * @param throwable - not used yet in this class
      */
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nonnull Throwable throwable) {
         this.numberOfErrors.incrementAndGet();
     }
 
@@ -132,6 +133,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
      *
      * @return an unmodifiable instance of {@link KnxStatistic}
      */
+    @Nonnull
     public KnxStatistic asUnmodifiable() {
         return new UnmodifiableKnxStatistic(this);
     }
@@ -151,7 +153,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
         private final long numberOfErrors;
         private final double errorRate;
 
-        private UnmodifiableKnxStatistic(final KnxStatisticImpl statistic) {
+        private UnmodifiableKnxStatistic(final @Nonnull KnxStatisticImpl statistic) {
             this.numberOfBodyReceivedMap = deepCopy(statistic.numberOfBodyReceivedMap);
             this.numberOfBodySentMap = deepCopy(statistic.numberOfBodySentMap);
             this.numberOfBytesReceived = statistic.getNumberOfBytesReceived();
@@ -168,7 +170,8 @@ public final class KnxStatisticImpl implements KnxStatistic {
          * @param map map to be deeply copied
          * @return unmodifiable deep copied map whereas the value is a {@link Long} (and not an {@link AtomicLong})
          */
-        private static Map<Class<? extends Body>, Long> deepCopy(final Map<Class<? extends Body>, AtomicLong> map) {
+        @Nonnull
+        private static Map<Class<? extends Body>, Long> deepCopy(final @Nonnull Map<Class<? extends Body>, AtomicLong> map) {
             return Maps.newHashMap(map).entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().longValue()));
         }
 
@@ -178,7 +181,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
         }
 
         @Override
-        public long getNumberOfBodyReceived(Class<? extends Body> bodyClass) {
+        public long getNumberOfBodyReceived(final @Nonnull Class<? extends Body> bodyClass) {
             return this.numberOfBodyReceivedMap.getOrDefault(bodyClass, 0L);
         }
 

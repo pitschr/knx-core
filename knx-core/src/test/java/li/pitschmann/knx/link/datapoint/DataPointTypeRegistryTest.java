@@ -92,8 +92,8 @@ public class DataPointTypeRegistryTest {
      */
     @Test
     public void testGetDataPointTypeFailure() {
-        assertThatThrownBy(() -> DataPointTypeRegistry.getDataPointType((Enum<DPT20.Priority>) null)).isInstanceOf(KnxEnumNotFoundException.class)
-                .hasMessage("Could not find enum data point type for: null");
+        assertThatThrownBy(() -> DataPointTypeRegistry.getDataPointType(TestEnum.UNKNOWN)).isInstanceOf(KnxEnumNotFoundException.class)
+                .hasMessage("Could not find enum data point type for: UNKNOWN");
 
         assertThatThrownBy(() -> DataPointTypeRegistry.getDataPointType("UNKNOWN")).isInstanceOf(KnxDataPointTypeNotFoundException.class)
                 .hasMessage("Could not find data point type ID 'UNKNOWN'");
@@ -124,6 +124,14 @@ public class DataPointTypeRegistryTest {
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DataPointTypeRegistry.class);
+    }
+
+
+    /**
+     * Test Enumeration Class for {@link #testGetDataPointTypeFailure()} test method.
+     */
+    private enum TestEnum implements DataPointTypeEnum<TestEnum> {
+        UNKNOWN
     }
 
     /*

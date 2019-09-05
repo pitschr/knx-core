@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
@@ -171,6 +172,22 @@ public class DefaultKnxClientTest {
     @DisplayName("Test KNX client instantiation using host address as string")
     public void testInstantiationViaHostAddress(final MockServer mockServer) {
         try (final var client = DefaultKnxClient.createStarted("localhost:" + mockServer.getPort())) {
+            // ok
+        } catch (final Throwable t) {
+            fail("Unexpected test state", t);
+        }
+    }
+
+    /**
+     * Test {@link DefaultKnxClient#createStarted()} which will find mock server using
+     * discovery service. Here we are testing the official KNX port number.
+     *
+     * @param mockServer
+     */
+    @MockServerTest(useDiscovery = true, discoveryPort = Constants.Default.KNX_PORT)
+    @DisplayName("Test KNX client instantiation using discovery service and default KNX port")
+    public void testInstantiationViaDiscovery(final MockServer mockServer) {
+        try (final var client = DefaultKnxClient.createStarted()) {
             // ok
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

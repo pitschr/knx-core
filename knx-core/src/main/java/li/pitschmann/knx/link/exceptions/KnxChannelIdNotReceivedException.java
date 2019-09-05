@@ -21,6 +21,8 @@ package li.pitschmann.knx.link.exceptions;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception when an channel id could not be received by KNX Net/IP device.
  * This exception is a subclass of {@link KnxCommunicationException}.
@@ -32,17 +34,20 @@ public final class KnxChannelIdNotReceivedException extends KnxCommunicationExce
     private final ConnectResponseBody responseBody;
 
 
-    public KnxChannelIdNotReceivedException(final ConnectRequestBody requestBody, final ConnectResponseBody responseBody, final Throwable cause) {
+    public KnxChannelIdNotReceivedException(final @Nullable ConnectRequestBody requestBody,
+                                            final @Nullable ConnectResponseBody responseBody,
+                                            final Throwable cause) {
         super(String.format("Could not get channel id from KNX Net/IP device: (request=%s, response=%s)", requestBody, responseBody), cause);
-
         this.requestBody = requestBody;
         this.responseBody = responseBody;
     }
 
+    @Nullable
     public ConnectRequestBody getRequestBody() {
         return requestBody;
     }
 
+    @Nullable
     public ConnectResponseBody getResponseBody() {
         return responseBody;
     }

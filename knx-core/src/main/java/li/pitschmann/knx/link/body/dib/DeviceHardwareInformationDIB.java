@@ -25,6 +25,7 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Networker;
 
+import javax.annotation.Nonnull;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -107,7 +108,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
     private final String macAddress;
     private final String deviceFriendlyName;
 
-    private DeviceHardwareInformationDIB(byte[] rawData) {
+    private DeviceHardwareInformationDIB(final @Nonnull byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -136,19 +137,21 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
      * Builds a new {@link DeviceHardwareInformationDIB} instance
      *
      * @param bytes complete byte array for {@link DeviceHardwareInformationDIB}
-     * @return immutable {@link DeviceHardwareInformationDIB}
+     * @return a new immutable {@link DeviceHardwareInformationDIB}
      */
-    public static DeviceHardwareInformationDIB valueOf(final byte[] bytes) {
+    @Nonnull
+    public static DeviceHardwareInformationDIB of(final @Nonnull byte[] bytes) {
         return new DeviceHardwareInformationDIB(bytes);
     }
 
     @Override
-    protected void validate(byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData.length != STRUCTURE_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
 
+    @Nonnull
     public MediumType getMediumType() {
         return this.mediumType;
     }
@@ -157,6 +160,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
         return this.programmingMode;
     }
 
+    @Nonnull
     public IndividualAddress getIndividualAddress() {
         return this.individualAddress;
     }
@@ -169,22 +173,27 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
         return this.projectInstallationIdentifier;
     }
 
+    @Nonnull
     public String getSerialNumber() {
         return this.serialNumber;
     }
 
+    @Nonnull
     public InetAddress getMulticastAddress() {
         return this.multicastAddress;
     }
 
+    @Nonnull
     public String getMacAddress() {
         return this.macAddress;
     }
 
+    @Nonnull
     public String getDeviceFriendlyName() {
         return this.deviceFriendlyName;
     }
 
+    @Nonnull
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

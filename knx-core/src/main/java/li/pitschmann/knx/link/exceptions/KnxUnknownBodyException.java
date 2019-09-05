@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.exceptions;
 
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception in case no Body could be parsed of raw data.
  *
@@ -33,7 +35,7 @@ public final class KnxUnknownBodyException extends KnxCommunicationException {
      *
      * @param rawData
      */
-    public KnxUnknownBodyException(final byte[] rawData) {
+    public KnxUnknownBodyException(final @Nullable byte[] rawData) {
         super(String.format("Unknown body received for raw data: %s", ByteFormatter.formatHexAsString(rawData)));
     }
 

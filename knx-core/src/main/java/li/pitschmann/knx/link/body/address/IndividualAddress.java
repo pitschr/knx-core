@@ -24,6 +24,7 @@ import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -49,11 +50,24 @@ public final class IndividualAddress extends KnxAddress {
     }
 
     /**
+     * Returns an instance of {@link IndividualAddress}
+     *
+     * @param bytes complete byte array for {@link IndividualAddress}
+     * @return a new immutable {@link IndividualAddress}
+     */
+    @Nonnull
+    public static IndividualAddress of(final @Nonnull byte[] bytes) {
+        // no validation required, validation will be done in KnxAddress class
+        return new IndividualAddress(bytes);
+    }
+
+    /**
      * Returns the default {@link IndividualAddress} ({@code 0.0.0}). This will usually use the address from the
      * KNX Net/IP device.
      *
-     * @return default {@link IndividualAddress} ({@code 0.0.0})
+     * @return re-usable immutable default {@link IndividualAddress} ({@code 0.0.0})
      */
+    @Nonnull
     public static IndividualAddress useDefault() {
         return DEFAULT;
     }
@@ -67,9 +81,10 @@ public final class IndividualAddress extends KnxAddress {
      * {@link #of(int, int, int)}
      *
      * @param addressAsString
-     * @return An instance of {@link IndividualAddress}
+     * @return An new instance of {@link IndividualAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
+    @Nonnull
     public static IndividualAddress of(final @Nonnull String addressAsString) {
         final String[] individualAddressAreas = addressAsString.split("\\.");
         if (individualAddressAreas.length == 3) {
@@ -85,22 +100,12 @@ public final class IndividualAddress extends KnxAddress {
     /**
      * Returns an instance of {@link IndividualAddress}
      *
-     * @param bytes complete byte array for {@link IndividualAddress}
-     * @return immutable {@link IndividualAddress}
-     */
-    public static IndividualAddress of(final @Nonnull byte[] bytes) {
-        // no validation required, validation will be done in KnxAddress class
-        return new IndividualAddress(bytes);
-    }
-
-    /**
-     * Returns an instance of {@link IndividualAddress}
-     *
      * @param area   [0..15]
      * @param line   [0..15]
      * @param device [0..255]
-     * @return immutable {@link IndividualAddress}
+     * @return a new immutable {@link IndividualAddress}
      */
+    @Nonnull
     public static IndividualAddress of(final int area, final int line, final int device) {
         if (area < 0 || area > 0x0F) {
             throw new KnxNumberOutOfRangeException("area", 0, 0x0F, area);
@@ -122,16 +127,19 @@ public final class IndividualAddress extends KnxAddress {
         return of(bytes);
     }
 
+    @Nonnull
     @Override
     public AddressType getAddressType() {
         return AddressType.INDIVIDUAL;
     }
 
+    @Nonnull
     @Override
     public String getAddress() {
         return this.area + "." + this.line + "." + this.device;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
@@ -146,7 +154,7 @@ public final class IndividualAddress extends KnxAddress {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof IndividualAddress) {

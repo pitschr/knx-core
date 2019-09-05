@@ -65,7 +65,7 @@ abstract class AbstractKnxEnumTest<E extends Enum<E> & KnxEnum> {
     }
 
     /**
-     * Tests the all {@link KnxEnum#getCode()} and {@code #valueOf(int)} static method
+     * Tests the all {@link KnxEnum#getCode()} static method
      */
     @Test
     public void allValueOf() {

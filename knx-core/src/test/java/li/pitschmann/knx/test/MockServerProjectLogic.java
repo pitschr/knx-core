@@ -102,11 +102,11 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
                 if (statusData != null) {
                     final var apciData = statusData.getApciData();
                     logger.debug("apciData: {}", Arrays.toString(apciData));
-                    final var cemi = CEMI.create(
+                    final var cemi = CEMI.of(
                             MessageCode.L_DATA_IND,
                             AdditionalInfo.empty(),
                             ControlByte1.useDefault(),
-                            ControlByte2.useDefault(destAddress),
+                            ControlByte2.of(destAddress),
                             IndividualAddress.useDefault(),
                             destAddress,
                             TPCI.UNNUMBERED_PACKAGE,

@@ -22,8 +22,10 @@ import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractSingleRawData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 
+import javax.annotation.Nonnull;
+
 public final class ControlByte1 extends AbstractSingleRawData {
-    private static final ControlByte1 DEFAULT = create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+    private static final ControlByte1 DEFAULT = of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
     private final boolean standardFrame;
     private final boolean repeatEnabled;
     private final BroadcastType broadcastType;
@@ -67,14 +69,15 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * Builds a new {@link ControlByte1} instance
      *
      * @param b byte
-     * @return immutable {@link ControlByte1}
+     * @return a new immutable {@link ControlByte1}
      */
-    public static ControlByte1 valueOf(final byte b) {
+    @Nonnull
+    public static ControlByte1 of(final byte b) {
         return new ControlByte1(b);
     }
 
     /**
-     * Uses the default {@link ControlByte1} with default settings:
+     * Returns the default {@link ControlByte1} with default settings:
      *
      * <ul>
      * <li>Use Standard Frame = {@code true}</li>
@@ -85,8 +88,9 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * <li>Confirmation Flag = {@code false}</li>
      * </ul>
      *
-     * @return immutable and default {@link ControlByte1}
+     * @return re-usable immutable default {@link ControlByte1}
      */
+    @Nonnull
     public static ControlByte1 useDefault() {
         return DEFAULT;
     }
@@ -100,10 +104,11 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * @param priority
      * @param acknowledgeRequested
      * @param confirmationFlag
-     * @return immutable {@link ControlByte1}
+     * @return a new immutable {@link ControlByte1}
      */
-    public static ControlByte1 create(final boolean standardFrame, final boolean isRepeatEnabled, final BroadcastType broadcastType,
-                                      final Priority priority, final boolean acknowledgeRequested, final boolean confirmationFlag) {
+    @Nonnull
+    public static ControlByte1 of(final boolean standardFrame, final boolean isRepeatEnabled, final @Nonnull BroadcastType broadcastType,
+                                  final @Nonnull Priority priority, final boolean acknowledgeRequested, final boolean confirmationFlag) {
         // validate
         if (broadcastType == null) {
             throw new KnxNullPointerException("broadcastType");
@@ -136,7 +141,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
 
         // create byte
         final var b = (byte) (frameAsByte | repeatAsByte | broadcastTypeAsByte | priorityAsByte | requestAckAsByte | confirmationFlagAsByte);
-        return valueOf(b);
+        return of(b);
     }
 
     @Override
@@ -152,10 +157,12 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.repeatEnabled;
     }
 
+    @Nonnull
     public BroadcastType getBroadcastType() {
         return this.broadcastType;
     }
 
+    @Nonnull
     public Priority getPriority() {
         return this.priority;
     }
@@ -168,6 +175,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.confirmationFlag;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

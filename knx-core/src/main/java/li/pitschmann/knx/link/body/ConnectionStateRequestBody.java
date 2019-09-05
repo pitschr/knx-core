@@ -61,7 +61,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
     private final int channelId;
     private final HPAI controlEndpoint;
 
-    private ConnectionStateRequestBody(final byte[] bytes) {
+    private ConnectionStateRequestBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
@@ -73,20 +73,22 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * Builds a new {@link ConnectionStateRequestBody} instance
      *
      * @param bytes complete byte array for {@link ConnectionStateRequestBody}
-     * @return immutable {@link ConnectionStateRequestBody}
+     * @return a new immutable {@link ConnectionStateRequestBody}
      */
-    public static ConnectionStateRequestBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static ConnectionStateRequestBody of(final @Nonnull byte[] bytes) {
         return new ConnectionStateRequestBody(bytes);
     }
 
     /**
      * Creates a new {@link ConnectionStateRequestBody} instance
      *
-     * @param channelId
+     * @param channelId       channel id between 0..255
      * @param controlEndpoint
-     * @return immutable {@link ConnectionStateRequestBody}
+     * @return a new immutable {@link ConnectionStateRequestBody}
      */
-    public static ConnectionStateRequestBody create(final int channelId, final HPAI controlEndpoint) {
+    @Nonnull
+    public static ConnectionStateRequestBody of(final int channelId, final @Nonnull HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -102,11 +104,11 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         bytes[1] = 0x00; // reserved
         System.arraycopy(hpaiAsBytes, 0, bytes, 2, hpaiAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -114,8 +116,8 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECTION_STATE_REQUEST;
     }
@@ -125,10 +127,12 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         return this.channelId;
     }
 
+    @Nonnull
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

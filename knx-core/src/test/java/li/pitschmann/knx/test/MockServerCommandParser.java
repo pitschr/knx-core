@@ -64,7 +64,7 @@ public class MockServerCommandParser {
         // One normal tunnelling request with CEMI bytes
         // (used in TunnelingRequestTest)
         else if ("cemi(1)={2900bce010c84c0f0300800c23}".equals(command)) {
-            final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.valueOf(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
+            final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
             return Collections.singletonList(new RequestMockAction(this.mockServer, mockRequest.getBody()));
         }
         // 100-times tunnelling request with CEMI bytes
@@ -72,7 +72,7 @@ public class MockServerCommandParser {
         else if ("cemi(260)={2E00BCE010FF0A96010081}".equals(command)) {
             final var actions = Lists.<MockAction>newArrayListWithCapacity(260);
             for (int i = 0; i < 260; i++) {
-                final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.valueOf(Bytes.toByteArray("2E00BCE010FF0A96010081")));
+                final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2E00BCE010FF0A96010081")));
                 actions.add(new RequestMockAction(this.mockServer, mockRequest.getBody()));
             }
             return actions;
@@ -80,7 +80,7 @@ public class MockServerCommandParser {
         // One a tunneling request with CEMI bytes, but routing to
         // wrong control channel (used in TunnelingRequestTest)
         else if ("channel=control,cemi(1)={2900bce010c84c0f0300800c23}".equals(command)) {
-            final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.valueOf(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
+            final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
             return Collections.singletonList(new RequestMockAction(this.mockServer, new ControlBytesBody(mockRequest.getBody().getRawData(true))));
         }
         // Two corrupted bodies (used in KnxClientTest)

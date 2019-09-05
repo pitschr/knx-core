@@ -34,6 +34,7 @@ import li.pitschmann.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -55,10 +56,10 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     private SocketAddress clientDataSocketAddress;
     private boolean useNAT;
 
-    public MockServerDatagramChannel() {
+    public MockServerDatagramChannel(final @Nonnull MockServerTest mockServerAnnotation) {
         // as mock server is used to test locally
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 0);
-        this.channel = ChannelFactory.newDatagramChannel(0, 3000, null, socketOptions);
+        this.channel = ChannelFactory.newDatagramChannel(mockServerAnnotation.discoveryPort(), 3000, null, socketOptions);
     }
 
     @Override
@@ -125,7 +126,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
             byteBuffer = ByteBuffer.wrap(body.getRawData());
         } else {
             // OK
-            final var headerRawData = Header.create(body).getRawData();
+            final var headerRawData = Header.of(body).getRawData();
             final var bodyRawData = body.getRawData();
             byteBuffer = ByteBuffer.wrap(Bytes.concat(headerRawData, bodyRawData));
         }

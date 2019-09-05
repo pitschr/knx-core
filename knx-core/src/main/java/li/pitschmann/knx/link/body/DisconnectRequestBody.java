@@ -57,7 +57,7 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
     private final int channelId;
     private final HPAI controlEndpoint;
 
-    private DisconnectRequestBody(final byte[] bytes) {
+    private DisconnectRequestBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
@@ -69,9 +69,10 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
      * Builds a new {@link DisconnectRequestBody} instance
      *
      * @param bytes complete byte array for {@link DisconnectRequestBody}
-     * @return immutable {@link DisconnectRequestBody}
+     * @return a new immutable {@link DisconnectRequestBody}
      */
-    public static DisconnectRequestBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static DisconnectRequestBody of(final @Nonnull byte[] bytes) {
         return new DisconnectRequestBody(bytes);
     }
 
@@ -80,9 +81,10 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
      *
      * @param channelId
      * @param controlEndpoint
-     * @return immutable {@link DisconnectRequestBody}
+     * @return a new immutable {@link DisconnectRequestBody}
      */
-    public static DisconnectRequestBody create(final int channelId, final HPAI controlEndpoint) {
+    @Nonnull
+    public static DisconnectRequestBody of(final int channelId, final @Nonnull HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -98,11 +100,11 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
         bytes[1] = 0x00; // reserved
         System.arraycopy(hpaiAsBytes, 0, bytes, 2, hpaiAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -112,8 +114,8 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.DISCONNECT_REQUEST;
     }
@@ -123,10 +125,12 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
         return this.channelId;
     }
 
+    @Nonnull
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

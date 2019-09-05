@@ -37,8 +37,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Flow;
@@ -69,9 +71,9 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
     private final AbstractOutboxQueue<? extends ByteChannel> outboxQueue;
 
     protected AbstractChannelCommunicator(final @Nonnull InternalKnxClient client) {
-        this.internalClient = client;
+        this.internalClient = Objects.requireNonNull(client);
 
-        this.channel = newChannel(this.internalClient);
+        this.channel = Objects.requireNonNull(newChannel(this.internalClient));
         log.info("Channel registered: {} (open: {}, registered: {}, blocking: {})", channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
 
         // creates inbox and outbox queues
@@ -192,6 +194,7 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @return a {@link CompletableFuture} representing pending completion of the task containing either an instance of {@link ResponseBody},
      * or {@code null} if no response was received because of e.g. timeout
      */
+    @Nonnull
     public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
         return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout), this.communicationExecutor);
     }
@@ -207,6 +210,7 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
+    @Nullable
     private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody, final long msTimeout) {
         final var eventPool = this.internalClient.getEventPool();
 

@@ -52,7 +52,7 @@ public final class DeviceInformationDIBTest {
     };
 
     /**
-     * Tests {@link DeviceHardwareInformationDIB#valueOf(byte[])}
+     * Tests {@link DeviceHardwareInformationDIB#of(byte[])}
      *
      * <pre>
      *  DIB: DEVICE_INFO
@@ -74,8 +74,8 @@ public final class DeviceInformationDIBTest {
      */
     @Test
     public void valueOfMDT() {
-        // valueOf
-        final var infoByValueOf = DeviceHardwareInformationDIB.valueOf(BYTES);
+        // create by bytes
+        final var infoByValueOf = DeviceHardwareInformationDIB.of(BYTES);
 
         // compare
         assertThat(infoByValueOf.getLength()).isEqualTo(54);
@@ -92,7 +92,7 @@ public final class DeviceInformationDIBTest {
     }
 
     /**
-     * Tests {@link DeviceHardwareInformationDIB#valueOf(byte[])}
+     * Tests {@link DeviceHardwareInformationDIB#of(byte[])}
      *
      * <pre>
      * 	DIB: DEVICE_INFO
@@ -114,9 +114,9 @@ public final class DeviceInformationDIBTest {
      */
     @Test
     public void valueOfWireGate() {
-        // valueOf
+        // create by bytes
         final var infoByValueOf = DeviceHardwareInformationDIB
-                .valueOf(new byte[]{0x36, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x36, 0x01, 0x02, 0x00, 0x00, 0x00, (byte) 0xe0, 0x00,
+                .of(new byte[]{0x36, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x36, 0x01, 0x02, 0x00, 0x00, 0x00, (byte) 0xe0, 0x00,
                         0x17, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x69, 0x62, 0x64, 0x20, 0x6f, 0x6e, 0x20, 0x57, 0x69, 0x72,
                         0x65, 0x47, 0x61, 0x74, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
 
@@ -141,7 +141,7 @@ public final class DeviceInformationDIBTest {
     public void invalidCases() {
         // incorrect size of bytes
         assertThatThrownBy(() -> DeviceHardwareInformationDIB
-                .valueOf(Bytes.fillByteArray(new byte[55], new byte[]{0x37, 0x01, 0x02}, FillDirection.LEFT_TO_RIGHT)))
+                .of(Bytes.fillByteArray(new byte[55], new byte[]{0x37, 0x01, 0x02}, FillDirection.LEFT_TO_RIGHT)))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
     }
 
@@ -150,7 +150,7 @@ public final class DeviceInformationDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(DeviceHardwareInformationDIB.valueOf(BYTES)).hasToString(String.format(
+        assertThat(DeviceHardwareInformationDIB.of(BYTES)).hasToString(String.format(
                 "DeviceHardwareInformationDIB{"
                         + "length=54 (0x36), descriptionType=%s, mediumType=%s, programmingMode=false, individualAddress=%s, "
                         + "projectNumber=582, projectInstallationIdentifier=4, serialNumber=0x00 88 99 AA BB CC, "

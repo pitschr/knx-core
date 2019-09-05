@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.KnxByteEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum Priority implements KnxByteEnum {
@@ -42,6 +43,14 @@ public enum Priority implements KnxByteEnum {
         this.friendlyName = friendlyName;
     }
 
+    /**
+     * A matching {@link Priority} for the given {@code code}
+     *
+     * @param code
+     * @return existing {@link Priority}, or {@link KnxEnumNotFoundException} if no {@link Priority}
+     * for given {@code code} exists
+     */
+    @Nonnull
     public static Priority valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(Priority.class, code));
@@ -52,11 +61,13 @@ public enum Priority implements KnxByteEnum {
         return this.code;
     }
 
+    @Nonnull
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

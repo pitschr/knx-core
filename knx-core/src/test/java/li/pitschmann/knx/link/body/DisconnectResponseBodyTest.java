@@ -44,7 +44,7 @@ public class DisconnectResponseBodyTest {
     }
 
     /**
-     * Tests the {@link DisconnectResponseBody#create(int, Status)} and {@link DisconnectResponseBody#valueOf(byte[])}
+     * Tests the {@link DisconnectResponseBody#of(int, Status)} and {@link DisconnectResponseBody#of(byte[])}
      * methods.
      *
      * <pre>
@@ -62,13 +62,15 @@ public class DisconnectResponseBodyTest {
     @Test
     public void validCases() {
         // create
-        final var body = DisconnectResponseBody.create(this.channelId, this.status);
+        final var body = DisconnectResponseBody.of(this.channelId, this.status);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getStatus()).isEqualTo(this.status);
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = DisconnectResponseBody.valueOf(new byte[]{0x0B, 0x24});
+        // create by bytes
+        final var bodyByBytes = DisconnectResponseBody.of(new byte[]{0x0B, 0x24});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -82,18 +84,18 @@ public class DisconnectResponseBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> DisconnectResponseBody.create(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> DisconnectResponseBody.of(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("status");
 
         // invalid channel id
-        assertThatThrownBy(() -> DisconnectResponseBody.create(-1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> DisconnectResponseBody.of(-1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> DisconnectResponseBody.create(0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> DisconnectResponseBody.of(0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
 
         // invalid raw data length
-        assertThatThrownBy(() -> DisconnectResponseBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> DisconnectResponseBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> DisconnectResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> DisconnectResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

@@ -46,7 +46,7 @@ public class TunnelingAckBodyTest {
     }
 
     /**
-     * Tests the {@link TunnelingAckBody#create(int, int, Status)} and {@link TunnelingAckBody#valueOf(byte[])}
+     * Tests the {@link TunnelingAckBody#of(int, int, Status)} and {@link TunnelingAckBody#of(byte[])}
      * methods.
      *
      * <pre>
@@ -66,15 +66,17 @@ public class TunnelingAckBodyTest {
     @Test
     public void validCases() {
         // create
-        final var body = TunnelingAckBody.create(this.channelId, this.sequence, this.status);
+        final var body = TunnelingAckBody.of(this.channelId, this.sequence, this.status);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
         assertThat(body.getLength()).isEqualTo(4);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getSequence()).isEqualTo(this.sequence);
         assertThat(body.getStatus()).isEqualTo(this.status);
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = TunnelingAckBody.valueOf(new byte[]{0x04, 0x11, (byte) 0x81, 0x29});
+        // create by bytes
+        final var bodyByBytes = TunnelingAckBody.of(new byte[]{0x04, 0x11, (byte) 0x81, 0x29});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -89,22 +91,22 @@ public class TunnelingAckBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> TunnelingAckBody.create(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.of(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("status");
 
         // invalid size
-        assertThatThrownBy(() -> TunnelingAckBody.create(-1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.of(-1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> TunnelingAckBody.create(0xFF + 1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.of(0xFF + 1, this.sequence, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> TunnelingAckBody.create(this.channelId, -1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.of(this.channelId, -1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("sequence");
-        assertThatThrownBy(() -> TunnelingAckBody.create(this.channelId, 0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.of(this.channelId, 0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("sequence");
 
         // invalid raw data length
-        assertThatThrownBy(() -> TunnelingAckBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnelingAckBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> TunnelingAckBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> TunnelingAckBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

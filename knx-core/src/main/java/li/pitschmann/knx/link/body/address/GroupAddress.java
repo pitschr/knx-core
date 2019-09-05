@@ -23,6 +23,8 @@ import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -38,9 +40,22 @@ public final class GroupAddress extends KnxAddress {
      *
      * @param addressRawData
      */
-    private GroupAddress(final byte[] addressRawData) {
+    private GroupAddress(final @Nonnull byte[] addressRawData) {
         super(addressRawData);
         address = getRawData();
+    }
+
+
+    /**
+     * Returns an instance of {@link GroupAddress}
+     *
+     * @param bytes complete byte array for {@link GroupAddress}
+     * @return a new immutable {@link GroupAddress}
+     */
+    @Nonnull
+    public static GroupAddress of(final @Nonnull byte[] bytes) {
+        // no validation required, validation will be done in KnxAddress class
+        return new GroupAddress(bytes);
     }
 
     /**
@@ -54,9 +69,10 @@ public final class GroupAddress extends KnxAddress {
      * either {@link #of(int)}, {@link #of(int, int)} or {@link #of(int, int, int)}
      *
      * @param addressAsString
-     * @return An instance of {@link GroupAddress}
+     * @return a new instance of {@link GroupAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
+    @Nonnull
     public static GroupAddress of(final String addressAsString) {
         final String[] groupAddressAreas = addressAsString.split("/");
         if (groupAddressAreas.length == 3) {
@@ -77,24 +93,14 @@ public final class GroupAddress extends KnxAddress {
     }
 
     /**
-     * Returns an instance of {@link GroupAddress}
-     *
-     * @param bytes complete byte array for {@link GroupAddress}
-     * @return immutable {@link GroupAddress}
-     */
-    public static GroupAddress of(final byte[] bytes) {
-        // no validation required, validation will be done in KnxAddress class
-        return new GroupAddress(bytes);
-    }
-
-    /**
      * Returns an instance of {@link GroupAddress} based on free-level topology.
      * <p/>
      * The range must be between 1 and 65535
      *
      * @param address
-     * @return immutable {@link GroupAddress}
+     * @return a new immutable {@link GroupAddress}
      */
+    @Nonnull
     public static GroupAddress of(final int address) {
         if (address < 1 || address > 0xFFFF) {
             throw new KnxNumberOutOfRangeException("address", 1, 0xFFFF, address);
@@ -116,8 +122,9 @@ public final class GroupAddress extends KnxAddress {
      *
      * @param main
      * @param sub
-     * @return immutable {@link GroupAddress}
+     * @return a new immutable {@link GroupAddress}
      */
+    @Nonnull
     public static GroupAddress of(final int main, final int sub) {
         if (main < 0 || main > 0x1F) {
             throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
@@ -147,7 +154,7 @@ public final class GroupAddress extends KnxAddress {
      * @param main
      * @param middle
      * @param sub
-     * @return immutable {@link GroupAddress}
+     * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int middle, final int sub) {
         if (main < 0 || main > 0x1F) {
@@ -172,6 +179,7 @@ public final class GroupAddress extends KnxAddress {
         return of(bytes);
     }
 
+    @Nonnull
     @Override
     public AddressType getAddressType() {
         return AddressType.GROUP;
@@ -182,6 +190,7 @@ public final class GroupAddress extends KnxAddress {
      *
      * @return group address in Free-level
      */
+    @Nonnull
     @Override
     public String getAddress() {
         return String.valueOf(getAddressAsInt());
@@ -201,6 +210,7 @@ public final class GroupAddress extends KnxAddress {
      *
      * @return group address in 2-level
      */
+    @Nonnull
     public String getAddressLevel2() {
         // byte 0: xxxx x...
         final var main = (address[0] & 0xF8) >>> 3;
@@ -217,6 +227,7 @@ public final class GroupAddress extends KnxAddress {
      *
      * @return group address in 3-level
      */
+    @Nonnull
     public String getAddressLevel3() {
         // byte 0: xxxx x...
         final var main = (address[0] & 0xF8) >>> 3;
@@ -228,6 +239,7 @@ public final class GroupAddress extends KnxAddress {
         return main + "/" + middle + "/" + sub;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
@@ -244,7 +256,7 @@ public final class GroupAddress extends KnxAddress {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof GroupAddress) {

@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.exceptions;
 
 import li.pitschmann.knx.link.body.Body;
 
+import javax.annotation.Nonnull;
+
 /**
  * Exception when an expected body could not be received (during a given time frame). This exception is a subclass of
  * {@link KnxCommunicationException}.
@@ -27,7 +29,7 @@ import li.pitschmann.knx.link.body.Body;
  * @author PITSCHR
  */
 public final class KnxBodyNotReceivedException extends KnxCommunicationException {
-    public KnxBodyNotReceivedException(final Class<? extends Body> bodyClass) {
-        super(String.format("Body with class '%s' not received.", bodyClass));
+    public KnxBodyNotReceivedException(final @Nonnull Class<? extends Body> bodyClass) {
+        super(String.format("Body with class '%s' not received.", bodyClass.getSimpleName()));
     }
 }

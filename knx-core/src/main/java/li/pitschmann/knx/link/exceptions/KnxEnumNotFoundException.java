@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import javax.annotation.Nonnull;
+
 /**
  * Exception when KNX/IP specific enumeration could not be found
  *
@@ -28,7 +30,7 @@ public final class KnxEnumNotFoundException extends KnxException {
         super(message);
     }
 
-    public KnxEnumNotFoundException(final Class<? extends Enum<?>> clazz, final int code) {
+    public KnxEnumNotFoundException(final @Nonnull Class<? extends Enum<?>> clazz, final int code) {
         super(String.format("Could not find enum for class '%s' and code: %s", clazz.getName(), code));
     }
 }

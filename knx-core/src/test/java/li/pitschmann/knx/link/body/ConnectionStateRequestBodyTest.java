@@ -47,8 +47,8 @@ public class ConnectionStateRequestBodyTest {
     }
 
     /**
-     * Tests the {@link ConnectionStateRequestBody#create(int, HPAI)} and
-     * {@link ConnectionStateRequestBody#valueOf(byte[])} methods.
+     * Tests the {@link ConnectionStateRequestBody#of(int, HPAI)} and
+     * {@link ConnectionStateRequestBody#of(byte[])} methods.
      *
      * <pre>
      * 	KNX/IP
@@ -70,14 +70,16 @@ public class ConnectionStateRequestBodyTest {
     @Test
     public void validCases() {
         // create
-        final var body = ConnectionStateRequestBody.create(this.channelId, this.controlEndpoint);
+        final var body = ConnectionStateRequestBody.of(this.channelId, this.controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
 
-        // compare raw data with valueOf(byte[])
+        // create by bytes
         final var bodyByBytes = ConnectionStateRequestBody
-                .valueOf(new byte[]{0x08, 0x00, 0x08, 0x01, 0x04, 0x04, 0x04, 0x04, (byte) 0xe5, 0x4e});
+                .of(new byte[]{0x08, 0x00, 0x08, 0x01, 0x04, 0x04, 0x04, 0x04, (byte) 0xe5, 0x4e});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -92,19 +94,19 @@ public class ConnectionStateRequestBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> ConnectionStateRequestBody.create(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ConnectionStateRequestBody.of(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("controlEndpoint");
 
         // invalid channel id
-        assertThatThrownBy(() -> ConnectionStateRequestBody.create(-1, this.controlEndpoint)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionStateRequestBody.of(-1, this.controlEndpoint)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> ConnectionStateRequestBody.create(0xFF + 1, this.controlEndpoint)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionStateRequestBody.of(0xFF + 1, this.controlEndpoint)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
 
         // invalid raw data length
-        assertThatThrownBy(() -> ConnectionStateRequestBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ConnectionStateRequestBody.of(null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ConnectionStateRequestBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionStateRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

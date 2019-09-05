@@ -115,14 +115,14 @@ public final class HPAITest {
         assertThat(hpaiByCreateRawData.getAddress().getAddress()).containsExactly(0x7f, 0x00, 0x00, 0x01);
         assertThat(hpaiByCreateRawData.getPort()).isEqualTo(80);
 
-        // valueOf
+        // create by bytes
         final var hpaiByValueOf = HPAI.of(new byte[]{0x08, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x00, 0x50});
         assertThat(hpaiByValueOf.getLength()).isEqualTo(HPAI.KNXNET_HPAI_LENGTH);
         assertThat(hpaiByValueOf.getProtocol()).isEqualTo(HostProtocol.IPV4_UDP);
         assertThat(hpaiByValueOf.getAddress().getAddress()).containsExactly(0x7f, 0x00, 0x00, 0x01);
         assertThat(hpaiByValueOf.getPort()).isEqualTo(80);
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(hpaiByCreate.getRawData()).isEqualTo(hpaiByCreateRawData.getRawData());
         assertThat(hpaiByCreate.getRawData()).isEqualTo(hpaiByValueOf.getRawData());
     }

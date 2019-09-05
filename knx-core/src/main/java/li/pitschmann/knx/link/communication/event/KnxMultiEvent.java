@@ -22,6 +22,8 @@ import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,27 +32,30 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     private RequestEvent<REQUEST> requestEvent;
     private List<ResponseEvent<RESPONSE>> responseEvents = new LinkedList<>();
 
+    @Nullable
     public REQUEST getRequest() {
         return requestEvent == null ? null : requestEvent.getRequest();
     }
 
-    public void setRequest(final REQUEST request) {
+    public void setRequest(final @Nonnull REQUEST request) {
         final var newRequestEvent = new RequestEvent<REQUEST>();
         newRequestEvent.setRequest(request);
         this.requestEvent = newRequestEvent;
     }
 
+    @Nullable
     public RESPONSE getResponse(final int index) {
         return this.responseEvents.size() > index ? this.responseEvents.get(index).getResponse() : null;
     }
 
+    @Nullable
     @Override
     public RESPONSE getResponse() {
         return this.responseEvents.isEmpty() ? null : this.responseEvents.get(0).getResponse();
     }
 
     @Override
-    public void setResponse(RESPONSE response) {
+    public void setResponse(final @Nonnull RESPONSE response) {
         addResponse(response);
     }
 
@@ -62,26 +67,30 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
         return !responseEvents.isEmpty();
     }
 
-    public void addResponse(final RESPONSE response) {
+    public void addResponse(final @Nonnull RESPONSE response) {
         final var newResponseEvent = new ResponseEvent<RESPONSE>();
         newResponseEvent.setResponse(response);
         this.responseEvents.add(newResponseEvent);
     }
 
+    @Nullable
     @Override
     public Instant getRequestTime() {
         return requestEvent == null ? null : requestEvent.getRequestTime();
     }
 
+    @Nullable
     public Instant getResponseTime(final int index) {
         return this.responseEvents.size() > index ? this.responseEvents.get(index).getResponseTime() : null;
     }
 
+    @Nullable
     @Override
     public Instant getResponseTime() {
         return this.responseEvents.isEmpty() ? null : this.responseEvents.get(0).getResponseTime();
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this) //

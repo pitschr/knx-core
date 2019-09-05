@@ -43,12 +43,12 @@ public final class IPCurrentConfigDIBTest {
     };
 
     /**
-     * Tests {@link IPCurrentConfigDIB#valueOf(byte[])}
+     * Tests {@link IPCurrentConfigDIB#of(byte[])}
      */
     @Test
-    public void valueOf() {
-        // valueOf
-        final var dib = IPCurrentConfigDIB.valueOf(BYTES);
+    public void validCases() {
+        // create by bytes
+        final var dib = IPCurrentConfigDIB.of(BYTES);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(20);
@@ -61,7 +61,7 @@ public final class IPCurrentConfigDIBTest {
     @Test
     public void invalidCases() {
         // incorrect size of bytes
-        assertThatThrownBy(() -> IPCurrentConfigDIB.valueOf(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> IPCurrentConfigDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
 
     }
@@ -71,7 +71,7 @@ public final class IPCurrentConfigDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(IPCurrentConfigDIB.valueOf(BYTES))
+        assertThat(IPCurrentConfigDIB.of(BYTES))
                 .hasToString(String.format("IPCurrentConfigDIB{length=20 (0x14), descriptionType=%s, rawData=%s}",
                         DescriptionType.IP_CURRENT_CONFIG, ByteFormatter.formatHexAsString(BYTES)));
     }

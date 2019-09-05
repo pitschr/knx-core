@@ -45,12 +45,12 @@ public final class ManufacturerDataDIBTest {
     };
 
     /**
-     * Tests {@link ManufacturerDataDIB#valueOf(byte[])} with data
+     * Tests {@link ManufacturerDataDIB#of(byte[])} with data
      */
     @Test
     public void valueOfWithData() {
-        // valueOf
-        final var dib = ManufacturerDataDIB.valueOf(BYTES_WITH_DATA);
+        // create by bytes
+        final var dib = ManufacturerDataDIB.of(BYTES_WITH_DATA);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(19);
@@ -64,12 +64,12 @@ public final class ManufacturerDataDIBTest {
     }
 
     /**
-     * Tests {@link ManufacturerDataDIB#valueOf(byte[])} without data
+     * Tests {@link ManufacturerDataDIB#of(byte[])} without data
      */
     @Test
     public void valueOfWithoutData() {
-        // valueOf
-        final var dib = ManufacturerDataDIB.valueOf(BYTES_WITHOUT_DATA);
+        // create by bytes
+        final var dib = ManufacturerDataDIB.of(BYTES_WITHOUT_DATA);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(4);
@@ -84,9 +84,9 @@ public final class ManufacturerDataDIBTest {
     @Test
     public void invalidCases() {
         // incorrect size of bytes
-        assertThatThrownBy(() -> ManufacturerDataDIB.valueOf(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ManufacturerDataDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ManufacturerDataDIB.valueOf(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ManufacturerDataDIB.of(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 
@@ -95,7 +95,7 @@ public final class ManufacturerDataDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(ManufacturerDataDIB.valueOf(BYTES_WITH_DATA))
+        assertThat(ManufacturerDataDIB.of(BYTES_WITH_DATA))
                 .hasToString(String.format("ManufacturerDataDIB{length=19 (0x13), descriptionType=%s, rawData=%s}",
                         DescriptionType.MANUFACTURER_DATA, ByteFormatter.formatHexAsString(BYTES_WITH_DATA)));
     }

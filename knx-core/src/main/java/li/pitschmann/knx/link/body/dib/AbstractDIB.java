@@ -25,6 +25,8 @@ import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+
 /**
  * Abstract DIB for all DIB implementations
  *
@@ -34,7 +36,7 @@ abstract class AbstractDIB extends AbstractMultiRawData {
     private final int length;
     private final DescriptionType descriptionType;
 
-    protected AbstractDIB(byte[] rawData) {
+    protected AbstractDIB(final @Nonnull byte[] rawData) {
         super(rawData);
 
         this.length = Bytes.toUnsignedInt(rawData[0]);
@@ -42,7 +44,7 @@ abstract class AbstractDIB extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < 2 || rawData.length != rawData[0]) {
@@ -55,10 +57,12 @@ abstract class AbstractDIB extends AbstractMultiRawData {
         return this.length;
     }
 
+    @Nonnull
     public DescriptionType getDescriptionType() {
         return this.descriptionType;
     }
 
+    @Nonnull
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

@@ -20,6 +20,8 @@ package li.pitschmann.knx.link;
 
 import li.pitschmann.knx.link.exceptions.KnxException;
 
+import javax.annotation.Nullable;
+
 /**
  * This class represents a raw data of KNX/IP and is immutable.
  *
@@ -39,7 +41,7 @@ public abstract class AbstractSingleRawData implements SingleRawDataAware {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         } else if (obj != null && this.getClass().equals(obj.getClass())) {

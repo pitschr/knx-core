@@ -26,6 +26,8 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+
 public final class ControlByte2 extends AbstractSingleRawData {
     private static final int DEFAULT_HOP_COUNT = 6;
     private static final int DEFAULT_FRAME_FORMAT = 0;
@@ -53,9 +55,10 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * Builds a new {@link ControlByte2} instance
      *
      * @param b byte
-     * @return immutable {@link ControlByte2}
+     * @return a new immutable {@link ControlByte2}
      */
-    public static ControlByte2 valueOf(final byte b) {
+    @Nonnull
+    public static ControlByte2 of(final byte b) {
         return new ControlByte2(b);
     }
 
@@ -69,14 +72,15 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * </ul>
      *
      * @param knxAddress to distinguish which address type from destination address should be used.
-     * @return immutable {@link ControlByte1} with default hop count and frame format
+     * @return a new immutable {@link ControlByte1} with default hop count and frame format
      */
-    public static ControlByte2 useDefault(final KnxAddress knxAddress) {
+    @Nonnull
+    public static ControlByte2 of(final @Nonnull KnxAddress knxAddress) {
         // validate
         if (knxAddress == null) {
             throw new KnxNullPointerException("knxAddress");
         }
-        return create(knxAddress.getAddressType(), DEFAULT_HOP_COUNT, DEFAULT_FRAME_FORMAT);
+        return of(knxAddress.getAddressType(), DEFAULT_HOP_COUNT, DEFAULT_FRAME_FORMAT);
     }
 
     /**
@@ -85,9 +89,10 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * @param addressType
      * @param hopCount
      * @param frameFormat
-     * @return immutable {@link ControlByte2}
+     * @return a new immutable {@link ControlByte2}
      */
-    public static ControlByte2 create(final AddressType addressType, final int hopCount, final int frameFormat) {
+    @Nonnull
+    public static ControlByte2 of(final @Nonnull AddressType addressType, final int hopCount, final int frameFormat) {
         // validate
         if (addressType == null) {
             throw new KnxNullPointerException("addressType");
@@ -111,7 +116,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
 
         // create byte
         final var b = (byte) (addressTypeAsByte | hopCountAsByte | frameFormatAsByte);
-        return valueOf(b);
+        return of(b);
     }
 
     @Override
@@ -119,6 +124,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
         // nothing to be validated
     }
 
+    @Nonnull
     public AddressType getAddressType() {
         return this.addressType;
     }
@@ -131,6 +137,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
         return this.extendedFrameFormat;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

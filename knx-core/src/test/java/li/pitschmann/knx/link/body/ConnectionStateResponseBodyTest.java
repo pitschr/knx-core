@@ -44,8 +44,8 @@ public class ConnectionStateResponseBodyTest {
     }
 
     /**
-     * Tests the {@link ConnectionStateResponseBody#create(int, Status)} and
-     * {@link ConnectionStateResponseBody#valueOf(byte[])} methods.
+     * Tests the {@link ConnectionStateResponseBody#of(int, Status)} and
+     * {@link ConnectionStateResponseBody#of(byte[])} methods.
      *
      * <pre>
      * 	KNX/IP
@@ -62,13 +62,15 @@ public class ConnectionStateResponseBodyTest {
     @Test
     public void validCases() {
         // create
-        final var body = ConnectionStateResponseBody.create(this.channelId, this.status);
+        final var body = ConnectionStateResponseBody.of(this.channelId, this.status);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getStatus()).isEqualTo(this.status);
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = ConnectionStateResponseBody.valueOf(new byte[]{0x09, 0x04});
+        // create by bytes
+        final var bodyByBytes = ConnectionStateResponseBody.of(new byte[]{0x09, 0x04});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -81,19 +83,19 @@ public class ConnectionStateResponseBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> ConnectionStateResponseBody.create(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("status");
 
         // invalid channel id
-        assertThatThrownBy(() -> ConnectionStateResponseBody.create(-1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(-1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> ConnectionStateResponseBody.create(0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("channelId");
 
         // invalid raw data length
-        assertThatThrownBy(() -> ConnectionStateResponseBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ConnectionStateResponseBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

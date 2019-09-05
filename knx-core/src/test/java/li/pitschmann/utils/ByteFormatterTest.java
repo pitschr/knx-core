@@ -87,8 +87,8 @@ public class ByteFormatterTest {
     @Test
     public void formatHexArrayAsString() {
         // null bytes
-        assertThat(ByteFormatter.formatHexAsString(null)).isNull();
-        assertThat(ByteFormatter.formatHexAsString(new byte[0])).isNull();
+        assertThat(ByteFormatter.formatHexAsString(null)).isEmpty();
+        assertThat(ByteFormatter.formatHexAsString(new byte[0])).isEmpty();
 
         // one byte
         assertThat(ByteFormatter.formatHexAsString(new byte[]{0x00})).isEqualTo("0x00");

@@ -46,9 +46,10 @@ public interface Body extends MultiRawDataAware {
      * @param withHeader if {@code true} then returned byte array will also contain the KNX header array
      * @return byte array
      */
+    @Nonnull
     default byte[] getRawData(final boolean withHeader) {
         if (withHeader) {
-            return Bytes.concat(Header.create(this).getRawData(), getRawData());
+            return Bytes.concat(Header.of(this).getRawData(), getRawData());
         } else {
             return getRawData();
         }

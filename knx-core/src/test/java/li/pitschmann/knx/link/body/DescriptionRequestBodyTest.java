@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public class DescriptionRequestBodyTest {
     /**
-     * Tests the {@link DescriptionRequestBody#create(HPAI)} and {@link DescriptionRequestBody#valueOf(byte[])} methods.
+     * Tests the {@link DescriptionRequestBody#of(HPAI)} and {@link DescriptionRequestBody#of(byte[])} methods.
      *
      * <pre>
      * KNX/IP Description Request, Control @ 192.168.1.25:33724
@@ -58,12 +58,14 @@ public class DescriptionRequestBodyTest {
     public void validCases() {
         // create
         final var controlEndpoint = HPAI.of(HostProtocol.IPV4_TCP, Networker.getByAddress(192, 168, 1, 25), 33724);
-        final var body = DescriptionRequestBody.create(controlEndpoint);
+        final var body = DescriptionRequestBody.of(controlEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
         assertThat(body.getControlEndpoint()).isEqualTo(controlEndpoint);
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = DescriptionRequestBody.valueOf(new byte[]{0x08, 0x02, (byte) 0xc0, (byte) 0xa8, 0x01, 0x19, (byte) 0x83, (byte) 0xbc});
+        // create by bytes
+        final var bodyByBytes = DescriptionRequestBody.of(new byte[]{0x08, 0x02, (byte) 0xc0, (byte) 0xa8, 0x01, 0x19, (byte) 0x83, (byte) 0xbc});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -72,7 +74,7 @@ public class DescriptionRequestBodyTest {
     }
 
     /**
-     * Tests the {@link SearchRequestBody#create()} method.
+     * Tests the {@link SearchRequestBody#useDefault()} method.
      *
      * <pre>
      * KNX/IP Description Request, Control @ 0.0.0.0:0
@@ -93,7 +95,7 @@ public class DescriptionRequestBodyTest {
     @Test
     public void validCaseNoArg() {
         // create
-        final var body = DescriptionRequestBody.create();
+        final var body = DescriptionRequestBody.useDefault();
         assertThat(body.getRawData()).containsExactly(0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
 
         // toString
@@ -107,12 +109,12 @@ public class DescriptionRequestBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> DescriptionRequestBody.create(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> DescriptionRequestBody.of((HPAI) null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("controlEndpoint");
 
         // invalid raw data length
-        assertThatThrownBy(() -> DescriptionRequestBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> DescriptionRequestBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> DescriptionRequestBody.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> DescriptionRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

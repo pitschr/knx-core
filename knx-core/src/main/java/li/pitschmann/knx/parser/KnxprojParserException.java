@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.parser;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception about any issue during parsing of '*.knxproj' file
  */
@@ -27,7 +29,7 @@ public final class KnxprojParserException extends RuntimeException {
      *
      * @param message exception message
      */
-    public KnxprojParserException(final String message) {
+    public KnxprojParserException(final @Nullable String message) {
         super(message);
     }
 }

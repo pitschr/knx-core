@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +64,7 @@ public class DefaultInboxQueueTest {
         });
 
         // add body to outbox queue
-        final var queue = new DefaultInboxQueue(clientMock, null); // channel is not relevant here
+        final var queue = new DefaultInboxQueue(clientMock, channelMock);
 
         // execute (this will pick up the body from outbox queue and write to channel)
         final var selectionKeyMock = mock(SelectionKey.class);
@@ -119,7 +120,7 @@ public class DefaultInboxQueueTest {
     @Test
     @DisplayName("Test for interest ops")
     public void testInterestOpsAndKeyValidity() {
-        final var queue = new DefaultInboxQueue(null, null); // args are not relevant for this test
+        final var queue = new DefaultInboxQueue(mock(InternalKnxClient.class), mock(SelectableChannel.class));
 
         // verify if interest op is READ only
         assertThat(queue.interestOps()).isEqualTo(SelectionKey.OP_READ);
@@ -131,7 +132,7 @@ public class DefaultInboxQueueTest {
     @Test
     @DisplayName("Test for key validity")
     public void testKeyValidity() {
-        final var queue = new DefaultInboxQueue(null, null); // args are not relevant for this test
+        final var queue = new DefaultInboxQueue(mock(InternalKnxClient.class), mock(SelectableChannel.class));
 
         // verify validity of the key (should be 'valid' + 'readable')
         final var selectionKeyMock = mock(SelectionKey.class);

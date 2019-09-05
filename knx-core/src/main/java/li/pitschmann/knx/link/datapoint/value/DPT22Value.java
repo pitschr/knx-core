@@ -55,8 +55,13 @@ public final class DPT22Value {
             super(DPT22.STATUS_DHW_CONTROLLER, bytes);
         }
 
-        public StatusDHWController(final boolean fault, final boolean loadActive, final boolean legionellaProtectionActive, final boolean pushActive,
-                                   final boolean otherEnergySourceActive, final boolean solarEnergyOnly, final boolean solarEnergySupport,
+        public StatusDHWController(final boolean fault,
+                                   final boolean loadActive,
+                                   final boolean legionellaProtectionActive,
+                                   final boolean pushActive,
+                                   final boolean otherEnergySourceActive,
+                                   final boolean solarEnergyOnly,
+                                   final boolean solarEnergySupport,
                                    final boolean temperatureSetpointInfluenced) {
             this(new byte[]{0, Bytes.toByte(temperatureSetpointInfluenced, solarEnergySupport, solarEnergyOnly, otherEnergySourceActive, pushActive,
                     legionellaProtectionActive, loadActive, fault)});
@@ -106,12 +111,21 @@ public final class DPT22Value {
             super(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER, bytes);
         }
 
-        public StatusRoomHeatinCoolingController(final boolean fault, final boolean statusEcoHeating, final boolean temperatureFlowLimit,
-                                                 final boolean temperatureReturnLimit, final boolean statusMorningBoost,
-                                                 final boolean startOptimizationActive, final boolean stopOptimizationActive,
-                                                 final boolean heatingDisabled, final boolean heatingMode, final boolean statusEcoCooling,
-                                                 final boolean statusPreCooling, final boolean coolingDisabled, final boolean dewPointAlarm,
-                                                 final boolean frostAlarm, final boolean overheatAlarm) {
+        public StatusRoomHeatinCoolingController(final boolean fault,
+                                                 final boolean statusEcoHeating,
+                                                 final boolean temperatureFlowLimit,
+                                                 final boolean temperatureReturnLimit,
+                                                 final boolean statusMorningBoost,
+                                                 final boolean startOptimizationActive,
+                                                 final boolean stopOptimizationActive,
+                                                 final boolean heatingDisabled,
+                                                 final boolean heatingMode,
+                                                 final boolean statusEcoCooling,
+                                                 final boolean statusPreCooling,
+                                                 final boolean coolingDisabled,
+                                                 final boolean dewPointAlarm,
+                                                 final boolean frostAlarm,
+                                                 final boolean overheatAlarm) {
             this(Bytes.toByteArray(false, overheatAlarm, frostAlarm, dewPointAlarm, coolingDisabled, statusPreCooling, statusEcoCooling, heatingMode,
                     heatingDisabled, stopOptimizationActive, startOptimizationActive, statusMorningBoost, temperatureReturnLimit,
                     temperatureFlowLimit, statusEcoHeating, fault));
@@ -189,7 +203,10 @@ public final class DPT22Value {
             super(DPT22.MEDIA, bytes);
         }
 
-        public Media(final boolean tp1Supported, final boolean pl110Supported, final boolean rfSupported, final boolean knxipSupported) {
+        public Media(final boolean tp1Supported,
+                     final boolean pl110Supported,
+                     final boolean rfSupported,
+                     final boolean knxipSupported) {
             this(new byte[]{0, Bytes.toByte(false, false, knxipSupported, rfSupported, false, pl110Supported, tp1Supported, false)});
         }
 

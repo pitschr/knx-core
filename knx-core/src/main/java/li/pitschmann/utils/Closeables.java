@@ -98,7 +98,9 @@ public final class Closeables {
      * @param timeUnit
      * @return {@code true} if the shutdown was gracefully, otherwise {@code false}
      */
-    public static boolean shutdownQuietly(final @Nullable ExecutorService executorService, final long timeout, final @Nullable TimeUnit timeUnit) {
+    public static boolean shutdownQuietly(final @Nullable ExecutorService executorService,
+                                          final long timeout,
+                                          final @Nullable TimeUnit timeUnit) {
         log.trace("Call 'shutdownQuietly(ExecutorService, long, TimeUnit)' method: {}, {}, {}", executorService, timeout, timeUnit);
         var isOk = true;
         if (executorService != null) {

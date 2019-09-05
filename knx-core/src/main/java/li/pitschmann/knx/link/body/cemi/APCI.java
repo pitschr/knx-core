@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.KnxBytesEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -103,6 +104,14 @@ public enum APCI implements KnxBytesEnum {
         this.friendlyName = friendlyName;
     }
 
+    /**
+     * A matching {@link APCI} for the given {@code code}
+     *
+     * @param code
+     * @return existing {@link APCI}, or {@link KnxEnumNotFoundException} if no {@link APCI}
+     * for given {@code code} exists
+     */
+    @Nonnull
     public static APCI valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> code >= x.codeRangeStart && code <= x.codeRangeEnd).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(APCI.class, code));
@@ -113,6 +122,7 @@ public enum APCI implements KnxBytesEnum {
         return this.codeRangeStart;
     }
 
+    @Nonnull
     @Override
     public byte[] getCodeAsBytes() {
         final var code = this.getCode();
@@ -128,11 +138,13 @@ public enum APCI implements KnxBytesEnum {
         return this.codeRangeStart != this.codeRangeEnd;
     }
 
+    @Nonnull
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

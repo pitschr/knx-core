@@ -39,7 +39,7 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
     private static SupportedDeviceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
 
     static {
-        DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB = DeviceHardwareInformationDIB.valueOf(new byte[]{ //
+        DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB = DeviceHardwareInformationDIB.of(new byte[]{ //
                 0x36, // Structure Length
                 0x01, // Description Type Code
                 0x02, // KNX medium
@@ -54,7 +54,7 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
         });
-        DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedDeviceFamiliesDIB.valueOf(new byte[]{ //
+        DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedDeviceFamiliesDIB.of(new byte[]{ //
                 0x0a, // Structure Length
                 0x02, // Description Type Code
                 0x02, 0x01, // Service Family ID (Core) + Version #1
@@ -92,6 +92,6 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
         final var deviceHardwareInformation = getDeviceHardwareInformation(mockServer);
         final var supportedDeviceFamilies = getSupportedDeviceFamilies(mockServer);
 
-        return new MockResponse(SearchResponseBody.create(hpai, deviceHardwareInformation, supportedDeviceFamilies));
+        return new MockResponse(SearchResponseBody.of(hpai, deviceHardwareInformation, supportedDeviceFamilies));
     }
 }

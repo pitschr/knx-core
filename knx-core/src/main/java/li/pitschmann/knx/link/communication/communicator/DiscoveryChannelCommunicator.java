@@ -28,6 +28,7 @@ import li.pitschmann.knx.link.communication.queue.DiscoveryOutboxQueue;
 import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.MembershipKey;
 import java.util.List;
@@ -44,8 +45,8 @@ public final class DiscoveryChannelCommunicator extends AbstractChannelCommunica
         super(client);
     }
 
-    @Override
     @Nonnull
+    @Override
     protected DatagramChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
         // creates new channel
         final var channel = ChannelFactory.newDiscoveryChannel(internalClient);
@@ -63,20 +64,22 @@ public final class DiscoveryChannelCommunicator extends AbstractChannelCommunica
         log.debug("Membership of all multicast groups dropped.");
     }
 
-    @Override
     @Nonnull
-    protected DiscoveryInboxQueue createInboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull DatagramChannel channel) {
+    @Override
+    protected DiscoveryInboxQueue createInboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                   final @Nonnull DatagramChannel channel) {
         return new DiscoveryInboxQueue(internalClient, channel);
     }
 
-    @Override
     @Nonnull
-    protected DiscoveryOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull DatagramChannel channel) {
+    @Override
+    protected DiscoveryOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                     final @Nonnull DatagramChannel channel) {
         return new DiscoveryOutboxQueue(internalClient, channel);
     }
 
     @Override
-    public boolean isCompatible(final @Nonnull Body body) {
+    public boolean isCompatible(final @Nullable Body body) {
         return body instanceof SearchResponseBody;
     }
 }

@@ -21,7 +21,9 @@ package li.pitschmann.knx.link.communication.event;
 import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.ResponseBody;
 
+import javax.annotation.Nonnull;
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * Mutable KNX event data for {@link ResponseBody}
@@ -39,6 +41,7 @@ public class ResponseEvent<T extends ResponseBody> {
      *
      * @return An {@link Instant}
      */
+    @Nonnull
     public Instant getResponseTime() {
         return this.responseTime;
     }
@@ -48,6 +51,7 @@ public class ResponseEvent<T extends ResponseBody> {
      *
      * @return The response body which was set last time
      */
+    @Nonnull
     public T getResponse() {
         return this.response;
     }
@@ -57,11 +61,12 @@ public class ResponseEvent<T extends ResponseBody> {
      *
      * @param response the response body
      */
-    public void setResponse(final T response) {
+    public void setResponse(final @Nonnull T response) {
         this.responseTime = Instant.now();
-        this.response = response;
+        this.response = Objects.requireNonNull(response);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this) //

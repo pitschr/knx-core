@@ -55,6 +55,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for discovery related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
+    @Nonnull
     public static DatagramChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
         final var config = client.getConfig();
         final var localPort = config.getDiscoveryChannelPort();
@@ -74,6 +75,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for description related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
+    @Nonnull
     public static SelectableChannel newDescriptionChannel(final @Nonnull InternalKnxClient client) {
         final var config = client.getConfig();
         final var localPort = config.getDescriptionChannelPort();
@@ -92,6 +94,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for control-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
+    @Nonnull
     public static SelectableChannel newControlChannel(final @Nonnull InternalKnxClient client) {
         final var config = client.getConfig();
         final var localPort = config.getControlChannelPort();
@@ -110,6 +113,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for data-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
+    @Nonnull
     public static SelectableChannel newDataChannel(final @Nonnull InternalKnxClient client) {
         final var config = client.getConfig();
         final var localPort = config.getDataChannelPort();
@@ -128,7 +132,10 @@ public final class ChannelFactory {
      * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
      * @return a new instance of {@link DatagramChannel}
      */
-    public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort, final long socketTimeout, final @Nullable SocketAddress socketAddress,
+    @Nonnull
+    public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort,
+                                                                        final long socketTimeout,
+                                                                        final @Nullable SocketAddress socketAddress,
                                                                         final @Nullable Map<? extends SocketOption<T>, T> socketOptionMap) {
         try {
             final var channel = DatagramChannel.open(StandardProtocolFamily.INET);

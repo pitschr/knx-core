@@ -21,6 +21,7 @@ package li.pitschmann.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 
@@ -42,8 +43,8 @@ public final class ClassHelper {
      * @return {@code Class<T>} if found
      * @throws IllegalArgumentException in case the class has no generic type class
      */
-    public static @Nullable
-    <T> Class<T> getGenericTypeSuperclass(final Class<?> clazz) {
+    @Nullable
+    public static <T> Class<T> getGenericTypeSuperclass(final @Nonnull Class<?> clazz) {
         return getGenericTypeSuperclass(clazz, 0);
     }
 
@@ -55,8 +56,8 @@ public final class ClassHelper {
      * @throws IllegalArgumentException in case the class is not qualified to get the generic type class
      */
     @SuppressWarnings("unchecked")
-    public static @Nullable
-    <T> Class<T> getGenericTypeSuperclass(final Class<?> clazz, final int index) {
+    @Nullable
+    public static <T> Class<T> getGenericTypeSuperclass(final @Nonnull Class<?> clazz, final int index) {
         final Class<T> retClass;
 
         final var superClassType = clazz.getGenericSuperclass();

@@ -26,6 +26,8 @@ import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+
 /**
  * TODO: TO IMPLEMENT
  *
@@ -49,26 +51,27 @@ public final class AuditDatabasePlugin implements ObserverPlugin {
     }
 
     @Override
-    public void onInitialization(KnxClient client) {
+    public void onInitialization(final @Nullable KnxClient client) {
+        // do nothing
     }
 
     @Override
-    public void onIncomingBody(Body item) {
+    public void onIncomingBody(final @Nullable Body item) {
         this.on("INCOMING", item);
     }
 
     @Override
-    public void onOutgoingBody(Body item) {
+    public void onOutgoingBody(final @Nullable Body item) {
         this.on("OUTGOING", item);
     }
 
-    public void on(final String text, final Body item) {
+    public void on(final @Nullable String text, final @Nullable Body item) {
         Sleeper.milliseconds(5000);
         log.debug("TEXT TO {} (SLOW): {}", text, item);
     }
 
     @Override
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nullable Throwable throwable) {
         // TODO Auto-generated method stub
 
     }

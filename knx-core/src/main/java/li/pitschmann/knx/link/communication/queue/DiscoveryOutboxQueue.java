@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.communication.queue;
 
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -41,7 +42,7 @@ public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChan
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public DiscoveryOutboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
+    public DiscoveryOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
         super(internalClient, channel);
 
         final var config = internalClient.getConfig();
@@ -49,7 +50,7 @@ public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChan
     }
 
     @Override
-    protected void send(final DatagramChannel channel, final ByteBuffer bb) throws IOException {
+    protected void send(final @Nonnull DatagramChannel channel, final @Nonnull ByteBuffer bb) throws IOException {
         channel.send(bb, discoverySocketAddress);
     }
 }

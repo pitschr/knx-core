@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class SearchRequestBodyTest {
 
     /**
-     * Tests the {@link SearchRequestBody#create(HPAI)} and {@link SearchRequestBody#valueOf(byte[])} methods.
+     * Tests the {@link SearchRequestBody#of(HPAI)} and {@link SearchRequestBody#of(byte[])} methods.
      *
      * <pre>
      * KNX/IP Search Request, Discovery @ 192.168.1.24:63723
@@ -59,12 +59,14 @@ public class SearchRequestBodyTest {
     public void validCases() {
         // create
         final var discoveryEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(192, 168, 1, 24), 63723);
-        final var body = SearchRequestBody.create(discoveryEndpoint);
+        final var body = SearchRequestBody.of(discoveryEndpoint);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
         assertThat(body.getDiscoveryEndpoint()).isEqualTo(discoveryEndpoint);
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = SearchRequestBody.valueOf(new byte[]{0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x18, (byte) 0xf8, (byte) 0xeb});
+        // create by bytes
+        final var bodyByBytes = SearchRequestBody.of(new byte[]{0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x18, (byte) 0xf8, (byte) 0xeb});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -73,7 +75,7 @@ public class SearchRequestBodyTest {
     }
 
     /**
-     * Tests the {@link SearchRequestBody#create()} method.
+     * Tests the {@link SearchRequestBody#useDefault()} method.
      *
      * <pre>
      * KNX/IP Search Request, Discovery @ 0.0.0.0:0
@@ -94,7 +96,7 @@ public class SearchRequestBodyTest {
     @Test
     public void validCaseNoArg() {
         // create
-        final var body = SearchRequestBody.create();
+        final var body = SearchRequestBody.useDefault();
         assertThat(body.getRawData()).containsExactly(0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
 
         // toString
@@ -108,12 +110,12 @@ public class SearchRequestBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> SearchRequestBody.create(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SearchRequestBody.of((HPAI) null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("discoveryEndpoint");
 
         // invalid raw data length
-        assertThatThrownBy(() -> SearchRequestBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> SearchRequestBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> SearchRequestBody.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> SearchRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.channels.SelectableChannel;
 
 /**
@@ -47,7 +48,7 @@ public final class ControlAndDataChannelCommunicator extends AbstractChannelComm
     }
 
     @Override
-    public boolean isCompatible(final @Nonnull Body body) {
+    public boolean isCompatible(final @Nullable Body body) {
         return body instanceof ControlChannelRelated
                 || body instanceof DataChannelRelated;
     }

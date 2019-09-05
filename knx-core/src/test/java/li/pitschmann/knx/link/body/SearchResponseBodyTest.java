@@ -49,7 +49,7 @@ public class SearchResponseBodyTest {
     @BeforeEach
     public void before() {
         this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(6, 2, 77, 4), 8332);
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(new byte[]{ //
+        this.deviceHardwareInformation = DeviceHardwareInformationDIB.of(new byte[]{ //
                 0x36, // Structure Length
                 0x01, // Description Type Code
                 0x02, // KNX medium
@@ -64,7 +64,7 @@ public class SearchResponseBodyTest {
                 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
         });
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(new byte[]{ //
+        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.of(new byte[]{ //
                 0x0a, // Structure Length
                 0x02, // Description Type Code
                 0x02, 0x01, // Service Family ID + Version #1
@@ -76,8 +76,8 @@ public class SearchResponseBodyTest {
 
     /**
      * Tests the
-     * {@link SearchResponseBody#create(HPAI, DeviceHardwareInformationDIB, SupportedDeviceFamiliesDIB)}
-     * and {@link SearchResponseBody#valueOf(byte[])} methods.
+     * {@link SearchResponseBody#of(HPAI, DeviceHardwareInformationDIB, SupportedDeviceFamiliesDIB)}
+     * and {@link SearchResponseBody#of(byte[])} methods.
      *
      * <pre>
      * 	KNX/IP
@@ -118,15 +118,17 @@ public class SearchResponseBodyTest {
     @Test
     public void validCases() {
         // create
-        final var body = SearchResponseBody.create(this.controlEndpoint, this.deviceHardwareInformation, this.supportedDeviceFamilies);
+        final var body = SearchResponseBody.of(this.controlEndpoint, this.deviceHardwareInformation, this.supportedDeviceFamilies);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
         assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
         assertThat(body.getSupportedDeviceFamilies()).isEqualTo(this.supportedDeviceFamilies);
 
-        // compare raw data with valueOf(byte[])
+        // create by bytes
         byte[] bytes = Bytes.concat(this.controlEndpoint.getRawData(), this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData());
-        final var bodyByBytes = SearchResponseBody.valueOf(bytes);
+        final var bodyByBytes = SearchResponseBody.of(bytes);
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -144,31 +146,31 @@ public class SearchResponseBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> SearchResponseBody.create(null, this.deviceHardwareInformation, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SearchResponseBody.of(null, this.deviceHardwareInformation, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("controlEndpoint");
-        assertThatThrownBy(() -> SearchResponseBody.create(this.controlEndpoint, null, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SearchResponseBody.of(this.controlEndpoint, null, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("deviceHardwareInformation");
-        assertThatThrownBy(() -> SearchResponseBody.create(this.controlEndpoint, this.deviceHardwareInformation, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SearchResponseBody.of(this.controlEndpoint, this.deviceHardwareInformation, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("supportedDeviceFamilies");
 
         // invalid raw data length
-        assertThatThrownBy(() -> SearchResponseBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> SearchResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
 
         // not proper size of byte array provided
-        assertThatThrownBy(() -> SearchResponseBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> SearchResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class);
 
         // size if byte array must be divisible by two
-        assertThatThrownBy(() -> SearchResponseBody.valueOf(new byte[59])).isInstanceOf(KnxIllegalArgumentException.class)
+        assertThatThrownBy(() -> SearchResponseBody.of(new byte[59])).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("The size of 'rawData' must be divisible by two.");
 
         // missing device information DIB
         final var bytesNoDeviceHardwareInfo = Bytes.concat(this.controlEndpoint.getRawData(), new byte[DeviceHardwareInformationDIB.STRUCTURE_LENGTH]);//Bytes.padRight(new byte[]{0x36, 0x02, 0x02}, (byte)0x00, DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
-        assertThatThrownBy(() -> SearchResponseBody.valueOf(bytesNoDeviceHardwareInfo)).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> SearchResponseBody.of(bytesNoDeviceHardwareInfo)).isInstanceOf(KnxException.class)
                 .hasMessage("Could not find device hardware information DIB array.");
 
         // missing supported device families DIB
         final var bytesNoDeviceFamilies = Bytes.concat(this.controlEndpoint.getRawData(), this.deviceHardwareInformation.getRawData(), new byte[2]);//Bytes.padRight(new byte[]{0x36, 0x02, 0x02}, (byte)0x00, DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
-        assertThatThrownBy(() -> SearchResponseBody.valueOf(bytesNoDeviceFamilies)).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> SearchResponseBody.of(bytesNoDeviceFamilies)).isInstanceOf(KnxException.class)
                 .hasMessage("Could not find supported device families DIB array.");
     }
 }

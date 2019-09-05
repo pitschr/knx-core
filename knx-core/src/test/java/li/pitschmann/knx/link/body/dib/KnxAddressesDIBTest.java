@@ -46,12 +46,12 @@ public final class KnxAddressesDIBTest {
     };
 
     /**
-     * Tests {@link KnxAddressesDIB#valueOf(byte[])}
+     * Tests {@link KnxAddressesDIB#of(byte[])}
      */
     @Test
-    public void valueOf() {
-        // valueOf
-        final var dib = KnxAddressesDIB.valueOf(BYTES);
+    public void validCases() {
+        // create by bytes
+        final var dib = KnxAddressesDIB.of(BYTES);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(10);
@@ -72,13 +72,13 @@ public final class KnxAddressesDIBTest {
     @Test
     public void invalidCases() {
         // specific for KNX addresses DIB
-        assertThatThrownBy(() -> KnxAddressesDIB.valueOf(new byte[]{0x05, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
+        assertThatThrownBy(() -> KnxAddressesDIB.of(new byte[]{0x05, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("divisible by two");
 
         // incorrect size of bytes
-        assertThatThrownBy(() -> KnxAddressesDIB.valueOf(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> KnxAddressesDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> KnxAddressesDIB.valueOf(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
+        assertThatThrownBy(() -> KnxAddressesDIB.of(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
     }
 
@@ -93,7 +93,7 @@ public final class KnxAddressesDIBTest {
                 IndividualAddress.of(7, 8, 127), //
                 IndividualAddress.of(15, 15, 255));
 
-        assertThat(KnxAddressesDIB.valueOf(BYTES)).hasToString(
+        assertThat(KnxAddressesDIB.of(BYTES)).hasToString(
                 String.format("KnxAddressesDIB{length=10 (0x0A), descriptionType=%s, knxAddress=%s, additionalAddresses=%s, rawData=%s}",
                         DescriptionType.KNX_ADDRESSES, knxAddress, additionalAddresses, ByteFormatter.formatHexAsString(BYTES)));
     }

@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * A custom RequestBody for non-KNX-specified responses. It may be used for customized bodies
@@ -58,9 +59,9 @@ public final class BytesRequestBody extends AbstractMultiRawData implements Requ
     private static final int STRUCTURE_LENGTH = 250;
     private final ServiceType serviceType;
 
-    private BytesRequestBody(final ServiceType serviceType, final byte[] bytes) {
+    private BytesRequestBody(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bytes) {
         super(bytes);
-        this.serviceType = serviceType;
+        this.serviceType = Objects.requireNonNull(serviceType);
     }
 
     /**
@@ -68,9 +69,10 @@ public final class BytesRequestBody extends AbstractMultiRawData implements Requ
      *
      * @param serviceType the service type
      * @param bytes       complete byte array for {@link ConnectionStateRequestBody}
-     * @return immutable {@link BytesRequestBody}
+     * @return a new immutable {@link BytesRequestBody}
      */
-    public static BytesRequestBody create(final ServiceType serviceType, final byte[] bytes) {
+    @Nonnull
+    public static BytesRequestBody of(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bytes) {
         if (serviceType == null) {
             throw new KnxNullPointerException("serviceType");
         } else if (bytes == null) {
@@ -86,14 +88,15 @@ public final class BytesRequestBody extends AbstractMultiRawData implements Requ
     }
 
     @Override
-    protected void validate(byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData.length > STRUCTURE_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", 0, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
 
+    @Nonnull
     @Override
-    public String toString(boolean inclRawData) {
+    public String toString(final boolean inclRawData) {
         final var h = MoreObjects.toStringHelper(this)
                 .add("serviceType", this.serviceType);
         if (inclRawData) {

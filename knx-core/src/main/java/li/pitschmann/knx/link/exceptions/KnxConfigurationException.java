@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception to be thrown in case something is wrong with the configuration like providing a wrong IP address or an
  * unsupported setting.
@@ -26,11 +28,11 @@ package li.pitschmann.knx.link.exceptions;
  */
 public final class KnxConfigurationException extends KnxException {
 
-    public KnxConfigurationException(final String message) {
+    public KnxConfigurationException(final @Nullable String message) {
         super(message);
     }
 
-    public KnxConfigurationException(final String message, final Throwable cause) {
+    public KnxConfigurationException(final @Nullable String message, final @Nullable Throwable cause) {
         super(message, cause);
     }
 

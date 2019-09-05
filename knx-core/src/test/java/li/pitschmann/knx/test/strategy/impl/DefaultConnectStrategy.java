@@ -69,12 +69,12 @@ public class DefaultConnectStrategy implements ConnectStrategy {
      * @return connection response data
      */
     protected ConnectionResponseData getConnectionResponseData(final MockServer mockServer) {
-        return ConnectionResponseData.create(mockServer.getIndividualAddress());
+        return ConnectionResponseData.of(mockServer.getIndividualAddress());
     }
 
     @Override
     public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
-        final var responseBody = ConnectResponseBody.create(
+        final var responseBody = ConnectResponseBody.of(
                 getChannelId(mockServer), //
                 getStatus(), //
                 getHPAI(mockServer), //

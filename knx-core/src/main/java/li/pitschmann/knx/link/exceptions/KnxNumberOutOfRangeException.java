@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.exceptions;
 
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception being thrown in case the a number is out of the range.
  *
@@ -35,7 +37,10 @@ public final class KnxNumberOutOfRangeException extends KnxException {
      * @param endInclusive
      * @param actual
      */
-    public KnxNumberOutOfRangeException(final String argumentName, final Number startInclusive, final Number endInclusive, final Number actual) {
+    public KnxNumberOutOfRangeException(final @Nullable String argumentName,
+                                        final @Nullable Number startInclusive,
+                                        final @Nullable Number endInclusive,
+                                        final @Nullable Number actual) {
         super(String.format("Value '%s' for argument '%s' is out of range '%s'..'%s'.", actual, argumentName, startInclusive, endInclusive));
     }
 
@@ -49,8 +54,11 @@ public final class KnxNumberOutOfRangeException extends KnxException {
      * @param actual
      * @param rawData
      */
-    public KnxNumberOutOfRangeException(final String argumentName, final Number startInclusive, final Number endInclusive, final Number actual,
-                                        final byte[] rawData) {
+    public KnxNumberOutOfRangeException(final @Nullable String argumentName,
+                                        final @Nullable Number startInclusive,
+                                        final @Nullable Number endInclusive,
+                                        final @Nullable Number actual,
+                                        final @Nullable byte[] rawData) {
         super(String.format("Value '%s' for argument '%s' is out of range '%s'..'%s'. Raw Data: %s", actual, argumentName, startInclusive,
                 endInclusive, ByteFormatter.formatHexAsString(rawData)));
     }

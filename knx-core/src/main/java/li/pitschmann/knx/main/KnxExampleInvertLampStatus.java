@@ -49,11 +49,11 @@ public class KnxExampleInvertLampStatus extends AbstractKnxMain {
 
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
-        final var address = getParameterValue(args, "-r", null, Function.identity());
+        final var address = getParameterValue(args, "-r", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", address);
 
         // 2nd Argument: Get Group Address
-        final var groupAddress = getParameterValue(args, "-ga", DEFAULT_GROUP_ADDRESS, GroupAddress::of);
+        final var groupAddress = getParameterValue(args, "-ga", GroupAddress::of, DEFAULT_GROUP_ADDRESS);
         log.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
 
         try (final var client = DefaultKnxClient.createStarted(address)) {

@@ -24,6 +24,7 @@ import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,7 +70,7 @@ public final class KnxAddressesDIB extends AbstractDIB {
     private final IndividualAddress knxAddress;
     private final List<IndividualAddress> additionalAddresses;
 
-    private KnxAddressesDIB(byte[] rawData) {
+    private KnxAddressesDIB(final @Nonnull byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -90,14 +91,15 @@ public final class KnxAddressesDIB extends AbstractDIB {
      * Builds a new {@link KnxAddressesDIB} instance
      *
      * @param bytes complete byte array for {@link KnxAddressesDIB}
-     * @return immutable {@link KnxAddressesDIB}
+     * @return a new immutable {@link KnxAddressesDIB}
      */
-    public static KnxAddressesDIB valueOf(final byte[] bytes) {
+    @Nonnull
+    public static KnxAddressesDIB of(final @Nonnull byte[] bytes) {
         return new KnxAddressesDIB(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
         } else if (rawData.length % 2 != 0) {
@@ -106,14 +108,17 @@ public final class KnxAddressesDIB extends AbstractDIB {
         }
     }
 
+    @Nonnull
     public IndividualAddress getKnxAddress() {
         return this.knxAddress;
     }
 
+    @Nonnull
     public List<IndividualAddress> getAdditionalAddresses() {
         return this.additionalAddresses;
     }
 
+    @Nonnull
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

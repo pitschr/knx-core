@@ -51,7 +51,7 @@ public class DescriptionResponseBodyTest {
 
     @BeforeEach
     public void before() {
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(new byte[]{ //
+        this.deviceHardwareInformation = DeviceHardwareInformationDIB.of(new byte[]{ //
                 0x36, // Structure Length
                 0x01, // Description Type Code
                 0x02, // KNX medium
@@ -66,7 +66,7 @@ public class DescriptionResponseBodyTest {
                 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
         });
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(new byte[]{ //
+        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.of(new byte[]{ //
                 0x0a, // Structure Length
                 0x02, // Description Type Code
                 0x02, 0x01, // Service Family ID + Version #1
@@ -74,7 +74,7 @@ public class DescriptionResponseBodyTest {
                 0x04, 0x01, // Service Family ID + Version #3
                 0x05, 0x03 // Service Family ID + Version #4
         });
-        this.ipConfig = IPConfigDIB.valueOf(new byte[]{ //
+        this.ipConfig = IPConfigDIB.of(new byte[]{ //
                 0x10, // Structure Length
                 0x03, // Description Type Code
                 0x11, 0x22, 0x33, 0x44, // IP Address
@@ -83,7 +83,7 @@ public class DescriptionResponseBodyTest {
                 (byte) 0xDD, // IP Capabilities
                 (byte) 0xEE // IP assignment method
         });
-        this.ipCurrentConfig = IPCurrentConfigDIB.valueOf(new byte[]{ //
+        this.ipCurrentConfig = IPCurrentConfigDIB.of(new byte[]{ //
                 0x14, // Structure Length
                 0x04, // Description Type Code
                 0x11, 0x22, 0x33, 0x44, // Current IP Address
@@ -93,7 +93,7 @@ public class DescriptionResponseBodyTest {
                 (byte) 0xDD, // IP Capabilities
                 (byte) 0x00 // (reserved)
         });
-        this.knxAddresses = KnxAddressesDIB.valueOf(new byte[]{ //
+        this.knxAddresses = KnxAddressesDIB.of(new byte[]{ //
                 0x0A, // Structure Length
                 0x05, // Description Type Code
                 0x00, 0x00, // KNX Individual Address (0.0.0)
@@ -101,7 +101,7 @@ public class DescriptionResponseBodyTest {
                 0x78, 0x7F, // Additional Individual Address 2 (7.8.127)
                 (byte) 0xFF, (byte) 0xFF, // Additional Individual Address 3 (15.15.255)
         });
-        this.manufacturerData = ManufacturerDataDIB.valueOf(new byte[]{ //
+        this.manufacturerData = ManufacturerDataDIB.of(new byte[]{ //
                 0x13, // Structure Length
                 (byte) 0xFE, // Description Type Code
                 0x21, 0x22, // KNX Manufacturer ID
@@ -112,8 +112,8 @@ public class DescriptionResponseBodyTest {
 
     /**
      * Tests the
-     * {@link DescriptionResponseBody#create(DeviceHardwareInformationDIB, SupportedDeviceFamiliesDIB)}
-     * and {@link DescriptionResponseBody#valueOf(byte[])} methods.
+     * {@link DescriptionResponseBody#of(DeviceHardwareInformationDIB, SupportedDeviceFamiliesDIB)}
+     * and {@link DescriptionResponseBody#of(byte[])} methods.
      *
      * <pre>
      * 	KNX/IP
@@ -156,7 +156,7 @@ public class DescriptionResponseBodyTest {
         byte[] dibBytes = Bytes.concat(this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData());
 
         // create
-        final var body = DescriptionResponseBody.create(this.deviceHardwareInformation, this.supportedDeviceFamilies);
+        final var body = DescriptionResponseBody.of(this.deviceHardwareInformation, this.supportedDeviceFamilies);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
         assertThat(body.getSupportedDeviceFamilies()).isEqualTo(this.supportedDeviceFamilies);
@@ -165,8 +165,10 @@ public class DescriptionResponseBodyTest {
         assertThat(body.getKnxAddresses()).isNull();
         assertThat(body.getManufacturerData()).isNull();
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = DescriptionResponseBody.valueOf(dibBytes);
+        // create by bytes
+        final var bodyByBytes = DescriptionResponseBody.of(dibBytes);
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -178,7 +180,7 @@ public class DescriptionResponseBodyTest {
     }
 
     /**
-     * Tests the {@link DescriptionResponseBody#valueOf(byte[])} method with following DIBs:
+     * Tests the {@link DescriptionResponseBody#of(byte[])} method with following DIBs:
      * <ul>
      * <li>DeviceHardwareInformationDIB</li>
      * <li>SupportedDeviceFamiliesDIB</li>
@@ -195,7 +197,7 @@ public class DescriptionResponseBodyTest {
                 this.manufacturerData.getRawData());
 
         // create
-        final var body = DescriptionResponseBody.valueOf(dibBytes);
+        final var body = DescriptionResponseBody.of(dibBytes);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
         assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
         assertThat(body.getSupportedDeviceFamilies()).isEqualTo(this.supportedDeviceFamilies);
@@ -220,24 +222,24 @@ public class DescriptionResponseBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> DescriptionResponseBody.create(null, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> DescriptionResponseBody.of(null, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("deviceHardwareInformation");
-        assertThatThrownBy(() -> DescriptionResponseBody.create(this.deviceHardwareInformation, null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> DescriptionResponseBody.of(this.deviceHardwareInformation, null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("supportedDeviceFamilies");
 
         // invalid raw data length
-        assertThatThrownBy(() -> DescriptionResponseBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> DescriptionResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
 
         // missing device information DIB
-        assertThatThrownBy(() -> DescriptionResponseBody.valueOf(new byte[0])).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> DescriptionResponseBody.of(new byte[0])).isInstanceOf(KnxException.class)
                 .hasMessage("Could not find device hardware information DIB array.");
 
         // missing supported device families DIB
-        assertThatThrownBy(() -> DescriptionResponseBody.valueOf(this.deviceHardwareInformation.getRawData())).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> DescriptionResponseBody.of(this.deviceHardwareInformation.getRawData())).isInstanceOf(KnxException.class)
                 .hasMessage("Could not find supported device families DIB array.");
 
         // endless loop because of wrong DIB info
-        assertThatThrownBy(() -> DescriptionResponseBody.valueOf(Bytes.toByteArray("34010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f7574657200000000000000000000000000"))).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> DescriptionResponseBody.of(Bytes.toByteArray("34010200100000000083497f01ece000170ccc1be08008da4d4454204b4e5820495020526f7574657200000000000000000000000000"))).isInstanceOf(KnxException.class)
                 .hasMessageContaining("This would result into an endless loop");
     }
 }

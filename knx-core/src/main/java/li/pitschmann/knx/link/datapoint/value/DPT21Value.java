@@ -52,7 +52,10 @@ public final class DPT21Value {
             super(DPT21.GENERAL_STATUS, b);
         }
 
-        public GeneralStatus(final boolean outOfService, final boolean fault, final boolean overridden, final boolean inAlarm,
+        public GeneralStatus(final boolean outOfService,
+                             final boolean fault,
+                             final boolean overridden,
+                             final boolean inAlarm,
                              final boolean alarmNotAcknowledged) {
             this(Bytes.toByte(false, false, false, alarmNotAcknowledged, inAlarm, overridden, fault, outOfService));
         }
@@ -88,7 +91,9 @@ public final class DPT21Value {
             super(DPT21.DEVICE_CONTROL, b);
         }
 
-        public DeviceControl(final boolean userApplicationStopped, final boolean ownIndividualAddress, final boolean verifyModeOn) {
+        public DeviceControl(final boolean userApplicationStopped,
+                             final boolean ownIndividualAddress,
+                             final boolean verifyModeOn) {
             this(Bytes.toByte(false, false, false, false, false, verifyModeOn, ownIndividualAddress, userApplicationStopped));
         }
 
@@ -115,8 +120,13 @@ public final class DPT21Value {
             super(DPT21.FORCING_SIGNAL, b);
         }
 
-        public ForcingSignal(final boolean forceRequest, final boolean protection, final boolean oversupply, final boolean overrun,
-                             final boolean dhwNormal, final boolean dhwLegionellaProtection, final boolean roomHeatingComfort,
+        public ForcingSignal(final boolean forceRequest,
+                             final boolean protection,
+                             final boolean oversupply,
+                             final boolean overrun,
+                             final boolean dhwNormal,
+                             final boolean dhwLegionellaProtection,
+                             final boolean roomHeatingComfort,
                              final boolean roomHeatingMaxFlowTemperature) {
             this(Bytes.toByte(roomHeatingMaxFlowTemperature, roomHeatingComfort, dhwLegionellaProtection, dhwNormal, overrun, oversupply, protection,
                     forceRequest));
@@ -191,9 +201,13 @@ public final class DPT21Value {
             super(DPT21.STATUS_ROOM_HEATING_CONTROLLER, b);
         }
 
-        public StatusRoomHeatingController(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
-                                           final boolean temperatureReturnLimit, final boolean statusMorningBoost,
-                                           final boolean statusStartOptimizationActive, final boolean statusStopOptimizationActive,
+        public StatusRoomHeatingController(final boolean fault,
+                                           final boolean statusEco,
+                                           final boolean temperatureFlowLimit,
+                                           final boolean temperatureReturnLimit,
+                                           final boolean statusMorningBoost,
+                                           final boolean statusStartOptimizationActive,
+                                           final boolean statusStopOptimizationActive,
                                            final boolean summerMode) {
             this(Bytes.toByte(summerMode, statusStopOptimizationActive, statusStartOptimizationActive, statusMorningBoost, temperatureReturnLimit,
                     temperatureFlowLimit, statusEco, fault));
@@ -242,7 +256,9 @@ public final class DPT21Value {
             super(DPT21.STATUS_SOLAR_DHW_CONTROLLER, b);
         }
 
-        public StatusSolarDHWController(final boolean fault, final boolean statusDHWLoadActive, final boolean solarLoadSufficient) {
+        public StatusSolarDHWController(final boolean fault,
+                                        final boolean statusDHWLoadActive,
+                                        final boolean solarLoadSufficient) {
             this(Bytes.toByte(false, false, false, false, false, solarLoadSufficient, statusDHWLoadActive, fault));
         }
 
@@ -269,7 +285,9 @@ public final class DPT21Value {
             super(DPT21.FUEL_TYPE_SET, b);
         }
 
-        public FuelTypeSet(final boolean oilFuelSupported, final boolean gasFuelSupported, final boolean solidStateFuelSupported) {
+        public FuelTypeSet(final boolean oilFuelSupported,
+                           final boolean gasFuelSupported,
+                           final boolean solidStateFuelSupported) {
             this(Bytes.toByte(false, false, false, false, false, solidStateFuelSupported, gasFuelSupported, oilFuelSupported));
         }
 
@@ -321,7 +339,9 @@ public final class DPT21Value {
             super(DPT21.STATUS_VENTILATION_CONTROLLER, b);
         }
 
-        public StatusVentilationController(final boolean fault, final boolean fanActive, final boolean heatingModeActive,
+        public StatusVentilationController(final boolean fault,
+                                           final boolean fanActive,
+                                           final boolean heatingModeActive,
                                            final boolean coolingModeActive) {
             this(Bytes.toByte(false, false, false, false, coolingModeActive, heatingModeActive, fanActive, fault));
         }
@@ -353,8 +373,13 @@ public final class DPT21Value {
             super(DPT21.LIGHTING_ACTUATOR_ERROR_INFO, b);
         }
 
-        public LightingActuatorErrorInfo(final boolean errorLoad, final boolean undervoltage, final boolean overcurrent, final boolean underload,
-                                         final boolean defectiveLoad, final boolean lampFailure, final boolean overheat) {
+        public LightingActuatorErrorInfo(final boolean errorLoad,
+                                         final boolean undervoltage,
+                                         final boolean overcurrent,
+                                         final boolean underload,
+                                         final boolean defectiveLoad,
+                                         final boolean lampFailure,
+                                         final boolean overheat) {
             this(Bytes.toByte(false, overheat, lampFailure, defectiveLoad, underload, overcurrent, undervoltage, errorLoad));
         }
 
@@ -397,7 +422,9 @@ public final class DPT21Value {
             super(DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO, b);
         }
 
-        public RadioFrequencyCommunicationModeInfo(final boolean asynchronous, final boolean master, final boolean slave) {
+        public RadioFrequencyCommunicationModeInfo(final boolean asynchronous,
+                                                   final boolean master,
+                                                   final boolean slave) {
             this(Bytes.toByte(false, false, false, false, false, slave, master, asynchronous));
         }
 
@@ -424,7 +451,9 @@ public final class DPT21Value {
             super(DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE, b);
         }
 
-        public CEMIServerSupportedFilteringMode(final boolean domainAddress, final boolean serialNumber, final boolean domainAddressAndSerialNumber) {
+        public CEMIServerSupportedFilteringMode(final boolean domainAddress,
+                                                final boolean serialNumber,
+                                                final boolean domainAddressAndSerialNumber) {
             this(Bytes.toByte(false, false, false, false, false, domainAddressAndSerialNumber, serialNumber, domainAddress));
         }
 

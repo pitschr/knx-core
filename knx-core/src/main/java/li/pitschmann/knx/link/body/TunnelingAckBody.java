@@ -59,7 +59,7 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     private final int sequence;
     private final Status status;
 
-    private TunnelingAckBody(final byte[] bytes) {
+    private TunnelingAckBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.length = Bytes.toUnsignedInt(bytes[0]);
@@ -72,9 +72,10 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
      * Builds a new {@link TunnelingAckBody} instance
      *
      * @param bytes complete byte array for {@link TunnelingAckBody}
-     * @return immutable {@link TunnelingAckBody}
+     * @return a new immutable {@link TunnelingAckBody}
      */
-    public static TunnelingAckBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static TunnelingAckBody of(final @Nonnull byte[] bytes) {
         return new TunnelingAckBody(bytes);
     }
 
@@ -84,9 +85,10 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
      * @param channelId
      * @param sequence
      * @param status
-     * @return immutable {@link TunnelingAckBody}
+     * @return a new immutable {@link TunnelingAckBody}
      */
-    public static TunnelingAckBody create(final int channelId, final int sequence, final Status status) {
+    @Nonnull
+    public static TunnelingAckBody of(final int channelId, final int sequence, final @Nonnull Status status) {
         // validate
         if (status == null) {
             throw new KnxNullPointerException("status");
@@ -103,11 +105,11 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
         bytes[2] = (byte) sequence;
         bytes[3] = status.getCodeAsByte();
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -115,8 +117,8 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.TUNNELING_ACK;
     }
@@ -134,10 +136,12 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
         return this.sequence;
     }
 
+    @Nonnull
     public Status getStatus() {
         return this.status;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

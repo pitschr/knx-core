@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import javax.annotation.Nullable;
+
 /**
  * KNX communication partner exception that is being thrown when KNX client cannot establish a communication to the
  * KNX Net/IP device because it doesn't support the tunneling.
@@ -26,7 +28,7 @@ package li.pitschmann.knx.link.exceptions;
  */
 public class KnxNoTunnelingException extends KnxException {
 
-    public KnxNoTunnelingException(final String message) {
+    public KnxNoTunnelingException(final @Nullable String message) {
         super(message);
     }
 

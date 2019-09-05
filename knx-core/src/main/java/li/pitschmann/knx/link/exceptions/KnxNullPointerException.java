@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import javax.annotation.Nullable;
+
 /**
  * {@link NullPointerException} for KNX
  *
@@ -30,7 +32,7 @@ public final class KnxNullPointerException extends KnxException {
      *
      * @param argumentName
      */
-    public KnxNullPointerException(final String argumentName) {
+    public KnxNullPointerException(final @Nullable String argumentName) {
         super(String.format("Argument '%s' is null.", argumentName));
     }
 }
