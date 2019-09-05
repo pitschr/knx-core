@@ -121,7 +121,7 @@ public class KnxStatusDataTest {
                         "timestamp=%s, " +
                         "sourceAddress=%s, " +
                         "apci=%s, " +
-                        "apciData=0x44 22 33" +
+                        "apciData=[68, 34, 51] (0x44 22 33)" +
                         "}", statusData2.getTimestamp(), cemi2.getSourceAddress(), cemi2.getApci()));
     }
 }
