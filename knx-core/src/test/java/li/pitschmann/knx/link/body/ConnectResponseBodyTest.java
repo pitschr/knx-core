@@ -49,12 +49,12 @@ public class ConnectResponseBodyTest {
         this.channelId = 7;
         this.status = Status.E_NO_ERROR;
         this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(3, 3, 3, 3), 3671);
-        this.crd = ConnectionResponseData.create(IndividualAddress.of(15, 15, 242));
+        this.crd = ConnectionResponseData.of(IndividualAddress.of(15, 15, 242));
     }
 
     /**
-     * Tests the {@link ConnectResponseBody#create(int, Status, HPAI, ConnectionResponseData)} and
-     * {@link ConnectResponseBody#valueOf(byte[])} methods.
+     * Tests the {@link ConnectResponseBody#of(int, Status, HPAI, ConnectionResponseData)} and
+     * {@link ConnectResponseBody#of(byte[])} methods.
      *
      * <pre>
      * 	KNX/IP
@@ -80,16 +80,18 @@ public class ConnectResponseBodyTest {
     @Test
     public void validCases() {
         // create
-        final var body = ConnectResponseBody.create(this.channelId, this.status, this.dataEndpoint, this.crd);
+        final var body = ConnectResponseBody.of(this.channelId, this.status, this.dataEndpoint, this.crd);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(this.channelId);
         assertThat(body.getStatus()).isEqualTo(this.status);
         assertThat(body.getDataEndpoint()).isEqualTo(this.dataEndpoint);
         assertThat(body.getConnectionResponseData()).isEqualTo(this.crd);
 
-        // compare raw data with valueOf(byte[])
+        // create by bytes
         final var bodyByBytes = ConnectResponseBody
-                .valueOf(new byte[]{0x07, 0x00, 0x08, 0x01, 0x03, 0x03, 0x03, 0x03, 0x0e, 0x57, 0x04, 0x04, (byte) 0xff, (byte) 0xf2});
+                .of(new byte[]{0x07, 0x00, 0x08, 0x01, 0x03, 0x03, 0x03, 0x03, 0x0e, 0x57, 0x04, 0x04, (byte) 0xff, (byte) 0xf2});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -101,15 +103,17 @@ public class ConnectResponseBodyTest {
     @Test
     public void validCaseErrorStatus() {
         // create
-        final var body = ConnectResponseBody.create(10, Status.E_NO_MORE_CONNECTIONS, null, null);
+        final var body = ConnectResponseBody.of(10, Status.E_NO_MORE_CONNECTIONS, null, null);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
         assertThat(body.getChannelId()).isEqualTo(0x0A);
         assertThat(body.getStatus()).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
         assertThat(body.getDataEndpoint()).isNull();
         assertThat(body.getConnectionResponseData()).isNull();
 
-        // compare raw data with valueOf(byte[])
-        final var bodyByBytes = ConnectResponseBody.valueOf(new byte[]{0x0A, 0x24});
+        // create by bytes
+        final var bodyByBytes = ConnectResponseBody.of(new byte[]{0x0A, 0x24});
+
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
 
         // toString
@@ -124,22 +128,22 @@ public class ConnectResponseBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> ConnectResponseBody.create(this.channelId, null, this.dataEndpoint, this.crd))
+        assertThatThrownBy(() -> ConnectResponseBody.of(this.channelId, null, this.dataEndpoint, this.crd))
                 .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("status");
-        assertThatThrownBy(() -> ConnectResponseBody.create(this.channelId, this.status, null, this.crd)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ConnectResponseBody.of(this.channelId, this.status, null, this.crd)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("dataEndpoint");
-        assertThatThrownBy(() -> ConnectResponseBody.create(this.channelId, this.status, this.dataEndpoint, null))
+        assertThatThrownBy(() -> ConnectResponseBody.of(this.channelId, this.status, this.dataEndpoint, null))
                 .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crd");
 
         // invalid channel id
-        assertThatThrownBy(() -> ConnectResponseBody.create(-1, this.status, this.dataEndpoint, this.crd))
+        assertThatThrownBy(() -> ConnectResponseBody.of(-1, this.status, this.dataEndpoint, this.crd))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("channelId");
-        assertThatThrownBy(() -> ConnectResponseBody.create(0xFF + 1, this.status, this.dataEndpoint, this.crd))
+        assertThatThrownBy(() -> ConnectResponseBody.of(0xFF + 1, this.status, this.dataEndpoint, this.crd))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("channelId");
 
         // invalid raw data length
-        assertThatThrownBy(() -> ConnectResponseBody.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ConnectResponseBody.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> ConnectResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

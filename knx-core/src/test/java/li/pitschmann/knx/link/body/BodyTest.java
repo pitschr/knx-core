@@ -46,7 +46,7 @@ public class BodyTest {
         assertThat(body.getRawData(false)).containsExactly(bodyBytes);
 
         // true -> should return the byte array of header and body
-        final var headerBytes = Header.create(body).getRawData();
+        final var headerBytes = Header.of(body).getRawData();
         assertThat(body.getRawData(true)).startsWith(headerBytes);
         assertThat(body.getRawData(true)).endsWith(body.getRawData());
         assertThat(body.getRawData(true)).hasSize(headerBytes.length + bodyBytes.length);

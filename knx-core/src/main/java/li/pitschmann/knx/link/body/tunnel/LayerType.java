@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.KnxByteEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -55,6 +56,14 @@ public enum LayerType implements KnxByteEnum {
         this.friendlyName = friendlyName;
     }
 
+    /**
+     * A matching {@link LayerType} for the given {@code code}
+     *
+     * @param code
+     * @return existing {@link LayerType}, or {@link KnxEnumNotFoundException} if no {@link LayerType}
+     * for given {@code code} exists
+     */
+    @Nonnull
     public static LayerType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(LayerType.class, code));
@@ -65,11 +74,13 @@ public enum LayerType implements KnxByteEnum {
         return this.code;
     }
 
+    @Nonnull
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

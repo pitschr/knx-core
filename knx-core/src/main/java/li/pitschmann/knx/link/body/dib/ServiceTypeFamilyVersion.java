@@ -20,20 +20,24 @@ package li.pitschmann.knx.link.body.dib;
 
 import com.google.common.base.MoreObjects;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 /**
  * Service Type Family and Version. Designed to be used for {@link SupportedDeviceFamiliesDIB}.
  *
  * @author PITSCHR
  */
-public class ServiceTypeFamilyVersion {
+public final class ServiceTypeFamilyVersion {
     private final ServiceTypeFamily family;
     private int version;
 
-    public ServiceTypeFamilyVersion(final ServiceTypeFamily family, final int version) {
-        this.family = family;
+    public ServiceTypeFamilyVersion(final @Nonnull ServiceTypeFamily family, final int version) {
+        this.family = Objects.requireNonNull(family);
         this.version = version;
     }
 
+    @Nonnull
     public ServiceTypeFamily getFamily() {
         return this.family;
     }
@@ -42,6 +46,7 @@ public class ServiceTypeFamilyVersion {
         return this.version;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

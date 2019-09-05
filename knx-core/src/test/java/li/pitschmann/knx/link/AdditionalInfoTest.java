@@ -42,12 +42,12 @@ public final class AdditionalInfoTest {
         assertThat(addInfoByCreate.getLength()).isEqualTo(0);
         assertThat(addInfoByCreate.getTotalLength()).isEqualTo(1);
 
-        // valueOf
-        final var addInfoByValueOf = AdditionalInfo.valueOf(new byte[]{0x00});
+        // create by bytes
+        final var addInfoByValueOf = AdditionalInfo.of(new byte[]{0x00});
         assertThat(addInfoByValueOf.getLength()).isEqualTo(0);
         assertThat(addInfoByValueOf.getTotalLength()).isEqualTo(addInfoByCreate.getRawData().length);
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(addInfoByCreate.getRawData()).isEqualTo(addInfoByValueOf.getRawData());
 
         // with raw data
@@ -62,9 +62,9 @@ public final class AdditionalInfoTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> AdditionalInfo.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addInfoRawData");
+        assertThatThrownBy(() -> AdditionalInfo.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addInfoRawData");
 
         // additional info are not supported yet
-        assertThatThrownBy(() -> AdditionalInfo.valueOf(new byte[]{0x01, 0x00})).isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> AdditionalInfo.of(new byte[]{0x01, 0x00})).isInstanceOf(UnsupportedOperationException.class);
     }
 }

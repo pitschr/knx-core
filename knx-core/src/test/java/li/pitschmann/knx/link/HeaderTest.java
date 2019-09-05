@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link;
 
+import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.Status;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
@@ -71,9 +72,9 @@ public final class HeaderTest {
      */
     @Test
     public void testHeadersWithBody() {
-        final var body = TunnelingAckBody.create(0x33, 0x66, Status.E_TUNNELING_LAYER);
-        final var headerByBody = Header.create(body);
-        final var headerByCreate = Header.create(ServiceType.TUNNELING_ACK, Header.KNXNET_HEADER_LENGTH + body.getLength());
+        final var body = TunnelingAckBody.of(0x33, 0x66, Status.E_TUNNELING_LAYER);
+        final var headerByBody = Header.of(body);
+        final var headerByCreate = Header.of(ServiceType.TUNNELING_ACK, Header.KNXNET_HEADER_LENGTH + body.getLength());
 
         assertThat(headerByBody.getRawData()).containsExactly(headerByCreate.getRawData());
     }
@@ -84,36 +85,36 @@ public final class HeaderTest {
     @Test
     public void testHeadersInvalid() {
         // test with no service type
-        assertThatThrownBy(() -> Header.create(null, -1)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("serviceType");
+        assertThatThrownBy(() -> Header.of(null, -1)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("serviceType");
         // test with no body
-        assertThatThrownBy(() -> Header.create(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("body");
+        assertThatThrownBy(() -> Header.of((Body)null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("body");
         // test with illegal total length (underflow)
-        assertThatThrownBy(() -> Header.create(ServiceType.CONNECT_REQUEST, -1)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> Header.of(ServiceType.CONNECT_REQUEST, -1)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("totalLength");
         // test with illegal total length (overflow)
-        assertThatThrownBy(() -> Header.create(ServiceType.CONNECT_REQUEST, 0xFFFF + 1)).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> Header.of(ServiceType.CONNECT_REQUEST, 0xFFFF + 1)).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("totalLength");
 
         // test with illegal bytes
-        assertThatThrownBy(() -> Header.valueOf(null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> Header.of((byte[])null)).isInstanceOf(KnxNullPointerException.class);
         // test with empty bytes
-        assertThatThrownBy(() -> Header.valueOf(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> Header.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class);
         // test with small header size ( < 6 bytes)
-        assertThatThrownBy(() -> Header.valueOf(new byte[1])).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> Header.of(new byte[1])).isInstanceOf(KnxNumberOutOfRangeException.class);
         // test with large header size ( > 6 bytes)
-        assertThatThrownBy(() -> Header.valueOf(new byte[10])).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> Header.of(new byte[10])).isInstanceOf(KnxNumberOutOfRangeException.class);
         // test with exact header size, but invalid header length (1st byte = 0x00)
-        assertThatThrownBy(() -> Header.valueOf(new byte[6])).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> Header.of(new byte[6])).isInstanceOf(KnxNumberOutOfRangeException.class);
         // test with exact header size, but invalid protocol version (2nd byte = 0x00)
-        assertThatThrownBy(() -> Header.valueOf(new byte[]{Header.KNXNET_HEADER_LENGTH, 0x00, 0x00, 0x00, 0x00, 0x00}))
+        assertThatThrownBy(() -> Header.of(new byte[]{Header.KNXNET_HEADER_LENGTH, 0x00, 0x00, 0x00, 0x00, 0x00}))
                 .isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
     /**
      * Asserts the header if {@link ServiceType} and {@code totalLength} are correctly parsed for
      * <ul>
-     * <li>{@link Header#create(ServiceType, int)}</li>
-     * <li>{@link Header#valueOf(byte[])}</li>
+     * <li>{@link Header#of(ServiceType, int)}</li>
+     * <li>{@link Header#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters. This method will also test
@@ -124,9 +125,9 @@ public final class HeaderTest {
      * @param bytes
      */
     private void assertHeader(final ServiceType serviceType, final int totalLength, final byte[] bytes) {
-        final var testByCreate = Header.create(serviceType, totalLength);
-        final var testByCreateRawData = Header.valueOf(testByCreate.getRawData());
-        final var testByValueOfRawData = Header.valueOf(bytes);
+        final var testByCreate = Header.of(serviceType, totalLength);
+        final var testByCreateRawData = Header.of(testByCreate.getRawData());
+        final var testByValueOfRawData = Header.of(bytes);
 
         // KNX Header Length + Protocol Version are hard-coded
         assertThat(testByCreate.getLength()).isEqualTo(Header.KNXNET_HEADER_LENGTH);

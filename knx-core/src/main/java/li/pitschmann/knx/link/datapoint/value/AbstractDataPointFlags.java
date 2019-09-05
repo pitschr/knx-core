@@ -39,7 +39,7 @@ abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extend
 
     protected AbstractDataPointFlags(final @Nonnull T dpt, final @Nonnull byte[] bytes) {
         super(dpt);
-        this.bytes = bytes;
+        this.bytes = Objects.requireNonNull(bytes);
     }
 
     @Nonnull

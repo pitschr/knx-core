@@ -20,6 +20,8 @@ package li.pitschmann.utils;
 
 import com.google.common.base.Preconditions;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -57,7 +59,7 @@ public final class Bytes {
      * @param bytes
      * @return signed short, between {@link Short#MIN_VALUE} and {@link Short#MAX_VALUE}
      */
-    public static short toSignedShort(byte[] bytes) {
+    public static short toSignedShort(final @Nullable byte[] bytes) {
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
         return (short) (adjustedBytes[0] << 8 | adjustedBytes[1] & 0xFF);
     }
@@ -83,7 +85,10 @@ public final class Bytes {
      * @param bytes
      * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
      */
-    public static short toUnsignedShort(byte[] bytes) {
+    public static short toUnsignedShort(final @Nullable byte[] bytes) {
+        if (bytes==null) {
+            return 0;
+        }
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
         // max size of short is Short#MAX_VALUE
         Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
@@ -143,7 +148,10 @@ public final class Bytes {
      * @param bytes
      * @return unsigned int, between {@code 0} and {@link Integer#MAX_VALUE}
      */
-    public static int toUnsignedInt(byte[] bytes) {
+    public static int toUnsignedInt(final @Nullable byte[] bytes) {
+        if (bytes == null) {
+            return 0;
+        }
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 4);
         return toUnsignedInt(adjustedBytes[0], adjustedBytes[1], adjustedBytes[2], adjustedBytes[3]);
     }
@@ -246,7 +254,7 @@ public final class Bytes {
      * @param bytes
      * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
      */
-    public static long toUnsignedLong(byte[] bytes) {
+    public static long toUnsignedLong(final @Nullable byte[] bytes) {
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 8);
         // max size of long is Long#MAX_VALUE
         Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
@@ -263,7 +271,8 @@ public final class Bytes {
      * @param moreBytes
      * @return byte array
      */
-    private static byte[] concatByteToByteArray(byte b, byte[] moreBytes) {
+    @Nonnull
+    private static byte[] concatByteToByteArray(final byte b, final @Nonnull byte[] moreBytes) {
         final var newByteArray = new byte[moreBytes.length + 1];
         newByteArray[0] = b;
         System.arraycopy(moreBytes, 0, newByteArray, 1, moreBytes.length);
@@ -278,7 +287,8 @@ public final class Bytes {
      * @param capacity
      * @return byte array
      */
-    public static byte[] toByteArrayWithCapacity(byte[] bytes, int capacity) {
+    @Nonnull
+    public static byte[] toByteArrayWithCapacity(final @Nullable byte[] bytes, int capacity) {
         if (bytes == null) {
             return new byte[capacity];
         } else if (bytes.length == capacity) {
@@ -307,7 +317,10 @@ public final class Bytes {
      * @param direction     the direction how the template array should be filled
      * @return byte array
      */
-    public static byte[] fillByteArray(byte[] templateArray, byte[] bytes, FillDirection direction) {
+    @Nonnull
+    public static byte[] fillByteArray(final @Nonnull byte[] templateArray,
+                                       final @Nonnull byte[] bytes,
+                                       final @Nonnull FillDirection direction) {
         Preconditions.checkArgument(bytes.length <= templateArray.length, "Length of bytes cannot exceed the template array capacity.");
 
         if (bytes.length == templateArray.length) {
@@ -331,7 +344,8 @@ public final class Bytes {
      * @param bytes
      * @return trimmed byte array
      */
-    public static byte[] trimRight(final byte[] bytes) {
+    @Nonnull
+    public static byte[] trimRight(final @Nonnull byte[] bytes) {
         return trimRight(bytes, (byte) 0x00);
     }
 
@@ -342,7 +356,8 @@ public final class Bytes {
      * @param byteToRemoved byte to be removed
      * @return trimmed byte array
      */
-    public static byte[] trimRight(final byte[] bytes, final byte byteToRemoved) {
+    @Nonnull
+    public static byte[] trimRight(final @Nonnull byte[] bytes, final byte byteToRemoved) {
         // count occurrence of bytes to be removed
         var count = 0;
         for (var i = bytes.length - 1; i >= 0; i--) {
@@ -363,7 +378,8 @@ public final class Bytes {
      * @param newCapacity
      * @return padded byte array
      */
-    public static byte[] padRight(final byte[] bytes, final byte b, final int newCapacity) {
+    @Nonnull
+    public static byte[] padRight(final @Nonnull byte[] bytes, final byte b, final int newCapacity) {
         Preconditions.checkArgument(bytes.length <= newCapacity,
                 "Capacity cannot be smaller than " + bytes.length + " (actual: " + newCapacity + ")");
 
@@ -394,8 +410,8 @@ public final class Bytes {
      * @param hexString
      * @return bytes array
      */
-    public static byte[] toByteArray(final String hexString) {
-        Preconditions.checkNotNull(hexString);
+    @Nonnull
+    public static byte[] toByteArray(final @Nonnull String hexString) {
         if (hexString.isEmpty()) {
             return new byte[0];
         }
@@ -479,6 +495,7 @@ public final class Bytes {
      * @param bits the size of bits must be divisible by 8
      * @return byte array
      */
+    @Nonnull
     public static byte[] toByteArray(final boolean... bits) {
         if (bits.length == 8) {
             return new byte[]{toByte(bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7])};
@@ -540,7 +557,8 @@ public final class Bytes {
      * @param arrays zero or more {@code byte} arrays
      * @return a single array containing all the values from the source arrays, in order
      */
-    public static byte[] concat(final byte[]... arrays) {
+    @Nonnull
+    public static byte[] concat(final @Nonnull byte[]... arrays) {
         return com.google.common.primitives.Bytes.concat(arrays);
     }
 

@@ -31,9 +31,11 @@ import li.pitschmann.knx.link.exceptions.KnxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,7 +94,7 @@ public final class DataPointTypeRegistry {
      *
      * @param dataPointTypeClass
      */
-    public static void registerDataPointType(final Class<?> dataPointTypeClass) {
+    public static void registerDataPointType(final @Nonnull Class<?> dataPointTypeClass) {
         log.debug("Register Data Point Type Class: {}", dataPointTypeClass);
 
         // find data point types by enumeration classes (e.g. DPT20, DPT23, ...)
@@ -110,7 +112,7 @@ public final class DataPointTypeRegistry {
      *
      * @param clazz Class must be an enumeration class and it must implements the {@link DataPointTypeEnum} interface
      */
-    private static <T extends Enum<T> & DataPointTypeEnum<T>> void registerDataPointTypeEnums(final Class<?> clazz) {
+    private static <T extends Enum<T> & DataPointTypeEnum<T>> void registerDataPointTypeEnums(final @Nonnull Class<?> clazz) {
         // we can cast safely here
         @SuppressWarnings("unchecked") final var enumInnerClass = (Class<T>) clazz;
 
@@ -151,7 +153,7 @@ public final class DataPointTypeRegistry {
      *
      * @param clazz
      */
-    private static void registerDataPointTypes(final Class<?> clazz) {
+    private static void registerDataPointTypes(final @Nonnull Class<?> clazz) {
         var first = true;
         // iterate for all public/static/final fields
         for (final var field : Stream
@@ -191,10 +193,11 @@ public final class DataPointTypeRegistry {
      * Returns the data point type by given enumeration field
      *
      * @param e
-     * @return
+     * @return {@link DPTEnumValue}
      */
-    public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
-        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(e);
+    @Nonnull
+    public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final @Nonnull Enum<T> e) {
+        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
         if (dpt == null) {
             throw new KnxEnumNotFoundException("Could not find enum data point type for: " + e);
         }
@@ -207,8 +210,9 @@ public final class DataPointTypeRegistry {
      * @param id
      * @return {@link DataPointType}
      */
-    public static <T extends DataPointType> T getDataPointType(final String id) {
-        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(id);
+    @Nonnull
+    public static <T extends DataPointType> T getDataPointType(final @Nonnull String id) {
+        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);
         }

@@ -41,7 +41,7 @@ public final class AbstractDIBTest {
      * Tests {@link AbstractDIB}
      */
     @Test
-    public void valueOf() {
+    public void validCases() {
         // new instance
         final var abstractDIB = new TestDIB(BYTES);
 

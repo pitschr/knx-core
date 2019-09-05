@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +60,7 @@ public class DefaultOutboxQueueTest {
         final var body = KnxBody.TUNNELING_REQUEST_BODY;
 
         // add body to outbox queue
-        final var queue = new DefaultOutboxQueue(clientMock, null); // channel is not relevant here
+        final var queue = new DefaultOutboxQueue(clientMock, channelMock);
         queue.send(body);
 
         // execute (this will pick up the body from outbox queue and write to channel)
@@ -114,7 +115,7 @@ public class DefaultOutboxQueueTest {
     @Test
     @DisplayName("Test for interest ops")
     public void testInterestOpsAndKeyValidity() {
-        final var queue = new DefaultOutboxQueue(null, null); // args are not relevant for this test
+        final var queue = new DefaultOutboxQueue(mock(InternalKnxClient.class), mock(SelectableChannel.class));
 
         // verify if interest op is WRITE only
         assertThat(queue.interestOps()).isEqualTo(SelectionKey.OP_WRITE);
@@ -126,7 +127,7 @@ public class DefaultOutboxQueueTest {
     @Test
     @DisplayName("Test for key validity")
     public void testKeyValidity() {
-        final var queue = new DefaultOutboxQueue(null, null); // args are not relevant for this test
+        final var queue = new DefaultOutboxQueue(mock(InternalKnxClient.class), mock(SelectableChannel.class));
 
         // verify validity of the key (should be 'valid' + 'writable')
         final var selectionKeyMock = mock(SelectionKey.class);

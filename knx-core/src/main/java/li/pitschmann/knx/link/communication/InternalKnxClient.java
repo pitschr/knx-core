@@ -68,6 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
@@ -111,10 +112,10 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @param config an instance of {@link Configuration}
      */
-    InternalKnxClient(final Configuration config) {
+    InternalKnxClient(final @Nonnull Configuration config) {
         log.trace("Abstract KNX Client constructor");
         // configuration
-        this.config = config;
+        this.config = Objects.requireNonNull(config);
 
         // executors with fixed threads for communication and subscription
         this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
@@ -156,16 +157,19 @@ public final class InternalKnxClient implements KnxClient {
         }
     }
 
+    @Nonnull
     @Override
     public final Configuration getConfig() {
         return this.config;
     }
 
+    @Nonnull
     @Override
     public KnxStatisticImpl getStatistic() {
         return this.statistics;
     }
 
+    @Nonnull
     @Override
     public KnxStatusPoolImpl getStatusPool() {
         return this.statusPool;
@@ -276,6 +280,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @return {@link DiscoveryChannelCommunicator}
      */
+    @Nonnull
     private DiscoveryChannelCommunicator newDiscoveryChannelCommunicator() {
         final var communicator = new DiscoveryChannelCommunicator(this);
         communicator.subscribe(new SearchResponseTask(this));
@@ -293,6 +298,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @return {@link DescriptionChannelCommunicator}
      */
+    @Nonnull
     private DescriptionChannelCommunicator newDescriptionChannelCommunicator() {
         final var communicator = new DescriptionChannelCommunicator(this);
         communicator.subscribe(new DescriptionResponseTask(this));
@@ -313,6 +319,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @return unmodifiable list of subscribers
      */
+    @Nonnull
     private List<Flow.Subscriber<Body>> subscribersForControlChannel() {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
         subscribers.add(new ConnectResponseTask(this));
@@ -334,6 +341,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @return unmodifiable list of subscribers
      */
+    @Nonnull
     private List<Flow.Subscriber<Body>> subscribersForDataChannel() {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
         subscribers.add(new TunnelingRequestTask(this));
@@ -349,6 +357,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @return {@link ConnectionStateMonitor}
      */
+    @Nonnull
     private ConnectionStateMonitor createConnectionStateMonitor() {
         return new ConnectionStateMonitor(this);
     }
@@ -391,7 +400,7 @@ public final class InternalKnxClient implements KnxClient {
             if (this.channelId > 0 && !this.eventPool.disconnectEvent().hasRequest()) {
                 log.trace("Control channel is still connected. Send disconnect request.");
                 // create body
-                final var requestBody = DisconnectRequestBody.create(this.channelId, this.controlHPAI);
+                final var requestBody = DisconnectRequestBody.of(this.channelId, this.controlHPAI);
                 try {
                     final var responseBody = this.send(requestBody, config.getTimeoutDisconnectRequest()).get();
                     if (responseBody != null) {
@@ -431,6 +440,7 @@ public final class InternalKnxClient implements KnxClient {
         return this.dataHPAI;
     }
 
+    @Nonnull
     public final KnxEventPool getEventPool() {
         return this.eventPool;
     }
@@ -449,7 +459,8 @@ public final class InternalKnxClient implements KnxClient {
      * @param body
      * @return responsible channel communicator, otherwise {@link IllegalArgumentException} if no suitable communicator was found
      */
-    private AbstractChannelCommunicator<SelectableChannel> getChannelCommunicator(final Body body) {
+    @Nonnull
+    private AbstractChannelCommunicator<SelectableChannel> getChannelCommunicator(final @Nonnull Body body) {
         for (final var channelCommunicator : channelCommunicators) {
             if (channelCommunicator.isCompatible(body)) {
                 return channelCommunicator;
@@ -463,7 +474,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @param body any KNX body
      */
-    public void notifyPluginsIncomingBody(final Body body) {
+    public void notifyPluginsIncomingBody(final @Nonnull Body body) {
         this.statistics.onIncomingBody(body);
         this.notifyPlugins(body, this.config.getObserverPlugins(), ObserverPlugin::onIncomingBody);
     }
@@ -473,7 +484,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @param body any KNX body
      */
-    public void notifyPluginsOutgoingBody(final Body body) {
+    public void notifyPluginsOutgoingBody(final @Nonnull Body body) {
         this.statistics.onOutgoingBody(body);
         this.notifyPlugins(body, this.config.getObserverPlugins(), ObserverPlugin::onOutgoingBody);
     }
@@ -483,7 +494,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @param throwable an instance of {@link Throwable} to be sent to plug-ins
      */
-    public void notifyPluginsError(final Throwable throwable) {
+    public void notifyPluginsError(final @Nonnull Throwable throwable) {
         this.statistics.onError(throwable);
         this.notifyPlugins(throwable, this.config.getObserverPlugins(), ObserverPlugin::onError);
     }
@@ -495,7 +506,9 @@ public final class InternalKnxClient implements KnxClient {
      * @param plugins  list of plug-ins to be notified
      * @param consumer consumer defining which method should be called
      */
-    protected <O, P extends Plugin> void notifyPlugins(final O obj, final List<P> plugins, BiConsumer<P, O> consumer) {
+    protected <O, P extends Plugin> void notifyPlugins(final @Nonnull O obj,
+                                                       final @Nonnull List<P> plugins,
+                                                       final @Nonnull BiConsumer<P, O> consumer) {
         if (this.pluginExecutor.isShutdown()) {
             log.warn("Could not send to plug-ins because plugin executor is shutdown already: {}",
                     obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
@@ -523,7 +536,7 @@ public final class InternalKnxClient implements KnxClient {
      * @return {@code true} if channel id is valid for current KNX client, otherwise {@link KnxWrongChannelIdException} is thrown.
      * @throws KnxWrongChannelIdException when channel id is not valid
      */
-    public final boolean verifyChannelId(final Body body) {
+    public final boolean verifyChannelId(final @Nonnull Body body) {
         // if body is channel id aware then verify the channel id, otherwise skip it
         if (ChannelIdAware.class.isAssignableFrom(body.getClass())) {
             final var channelIdAwareBody = (ChannelIdAware) body;
@@ -545,8 +558,9 @@ public final class InternalKnxClient implements KnxClient {
      * Returns the description response body from KNX Net/IP device containing device information, supported device
      * capabilities.
      *
-     * @return {@link DescriptionResponseBody}
+     * @return {@link DescriptionResponseBody}, otherwise {@link KnxDescriptionNotReceivedException} will be thrown
      */
+    @Nonnull
     private DescriptionResponseBody fetchDescriptionFromKNX() {
         log.trace("Method 'fetchDescriptionFromKNX()' called.");
 
@@ -559,7 +573,7 @@ public final class InternalKnxClient implements KnxClient {
         es.shutdown();
 
         // send description request
-        final var request = DescriptionRequestBody.create();
+        final var request = DescriptionRequestBody.useDefault();
         log.debug("Request for description: {}", request);
 
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
@@ -580,8 +594,10 @@ public final class InternalKnxClient implements KnxClient {
      * Returns the discovery response body containing available KNX Net/IP devices including device information,
      * supported device capabilities.
      *
-     * @return First {@link SearchResponseBody} (subsequent should be requested by {@link KnxEventPool})
+     * @return First {@link SearchResponseBody} (subsequent should be requested by {@link KnxEventPool}),
+     *          otherwise {@link KnxDiscoveryNotReceivedException} will be thrown
      */
+    @Nonnull
     private SearchResponseBody fetchDiscoveryFromKNX() {
         log.trace("Method 'fetchDiscoveryFromKNX()' called.");
 
@@ -594,7 +610,7 @@ public final class InternalKnxClient implements KnxClient {
         es.shutdown();
 
         // send search request
-        final var requestBody = SearchRequestBody.create(HPAI.of(communicator.getChannel()));
+        final var requestBody = SearchRequestBody.of(HPAI.of(communicator.getChannel()));
         log.debug("Request for search: {}", requestBody);
 
         // It opens a new channel for discovery communication and processing. Afterwards it will be shutdown.
@@ -622,14 +638,14 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Method 'fetchChannelIdFromKNX()' called.");
 
         // create connect request and send it
-        final var cri = ConnectionRequestInformation.create();
-        final var requestBody = ConnectRequestBody.create(this.controlHPAI, this.dataHPAI, cri);
+        final var cri = ConnectionRequestInformation.useDefault();
+        final var requestBody = ConnectRequestBody.of(this.controlHPAI, this.dataHPAI, cri);
         log.debug("Request for connect: {}", requestBody);
 
         ConnectResponseBody responseBody = null;
         try {
             responseBody = this.<ConnectResponseBody>send(requestBody, config.getTimeoutConnectRequest()).get();
-            // check status
+            // check status if we got response with NO_ERROR status
             Preconditions.checkState(responseBody != null && responseBody.getStatus() == Status.E_NO_ERROR, responseBody);
             return responseBody.getChannelId();
         } catch (final Exception ex) {
@@ -639,12 +655,13 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     @Override
-    public final void send(final Body body) {
+    public final void send(final @Nonnull Body body) {
         this.getChannelCommunicator(body).send(body);
     }
 
+    @Nonnull
     @Override
-    public final <U extends ResponseBody> CompletableFuture<U> send(final RequestBody requestBody, final long msTimeout) {
+    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
     }
 }

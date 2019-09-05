@@ -219,6 +219,25 @@ public class KnxStatusPoolTest {
     }
 
     /**
+     * Test {@link KnxStatusPoolImpl#copyStatusMap()}
+     */
+    @Test
+    @DisplayName("Test #copyStatusMap() method")
+    public void testCopyStatusMap() {
+        final var pool = new KnxStatusPoolImpl();
+
+        pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
+
+        // call this method twice times
+        final var map1 = pool.copyStatusMap();
+        final var map2 = pool.copyStatusMap();
+
+
+        assertThat(map1).isNotSameAs(map2); // the object reference should not be same
+        assertThat(map1).isEqualTo(map2); // but entry should be same
+    }
+
+    /**
      * Test {@link KnxStatusPool#toString()}
      */
     @Test

@@ -76,23 +76,24 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     private final int sequence;
     private final CEMI cemi;
 
-    private TunnelingRequestBody(final byte[] bytes) {
+    private TunnelingRequestBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.length = Bytes.toUnsignedInt(bytes[0]);
         this.channelId = Bytes.toUnsignedInt(bytes[1]);
         this.sequence = Bytes.toUnsignedInt(bytes[2]);
         // [3] -> reserved
-        this.cemi = CEMI.valueOf(Arrays.copyOfRange(bytes, 4, bytes.length));
+        this.cemi = CEMI.of(Arrays.copyOfRange(bytes, 4, bytes.length));
     }
 
     /**
      * Builds a new {@link TunnelingRequestBody} instance
      *
      * @param bytes complete byte array for {@link TunnelingRequestBody}
-     * @return immutable {@link TunnelingRequestBody}
+     * @return a new immutable {@link TunnelingRequestBody}
      */
-    public static TunnelingRequestBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static TunnelingRequestBody of(final @Nonnull byte[] bytes) {
         return new TunnelingRequestBody(bytes);
     }
 
@@ -102,9 +103,10 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @param channelId
      * @param sequence
      * @param cemi
-     * @return immutable {@link TunnelingRequestBody}
+     * @return a new immutable {@link TunnelingRequestBody}
      */
-    public static TunnelingRequestBody create(final int channelId, final int sequence, final CEMI cemi) {
+    @Nonnull
+    public static TunnelingRequestBody of(final int channelId, final int sequence, final @Nonnull CEMI cemi) {
         // validate
         if (cemi == null) {
             throw new KnxNullPointerException("cemi");
@@ -124,11 +126,11 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         bytes[3] = 0x00; // reserved
         System.arraycopy(cemiAsBytes, 0, bytes, STRUCTURE_LENGTH, cemiAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
@@ -139,8 +141,8 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.TUNNELING_REQUEST;
     }
@@ -158,10 +160,12 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         return this.sequence;
     }
 
+    @Nonnull
     public CEMI getCEMI() {
         return this.cemi;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

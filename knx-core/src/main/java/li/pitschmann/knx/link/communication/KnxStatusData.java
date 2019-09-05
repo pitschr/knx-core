@@ -25,7 +25,9 @@ import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.utils.ByteFormatter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Instant;
+import java.util.Arrays;
 
 /**
  * Status data for KNX Address. This class preserves the immutability about KNX data,
@@ -45,7 +47,7 @@ public final class KnxStatusData {
      *
      * @param cemi an instance of CEMI
      */
-    public KnxStatusData(final CEMI cemi) {
+    public KnxStatusData(final @Nonnull CEMI cemi) {
         this(cemi.getSourceAddress(), cemi.getApci(), cemi.getApciData());
     }
 
@@ -56,10 +58,10 @@ public final class KnxStatusData {
      * @param apci          the purpose why it was set
      * @param apciData      the value in byte array
      */
-    public KnxStatusData(final KnxAddress sourceAddress, final APCI apci, final byte[] apciData) {
+    public KnxStatusData(final @Nonnull KnxAddress sourceAddress, final @Nonnull APCI apci, final @Nullable byte[] apciData) {
         this.timestamp = Instant.now();
         this.apci = apci;
-        this.apciData = apciData.clone(); // defensive copy
+        this.apciData = apciData == null ? new byte[0] : apciData.clone(); // defensive copy
         this.sourceAddress = sourceAddress;
         this.dirty = false; // reset the dirty flag
     }
@@ -69,8 +71,8 @@ public final class KnxStatusData {
      *
      * @return The {@link Instant} when this object has been created
      */
-    public @Nonnull
-    Instant getTimestamp() {
+    @Nonnull
+    public Instant getTimestamp() {
         return this.timestamp;
     }
 
@@ -79,8 +81,8 @@ public final class KnxStatusData {
      *
      * @return A {@link KnxAddress}
      */
-    public @Nonnull
-    KnxAddress getSourceAddress() {
+    @Nonnull
+    public KnxAddress getSourceAddress() {
         return this.sourceAddress;
     }
 
@@ -89,8 +91,8 @@ public final class KnxStatusData {
      *
      * @return An {@link APCI}
      */
-    public @Nonnull
-    APCI getApci() {
+    @Nonnull
+    public APCI getApci() {
         return this.apci;
     }
 
@@ -99,8 +101,8 @@ public final class KnxStatusData {
      *
      * @return byte array with APCI data
      */
-    public @Nonnull
-    byte[] getApciData() {
+    @Nonnull
+    public byte[] getApciData() {
         return this.apciData.clone(); // defensive copy
     }
 
@@ -122,6 +124,7 @@ public final class KnxStatusData {
         this.dirty = dirty;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -130,7 +133,7 @@ public final class KnxStatusData {
                 .add("timestamp", this.timestamp)
                 .add("sourceAddress", this.sourceAddress)
                 .add("apci", this.apci)
-                .add("apciData", ByteFormatter.formatHexAsString(this.apciData))
+                .add("apciData", Arrays.toString(this.apciData) + " (" + ByteFormatter.formatHexAsString(this.apciData) + ")")
                 .toString();
         // @formatter:on
     }

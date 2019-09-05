@@ -26,6 +26,7 @@ import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,7 +78,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
     private static final int STRUCTURE_MAX_LENGTH = 0xFE;
     private final List<ServiceTypeFamilyVersion> serviceFamilies;
 
-    private SupportedDeviceFamiliesDIB(byte[] rawData) {
+    private SupportedDeviceFamiliesDIB(final @Nonnull byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -96,14 +97,15 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
      * Builds a new {@link SupportedDeviceFamiliesDIB} instance
      *
      * @param bytes complete byte array for {@link SupportedDeviceFamiliesDIB}
-     * @return immutable {@link SupportedDeviceFamiliesDIB}
+     * @return a new immutable {@link SupportedDeviceFamiliesDIB}
      */
-    public static SupportedDeviceFamiliesDIB valueOf(final byte[] bytes) {
+    @Nonnull
+    public static SupportedDeviceFamiliesDIB of(final @Nonnull byte[] bytes) {
         return new SupportedDeviceFamiliesDIB(bytes);
     }
 
     @Override
-    protected void validate(byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
@@ -114,10 +116,12 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         }
     }
 
+    @Nonnull
     public List<ServiceTypeFamilyVersion> getServiceFamilies() {
         return this.serviceFamilies;
     }
 
+    @Nonnull
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

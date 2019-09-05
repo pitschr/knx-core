@@ -19,8 +19,10 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -95,22 +97,29 @@ public final class XmlGroupRange {
         this.rangeStart = rangeStart;
     }
 
+    @Nonnull
     public List<XmlGroupRange> getChildGroupRanges() {
         return childGroupRanges;
     }
 
-    public void setChildGroupRanges(List<XmlGroupRange> childGroupRanges) {
-        this.childGroupRanges = childGroupRanges;
+    public void setChildGroupRanges(final @Nonnull List<XmlGroupRange> childGroupRanges) {
+        Preconditions.checkNotNull(childGroupRanges);
+        this.childGroupRanges.clear();
+        this.childGroupRanges.addAll(childGroupRanges);
     }
 
+    @Nonnull
     public List<XmlGroupAddress> getGroupAddresses() {
         return groupAddresses;
     }
 
-    public void setGroupAddresses(List<XmlGroupAddress> groupAddresses) {
-        this.groupAddresses = groupAddresses;
+    public void setGroupAddresses(final @Nonnull List<XmlGroupAddress> groupAddresses) {
+        Preconditions.checkNotNull(groupAddresses);
+        this.groupAddresses.clear();
+        this.groupAddresses.addAll(groupAddresses);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

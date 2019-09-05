@@ -46,7 +46,7 @@ public final class SupportedDeviceFamiliesDIBTest {
     };
 
     /**
-     * Tests {@link SupportedDeviceFamiliesDIB#valueOf(byte[])}
+     * Tests {@link SupportedDeviceFamiliesDIB#of(byte[])}
      *
      * <pre>
      * 	DIB: SUPP_SVC_FAMILIES
@@ -63,9 +63,9 @@ public final class SupportedDeviceFamiliesDIBTest {
      * </pre>
      */
     @Test
-    public void valueOf() {
-        // valueOf
-        final var supportedDevicesFamiliesByValueOf = SupportedDeviceFamiliesDIB.valueOf(BYTES);
+    public void validCases() {
+        // create by bytes
+        final var supportedDevicesFamiliesByValueOf = SupportedDeviceFamiliesDIB.of(BYTES);
 
         // compare
         assertThat(supportedDevicesFamiliesByValueOf.getLength()).isEqualTo(10);
@@ -98,17 +98,17 @@ public final class SupportedDeviceFamiliesDIBTest {
     @Test
     public void invalidCases() {
         // null check
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("rawData");
 
         // specific for supported device families DIB
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
+        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("divisible by two");
 
         // incorrect size of bytes
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(new byte[]{0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(new byte[]{0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.valueOf(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
+        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
     }
 
@@ -117,7 +117,7 @@ public final class SupportedDeviceFamiliesDIBTest {
      */
     @Test
     public void testToString() {
-        final var supportedDevicesFamiliesDIB = SupportedDeviceFamiliesDIB.valueOf(BYTES);
+        final var supportedDevicesFamiliesDIB = SupportedDeviceFamiliesDIB.of(BYTES);
 
         final var familyVersions = new ArrayList<ServiceTypeFamilyVersion>();
         familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.CORE, 1));

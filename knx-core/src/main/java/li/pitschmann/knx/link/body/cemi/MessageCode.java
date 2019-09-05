@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.KnxByteEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -100,14 +101,16 @@ public enum MessageCode implements KnxByteEnum {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
+     * A matching {@link MessageCode} for the given {@code code}
+     * <p/>
      * In case if the message code is unknown or unsupported message, the received message should be simply be ignored
      * and no confirmation message should be sent.
      *
      * @param code
-     * @return {@link MessageCode}, or {@link KnxEnumNotFoundException} in case the {@code} is unknown or unsupported
+     * @return existing {@link MessageCode}, or {@link KnxEnumNotFoundException} if no {@link MessageCode}
+     * for given {@code code} exists
      */
+    @Nonnull
     public static MessageCode valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(MessageCode.class, code));
@@ -118,11 +121,13 @@ public enum MessageCode implements KnxByteEnum {
         return this.code;
     }
 
+    @Nonnull
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

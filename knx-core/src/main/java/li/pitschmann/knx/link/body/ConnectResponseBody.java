@@ -30,7 +30,6 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -70,14 +69,14 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
     private final HPAI dataEndpoint;
     private final ConnectionResponseData connectionResponseData;
 
-    private ConnectResponseBody(final byte[] bytes) {
+    private ConnectResponseBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
         this.status = Status.valueOf(Bytes.toUnsignedInt(bytes[1]));
         if (bytes.length == STRUCTURE_LENGTH) {
             this.dataEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 2, 10));
-            this.connectionResponseData = ConnectionResponseData.valueOf(Arrays.copyOfRange(bytes, 10, 14));
+            this.connectionResponseData = ConnectionResponseData.of(Arrays.copyOfRange(bytes, 10, 14));
         } else {
             this.dataEndpoint = null;
             this.connectionResponseData = null;
@@ -88,9 +87,10 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * Builds a new {@link ConnectResponseBody} instance
      *
      * @param bytes complete byte array for {@link ConnectResponseBody}
-     * @return immutable {@link ConnectResponseBody}
+     * @return a new immutable {@link ConnectResponseBody}
      */
-    public static ConnectResponseBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static ConnectResponseBody of(final @Nonnull byte[] bytes) {
         return new ConnectResponseBody(bytes);
     }
 
@@ -101,9 +101,13 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * @param status
      * @param dataEndpoint
      * @param crd
-     * @return immutable {@link ConnectResponseBody}
+     * @return a new immutable {@link ConnectResponseBody}
      */
-    public static ConnectResponseBody create(final int channelId, final Status status, final HPAI dataEndpoint, final ConnectionResponseData crd) {
+    @Nonnull
+    public static ConnectResponseBody of(final int channelId,
+                                         final @Nonnull Status status,
+                                         final @Nonnull HPAI dataEndpoint,
+                                         final @Nonnull ConnectionResponseData crd) {
         // validate
         if (channelId < 0 || channelId > 0xFF) {
             throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
@@ -130,15 +134,15 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
             System.arraycopy(dataEndpointAsBytes, 0, bytes, 2, dataEndpointAsBytes.length);
             System.arraycopy(crdAsBytes, 0, bytes, dataEndpointAsBytes.length + 2, crdAsBytes.length);
 
-            return valueOf(bytes);
+            return of(bytes);
         } else {
             // error (only channel id + status)
-            return valueOf(new byte[]{(byte) channelId, status.getCodeAsByte()});
+            return of(new byte[]{(byte) channelId, status.getCodeAsByte()});
         }
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length == 2) {
@@ -149,8 +153,8 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECT_RESPONSE;
     }
@@ -170,6 +174,7 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return
      */
+    @Nonnull
     public Status getStatus() {
         return this.status;
     }
@@ -179,8 +184,8 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return {@link HPAI}, it may be null when there was an error (see: {@link #getStatus()})
      */
-    public @Nullable
-    HPAI getDataEndpoint() {
+    @Nonnull
+    public HPAI getDataEndpoint() {
         return this.dataEndpoint;
     }
 
@@ -189,11 +194,12 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return {@link ConnectionResponseData}, it may be null when there was an error (see: {@link #getStatus()})
      */
-    public @Nullable
-    ConnectionResponseData getConnectionResponseData() {
+    @Nonnull
+    public ConnectionResponseData getConnectionResponseData() {
         return this.connectionResponseData;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

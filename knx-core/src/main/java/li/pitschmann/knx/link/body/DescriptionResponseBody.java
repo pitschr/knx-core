@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Body for Description Response
@@ -71,34 +72,35 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     private final KnxAddressesDIB knxAddresses;
     private final ManufacturerDataDIB manufacturerData;
 
-    private DescriptionResponseBody(final byte[] bytes) {
+    private DescriptionResponseBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         // mandatory
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.valueOf(this.getArrayPartByDIB(DescriptionType.DEVICE_INFO, bytes));
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.valueOf(this.getArrayPartByDIB(DescriptionType.SUPPORTED_SERVICE_FAMILIES, bytes));
+        this.deviceHardwareInformation = DeviceHardwareInformationDIB.of(this.getArrayPartByDIB(DescriptionType.DEVICE_INFO, bytes));
+        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.of(this.getArrayPartByDIB(DescriptionType.SUPPORTED_SERVICE_FAMILIES, bytes));
 
         // optional
         byte[] ipConfigArray = this.getArrayPartByDIB(DescriptionType.IP_CONFIG, bytes);
-        this.ipConfig = ipConfigArray == null ? null : IPConfigDIB.valueOf(ipConfigArray);
+        this.ipConfig = ipConfigArray == null ? null : IPConfigDIB.of(ipConfigArray);
 
         byte[] ipCurrentConfigArray = this.getArrayPartByDIB(DescriptionType.IP_CURRENT_CONFIG, bytes);
-        this.ipCurrentConfig = ipCurrentConfigArray == null ? null : IPCurrentConfigDIB.valueOf(ipCurrentConfigArray);
+        this.ipCurrentConfig = ipCurrentConfigArray == null ? null : IPCurrentConfigDIB.of(ipCurrentConfigArray);
 
         byte[] knxAddressesArray = this.getArrayPartByDIB(DescriptionType.KNX_ADDRESSES, bytes);
-        this.knxAddresses = knxAddressesArray == null ? null : KnxAddressesDIB.valueOf(knxAddressesArray);
+        this.knxAddresses = knxAddressesArray == null ? null : KnxAddressesDIB.of(knxAddressesArray);
 
         byte[] manufacturerDataArray = this.getArrayPartByDIB(DescriptionType.MANUFACTURER_DATA, bytes);
-        this.manufacturerData = manufacturerDataArray == null ? null : ManufacturerDataDIB.valueOf(manufacturerDataArray);
+        this.manufacturerData = manufacturerDataArray == null ? null : ManufacturerDataDIB.of(manufacturerDataArray);
     }
 
     /**
      * Builds a new {@link DescriptionResponseBody} instance
      *
      * @param bytes complete byte array for {@link DescriptionResponseBody}
-     * @return immutable {@link DescriptionResponseBody}
+     * @return a new immutable {@link DescriptionResponseBody}
      */
-    public static DescriptionResponseBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static DescriptionResponseBody of(final @Nonnull byte[] bytes) {
         return new DescriptionResponseBody(bytes);
     }
 
@@ -107,10 +109,11 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      *
      * @param deviceHardwareInformation
      * @param supportedDeviceFamilies
-     * @return immutable {@link DescriptionResponseBody}
+     * @return a new immutable {@link DescriptionResponseBody}
      */
-    public static DescriptionResponseBody create(final DeviceHardwareInformationDIB deviceHardwareInformation,
-                                                 final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
+    @Nonnull
+    public static DescriptionResponseBody of(final @Nonnull DeviceHardwareInformationDIB deviceHardwareInformation,
+                                             final @Nonnull SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
         // validate
         if (deviceHardwareInformation == null) {
             throw new KnxNullPointerException("deviceHardwareInformation");
@@ -130,11 +133,11 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
         pos += deviceHardwareInformationAsBytes.length;
         System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else {
@@ -158,7 +161,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param rawData
      * @return positive number if found, otherwise {@code -1}.
      */
-    private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
+    private int indexOfDIB(final @Nonnull DescriptionType descriptionType, final @Nonnull byte[] rawData) {
         var index = -1;
         for (var i = 0; i < rawData.length; ) {
             final var dibLength = Bytes.toUnsignedInt(rawData[i]);
@@ -188,7 +191,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param rawData
      * @return byte array if found, otherwise {@code null}
      */
-    private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {
+    private byte[] getArrayPartByDIB(final @Nonnull DescriptionType descriptionType, final @Nonnull byte[] rawData) {
         final var index = this.indexOfDIB(descriptionType, rawData);
 
         if (index < 0) {
@@ -209,36 +212,43 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_RESPONSE;
     }
 
+    @Nonnull
     public DeviceHardwareInformationDIB getDeviceInformation() {
         return this.deviceHardwareInformation;
     }
 
+    @Nonnull
     public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
         return this.supportedDeviceFamilies;
     }
 
+    @Nullable
     public IPConfigDIB getIPConfig() {
         return this.ipConfig;
     }
 
+    @Nullable
     public IPCurrentConfigDIB getIPCurrentConfig() {
         return this.ipCurrentConfig;
     }
 
+    @Nullable
     public KnxAddressesDIB getKnxAddresses() {
         return this.knxAddresses;
     }
 
+    @Nullable
     public ManufacturerDataDIB getManufacturerData() {
         return this.manufacturerData;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

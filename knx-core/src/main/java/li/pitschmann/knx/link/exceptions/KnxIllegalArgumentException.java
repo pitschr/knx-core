@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -31,7 +32,7 @@ public final class KnxIllegalArgumentException extends KnxException {
      *
      * @param message
      */
-    public KnxIllegalArgumentException(final String message) {
+    public KnxIllegalArgumentException(final @Nullable String message) {
         super(message);
     }
 
@@ -41,7 +42,7 @@ public final class KnxIllegalArgumentException extends KnxException {
      * @param message
      * @param obj
      */
-    public KnxIllegalArgumentException(final String message, final Object... obj) {
+    public KnxIllegalArgumentException(final @Nullable String message, final @Nullable Object... obj) {
         super(String.format("KNX Illegal Argument: '%s'. Actual: %s", message, Arrays.toString(obj)));
     }
 }

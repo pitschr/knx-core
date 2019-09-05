@@ -29,6 +29,9 @@ import li.pitschmann.utils.ByteFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
@@ -41,19 +44,19 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     private static final Logger log = LoggerFactory.getLogger(TunnelingRequestTask.class);
     private final InternalKnxClient client;
 
-    public TunnelingRequestTask(InternalKnxClient client) {
-        this.client = client;
+    public TunnelingRequestTask(final @Nonnull InternalKnxClient client) {
+        this.client = Objects.requireNonNull(client);
     }
 
     @Override
-    public void onNext(Body body) {
+    public void onNext(final @Nullable Body body) {
         // we are interested in tunneling request only
         if (body instanceof TunnelingRequestBody) {
             log.debug("Tunneling Request received: {}", body);
 
             // acknowledge frame to be sent back
             final var reqBody = (TunnelingRequestBody) body;
-            final var ackBody = TunnelingAckBody.create(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
+            final var ackBody = TunnelingAckBody.of(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
 
             // send acknowledge frame
             this.client.send(ackBody);
@@ -88,7 +91,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nullable Throwable throwable) {
         log.error("Error during Tunneling Request Task class", throwable);
     }
 
@@ -98,7 +101,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(final Subscription subscription) {
+    public void onSubscribe(final @Nonnull Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 }

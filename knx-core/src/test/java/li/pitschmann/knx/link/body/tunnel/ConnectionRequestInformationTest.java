@@ -35,24 +35,25 @@ public final class ConnectionRequestInformationTest {
     /**
      * Valid {@link ConnectionRequestInformation} for tunneling.
      * <p>
-     * Tests the {@link ConnectionRequestInformation#create()} and
-     * {@link ConnectionRequestInformation#valueOf(byte[])}
+     * Tests the {@link ConnectionRequestInformation#useDefault()} and
+     * {@link ConnectionRequestInformation#of(byte[])}
      */
     @Test
     public void validConnectionRequestInformationTunnel() {
-        final var criByCreate = ConnectionRequestInformation.create();
-        final var criByCreateRawData = ConnectionRequestInformation.valueOf(criByCreate.getRawData());
+        // create
+        final var criByCreate = ConnectionRequestInformation.useDefault();
+        final var criByCreateRawData = ConnectionRequestInformation.of(criByCreate.getRawData());
         assertThat(criByCreateRawData.getLength()).isEqualTo(4);
         assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByCreateRawData.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
 
-        // valueOf
-        final var criByValueOf = ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x04, 0x02, 0x00});
+        // create by bytes
+        final var criByValueOf = ConnectionRequestInformation.of(new byte[]{0x04, 0x04, 0x02, 0x00});
         assertThat(criByValueOf.getLength()).isEqualTo(4);
         assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByValueOf.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(criByCreateRawData.getRawData()).isEqualTo(criByCreateRawData.getRawData());
         assertThat(criByCreateRawData.getRawData()).isEqualTo(criByValueOf.getRawData());
     }
@@ -60,24 +61,24 @@ public final class ConnectionRequestInformationTest {
     /**
      * Valid CRI for device management.
      * <p>
-     * Tests the {@link ConnectionRequestInformation#create()} and
-     * {@link ConnectionRequestInformation#valueOf(byte[])}
+     * Tests the {@link ConnectionRequestInformation#useDefault()} and
+     * {@link ConnectionRequestInformation#of(byte[])}
      */
     @Test
     public void validConnectionRequestInformationDeviceMgmt() {
-        final var criByCreate = ConnectionRequestInformation.create();
-        final var criByCreateRawData = ConnectionRequestInformation.valueOf(criByCreate.getRawData());
+        final var criByCreate = ConnectionRequestInformation.useDefault();
+        final var criByCreateRawData = ConnectionRequestInformation.of(criByCreate.getRawData());
         assertThat(criByCreateRawData.getLength()).isEqualTo(4);
         assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByCreateRawData.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
 
-        // valueOf
-        final var criByValueOf = ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x04, 0x02, 0x00});
+        // create by bytes
+        final var criByValueOf = ConnectionRequestInformation.of(new byte[]{0x04, 0x04, 0x02, 0x00});
         assertThat(criByValueOf.getLength()).isEqualTo(4);
         assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByValueOf.getLayerType()).isEqualTo(LayerType.TUNNEL_LINKLAYER);
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(criByCreateRawData.getRawData()).isEqualTo(criByCreateRawData.getRawData());
         assertThat(criByCreateRawData.getRawData()).isEqualTo(criByValueOf.getRawData());
     }
@@ -88,13 +89,17 @@ public final class ConnectionRequestInformationTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> ConnectionRequestInformation.valueOf(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ConnectionRequestInformation.of(null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("criRawData");
+        assertThatThrownBy(() -> ConnectionRequestInformation.of(ConnectionType.TUNNEL_CONNECTION, null))
+                .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("layerType");
+        assertThatThrownBy(() -> ConnectionRequestInformation.of(null, LayerType.TUNNEL_RAW))
+                .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("connectionType");
 
         // out of range
-        assertThatThrownBy(() -> ConnectionRequestInformation.valueOf(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionRequestInformation.of(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("criRawData");
-        assertThatThrownBy(() -> ConnectionRequestInformation.valueOf(new byte[4])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionRequestInformation.of(new byte[4])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("criRawData[0]"); // illegal length (byte 0)
     }
 
@@ -103,11 +108,11 @@ public final class ConnectionRequestInformationTest {
      */
     @Test
     public void testToString() {
-        assertThat(ConnectionRequestInformation.create()).hasToString(
+        assertThat(ConnectionRequestInformation.useDefault()).hasToString(
                 String.format("ConnectionRequestInformation{length=4 (0x04), connectionType=%s, layerType=%s, rawData=0x04 04 02 00}",
                         ConnectionType.TUNNEL_CONNECTION, LayerType.TUNNEL_LINKLAYER));
 
-        assertThat(ConnectionRequestInformation.valueOf(new byte[]{0x04, 0x03, (byte) 0x80, 0x00}).toString(false))
+        assertThat(ConnectionRequestInformation.of(new byte[]{0x04, 0x03, (byte) 0x80, 0x00}).toString(false))
                 .isEqualTo(String.format("ConnectionRequestInformation{length=4 (0x04), connectionType=%s, layerType=%s}",
                         ConnectionType.DEVICE_MANAGEMENT_CONNECTION, LayerType.TUNNEL_BUSMONITOR));
     }

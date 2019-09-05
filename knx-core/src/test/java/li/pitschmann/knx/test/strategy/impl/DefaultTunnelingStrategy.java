@@ -81,7 +81,7 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
         final var channelId = getChannelId(mockServer);
         final var sequence = getRequestSequence(mockServer);
 
-        return new MockRequest(TunnelingRequestBody.create(channelId, sequence, cemi));
+        return new MockRequest(TunnelingRequestBody.of(channelId, sequence, cemi));
     }
 
     @Override
@@ -90,6 +90,6 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
         final var sequence = getResponseSequence(request.getBody());
         final var status = getStatus();
 
-        return new MockResponse(TunnelingAckBody.create(channelId, sequence, status));
+        return new MockResponse(TunnelingAckBody.of(channelId, sequence, status));
     }
 }

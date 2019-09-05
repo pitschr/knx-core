@@ -33,11 +33,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public class BytesResponseBodyTest {
     /**
-     * Tests the {@link BytesResponseBody#create(ServiceType, byte[])}
+     * Tests the {@link BytesResponseBody#of(ServiceType, byte[])}
      */
     @Test
     public void validCases() {
-        final var body = BytesResponseBody.create(ServiceType.DEVICE_CONFIGURATION_ACK, new byte[]{0x11, 0x22, 0x33});
+        final var body = BytesResponseBody.of(ServiceType.DEVICE_CONFIGURATION_ACK, new byte[]{0x11, 0x22, 0x33});
 
         assertThat(body.getServiceType()).isEqualTo(ServiceType.DEVICE_CONFIGURATION_ACK);
         assertThat(body.getRawData()).containsExactly(0x11, 0x22, 0x33);
@@ -53,11 +53,11 @@ public class BytesResponseBodyTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> BytesResponseBody.create(null, new byte[0])).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("serviceType");
-        assertThatThrownBy(() -> BytesResponseBody.create(ServiceType.CONNECT_REQUEST, null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("bytes");
+        assertThatThrownBy(() -> BytesResponseBody.of(null, new byte[0])).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("serviceType");
+        assertThatThrownBy(() -> BytesResponseBody.of(ServiceType.CONNECT_REQUEST, null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("bytes");
 
         // invalid raw data length
-        assertThatThrownBy(() -> BytesResponseBody.create(ServiceType.CONNECT_REQUEST, new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> BytesResponseBody.of(ServiceType.CONNECT_REQUEST, new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
     }
 }

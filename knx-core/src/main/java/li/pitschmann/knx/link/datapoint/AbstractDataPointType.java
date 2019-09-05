@@ -114,7 +114,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @param bytes
      * @return {@code true} if compatible, otherwise {@code false}
      */
-    protected abstract boolean isCompatible(byte[] bytes);
+    protected abstract boolean isCompatible(final byte[] bytes);
 
     /**
      * Parses the {@code bytes} to an instance of {@code <V>}

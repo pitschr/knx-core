@@ -96,7 +96,7 @@ public final class XmlProject {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -104,7 +104,7 @@ public final class XmlProject {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -112,7 +112,7 @@ public final class XmlProject {
         return groupAddressStyle;
     }
 
-    public void setGroupAddressStyle(String groupAddressStyle) {
+    public void setGroupAddressStyle(final String groupAddressStyle) {
         this.groupAddressStyle = groupAddressStyle;
     }
 
@@ -320,6 +320,7 @@ public final class XmlProject {
         }
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     // @formatter:on
 
     @Override
-    public void onInitialization(KnxClient client) {
+    public void onInitialization(final @Nullable KnxClient client) {
         auditSignal(AuditType.INIT);
     }
 
@@ -92,17 +93,17 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     }
 
     @Override
-    public void onIncomingBody(Body item) {
+    public void onIncomingBody(final @Nonnull Body item) {
         auditBody(AuditType.INCOMING, item);
     }
 
     @Override
-    public void onOutgoingBody(Body item) {
+    public void onOutgoingBody(final @Nonnull Body item) {
         auditBody(AuditType.OUTGOING, item);
     }
 
     @Override
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nonnull Throwable throwable) {
         log.info(String.format(JSON_TEMPLATE_ERROR, //
                 AuditType.ERROR, // #1
                 gson.toJson(throwable.getMessage()), // #2
@@ -116,8 +117,8 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param type audit type
      * @param body body to be printed
      */
-    private void auditBody(final @Nonnull AuditType type, final Body body) {
-        final var header = Header.create(body);
+    private void auditBody(final @Nonnull AuditType type, final @Nonnull Body body) {
+        final var header = Header.of(body);
         log.info(String.format(JSON_TEMPLATE_BODY, //
                 type, // #1
                 ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes()), // #2
@@ -174,6 +175,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
             this.type = type;
         }
 
+        @Nonnull
         @Override
         public String toString() {
             return this.type;

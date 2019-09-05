@@ -136,7 +136,7 @@ public final class ConnectionStateMonitor implements Runnable {
         log.trace("Send connection state request now.");
 
         // create body
-        final var requestBody = ConnectionStateRequestBody.create(this.client.getChannelId(), this.client.getControlHPAI());
+        final var requestBody = ConnectionStateRequestBody.of(this.client.getChannelId(), this.client.getControlHPAI());
 
         // send
         this.client.getEventPool().add(requestBody);

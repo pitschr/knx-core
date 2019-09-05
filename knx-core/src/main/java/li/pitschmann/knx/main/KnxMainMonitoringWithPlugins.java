@@ -45,18 +45,18 @@ public class KnxMainMonitoringWithPlugins extends AbstractKnxMain {
 
     public static void main(final String[] args) {
         // set level to Level#ALL for ROOT log implementation
-        final var logAll = getParameterValue(args, "-l", false, Boolean::parseBoolean);
+        final var logAll = getParameterValue(args, "-l", Boolean::parseBoolean, false);
         if (logAll) {
             ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.ALL);
         }
         log.debug("Log all: {}", logAll);
 
         // Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", null, Networker::getByAddress);
+        final var ipAddress = getParameterValue(args, "-r", Networker::getByAddress, null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // Get Monitor Time in Seconds
-        final var monitorTime = getParameterValue(args, "-t", Long.MAX_VALUE, Long::parseLong);
+        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, Long.MAX_VALUE);
         log.debug("Monitor Time: {}s", monitorTime);
 
         final var natEnabled = existsParameter(args, "-nat");

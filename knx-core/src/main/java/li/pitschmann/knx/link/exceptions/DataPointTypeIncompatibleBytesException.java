@@ -21,6 +21,9 @@ package li.pitschmann.knx.link.exceptions;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.utils.ByteFormatter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Exception when an incompatible byte array were provided.
  *
@@ -34,7 +37,7 @@ public final class DataPointTypeIncompatibleBytesException extends KnxException 
      * @param dpt
      * @param bytes
      */
-    public DataPointTypeIncompatibleBytesException(final DataPointType<?> dpt, final byte[] bytes) {
+    public DataPointTypeIncompatibleBytesException(final @Nonnull DataPointType<?> dpt, final @Nullable byte[] bytes) {
         super(String.format("Looks like you chose a wrong DPT. Given bytes is not compatible for '%s': %s", dpt.getClass().getSimpleName(),
                 ByteFormatter.formatHexAsString(bytes)));
     }

@@ -44,52 +44,56 @@ import javax.annotation.Nonnull;
  * @author PITSCHR
  */
 public final class DescriptionRequestBody extends AbstractMultiRawData implements RequestBody, DescriptionChannelRelated {
+    private static final DescriptionRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI controlEndpoint;
 
-    private DescriptionRequestBody(final byte[] bytes) {
+    private DescriptionRequestBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.controlEndpoint = HPAI.of(bytes);
     }
 
     /**
-     * Builds a new {@link DescriptionRequestBody} instance
-     *
-     * @param bytes complete byte array for {@link DescriptionRequestBody}
-     * @return immutable {@link DescriptionRequestBody}
-     */
-    public static DescriptionRequestBody valueOf(final byte[] bytes) {
-        return new DescriptionRequestBody(bytes);
-    }
-
-    /**
-     * Creates a new {@link DescriptionRequestBody} instance.
+     * Returns the default {@link DescriptionRequestBody} instance.
      * <p>
      * Per default the {@link HPAI#useDefault()} is used.
      *
-     * @return immutable {@link DescriptionRequestBody}
+     * @return re-usable immutable {@link DescriptionRequestBody}
      */
-    public static DescriptionRequestBody create() {
-        return create(HPAI.useDefault());
+    @Nonnull
+    public static DescriptionRequestBody useDefault() {
+        return DEFAULT;
+    }
+
+    /**
+     * Builds a new {@link DescriptionRequestBody} instance
+     *
+     * @param bytes complete byte array for {@link DescriptionRequestBody}
+     * @return a new immutable {@link DescriptionRequestBody}
+     */
+    @Nonnull
+    public static DescriptionRequestBody of(final @Nonnull byte[] bytes) {
+        return new DescriptionRequestBody(bytes);
     }
 
     /**
      * Creates a new {@link DescriptionRequestBody} instance
      *
      * @param controlEndpoint
-     * @return immutable {@link DescriptionRequestBody}
+     * @return a new immutable {@link DescriptionRequestBody}
      */
-    public static DescriptionRequestBody create(final HPAI controlEndpoint) {
+    @Nonnull
+    public static DescriptionRequestBody of(final @Nonnull HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
         }
 
-        return valueOf(controlEndpoint.getRawData());
+        return of(controlEndpoint.getRawData());
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != 8) {
@@ -98,16 +102,18 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_REQUEST;
     }
 
+    @Nonnull
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

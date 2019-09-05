@@ -66,21 +66,22 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     private final HPAI dataEndpoint;
     private final ConnectionRequestInformation connectionRequestInformation;
 
-    private ConnectRequestBody(final byte[] bytes) {
+    private ConnectRequestBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 0, 8));
         this.dataEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 8, 16));
-        this.connectionRequestInformation = ConnectionRequestInformation.valueOf(Arrays.copyOfRange(bytes, 16, 20));
+        this.connectionRequestInformation = ConnectionRequestInformation.of(Arrays.copyOfRange(bytes, 16, 20));
     }
 
     /**
      * Builds a new {@link ConnectRequestBody} instance
      *
      * @param bytes complete byte array for {@link ConnectRequestBody}
-     * @return immutable {@link ConnectRequestBody}
+     * @return a  new immutable {@link ConnectRequestBody}
      */
-    public static ConnectRequestBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static ConnectRequestBody of(final @Nonnull byte[] bytes) {
         return new ConnectRequestBody(bytes);
     }
 
@@ -90,9 +91,10 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
      * @param controlEndpoint
      * @param dataEndpoint
      * @param cri
-     * @return immutable {@link ConnectRequestBody}
+     * @return a  new immutable {@link ConnectRequestBody}
      */
-    public static ConnectRequestBody create(final HPAI controlEndpoint, final HPAI dataEndpoint, final ConnectionRequestInformation cri) {
+    @Nonnull
+    public static ConnectRequestBody of(final @Nonnull HPAI controlEndpoint, final @Nonnull HPAI dataEndpoint, final @Nonnull ConnectionRequestInformation cri) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -112,11 +114,11 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
         System.arraycopy(dataEndpointAsBytes, 0, bytes, 8, dataEndpointAsBytes.length);
         System.arraycopy(criAsBytes, 0, bytes, 16, criAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -124,24 +126,28 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECT_REQUEST;
     }
 
+    @Nonnull
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
+    @Nonnull
     public HPAI getDataEndpoint() {
         return this.dataEndpoint;
     }
 
+    @Nonnull
     public ConnectionRequestInformation getConnectionRequestInformation() {
         return this.connectionRequestInformation;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

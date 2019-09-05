@@ -36,22 +36,22 @@ public final class ControlByte1Test {
     @Test
     public void useDefault() {
         final ControlByte1 controlByte1Default = ControlByte1.useDefault();
-        final ControlByte1 controlByte1CreateBy = ControlByte1.create(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final ControlByte1 controlByte1CreateBy = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
 
         // assert
         assertThat(controlByte1Default.getRawData()).isEqualTo(controlByte1CreateBy.getRawData());
     }
 
     /**
-     * Tests {@link ControlByte1#create(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#valueOf(byte)} with all parameters as {@code true}, {@link BroadcastType#SYSTEM} and
+     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
+     * {@link ControlByte1#of(byte)} with all parameters as {@code true}, {@link BroadcastType#SYSTEM} and
      * {@link Priority#SYSTEM}.
      */
     @Test
     public void validCaseA() {
         // create
-        final var controlByteByCreate = ControlByte1.create(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false);
-        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.of(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false);
+        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isFalse();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isFalse();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -59,8 +59,8 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isFalse();
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isFalse();
 
-        // valueOf
-        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x00 << 7 | 0x01 << 5 | 0x00 << 4 | 0x00 << 2 | 0x00 << 1 | 0x00));
+        // create by bytes
+        final var controlByteByValueOf = ControlByte1.of((byte) (0x00 << 7 | 0x01 << 5 | 0x00 << 4 | 0x00 << 2 | 0x00 << 1 | 0x00));
         assertThat(controlByteByValueOf.isStandardFrame()).isFalse();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isFalse();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -68,21 +68,21 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isFalse();
         assertThat(controlByteByValueOf.isConfirmationFlag()).isFalse();
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
     }
 
     /**
-     * Tests {@link ControlByte1#create(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#valueOf(byte)} with all parameters as {@code true}, {@link BroadcastType#NORMAL} and
+     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
+     * {@link ControlByte1#of(byte)} with all parameters as {@code true}, {@link BroadcastType#NORMAL} and
      * {@link Priority#LOW}.
      */
     @Test
     public void validCaseB() {
         // create
-        final var controlByteByCreate = ControlByte1.create(true, true, BroadcastType.NORMAL, Priority.LOW, true, true);
-        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.of(true, true, BroadcastType.NORMAL, Priority.LOW, true, true);
+        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isTrue();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isTrue();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -90,8 +90,8 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isTrue();
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isTrue();
 
-        // valueOf
-        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x01 << 7 | 0x00 << 5 | 0x01 << 4 | 0x03 << 2 | 0x01 << 1 | 0x01));
+        // create by bytes
+        final var controlByteByValueOf = ControlByte1.of((byte) (0x01 << 7 | 0x00 << 5 | 0x01 << 4 | 0x03 << 2 | 0x01 << 1 | 0x01));
         assertThat(controlByteByValueOf.isStandardFrame()).isTrue();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isTrue();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -99,21 +99,21 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isTrue();
         assertThat(controlByteByValueOf.isConfirmationFlag()).isTrue();
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
     }
 
     /**
-     * Tests {@link ControlByte1#create(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#valueOf(byte)} in {@code true}/{@code false} sequence, {@link BroadcastType#SYSTEM} and
+     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
+     * {@link ControlByte1#of(byte)} in {@code true}/{@code false} sequence, {@link BroadcastType#SYSTEM} and
      * {@link Priority#NORMAL}.
      */
     @Test
     public void validCaseC() {
         // create
-        final var controlByteByCreate = ControlByte1.create(true, false, BroadcastType.SYSTEM, Priority.NORMAL, true, false);
-        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.of(true, false, BroadcastType.SYSTEM, Priority.NORMAL, true, false);
+        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isTrue();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isFalse();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -121,8 +121,8 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isTrue();
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isFalse();
 
-        // valueOf
-        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x01 << 7 | 0x01 << 5 | 0x00 << 4 | 0x01 << 2 | 0x01 << 1 | 0x00));
+        // create by bytes
+        final var controlByteByValueOf = ControlByte1.of((byte) (0x01 << 7 | 0x01 << 5 | 0x00 << 4 | 0x01 << 2 | 0x01 << 1 | 0x00));
         assertThat(controlByteByValueOf.isStandardFrame()).isTrue();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isFalse();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
@@ -130,21 +130,21 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isTrue();
         assertThat(controlByteByValueOf.isConfirmationFlag()).isFalse();
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
     }
 
     /**
-     * Tests {@link ControlByte1#create(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#valueOf(byte)} in {@code false}/{@code true} sequence, {@link BroadcastType#NORMAL} and
+     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
+     * {@link ControlByte1#of(byte)} in {@code false}/{@code true} sequence, {@link BroadcastType#NORMAL} and
      * {@link Priority#NORMAL}.
      */
     @Test
     public void validCaseD() {
         // create
-        final var controlByteByCreate = ControlByte1.create(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true);
-        final var controlByteByCreateRawData = ControlByte1.valueOf(controlByteByCreate.getRawData());
+        final var controlByteByCreate = ControlByte1.of(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true);
+        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
         assertThat(controlByteByCreateRawData.isStandardFrame()).isFalse();
         assertThat(controlByteByCreateRawData.isRepeatEnabled()).isTrue();
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -152,8 +152,8 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isFalse();
         assertThat(controlByteByCreateRawData.isConfirmationFlag()).isTrue();
 
-        // valueOf
-        final var controlByteByValueOf = ControlByte1.valueOf((byte) (0x00 << 7 | 0x00 << 5 | 0x01 << 4 | 0x02 << 2 | 0x00 << 1 | 0x01));
+        // create by bytes
+        final var controlByteByValueOf = ControlByte1.of((byte) (0x00 << 7 | 0x00 << 5 | 0x01 << 4 | 0x02 << 2 | 0x00 << 1 | 0x01));
         assertThat(controlByteByValueOf.isStandardFrame()).isFalse();
         assertThat(controlByteByValueOf.isRepeatEnabled()).isTrue();
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
@@ -161,7 +161,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isFalse();
         assertThat(controlByteByValueOf.isConfirmationFlag()).isTrue();
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
     }
@@ -171,9 +171,9 @@ public final class ControlByte1Test {
      */
     @Test
     public void invalidCases() {
-        assertThatThrownBy(() -> ControlByte1.create(false, false, null, Priority.LOW, false, false)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> ControlByte1.of(false, false, null, Priority.LOW, false, false)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("broadcastType");
-        assertThatThrownBy(() -> ControlByte1.create(false, false, BroadcastType.SYSTEM, null, false, false))
+        assertThatThrownBy(() -> ControlByte1.of(false, false, BroadcastType.SYSTEM, null, false, false))
                 .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("priority");
     }
 
@@ -182,11 +182,11 @@ public final class ControlByte1Test {
      */
     @Test
     public void testToString() {
-        assertThat(ControlByte1.create(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false)).hasToString(String.format(
+        assertThat(ControlByte1.of(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false)).hasToString(String.format(
                 "ControlByte1{standardFrame=false, repeatEnabled=false, broadcastType=%s, priority=%s, requestAcknowledge=false, confirmationFlag=false, rawData=0x20}",
                 BroadcastType.SYSTEM, Priority.SYSTEM));
 
-        assertThat(ControlByte1.create(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true)).hasToString(String.format(
+        assertThat(ControlByte1.of(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true)).hasToString(String.format(
                 "ControlByte1{standardFrame=false, repeatEnabled=true, broadcastType=%s, priority=%s, requestAcknowledge=false, confirmationFlag=true, rawData=0x19}",
                 BroadcastType.NORMAL, Priority.URGENT));
     }

@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.exceptions;
 
 import li.pitschmann.knx.link.body.Body;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception when description information could not be received by KNX Net/IP device.
  * This exception is a subclass of {@link KnxCommunicationException}.
@@ -28,7 +30,7 @@ import li.pitschmann.knx.link.body.Body;
  */
 public final class KnxDescriptionNotReceivedException extends KnxCommunicationException {
 
-    public KnxDescriptionNotReceivedException(final Body body) {
+    public KnxDescriptionNotReceivedException(final @Nullable Body body) {
         super(String.format("Could not get description from KNX Net/IP device: %s", body));
     }
 }

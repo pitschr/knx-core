@@ -42,12 +42,12 @@ public final class IPConfigDIBTest {
     };
 
     /**
-     * Tests {@link IPConfigDIB#valueOf(byte[])}
+     * Tests {@link IPConfigDIB#of(byte[])}
      */
     @Test
-    public void valueOf() {
-        // valueOf
-        final var dib = IPConfigDIB.valueOf(BYTES);
+    public void validCases() {
+        // create by bytes
+        final var dib = IPConfigDIB.of(BYTES);
 
         // compare
         assertThat(dib.getLength()).isEqualTo(16);
@@ -60,7 +60,7 @@ public final class IPConfigDIBTest {
     @Test
     public void invalidCases() {
         // incorrect size of bytes
-        assertThatThrownBy(() -> IPConfigDIB.valueOf(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> IPConfigDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
 
     }
@@ -70,7 +70,7 @@ public final class IPConfigDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(IPConfigDIB.valueOf(BYTES)).hasToString(String.format("IPConfigDIB{length=16 (0x10), descriptionType=%s, rawData=%s}",
+        assertThat(IPConfigDIB.of(BYTES)).hasToString(String.format("IPConfigDIB{length=16 (0x10), descriptionType=%s, rawData=%s}",
                 DescriptionType.IP_CONFIG, ByteFormatter.formatHexAsString(BYTES)));
     }
 }

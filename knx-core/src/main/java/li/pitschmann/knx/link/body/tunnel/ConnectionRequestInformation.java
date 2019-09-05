@@ -26,6 +26,8 @@ import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+
 /**
  * Tunneling Connection Request Information (CRI)
  * <p>
@@ -45,11 +47,13 @@ import li.pitschmann.utils.Bytes;
  * @author PITSCHR
  */
 public final class ConnectionRequestInformation extends AbstractMultiRawData {
+    private static final ConnectionRequestInformation DEFAULT = of(ConnectionType.TUNNEL_CONNECTION, LayerType.TUNNEL_LINKLAYER);
+
     private final int length;
     private final ConnectionType connectionType;
     private final LayerType layerType;
 
-    private ConnectionRequestInformation(final byte[] criRawData) {
+    private ConnectionRequestInformation(final @Nonnull byte[] criRawData) {
         super(criRawData);
 
         this.length = Bytes.toUnsignedInt(criRawData[0]);
@@ -62,18 +66,40 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      * Builds a new {@link ConnectionRequestInformation} instance
      *
      * @param bytes complete byte array for {@link ConnectionRequestInformation}
-     * @return immutable {@link ConnectionRequestInformation}
+     * @return a new immutable {@link ConnectionRequestInformation}
      */
-    public static ConnectionRequestInformation valueOf(final byte[] bytes) {
+    @Nonnull
+    public static ConnectionRequestInformation of(final @Nonnull byte[] bytes) {
         return new ConnectionRequestInformation(bytes);
     }
 
     /**
-     * Creates a new {@link ConnectionRequestInformation} instance
+     * Uses the default {@link ConnectionRequestInformation} instance with {@link ConnectionType#TUNNEL_CONNECTION}
+     * and {@link LayerType#TUNNEL_LINKLAYER} pre-defined
      *
-     * @return immutable {@link ConnectionRequestInformation}
+     * @return re-usable immutable default {@link ConnectionRequestInformation}
      */
-    public static ConnectionRequestInformation create() {
+    @Nonnull
+    public static ConnectionRequestInformation useDefault() {
+        return DEFAULT;
+    }
+
+    /**
+     * Returns an instance of {@link ConnectionRequestInformation}
+     *
+     * @param connectionType
+     * @param layerType
+     * @return a new immutable {@link ConnectionRequestInformation}
+     */
+    @Nonnull
+    public static ConnectionRequestInformation of(final @Nonnull ConnectionType connectionType, final @Nonnull LayerType layerType) {
+        // validate
+        if (connectionType == null) {
+            throw new KnxNullPointerException("connectionType");
+        } else if (layerType == null) {
+            throw new KnxNullPointerException("layerType");
+        }
+
         // hardcoded
         // 4 bytes (1 byte for length, 1 byte for connection type, 1 byte for layer type and 1 byte for reserved)
         final var length = 4;
@@ -81,15 +107,15 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
         // create bytes
         final var bytes = new byte[length];
         bytes[0] = (byte) length;
-        bytes[1] = ConnectionType.TUNNEL_CONNECTION.getCodeAsByte();
-        bytes[2] = LayerType.TUNNEL_LINKLAYER.getCodeAsByte();
+        bytes[1] = connectionType.getCodeAsByte();
+        bytes[2] = layerType.getCodeAsByte();
         bytes[3] = 0x00;
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] criRawData) {
+    protected void validate(final @Nonnull byte[] criRawData) {
         if (criRawData == null) {
             throw new KnxNullPointerException("criRawData");
         } else if (criRawData.length != 4) {
@@ -103,14 +129,17 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
         return this.length;
     }
 
+    @Nonnull
     public ConnectionType getConnectionType() {
         return this.connectionType;
     }
 
+    @Nonnull
     public LayerType getLayerType() {
         return this.layerType;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

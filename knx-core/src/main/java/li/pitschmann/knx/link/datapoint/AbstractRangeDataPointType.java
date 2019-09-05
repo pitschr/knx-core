@@ -52,7 +52,7 @@ public abstract class AbstractRangeDataPointType<V extends DataPointValue<?>, R 
         return this.upperValue;
     }
 
-    public final boolean isRangeClosed(final R value) {
+    public final boolean isRangeClosed(final @Nonnull R value) {
         final var isWithinRange = value.compareTo(this.lowerValue) >= 0 && value.compareTo(this.upperValue) <= 0;
         if (!isWithinRange) {
             log.warn("Value '{}' is not within [{}, {}] for DPT '{}'", value, this.lowerValue, this.upperValue, this.getClass().getSimpleName());

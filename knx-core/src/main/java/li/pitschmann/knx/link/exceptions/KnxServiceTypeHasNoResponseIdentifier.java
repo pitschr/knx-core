@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.exceptions;
 
 import li.pitschmann.knx.link.header.ServiceType;
 
+import javax.annotation.Nonnull;
+
 /**
  * Exception in case no response identifier could be found for given {@link ServiceType}.
  *
@@ -33,7 +35,7 @@ public final class KnxServiceTypeHasNoResponseIdentifier extends KnxCommunicatio
      *
      * @param serviceType
      */
-    public KnxServiceTypeHasNoResponseIdentifier(final ServiceType serviceType) {
+    public KnxServiceTypeHasNoResponseIdentifier(final @Nonnull ServiceType serviceType) {
         super(String.format("Current service type '%s' has no response identifier!", serviceType.name()));
     }
 

@@ -46,9 +46,10 @@ import javax.annotation.Nonnull;
  * @author PITSCHR
  */
 public final class SearchRequestBody extends AbstractMultiRawData implements RequestBody, DiscoveryChannelRelated {
+    private static final SearchRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI discoveryEndpoint;
 
-    private SearchRequestBody(final byte[] bytes) {
+    private SearchRequestBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.discoveryEndpoint = HPAI.of(bytes);
@@ -58,39 +59,42 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * Builds a new {@link SearchRequestBody} instance
      *
      * @param bytes complete byte array for {@link SearchRequestBody}
-     * @return immutable {@link SearchRequestBody}
+     * @return a new immutable {@link SearchRequestBody}
      */
-    public static SearchRequestBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static SearchRequestBody of(final @Nonnull byte[] bytes) {
         return new SearchRequestBody(bytes);
     }
 
     /**
-     * Creates a new {@link SearchRequestBody} instance.
+     * Returns a default {@link SearchRequestBody} instance.
      * <p>
      * Per default the {@link HPAI#useDefault()} is used.
      *
-     * @return immutable {@link SearchRequestBody}
+     * @return a new immutable {@link SearchRequestBody}
      */
-    public static SearchRequestBody create() {
-        return create(HPAI.useDefault());
+    @Nonnull
+    public static SearchRequestBody useDefault() {
+        return DEFAULT;
     }
 
     /**
      * Creates a new {@link SearchRequestBody} instance
      *
      * @param discoveryEndpoint
-     * @return immutable {@link SearchRequestBody}
+     * @return a new immutable {@link SearchRequestBody}
      */
-    public static SearchRequestBody create(final HPAI discoveryEndpoint) {
+    @Nonnull
+    public static SearchRequestBody of(final @Nonnull HPAI discoveryEndpoint) {
         // validate
         if (discoveryEndpoint == null) {
             throw new KnxNullPointerException("discoveryEndpoint");
         }
-        return valueOf(discoveryEndpoint.getRawData());
+        return of(discoveryEndpoint.getRawData());
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != 8) {
@@ -99,16 +103,18 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_REQUEST;
     }
 
+    @Nonnull
     public HPAI getDiscoveryEndpoint() {
         return this.discoveryEndpoint;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

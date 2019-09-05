@@ -51,7 +51,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
      * @param address    KNX address
      * @param statusData status data to be analyzed for pool
      */
-    public void updateStatus(final @Nonnull KnxAddress address, final KnxStatusData statusData) {
+    public void updateStatus(final @Nonnull KnxAddress address, final @Nullable KnxStatusData statusData) {
         log.trace("Update status by KNX address {}: {}", address, statusData);
         Preconditions.checkNotNull(address);
         this.statusMap.put(address, statusData);
@@ -149,6 +149,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         return ImmutableMap.copyOf(this.statusMap);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("statusMap", this.statusMap).toString();

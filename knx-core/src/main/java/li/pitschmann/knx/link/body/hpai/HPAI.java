@@ -27,6 +27,8 @@ import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Networker;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
@@ -62,14 +64,14 @@ public final class HPAI extends AbstractMultiRawData {
      * Fixed length for HPAI
      */
     public static final int KNXNET_HPAI_LENGTH = 0x08;
-    private static final HPAI DEFAULT = HPAI.of(HostProtocol.IPV4_UDP, Networker.getAddressUnbound(), 0);
+    private static final HPAI DEFAULT = of(HostProtocol.IPV4_UDP, Networker.getAddressUnbound(), 0);
 
     private final int length;
     private final HostProtocol protocol;
     private final InetAddress address;
     private final int port;
 
-    private HPAI(final byte[] hpaiRawData) {
+    private HPAI(final @Nonnull byte[] hpaiRawData) {
         super(hpaiRawData);
 
         this.length = Bytes.toUnsignedInt(hpaiRawData[0]);
@@ -78,12 +80,25 @@ public final class HPAI extends AbstractMultiRawData {
         this.port = Bytes.toUnsignedInt(hpaiRawData[6], hpaiRawData[7]);
     }
 
+
     /**
-     * Uses the default {@link HPAI} instance. It is equivalent to {@link HostProtocol#IPV4_UDP} and {@link InetAddress}
+     * Returns an instance of {@link HPAI}
+     *
+     * @param bytes complete byte array for {@link HPAI}
+     * @return a new immutable {@link HPAI}
+     */
+    @Nonnull
+    public static HPAI of(final @Nonnull byte[] bytes) {
+        return new HPAI(bytes);
+    }
+
+    /**
+     * Returns the default {@link HPAI} instance. It is equivalent to {@link HostProtocol#IPV4_UDP} and {@link InetAddress}
      * with {@code 0.0.0.0} and port {@code 0}.
      *
-     * @return default {@link HPAI}
+     * @return re-usable immutable default {@link HPAI}
      */
+    @Nonnull
     public static HPAI useDefault() {
         return DEFAULT;
     }
@@ -91,20 +106,11 @@ public final class HPAI extends AbstractMultiRawData {
     /**
      * Returns an instance of {@link HPAI}
      *
-     * @param bytes complete byte array for {@link HPAI}
-     * @return immutable {@link HPAI}
-     */
-    public static HPAI of(final byte[] bytes) {
-        return new HPAI(bytes);
-    }
-
-    /**
-     * Returns an instance of {@link HPAI}
-     *
      * @param channel
-     * @return immutable {@link HPAI}
+     * @return a new immutable {@link HPAI}
      */
-    public static HPAI of(final Channel channel) {
+    @Nonnull
+    public static HPAI of(final @Nonnull Channel channel) {
         // validate
         if (channel == null) {
             throw new KnxNullPointerException("channel");
@@ -129,9 +135,10 @@ public final class HPAI extends AbstractMultiRawData {
      * @param protocol
      * @param address
      * @param port
-     * @return immutable {@link HPAI}
+     * @return a new immutable {@link HPAI}
      */
-    public static HPAI of(final HostProtocol protocol, final InetAddress address, final int port) {
+    @Nonnull
+    public static HPAI of(final @Nonnull HostProtocol protocol, final @Nonnull InetAddress address, final int port) {
         // validate
         if (protocol == null) {
             throw new KnxNullPointerException("protocol");
@@ -152,7 +159,7 @@ public final class HPAI extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(final byte[] hpaiRawData) {
+    protected void validate(final @Nonnull byte[] hpaiRawData) {
         if (hpaiRawData == null) {
             throw new KnxNullPointerException("hpaiRawData");
         } else if (hpaiRawData.length != KNXNET_HPAI_LENGTH) {
@@ -164,10 +171,12 @@ public final class HPAI extends AbstractMultiRawData {
         return this.length;
     }
 
+    @Nonnull
     public HostProtocol getProtocol() {
         return this.protocol;
     }
 
+    @Nonnull
     public InetAddress getAddress() {
         return this.address;
     }
@@ -176,6 +185,7 @@ public final class HPAI extends AbstractMultiRawData {
         return this.port;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
@@ -192,7 +202,7 @@ public final class HPAI extends AbstractMultiRawData {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof HPAI) {

@@ -33,6 +33,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -53,9 +54,9 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    protected AbstractKnxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
-        this.internalClient = internalClient;
-        this.channel = channel;
+    protected AbstractKnxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
+        this.internalClient = Objects.requireNonNull(internalClient);
+        this.channel = Objects.requireNonNull(channel);
     }
 
     /**
@@ -111,6 +112,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return newly created selector with interest ops taken from {@link #interestOps()}
      * @throws IOException - if IO exception happened while performing the action method
      */
+    @Nonnull
     public final Selector openSelector() throws IOException {
         final var selector = Selector.open();
 
@@ -162,7 +164,8 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return An instance of {@link ByteChannel}
      */
     @SuppressWarnings("unchecked")
-    protected T getChannel(final SelectionKey key) {
+    @Nonnull
+    protected T getChannel(final @Nonnull SelectionKey key) {
         return (T) key.channel();
     }
 
@@ -173,8 +176,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return {@code true} (as specified by {@link Collection#add})
      */
     protected boolean add(final @Nonnull Body body) {
-        Preconditions.checkNotNull(body);
-        return this.queue.add(body);
+        return this.queue.add(Objects.requireNonNull(body));
     }
 
     /**
@@ -185,6 +187,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      */
     @Nonnull
     public final Body next() throws InterruptedException {
-        return this.queue.take();
+        return Objects.requireNonNull(this.queue.take());
     }
 }

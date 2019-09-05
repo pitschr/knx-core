@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.link.exceptions;
 
+import javax.annotation.Nullable;
+
 /**
  * A general KNX/IP communication exception. This exception is used for general communication issues as well like
  * IOException, InterruptedException during sending and receiving procedures.
@@ -26,11 +28,11 @@ package li.pitschmann.knx.link.exceptions;
  */
 public class KnxCommunicationException extends KnxException {
 
-    public KnxCommunicationException(final String message) {
+    public KnxCommunicationException(final @Nullable String message) {
         super(message);
     }
 
-    public KnxCommunicationException(final String message, final Throwable cause) {
+    public KnxCommunicationException(final @Nullable String message, final @Nullable Throwable cause) {
         super(message, cause);
     }
 

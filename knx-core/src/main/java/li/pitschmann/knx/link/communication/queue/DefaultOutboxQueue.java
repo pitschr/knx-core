@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.communication.queue;
 
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -37,12 +38,12 @@ public final class DefaultOutboxQueue extends AbstractOutboxQueue<ByteChannel> {
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public DefaultOutboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
+    public DefaultOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
         super(internalClient, channel);
     }
 
     @Override
-    protected void send(final ByteChannel channel, final ByteBuffer bb) throws IOException {
+    protected void send(final @Nonnull ByteChannel channel, final @Nonnull ByteBuffer bb) throws IOException {
         channel.write(bb);
     }
 }

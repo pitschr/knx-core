@@ -35,6 +35,7 @@ import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -70,13 +71,13 @@ public final class StatisticPlugin implements ExtensionPlugin {
      * @param format               the format how statistic should look like (see: {@link StatisticFormat})
      * @param intervalMilliseconds interval in milliseconds
      */
-    public StatisticPlugin(final StatisticFormat format, final long intervalMilliseconds) {
-        this.format = format;
+    public StatisticPlugin(final @Nonnull StatisticFormat format, final long intervalMilliseconds) {
+        this.format = Objects.requireNonNull(format);
         this.intervalMilliseconds = intervalMilliseconds;
     }
 
     @Override
-    public void onInitialization(final KnxClient client) {
+    public void onInitialization(final @Nonnull KnxClient client) {
         this.client = Objects.requireNonNull(client);
         executor.execute(new StatisticRunnable(this.intervalMilliseconds));
         executor.shutdown();
@@ -99,6 +100,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
      *
      * @return human-friendly statistic string
      */
+    @Nonnull
     private String getStatisticAsText() {
         final var statistics = this.client.getStatistic();
 
@@ -229,6 +231,7 @@ public final class StatisticPlugin implements ExtensionPlugin {
             this.template = template;
         }
 
+        @Nonnull
         private String getTemplate() {
             return template;
         }

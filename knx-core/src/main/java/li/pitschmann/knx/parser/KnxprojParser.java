@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -79,9 +80,10 @@ public final class KnxprojParser {
      * @param path location of *.knxproj file
      * @return KNX project
      */
-    public static XmlProject parse(final Path path) {
-        Preconditions.checkArgument(Files.exists(path), "File '" + path + "' doesn't exists.");
-        Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION), "Only '" + FILE_EXTENSION + "' is supported.");
+    @Nonnull
+    public static XmlProject parse(final @Nonnull Path path) {
+        Preconditions.checkArgument(Files.exists(path), "File '%s' doesn't exists.", path);
+        Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION), "Only '%s' is supported.", FILE_EXTENSION);
 
         log.debug("File '{}' to be parsed.", path);
 
@@ -116,7 +118,8 @@ public final class KnxprojParser {
      * @throws IOException  I/O exception when reading ZIP stream
      * @throws VTDException exception from VTD-XML
      */
-    private static XmlProject getKnxProjectInformation(final ZipFile zipFile) throws IOException, VTDException {
+    @Nonnull
+    private static XmlProject getKnxProjectInformation(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
         // reads the 'project.xml' file from 'P-<digit>' folder
         final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/project\\.xml$");
 
@@ -298,7 +301,8 @@ public final class KnxprojParser {
      * @param groupAddress look up for flags that is connected to this group address
      * @throws VTDException exception from VTD-XML
      */
-    private static final void readFlags(final VTDNav vtdNav, final XmlGroupAddress groupAddress) throws VTDException {
+    private static final void readFlags(final @Nonnull VTDNav vtdNav,
+                                        final @Nonnull XmlGroupAddress groupAddress) throws VTDException {
         final var vtdAutoPilot = new AutoPilot(vtdNav);
         // select xpath and evaluate
         vtdAutoPilot.selectXPath("//ComObjectInstanceRef[Connectors/Send[@GroupAddressRefId='" + groupAddress.getId() + "']]");
@@ -320,7 +324,10 @@ public final class KnxprojParser {
      * @return value of attribute, otherwise {@link KnxprojParserException}
      * @throws NavException navigation exception by VTD-XML
      */
-    private static String readAttributeValue(final VTDNav vtdNav, final String attribute, final Supplier<KnxprojParserException> throwable) throws NavException {
+    @Nullable
+    private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
+                                             final @Nonnull String attribute,
+                                             final @Nonnull Supplier<KnxprojParserException> throwable) throws NavException {
         final var value = readAttributeValue(vtdNav, attribute);
         if (value == null) {
             throw throwable.get();
@@ -336,7 +343,9 @@ public final class KnxprojParser {
      * @return value of attribute, otherwise {@code null}
      * @throws NavException navigation exception by VTD-XML
      */
-    private static String readAttributeValue(final VTDNav vtdNav, final String attribute) throws NavException {
+    @Nullable
+    private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
+                                             final @Nonnull String attribute) throws NavException {
         return readAttributeValue(vtdNav, attribute, (String) null);
     }
 
@@ -348,8 +357,11 @@ public final class KnxprojParser {
      * @return value of attribute, otherwise {@code defaultValue}
      * @throws NavException navigation exception by VTD-XML
      */
-    private static String readAttributeValue(final VTDNav vtdNav, final String attribute, final String defaultValue) throws NavException {
-        final var index = vtdNav.getAttrVal(attribute);
+    @Nullable
+    private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
+                                             final @Nonnull String attribute,
+                                             final @Nullable String defaultValue) throws NavException {
+        final var index = vtdNav.getAttrVal(Objects.requireNonNull(attribute));
         return index > 0 ? vtdNav.toString(index) : defaultValue;
     }
 
@@ -362,7 +374,11 @@ public final class KnxprojParser {
      * @return byte array
      * @throws IOException
      */
-    private static byte[] findAndReadToBytes(final ZipFile zipFile, final String filePathRegEx) throws IOException {
+    @Nonnull
+    private static byte[] findAndReadToBytes(final @Nonnull ZipFile zipFile,
+                                             final @Nonnull String filePathRegEx) throws IOException {
+        Preconditions.checkNotNull(zipFile);
+        Preconditions.checkNotNull(filePathRegEx);
         // find file that matches filePathRegEx in ZIP file
         final var zipEntry = zipFile.stream().filter(f -> f.getName().matches(filePathRegEx))
                 .findFirst()

@@ -176,4 +176,20 @@ public class DefaultKnxClientTest {
             fail("Unexpected test state", t);
         }
     }
+
+    /**
+     * Test {@link DefaultKnxClient#createStarted()} which will find mock server using
+     * discovery service.
+     *
+     * @param mockServer
+     */
+    @MockServerTest(useDiscovery = true)
+    @DisplayName("Test KNX client instantiation using discovery service")
+    public void testInstantiationViaDiscovery(final MockServer mockServer) {
+        try (final var client = DefaultKnxClient.createStarted()) {
+            // ok
+        } catch (final Throwable t) {
+            fail("Unexpected test state", t);
+        }
+    }
 }

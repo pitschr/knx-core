@@ -24,6 +24,9 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
@@ -36,12 +39,12 @@ public final class ConnectionStateResponseTask implements Subscriber<Body> {
     private static final Logger log = LoggerFactory.getLogger(ConnectionStateResponseTask.class);
     private final InternalKnxClient client;
 
-    public ConnectionStateResponseTask(final InternalKnxClient client) {
-        this.client = client;
+    public ConnectionStateResponseTask(final @Nonnull InternalKnxClient client) {
+        this.client = Objects.requireNonNull(client);
     }
 
     @Override
-    public void onNext(final Body body) {
+    public void onNext(final @Nullable Body body) {
         // we are interested in connection state response only
         if (body instanceof ConnectionStateResponseBody) {
             final var responseBody = (ConnectionStateResponseBody) body;
@@ -52,7 +55,7 @@ public final class ConnectionStateResponseTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nullable Throwable throwable) {
         log.error("Error during Connection State Response Task class", throwable);
     }
 
@@ -62,7 +65,7 @@ public final class ConnectionStateResponseTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(final Subscription subscription) {
+    public void onSubscribe(final @Nonnull Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 }

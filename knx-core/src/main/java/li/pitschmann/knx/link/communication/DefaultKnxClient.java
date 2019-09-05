@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.communication;
 
 import li.pitschmann.knx.link.Configuration;
 
+import javax.annotation.Nonnull;
+
 /**
  * Default KNX client implementation
  *
@@ -32,7 +34,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      *
      * @param config
      */
-    private DefaultKnxClient(final Configuration config) {
+    private DefaultKnxClient(final @Nonnull Configuration config) {
         super(config);
     }
 
@@ -43,6 +45,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      *
      * @return
      */
+    @Nonnull
     public static DefaultKnxClient createStarted() {
         return createStarted("");
     }
@@ -53,6 +56,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @param address
      * @return
      */
+    @Nonnull
     public static DefaultKnxClient createStarted(final String address) {
         return createStarted(Configuration.create(address).build());
     }
@@ -63,7 +67,8 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @param config
      * @return
      */
-    public static DefaultKnxClient createStarted(final Configuration config) {
+    @Nonnull
+    public static DefaultKnxClient createStarted(final @Nonnull Configuration config) {
         final var client = new DefaultKnxClient(config);
         // start communication
         client.getInternalClient().start();

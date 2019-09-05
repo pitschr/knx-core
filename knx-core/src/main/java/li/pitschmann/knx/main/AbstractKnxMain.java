@@ -21,6 +21,8 @@ package li.pitschmann.knx.main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -46,8 +48,11 @@ public abstract class AbstractKnxMain {
      * @param function
      * @return the value of parameter, otherwise {@code defaultValue}
      */
-    protected static <T> T getParameterValue(final String[] args, final String parameterName, final T defaultValue,
-                                             final Function<String, T> function) {
+    @Nullable
+    protected static <T> T getParameterValue(final @Nonnull String[] args,
+                                             final @Nonnull String parameterName,
+                                             final @Nonnull Function<String, T> function,
+                                             final @Nullable T defaultValue) {
         for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {
                 // found - next argument should be the value
@@ -73,7 +78,8 @@ public abstract class AbstractKnxMain {
      * @param parameterName
      * @return {@code true} if parameter was found, otherwise {@code false}
      */
-    protected static boolean existsParameter(final String[] args, final String parameterName) {
+    protected static boolean existsParameter(final @Nonnull String[] args,
+                                             final @Nonnull String parameterName) {
         return Arrays.stream(args).anyMatch(arg -> parameterName.equalsIgnoreCase(arg));
     }
     /**
@@ -85,9 +91,12 @@ public abstract class AbstractKnxMain {
      * @param function
      * @return the value of parameter, otherwise {@code defaultValue}
      */
-    // @SuppressWarnings("unchecked")
-    protected static <T> T[] getParameterValues(final String[] args, final String parameterName, final T[] defaultValues,
-                                                final IntFunction<T[]> function) {
+    @Nullable
+    protected static <T> T[] getParameterValues(final @Nonnull String[] args,
+                                                final @Nonnull String parameterName,
+                                                final @Nonnull IntFunction<T[]> function,
+                                                final @Nullable T[] defaultValues
+                                                ) {
         for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {
                 // found - next arguments should be the values

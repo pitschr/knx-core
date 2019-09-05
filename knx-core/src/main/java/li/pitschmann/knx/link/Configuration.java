@@ -26,12 +26,15 @@ import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,7 +54,7 @@ public final class Configuration {
     private final List<ObserverPlugin> observerPlugins;
     private final Map<String, String> settings;
 
-    private Configuration(final Builder builder) {
+    private Configuration(final @Nonnull Builder builder) {
         // control endpoint
         this.remoteControlAddress = builder.remoteControlAddress;
         this.remoteControlPort = builder.remoteControlPort;
@@ -71,7 +74,7 @@ public final class Configuration {
      * @param address remote control address (and port)
      * @return {@link Builder}
      */
-    public static Builder create(final String address) {
+    public static Builder create(final @Nullable String address) {
         // if address is null/blank then no address is provided and will be picked up using discovery approach
         if (address == null || address.isBlank()) {
             return create();
@@ -98,7 +101,7 @@ public final class Configuration {
      * @param address remote control address
      * @return {@link Builder}
      */
-    public static Builder create(final InetAddress address) {
+    public static Builder create(final @Nullable InetAddress address) {
         return create(address, Constants.Default.KNX_PORT);
     }
 
@@ -109,7 +112,7 @@ public final class Configuration {
      * @param port    remote control port
      * @return {@link Builder}
      */
-    public static Builder create(final InetAddress address, final int port) {
+    public static Builder create(final @Nullable InetAddress address, final int port) {
         if (address == null) {
             return create();
         } else {
@@ -132,6 +135,7 @@ public final class Configuration {
      *
      * @return {@link InetAddress}
      */
+    @Nonnull
     public InetAddress getRemoteControlAddress() {
         return this.remoteControlAddress;
     }
@@ -150,6 +154,7 @@ public final class Configuration {
      *
      * @return unmodifiable list of all {@link Plugin} instances
      */
+    @Nonnull
     public List<Plugin> getAllPlugins() {
         return this.allPlugins;
     }
@@ -159,6 +164,7 @@ public final class Configuration {
      *
      * @return unmodifiable list of {@link ObserverPlugin}
      */
+    @Nonnull
     public List<ObserverPlugin> getObserverPlugins() {
         return this.observerPlugins;
     }
@@ -168,6 +174,7 @@ public final class Configuration {
      *
      * @return unmodifiable list of {@link ExtensionPlugin}
      */
+    @Nonnull
     public List<ExtensionPlugin> getExtensionPlugins() {
         return this.extensionPlugins;
     }
@@ -182,8 +189,9 @@ public final class Configuration {
      * @param <T>
      * @return the value of setting (key)
      */
-    private <T> T getSetting(final String key, final T defaultValue, Function<String, T> function) {
-        final var value = this.settings.get(key);
+    @Nullable
+    private <T> T getSetting(final @Nonnull String key, final @Nullable T defaultValue, final @Nonnull Function<String, T> function) {
+        final var value = this.settings.get(Objects.requireNonNull(key));
         return value == null ? defaultValue : function.apply(value);
     }
 
@@ -196,7 +204,8 @@ public final class Configuration {
      * @param <T>
      * @return the value of configuration
      */
-    private <T> T getSetting(final T value, final T defaultValue) {
+    @Nullable
+    private <T> T getSetting(final @Nullable T value, final @Nullable T defaultValue) {
         return value == null ? defaultValue : value;
     }
 
@@ -206,6 +215,7 @@ public final class Configuration {
      *
      * @return {@link InetAddress}
      */
+    @Nonnull
     public InetAddress getRemoteDiscoveryAddress() {
         return getSetting("endpoint.discovery.address", Constants.Default.KNX_MULTICAST_ADDRESS, Networker::getByAddress);
     }
@@ -283,6 +293,7 @@ public final class Configuration {
         return getSetting("daemon.port.http", Constants.Default.HTTP_DAEMON_PORT, Integer::valueOf);
     }
 
+    @Nullable
     public Path getProjectPath() {
         return getSetting("daemon.path.knxproj", null, Paths::get);
     }
@@ -333,7 +344,8 @@ public final class Configuration {
          * @param port    remote control endpoint port
          * @return myself
          */
-        private Builder control(final InetAddress address, final int port) {
+        @Nonnull
+        private Builder control(final @Nonnull InetAddress address, final int port) {
             Preconditions.checkNotNull(address);
             // accept only 1024 .. 65535, other ports are reserved
             Preconditions.checkArgument(port >= 1024 && port <= 65535, "Illegal Port for endpoint provided.");
@@ -343,19 +355,22 @@ public final class Configuration {
             return this;
         }
 
-        public Builder plugin(final Plugin plugin, final Plugin... morePlugins) {
-            this.plugins.add(plugin);
+        @Nonnull
+        public Builder plugin(final @Nonnull Plugin plugin, final @Nullable Plugin... morePlugins) {
+            this.plugins.add(Objects.requireNonNull(plugin));
             for (final Plugin morePlugin : morePlugins) {
-                this.plugins.add(morePlugin);
+                this.plugins.add(Objects.requireNonNull(morePlugin));
             }
             return this;
         }
 
-        public Builder setting(final String key, final String value) {
-            this.settings.put(key, value);
+        @Nonnull
+        public Builder setting(final @Nonnull String key, final @Nullable String value) {
+            this.settings.put(Objects.requireNonNull(key), value);
             return this;
         }
 
+        @Nonnull
         public Configuration build() {
             return new Configuration(this);
         }

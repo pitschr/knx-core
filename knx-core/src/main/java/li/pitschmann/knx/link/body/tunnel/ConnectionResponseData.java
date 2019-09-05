@@ -28,6 +28,8 @@ import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 
+import javax.annotation.Nonnull;
+
 /**
  * Tunneling Connection Response Data (CRD)
  * <p>
@@ -51,7 +53,7 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
     private final ConnectionType connectionType;
     private final IndividualAddress address;
 
-    private ConnectionResponseData(final byte[] crdRawData) {
+    private ConnectionResponseData(final @Nonnull byte[] crdRawData) {
         super(crdRawData);
 
         this.length = Bytes.toUnsignedInt(crdRawData[0]);
@@ -63,9 +65,10 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * Builds a new {@link ConnectionResponseData} instance
      *
      * @param bytes complete byte array for {@link ConnectionResponseData}
-     * @return immutable {@link ConnectionResponseData}
+     * @return a new immutable {@link ConnectionResponseData}
      */
-    public static ConnectionResponseData valueOf(final byte[] bytes) {
+    @Nonnull
+    public static ConnectionResponseData of(final @Nonnull byte[] bytes) {
         return new ConnectionResponseData(bytes);
     }
 
@@ -73,9 +76,10 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * Creates a new {@link ConnectionResponseData} instance
      *
      * @param address
-     * @return immutable {@link ConnectionResponseData}
+     * @return a new immutable {@link ConnectionResponseData}
      */
-    public static ConnectionResponseData create(final IndividualAddress address) {
+    @Nonnull
+    public static ConnectionResponseData of(final @Nonnull IndividualAddress address) {
         // validate
         if (address == null) {
             throw new KnxNullPointerException("address");
@@ -93,11 +97,11 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
         bytes[1] = ConnectionType.TUNNEL_CONNECTION.getCodeAsByte();
         System.arraycopy(addressAsBytes, 0, bytes, 2, addressAsBytes.length);
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
     @Override
-    protected void validate(final byte[] crdRawData) {
+    protected void validate(final @Nonnull byte[] crdRawData) {
         if (crdRawData == null) {
             throw new KnxNullPointerException("crdRawData");
         } else if (crdRawData.length != 4) {
@@ -111,14 +115,17 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
         return this.length;
     }
 
+    @Nonnull
     public ConnectionType getConnectionType() {
         return this.connectionType;
     }
 
+    @Nonnull
     public IndividualAddress getAddress() {
         return this.address;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

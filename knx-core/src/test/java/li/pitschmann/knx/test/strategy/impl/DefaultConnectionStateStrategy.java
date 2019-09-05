@@ -55,6 +55,6 @@ public class DefaultConnectionStateStrategy implements ConnectionStateStrategy {
         final var channelId = getChannelId(mockServer);
         final var status = getStatus();
 
-        return new MockResponse(ConnectionStateResponseBody.create(channelId, status));
+        return new MockResponse(ConnectionStateResponseBody.of(channelId, status));
     }
 }

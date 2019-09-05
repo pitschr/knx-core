@@ -52,7 +52,7 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     private final int channelId;
     private final Status status;
 
-    private DisconnectResponseBody(final byte[] bytes) {
+    private DisconnectResponseBody(final @Nonnull byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
@@ -63,9 +63,10 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
      * Builds a new {@link DisconnectResponseBody} instance
      *
      * @param bytes complete byte array for {@link DisconnectResponseBody}
-     * @return immutable {@link DisconnectResponseBody}
+     * @return a new immutable {@link DisconnectResponseBody}
      */
-    public static DisconnectResponseBody valueOf(final byte[] bytes) {
+    @Nonnull
+    public static DisconnectResponseBody of(final @Nonnull byte[] bytes) {
         return new DisconnectResponseBody(bytes);
     }
 
@@ -74,9 +75,9 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
      *
      * @param channelId
      * @param status
-     * @return immutable {@link DisconnectResponseBody}
+     * @return a new immutable {@link DisconnectResponseBody}
      */
-    public static DisconnectResponseBody create(final int channelId, final Status status) {
+    public static DisconnectResponseBody of(final int channelId, final Status status) {
         // validate
         if (status == null) {
             throw new KnxNullPointerException("status");
@@ -89,11 +90,12 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         bytes[0] = (byte) channelId;
         bytes[1] = status.getCodeAsByte();
 
-        return valueOf(bytes);
+        return of(bytes);
     }
 
+    @Nonnull
     @Override
-    protected void validate(final byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -101,8 +103,8 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         }
     }
 
-    @Override
     @Nonnull
+    @Override
     public ServiceType getServiceType() {
         return ServiceType.DISCONNECT_RESPONSE;
     }
@@ -112,10 +114,12 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         return this.channelId;
     }
 
+    @Nonnull
     public Status getStatus() {
         return this.status;
     }
 
+    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

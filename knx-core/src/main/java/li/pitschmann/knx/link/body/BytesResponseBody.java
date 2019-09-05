@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * A custom ResponseBody for non-KNX-specified responses. It may be used for customized bodies
@@ -58,9 +59,9 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
     private static final int STRUCTURE_LENGTH = 250;
     private final ServiceType serviceType;
 
-    private BytesResponseBody(final ServiceType serviceType, final byte[] bytes) {
+    private BytesResponseBody(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bytes) {
         super(bytes);
-        this.serviceType = serviceType;
+        this.serviceType = Objects.requireNonNull(serviceType);
     }
 
     /**
@@ -68,9 +69,10 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
      *
      * @param serviceType the service type
      * @param bytes       complete byte array for {@link ConnectionStateRequestBody}
-     * @return immutable {@link BytesResponseBody}
+     * @return a new immutable {@link BytesResponseBody}
      */
-    public static BytesResponseBody create(final ServiceType serviceType, final byte[] bytes) {
+    @Nonnull
+    public static BytesResponseBody of(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bytes) {
         if (serviceType == null) {
             throw new KnxNullPointerException("serviceType");
         } else if (bytes == null) {
@@ -86,12 +88,13 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
     }
 
     @Override
-    protected void validate(byte[] rawData) {
+    protected void validate(final @Nonnull byte[] rawData) {
         if (rawData.length > STRUCTURE_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", 0, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
 
+    @Nonnull
     @Override
     public String toString(boolean inclRawData) {
         final var h = MoreObjects.toStringHelper(this)

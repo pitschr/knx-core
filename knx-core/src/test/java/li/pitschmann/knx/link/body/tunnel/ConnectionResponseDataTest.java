@@ -38,24 +38,24 @@ public final class ConnectionResponseDataTest {
     /**
      * Valid {@link ConnectionResponseData} for tunneling.
      * <p>
-     * Tests the {@link ConnectionResponseData#create(IndividualAddress)} and
-     * {@link ConnectionResponseData#valueOf(byte[])}
+     * Tests the {@link ConnectionResponseData#of(IndividualAddress)} and
+     * {@link ConnectionResponseData#of(byte[])}
      */
     @Test
     public void validCase() {
-        final var criByCreate = ConnectionResponseData.create(TEST_ADDRESS);
-        final var criByCreateRawData = ConnectionResponseData.valueOf(criByCreate.getRawData());
+        final var criByCreate = ConnectionResponseData.of(TEST_ADDRESS);
+        final var criByCreateRawData = ConnectionResponseData.of(criByCreate.getRawData());
         assertThat(criByCreateRawData.getLength()).isEqualTo(4);
         assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByCreateRawData.getAddress()).isEqualTo(TEST_ADDRESS);
 
-        // valueOf
-        final var criByValueOf = ConnectionResponseData.valueOf(new byte[]{0x04, 0x04, (byte) 0xFF, (byte) 0xFF});
+        // create by bytes
+        final var criByValueOf = ConnectionResponseData.of(new byte[]{0x04, 0x04, (byte) 0xFF, (byte) 0xFF});
         assertThat(criByValueOf.getLength()).isEqualTo(4);
         assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(criByValueOf.getAddress()).isEqualTo(TEST_ADDRESS);
 
-        // compare raw data of 'create' and 'valueOf'
+        // compare raw data of 'create' and 'create by bytes'
         assertThat(criByCreateRawData.getRawData()).isEqualTo(criByCreateRawData.getRawData());
         assertThat(criByCreateRawData.getRawData()).isEqualTo(criByValueOf.getRawData());
     }
@@ -66,13 +66,13 @@ public final class ConnectionResponseDataTest {
     @Test
     public void invalidCases() {
         // null
-        assertThatThrownBy(() -> ConnectionResponseData.valueOf(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crdRawData");
-        assertThatThrownBy(() -> ConnectionResponseData.create(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("address");
+        assertThatThrownBy(() -> ConnectionResponseData.of((byte[])null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crdRawData");
+        assertThatThrownBy(() -> ConnectionResponseData.of((IndividualAddress)null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("address");
 
         // out of range
-        assertThatThrownBy(() -> ConnectionResponseData.valueOf(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionResponseData.of(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("crdRawData");
-        assertThatThrownBy(() -> ConnectionResponseData.valueOf(new byte[4])).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> ConnectionResponseData.of(new byte[4])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("crdRawData[0]"); // illegal length (byte 0)
     }
 
@@ -81,11 +81,11 @@ public final class ConnectionResponseDataTest {
      */
     @Test
     public void testToString() {
-        assertThat(ConnectionResponseData.create(TEST_ADDRESS))
+        assertThat(ConnectionResponseData.of(TEST_ADDRESS))
                 .hasToString(String.format("ConnectionResponseData{length=4 (0x04), connectionType=%s, address=%s, rawData=0x04 04 FF FF}",
                         ConnectionType.TUNNEL_CONNECTION, TEST_ADDRESS.toString(false)));
 
-        assertThat(ConnectionResponseData.valueOf(new byte[]{0x04, 0x06, 0x16, 0x63}).toString(false)).hasToString(String.format(
+        assertThat(ConnectionResponseData.of(new byte[]{0x04, 0x06, 0x16, 0x63}).toString(false)).hasToString(String.format(
                 "ConnectionResponseData{length=4 (0x04), connectionType=%s, address=%s}", ConnectionType.REMOTE_LOGGING_CONNECTION,
                 IndividualAddress.of(new byte[]{0x16, 0x63}).toString(false)));
 

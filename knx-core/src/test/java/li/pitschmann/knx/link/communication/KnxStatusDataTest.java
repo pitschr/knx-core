@@ -99,7 +99,14 @@ public class KnxStatusDataTest {
         when(cemi1.getApciData()).thenReturn(new byte[0]);
 
         final var statusData1 = new KnxStatusData(cemi1);
-        assertThat(statusData1).hasToString(String.format("KnxStatusData{dirty=false, timestamp=%s, sourceAddress=%s, apci=%s, apciData=null}", statusData1.getTimestamp(), cemi1.getSourceAddress(), cemi1.getApci()));
+        assertThat(statusData1).hasToString(String.format(
+                "KnxStatusData{" +
+                        "dirty=false, " +
+                        "timestamp=%s, " +
+                        "sourceAddress=%s, " +
+                        "apci=%s, " +
+                        "apciData=[] ()" +
+                        "}", statusData1.getTimestamp(), cemi1.getSourceAddress(), cemi1.getApci()));
 
         // Test #2
         final var cemi2 = mock(CEMI.class);
@@ -108,6 +115,13 @@ public class KnxStatusDataTest {
         when(cemi2.getApciData()).thenReturn(new byte[]{0x44, 0x22, 0x33});
 
         final var statusData2 = new KnxStatusData(cemi2);
-        assertThat(statusData2).hasToString(String.format("KnxStatusData{dirty=false, timestamp=%s, sourceAddress=%s, apci=%s, apciData=0x44 22 33}", statusData2.getTimestamp(), cemi2.getSourceAddress(), cemi2.getApci()));
+        assertThat(statusData2).hasToString(String.format(
+                "KnxStatusData{" +
+                        "dirty=false, " +
+                        "timestamp=%s, " +
+                        "sourceAddress=%s, " +
+                        "apci=%s, " +
+                        "apciData=0x44 22 33" +
+                        "}", statusData2.getTimestamp(), cemi2.getSourceAddress(), cemi2.getApci()));
     }
 }

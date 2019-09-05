@@ -53,15 +53,15 @@ public class KnxMainWrite extends AbstractKnxMain {
 
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", null, Function.identity());
+        final var ipAddress = getParameterValue(args, "-r", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         // 2nd Argument: Get DPT
-        final var dpt = getParameterValue(args, "-dpt", DEFAULT_DPT, String::valueOf);
+        final var dpt = getParameterValue(args, "-dpt", String::valueOf, DEFAULT_DPT);
         log.debug("DPT: {}", dpt);
 
         // 3rd..Nth Arguments: Get Values
-        final var values = getParameterValues(args, "-c", DEFAULT_VALUES, String[]::new);
+        final var values = getParameterValues(args, "-c", String[]::new, DEFAULT_VALUES);
         log.debug("Values: {}", Arrays.toString(values));
 
         // start KNX communication

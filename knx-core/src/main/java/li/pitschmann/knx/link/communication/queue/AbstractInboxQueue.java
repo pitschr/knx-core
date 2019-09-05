@@ -26,6 +26,7 @@ import li.pitschmann.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -48,7 +49,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public AbstractInboxQueue(final InternalKnxClient internalClient, final SelectableChannel channel) {
+    public AbstractInboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
         super(internalClient, channel);
     }
 
@@ -58,7 +59,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
     }
 
     @Override
-    protected boolean valid(final SelectionKey key) {
+    protected boolean valid(final @Nonnull SelectionKey key) {
         return key.isValid() && key.isReadable();
     }
 
@@ -69,7 +70,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
      * @param key selection key
      * @throws IOException exception while reading from {@link ByteChannel}
      */
-    protected void action(final SelectionKey key) throws IOException {
+    protected void action(final @Nonnull SelectionKey key) throws IOException {
         log.trace("Method 'action(SelectionKey)' called.");
 
         final byte[] receivedBytes;
@@ -91,7 +92,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
         if (this.getInternalClient().verifyChannelId(body)) {
             // channel id is correct
             if (log.isDebugEnabled()) {
-                final var header = Header.valueOf(receivedBytes);
+                final var header = Header.of(receivedBytes);
                 log.debug("RECEIVE: {}\n" + //
                                 "----------------------------------------------------------------\n" + //
                                 "   Source: {}\n" + //
