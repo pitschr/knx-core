@@ -48,20 +48,19 @@ public final class ChannelFactory {
     }
 
     /**
-     * Creates a channel for discovery communication to the given
+     * Creates a channel for multicast communication to the given
      * socket address provided by {@link InternalKnxClient}
      *
      * @param client
      * @return a new instance of {@link DatagramChannel} for discovery related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    @Nonnull
-    public static DatagramChannel newDiscoveryChannel(final @Nonnull InternalKnxClient client) {
+    public static DatagramChannel newMulticastChannel(final @Nonnull InternalKnxClient client) {
         final var config = client.getConfig();
-        final var localPort = config.getDiscoveryChannelPort();
-        final var socketTimeout = config.getSocketTimeoutDiscoveryChannel();
-        final var timeToLive = config.getDiscoveryMulticastTTL();
-        log.debug("Create new discovery channel (local port: {}, socket timeout: {} ms, Time-To-Live (TTL): {})",
+        final var localPort = config.getMulticastChannelPort();
+        final var socketTimeout = config.getSocketTimeoutMulticastChannel();
+        final var timeToLive = config.getMulticastTTL();
+        log.debug("Create new multicast channel (local port: {}, socket timeout: {} ms, Time-To-Live (TTL): {})",
                 localPort, socketTimeout, timeToLive);
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, timeToLive);
         return newDatagramChannel(localPort, socketTimeout, null, socketOptions);

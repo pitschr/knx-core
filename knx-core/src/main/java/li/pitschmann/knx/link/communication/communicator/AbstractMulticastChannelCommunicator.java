@@ -19,67 +19,60 @@
 package li.pitschmann.knx.link.communication.communicator;
 
 import li.pitschmann.knx.link.Constants;
-import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.queue.DiscoveryInboxQueue;
-import li.pitschmann.knx.link.communication.queue.DiscoveryOutboxQueue;
+import li.pitschmann.knx.link.communication.queue.MulticastInboxQueue;
+import li.pitschmann.knx.link.communication.queue.MulticastOutboxQueue;
 import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.MembershipKey;
+import java.nio.channels.SelectableChannel;
 import java.util.List;
 
 /**
- * Communicator for discovery channel related packets
+ * Channel communicator for multicast related packets (Discovery, Routing)
  *
  * @author PITSCHR
  */
-public final class DiscoveryChannelCommunicator extends AbstractChannelCommunicator<DatagramChannel> {
+public abstract class AbstractMulticastChannelCommunicator extends AbstractChannelCommunicator<SelectableChannel> {
     private List<MembershipKey> membershipKeys;
 
-    public DiscoveryChannelCommunicator(final @Nonnull InternalKnxClient client) {
+    protected AbstractMulticastChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
     }
 
     @Nonnull
     @Override
-    protected DatagramChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
+    protected final DatagramChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
         // creates new channel
-        final var channel = ChannelFactory.newDiscoveryChannel(internalClient);
+        final var channel = ChannelFactory.newMulticastChannel(internalClient);
 
         // join channels, the membership keys will be used for laving the joined
         // multicast groups -> see cleanUp() method.
-        this.membershipKeys = Networker.joinChannels(channel, Constants.Default.KNX_MULTICAST_ADDRESS);
+        this.membershipKeys = Networker.joinChannels(channel, Constants.Default.MULTICAST_ADDRESS);
 
         return channel;
     }
 
     @Override
-    protected void cleanUp() {
+    protected final void cleanUp() {
         membershipKeys.stream().forEach(MembershipKey::drop);
         log.debug("Membership of all multicast groups dropped.");
     }
 
     @Nonnull
     @Override
-    protected DiscoveryInboxQueue createInboxQueue(final @Nonnull InternalKnxClient internalClient,
-                                                   final @Nonnull DatagramChannel channel) {
-        return new DiscoveryInboxQueue(internalClient, channel);
+    protected final MulticastInboxQueue createInboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                   final @Nonnull SelectableChannel channel) {
+        return new MulticastInboxQueue(internalClient, channel);
     }
 
     @Nonnull
     @Override
-    protected DiscoveryOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
-                                                     final @Nonnull DatagramChannel channel) {
-        return new DiscoveryOutboxQueue(internalClient, channel);
-    }
-
-    @Override
-    public boolean isCompatible(final @Nullable Body body) {
-        return body instanceof SearchResponseBody;
+    protected final MulticastOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                     final @Nonnull SelectableChannel channel) {
+        return new MulticastOutboxQueue(internalClient, channel);
     }
 }

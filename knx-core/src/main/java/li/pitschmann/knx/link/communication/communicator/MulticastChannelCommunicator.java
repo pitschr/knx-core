@@ -16,13 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.link.body;
+package li.pitschmann.knx.link.communication.communicator;
+
+import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.MulticastChannelRelated;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * Marker interface that this body is subject to be sent over discovery channel only.
+ * Channel communicator for multicast related packets (Discovery, Routing)
  *
  * @author PITSCHR
  */
-public interface DiscoveryChannelRelated {
-    // empty
+public final class MulticastChannelCommunicator extends AbstractMulticastChannelCommunicator {
+    public MulticastChannelCommunicator(final @Nonnull InternalKnxClient client) {
+        super(client);
+    }
+
+    @Override
+    public boolean isCompatible(final @Nullable Body body) {
+        return body instanceof MulticastChannelRelated;
+    }
 }

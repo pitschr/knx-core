@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
  *
  * @author PITSCHR
  */
-public final class SearchRequestBody extends AbstractMultiRawData implements RequestBody, DiscoveryChannelRelated {
+public final class SearchRequestBody extends AbstractMultiRawData implements RequestBody, MulticastChannelRelated {
     private static final SearchRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI discoveryEndpoint;
 

@@ -27,6 +27,7 @@ import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +39,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author PITSCHR
  */
 public final class CEMITest {
+    /**
+     * Tests the {@code useDefault(..)} methods
+     */
+    @Test
+    @DisplayName("Test useDefault(..) methods if they generate same byte arrays")
+    public void testUseDefaultMethods() {
+        final var knxAddress = IndividualAddress.of(5, 9, 15);
+        final var bytes = new byte[]{(byte) 0xCC, (byte) 0xEE};
+        final var dptValue = DPT7.LENGTH_MM.toValue(bytes);
+
+        final var cemiDefaultWithBytes = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
+        final var cemiDefaultWithDataPoint = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
+
+        final var cemiDefaultWithBytes2 = CEMI.useDefault(MessageCode.L_DATA_REQ, knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
+        final var cemiDefaultWithDataPoint2 = CEMI.useDefault(MessageCode.L_DATA_REQ, knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
+
+        // assert
+        assertThat(cemiDefaultWithBytes.getRawData()).containsExactly(cemiDefaultWithBytes2.getRawData());
+        assertThat(cemiDefaultWithDataPoint.getRawData()).containsExactly(cemiDefaultWithDataPoint2.getRawData());
+    }
+
     /**
      * Tests the {@link CEMI#useDefaultForGroupValueRead(KnxAddress)}
      */

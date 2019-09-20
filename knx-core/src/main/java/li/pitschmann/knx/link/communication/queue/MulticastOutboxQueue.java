@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
 import javax.annotation.Nonnull;
@@ -28,13 +29,13 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 
 /**
- * Discovery Outbox Queue for KNX discovery packets to be sent to KNX Net/IP device
- * This class is special because the discovery communication is based on broadcast.
+ * Discovery Outbox Queue for KNX multicast packets to be sent to KNX Net/IP device
+ * This class is special because the multicast communication is based on broadcast.
  *
  * @author PITSCHR
  */
-public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChannel> {
-    private final InetSocketAddress discoverySocketAddress;
+public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChannel> {
+    private final InetSocketAddress multicastSocketAddress;
 
     /**
      * Constructor for KNX Discovery Inbox Queue
@@ -42,15 +43,15 @@ public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChan
      * @param internalClient internal KNX client for internal actions like informing plug-ins
      * @param channel        channel of communication
      */
-    public DiscoveryOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
+    public MulticastOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
         super(internalClient, channel);
 
         final var config = internalClient.getConfig();
-        discoverySocketAddress = new InetSocketAddress(config.getRemoteDiscoveryAddress(), config.getRemoteDiscoveryPort());
+        multicastSocketAddress = new InetSocketAddress(config.getRemoteMulticastAddress(), config.getRemoteMulticastPort());
     }
 
     @Override
     protected void send(final @Nonnull DatagramChannel channel, final @Nonnull ByteBuffer bb) throws IOException {
-        channel.send(bb, discoverySocketAddress);
+        channel.send(bb, multicastSocketAddress);
     }
 }

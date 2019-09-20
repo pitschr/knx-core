@@ -245,6 +245,22 @@ public final class CEMI extends AbstractMultiRawData {
     }
 
     /**
+     * Creates a new {@link CEMI} instance with default settings. It is a wrapper of
+     * {@link #useDefault(MessageCode, KnxAddress, APCI, byte[])} while the byte array is taken
+     * from {@link DataPointValue} parameter.
+     *
+     * @param destinationAddress
+     * @param apci
+     * @param dataPointValue
+     * @return a new immutable {@link CEMI} with default settings and {@link MessageCode,} {@link KnxAddress},
+     * {@link APCI} and byte array with data for {@link APCI} taken from {@link DataPointValue}.
+     */
+    @Nonnull
+    public static CEMI useDefault(final @Nonnull MessageCode messageCode, final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nonnull DataPointValue<?> dataPointValue) {
+        return useDefault(messageCode, destinationAddress, apci, dataPointValue.toByteArray());
+    }
+
+    /**
      * Creates a new {@link CEMI} instance with default settings:
      *
      * <ul>
@@ -265,10 +281,33 @@ public final class CEMI extends AbstractMultiRawData {
      */
     @Nonnull
     public static CEMI useDefault(final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nullable byte[] apciData) {
+        return useDefault(MessageCode.L_DATA_REQ, destinationAddress, apci, apciData);
+    }
+
+    /**
+     * Creates a new {@link CEMI} instance with default settings:
+     *
+     * <ul>
+     * <li>Additional Info = N/A (empty)</li>
+     * <li>ControlByte 1 = {@link ControlByte1#useDefault()}</li>
+     * <li>ControlByte 2 = {@link ControlByte2#of(KnxAddress)} (KnxAddress taken from parameter
+     * {@code destinationAddress})</li>
+     * <li>TPCI = {@link TPCI#UNNUMBERED_PACKAGE}</li>
+     * <li>TPCI Packet Number = 0 (zero)</li>
+     * </ul>
+     *
+     * @param messageCode
+     * @param destinationAddress
+     * @param apci
+     * @param apciData
+     * @return a new immutable {@link CEMI} with default settings and {@link MessageCode, }{@link KnxAddress},
+     * {@link APCI} and byte array with data for {@link APCI}.
+     */
+    @Nonnull
+    public static CEMI useDefault(final @Nonnull MessageCode messageCode, final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nullable byte[] apciData) {
         // no validation required here
 
         // default settings
-        final var messageCode = MessageCode.L_DATA_REQ;
         final var additionalInfo = AdditionalInfo.empty();
         final var controlByte1 = ControlByte1.useDefault();
         final var controlByte2 = ControlByte2.of(destinationAddress);
@@ -280,7 +319,6 @@ public final class CEMI extends AbstractMultiRawData {
         return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, tpciPacketNumber, apci,
                 apciData);
     }
-
     /**
      * Creates a new {@link CEMI} instance
      *

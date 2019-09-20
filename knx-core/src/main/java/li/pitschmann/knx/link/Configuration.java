@@ -150,6 +150,25 @@ public final class Configuration {
     }
 
     /**
+     * Remote Discovery Endpoint address to find KNX Net/IP devices
+     *
+     * @return {@link InetAddress}
+     */
+    @Nonnull
+    public InetAddress getRemoteMulticastAddress() {
+        return getSetting("remote.multicast.address", Constants.Default.MULTICAST_ADDRESS, Networker::getByAddress);
+    }
+
+    /**
+     * Remote Discovery Endpoint port to find KNX Net/IP devices
+     *
+     * @return port
+     */
+    public int getRemoteMulticastPort() {
+        return getSetting("remote.multicast.port", Constants.Default.KNX_PORT, Integer::valueOf);
+    }
+
+    /**
      * Returns list of all plug-ins
      *
      * @return unmodifiable list of all {@link Plugin} instances
@@ -209,26 +228,6 @@ public final class Configuration {
         return value == null ? defaultValue : value;
     }
 
-
-    /**
-     * Remote Discovery Endpoint address to find KNX Net/IP devices
-     *
-     * @return {@link InetAddress}
-     */
-    @Nonnull
-    public InetAddress getRemoteDiscoveryAddress() {
-        return getSetting("endpoint.discovery.address", Constants.Default.KNX_MULTICAST_ADDRESS, Networker::getByAddress);
-    }
-
-    /**
-     * Remote Discovery Endpoint port to find KNX Net/IP devices
-     *
-     * @return port
-     */
-    public int getRemoteDiscoveryPort() {
-        return getSetting("endpoint.discovery.port", Constants.Default.KNX_PORT, Integer::valueOf);
-    }
-
     public int getPluginExecutorPoolSize() {
         return Math.max(this.getSetting("executor.pool.plugin", Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf), this.observerPlugins.size());
     }
@@ -245,8 +244,8 @@ public final class Configuration {
         return getSetting("interval.event", Constants.Interval.EVENT, Long::valueOf);
     }
 
-    public long getSocketTimeoutDiscoveryChannel() {
-        return getSetting("timeout.socket.discovery", Constants.Timeouts.DISCOVERY_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    public long getSocketTimeoutMulticastChannel() {
+        return getSetting("timeout.socket.multicast", Constants.Timeouts.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     public long getSocketTimeoutDescriptionChannel() {
@@ -298,12 +297,12 @@ public final class Configuration {
         return getSetting("daemon.path.knxproj", null, Paths::get);
     }
 
-    public int getDiscoveryChannelPort() {
-        return getSetting("client.channel.discovery.port", 0, Integer::valueOf);
+    public int getMulticastChannelPort() {
+        return getSetting("client.channel.multicast.port", 0, Integer::valueOf);
     }
 
-    public int getDiscoveryMulticastTTL() {
-        return getSetting("client.channel.discovery.ttl", 4, Integer::valueOf);
+    public int getMulticastTTL() {
+        return getSetting("client.channel.multicast.ttl", 4, Integer::valueOf);
     }
 
     public int getDescriptionChannelPort() {
@@ -320,6 +319,10 @@ public final class Configuration {
 
     public boolean isNatEnabled() {
         return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
+    }
+
+    public boolean isRoutingEnabled() {
+        return getSetting("client.routing.enabled", Constants.Default.ROUTING_ENABLED, Boolean::valueOf);
     }
 
     /**

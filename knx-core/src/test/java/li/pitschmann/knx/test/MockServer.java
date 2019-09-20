@@ -118,7 +118,7 @@ public final class MockServer implements Runnable, Closeable {
         // Join Discovery Multicast Service if necessary
         if (mockServerAnnotation.useDiscovery()) {
             Preconditions.checkArgument(this.serverChannel.getChannel() instanceof MulticastChannel);
-            this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), Constants.Default.KNX_MULTICAST_ADDRESS);
+            this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), Constants.Default.MULTICAST_ADDRESS);
             logger.debug("Membership Keys: {}", membershipKeys);
         }
 
@@ -450,8 +450,8 @@ public final class MockServer implements Runnable, Closeable {
         final Configuration.Builder configBuilder;
         if (mockServerAnnotation.useDiscovery()) {
             configBuilder = Configuration.create()
-                    .setting("endpoint.discovery.port", String.valueOf(this.serverChannel.getPort()))
-                    .setting("client.channel.discovery.ttl", "0");
+                    .setting("remote.multicast.port", String.valueOf(this.serverChannel.getPort()))
+                    .setting("client.channel.multicast.ttl", "0");
             logger.info("Discovery service will be used for mock server");
         } else {
             final var address = Networker.getLocalHost();

@@ -82,9 +82,9 @@ public final class Constants {
          */
         public static final long CONNECTION_ALIVE_TIME = TimeUnit.SECONDS.toMillis(120);
         /**
-         * Timeout for Description Channel Socket
+         * Timeout for Multicast Channel Socket
          */
-        public static final long DISCOVERY_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+        public static final long MULTICAST_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
         /**
          * Timeout for Description Channel Socket
          */
@@ -130,7 +130,7 @@ public final class Constants {
         /**
          * KNX/IP System Setup Multicast Address
          */
-        public static final InetAddress KNX_MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
+        public static final InetAddress MULTICAST_ADDRESS = Networker.getByAddress(224, 0, 23, 12);
         /**
          * Default size for Communicator Executor Pool Size
          */
@@ -147,6 +147,11 @@ public final class Constants {
          * Default value if NAT should be enabled
          */
         public static final boolean NAT_ENABLED = false;
+
+        /**
+         * Default value if ROUTING should be enabled
+         */
+        public static final boolean ROUTING_ENABLED = false;
 
         private Default() {
         }

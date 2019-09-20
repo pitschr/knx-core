@@ -23,9 +23,11 @@ import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
@@ -73,6 +75,11 @@ public class BaseKnxClient implements KnxClient {
     public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
         final var cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
         return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+    }
+
+    public void writeRouting(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
+        final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, dataPointValue.toByteArray());
+        this.internalClient.send(RoutingIndicationBody.of(cemi));
     }
 
     /**

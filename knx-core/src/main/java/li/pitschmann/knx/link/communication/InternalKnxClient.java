@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.ChannelIdAware;
 import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
@@ -43,12 +44,13 @@ import li.pitschmann.knx.link.communication.communicator.ControlAndDataChannelCo
 import li.pitschmann.knx.link.communication.communicator.ControlChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.DataChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.DescriptionChannelCommunicator;
-import li.pitschmann.knx.link.communication.communicator.DiscoveryChannelCommunicator;
+import li.pitschmann.knx.link.communication.communicator.MulticastChannelCommunicator;
 import li.pitschmann.knx.link.communication.task.ConnectResponseTask;
 import li.pitschmann.knx.link.communication.task.ConnectionStateResponseTask;
 import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
 import li.pitschmann.knx.link.communication.task.DisconnectRequestTask;
 import li.pitschmann.knx.link.communication.task.DisconnectResponseTask;
+import li.pitschmann.knx.link.communication.task.RoutingIndicationTask;
 import li.pitschmann.knx.link.communication.task.SearchResponseTask;
 import li.pitschmann.knx.link.communication.task.TunnelingAckTask;
 import li.pitschmann.knx.link.communication.task.TunnelingRequestTask;
@@ -130,29 +132,50 @@ public final class InternalKnxClient implements KnxClient {
         Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
 
         try {
-            // check if endpoint is defined - if not, look up for an available KNX Net/IP device
-            if (config.getRemoteControlAddress() == null) {
-                final var discoveryResponse = this.fetchDiscoveryFromKNX();
-                this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getControlEndpoint());
-                log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());
+            if (this.config.isRoutingEnabled()) {
+                startRouting();
             } else {
-                this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
-                log.debug("Endpoint from configuration is taken: {}", this.remoteEndpoint);
-            }
-
-            // validate
-            if (this.verify()) {
-                log.info("Verification passed. Starting KNX services.");
-                this.startServices();
-            } else {
-                throw new KnxNoTunnelingException(
-                        "The remote device doesn't support TUNNELING. Please choose a remote device that supports TUNNELING.");
+                startTunneling();
             }
         } catch (final Exception ex) {
             log.error("Exception caught on 'start()' method.", ex);
             this.notifyPluginsError(ex);
             this.close();
             throw ex;
+        }
+    }
+
+    /**
+     * Starts KNX communication via Routing
+     */
+    private final void startRouting() {
+        this.remoteEndpoint = new InetSocketAddress(Constants.Default.MULTICAST_ADDRESS, Constants.Default.KNX_PORT);
+        log.debug("Endpoint from KNX multi cast is taken: {}", this.remoteEndpoint);
+
+        log.info("Routing is used. Starting KNX services.");
+        this.startServices();
+    }
+
+    /**
+     * Starts KNX communication via Tunneling
+     */
+    private final void startTunneling() {
+        // check if endpoint is defined - if not, look up for an available KNX Net/IP device
+        if (config.getRemoteControlAddress() == null) {
+            final var discoveryResponse = this.fetchDiscoveryFromKNX();
+            this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getControlEndpoint());
+            log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());
+        } else {
+            this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
+            log.debug("Endpoint from configuration is taken: {}", this.remoteEndpoint);
+        }
+
+        if (this.verifyTunnelingSupport()) {
+            log.info("Tunneling is used. Verification passed. Starting KNX services.");
+            this.startServices();
+        } else {
+            throw new KnxNoTunnelingException(
+                    "The remote device doesn't support TUNNELING. Please choose a remote device that supports TUNNELING.");
         }
     }
 
@@ -193,8 +216,8 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @return {@code true} if tunneling is supported by KNX Net/IP device and we can proceed with connect, otherwise {@code false}.
      */
-    private boolean verify() {
-        log.trace("Call 'verify()' method.");
+    private boolean verifyTunnelingSupport() {
+        log.trace("Call 'verifyTunnelingSupport()' method.");
         final var descriptionResponseBody = this.fetchDescriptionFromKNX();
 
         // get supported device families
@@ -217,7 +240,16 @@ public final class InternalKnxClient implements KnxClient {
             Preconditions.checkState(this.controlHPAI == null);
             Preconditions.checkState(this.dataHPAI == null);
 
-            if (this.config.isNatEnabled()) {
+            if (this.config.isRoutingEnabled()) {
+                // Routing is enabled -> communication will be done via multi cast
+                final var multicastChannelCommunicator = new MulticastChannelCommunicator(this);
+                subscribersForMultiChannel().forEach(multicastChannelCommunicator::subscribe);
+
+                this.controlHPAI = HPAI.useDefault();
+                this.dataHPAI = HPAI.useDefault();
+
+                this.channelCommunicators = ImmutableList.of(multicastChannelCommunicator);
+            } else if (this.config.isNatEnabled()) {
                 // NAT is enabled -> only one communicator for control and data related packets
                 final var controlAndDataChannelCommunicator = new ControlAndDataChannelCommunicator(this);
                 subscribersForDataChannel().forEach(controlAndDataChannelCommunicator::subscribe);
@@ -251,11 +283,15 @@ public final class InternalKnxClient implements KnxClient {
             this.channelCommunicators.forEach(channelExecutor::execute);
 
             // get channel for further communications
-            this.channelId = this.fetchChannelIdFromKNX();
-            log.info("Channel ID received: {}", this.channelId);
+            if (this.config.isRoutingEnabled()) {
+                log.info("No channel ID because of routing");
+            } else {
+                this.channelId = this.fetchChannelIdFromKNX();
+                log.info("Channel ID received: {}", this.channelId);
 
-            // after obtaining channel id - start monitor as well
-            this.channelExecutor.submit(this.createConnectionStateMonitor());
+                // after obtaining channel id - start monitor as well
+                this.channelExecutor.submit(this.createConnectionStateMonitor());
+            }
 
             // do not accept more services anymore!
             this.channelExecutor.shutdown();
@@ -269,39 +305,18 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     /**
-     * Creates a new instance of {@link DescriptionChannelCommunicator} for discovery channel communication
-     * and forwards the KNX packets to subscribed tasks.
+     * Returns a list of {@link Flow.Subscriber} that is suited for description channel communicators
      * <p>
      * Following subscribers are:
      * <ul>
-     * <li>{@link SearchResponseTask} receiving the search frames</li>
+     * <li>{@link DescriptionResponseTask} receiving the response after {@link DescriptionRequestBody}</li>
+     * client</li>
      * </ul>
      *
-     * @return {@link DiscoveryChannelCommunicator}
+     * @return unmodifiable list of subscribers
      */
-    @Nonnull
-    private DiscoveryChannelCommunicator newDiscoveryChannelCommunicator() {
-        final var communicator = new DiscoveryChannelCommunicator(this);
-        communicator.subscribe(new SearchResponseTask(this));
-        return communicator;
-    }
-
-    /**
-     * Creates a new instance of {@link DescriptionChannelCommunicator} for description channel communication
-     * and forwards the KNX packets to subscribed tasks.
-     * <p>
-     * Following subscribers are:
-     * <ul>
-     * <li>{@link DescriptionResponseTask} receiving the description frames</li>
-     * </ul>
-     *
-     * @return {@link DescriptionChannelCommunicator}
-     */
-    @Nonnull
-    private DescriptionChannelCommunicator newDescriptionChannelCommunicator() {
-        final var communicator = new DescriptionChannelCommunicator(this);
-        communicator.subscribe(new DescriptionResponseTask(this));
-        return communicator;
+    private List<Flow.Subscriber<Body>> subscribersForDescriptionChannel() {
+        return Collections.singletonList(new DescriptionResponseTask(this));
     }
 
     /**
@@ -309,7 +324,7 @@ public final class InternalKnxClient implements KnxClient {
      * <p>
      * Following subscribers are:
      * <ul>
-     * <li>{@link ConnectResponseTask} receiving the response after {@link ConnectRequestBody}, only once time</li>
+     * <li>{@link ConnectResponseTask} receiving the response after {@link ConnectRequestBody}</li>
      * <li>{@link ConnectionStateResponseTask} receiving connection health status from KNX Net/IP device</li>
      * <li>{@link DisconnectRequestTask} when disconnect is initiated by the KNX Net/IP device</li>
      * <li>{@link DisconnectResponseTask} as answer from KNX Net/IP device when disconnect is initiated by the
@@ -345,6 +360,25 @@ public final class InternalKnxClient implements KnxClient {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
         subscribers.add(new TunnelingRequestTask(this));
         subscribers.add(new TunnelingAckTask(this));
+        return Collections.unmodifiableList(subscribers);
+    }
+
+    /**
+     * Returns a list of {@link Flow.Subscriber} that is suited for multicast channel communicators
+     * <p>
+     * Following subscribers are:
+     * <ul>
+     * <li>{@link RoutingIndicationTask} when KNX Net/IP device notifies the client about a change from a remote KNX
+     * device</li>
+     * </ul>
+     *
+     * @return unmodifiable list of subscribers
+     */
+    @Nonnull
+    private List<Flow.Subscriber<Body>> subscribersForMultiChannel() {
+        final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
+        subscribers.add(new SearchResponseTask(this));
+        subscribers.add(new RoutingIndicationTask(this));
         return Collections.unmodifiableList(subscribers);
     }
 
@@ -564,7 +598,8 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Method 'fetchDescriptionFromKNX()' called.");
 
         // Description request / response is one-time task before establishing communication to KNX Net/IP device
-        final var communicator = newDescriptionChannelCommunicator();
+        final var communicator = new DescriptionChannelCommunicator(this);
+        subscribersForDescriptionChannel().forEach(communicator::subscribe);
 
         // Create executor service for description communication
         final var es = Executors.newSingleThreadExecutor(true);
@@ -601,7 +636,8 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Method 'fetchDiscoveryFromKNX()' called.");
 
         // Search request / response is one-time task to auto-find all available KNX Net/IP device
-        final var communicator = newDiscoveryChannelCommunicator();
+        final var communicator = new MulticastChannelCommunicator(this);
+        subscribersForMultiChannel().forEach(communicator::subscribe);
 
         // Create executor service for discovery communication
         final var es = Executors.newSingleThreadExecutor(true);
