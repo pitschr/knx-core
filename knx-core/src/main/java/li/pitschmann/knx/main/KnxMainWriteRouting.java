@@ -20,6 +20,7 @@ package li.pitschmann.knx.main;
 
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
@@ -61,9 +62,7 @@ public class KnxMainWriteRouting extends AbstractKnxMain {
         final var values = getParameterValues(args, "-c", String[]::new, DEFAULT_VALUES);
         log.debug("Values: {}", Arrays.toString(values));
 
-        final var config = Configuration.create() //
-                .setting("client.routing.enabled", "true") //
-                .build();
+        final var config = Configuration.create(Constants.Default.MULTICAST_ADDRESS).build();
 
         // start KNX communication
         log.trace("START");

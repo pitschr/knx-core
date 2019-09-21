@@ -71,13 +71,13 @@ public class KnxMainMonitoringWithPlugins extends AbstractKnxMain {
                         //        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
                         //        new AuditDatabasePlugin() //
                 ) //
-                .setting("timeout.request.connectionstate", "10000") //
-                .setting("interval.connectionstate", "30000") //
-                .setting("timeout.alive.connectionstate", "60000") //
-                .setting("client.channel.discovery.port", "40000") //
-                .setting("client.channel.description.port", "40001") //
-                .setting("client.channel.control.port", "40002") //
-                .setting("client.channel.data.port", "40003") //
+                .setting("client.communication.connectionState.requestTimeout", "10000") //
+                .setting("client.communication.connectionState.interval", "30000") //
+                .setting("client.communication.connectionState.aliveTimeout", "60000") //
+                .setting("client.communication.description.port", "40000") //
+                .setting("client.communication.description.port", "40001") //
+                .setting("client.communication.control.port", "40002") //
+                .setting("client.communication.data.port", "40003") //
                 .setting("client.nat.enabled", String.valueOf(natEnabled)) //
                 .build();
 

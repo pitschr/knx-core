@@ -56,17 +56,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * It also controls the lifecycle of channel (opening, closing) and all receiving
  * KNX packets are forwarded to all subscribers.
  *
- * @param <C> Instance of {@link SelectableChannel}
  * @author PITSCHR
  */
-public abstract class AbstractChannelCommunicator<C extends SelectableChannel> extends SubmissionPublisher<Body> implements Runnable {
+public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Body> implements Runnable {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final InternalKnxClient internalClient;
     private final AtomicBoolean closed = new AtomicBoolean();
     private final ExecutorService queueExecutor;
     private final ExecutorService communicationExecutor;
 
-    private final C channel;
+    private final SelectableChannel channel;
     private final AbstractInboxQueue<? extends ByteChannel> inboxQueue;
     private final AbstractOutboxQueue<? extends ByteChannel> outboxQueue;
 
@@ -101,7 +100,7 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @return A new channel
      */
     @Nonnull
-    protected abstract C newChannel(final @Nonnull InternalKnxClient internalClient);
+    protected abstract SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient);
 
     /**
      * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
@@ -111,7 +110,8 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @return new instance of {@link AbstractInboxQueue}
      */
     @Nonnull
-    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull C channel) {
+    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                                         final @Nonnull SelectableChannel channel) {
         return new DefaultInboxQueue(internalClient, channel);
     }
 
@@ -123,12 +123,13 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @return new instance of {@link AbstractOutboxQueue}
      */
     @Nonnull
-    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull C channel) {
+    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                                           final @Nonnull SelectableChannel channel) {
         return new DefaultOutboxQueue(internalClient, channel);
     }
 
     @Nonnull
-    public C getChannel() {
+    public SelectableChannel getChannel() {
         return channel;
     }
 

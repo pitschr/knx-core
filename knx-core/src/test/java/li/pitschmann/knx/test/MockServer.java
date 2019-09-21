@@ -41,8 +41,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.MulticastChannel;
+import java.nio.channels.NetworkChannel;
 import java.nio.channels.Selector;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -449,10 +452,10 @@ public final class MockServer implements Runnable, Closeable {
 
         final Configuration.Builder configBuilder;
         if (mockServerAnnotation.useDiscovery()) {
-            configBuilder = Configuration.create()
-                    .setting("remote.multicast.port", String.valueOf(this.serverChannel.getPort()))
-                    .setting("client.channel.multicast.ttl", "0");
-            logger.info("Discovery service will be used for mock server");
+            final var port = getPort();
+            configBuilder = Configuration.create(null, port)
+                    .setting("client.communication.multicast.timeToLive", "0");
+            logger.info("Discovery service will be used for mock server. Endpoint: 0.0.0.0:{}", port);
         } else {
             final var address = Networker.getLocalHost();
             final var port = getPort();
@@ -462,15 +465,15 @@ public final class MockServer implements Runnable, Closeable {
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
-                .setting("executor.pool.plugin", "3") // 3 instead of 10
-                .setting("executor.pool.communication", "3") // 3 instead of 10
-                .setting("timeout.request.discovery", "2000") // 2s instead of 10s
-                .setting("timeout.request.description", "2000") // 2s instead of 10s
-                .setting("timeout.request.connect", "2000") // 2s instead of 10s
-                .setting("timeout.request.disconnect", "2000") // 2s instead of 10s
-                .setting("timeout.request.connectionstate", "2000") // 2s instead of 10s
-                .setting("interval.connectionstate", "6000") // 6s instead of 60s
-                .setting("timeout.alive.connectionstate", "12000") // 12s instead of 120s
+                .setting("client.plugin.executorPoolSize", "3") // 3 instead of 10
+                .setting("client.communication.executorPoolSize", "3") // 3 instead of 10
+                .setting("client.communication.discovery.requestTimeout", "2000") // 2s instead of 10s
+                .setting("client.communication.description.requestTimeout", "2000") // 2s instead of 10s
+                .setting("client.communication.connect.requestTimeout", "2000") // 2s instead of 10s
+                .setting("client.communication.disconnect.requestTimeout", "2000") // 2s instead of 10s
+                .setting("client.communication.connectionState.requestTimeout", "2000") // 2s instead of 10s
+                .setting("client.communication.connectionState.interval", "6000") // 6s instead of 60s
+                .setting("client.communication.connectionState.aliveTimeout", "12000") // 12s instead of 120s
                 ;
     }
 

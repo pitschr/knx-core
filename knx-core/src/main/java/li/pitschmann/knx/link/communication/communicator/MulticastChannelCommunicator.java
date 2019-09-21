@@ -18,21 +18,64 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.MulticastChannelRelated;
+import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.communication.queue.MulticastInboxQueue;
+import li.pitschmann.knx.link.communication.queue.MulticastOutboxQueue;
+import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.channels.MembershipKey;
+import java.nio.channels.SelectableChannel;
+import java.util.List;
 
 /**
  * Channel communicator for multicast related packets (Discovery, Routing)
  *
  * @author PITSCHR
  */
-public final class MulticastChannelCommunicator extends AbstractMulticastChannelCommunicator {
+public final class MulticastChannelCommunicator extends AbstractChannelCommunicator {
+    private List<MembershipKey> membershipKeys;
+
     public MulticastChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
+    }
+
+    @Nonnull
+    @Override
+    protected final SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
+        // creates new channel
+        final var channel = ChannelFactory.newMulticastChannel(internalClient);
+
+        // join channels, the membership keys will be used for laving the joined
+        // multicast groups -> see cleanUp() method.
+        this.membershipKeys = Networker.joinChannels(channel, Constants.Default.MULTICAST_ADDRESS);
+
+        return channel;
+    }
+
+    @Override
+    protected final void cleanUp() {
+        membershipKeys.stream().forEach(MembershipKey::drop);
+        log.debug("Membership of all multicast groups dropped.");
+    }
+
+    @Nonnull
+    @Override
+    protected final MulticastInboxQueue createInboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                         final @Nonnull SelectableChannel channel) {
+        return new MulticastInboxQueue(internalClient, channel);
+    }
+
+    @Nonnull
+    @Override
+    protected final MulticastOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
+                                                           final @Nonnull SelectableChannel channel) {
+        return new MulticastOutboxQueue(internalClient, channel);
     }
 
     @Override

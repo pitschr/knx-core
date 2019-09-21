@@ -62,9 +62,9 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         log.trace("START");
 
         final var config = Configuration.create(ipAddress)//
-                .setting("timeout.request.connectionstate", "10000") //
-                .setting("interval.connectionstate", "30000") //
-                .setting("timeout.alive.connectionstate", "60000") //
+                .setting("client.communication.connectionState.requestTimeout", "10000") //
+                .setting("client.communication.connectionState.interval", "30000") //
+                .setting("client.communication.connectionState.aliveTimeout", "60000") //
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {

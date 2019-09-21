@@ -64,6 +64,14 @@ public class BodyFactoryTest {
                 // Body
                 0x04, 0x11, (byte) 0x81, 0x29};
 
+        byte[] routIndBytes = new byte[]{ //
+                // Header
+                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                0x05, 0x30, // Routing Indication
+                0x00, 0x13, // Total Length Octets
+                // Body
+                0x29, 0x00, (byte) 0xbc, (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f};
+
         byte[] conStateReqBytes = new byte[]{ //
                 // Header
                 Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
@@ -156,6 +164,8 @@ public class BodyFactoryTest {
         // bodies
         assertThat(BodyFactory.valueOf(tunReqBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
         assertThat(BodyFactory.valueOf(tunAckBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
+
+        assertThat(BodyFactory.valueOf(routIndBytes).getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);
 
         assertThat(BodyFactory.valueOf(conStateReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
         assertThat(BodyFactory.valueOf(conStateResBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);

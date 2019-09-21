@@ -27,6 +27,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
+import java.util.Objects;
 
 /**
  * Discovery Outbox Queue for KNX multicast packets to be sent to KNX Net/IP device
@@ -47,7 +48,13 @@ public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChan
         super(internalClient, channel);
 
         final var config = internalClient.getConfig();
-        multicastSocketAddress = new InetSocketAddress(config.getRemoteMulticastAddress(), config.getRemoteMulticastPort());
+
+        // use config setting, otherwise fall back to default setting
+        final var remoteAddress = Objects.requireNonNullElse(config.getRemoteControlAddress(), Constants.Default.MULTICAST_ADDRESS);
+        final var remotePort = config.getRemoteControlPort();
+
+        multicastSocketAddress = new InetSocketAddress(remoteAddress, remotePort);
+        log.debug("Multicast Outbox Socket: {}", multicastSocketAddress);
     }
 
     @Override

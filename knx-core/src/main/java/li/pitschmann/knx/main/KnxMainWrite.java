@@ -45,7 +45,7 @@ import java.util.function.Function;
 public class KnxMainWrite extends AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(KnxMainWrite.class);
     private static final List<GroupAddress> DEFAULT_GROUP_ADDRESSES = Lists.newArrayList( //
-            GroupAddress.of(1, 2, 0), //
+            // GroupAddress.of(1, 2, 0), //
             GroupAddress.of(1, 2, 50)
     );
     private static final String DEFAULT_DPT = "1.001"; // DPT1.SWITCH

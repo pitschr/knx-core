@@ -55,9 +55,10 @@ public final class Configuration {
     private final Map<String, String> settings;
 
     private Configuration(final @Nonnull Builder builder) {
-        // control endpoint
+        // remote endpoint
         this.remoteControlAddress = builder.remoteControlAddress;
         this.remoteControlPort = builder.remoteControlPort;
+
         // settings
         this.settings = Collections.unmodifiableMap(builder.settings);
         // plugins
@@ -96,6 +97,16 @@ public final class Configuration {
     }
 
     /**
+     * Creates a Builder for a customized configuration.
+     * The endpoint of KNX Net/IP device will be discovered and the first applicable device is taken
+     *
+     * @return {@link Builder}
+     */
+    public static Builder create() {
+        return create((InetAddress)null);
+    }
+
+    /**
      * Creates a Builder for a customized configuration
      *
      * @param address remote control address
@@ -113,21 +124,7 @@ public final class Configuration {
      * @return {@link Builder}
      */
     public static Builder create(final @Nullable InetAddress address, final int port) {
-        if (address == null) {
-            return create();
-        } else {
-            return new Builder().control(address, port);
-        }
-    }
-
-    /**
-     * Creates a Builder for a customized configuration.
-     * The endpoint of KNX Net/IP device will be discovered and the first applicable device is taken
-     *
-     * @return {@link Builder}
-     */
-    public static Builder create() {
-        return new Builder();
+        return new Builder(address, port);
     }
 
     /**
@@ -150,22 +147,12 @@ public final class Configuration {
     }
 
     /**
-     * Remote Discovery Endpoint address to find KNX Net/IP devices
+     * Returns if the routing is enabled. It returns {@code true} if the remote control address is a multicast address.
      *
-     * @return {@link InetAddress}
+     * @return {@code true} if routing is enabled, otherwise {@code false}
      */
-    @Nonnull
-    public InetAddress getRemoteMulticastAddress() {
-        return getSetting("remote.multicast.address", Constants.Default.MULTICAST_ADDRESS, Networker::getByAddress);
-    }
-
-    /**
-     * Remote Discovery Endpoint port to find KNX Net/IP devices
-     *
-     * @return port
-     */
-    public int getRemoteMulticastPort() {
-        return getSetting("remote.multicast.port", Constants.Default.KNX_PORT, Integer::valueOf);
+    public boolean isRoutingEnabled() {
+        return getRemoteControlAddress() != null && getRemoteControlAddress().isMulticastAddress();
     }
 
     /**
@@ -228,65 +215,118 @@ public final class Configuration {
         return value == null ? defaultValue : value;
     }
 
+    //
+    // client.plugin
+    //
+
     public int getPluginExecutorPoolSize() {
-        return Math.max(this.getSetting("executor.pool.plugin", Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf), this.observerPlugins.size());
+        return Math.max(getSetting("client.plugin.executorPoolSize", Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf), this.observerPlugins.size());
     }
+
+    //
+    // client.communication
+    //
 
     public int getCommunicationExecutorPoolSize() {
-        return this.getSetting("executor.pool.communication", Constants.Default.COMMUNICATION_POOL_SIZE, Integer::valueOf);
-    }
-
-    public long getIntervalConnectionState() {
-        return getSetting("interval.connectionstate", Constants.Interval.CONNECTIONSTATE, Long::valueOf);
+        return getSetting("client.communication.executorPoolSize", Constants.Default.COMMUNICATION_POOL_SIZE, Integer::valueOf);
     }
 
     public long getIntervalEvent() {
-        return getSetting("interval.event", Constants.Interval.EVENT, Long::valueOf);
+        return getSetting("client.communication.interval", Constants.Interval.EVENT, Long::valueOf);
     }
 
-    public long getSocketTimeoutMulticastChannel() {
-        return getSetting("timeout.socket.multicast", Constants.Timeouts.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    public boolean isNatEnabled() {
+        return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
     }
 
-    public long getSocketTimeoutDescriptionChannel() {
-        return getSetting("timeout.socket.description", Constants.Timeouts.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    // client.communication.control
+
+    public int getControlChannelPort() {
+        return getSetting("client.communication.control.port", 0, Integer::valueOf);
     }
 
     public long getSocketTimeoutControlChannel() {
-        return getSetting("timeout.socket.control", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.control.socketTimeout", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    }
+
+    // client.communication.data
+
+    public int getDataChannelPort() {
+        return getSetting("client.communication.data.port", 0, Integer::valueOf);
     }
 
     public long getSocketTimeoutDataChannel() {
-        return getSetting("timeout.socket.data", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.data.socketTimeout", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
+    // client.communication.discovery
+
     public long getTimeoutDiscoveryRequest() {
-        return getSetting("timeout.request.discovery", Constants.Timeouts.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.discovery.requestTimeout", Constants.Timeouts.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
+    }
+
+    // client.communication.multicast
+
+    public int getMulticastChannelPort() {
+        return getSetting("client.communication.multicast.port", 0, Integer::valueOf);
+    }
+
+    public long getSocketTimeoutMulticastChannel() {
+        return getSetting("client.communication.multicast.socketTimeout", Constants.Timeouts.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+    }
+
+    public int getMulticastTTL() {
+        return getSetting("client.communication.multicast.timeToLive", 4, Integer::valueOf);
+    }
+
+    // client.communication.description
+
+    public int getDescriptionChannelPort() {
+        return getSetting("client.communication.description.port", 0, Integer::valueOf);
     }
 
     public long getTimeoutDescriptionRequest() {
-        return getSetting("timeout.request.description", Constants.Timeouts.DESCRIPTION_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.description.requestTimeout", Constants.Timeouts.DESCRIPTION_REQUEST_TIMEOUT, Long::valueOf);
     }
 
-    public long getTimeoutConnectRequest() {
-        return getSetting("timeout.request.connect", Constants.Timeouts.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
+    public long getSocketTimeoutDescriptionChannel() {
+        return getSetting("client.communication.description.socketTimeout", Constants.Timeouts.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
+
+    // client.communication.disconnect
 
     public long getTimeoutDisconnectRequest() {
-        return getSetting("timeout.request.disconnect", Constants.Timeouts.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.disconnect.requestTimeout", Constants.Timeouts.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutDisconnectResponse() {
-        return getSetting("timeout.response.disconnect", Constants.Timeouts.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.disconnect.responseTimeout", Constants.Timeouts.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
     }
 
+    // client.communication.connect
+
+    public long getTimeoutConnectRequest() {
+        return getSetting("client.communication.connect.requestTimeout", Constants.Timeouts.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
+    }
+
+    // client.communication.connectionState
+
     public long getTimeoutConnectionStateRequest() {
-        return getSetting("timeout.request.connectionstate", Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.connectionState.requestTimeout", Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutAliveConnection() {
-        return getSetting("timeout.alive.connectionstate", Constants.Timeouts.CONNECTION_ALIVE_TIME, Long::valueOf);
+        return getSetting("client.communication.connectionState.aliveTimeout", Constants.Timeouts.CONNECTION_ALIVE_TIME, Long::valueOf);
     }
+
+    public long getIntervalConnectionState() {
+        return getSetting("client.communication.connectionState.interval", Constants.Interval.CONNECTIONSTATE, Long::valueOf);
+    }
+
+
+    //
+    // DAEMON
+    //
 
     public int getDaemonPort() {
         return getSetting("daemon.port.http", Constants.Default.HTTP_DAEMON_PORT, Integer::valueOf);
@@ -295,34 +335,6 @@ public final class Configuration {
     @Nullable
     public Path getProjectPath() {
         return getSetting("daemon.path.knxproj", null, Paths::get);
-    }
-
-    public int getMulticastChannelPort() {
-        return getSetting("client.channel.multicast.port", 0, Integer::valueOf);
-    }
-
-    public int getMulticastTTL() {
-        return getSetting("client.channel.multicast.ttl", 4, Integer::valueOf);
-    }
-
-    public int getDescriptionChannelPort() {
-        return getSetting("client.channel.description.port", 0, Integer::valueOf);
-    }
-
-    public int getControlChannelPort() {
-        return getSetting("client.channel.control.port", 0, Integer::valueOf);
-    }
-
-    public int getDataChannelPort() {
-        return getSetting("client.channel.data.port", 0, Integer::valueOf);
-    }
-
-    public boolean isNatEnabled() {
-        return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
-    }
-
-    public boolean isRoutingEnabled() {
-        return getSetting("client.routing.enabled", Constants.Default.ROUTING_ENABLED, Boolean::valueOf);
     }
 
     /**
@@ -340,22 +352,11 @@ public final class Configuration {
             // empty
         }
 
-        /**
-         * Defines the control endpoint of KNX Net/IP device
-         *
-         * @param address remote control endpoint address
-         * @param port    remote control endpoint port
-         * @return myself
-         */
-        @Nonnull
-        private Builder control(final @Nonnull InetAddress address, final int port) {
-            Preconditions.checkNotNull(address);
+        private Builder(final @Nullable InetAddress address, final int port) {
             // accept only 1024 .. 65535, other ports are reserved
             Preconditions.checkArgument(port >= 1024 && port <= 65535, "Illegal Port for endpoint provided.");
-
             this.remoteControlAddress = address;
             this.remoteControlPort = port;
-            return this;
         }
 
         @Nonnull

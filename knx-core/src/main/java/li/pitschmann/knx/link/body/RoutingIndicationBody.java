@@ -40,7 +40,7 @@ import javax.annotation.Nonnull;
  *
  * @author PITSCHR
  */
-public final class RoutingIndicationBody extends AbstractMultiRawData implements RequestBody, ResponseBody {
+public final class RoutingIndicationBody extends AbstractMultiRawData implements RequestBody, ResponseBody, MulticastChannelRelated {
     /**
      * Minimum Structure Length for {@link RoutingIndicationBody} including {@link CEMI}
      * <p>

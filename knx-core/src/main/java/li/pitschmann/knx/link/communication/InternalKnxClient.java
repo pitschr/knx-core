@@ -71,7 +71,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
-import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -101,7 +100,7 @@ public final class InternalKnxClient implements KnxClient {
     private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
     private final Configuration config;
     private final ExecutorService pluginExecutor;
-    private List<AbstractChannelCommunicator<SelectableChannel>> channelCommunicators = Collections.emptyList();
+    private List<AbstractChannelCommunicator> channelCommunicators = Collections.emptyList();
     private ExecutorService channelExecutor;
     private HPAI controlHPAI;
     private HPAI dataHPAI;
@@ -132,9 +131,12 @@ public final class InternalKnxClient implements KnxClient {
         Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
 
         try {
-            if (this.config.isRoutingEnabled()) {
+            // if remote control address is multicast address, then we know that we want to use the routing feature
+            if (config.isRoutingEnabled()) {
                 startRouting();
-            } else {
+            }
+            // otherwise use the tunneling
+            else {
                 startTunneling();
             }
         } catch (final Exception ex) {
@@ -149,7 +151,9 @@ public final class InternalKnxClient implements KnxClient {
      * Starts KNX communication via Routing
      */
     private final void startRouting() {
-        this.remoteEndpoint = new InetSocketAddress(Constants.Default.MULTICAST_ADDRESS, Constants.Default.KNX_PORT);
+        log.trace("Method 'startRouting()' called");
+
+        this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
         log.debug("Endpoint from KNX multi cast is taken: {}", this.remoteEndpoint);
 
         log.info("Routing is used. Starting KNX services.");
@@ -160,6 +164,8 @@ public final class InternalKnxClient implements KnxClient {
      * Starts KNX communication via Tunneling
      */
     private final void startTunneling() {
+        log.trace("Method 'startTunneling()' called");
+
         // check if endpoint is defined - if not, look up for an available KNX Net/IP device
         if (config.getRemoteControlAddress() == null) {
             final var discoveryResponse = this.fetchDiscoveryFromKNX();
@@ -493,7 +499,7 @@ public final class InternalKnxClient implements KnxClient {
      * @return responsible channel communicator, otherwise {@link IllegalArgumentException} if no suitable communicator was found
      */
     @Nonnull
-    private AbstractChannelCommunicator<SelectableChannel> getChannelCommunicator(final @Nonnull Body body) {
+    private AbstractChannelCommunicator getChannelCommunicator(final @Nonnull Body body) {
         for (final var channelCommunicator : channelCommunicators) {
             if (channelCommunicator.isCompatible(body)) {
                 return channelCommunicator;

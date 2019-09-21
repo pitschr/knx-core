@@ -41,7 +41,7 @@ import java.util.Collection;
  * @author PITSCHR
  */
 public abstract class AbstractOutboxQueue<T extends ByteChannel> extends AbstractKnxQueue<T> {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Constructor for KNX Outbox Queue
