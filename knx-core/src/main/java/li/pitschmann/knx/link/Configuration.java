@@ -103,7 +103,7 @@ public final class Configuration {
      * @return {@link Builder}
      */
     public static Builder create() {
-        return create((InetAddress)null);
+        return create((InetAddress) null);
     }
 
     /**

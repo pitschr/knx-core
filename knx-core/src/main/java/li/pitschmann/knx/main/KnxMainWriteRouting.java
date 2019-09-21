@@ -21,19 +21,15 @@ package li.pitschmann.knx.main;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.Constants;
-import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import li.pitschmann.knx.link.plugin.AuditPlugin;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.function.Function;
 
 /**
  * Demo class how to send a specific write request to a KNX group address.

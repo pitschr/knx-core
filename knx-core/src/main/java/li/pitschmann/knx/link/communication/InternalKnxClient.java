@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.ChannelIdAware;
 import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;

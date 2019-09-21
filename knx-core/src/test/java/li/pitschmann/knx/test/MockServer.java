@@ -41,11 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.MulticastChannel;
-import java.nio.channels.NetworkChannel;
 import java.nio.channels.Selector;
 import java.nio.file.Files;
 import java.nio.file.Paths;

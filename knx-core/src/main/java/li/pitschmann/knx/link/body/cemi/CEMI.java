@@ -319,6 +319,7 @@ public final class CEMI extends AbstractMultiRawData {
         return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, tpciPacketNumber, apci,
                 apciData);
     }
+
     /**
      * Creates a new {@link CEMI} instance
      *
