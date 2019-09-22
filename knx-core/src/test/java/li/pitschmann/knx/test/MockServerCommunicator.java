@@ -32,6 +32,8 @@ import li.pitschmann.knx.test.strategy.impl.DefaultDisconnectStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,7 +66,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      *
      * @param mockServer
      */
-    MockServerCommunicator(final MockServer mockServer, final MockServerTest testAnnotation) {
+    MockServerCommunicator(final @Nonnull MockServer mockServer, final @Nonnull MockServerTest testAnnotation) {
         Preconditions.checkNotNull(testAnnotation);
         this.mockServer = Objects.requireNonNull(mockServer);
         this.commandParser = new MockServerCommandParser(mockServer, this);
@@ -76,6 +78,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
         registerResponseStrategies(ServiceType.CONNECTION_STATE_REQUEST, testAnnotation.connectionStateStrategy());
         registerResponseStrategies(ServiceType.DISCONNECT_REQUEST, testAnnotation.disconnectStrategy());
         registerResponseStrategies(ServiceType.TUNNELING_REQUEST, testAnnotation.tunnelingStrategy());
+        registerResponseStrategies(ServiceType.ROUTING_INDICATION, null);
 
         // Logic for Disconnect Trigger
         // --------------------------------
@@ -114,25 +117,30 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      * Registers the response strategies
      *
      * @param serviceType
-     * @param strategyClasses
+     * @param strategyClasses, if {@code null}, then {@link IgnoreStrategy} will be used
      */
-    private void registerResponseStrategies(final ServiceType serviceType, final Class<? extends ResponseStrategy>[] strategyClasses) {
+    private void registerResponseStrategies(final @Nonnull ServiceType serviceType,
+                                            final @Nullable Class<? extends ResponseStrategy>[] strategyClasses) {
         // re-init values for given service types
         responseStrategies.put(serviceType, Lists.newLinkedList());
         serviceTypeCounter.put(serviceType, new AtomicInteger());
         // add strategies
-        try {
-            for (final var strategyClass : strategyClasses) {
-                final var strategyInstance = strategyClass.getDeclaredConstructor().newInstance();
-                responseStrategies.get(serviceType).add(strategyInstance);
+        if (strategyClasses == null) {
+            responseStrategies.get(serviceType).add(IgnoreStrategy.DEFAULT);
+        } else {
+            try {
+                for (final var strategyClass : strategyClasses) {
+                    final var strategyInstance = strategyClass.getDeclaredConstructor().newInstance();
+                    responseStrategies.get(serviceType).add(strategyInstance);
+                }
+            } catch (final Exception e) {
+                logger.error("Exception happened during creating strategy instance", e);
             }
-        } catch (final Exception e) {
-            logger.error("Exception happened during creating strategy instance", e);
         }
     }
 
     @Override
-    public void onNext(final Body body) {
+    public void onNext(final @Nullable Body body) {
         if (body instanceof RequestBody) {
             final var requestBody = (RequestBody) body;
             final var requestServiceType = requestBody.getServiceType();
@@ -179,7 +187,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     }
 
     @Override
-    public void onError(final Throwable throwable) {
+    public void onError(final @Nullable Throwable throwable) {
         logger.error("Error during KNX Mock Server Logic class", throwable);
         // here we do not any error handling
         // call on complete to close mock server properly
@@ -192,7 +200,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(Flow.Subscription subscription) {
+    public void onSubscribe(final @Nonnull Flow.Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 

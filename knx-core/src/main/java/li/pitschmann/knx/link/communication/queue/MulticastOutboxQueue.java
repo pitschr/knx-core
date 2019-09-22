@@ -50,7 +50,7 @@ public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChan
         final var config = internalClient.getConfig();
 
         // use config setting, otherwise fall back to default setting
-        final var remoteAddress = Objects.requireNonNullElse(config.getRemoteControlAddress(), Constants.Default.MULTICAST_ADDRESS);
+        final var remoteAddress = Objects.requireNonNullElse(config.getRemoteControlAddress(), config.getMulticastChannelAddress());
         final var remotePort = config.getRemoteControlPort();
 
         multicastSocketAddress = new InetSocketAddress(remoteAddress, remotePort);

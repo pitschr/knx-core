@@ -53,7 +53,7 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
 
         // join channels, the membership keys will be used for laving the joined
         // multicast groups -> see cleanUp() method.
-        this.membershipKeys = Networker.joinChannels(channel, Constants.Default.MULTICAST_ADDRESS);
+        this.membershipKeys = Networker.joinChannels(channel, internalClient.getConfig().getMulticastChannelAddress());
 
         return channel;
     }

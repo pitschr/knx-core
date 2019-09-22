@@ -30,6 +30,8 @@ import li.pitschmann.knx.test.MockServer;
  * responded by a different strategy class.
  */
 public final class IgnoreStrategy implements ResponseStrategy {
+    public static final IgnoreStrategy DEFAULT = new IgnoreStrategy();
+
     @Override
     public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
         // do nothing ...

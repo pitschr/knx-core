@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
     @Override
     protected int numberOfElements() {
-        return 16;
+        return 17;
     }
 
     @Override
@@ -69,6 +69,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.valueOf(0x0421)).isEqualTo(ServiceType.TUNNELING_ACK);
         assertThat(ServiceType.valueOf(0x0530)).isEqualTo(ServiceType.ROUTING_INDICATION);
         assertThat(ServiceType.valueOf(0x0531)).isEqualTo(ServiceType.ROUTING_LOST_MESSAGE);
+        assertThat(ServiceType.valueOf(0x0532)).isEqualTo(ServiceType.ROUTING_BUSY);
     }
 
     @Override
@@ -90,6 +91,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.TUNNELING_ACK.getFriendlyName()).isEqualTo("Tunneling Acknowledgement");
         assertThat(ServiceType.ROUTING_INDICATION.getFriendlyName()).isEqualTo("Routing indication");
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.getFriendlyName()).isEqualTo("Routing lost message");
+        assertThat(ServiceType.ROUTING_BUSY.getFriendlyName()).isEqualTo("Routing busy message");
     }
 
     @Test
@@ -127,6 +129,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.TUNNELING_ACK.getCodeAsBytes()).containsExactly(new byte[]{0x04, 0x21});
         assertThat(ServiceType.ROUTING_INDICATION.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x30});
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x31});
+        assertThat(ServiceType.ROUTING_BUSY.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x32});
     }
 
     /**
@@ -150,6 +153,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.TUNNELING_ACK.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELING);
         assertThat(ServiceType.ROUTING_INDICATION.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
+        assertThat(ServiceType.ROUTING_BUSY.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
     }
 
     /**
@@ -173,6 +177,7 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.TUNNELING_ACK.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.ROUTING_INDICATION.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.ROUTING_BUSY.hasResponseIdentifier()).isFalse();
     }
 
     /**
@@ -203,5 +208,6 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         // services without response identifier
         assertThatThrownBy(() -> ServiceType.ROUTING_INDICATION.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.ROUTING_LOST_MESSAGE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.ROUTING_BUSY.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
     }
 }

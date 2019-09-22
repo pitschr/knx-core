@@ -281,6 +281,7 @@ public final class InternalKnxClient implements KnxClient {
             log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.remoteEndpoint.getAddress().getHostAddress(), this.remoteEndpoint.getPort());
             log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
             log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
+            log.info("Routing Enabled                  : {}", this.config.isRoutingEnabled());
             log.info("NAT Enabled                      : {}", this.config.isNatEnabled());
 
             // channel executors

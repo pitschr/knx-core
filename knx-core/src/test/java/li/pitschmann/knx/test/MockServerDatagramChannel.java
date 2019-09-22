@@ -57,7 +57,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     public MockServerDatagramChannel(final @Nonnull MockServerTest mockServerAnnotation) {
         // as mock server is used to test locally
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 0);
-        this.channel = ChannelFactory.newDatagramChannel(mockServerAnnotation.discoveryPort(), 3000, null, socketOptions);
+        this.channel = ChannelFactory.newDatagramChannel(0, 3000, null, socketOptions);
     }
 
     @Override

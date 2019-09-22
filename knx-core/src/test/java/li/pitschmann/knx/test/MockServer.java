@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -41,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
+import java.net.InetAddress;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.MulticastChannel;
 import java.nio.channels.Selector;
@@ -76,6 +76,7 @@ public final class MockServer implements Runnable, Closeable {
     private final MockServerChannel serverChannel;
     private final MockServerTest mockServerAnnotation;
     private final ExecutorService executorService;
+    private InetAddress multicastAddress;
     private HPAI hpai;
     private IndividualAddress individualAddress;
     private int channelId;
@@ -115,12 +116,12 @@ public final class MockServer implements Runnable, Closeable {
         // generate channel id [0 .. 255]
         this.channelId = globalChannelIdPool.incrementAndGet() % 256;
         logger.info("Mock Server Channel ID: {}", this.channelId);
-        // Join Discovery Multicast Service if necessary
-        if (mockServerAnnotation.useDiscovery()) {
-            Preconditions.checkArgument(this.serverChannel.getChannel() instanceof MulticastChannel);
-            this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), Constants.Default.MULTICAST_ADDRESS);
-            logger.debug("Membership Keys: {}", membershipKeys);
-        }
+
+        // join multicast (used for e.g. discovery, routing, ...)
+        multicastAddress = Networker.getByAddress(224, 0, 0, channelId);
+        logger.debug("Multicast Address: {}", multicastAddress);
+        this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), multicastAddress);
+        logger.debug("Membership Keys: {}", membershipKeys);
 
         // Start executor service heartbeat monitor
         final var executorService = Executors.newSingleThreadExecutor(true);
@@ -205,7 +206,7 @@ public final class MockServer implements Runnable, Closeable {
         } finally {
             // drop membership keys if it exists
             if (this.membershipKeys != null) {
-                //membershipKeys.stream().forEach(key -> key.drop());
+                membershipKeys.stream().forEach(key -> key.drop());
             }
 
             Closeables.shutdownQuietly(executorService);
@@ -230,6 +231,16 @@ public final class MockServer implements Runnable, Closeable {
      */
     public int getChannelId() {
         return this.channelId;
+    }
+
+    /**
+     * Returns the multicast address used by the KNX mock server
+     *
+     * @return multicast address
+     */
+    @Nonnull
+    public InetAddress getMulticastAddress() {
+        return Objects.requireNonNull(this.multicastAddress);
     }
 
     /**
@@ -448,10 +459,14 @@ public final class MockServer implements Runnable, Closeable {
         Preconditions.checkArgument(getPort() > 0, "Knx Client cannot be returned when port is not defined.");
 
         final Configuration.Builder configBuilder;
-        if (mockServerAnnotation.useDiscovery()) {
+        if (mockServerAnnotation.useRouting()) {
+            final var address = getMulticastAddress();
             final var port = getPort();
-            configBuilder = Configuration.create(null, port)
-                    .setting("client.communication.multicast.timeToLive", "0");
+            configBuilder = Configuration.create(address, port);
+            logger.info("Routing service will be used for mock server. Endpoint: {}:{}", address, port);
+        } else if (mockServerAnnotation.useDiscovery()) {
+            final var port = getPort();
+            configBuilder = Configuration.create(null, port);
             logger.info("Discovery service will be used for mock server. Endpoint: 0.0.0.0:{}", port);
         } else {
             final var address = Networker.getLocalHost();
@@ -462,6 +477,9 @@ public final class MockServer implements Runnable, Closeable {
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
+                .setting("client.communication.multicast.address", this.getMulticastAddress().getHostAddress())
+                // .setting("client.communication.multicast.port", String.valueOf(this.getPort()))
+                .setting("client.communication.multicast.timeToLive", "0")
                 .setting("client.plugin.executorPoolSize", "3") // 3 instead of 10
                 .setting("client.communication.executorPoolSize", "3") // 3 instead of 10
                 .setting("client.communication.discovery.requestTimeout", "2000") // 2s instead of 10s

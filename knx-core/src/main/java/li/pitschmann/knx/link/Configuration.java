@@ -267,6 +267,10 @@ public final class Configuration {
 
     // client.communication.multicast
 
+    public InetAddress getMulticastChannelAddress() {
+        return getSetting("client.communication.multicast.address", Constants.Default.MULTICAST_ADDRESS, Networker::getByAddress);
+    }
+
     public int getMulticastChannelPort() {
         return getSetting("client.communication.multicast.port", 0, Integer::valueOf);
     }
