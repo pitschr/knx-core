@@ -19,11 +19,8 @@
 package li.pitschmann.knx.link.communication.communicator;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.ControlChannelRelated;
-import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
-import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.event.KnxEvent;
 import li.pitschmann.knx.link.communication.queue.AbstractInboxQueue;
@@ -47,6 +44,7 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.Future;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 /**
  * Abstract channel communicator. It coordinates the communication for given channel
@@ -188,49 +186,63 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     }
 
     /**
-     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel. It returns a {@link Future} for further processing.
+     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
+     * It returns a {@link Future} for further processing.
      *
      * @param requestBody
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
-     * @return a {@link CompletableFuture} representing pending completion of the task containing either an instance of {@link ResponseBody},
-     * or {@code null} if no response was received because of e.g. timeout
+     * @return a {@link CompletableFuture} representing pending completion of the task containing
+     * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
     @Nonnull
-    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
-        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout), this.communicationExecutor);
+    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
+                                                                    final long msTimeout) {
+        return send(requestBody, msTimeout, KnxEvent::hasResponse);
     }
 
     /**
-     * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected body which
-     * is an instance of {@link ResponseBody}.
-     * <p>
-     * The appropriate channel will be chosen by {@link ControlChannelRelated} and {@link DataChannelRelated} marker
-     * interfaces.
+     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
+     * It returns a {@link Future} for further processing.
+     *
+     * @param requestBody
+     * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
+     * @return a {@link CompletableFuture} representing pending completion of the task containing
+     * either an instance of {@link ResponseBody}, or {@code null} if no response was received
+     */
+    @Nonnull
+    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
+                                                                    final long msTimeout,
+                                                                    final Predicate<KnxEvent> predicate) {
+        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout, predicate), this.communicationExecutor);
+    }
+
+    /**
+     * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected response
+     * that meets the {@link Predicate} criteria and is an an instance of {@link ResponseBody}.
      *
      * @param requestBody
      * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
-     * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
+     * @param predicate   predicate if the requested response was received
+     * @return an instance of {@link ResponseBody}, or {@code null} if no response was received (timeout) or no response that meets the preconditions was received
      */
     @Nullable
-    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody, final long msTimeout) {
+    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody, final long msTimeout, final Predicate<KnxEvent> predicate) {
         final var eventPool = this.internalClient.getEventPool();
 
         // add request body to event pool
         eventPool.add(requestBody);
         log.trace("Request Body added to event pool.");
 
-        // mark as dirty
-        if (requestBody instanceof TunnelingRequestBody) {
-            this.internalClient.getStatusPool().setDirty(((TunnelingRequestBody) requestBody).getCEMI().getDestinationAddress());
-        }
+        // mark as dirty (if possible)
+        this.internalClient.getStatusPool().setDirty(requestBody);
 
+        // send packet
         var attempts = 1;
         final var totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)
         final var eventWaiting = this.internalClient.getConfig().getIntervalEvent();
         U responseBody;
 
         do {
-            // send packet
             send(requestBody);
 
             // iterate for event response
@@ -240,8 +252,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                 event = eventPool.get(requestBody);
             }
             // no null check required here because we know that eventData is always present here
-            while ( // true = no response yet
-                    !event.hasResponse()
+            while ( // !false = true = predicate not meet
+                    !predicate.test(event)
                             // true = not interrupted
                             && Sleeper.milliseconds(eventWaiting)
                             // true = request timeout not reached yet

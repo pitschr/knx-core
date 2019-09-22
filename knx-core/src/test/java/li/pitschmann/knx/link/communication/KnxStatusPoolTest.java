@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.address.KnxAddress;
@@ -27,6 +28,7 @@ import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.datapoint.DPT9;
 import li.pitschmann.knx.link.datapoint.value.DPT1Value;
 import li.pitschmann.knx.link.datapoint.value.DPT9Value;
+import li.pitschmann.knx.test.KnxBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -208,14 +210,19 @@ public class KnxStatusPoolTest {
         final var pool = new KnxStatusPoolImpl();
         pool.updateStatus(CEMI.useDefault(ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
 
-        // Scenario 1: test with known KNX address
+        // test with known and unknown KNX address
         pool.setDirty(ADDRESS);
-
-        // Scenario 2: test with unknown KNX address
         pool.setDirty(ADDRESS_UNKNOWN);
 
-        // Scenario 3: test with invalid null parameter
-        assertThatThrownBy(() -> pool.setDirty(null)).isInstanceOf(NullPointerException.class);
+        // test with invalid null parameter
+        assertThatThrownBy(() -> pool.setDirty((KnxAddress)null)).isInstanceOf(NullPointerException.class);
+
+        // test with tunneling and routing body
+        pool.setDirty(KnxBody.TUNNELING_REQUEST_BODY);
+        pool.setDirty(KnxBody.ROUTING_INDICATION_BODY);
+
+        // test with valid null request body parameter
+        pool.setDirty((RequestBody)null);
     }
 
     /**

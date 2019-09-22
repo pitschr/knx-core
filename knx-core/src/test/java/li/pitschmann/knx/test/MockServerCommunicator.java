@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Logic for KNX mock server (package-protected)
  */
 public class MockServerCommunicator implements Flow.Subscriber<Body> {
-    private static final Logger logger = LoggerFactory.getLogger(MockServerCommunicator.class);
+    private static final Logger log = LoggerFactory.getLogger(MockServerCommunicator.class);
     private final Map<ServiceType, List<ResponseStrategy>> responseStrategies = new HashMap<>();
     private final Map<ServiceType, AtomicInteger> serviceTypeCounter = new HashMap<>();
     private final MockServer mockServer;
@@ -134,7 +134,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
                     responseStrategies.get(serviceType).add(strategyInstance);
                 }
             } catch (final Exception e) {
-                logger.error("Exception happened during creating strategy instance", e);
+                log.error("Exception happened during creating strategy instance", e);
             }
         }
     }
@@ -155,9 +155,9 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
             final var responseStrategy = responseStrategiesList.get(index);
 
             if (responseStrategy instanceof IgnoreStrategy) {
-                logger.debug("Request being ignored because of IgnoreStrategy: {}", requestBody);
+                log.debug("Request being ignored because of IgnoreStrategy: {}", requestBody);
             } else {
-                logger.debug("Request processed by '{}': {}", responseStrategy.getClass().getName(), requestBody);
+                log.debug("Request processed by '{}': {}", responseStrategy.getClass().getName(), requestBody);
                 // get response body
                 final var mockResponse = responseStrategy.createResponse(this.mockServer, new MockRequest(requestBody));
 
@@ -166,29 +166,29 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
 
                 // checks if the disconnect should be done by KNX mock server
                 if (shouldDisconnectTrigger()) {
-                    logger.debug("KNX mock server disconnect triggered");
+                    log.debug("KNX mock server disconnect triggered");
                     this.mockServer.addToOutbox(new DefaultDisconnectStrategy().createRequest(this.mockServer, null).getBody());
                 }
                 // if the request body was a connect state request then internal runnable services may start
                 else if (!requestRunnableStarted && requestBody instanceof ConnectionStateRequestBody) {
                     requestRunnableStarted = true;
-                    logger.debug("Start with Mock Actions: {}", requests);
+                    log.debug("Start with Mock Actions: {}", requests);
                     CompletableFuture
                             .runAsync(() -> requests.stream().map(commandParser::parse).flatMap(Collection::stream).forEach(MockAction::apply))
-                            .thenRun(() -> logger.debug("Mock Actions fully performed."));
+                            .thenRun(() -> log.debug("Mock Actions fully performed."));
                 }
             }
 
         } else if (body instanceof ResponseBody) {
-            logger.trace("Response body received. Do nothing. Body: {}", body);
+            log.trace("Response body received. Do nothing. Body: {}", body);
         } else {
-            logger.warn("Unknown body received. Do nothing. Body: {}", body);
+            log.warn("Unknown body received. Do nothing. Body: {}", body);
         }
     }
 
     @Override
     public void onError(final @Nullable Throwable throwable) {
-        logger.error("Error during KNX Mock Server Logic class", throwable);
+        log.error("Error during KNX Mock Server Logic class", throwable);
         // here we do not any error handling
         // call on complete to close mock server properly
         onComplete();

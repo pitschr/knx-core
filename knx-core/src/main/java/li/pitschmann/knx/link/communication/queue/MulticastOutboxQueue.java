@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.queue;
 
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 
 import javax.annotation.Nonnull;

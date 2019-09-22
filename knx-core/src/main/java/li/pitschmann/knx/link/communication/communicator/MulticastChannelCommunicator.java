@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.MulticastChannelRelated;
 import li.pitschmann.knx.link.communication.ChannelFactory;

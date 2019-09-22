@@ -22,6 +22,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.datapoint.DataPointType;
@@ -67,7 +70,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
     }
 
     /**
-     * Marks the status for given {@link KnxAddress} as dirty (not up to date)
+     * Marks the status for given {@link KnxAddress} as dirty (not up-to-date)
      *
      * @param address {@link KnxAddress} for which the status should be marked as dirty
      */
@@ -76,6 +79,22 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         final var knxStatus = this.statusMap.get(address);
         if (knxStatus != null) {
             knxStatus.setDirty(true);
+        }
+    }
+
+    /**
+     * Marks the status for given RequestBody as dirty (not up-to-date)
+     *
+     * @param requestBody
+     */
+    public void setDirty(final @Nullable RequestBody requestBody) {
+        // for tunneling
+        if (requestBody instanceof TunnelingRequestBody) {
+            setDirty(((TunnelingRequestBody) requestBody).getCEMI().getDestinationAddress());
+        }
+        // for routing
+        else if (requestBody instanceof RoutingIndicationBody) {
+            setDirty(((RoutingIndicationBody) requestBody).getCEMI().getDestinationAddress());
         }
     }
 

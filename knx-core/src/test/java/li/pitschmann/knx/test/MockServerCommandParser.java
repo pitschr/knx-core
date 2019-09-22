@@ -40,7 +40,7 @@ import java.util.Objects;
  */
 public class MockServerCommandParser {
     public static final String DISCONNECT_REQUEST_COMMAND = "$DISCONNECT$";
-    private static final Logger logger = LoggerFactory.getLogger(MockServerCommandParser.class);
+    private static final Logger log = LoggerFactory.getLogger(MockServerCommandParser.class);
     private final MockServer mockServer;
     private final MockServerCommunicator mockServerCommunicator;
 
@@ -103,7 +103,7 @@ public class MockServerCommandParser {
         }
         // otherwise we have received an unsupported trigger command
         else {
-            logger.error("Unknown disconnect trigger command received: {}", command);
+            log.error("Unknown disconnect trigger command received: {}", command);
             throw new UnsupportedOperationException("Trigger is not supported: " + command);
         }
     }

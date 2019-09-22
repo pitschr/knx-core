@@ -47,7 +47,7 @@ import java.util.Collections;
  * Mock Server Channel for UDP ({@link DatagramChannel}) communication
  */
 public final class MockServerDatagramChannel implements MockServerChannel<DatagramChannel> {
-    private final static Logger logger = LoggerFactory.getLogger(MockServerDatagramChannel.class);
+    private final static Logger log = LoggerFactory.getLogger(MockServerDatagramChannel.class);
     private final DatagramChannel channel;
     private SocketAddress clientMulticastSocketAddress;
     private SocketAddress clientDescriptionSocketAddress;
@@ -84,12 +84,12 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
         // update client multicast address if multicast related packet is received
         if (body instanceof MulticastChannelRelated) {
             this.clientMulticastSocketAddress = address;
-            logger.debug("Multicast Address: {}", this.clientMulticastSocketAddress);
+            log.debug("Multicast Address: {}", this.clientMulticastSocketAddress);
         }
         // update client description address if DescriptionRequestBody from client is received
         else if (body instanceof DescriptionRequestBody) {
             this.clientDescriptionSocketAddress = address;
-            logger.debug("Description Address: {}", this.clientDescriptionSocketAddress);
+            log.debug("Description Address: {}", this.clientDescriptionSocketAddress);
         }
         // update client control/data addresses if ConnectRequestBody from client is received
         else if (body instanceof ConnectRequestBody) {
@@ -108,8 +108,8 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
                 this.clientControlSocketAddress = new InetSocketAddress(clientControlHPAI.getAddress(), clientControlHPAI.getPort());
                 this.clientDataSocketAddress = new InetSocketAddress(clientDataHPAI.getAddress(), clientDataHPAI.getPort());
             }
-            logger.debug("Control Address: {}", this.clientControlSocketAddress);
-            logger.debug("Data Address   : {}", this.clientDataSocketAddress);
+            log.debug("Control Address: {}", this.clientControlSocketAddress);
+            log.debug("Data Address   : {}", this.clientDataSocketAddress);
         }
 
         return body;

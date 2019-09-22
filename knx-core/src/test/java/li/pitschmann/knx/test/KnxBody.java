@@ -28,6 +28,7 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
@@ -52,6 +53,7 @@ public final class KnxBody {
     public static final String TUNNELING_ACK = "06100421000a04071b00";
     public static final String TUNNELING_REQUEST_2 = "06100420001704070b002900bce010aa4c090300800c82";
     public static final String TUNNELING_ACK_2 = "06100421000a04070b00";
+    public static final String ROUTING_INDICATION = "0610053000132900bce010aa4c090300800c82";
     public static final SearchRequestBody SEARCH_REQUEST_BODY = toBody(SEARCH_REQUEST);
     public static final SearchResponseBody SEARCH_RESPONSE_BODY = toBody(SEARCH_RESPONSE);
     public static final DescriptionRequestBody DESCRIPTION_REQUEST_BODY = toBody(DESCRIPTION_REQUEST);
@@ -66,6 +68,7 @@ public final class KnxBody {
     public static final TunnelingAckBody TUNNELING_ACK_BODY = toBody(TUNNELING_ACK);
     public static final TunnelingRequestBody TUNNELING_REQUEST_BODY_2 = toBody(TUNNELING_REQUEST_2);
     public static final TunnelingAckBody TUNNELING_ACK_BODY_2 = toBody(TUNNELING_ACK_2);
+    public static final RoutingIndicationBody ROUTING_INDICATION_BODY = toBody(ROUTING_INDICATION);
 
     private KnxBody() {
         throw new AssertionError("Do not touch me!");

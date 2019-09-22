@@ -14,27 +14,34 @@ See examples below to get a quick start using read-to-use classes.
 
 ### Known limitations
 
-* Only *tunneling* supported (no routing!)
-* No KNX Secure implementation yet
+* No KNX Secure implementation yet (because I do not have a KNX router that supports KNX secure)
 * No Additional Info support in CEMI frame yet
  
 ### Prerequisites
 
 * **Java 11+**
   * Make sure that you have Java 11 installed and running as Java 11
-* **KNX Net/IP device (Router or Interface)**
-  * One free tunneling connection available  
+* **Tunneling: KNX Net/IP device (Router or Interface)**
+  * One free tunneling connection available
   * IP-Address (optional, if not provided - the auto-discovery service will be used)
+* **Routing: KNX Net/IP device (Router only)**
+  * Filter table on your KNX router device is properly configured
+  * IP-Multicast Address that is used by your KNX router (default: 224.0.23.12)
 
 ### Architecture
 
 ![Architecture](./assets/readme_architecture.png)
 
-The communication between KNX and the client is reactive and non-blocking which allows a very fast communication and we have two channels simultaneously open: 
+The communication between KNX and the client is reactive and non-blocking which allows a very fast communication 
+and we may have multiple channels simultaneously open: 
+* Discovery Channel (for discovery service; multicast)
+* Description Channel (for receiving description information)
 * Control Channel (for control-related frames like description, connect, disconnect and health-check)
 * Data Channel (for data-related frames like read/request frames to/from KNX)
+* Multicast Channel (for routing; multicast)
 
- Good All data requests of all group addresses that is sent by KNX Net/IP will be fetched by the KNX client internally.
+All data requests of all group addresses that is sent by KNX Net/IP will be fetched by the KNX client internally. 
+If the KNX client is using NAT, then control channel and data channel are using a shared channel. 
 
 
 ## Ready-to-go Examples
