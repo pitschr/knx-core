@@ -39,20 +39,7 @@ import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
-import li.pitschmann.knx.link.communication.communicator.ControlAndDataChannelCommunicator;
-import li.pitschmann.knx.link.communication.communicator.ControlChannelCommunicator;
-import li.pitschmann.knx.link.communication.communicator.DataChannelCommunicator;
-import li.pitschmann.knx.link.communication.communicator.DescriptionChannelCommunicator;
-import li.pitschmann.knx.link.communication.communicator.MulticastChannelCommunicator;
-import li.pitschmann.knx.link.communication.task.ConnectResponseTask;
-import li.pitschmann.knx.link.communication.task.ConnectionStateResponseTask;
-import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
-import li.pitschmann.knx.link.communication.task.DisconnectRequestTask;
-import li.pitschmann.knx.link.communication.task.DisconnectResponseTask;
-import li.pitschmann.knx.link.communication.task.RoutingIndicationTask;
-import li.pitschmann.knx.link.communication.task.SearchResponseTask;
-import li.pitschmann.knx.link.communication.task.TunnelingAckTask;
-import li.pitschmann.knx.link.communication.task.TunnelingRequestTask;
+import li.pitschmann.knx.link.communication.communicator.CommunicatorFactory;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
@@ -70,14 +57,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Flow;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -247,34 +232,24 @@ public final class InternalKnxClient implements KnxClient {
 
             if (this.config.isRoutingEnabled()) {
                 // Routing is enabled -> communication will be done via multi cast
-                final var multicastChannelCommunicator = new MulticastChannelCommunicator(this);
-                subscribersForMultiChannel().forEach(multicastChannelCommunicator::subscribe);
+                this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newRoutingChannelCommunicator(this));
 
                 this.controlHPAI = HPAI.useDefault();
                 this.dataHPAI = HPAI.useDefault();
-
-                this.channelCommunicators = ImmutableList.of(multicastChannelCommunicator);
             } else if (this.config.isNatEnabled()) {
                 // NAT is enabled -> only one communicator for control and data related packets
-                final var controlAndDataChannelCommunicator = new ControlAndDataChannelCommunicator(this);
-                subscribersForDataChannel().forEach(controlAndDataChannelCommunicator::subscribe);
-                subscribersForControlChannel().forEach(controlAndDataChannelCommunicator::subscribe);
+                this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newControlAndDataChannelCommunicator(this));
 
                 this.controlHPAI = HPAI.useDefault();
                 this.dataHPAI = HPAI.useDefault();
-
-                this.channelCommunicators = ImmutableList.of(controlAndDataChannelCommunicator);
             } else {
                 // NAT is not enabled -> two communicators (one for control, and one for data related packets)
-                final var controlChannelCommunicator = new ControlChannelCommunicator(this);
-                subscribersForControlChannel().forEach(controlChannelCommunicator::subscribe);
-                final var dataChannelCommunicator = new DataChannelCommunicator(this);
-                subscribersForDataChannel().forEach(dataChannelCommunicator::subscribe);
+                final var controlChannelCommunicator = CommunicatorFactory.newControlChannelCommunicator(this);
+                final var dataChannelCommunicator = CommunicatorFactory.newDataChannelCommunicator(this);
+                this.channelCommunicators = ImmutableList.of(dataChannelCommunicator, controlChannelCommunicator);
 
                 this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
                 this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());
-
-                this.channelCommunicators = ImmutableList.of(dataChannelCommunicator, controlChannelCommunicator);
             }
 
             // logging
@@ -296,7 +271,7 @@ public final class InternalKnxClient implements KnxClient {
                 log.info("Channel ID received: {}", this.channelId);
 
                 // after obtaining channel id - start monitor as well
-                this.channelExecutor.submit(this.createConnectionStateMonitor());
+                this.channelExecutor.submit(new ConnectionStateMonitor(this));
             }
 
             // do not accept more services anymore!
@@ -308,97 +283,6 @@ public final class InternalKnxClient implements KnxClient {
         } finally {
             this.lock.unlock();
         }
-    }
-
-    /**
-     * Returns a list of {@link Flow.Subscriber} that is suited for description channel communicators
-     * <p>
-     * Following subscribers are:
-     * <ul>
-     * <li>{@link DescriptionResponseTask} receiving the response after {@link DescriptionRequestBody}</li>
-     * client</li>
-     * </ul>
-     *
-     * @return unmodifiable list of subscribers
-     */
-    private List<Flow.Subscriber<Body>> subscribersForDescriptionChannel() {
-        return Collections.singletonList(new DescriptionResponseTask(this));
-    }
-
-    /**
-     * Returns a list of {@link Flow.Subscriber} that is suited for control channel communicators
-     * <p>
-     * Following subscribers are:
-     * <ul>
-     * <li>{@link ConnectResponseTask} receiving the response after {@link ConnectRequestBody}</li>
-     * <li>{@link ConnectionStateResponseTask} receiving connection health status from KNX Net/IP device</li>
-     * <li>{@link DisconnectRequestTask} when disconnect is initiated by the KNX Net/IP device</li>
-     * <li>{@link DisconnectResponseTask} as answer from KNX Net/IP device when disconnect is initiated by the
-     * client</li>
-     * </ul>
-     *
-     * @return unmodifiable list of subscribers
-     */
-    @Nonnull
-    private List<Flow.Subscriber<Body>> subscribersForControlChannel() {
-        final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
-        subscribers.add(new ConnectResponseTask(this));
-        subscribers.add(new ConnectionStateResponseTask(this));
-        subscribers.add(new DisconnectRequestTask(this));
-        subscribers.add(new DisconnectResponseTask(this));
-        return Collections.unmodifiableList(subscribers);
-    }
-
-    /**
-     * Returns a list of {@link Flow.Subscriber} that is suited for data channel communicators
-     * <p>
-     * Following subscribers are:
-     * <ul>
-     * <li>{@link TunnelingRequestTask} when KNX Net/IP device notifies the client about a change from a remote KNX
-     * device</li>
-     * <li>{@link TunnelingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
-     * </ul>
-     *
-     * @return unmodifiable list of subscribers
-     */
-    @Nonnull
-    private List<Flow.Subscriber<Body>> subscribersForDataChannel() {
-        final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
-        subscribers.add(new TunnelingRequestTask(this));
-        subscribers.add(new TunnelingAckTask(this));
-        return Collections.unmodifiableList(subscribers);
-    }
-
-    /**
-     * Returns a list of {@link Flow.Subscriber} that is suited for multicast channel communicators
-     * <p>
-     * Following subscribers are:
-     * <ul>
-     * <li>{@link RoutingIndicationTask} when KNX Net/IP device notifies the client about a change from a remote KNX
-     * device</li>
-     * </ul>
-     *
-     * @return unmodifiable list of subscribers
-     */
-    @Nonnull
-    private List<Flow.Subscriber<Body>> subscribersForMultiChannel() {
-        final var subscribers = new ArrayList<Flow.Subscriber<Body>>();
-        subscribers.add(new SearchResponseTask(this));
-        subscribers.add(new RoutingIndicationTask(this));
-        return Collections.unmodifiableList(subscribers);
-    }
-
-    /**
-     * Registers the {@link ConnectionStateMonitor} to send {@link ConnectionStateRequestBody} frequently to the
-     * KNX Net/IP device and monitors the health status.
-     * <p>
-     * No subscribers.
-     *
-     * @return {@link ConnectionStateMonitor}
-     */
-    @Nonnull
-    private ConnectionStateMonitor createConnectionStateMonitor() {
-        return new ConnectionStateMonitor(this);
     }
 
     @Override
@@ -604,8 +488,7 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Method 'fetchDescriptionFromKNX()' called.");
 
         // Description request / response is one-time task before establishing communication to KNX Net/IP device
-        final var communicator = new DescriptionChannelCommunicator(this);
-        subscribersForDescriptionChannel().forEach(communicator::subscribe);
+        final var communicator = CommunicatorFactory.newDescriptionChannelCommunicator(this);
 
         // Create executor service for description communication
         final var es = Executors.newSingleThreadExecutor(true);
@@ -642,8 +525,7 @@ public final class InternalKnxClient implements KnxClient {
         log.trace("Method 'fetchDiscoveryFromKNX()' called.");
 
         // Search request / response is one-time task to auto-find all available KNX Net/IP device
-        final var communicator = new MulticastChannelCommunicator(this);
-        subscribersForMultiChannel().forEach(communicator::subscribe);
+        final var communicator = CommunicatorFactory.newDiscoveryChannelCommunicator(this);
 
         // Create executor service for discovery communication
         final var es = Executors.newSingleThreadExecutor(true);

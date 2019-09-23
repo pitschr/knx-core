@@ -33,7 +33,7 @@ import java.nio.channels.SelectableChannel;
  * @author PITSCHR
  */
 public final class ControlChannelCommunicator extends AbstractChannelCommunicator {
-    public ControlChannelCommunicator(final @Nonnull InternalKnxClient client) {
+    ControlChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
     }
 

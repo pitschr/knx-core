@@ -40,7 +40,7 @@ import java.util.List;
 public final class MulticastChannelCommunicator extends AbstractChannelCommunicator {
     private List<MembershipKey> membershipKeys;
 
-    public MulticastChannelCommunicator(final @Nonnull InternalKnxClient client) {
+    MulticastChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
     }
 

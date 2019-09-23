@@ -67,8 +67,8 @@ public final class MockServerTestExtension
             final var mockServer = MockServer.createStarted(annotation);
 
             // wait until mock server is ready for receiving packets from client
-            // if will take longer than 15 seconds -> abort
-            if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 15000)) {
+            // if will take longer than 30 seconds -> abort
+            if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 30000)) {
                 throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
             }
 
