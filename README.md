@@ -21,10 +21,10 @@ See examples below to get a quick start using read-to-use classes.
 
 * **Java 11+**
   * Make sure that you have Java 11 installed and running as Java 11
-* **Tunneling: KNX Net/IP device (Router or Interface)**
+* **Tunneling: KNX Router or Interface**
   * One free tunneling connection available
   * IP-Address (optional, if not provided - the auto-discovery service will be used)
-* **Routing: KNX Net/IP device (Router only)**
+* **Routing: KNX Router (only)**
   * Filter table on your KNX router device is properly configured
   * IP-Multicast Address that is used by your KNX router (default: 224.0.23.12)
 
