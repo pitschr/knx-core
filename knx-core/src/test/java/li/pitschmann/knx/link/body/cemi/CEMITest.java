@@ -22,12 +22,10 @@ import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.address.KnxAddress;
-import li.pitschmann.knx.link.datapoint.DPT7;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

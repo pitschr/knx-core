@@ -216,14 +216,14 @@ public class KnxStatusPoolTest {
         pool.setDirty(ADDRESS_UNKNOWN);
 
         // test with invalid null parameter
-        assertThatThrownBy(() -> pool.setDirty((KnxAddress)null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> pool.setDirty((KnxAddress) null)).isInstanceOf(NullPointerException.class);
 
         // test with tunneling and routing body
         pool.setDirty(KnxBody.TUNNELING_REQUEST_BODY);
         pool.setDirty(KnxBody.ROUTING_INDICATION_BODY);
 
         // test with valid null request body parameter
-        pool.setDirty((RequestBody)null);
+        pool.setDirty((RequestBody) null);
     }
 
     /**

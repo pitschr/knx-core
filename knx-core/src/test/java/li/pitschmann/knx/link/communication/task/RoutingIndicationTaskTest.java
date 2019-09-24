@@ -20,7 +20,6 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
-import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
