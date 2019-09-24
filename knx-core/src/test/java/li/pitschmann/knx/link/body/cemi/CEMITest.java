@@ -39,83 +39,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author PITSCHR
  */
 public final class CEMITest {
-    /**
-     * Tests the {@code useDefault(..)} methods
-     */
-    @Test
-    @DisplayName("Test useDefault(..) methods if they generate same byte arrays")
-    public void testUseDefaultMethods() {
-        final var knxAddress = IndividualAddress.of(5, 9, 15);
-        final var bytes = new byte[]{(byte) 0xCC, (byte) 0xEE};
-        final var dptValue = DPT7.LENGTH_MM.toValue(bytes);
-
-        final var cemiDefaultWithBytes = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
-        final var cemiDefaultWithDataPoint = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
-
-        final var cemiDefaultWithBytes2 = CEMI.useDefault(MessageCode.L_DATA_REQ, knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
-        final var cemiDefaultWithDataPoint2 = CEMI.useDefault(MessageCode.L_DATA_REQ, knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
-
-        // assert
-        assertThat(cemiDefaultWithBytes.getRawData()).containsExactly(cemiDefaultWithBytes2.getRawData());
-        assertThat(cemiDefaultWithDataPoint.getRawData()).containsExactly(cemiDefaultWithDataPoint2.getRawData());
-    }
-
-    /**
-     * Tests the {@link CEMI#useDefaultForGroupValueRead(KnxAddress)}
-     */
-    @Test
-    public void useDefaultForGroupValueRead() {
-        final var knxAddress = IndividualAddress.of(5, 9, 15);
-
-        // useDefaultForGroupValueRead
-        final var cemiDefaultForGroupValueRead = CEMI.useDefaultForGroupValueRead(knxAddress);
-
-        // useDefault
-        final var cemiDefault = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_READ, (byte[]) null);
-
-        // complex
-        final var cemiCreate = CEMI.of(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
-                ControlByte2.of(knxAddress), IndividualAddress.useDefault(), knxAddress, TPCI.UNNUMBERED_PACKAGE, 0,
-                APCI.GROUP_VALUE_READ, (byte[]) null);
-
-        // assert
-        assertThat(cemiDefaultForGroupValueRead.getRawData()).containsExactly(cemiDefault.getRawData());
-        assertThat(cemiDefaultForGroupValueRead.getRawData()).containsExactly(cemiCreate.getRawData());
-    }
-
-    /**
-     * Tests the
-     * {@link CEMI#useDefaultForGroupValueWrite(KnxAddress, li.pitschmann.knx.link.datapoint.value.DataPointValue)}
-     */
-    @Test
-    public void useDefaultForGroupValueWrite() {
-        final var knxAddress = IndividualAddress.of(7, 13, 41);
-        final var bytes = new byte[]{(byte) 0xAA, (byte) 0xBB};
-        final var dptValue = DPT7.BRIGHTNESS.toValue(bytes);
-
-        // useDefaultForGroupValueWrite
-        final var cemiDefaultForGroupValueWriteWithBytes = CEMI.useDefaultForGroupValueWrite(knxAddress, bytes);
-        final var cemiDefaultForGroupValueWriteWithDataPoint = CEMI.useDefaultForGroupValueWrite(knxAddress, dptValue);
-
-        // useDefault
-        final var cemiDefaultWithBytes = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
-        final var cemiDefaultWithDataPoint = CEMI.useDefault(knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
-
-        // complex
-        final var cemiCreateWithBytes = CEMI.of(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
-                ControlByte2.of(knxAddress), IndividualAddress.useDefault(), knxAddress, TPCI.UNNUMBERED_PACKAGE, 0,
-                APCI.GROUP_VALUE_WRITE, bytes);
-        final var cemiCreateWithDataPoint = CEMI.of(MessageCode.L_DATA_REQ, AdditionalInfo.empty(), ControlByte1.useDefault(),
-                ControlByte2.of(knxAddress), IndividualAddress.useDefault(), knxAddress, TPCI.UNNUMBERED_PACKAGE, 0,
-                APCI.GROUP_VALUE_WRITE, dptValue);
-
-        // assert
-        assertThat(cemiDefaultForGroupValueWriteWithBytes.getRawData()).containsExactly(cemiDefaultForGroupValueWriteWithDataPoint.getRawData());
-        assertThat(cemiDefaultForGroupValueWriteWithBytes.getRawData()).containsExactly(cemiDefaultWithBytes.getRawData());
-        assertThat(cemiDefaultForGroupValueWriteWithBytes.getRawData()).containsExactly(cemiDefaultWithDataPoint.getRawData());
-        assertThat(cemiDefaultForGroupValueWriteWithBytes.getRawData()).containsExactly(cemiCreateWithBytes.getRawData());
-        assertThat(cemiDefaultForGroupValueWriteWithBytes.getRawData()).containsExactly(cemiCreateWithDataPoint.getRawData());
-    }
 
     /**
      * Test for L_Data Connection, A_GroupValue_Read
@@ -499,7 +422,7 @@ public final class CEMITest {
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("cemiRawData/npdu");
 
         // invalid APCI
-        assertThatThrownBy(() -> CEMI.useDefault(sourceAddress, APCI.INDIVIDUAL_ADDRESS_WRITE, new byte[0]))
+        assertThatThrownBy(() -> CEMI.useDefault(MessageCode.L_DATA_REQ, sourceAddress, APCI.INDIVIDUAL_ADDRESS_WRITE, new byte[0]))
                 .isInstanceOf(KnxException.class).hasMessage("Current APCI is not supported: INDIVIDUAL_ADDRESS_WRITE");
     }
 

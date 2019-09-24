@@ -172,83 +172,11 @@ public final class CEMI extends AbstractMultiRawData {
     }
 
     /**
-     * Creates a new {@link CEMI} instance with default settings taken from
-     * {@link #useDefault(KnxAddress, APCI, byte[])} with pre-defined setting:
-     *
-     * <ul>
-     * <li>APCI = {@link APCI#GROUP_VALUE_WRITE}</li>
-     * <li>APCI data = N/A (empty)</li>
-     * </ul>
-     *
-     * @param destinationAddress
-     * @return a new immutable {@link CEMI} with default settings and {@link KnxAddress} for read request
-     */
-    @Nonnull
-    public static CEMI useDefaultForGroupValueRead(final @Nonnull KnxAddress destinationAddress) {
-        // no validation required here
-
-        // create new instance
-        return useDefault(destinationAddress, APCI.GROUP_VALUE_READ, (byte[]) null);
-    }
-
-    /**
-     * Creates a new {@link CEMI} instance with default settings taken from
-     * {@link #useDefault(KnxAddress, APCI, byte[])} with pre-defined setting:
-     *
-     * <ul>
-     * <li>APCI = {@link APCI#GROUP_VALUE_WRITE}</li>
-     * </ul>
-     *
-     * @param destinationAddress
-     * @param dataPointValue
-     * @return a new immutable {@link CEMI} with default settings and {@link KnxAddress} and byte array for write request
-     */
-    @Nonnull
-    public static CEMI useDefaultForGroupValueWrite(final @Nonnull KnxAddress destinationAddress, final @Nonnull DataPointValue<?> dataPointValue) {
-        return useDefaultForGroupValueWrite(destinationAddress, dataPointValue.toByteArray());
-    }
-
-    /**
-     * Creates a new {@link CEMI} instance with default settings taken from
-     * {@link #useDefault(KnxAddress, APCI, byte[])} with pre-defined setting:
-     *
-     * <ul>
-     * <li>APCI = {@link APCI#GROUP_VALUE_WRITE}</li>
-     * </ul>
-     *
-     * @param destinationAddress
-     * @param apciData
-     * @return a new immutable {@link CEMI} with default settings and {@link KnxAddress} and byte array for write request
-     */
-    @Nonnull
-    public static CEMI useDefaultForGroupValueWrite(final @Nonnull KnxAddress destinationAddress, final @Nullable byte[] apciData) {
-        // no validation required here
-
-        // create new instance
-        return useDefault(destinationAddress, APCI.GROUP_VALUE_WRITE, apciData);
-    }
-
-    /**
-     * Creates a new {@link CEMI} instance with default settings. It is a wrapper of
-     * {@link #useDefault(KnxAddress, APCI, byte[])} while the byte array is taken
-     * from {@link DataPointValue} parameter.
-     *
-     * @param destinationAddress
-     * @param apci
-     * @param dataPointValue
-     * @return a new immutable {@link CEMI} with default settings and {@link KnxAddress}, {@link APCI} and byte array with
-     * data for {@link APCI} taken from {@link DataPointValue}.
-     */
-    @Nonnull
-    public static CEMI useDefault(final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nonnull DataPointValue<?> dataPointValue) {
-        return useDefault(destinationAddress, apci, dataPointValue.toByteArray());
-    }
-
-    /**
      * Creates a new {@link CEMI} instance with default settings. It is a wrapper of
      * {@link #useDefault(MessageCode, KnxAddress, APCI, byte[])} while the byte array is taken
      * from {@link DataPointValue} parameter.
      *
+     * @param messageCode
      * @param destinationAddress
      * @param apci
      * @param dataPointValue
@@ -258,30 +186,6 @@ public final class CEMI extends AbstractMultiRawData {
     @Nonnull
     public static CEMI useDefault(final @Nonnull MessageCode messageCode, final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nonnull DataPointValue<?> dataPointValue) {
         return useDefault(messageCode, destinationAddress, apci, dataPointValue.toByteArray());
-    }
-
-    /**
-     * Creates a new {@link CEMI} instance with default settings:
-     *
-     * <ul>
-     * <li>Message Code = {@link MessageCode#L_DATA_REQ}</li>
-     * <li>Additional Info = N/A (empty)</li>
-     * <li>ControlByte 1 = {@link ControlByte1#useDefault()}</li>
-     * <li>ControlByte 2 = {@link ControlByte2#of(KnxAddress)} (KnxAddress taken from parameter
-     * {@code destinationAddress})</li>
-     * <li>TPCI = {@link TPCI#UNNUMBERED_PACKAGE}</li>
-     * <li>TPCI Packet Number = 0 (zero)</li>
-     * </ul>
-     *
-     * @param destinationAddress
-     * @param apci
-     * @param apciData
-     * @return a new immutable {@link CEMI} with default settings and {@link KnxAddress}, {@link APCI} and byte array with
-     * data for {@link APCI}.
-     */
-    @Nonnull
-    public static CEMI useDefault(final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nullable byte[] apciData) {
-        return useDefault(MessageCode.L_DATA_REQ, destinationAddress, apci, apciData);
     }
 
     /**

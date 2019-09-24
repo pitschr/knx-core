@@ -28,7 +28,7 @@ import li.pitschmann.knx.link.header.ServiceType;
 import javax.annotation.Nonnull;
 
 /**
- * Body for Tunneling Request
+ * Body for Routing Indication
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -48,7 +48,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      */
     private static final int STRUCTURE_WITH_CEMI_MIN_LENGTH = 11;
     /**
-     * Maximum Structure Length for {@link TunnelingRequestBody} including {@link CEMI}
+     * Maximum Structure Length for {@link RoutingIndicationBody} including {@link CEMI}
      */
     private static final int STRUCTURE_WITH_CEMI_MAX_LENGTH = 0xFF;
     private final CEMI cemi;

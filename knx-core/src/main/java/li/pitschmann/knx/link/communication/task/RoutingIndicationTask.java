@@ -51,17 +51,16 @@ public final class RoutingIndicationTask implements Subscriber<Body> {
     public void onNext(final @Nullable Body body) {
         // we are interested in routing indication only
         if (body instanceof RoutingIndicationBody) {
-            final var reqBody = (RoutingIndicationBody) body;
             log.debug("Routing Indication received: {}", body);
 
-            // if it is indication, update the state of source address
-            final var cemi = reqBody.getCEMI();
-
             // Consider only:
-            // 1) Indication + Group Value Response
-            // 2) Indication + Group Value Write
-            // 3) Consider Confirmation + Group Value Write
+            // 1) Indication + Group Value Write
+            // 2) Indication + Group Value Response
             // rest are ignored
+            final var reqBody = (RoutingIndicationBody) body;
+            final var cemi = reqBody.getCEMI();
+            final var messageCode = cemi.getMessageCode();
+            final var apci = cemi.getApci();
             if (cemi.getMessageCode() == MessageCode.L_DATA_IND) {
                 if (cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
                     if (log.isDebugEnabled()) {
@@ -73,12 +72,11 @@ public final class RoutingIndicationTask implements Subscriber<Body> {
                         log.debug("RoutingIndication frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
+                } else {
+                    log.debug("RoutingIndication frame received but ignored: with MessageCode={}, APCI={}", messageCode, apci);
                 }
-            } else if (cemi.getMessageCode() == MessageCode.L_DATA_CON && cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
-                if (log.isDebugEnabled()) {
-                    log.debug("RoutingIndication frame received from KNX after WRITE request from KNX client: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
-                }
-                this.client.getStatusPool().updateStatus(cemi);
+            } else {
+                log.debug("RoutingIndication frame received but ignored: MessageCode={}", messageCode);
             }
         }
     }

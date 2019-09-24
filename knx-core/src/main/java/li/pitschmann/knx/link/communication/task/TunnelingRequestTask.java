@@ -61,31 +61,35 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
             // send acknowledge frame
             this.client.send(ackBody);
 
-            // if it is indication, update the state of source address
-            final var cemi = reqBody.getCEMI();
-
             // Consider only:
-            // 1) Indication + Group Value Response
-            // 2) Indication + Group Value Write
-            // 3) Consider Confirmation + Group Value Write
+            // 1) Indication + Group Value Write
+            // 2) Indication + Group Value Response
+            // 3) Confirmation + Group Value Write
             // rest are ignored
-            if (cemi.getMessageCode() == MessageCode.L_DATA_IND) {
-                if (cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
+            final var cemi = reqBody.getCEMI();
+            final var messageCode = cemi.getMessageCode();
+            final var apci = cemi.getApci();
+            if (messageCode == MessageCode.L_DATA_IND) {
+                if (apci == APCI.GROUP_VALUE_WRITE) {
                     if (log.isDebugEnabled()) {
                         log.debug("TunnelingRequest frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
-                } else if (cemi.getApci() == APCI.GROUP_VALUE_RESPONSE) {
+                } else if (apci == APCI.GROUP_VALUE_RESPONSE) {
                     if (log.isDebugEnabled()) {
                         log.debug("TunnelingRequest frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
+                } else {
+                    log.debug("TunnelingRequest frame received but ignored: with MessageCode={}, APCI={}", messageCode, apci);
                 }
-            } else if (cemi.getMessageCode() == MessageCode.L_DATA_CON && cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
+            } else if (messageCode == MessageCode.L_DATA_CON && apci == APCI.GROUP_VALUE_WRITE) {
                 if (log.isDebugEnabled()) {
                     log.debug("TunnelingRequest frame received from KNX after WRITE request from KNX client: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
                 }
                 this.client.getStatusPool().updateStatus(cemi);
+            } else {
+                log.debug("TunnelingRequest frame received but ignored: with MessageCode={}, APCI={}", messageCode, apci);
             }
         }
     }

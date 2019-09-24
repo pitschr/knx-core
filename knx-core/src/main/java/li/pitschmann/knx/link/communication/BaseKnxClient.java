@@ -73,7 +73,7 @@ public class BaseKnxClient implements KnxClient {
      */
     @Nonnull
     public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
-        final var cemi = CEMI.useDefaultForGroupValueWrite(address, dataPointValue);
+        final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
         return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
@@ -96,7 +96,7 @@ public class BaseKnxClient implements KnxClient {
      */
     @Nonnull
     public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
-        final var cemi = CEMI.useDefaultForGroupValueWrite(address, apciData);
+        final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
         return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 
@@ -113,7 +113,7 @@ public class BaseKnxClient implements KnxClient {
      */
     @Nonnull
     public CompletableFuture<TunnelingAckBody> readRequest(final @Nonnull GroupAddress address) {
-        final var cemi = CEMI.useDefaultForGroupValueRead(address);
+        final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
         return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
     }
 

@@ -85,9 +85,6 @@ public final class BodyFactory {
             return (T) TunnelingAckBody.of(bodyBytes);
         } else if (serviceType == ServiceType.ROUTING_INDICATION) {
             return (T) RoutingIndicationBody.of(bodyBytes);
-        } else if (serviceType == ServiceType.ROUTING_LOST_MESSAGE) {
-            throw new UnsupportedOperationException();
-            // TODO: return (T) RoutingLostMessage.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECTION_STATE_REQUEST) {
             return (T) ConnectionStateRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECTION_STATE_RESPONSE) {

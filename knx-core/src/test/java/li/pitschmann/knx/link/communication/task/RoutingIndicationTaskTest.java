@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
@@ -36,22 +37,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link TunnelingRequestTask}
+ * Test for {@link RoutingIndicationTask}
  *
  * @author PITSCHR
  */
-public class TunnelingRequestTaskTest {
+public class RoutingIndicationTaskTest {
 
     /**
-     * Tests the {@link TunnelingRequestTask#onNext(Body)} successfully
+     * Tests the {@link RoutingIndicationTask#onNext(Body)}
      */
     @Test
-    @DisplayName("OK: Test 'onNext(Body)' method")
+    @DisplayName("Test 'onNext(Body)' method")
     public void testOnNext() {
         final var task = createTask();
 
         final var cemi = mock(CEMI.class);
-        final var correctBody = mock(TunnelingRequestBody.class);
+        final var correctBody = mock(RoutingIndicationBody.class);
         when(correctBody.getCEMI()).thenReturn(cemi);
         when(cemi.getSourceAddress()).thenReturn(IndividualAddress.of(1, 2, 3));
         when(cemi.getDestinationAddress()).thenReturn(GroupAddress.of(4, 5, 6));
@@ -85,14 +86,14 @@ public class TunnelingRequestTaskTest {
         task.onNext(wrongBody);
 
         // wrong wrong message code
-        final var bodyWithWrongMessageCode = mock(TunnelingRequestBody.class);
+        final var bodyWithWrongMessageCode = mock(RoutingIndicationBody.class);
         final var cemiMock = mock(CEMI.class);
         when(cemiMock.getMessageCode()).thenReturn(MessageCode.L_DATA_REQ);
         when(bodyWithWrongMessageCode.getCEMI()).thenReturn(cemiMock);
         task.onNext(bodyWithWrongMessageCode);
 
         // wrong APCI for message indication
-        final var bodyWithWrongApciCode = mock(TunnelingRequestBody.class);
+        final var bodyWithWrongApciCode = mock(RoutingIndicationBody.class);
         final var cemiMock2 = mock(CEMI.class);
         when(cemiMock2.getMessageCode()).thenReturn(MessageCode.L_DATA_IND);
         when(cemiMock2.getApci()).thenReturn(APCI.INDIVIDUAL_ADDRESS_WRITE);
@@ -101,7 +102,7 @@ public class TunnelingRequestTaskTest {
     }
 
     /**
-     * Test the {@link TunnelingRequestTask#onError(Throwable)}
+     * Test the {@link RoutingIndicationTask#onError(Throwable)}
      * <p/>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
@@ -113,7 +114,7 @@ public class TunnelingRequestTaskTest {
     }
 
     /**
-     * Test the {@link TunnelingRequestTask#onComplete()}
+     * Test the {@link RoutingIndicationTask#onComplete()}
      * <p/>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
@@ -125,18 +126,18 @@ public class TunnelingRequestTaskTest {
     }
 
     /**
-     * Helper for creating a {@link TunnelingRequestTask}
+     * Helper for creating a {@link RoutingIndicationTask}
      *
-     * @return returns a newly instance of {@link TunnelingRequestTask}
+     * @return returns a newly instance of {@link RoutingIndicationTask}
      */
-    private TunnelingRequestTask createTask() {
+    private RoutingIndicationTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
         final var statusPool = mock(KnxStatusPoolImpl.class);
         final var subscription = mock(Flow.Subscription.class);
 
         when(internalClient.getStatusPool()).thenReturn(statusPool);
 
-        final var task = new TunnelingRequestTask(internalClient);
+        final var task = new RoutingIndicationTask(internalClient);
         task.onSubscribe(subscription);
         return task;
     }
