@@ -21,8 +21,6 @@ package li.pitschmann.knx.link;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import li.pitschmann.knx.link.plugin.ExtensionPlugin;
-import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
 
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * KNX specific configurations like KNX Net/IP device address. This class can be created
@@ -49,9 +46,7 @@ import java.util.stream.Collectors;
 public final class Configuration {
     private final InetAddress remoteControlAddress;
     private final Integer remoteControlPort;
-    private final List<Plugin> allPlugins;
-    private final List<ExtensionPlugin> extensionPlugins;
-    private final List<ObserverPlugin> observerPlugins;
+    private final List<Plugin> plugins;
     private final Map<String, String> settings;
 
     private Configuration(final @Nonnull Builder builder) {
@@ -59,14 +54,8 @@ public final class Configuration {
         this.remoteControlAddress = builder.remoteControlAddress;
         this.remoteControlPort = builder.remoteControlPort;
 
-        // settings
         this.settings = Collections.unmodifiableMap(builder.settings);
-        // plugins
-        this.allPlugins = Collections.unmodifiableList(builder.plugins);
-        this.extensionPlugins = builder.plugins.stream().filter(ExtensionPlugin.class::isInstance).map(ExtensionPlugin.class::cast)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
-        this.observerPlugins = builder.plugins.stream().filter(ObserverPlugin.class::isInstance).map(ObserverPlugin.class::cast)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        this.plugins = Collections.unmodifiableList(builder.plugins);
     }
 
     /**
@@ -161,28 +150,8 @@ public final class Configuration {
      * @return unmodifiable list of all {@link Plugin} instances
      */
     @Nonnull
-    public List<Plugin> getAllPlugins() {
-        return this.allPlugins;
-    }
-
-    /**
-     * Returns list of observer plug-ins
-     *
-     * @return unmodifiable list of {@link ObserverPlugin}
-     */
-    @Nonnull
-    public List<ObserverPlugin> getObserverPlugins() {
-        return this.observerPlugins;
-    }
-
-    /**
-     * Returns list of extension plug-ins
-     *
-     * @return unmodifiable list of {@link ExtensionPlugin}
-     */
-    @Nonnull
-    public List<ExtensionPlugin> getExtensionPlugins() {
-        return this.extensionPlugins;
+    public List<Plugin> getPlugins() {
+        return this.plugins;
     }
 
     /**
@@ -220,7 +189,7 @@ public final class Configuration {
     //
 
     public int getPluginExecutorPoolSize() {
-        return Math.max(getSetting("client.plugin.executorPoolSize", Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf), this.observerPlugins.size());
+        return getSetting("client.plugin.executorPoolSize", Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf);
     }
 
     //

@@ -46,6 +46,7 @@ import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
+import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Closeables;
@@ -57,8 +58,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -89,6 +93,11 @@ public final class InternalKnxClient implements KnxClient {
     private HPAI dataHPAI;
     private int channelId = -1;
     private InetSocketAddress remoteEndpoint;
+    // TODO -> KNX Plugin Pool class?
+    // TODO registerPlugin(..), unregisterPlugin(..)
+    private List<ObserverPlugin> observerPlugins = new LinkedList<>();
+    private List<ExtensionPlugin> extensionPlugins = new LinkedList<>();
+    private Set<Class<?>> classPlugins = new HashSet<>();
 
     /**
      * KNX client constructor (package protected)
@@ -100,11 +109,14 @@ public final class InternalKnxClient implements KnxClient {
         // configuration
         this.config = Objects.requireNonNull(config);
 
+        // set plugins
+
         // executors with fixed threads for communication and subscription
+        this.config.getPlugins().stream().forEach(this::registerPlugin);
         this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
         log.info("Plugin Executor created with size of {}: {}", config.getPluginExecutorPoolSize(), this.pluginExecutor);
-        log.info("Observer Plugins: {}", this.config.getObserverPlugins());
-        log.info("Extension Plugins: {}", this.config.getExtensionPlugins());
+        log.info("Observer Plugins: {}", this.observerPlugins);
+        log.info("Extension Plugins: {}", this.extensionPlugins);
     }
 
     /**
@@ -278,7 +290,7 @@ public final class InternalKnxClient implements KnxClient {
             log.info("Channel Executor created: {}", this.channelExecutor);
 
             // notifies the extension plug-in about start of service / communication
-            this.notifyPlugins(this, this.config.getExtensionPlugins(), (p, c) -> p.onStart());
+            this.notifyPlugins(this, extensionPlugins, (p, c) -> p.onStart());
         } finally {
             this.lock.unlock();
         }
@@ -299,7 +311,7 @@ public final class InternalKnxClient implements KnxClient {
         this.lock.lock();
         try {
             // notifies the extension plug-ins about shutdown
-            this.notifyPlugins(this, this.config.getExtensionPlugins(), (p, c) -> p.onShutdown());
+            this.notifyPlugins(this, extensionPlugins, (p, c) -> p.onShutdown());
 
             this.stopServices();
         } finally {
@@ -398,7 +410,7 @@ public final class InternalKnxClient implements KnxClient {
      */
     public void notifyPluginsIncomingBody(final @Nonnull Body body) {
         this.statistics.onIncomingBody(body);
-        this.notifyPlugins(body, this.config.getObserverPlugins(), ObserverPlugin::onIncomingBody);
+        this.notifyPlugins(body, observerPlugins, ObserverPlugin::onIncomingBody);
     }
 
     /**
@@ -408,7 +420,7 @@ public final class InternalKnxClient implements KnxClient {
      */
     public void notifyPluginsOutgoingBody(final @Nonnull Body body) {
         this.statistics.onOutgoingBody(body);
-        this.notifyPlugins(body, this.config.getObserverPlugins(), ObserverPlugin::onOutgoingBody);
+        this.notifyPlugins(body, observerPlugins, ObserverPlugin::onOutgoingBody);
     }
 
     /**
@@ -418,7 +430,48 @@ public final class InternalKnxClient implements KnxClient {
      */
     public void notifyPluginsError(final @Nonnull Throwable throwable) {
         this.statistics.onError(throwable);
-        this.notifyPlugins(throwable, this.config.getObserverPlugins(), ObserverPlugin::onError);
+        this.notifyPlugins(throwable, observerPlugins, ObserverPlugin::onError);
+    }
+
+    /**
+     * Registers the plugin
+     *
+     * @param plugin
+     */
+    public void registerPlugin(final @Nonnull Plugin plugin) {
+        final var pluginClass = plugin.getClass();
+        Preconditions.checkArgument(!classPlugins.contains(pluginClass),
+                "There is already a plugin registered for class: %s", pluginClass);
+
+        boolean added = true;
+        if (plugin instanceof ExtensionPlugin) {
+            this.extensionPlugins.add((ExtensionPlugin)plugin);
+        }
+        if (plugin instanceof ObserverPlugin) {
+            this.observerPlugins.add((ObserverPlugin)plugin);
+        }
+        this.classPlugins.add(pluginClass);
+    }
+
+    /**
+     * De-Registers the plugin
+     *
+     * @param pluginClass
+     */
+    public void unregisterPlugin(final @Nonnull Class<Plugin> pluginClass) {
+        if (classPlugins.contains(pluginClass)) {
+            // plugin class is registered, remove it from extension and/or observer plugin lists
+            for (var extensionPlugin : extensionPlugins) {
+                if (pluginClass.equals(extensionPlugin.getClass())) {
+                    extensionPlugins.remove(extensionPlugin);
+                }
+            }
+            for (var observerPlugin : observerPlugins) {
+                if (pluginClass.equals(observerPlugin.getClass())) {
+                    observerPlugins.remove(observerPlugin);
+                }
+            }
+        }
     }
 
     /**

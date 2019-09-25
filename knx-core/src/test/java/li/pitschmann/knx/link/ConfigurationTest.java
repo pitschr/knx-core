@@ -74,13 +74,9 @@ public class ConfigurationTest {
 
         // verify
         final var config = configBuilder.build();
-        assertThat(config.getAllPlugins()).hasSize(33);
-        assertThat(config.getObserverPlugins()).hasSize(13);
-        assertThat(config.getExtensionPlugins()).hasSize(20);
+        assertThat(config.getPlugins()).hasSize(33);
 
-        // default size of pool execution should be increased automatically
-        // only the number of observer plugins is being considered because
-        // extension plugin is only used on start up / shut down phases
-        assertThat(config.getPluginExecutorPoolSize()).isEqualTo(13);
+        // default size of pool execution should be 10
+        assertThat(config.getPluginExecutorPoolSize()).isEqualTo(10);
     }
 }

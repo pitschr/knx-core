@@ -171,7 +171,7 @@ public class KnxClientTest {
         final var observerPlugin = mock(ObserverPlugin.class);
 
         final var configMock = createConfigMock();
-        when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(observerPlugin));
+        when(configMock.getPlugins()).thenReturn(Collections.singletonList(observerPlugin));
 
         final var client = new InternalKnxClient(configMock);
         client.close();
@@ -194,7 +194,7 @@ public class KnxClientTest {
         doThrow(new RuntimeException()).when(erroneousPlugin).onError(any());
 
         final var configMock = createConfigMock();
-        when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
+        when(configMock.getPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
 
         final var client = new InternalKnxClient(configMock);
 
