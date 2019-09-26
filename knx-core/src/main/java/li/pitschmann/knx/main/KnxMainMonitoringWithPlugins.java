@@ -22,6 +22,7 @@ import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.plugin.AuditPlugin;
+import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -67,8 +68,8 @@ public class KnxMainMonitoringWithPlugins extends AbstractKnxMain {
 
         final var config = Configuration.create(ipAddress)//
                 .plugin( //
-                        new AuditPlugin() //, //
-                        //        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
+                        new AuditPlugin() , //
+                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //, //
                         //        new AuditDatabasePlugin() //
                 ) //
                 .setting("client.communication.connectionState.requestTimeout", "10000") //

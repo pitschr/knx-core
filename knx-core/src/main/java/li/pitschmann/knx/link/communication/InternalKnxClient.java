@@ -282,9 +282,6 @@ public final class InternalKnxClient implements KnxClient {
             // do not accept more services anymore!
             this.channelExecutor.shutdown();
             log.info("Channel Executor created: {}", this.channelExecutor);
-
-            // notifies the extension plug-ins about shutdown
-            pluginManager.notifyClientShutdown();
         } finally {
             this.lock.unlock();
         }
@@ -306,6 +303,8 @@ public final class InternalKnxClient implements KnxClient {
         try {
             this.stopServices();
         } finally {
+            // notifies the extension plug-ins about shutdown
+            pluginManager.notifyClientShutdown();
             pluginManager.close();
             log.info("Plugin Manager closed.");
 

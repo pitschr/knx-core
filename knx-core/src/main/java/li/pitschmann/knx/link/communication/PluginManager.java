@@ -136,12 +136,15 @@ public final class PluginManager implements AutoCloseable {
         Preconditions.checkArgument(getPlugin(pluginClass)==null,
                 "There is already a plugin registered for class: %s", pluginClass);
 
+        log.debug("Register plugin: {}", plugin);
         allPlugins.add(plugin);
         if (plugin instanceof ExtensionPlugin) {
             extensionPlugins.add((ExtensionPlugin) plugin);
+            log.trace("Register plugin as Extension Plugin: {}", plugin);
         }
         if (plugin instanceof ObserverPlugin) {
             observerPlugins.add((ObserverPlugin) plugin);
+            log.trace("Register plugin as Observer Plugin: {}", plugin);
         }
     }
 
