@@ -86,18 +86,14 @@ public final class InternalKnxClient implements KnxClient {
     private final KnxStatisticImpl statistics = new KnxStatisticImpl();
     private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
     private final Configuration config;
-    private final ExecutorService pluginExecutor;
+    private final PluginManager pluginManager;
     private List<AbstractChannelCommunicator> channelCommunicators = Collections.emptyList();
     private ExecutorService channelExecutor;
     private HPAI controlHPAI;
     private HPAI dataHPAI;
     private int channelId = -1;
     private InetSocketAddress remoteEndpoint;
-    // TODO -> KNX Plugin Pool class?
-    // TODO registerPlugin(..), unregisterPlugin(..)
-    private List<ObserverPlugin> observerPlugins = new LinkedList<>();
-    private List<ExtensionPlugin> extensionPlugins = new LinkedList<>();
-    private Set<Class<?>> classPlugins = new HashSet<>();
+
 
     /**
      * KNX client constructor (package protected)
@@ -106,17 +102,9 @@ public final class InternalKnxClient implements KnxClient {
      */
     InternalKnxClient(final @Nonnull Configuration config) {
         log.trace("Abstract KNX Client constructor");
-        // configuration
+
         this.config = Objects.requireNonNull(config);
-
-        // set plugins
-
-        // executors with fixed threads for communication and subscription
-        this.config.getPlugins().stream().forEach(this::registerPlugin);
-        this.pluginExecutor = Executors.newFixedThreadPool(config.getPluginExecutorPoolSize(), true);
-        log.info("Plugin Executor created with size of {}: {}", config.getPluginExecutorPoolSize(), this.pluginExecutor);
-        log.info("Observer Plugins: {}", this.observerPlugins);
-        log.info("Extension Plugins: {}", this.extensionPlugins);
+        this.pluginManager = new PluginManager(this);
     }
 
     /**
@@ -124,6 +112,9 @@ public final class InternalKnxClient implements KnxClient {
      */
     protected final void start() {
         Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
+
+        // notifies the extension plug-in about start of client
+        pluginManager.notifyClientStart();
 
         try {
             // if remote control address is multicast address, then we know that we want to use the routing feature
@@ -197,6 +188,9 @@ public final class InternalKnxClient implements KnxClient {
     public KnxStatusPoolImpl getStatusPool() {
         return this.statusPool;
     }
+
+    @Nonnull
+    protected PluginManager getPluginManager() { return this.pluginManager; }
 
     /**
      * Returns the remote endpoint. If specified by the config explicitly, the endpoint from config is taken,
@@ -289,8 +283,8 @@ public final class InternalKnxClient implements KnxClient {
             this.channelExecutor.shutdown();
             log.info("Channel Executor created: {}", this.channelExecutor);
 
-            // notifies the extension plug-in about start of service / communication
-            this.notifyPlugins(this, extensionPlugins, (p, c) -> p.onStart());
+            // notifies the extension plug-ins about shutdown
+            pluginManager.notifyClientShutdown();
         } finally {
             this.lock.unlock();
         }
@@ -310,11 +304,11 @@ public final class InternalKnxClient implements KnxClient {
 
         this.lock.lock();
         try {
-            // notifies the extension plug-ins about shutdown
-            this.notifyPlugins(this, extensionPlugins, (p, c) -> p.onShutdown());
-
             this.stopServices();
         } finally {
+            pluginManager.close();
+            log.info("Plugin Manager closed.");
+
             this.lock.unlock();
         }
 
@@ -359,9 +353,8 @@ public final class InternalKnxClient implements KnxClient {
             }
             log.info("Channel Communicator stopped gracefully. Status: {}", isOk);
 
-            // shutdown executors now
+            // shutdown executor now
             isOk &= Closeables.shutdownQuietly(this.channelExecutor, 0, TimeUnit.SECONDS);
-            isOk &= Closeables.shutdownQuietly(this.pluginExecutor, 10, TimeUnit.SECONDS);
             log.info("KNX Services stopped gracefully. Status: {}", isOk);
         }
     }
@@ -387,6 +380,18 @@ public final class InternalKnxClient implements KnxClient {
         return this.closed.get();
     }
 
+
+    @Override
+    public final void send(final @Nonnull Body body) {
+        this.getChannelCommunicator(body).send(body);
+    }
+
+    @Nonnull
+    @Override
+    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
+        return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
+    }
+
     /**
      * Finds the responsible channel communicator for the given {@code body}
      *
@@ -404,23 +409,23 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     /**
-     * Notifies all {@link ObserverPlugin} about incoming {@link Body}
+     * Notifies all listeners{@link ObserverPlugin} about incoming {@link Body}
      *
      * @param body any KNX body
      */
-    public void notifyPluginsIncomingBody(final @Nonnull Body body) {
-        this.statistics.onIncomingBody(body);
-        this.notifyPlugins(body, observerPlugins, ObserverPlugin::onIncomingBody);
+    public void notifyIncomingBody(final @Nonnull Body body) {
+        statistics.onIncomingBody(body);
+        pluginManager.notifyIncomingBody(body);
     }
 
     /**
-     * Notifies all {@link ObserverPlugin} about outgoing {@link Body}
+     * Notifies all listeners about outgoing {@link Body}
      *
      * @param body any KNX body
      */
-    public void notifyPluginsOutgoingBody(final @Nonnull Body body) {
-        this.statistics.onOutgoingBody(body);
-        this.notifyPlugins(body, observerPlugins, ObserverPlugin::onOutgoingBody);
+    public void notifyOutgoingBody(final @Nonnull Body body) {
+        statistics.onOutgoingBody(body);
+        pluginManager.notifyOutgoingBody(body);
     }
 
     /**
@@ -429,76 +434,8 @@ public final class InternalKnxClient implements KnxClient {
      * @param throwable an instance of {@link Throwable} to be sent to plug-ins
      */
     public void notifyPluginsError(final @Nonnull Throwable throwable) {
-        this.statistics.onError(throwable);
-        this.notifyPlugins(throwable, observerPlugins, ObserverPlugin::onError);
-    }
-
-    /**
-     * Registers the plugin
-     *
-     * @param plugin
-     */
-    public void registerPlugin(final @Nonnull Plugin plugin) {
-        final var pluginClass = plugin.getClass();
-        Preconditions.checkArgument(!classPlugins.contains(pluginClass),
-                "There is already a plugin registered for class: %s", pluginClass);
-
-        boolean added = true;
-        if (plugin instanceof ExtensionPlugin) {
-            this.extensionPlugins.add((ExtensionPlugin)plugin);
-        }
-        if (plugin instanceof ObserverPlugin) {
-            this.observerPlugins.add((ObserverPlugin)plugin);
-        }
-        this.classPlugins.add(pluginClass);
-    }
-
-    /**
-     * De-Registers the plugin
-     *
-     * @param pluginClass
-     */
-    public void unregisterPlugin(final @Nonnull Class<Plugin> pluginClass) {
-        if (classPlugins.contains(pluginClass)) {
-            // plugin class is registered, remove it from extension and/or observer plugin lists
-            for (var extensionPlugin : extensionPlugins) {
-                if (pluginClass.equals(extensionPlugin.getClass())) {
-                    extensionPlugins.remove(extensionPlugin);
-                }
-            }
-            for (var observerPlugin : observerPlugins) {
-                if (pluginClass.equals(observerPlugin.getClass())) {
-                    observerPlugins.remove(observerPlugin);
-                }
-            }
-        }
-    }
-
-    /**
-     * Notifies the registered plug-ins about {@code <O>}.
-     *
-     * @param obj      object to be sent to plug-ins
-     * @param plugins  list of plug-ins to be notified
-     * @param consumer consumer defining which method should be called
-     */
-    protected <O, P extends Plugin> void notifyPlugins(final @Nonnull O obj,
-                                                       final @Nonnull List<P> plugins,
-                                                       final @Nonnull BiConsumer<P, O> consumer) {
-        if (this.pluginExecutor.isShutdown()) {
-            log.warn("Could not send to plug-ins because plugin executor is shutdown already: {}",
-                    obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
-        } else {
-            for (final P plugin : plugins) {
-                CompletableFuture.runAsync(() -> {
-                    log.trace("Send to plugin: {}", plugin);
-                    try {
-                        consumer.accept(plugin, obj);
-                    } catch (final Exception ex) {
-                        log.debug("Exception during notifyPlugins(T, List<Plugin>, BiConsumer)", ex);
-                    }
-                }, this.pluginExecutor);
-            }
-        }
+        statistics.onError(throwable);
+        pluginManager.notifyError(throwable);
     }
 
     /**
@@ -627,16 +564,5 @@ public final class InternalKnxClient implements KnxClient {
             log.error("Exception during fetch channel id from KNX Net/IP device", ex);
             throw new KnxChannelIdNotReceivedException(requestBody, responseBody, ex);
         }
-    }
-
-    @Override
-    public final void send(final @Nonnull Body body) {
-        this.getChannelCommunicator(body).send(body);
-    }
-
-    @Nonnull
-    @Override
-    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
-        return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
     }
 }

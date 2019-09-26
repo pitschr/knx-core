@@ -75,7 +75,7 @@ public class DefaultInboxQueueTest {
         // - add body is in inbox queue
         // - incoming body notification
         assertThat(queue.next()).isEqualTo(body);
-        verify(clientMock).notifyPluginsIncomingBody(body);
+        verify(clientMock).notifyIncomingBody(body);
     }
 
     /**
@@ -111,7 +111,7 @@ public class DefaultInboxQueueTest {
         // - add body is in inbox queue
         // - incoming body notification
         assertThat(queue.next()).isEqualTo(body);
-        verify(clientMock).notifyPluginsIncomingBody(body);
+        verify(clientMock).notifyIncomingBody(body);
     }
 
     /**

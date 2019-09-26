@@ -56,7 +56,7 @@ public class BaseKnxClient implements KnxClient {
         internalClient = new InternalKnxClient(config);
 
         // notifies all plug-ins about initialization
-        internalClient.notifyPlugins(this, config.getPlugins(), Plugin::onInitialization);
+        internalClient.getPluginManager().notifyClientInitialization(this);
     }
 
     /**

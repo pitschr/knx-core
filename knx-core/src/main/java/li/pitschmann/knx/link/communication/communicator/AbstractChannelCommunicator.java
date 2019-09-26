@@ -181,7 +181,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param body
      */
     public final void send(final @Nonnull Body body) {
-        this.outboxQueue.send(body);
+        this.outboxQueue.send(Objects.requireNonNull(body));
         log.debug("Body added to outbox queue: {}", body);
     }
 
@@ -197,7 +197,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     @Nonnull
     public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
                                                                     final long msTimeout) {
-        return send(requestBody, msTimeout, KnxEvent::hasResponse);
+        return send(requestBody, null, msTimeout);
     }
 
     /**
@@ -205,15 +205,17 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * It returns a {@link Future} for further processing.
      *
      * @param requestBody
+     * @param predicate   predicates if the condition of {@link KnxEvent} was meet ({@code true}) or not ({@code false}),
+     *                    {@code null} means that no predicate check
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
     @Nonnull
     public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
-                                                                    final long msTimeout,
-                                                                    final Predicate<KnxEvent> predicate) {
-        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout, predicate), this.communicationExecutor);
+                                                                    final @Nullable Predicate<KnxEvent> predicate,
+                                                                    final long msTimeout) {
+        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, predicate, msTimeout), this.communicationExecutor);
     }
 
     /**
@@ -221,12 +223,15 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * that meets the {@link Predicate} criteria and is an an instance of {@link ResponseBody}.
      *
      * @param requestBody
+     * @param predicate   predicates if the condition of {@link KnxEvent} was meet ({@code true}) or not ({@code false}),
+     *                    {@code null} means that no predicate check
      * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
-     * @param predicate   predicate if the requested response was received
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received (timeout) or no response that meets the preconditions was received
      */
     @Nullable
-    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody, final long msTimeout, final Predicate<KnxEvent> predicate) {
+    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody,
+                                                                 final @Nullable Predicate<KnxEvent> predicate,
+                                                                 final long msTimeout) {
         final var eventPool = this.internalClient.getEventPool();
 
         // add request body to event pool
@@ -252,14 +257,17 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                 event = eventPool.get(requestBody);
             }
             // no null check required here because we know that eventData is always present here
-            while ( // !false = true = predicate not meet
-                    !predicate.test(event)
+            while ( // true = no response yet
+                    !event.hasResponse()
                             // true = not interrupted
                             && Sleeper.milliseconds(eventWaiting)
                             // true = request timeout not reached yet
-                            && (System.currentTimeMillis() - start) < msTimeout);
+                            && (System.currentTimeMillis() - start) < msTimeout
+                            // true = no predicate defined or not meet
+                            && (predicate == null || !predicate.test(event)));
 
-            responseBody = event.getResponse();
+            // additional check, as it may happen that there was a timeout
+            responseBody = (predicate == null || predicate.test(event)) ? event.getResponse() : null;
             if (responseBody == null) {
                 log.warn("No response received yet for request ({}/{}): {}", attempts, totalAttempts, requestBody);
             } else {

@@ -73,7 +73,7 @@ public class DefaultOutboxQueueTest {
         final var byteBufferCaptor = ArgumentCaptor.forClass(ByteBuffer.class);
         verify(channelMock).write(byteBufferCaptor.capture());
         assertThat(byteBufferCaptor.getValue().array()).containsExactly(body.getRawData(true));
-        verify(clientMock).notifyPluginsOutgoingBody(body);
+        verify(clientMock).notifyOutgoingBody(body);
     }
 
     /**

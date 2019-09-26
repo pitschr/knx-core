@@ -111,7 +111,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
 
             // add body to queue
             this.add(body);
-            this.getInternalClient().notifyPluginsIncomingBody(body);
+            this.getInternalClient().notifyIncomingBody(body);
         }
     }
 

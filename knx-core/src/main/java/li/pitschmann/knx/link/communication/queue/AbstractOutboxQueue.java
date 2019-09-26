@@ -89,7 +89,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
         }
         send(channel, ByteBuffer.wrap(packetToSend));
         log.trace("Packet sent.");
-        this.getInternalClient().notifyPluginsOutgoingBody(body);
+        this.getInternalClient().notifyOutgoingBody(body);
 
         if (log.isDebugEnabled()) {
             log.debug("SEND: {}\n" + //
