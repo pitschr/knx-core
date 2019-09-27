@@ -2,7 +2,6 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
-import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
@@ -44,19 +43,9 @@ public final class ReadRequestController extends AbstractController {
             return EMPTY_RESPONSE;
         }
 
-        // found - group address is known, send read request
-        TunnelingAckBody ackBody = null;
-        try {
-            ackBody = getKnxClient().readRequest(groupAddress).get();
-            log.debug("Acknowledge received for read request: {}", readRequest);
-        } catch (final Exception ex) {
-            log.error("Exception during sending read request", ex);
-        }
-
-        // acknowledge not received or received with error?
-        if (ackBody == null
-                || ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
-            log.warn("No or unexpected acknowledge received for read request: {}", ackBody);
+        // send read request
+        if (!getKnxClient().readRequest(groupAddress)) {
+            log.warn("No or unexpected acknowledge received for read request: {}", readRequest);
             getResponse().internalError();
             return EMPTY_RESPONSE;
         }

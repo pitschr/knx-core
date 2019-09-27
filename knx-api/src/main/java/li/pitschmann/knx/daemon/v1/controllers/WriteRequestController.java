@@ -3,7 +3,6 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import com.google.inject.Inject;
 import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.daemon.v1.json.WriteResponse;
-import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.ByteFormatter;
@@ -66,23 +65,14 @@ public final class WriteRequestController extends AbstractController {
         log.debug("Write request to group address '{}' with bytes: {}", groupAddress, ByteFormatter.formatHexAsString(rawToWrite));
 
         // send write request
-        TunnelingAckBody ackBody = null;
-        try {
-            ackBody = knxClient.writeRequest(groupAddress, rawToWrite).get();
-        } catch (final Exception ex) {
-            log.error("Exception during sending write request", ex);
-        }
-
-        // acknowledge not received or received with error?
-        if (ackBody == null
-                || ackBody.getStatus() != li.pitschmann.knx.link.body.Status.E_NO_ERROR) {
-            log.warn("No or unexpected acknowledge received for write request: {}", ackBody);
-            getResponse().internalError();
-        }
-        // everything OK
-        else {
+        if (knxClient.writeRequest(groupAddress, rawToWrite)) {
             log.debug("Acknowledge received for write request: {}", writeRequest);
             getResponse().accepted();
+        }
+        // acknowledge not received or received with error?
+        else {
+            log.warn("No or unexpected acknowledge received for write request: {}", writeRequest);
+            getResponse().internalError();
         }
 
         return EMPTY_RESPONSE;

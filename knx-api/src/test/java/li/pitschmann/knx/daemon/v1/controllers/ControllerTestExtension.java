@@ -22,8 +22,6 @@ import com.google.common.base.Strings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
-import li.pitschmann.knx.link.body.Status;
-import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.communication.KnxStatistic;
@@ -58,10 +56,8 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -170,23 +166,9 @@ public final class ControllerTestExtension
         when(knxClient.getStatistic()).thenReturn(statistic);
         when(knxClient.getStatusPool()).thenReturn(statusPool);
 
-        final CompletableFuture<TunnelingAckBody> readCompletableFuture = mock(CompletableFuture.class);
-        final CompletableFuture<TunnelingAckBody> writeCompletableFuture = mock(CompletableFuture.class);
-
-        final var readAckBody = mock(TunnelingAckBody.class);
-        final var writeAckBody = mock(TunnelingAckBody.class);
-        when(readAckBody.getStatus()).thenReturn(Status.E_NO_ERROR);
-        when(writeAckBody.getStatus()).thenReturn(Status.E_NO_ERROR);
-        try {
-            when(readCompletableFuture.get()).thenReturn(readAckBody);
-            when(writeCompletableFuture.get()).thenReturn(writeAckBody);
-        } catch (final Exception ex) {
-            fail(ex);
-        }
-
-        when(knxClient.readRequest(any(GroupAddress.class))).thenReturn(readCompletableFuture);
-        when(knxClient.writeRequest(any(GroupAddress.class), any(byte[].class))).thenReturn(writeCompletableFuture);
-        when(knxClient.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(writeCompletableFuture);
+        when(knxClient.readRequest(any(GroupAddress.class))).thenReturn(true);
+        when(knxClient.writeRequest(any(GroupAddress.class), any(byte[].class))).thenReturn(true);
+        when(knxClient.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(true);
 
         if (consumer != null) {
             consumer.accept(knxClient);

@@ -25,6 +25,8 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
+import li.pitschmann.knx.link.body.Status;
+import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
@@ -73,9 +75,10 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param address
      * @param dataPointValue
+     * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    public void writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
-        writeRequest(address, dataPointValue.toByteArray());
+    public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
+        return writeRequest(address, dataPointValue.toByteArray());
     }
 
     /**
@@ -88,25 +91,29 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param address
      * @param apciData
+     * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    public void writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
+    public boolean writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
         Preconditions.checkNotNull(address);
         Preconditions.checkNotNull(apciData);
         if (getConfig().isRoutingEnabled()) {
             // routing request
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, apciData);
             this.internalClient.send(RoutingIndicationBody.of(cemi));
+            return true; // unconfirmed
         } else {
             // tunneling request
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
-                this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+                return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during write request for tunneling", ex);
             } catch (final InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }
         }
+        return false;
     }
 
     /**
@@ -118,22 +125,26 @@ public class BaseKnxClient implements KnxClient {
      * set on KNX device.
      *
      * @param address
+     * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    public void readRequest(final @Nonnull GroupAddress address) {
+    public boolean readRequest(final @Nonnull GroupAddress address) {
         Preconditions.checkNotNull(address);
         if (getConfig().isRoutingEnabled()) {
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, (byte[]) null);
             this.internalClient.send(RoutingIndicationBody.of(cemi));
+            return true; // unconfirmed
         } else {
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
-                this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+                return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during read response for tunneling", ex);
             } catch (final InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }
         }
+        return false;
     }
 
     /**

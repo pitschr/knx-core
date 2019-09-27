@@ -33,14 +33,12 @@ import ro.pippo.core.HttpConstants;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
 
 import static li.pitschmann.knx.test.TestUtils.asJson;
 import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
 import static li.pitschmann.knx.test.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -103,12 +101,8 @@ public class ReadRequestControllerTest {
         // Mocking
         //
 
-        // mock no ack body was found - an execution exception is thrown instead
-        try {
-            when(readRequestController.getKnxClient().readRequest(groupAddress).get()).thenThrow(new ExecutionException(null));
-        } catch (final Throwable t) {
-            fail(t);
-        }
+        // mock no ack body was found
+        when(readRequestController.getKnxClient().readRequest(groupAddress)).thenReturn(false);
 
         //
         // Verification
