@@ -46,7 +46,6 @@ import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
-import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Closeables;
@@ -58,11 +57,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -70,7 +66,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiConsumer;
 
 /**
  * Abstract KNX Client class containing essential KNX communication ways to retrieve device information from
@@ -85,8 +80,8 @@ public final class InternalKnxClient implements KnxClient {
     private final KnxEventPool eventPool = new KnxEventPool();
     private final KnxStatisticImpl statistics = new KnxStatisticImpl();
     private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
-    private final Configuration config;
     private final PluginManager pluginManager;
+    private final Configuration config;
     private List<AbstractChannelCommunicator> channelCommunicators = Collections.emptyList();
     private ExecutorService channelExecutor;
     private HPAI controlHPAI;
@@ -102,15 +97,14 @@ public final class InternalKnxClient implements KnxClient {
      */
     InternalKnxClient(final @Nonnull Configuration config) {
         log.trace("Abstract KNX Client constructor");
-
         this.config = Objects.requireNonNull(config);
-        this.pluginManager = new PluginManager(this);
+        this.pluginManager = new PluginManager(config);
     }
 
     /**
      * Starts the services and notifies the plug-ins about initialization
      */
-    protected final void start() {
+    protected void start() {
         Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
 
         // notifies the extension plug-in about start of client
@@ -127,7 +121,7 @@ public final class InternalKnxClient implements KnxClient {
             }
         } catch (final Exception ex) {
             log.error("Exception caught on 'start()' method.", ex);
-            this.notifyPluginsError(ex);
+            this.notifyError(ex);
             this.close();
             throw ex;
         }
@@ -136,7 +130,7 @@ public final class InternalKnxClient implements KnxClient {
     /**
      * Starts KNX communication via Routing
      */
-    private final void startRouting() {
+    private void startRouting() {
         log.trace("Method 'startRouting()' called");
 
         this.remoteEndpoint = new InetSocketAddress(config.getRemoteControlAddress(), config.getRemoteControlPort());
@@ -149,7 +143,7 @@ public final class InternalKnxClient implements KnxClient {
     /**
      * Starts KNX communication via Tunneling
      */
-    private final void startTunneling() {
+    private void startTunneling() {
         log.trace("Method 'startTunneling()' called");
 
         // check if endpoint is defined - if not, look up for an available KNX Net/IP device
@@ -173,7 +167,7 @@ public final class InternalKnxClient implements KnxClient {
 
     @Nonnull
     @Override
-    public final Configuration getConfig() {
+    public Configuration getConfig() {
         return this.config;
     }
 
@@ -188,9 +182,6 @@ public final class InternalKnxClient implements KnxClient {
     public KnxStatusPoolImpl getStatusPool() {
         return this.statusPool;
     }
-
-    @Nonnull
-    protected PluginManager getPluginManager() { return this.pluginManager; }
 
     /**
      * Returns the remote endpoint. If specified by the config explicitly, the endpoint from config is taken,
@@ -288,7 +279,7 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     @Override
-    public final void close() {
+    public void close() {
         log.trace("Method 'close()' called.");
 
         // already closed?
@@ -358,36 +349,42 @@ public final class InternalKnxClient implements KnxClient {
         }
     }
 
-    public final HPAI getControlHPAI() {
-        return this.controlHPAI;
-    }
-
-    public final HPAI getDataHPAI() {
-        return this.dataHPAI;
+    @Nonnull
+    public HPAI getControlHPAI() {
+        return this.controlHPAI == null ? HPAI.useDefault() : this.controlHPAI;
     }
 
     @Nonnull
-    public final KnxEventPool getEventPool() {
+    public HPAI getDataHPAI() {
+        return this.dataHPAI == null ? HPAI.useDefault() : this.dataHPAI;
+    }
+
+    @Nonnull
+    public KnxEventPool getEventPool() {
         return this.eventPool;
     }
 
-    public final int getChannelId() {
+    @Nonnull
+    public PluginManager getPluginManager() {
+        return this.pluginManager;
+    }
+
+    public int getChannelId() {
         return this.channelId;
     }
 
-    public final boolean isClosed() {
+    public boolean isClosed() {
         return this.closed.get();
     }
 
-
     @Override
-    public final void send(final @Nonnull Body body) {
+    public void send(final @Nonnull Body body) {
         this.getChannelCommunicator(body).send(body);
     }
 
     @Nonnull
     @Override
-    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
+    public <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
     }
 
@@ -432,7 +429,7 @@ public final class InternalKnxClient implements KnxClient {
      *
      * @param throwable an instance of {@link Throwable} to be sent to plug-ins
      */
-    public void notifyPluginsError(final @Nonnull Throwable throwable) {
+    public void notifyError(final @Nonnull Throwable throwable) {
         statistics.onError(throwable);
         pluginManager.notifyError(throwable);
     }
@@ -447,7 +444,7 @@ public final class InternalKnxClient implements KnxClient {
      * @return {@code true} if channel id is valid for current KNX client, otherwise {@link KnxWrongChannelIdException} is thrown.
      * @throws KnxWrongChannelIdException when channel id is not valid
      */
-    public final boolean verifyChannelId(final @Nonnull Body body) {
+    public boolean verifyChannelId(final @Nonnull Body body) {
         // if body is channel id aware then verify the channel id, otherwise skip it
         if (ChannelIdAware.class.isAssignableFrom(body.getClass())) {
             final var channelIdAwareBody = (ChannelIdAware) body;

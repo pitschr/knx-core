@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.Preconditions;
+import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -33,6 +34,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,20 +49,29 @@ import java.util.function.BiConsumer;
  */
 public final class PluginManager implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
-    private final InternalKnxClient knxClient;
-    private final ExecutorService pluginExecutor;
     private final List<ObserverPlugin> observerPlugins = new LinkedList<>();
     private final List<ExtensionPlugin> extensionPlugins = new LinkedList<>();
     private final List<Plugin> allPlugins = new LinkedList<>();
+    private final ExecutorService pluginExecutor;
+    private BaseKnxClient client;
 
-    public PluginManager(final @Nonnull InternalKnxClient knxClient) {
-        this.knxClient = knxClient;
+    public PluginManager(final @Nonnull Configuration config) {
+        final var pluginExecutorPoolSize = config.getPluginExecutorPoolSize();
+        pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
+        log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
+    }
 
-        pluginExecutor = Executors.newFixedThreadPool(knxClient.getConfig().getPluginExecutorPoolSize(), true);
-        knxClient.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
-        log.info("Plugin Executor created with size of {}: {}", knxClient.getConfig().getPluginExecutorPoolSize(), pluginExecutor);
+    /**
+     * Notifies all {@link ExtensionPlugin} and {@link ObserverPlugin} about KNX Client initialization
+     * <p/>
+     * <strong>For internal use only!</strong>
+     */
+    void notifyInitialization(final @Nonnull BaseKnxClient client) {
+        this.client = Objects.requireNonNull(client);
+        client.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
         log.info("Observer Plugins: {}", observerPlugins);
         log.info("Extension Plugins: {}", extensionPlugins);
+        notifyPlugins(client, allPlugins, Plugin::onInitialization);
     }
 
     /**
@@ -91,15 +102,6 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Notifies all {@link ExtensionPlugin} and {@link ObserverPlugin} about KNX Client initialization
-     * <p/>
-     * <strong>For internal use only!</strong>
-     */
-    void notifyClientInitialization(final BaseKnxClient client) {
-        notifyPlugins(client, allPlugins, Plugin::onInitialization);
-    }
-
-    /**
      * Notifies all {@link ExtensionPlugin} about KNX Client communication start
      * <p/>
      * <strong>For internal use only!</strong>
@@ -119,11 +121,12 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Registers the plugin and calls the initialization
+     *
      * @param plugin
      */
     public void registerPlugin(final @Nonnull Plugin plugin) {
         registerPluginInternal(plugin);
-        notifyPlugins(knxClient, Collections.singletonList(plugin), Plugin::onInitialization);
+        notifyPlugins(client, Collections.singletonList(plugin), Plugin::onInitialization);
     }
 
     /**
@@ -133,7 +136,7 @@ public final class PluginManager implements AutoCloseable {
      */
     private void registerPluginInternal(final @Nonnull Plugin plugin) {
         final var pluginClass = plugin.getClass();
-        Preconditions.checkArgument(getPlugin(pluginClass)==null,
+        Preconditions.checkArgument(getPlugin(pluginClass) == null,
                 "There is already a plugin registered for class: %s", pluginClass);
 
         log.debug("Register plugin: {}", plugin);

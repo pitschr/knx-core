@@ -46,13 +46,13 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
 
     @Nonnull
     @Override
-    protected final SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
+    protected final SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
         // creates new channel
-        final var channel = ChannelFactory.newMulticastChannel(internalClient);
+        final var channel = ChannelFactory.newMulticastChannel(client);
 
         // join channels, the membership keys will be used for laving the joined
         // multicast groups -> see cleanUp() method.
-        this.membershipKeys = Networker.joinChannels(channel, internalClient.getConfig().getMulticastChannelAddress());
+        this.membershipKeys = Networker.joinChannels(channel, client.getConfig().getMulticastChannelAddress());
 
         return channel;
     }
@@ -65,16 +65,16 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
 
     @Nonnull
     @Override
-    protected final MulticastInboxQueue createInboxQueue(final @Nonnull InternalKnxClient internalClient,
+    protected final MulticastInboxQueue createInboxQueue(final @Nonnull InternalKnxClient client,
                                                          final @Nonnull SelectableChannel channel) {
-        return new MulticastInboxQueue(internalClient, channel);
+        return new MulticastInboxQueue(client, channel);
     }
 
     @Nonnull
     @Override
-    protected final MulticastOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
+    protected final MulticastOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient client,
                                                            final @Nonnull SelectableChannel channel) {
-        return new MulticastOutboxQueue(internalClient, channel);
+        return new MulticastOutboxQueue(client, channel);
     }
 
     @Override

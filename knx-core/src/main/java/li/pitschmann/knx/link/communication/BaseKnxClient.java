@@ -31,7 +31,6 @@ import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
-import li.pitschmann.knx.link.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,7 +55,8 @@ public class BaseKnxClient implements KnxClient {
         internalClient = new InternalKnxClient(config);
 
         // notifies all plug-ins about initialization
-        internalClient.getPluginManager().notifyClientInitialization(this);
+        // here we want to pass the BaseKnxClient to plugin manager - not the InternalKnxClient!
+        internalClient.getPluginManager().notifyInitialization(this);
     }
 
     /**

@@ -39,8 +39,8 @@ public final class DescriptionChannelCommunicator extends AbstractChannelCommuni
 
     @Nonnull
     @Override
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
-        return ChannelFactory.newDescriptionChannel(internalClient);
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
+        return ChannelFactory.newDescriptionChannel(client);
     }
 
     @Override

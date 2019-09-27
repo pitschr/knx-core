@@ -66,9 +66,9 @@ public class KnxClientTest {
      * <ul>
      * <li>{@code InternalKnxClient#notifyPlugins(Object, List, BiConsumer)}
      * (internally used for initialization, start and shutdown)</li>
-     * <li>{@link InternalKnxClient#notifyPluginsIncomingBody(Body)}</li>
-     * <li>{@link InternalKnxClient#notifyPluginsOutgoingBody(Body)}</li>
-     * <li>{@link InternalKnxClient#notifyPluginsError(Throwable)}</li>
+     * <li>{@link InternalKnxClient#notifyIncomingBody(Body)}</li>
+     * <li>{@link InternalKnxClient#notifyOutgoingBody(Body)}</li>
+     * <li>{@link InternalKnxClient#notifyError(Throwable)}</li>
      * </ul>
      */
     @MockServerTest(requests = {
@@ -162,7 +162,7 @@ public class KnxClientTest {
     }
 
     /**
-     * Test {@link InternalKnxClient#notifyPluginsError(Throwable)} after client close
+     * Test {@link InternalKnxClient#notifyError(Throwable)} after client close
      */
     @Test
     @DisplayName("Internal Client: Test plug-in notification after close")
@@ -177,12 +177,12 @@ public class KnxClientTest {
         client.close();
 
         // should not be an issue (silently ignored, plug-in should never be called)
-        client.notifyPluginsError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
+        client.notifyError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
         verify(observerPlugin, never()).onError(any());
     }
 
     /**
-     * Test {@link InternalKnxClient#notifyPluginsError(Throwable)} when calling an erroneous plug-in.
+     * Test {@link InternalKnxClient#notifyError(Throwable)} when calling an erroneous plug-in.
      * <p/>
      * In case an exception is thrown by plug-in the KNX client should still be alive.
      */
@@ -200,7 +200,7 @@ public class KnxClientTest {
 
         try (client) {
             // should not be an issue
-            client.notifyPluginsError(new Throwable());
+            client.notifyError(new Throwable());
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }

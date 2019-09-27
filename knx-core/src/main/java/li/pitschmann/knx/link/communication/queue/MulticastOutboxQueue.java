@@ -40,13 +40,13 @@ public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChan
     /**
      * Constructor for KNX Discovery Inbox Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    public MulticastOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        super(internalClient, channel);
+    public MulticastOutboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        super(client, channel);
 
-        final var config = internalClient.getConfig();
+        final var config = client.getConfig();
 
         // use config setting, otherwise fall back to default setting
         final var remoteAddress = Objects.requireNonNullElse(config.getRemoteControlAddress(), config.getMulticastChannelAddress());

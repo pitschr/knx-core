@@ -68,7 +68,7 @@ public class KnxMainMonitoringWithPlugins extends AbstractKnxMain {
 
         final var config = Configuration.create(ipAddress)//
                 .plugin( //
-                        new AuditPlugin() , //
+                        new AuditPlugin(), //
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //, //
                         //        new AuditDatabasePlugin() //
                 ) //

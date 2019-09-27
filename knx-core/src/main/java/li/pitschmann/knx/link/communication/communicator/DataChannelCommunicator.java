@@ -39,8 +39,8 @@ public final class DataChannelCommunicator extends AbstractChannelCommunicator {
 
     @Nonnull
     @Override
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
-        return ChannelFactory.newDataChannel(internalClient);
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
+        return ChannelFactory.newDataChannel(client);
     }
 
     @Override

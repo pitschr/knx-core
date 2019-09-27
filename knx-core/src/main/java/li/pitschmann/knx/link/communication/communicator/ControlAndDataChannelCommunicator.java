@@ -42,9 +42,9 @@ public final class ControlAndDataChannelCommunicator extends AbstractChannelComm
 
     @Override
     @Nonnull
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
         // we will use the control channel for data as well
-        return ChannelFactory.newControlChannel(internalClient);
+        return ChannelFactory.newControlChannel(client);
     }
 
     @Override

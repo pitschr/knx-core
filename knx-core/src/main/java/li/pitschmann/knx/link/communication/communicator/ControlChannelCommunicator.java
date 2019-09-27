@@ -39,8 +39,8 @@ public final class ControlChannelCommunicator extends AbstractChannelCommunicato
 
     @Override
     @Nonnull
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
-        return ChannelFactory.newControlChannel(internalClient);
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
+        return ChannelFactory.newControlChannel(client);
     }
 
     @Override

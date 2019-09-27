@@ -58,7 +58,7 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Body> implements Runnable {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final InternalKnxClient internalClient;
+    private final InternalKnxClient client;
     private final AtomicBoolean closed = new AtomicBoolean();
     private final ExecutorService queueExecutor;
     private final ExecutorService communicationExecutor;
@@ -68,14 +68,14 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     private final AbstractOutboxQueue<? extends ByteChannel> outboxQueue;
 
     protected AbstractChannelCommunicator(final @Nonnull InternalKnxClient client) {
-        this.internalClient = Objects.requireNonNull(client);
+        this.client = Objects.requireNonNull(client);
 
-        this.channel = Objects.requireNonNull(newChannel(this.internalClient));
+        this.channel = Objects.requireNonNull(newChannel(this.client));
         log.info("Channel registered: {} (open: {}, registered: {}, blocking: {})", channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
 
         // creates inbox and outbox queues
-        this.inboxQueue = createInboxQueue(this.internalClient, this.channel);
-        this.outboxQueue = createOutboxQueue(this.internalClient, this.channel);
+        this.inboxQueue = createInboxQueue(this.client, this.channel);
+        this.outboxQueue = createOutboxQueue(this.client, this.channel);
         log.trace("Inbox and Outbox Queues created: InboxQueue={}, OutboxQueue={}.", this.inboxQueue, this.outboxQueue);
 
         // creates queue executor
@@ -86,44 +86,44 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         log.info("Queue Executor created: {}", this.queueExecutor);
 
         // creates executor for communication
-        this.communicationExecutor = Executors.newFixedThreadPool(internalClient.getConfig().getCommunicationExecutorPoolSize(), true);
-        log.info("Communication Executor created with size of {}: {}", internalClient.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
+        this.communicationExecutor = Executors.newFixedThreadPool(this.client.getConfig().getCommunicationExecutorPoolSize(), true);
+        log.info("Communication Executor created with size of {}: {}", this.client.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
     }
 
     /**
      * Creates a new channel to be used by this communicator. It will be called during initialization
      * and only once time.
      *
-     * @param internalClient
+     * @param client
      * @return A new channel
      */
     @Nonnull
-    protected abstract SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient);
+    protected abstract SelectableChannel newChannel(final @Nonnull InternalKnxClient client);
 
     /**
      * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
      *
-     * @param internalClient
+     * @param client
      * @param channel
      * @return new instance of {@link AbstractInboxQueue}
      */
     @Nonnull
-    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient internalClient,
+    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient client,
                                                                          final @Nonnull SelectableChannel channel) {
-        return new DefaultInboxQueue(internalClient, channel);
+        return new DefaultInboxQueue(client, channel);
     }
 
     /**
      * Creates a new instance of {@link AbstractOutboxQueue} that should be used by this communicator
      *
-     * @param internalClient
+     * @param client
      * @param channel
      * @return new instance of {@link AbstractOutboxQueue}
      */
     @Nonnull
-    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient internalClient,
+    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient client,
                                                                            final @Nonnull SelectableChannel channel) {
-        return new DefaultOutboxQueue(internalClient, channel);
+        return new DefaultOutboxQueue(client, channel);
     }
 
     @Nonnull
@@ -232,19 +232,19 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody,
                                                                  final @Nullable Predicate<KnxEvent> predicate,
                                                                  final long msTimeout) {
-        final var eventPool = this.internalClient.getEventPool();
+        final var eventPool = this.client.getEventPool();
 
         // add request body to event pool
         eventPool.add(requestBody);
         log.trace("Request Body added to event pool.");
 
         // mark as dirty (if possible)
-        this.internalClient.getStatusPool().setDirty(requestBody);
+        this.client.getStatusPool().setDirty(requestBody);
 
         // send packet
         var attempts = 1;
         final var totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)
-        final var eventWaiting = this.internalClient.getConfig().getIntervalEvent();
+        final var eventWaiting = this.client.getConfig().getIntervalEvent();
         U responseBody;
 
         do {
