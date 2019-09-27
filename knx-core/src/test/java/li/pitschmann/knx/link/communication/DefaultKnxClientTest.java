@@ -230,7 +230,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Test KNX client instantiation using routing service (via multicast)")
     public void testRouting(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
-            client.writeRouting(GroupAddress.of(11, 4, 67), DPT1.SWITCH.toValue(true));
+            client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.toValue(true));
             mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

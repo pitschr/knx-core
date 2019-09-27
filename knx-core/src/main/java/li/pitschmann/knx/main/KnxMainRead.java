@@ -63,7 +63,7 @@ public class KnxMainRead extends AbstractKnxMain {
             Sleeper.seconds(1);
             log.debug("========================================================================");
             log.debug("GROUP ADDRESS: 3-level: {}, 2-level: {}", groupAddress.getAddress(), groupAddress.getAddressLevel2());
-            log.debug("READ ACK: {}", client.readRequest(groupAddress).get());
+            client.readRequest(groupAddress);
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the

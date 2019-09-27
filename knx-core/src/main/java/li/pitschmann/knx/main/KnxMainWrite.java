@@ -73,9 +73,8 @@ public class KnxMainWrite extends AbstractKnxMain {
                 final var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
                 log.debug("========================================================================");
                 for (final GroupAddress groupAddress : DEFAULT_GROUP_ADDRESSES) {
-                    final var future = client.writeRequest(groupAddress, dpValue);
-                    ackBodies.add(future);
-                    log.debug("WRITE: {} - {}\nACK: {}", value, dpValue, future);
+                    client.writeRequest(groupAddress, dpValue);
+                    log.debug("WRITE: {} - {}", value, dpValue);
                 }
                 Sleeper.seconds(2);
                 log.debug("========================================================================");
@@ -83,11 +82,6 @@ public class KnxMainWrite extends AbstractKnxMain {
 
             // wait until completed
             log.debug("WAIT UNTIL COMPLETED");
-
-            for (final var ackBody : ackBodies) {
-                log.debug("DONE: {}", ackBody.isDone());
-                log.debug("GET : {}", ackBody.get());
-            }
             log.debug("Statistic: {}", client.getStatistic());
             log.debug("COMPLETED!");
         } catch (final Throwable t) {

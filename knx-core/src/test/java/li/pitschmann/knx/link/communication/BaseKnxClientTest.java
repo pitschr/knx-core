@@ -126,11 +126,11 @@ public class BaseKnxClientTest {
         final var config = configBuilder.apply(mockServer);
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // async read request
-            client.readRequest(groupAddress).get();
+            client.readRequest(groupAddress);
             // async write request with DPT
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(false)).get();
+            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(false));
             // async write request with APCI data
-            client.writeRequest(groupAddress, new byte[]{0x00}).get();
+            client.writeRequest(groupAddress, new byte[]{0x00});
             // send via body
             client.send(KnxBody.TUNNELING_REQUEST_BODY);
             // send via body and timeout

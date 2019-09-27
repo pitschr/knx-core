@@ -45,43 +45,38 @@ import java.util.function.Function;
  */
 public class KnxExampleInvertLampStatus extends AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(KnxExampleInvertLampStatus.class);
-    private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
+    private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 110);
+    private static final GroupAddress DEFAULT_RM_GROUP_ADDRESS = GroupAddress.of(1, 2, 113);
 
     public static void main(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
         final var address = getParameterValue(args, "-r", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", address);
 
-        // 2nd Argument: Get Group Address
-        final var groupAddress = getParameterValue(args, "-ga", GroupAddress::of, DEFAULT_GROUP_ADDRESS);
-        log.debug("Group Address: {} (3-level), {} (2-level)", groupAddress.getAddress(), groupAddress.getAddressLevel2());
-
         try (final var client = DefaultKnxClient.createStarted(address)) {
             // Sends the read request
             // The returned instance is the acknowledge sent by KNX Net/IP device indicating that read request was received
-            final var readRequestAck = client.readRequest(groupAddress).get();
-            log.debug("READ ACK: {}", readRequestAck);
+            client.readRequest(DEFAULT_RM_GROUP_ADDRESS);
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
             // KNX Net/IP device and status pool will be updated by KNX client with the actual lamp status
-            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+            client.getStatusPool().isUpdated(DEFAULT_RM_GROUP_ADDRESS, 1, TimeUnit.SECONDS);
 
             // read lamp state
-            final var lampStatus = client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue();
+            final var lampStatus = client.getStatusPool().getValue(DEFAULT_RM_GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue();
             log.debug("STATUS BEFORE SWITCH: {}", lampStatus);
 
             // Sends the write request
             // The returned instance is the acknowledge sent by KNX Net/IP device indicating that write request was received
-            final var writeRequestAck = client.writeRequest(groupAddress, DPT1.SWITCH.toValue(!lampStatus)).get();
-            log.debug("WRITE ACK: {}", writeRequestAck);
+            client.writeRequest(DEFAULT_GROUP_ADDRESS, DPT1.SWITCH.toValue(!lampStatus));
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and write flags on KNX group address are set the state of lamp will be changed.
             // The state of lamp will be forwarded by the KNX Net/IP device and status pool will be updated by KNX client
-            client.getStatusPool().isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+            client.getStatusPool().isUpdated(DEFAULT_GROUP_ADDRESS, 1, TimeUnit.SECONDS);
 
-            log.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(groupAddress, DPT1.SWITCH).getBooleanValue());
+            log.debug("STATUS AFTER SWITCH: {}", client.getStatusPool().getValue(DEFAULT_GROUP_ADDRESS, DPT1.SWITCH).getBooleanValue());
         } catch (final Throwable t) {
             log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         }

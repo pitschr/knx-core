@@ -18,23 +18,26 @@
 
 package li.pitschmann.knx.link.communication;
 
+import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
-import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -43,6 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author PITSCHR
  */
 public class BaseKnxClient implements KnxClient {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger sequence = new AtomicInteger();
     private final InternalKnxClient internalClient;
 
@@ -69,17 +73,9 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param address
      * @param dataPointValue
-     * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    @Nonnull
-    public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
-        final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
-        return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
-    }
-
-    public void writeRouting(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
-        final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, dataPointValue.toByteArray());
-        this.internalClient.send(RoutingIndicationBody.of(cemi));
+    public void writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
+        writeRequest(address, dataPointValue.toByteArray());
     }
 
     /**
@@ -92,12 +88,25 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param address
      * @param apciData
-     * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    @Nonnull
-    public CompletableFuture<TunnelingAckBody> writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
-        final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
-        return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+    public void writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
+        Preconditions.checkNotNull(address);
+        Preconditions.checkNotNull(apciData);
+        if (getConfig().isRoutingEnabled()) {
+            // routing request
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, apciData);
+            this.internalClient.send(RoutingIndicationBody.of(cemi));
+        } else {
+            // tunneling request
+            try {
+                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
+                this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+            } catch (final ExecutionException ex) {
+                log.warn("Exception during write request for tunneling", ex);
+            } catch (final InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     /**
@@ -109,12 +118,22 @@ public class BaseKnxClient implements KnxClient {
      * set on KNX device.
      *
      * @param address
-     * @return A {@link CompletableFuture} containing {@link TunnelingAckBody} from KNX Net/IP device
      */
-    @Nonnull
-    public CompletableFuture<TunnelingAckBody> readRequest(final @Nonnull GroupAddress address) {
-        final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
-        return this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT);
+    public void readRequest(final @Nonnull GroupAddress address) {
+        Preconditions.checkNotNull(address);
+        if (getConfig().isRoutingEnabled()) {
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, (byte[]) null);
+            this.internalClient.send(RoutingIndicationBody.of(cemi));
+        } else {
+            try {
+                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
+                this.internalClient.send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+            } catch (final ExecutionException ex) {
+                log.warn("Exception during read response for tunneling", ex);
+            } catch (final InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     /**

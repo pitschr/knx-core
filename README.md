@@ -132,7 +132,7 @@ You want to switch ``on`` a lamp on KNX group address ``1/2/3`` and switch ``off
 public class KnxMain {    
     public static void main(final String[] args) {    
         // group address we want to communicate with
-        final var ga = GroupAddress.of(1,2,3);
+        final var ga = GroupAddress.of(1,2,0);
         // connect KNX client to 192.168.0.10
         try (final var client = DefaultKnxClient.createStarted("192.168.0.10")) {   
             // switch on (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
@@ -160,20 +160,21 @@ You want to inverse the status of your lamp on KNX group address ``1/2/3``:
 public class KnxMain {    
     public static void main(final String[] args) {    
         // group address we want to communicate with
-        final var ga = GroupAddress.of(1,2,3);
+        final var ga = GroupAddress.of(1,2,0);  // group address for on/off request
+        final var gaRead = GroupAddress.of(1,2,3);  // group address for read request
         // connect KNX client to a KNX Net/IP device using auto-discovery (no-arg, null or empty)
         try (final var client = DefaultKnxClient.createStarted()) {  
             // Sends the read request
             // The returned instance is the acknowledge sent by KNX Net/IP indicating that read request was received
-            final var readRequestAck = client.readRequest(ga).get();
+            final var readRequestAck = client.readRequest(gaRead).get();
 
             // Wait bit for update (usually few 10ms, but up to 1 sec max)
             // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
             // KNX Net/IP and status pool will be updated by KNX client with the actual lamp status
-            client.getStatusPool().isUpdated(ga, 1, TimeUnit.SECONDS);
+            client.getStatusPool().isUpdated(gaRead, 1, TimeUnit.SECONDS);
 
             // read lamp state from status pool
-            final var lampStatus = client.getStatusPool().getValue(ga, DPT1.SWITCH).getBooleanValue();
+            final var lampStatus = client.getStatusPool().getValue(gaRead, DPT1.SWITCH).getBooleanValue();
 
             // Sends the write request
             // The returned instance is the acknowledge sent by KNX Net/IP indicating that write request was received

@@ -128,7 +128,7 @@ public class PerformanceKnxTest {
         try (final var client = DefaultKnxClient.createStarted(config)) {
             final var groupAddress = GroupAddress.of(1, 2, 3);
             for (int i = 0; i < TIMES; i++) {
-                assertThat(client.readRequest(groupAddress).get()).isNotNull();
+                client.readRequest(groupAddress);
             }
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, TIMES);
         } catch (final Throwable t) {

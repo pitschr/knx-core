@@ -68,7 +68,7 @@ public class KnxMainWriteRouting extends AbstractKnxMain {
                 final var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
                 log.debug("========================================================================");
                 for (final GroupAddress groupAddress : DEFAULT_GROUP_ADDRESSES) {
-                    client.writeRouting(groupAddress, dpValue);
+                    client.writeRequest(groupAddress, dpValue);
                     log.debug("WRITE ROUTING: {} - {}", value, dpValue);
                 }
                 Sleeper.seconds(2);

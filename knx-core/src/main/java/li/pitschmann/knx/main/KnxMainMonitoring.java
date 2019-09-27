@@ -21,6 +21,8 @@ package li.pitschmann.knx.main;
 import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.plugin.AuditPlugin;
+import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -29,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Demo class how to monitor the KNX traffic
+ * Demo class how to monitor the KNX traffic with support of plug-ins
  * <ul>
  * <li>1st argument is the address of KNX Net/IP device; default value "192.168.1.16"</li>
  * <li>2nd argument is the monitoring time in seconds; default value is "forever" ({@link Long#MAX_VALUE})</li>
@@ -58,25 +60,38 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         final var monitorTime = getParameterValue(args, "-t", Long::parseLong, Long.MAX_VALUE);
         log.debug("Monitor Time: {}s", monitorTime);
 
+        final var natEnabled = existsParameter(args, "-nat");
+        log.debug("NAT Enabled: {}", natEnabled);
+
         // start KNX communication
         log.trace("START");
 
         final var config = Configuration.create(ipAddress)//
+                .plugin( //
+                        new AuditPlugin(), //
+                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //, //
+                        //        new AuditDatabasePlugin() //
+                ) //
                 .setting("client.communication.connectionState.requestTimeout", "10000") //
                 .setting("client.communication.connectionState.interval", "30000") //
                 .setting("client.communication.connectionState.aliveTimeout", "60000") //
+                .setting("client.communication.description.port", "40000") //
+                .setting("client.communication.description.port", "40001") //
+                .setting("client.communication.control.port", "40002") //
+                .setting("client.communication.data.port", "40003") //
+                .setting("client.nat.enabled", String.valueOf(natEnabled)) //
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
             log.debug("========================================================================");
-            log.debug("MONITORING for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
+            log.debug("MONITORING WITH PLUGINS for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
             log.debug("========================================================================");
             final var sw = Stopwatch.createStarted();
             while (!client.isClosed() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
                 Sleeper.seconds(1);
             }
             log.debug("========================================================================");
-            log.debug("STOP MONITORING");
+            log.debug("STOP MONITORING WITH PLUGINS");
             log.debug("========================================================================");
         } catch (final Throwable t) {
             log.error("THROWABLE. Reason: {}", t.getMessage(), t);
