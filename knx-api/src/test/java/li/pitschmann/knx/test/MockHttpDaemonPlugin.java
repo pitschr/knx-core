@@ -18,20 +18,15 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.base.Stopwatch;
-import li.pitschmann.knx.daemon.AbstractHttpDaemon;
-import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.utils.Sleeper;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.support.AnnotationSupport;
+import li.pitschmann.knx.daemon.DefaultHttpDaemonPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ro.pippo.core.Pippo;
 import ro.pippo.core.PippoRuntimeException;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Creates a new instance of KNX Mock Daemon
@@ -39,39 +34,8 @@ import java.util.concurrent.TimeUnit;
  * This will also start the KNX Mock Server ({@link MockServer}) in background which will be used
  * for communication with the KNX Net/IP device
  */
-public final class MockHttpDaemon extends AbstractHttpDaemon {
-    private MockHttpDaemon(final @Nonnull Configuration configuration) {
-        super(configuration);
-    }
-
-    /**
-     * Creates the KNX Mock Daemon and start it immediately
-     * <p/>
-     * The KNX Mock Server will be also started as a background service to serve
-     * the requests coming from KNX Mock Daemon
-     *
-     * @param context
-     * @return started KNX Mock Daemon
-     */
-    public static MockHttpDaemon createStarted(final @Nonnull ExtensionContext context) {
-        final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockDaemonTest.class).get();
-
-        // start mock server and wait until it is ready
-        final var stopwatch = Stopwatch.createStarted();
-        final var mockServer = MockServer.createStarted(annotation.value());
-        if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 10000)) {
-            // it took longer than 10 seconds -> abort
-            throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
-        }
-
-        final var configBuilder = mockServer.newConfigBuilder();
-        configBuilder.setting("daemon.path.knxproj", annotation.value().projectPath());
-
-        // start mock daemon
-        final var mockDaemon = new MockHttpDaemon(configBuilder.build());
-        mockDaemon.start();
-        return mockDaemon;
-    }
+public final class MockHttpDaemonPlugin extends DefaultHttpDaemonPlugin {
+    private static final Logger log = LoggerFactory.getLogger(MockHttpDaemonPlugin.class);
 
     @Override
     protected void startPippo(Pippo pippo) {

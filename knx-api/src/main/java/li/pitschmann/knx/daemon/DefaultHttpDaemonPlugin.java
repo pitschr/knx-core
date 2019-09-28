@@ -38,7 +38,7 @@ import java.util.Objects;
 /**
  * Abstract HTTP Daemon
  */
-public abstract class AbstractHttpDaemon2 implements ExtensionPlugin {
+public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private KnxClient client;
     private Pippo pippo;
