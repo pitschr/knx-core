@@ -23,8 +23,8 @@ import li.pitschmann.knx.daemon.v1.json.ReadRequest;
 import li.pitschmann.knx.daemon.v1.json.ReadResponse;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT12;
-import li.pitschmann.knx.test.MockDaemonTest;
-import li.pitschmann.knx.test.MockHttpDaemon;
+import li.pitschmann.knx.test.MockDaemonTest2;
+import li.pitschmann.knx.test.MockHttpDaemon2;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -51,9 +51,9 @@ public class ReadRequestControllerTest {
     /**
      * Tests the /read endpoint for group addresses using KNX mock server
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockDaemonTest2(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Read Request for group addresses using KNX mock server")
-    public void testRead(final MockHttpDaemon daemon) throws Exception {
+    public void testRead(final MockHttpDaemon2 daemon) throws Exception {
         final var groupAddress = GroupAddress.of(0, 3, 18);
 
         // create read request

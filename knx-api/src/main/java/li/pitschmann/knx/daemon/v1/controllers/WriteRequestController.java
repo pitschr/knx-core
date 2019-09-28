@@ -1,10 +1,7 @@
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import com.google.inject.Inject;
 import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.daemon.v1.json.WriteResponse;
-import li.pitschmann.knx.link.communication.DefaultKnxClient;
-import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.ByteFormatter;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
@@ -16,12 +13,6 @@ import ro.pippo.controller.extractor.Body;
  */
 public final class WriteRequestController extends AbstractController {
     private static final WriteResponse EMPTY_RESPONSE = new WriteResponse();
-
-    @Inject
-    private XmlProject xmlProject;
-
-    @Inject
-    private DefaultKnxClient knxClient;
 
     /**
      * Endpoint for write request to be forwarded to KNX Net/IP device by KNX Daemon.
@@ -65,7 +56,7 @@ public final class WriteRequestController extends AbstractController {
         log.debug("Write request to group address '{}' with bytes: {}", groupAddress, ByteFormatter.formatHexAsString(rawToWrite));
 
         // send write request
-        if (knxClient.writeRequest(groupAddress, rawToWrite)) {
+        if (getKnxClient().writeRequest(groupAddress, rawToWrite)) {
             log.debug("Acknowledge received for write request: {}", writeRequest);
             getResponse().accepted();
         }

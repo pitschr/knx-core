@@ -2,7 +2,7 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.parser.XmlProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +29,14 @@ abstract class AbstractController extends Controller {
     private XmlProject xmlProject;
 
     @Inject
-    private DefaultKnxClient knxClient;
+    private KnxClient knxClient;
 
 
     public final XmlProject getXmlProject() {
         return xmlProject;
     }
 
-    public final DefaultKnxClient getKnxClient() {
+    public final KnxClient getKnxClient() {
         return knxClient;
     }
 

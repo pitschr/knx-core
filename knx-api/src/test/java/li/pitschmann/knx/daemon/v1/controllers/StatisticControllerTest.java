@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import li.pitschmann.knx.test.MockDaemonTest;
-import li.pitschmann.knx.test.MockHttpDaemon;
+import li.pitschmann.knx.test.MockDaemonTest2;
+import li.pitschmann.knx.test.MockHttpDaemon2;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 
@@ -38,9 +38,9 @@ public class StatisticControllerTest {
      * @param daemon
      * @throws Exception
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockDaemonTest2(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /statistic endpoint")
-    public void testStatistic(final MockHttpDaemon daemon) throws Exception {
+    public void testStatistic(final MockHttpDaemon2 daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 

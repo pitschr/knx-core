@@ -489,6 +489,7 @@ public final class MockServer implements Runnable, Closeable {
                 .setting("client.communication.connectionState.requestTimeout", "2000") // 2s instead of 10s
                 .setting("client.communication.connectionState.interval", "6000") // 6s instead of 60s
                 .setting("client.communication.connectionState.aliveTimeout", "12000") // 12s instead of 120s
+                .setting("daemon.path.knxproj", mockServerAnnotation.projectPath())
                 ;
     }
 

@@ -24,6 +24,7 @@ import com.google.inject.Guice;
 import com.google.inject.Provides;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.communication.KnxStatusPool;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
@@ -31,16 +32,11 @@ import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupRange;
 import li.pitschmann.knx.parser.XmlProject;
-import li.pitschmann.knx.test.MockDaemonTest;
-import li.pitschmann.knx.test.MockHttpDaemon;
-import li.pitschmann.knx.test.MockServer;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.core.Messages;
@@ -67,16 +63,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
- * Extension to start/stop the {@link MockHttpDaemon} (and {@link MockServer} indirectly).
- * <p/>
- * It will be invoked using {@link MockDaemonTest} annotation.
+ * Extension to test the controller directly without starting up the web service.
  *
  * @author PITSCHR
  */
 public final class ControllerTestExtension
         implements ParameterResolver {
-    private static final Logger log = LoggerFactory.getLogger(ControllerTestExtension.class);
-
     @Override
     public Controller resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
         final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ControllerTest.class).get();
@@ -115,7 +107,7 @@ public final class ControllerTestExtension
             // create guice injector
             final var injector = Guice.createInjector(new AbstractModule() {
                 @Provides
-                private final DefaultKnxClient providesKnxClient() {
+                private final KnxClient providesKnxClient() {
                     return injectKnxClient;
                 }
 

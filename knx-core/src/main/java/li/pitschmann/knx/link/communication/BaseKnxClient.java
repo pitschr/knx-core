@@ -65,35 +65,13 @@ public class BaseKnxClient implements KnxClient {
         internalClient.getPluginManager().notifyInitialization(this);
     }
 
-    /**
-     * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} <strong>asynchronously</strong>.
-     *
-     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP device. The
-     * requested KNX device will send a {@link TunnelingRequestBody} with {@link MessageCode#L_DATA_CON} if write was
-     * successful. It is possible only when communication and write flags are set on KNX device. A
-     * {@link MessageCode#L_DATA_IND} is sent by the KNX device additionally when a transmit flag was set too.
-     *
-     * @param address
-     * @param dataPointValue
-     * @return {@code true} if the write request was successful, otherwise {@code false}
-     */
+    @Override
     public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
         return writeRequest(address, dataPointValue.toByteArray());
     }
 
-    /**
-     * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
-     *
-     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP device. The
-     * requested KNX device will send a {@link TunnelingRequestBody} with {@link MessageCode#L_DATA_CON} if write was
-     * successful. It is possible only when communication and write flags are set on KNX device. A
-     * {@link MessageCode#L_DATA_IND} is sent by the KNX device additionally when a transmit flag was set too.
-     *
-     * @param address
-     * @param apciData
-     * @return {@code true} if the write request was successful, otherwise {@code false}
-     */
-    public boolean writeRequest(final @Nonnull GroupAddress address, final @Nullable byte[] apciData) {
+    @Override
+    public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull byte[] apciData) {
         Preconditions.checkNotNull(address);
         Preconditions.checkNotNull(apciData);
         if (getConfig().isRoutingEnabled()) {
@@ -116,17 +94,7 @@ public class BaseKnxClient implements KnxClient {
         return false;
     }
 
-    /**
-     * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>
-     *
-     * <strong>Note:</strong> the response is an acknowledge that request has been accepted by KNX Net/IP device. The
-     * requested KNX device will send a {@link TunnelingRequestBody} with {@link MessageCode#L_DATA_CON} and
-     * {@link MessageCode#L_DATA_IND} if read was successful. It is possible only when communication and read flags are
-     * set on KNX device.
-     *
-     * @param address
-     * @return {@code true} if the write request was successful, otherwise {@code false}
-     */
+    @Override
     public boolean readRequest(final @Nonnull GroupAddress address) {
         Preconditions.checkNotNull(address);
         if (getConfig().isRoutingEnabled()) {

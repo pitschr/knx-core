@@ -72,7 +72,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author PITSCHR
  */
-public final class InternalKnxClient implements KnxClient {
+public final class InternalKnxClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(InternalKnxClient.class);
     private final AtomicBoolean closed = new AtomicBoolean();
     private final Lock lock = new ReentrantLock();
@@ -106,9 +106,6 @@ public final class InternalKnxClient implements KnxClient {
     protected void start() {
         Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
 
-        // notifies the extension plug-in about start of client
-        pluginManager.notifyClientStart();
-
         try {
             // if remote control address is multicast address, then we know that we want to use the routing feature
             if (config.isRoutingEnabled()) {
@@ -118,6 +115,9 @@ public final class InternalKnxClient implements KnxClient {
             else {
                 startTunneling();
             }
+
+            // notifies the extension plug-in about start of client
+            pluginManager.notifyClientStart();
         } catch (final Exception ex) {
             log.error("Exception caught on 'start()' method.", ex);
             this.notifyError(ex);
@@ -165,19 +165,16 @@ public final class InternalKnxClient implements KnxClient {
     }
 
     @Nonnull
-    @Override
     public Configuration getConfig() {
         return this.config;
     }
 
     @Nonnull
-    @Override
     public KnxStatisticImpl getStatistic() {
         return this.statistics;
     }
 
     @Nonnull
-    @Override
     public KnxStatusPoolImpl getStatusPool() {
         return this.statusPool;
     }
@@ -277,7 +274,6 @@ public final class InternalKnxClient implements KnxClient {
         }
     }
 
-    @Override
     public void close() {
         log.trace("Method 'close()' called.");
 
@@ -376,13 +372,11 @@ public final class InternalKnxClient implements KnxClient {
         return this.closed.get();
     }
 
-    @Override
     public void send(final @Nonnull Body body) {
         this.getChannelCommunicator(body).send(body);
     }
 
     @Nonnull
-    @Override
     public <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
     }

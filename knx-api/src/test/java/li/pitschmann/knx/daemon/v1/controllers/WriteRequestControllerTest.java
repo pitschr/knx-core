@@ -23,8 +23,8 @@ import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.datapoint.DPT2;
-import li.pitschmann.knx.test.MockDaemonTest;
-import li.pitschmann.knx.test.MockHttpDaemon;
+import li.pitschmann.knx.test.MockDaemonTest2;
+import li.pitschmann.knx.test.MockHttpDaemon2;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -51,9 +51,9 @@ public class WriteRequestControllerTest {
      * @param daemon
      * @throws Exception
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockDaemonTest2(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Write Request for group address 0/0/22")
-    public void testWrite(final MockHttpDaemon daemon) throws Exception {
+    public void testWrite(final MockHttpDaemon2 daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
