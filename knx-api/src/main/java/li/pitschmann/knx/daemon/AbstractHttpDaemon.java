@@ -157,7 +157,7 @@ public abstract class AbstractHttpDaemon implements Runnable, AutoCloseable {
     public final HttpRequest.Builder newRequestBuilder(final String path) {
         Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
         try {
-            return HttpRequest.newBuilder(new URI("http://localhost:" + port + path))
+            return HttpRequest.newBuilder(new URI("http://localhost:" + getPort() + path))
                     .header(HttpHeaders.ACCEPT, MediaType.JSON_UTF_8.toString())
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
         } catch (URISyntaxException e) {
