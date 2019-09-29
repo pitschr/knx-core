@@ -66,7 +66,7 @@ public class BaseKnxClientTest {
         try (client) {
             assertThat(client.getStatusPool()).isNotNull();
             assertThat(client.getConfig()).isNotNull();
-            assertThat(client.isClosed()).isFalse();
+            assertThat(client.isRunning()).isFalse(); // it is false, because it has not been started yet
 
             // verify if statistic is an unmodifiable instance
             final var statistic = client.getStatistic();
@@ -84,8 +84,6 @@ public class BaseKnxClientTest {
             assertThat(argCaptor.getValue()).isInstanceOf(BaseKnxClient.class).isSameAs(client);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
-        } finally {
-            assertThat(client.isClosed()).isTrue();
         }
     }
 

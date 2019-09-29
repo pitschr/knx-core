@@ -68,11 +68,11 @@ public interface KnxClient extends AutoCloseable {
     KnxStatusPool getStatusPool();
 
     /**
-     * Returns {@code true} if the close has already been requested
+     * Returns {@code true} if the KNX Client is actively communicating with the KNX Net/IP device.
      *
-     * @return {@code true} if closed
+     * @return {@code true} if the client is running
      */
-    boolean isClosed();
+    boolean isRunning();
 
     /**
      * Sends any {@link Body} packet immediately to the appropriate channel.

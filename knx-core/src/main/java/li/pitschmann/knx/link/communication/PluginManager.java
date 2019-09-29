@@ -31,6 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,6 +131,46 @@ public final class PluginManager implements AutoCloseable {
     public void registerPlugin(final @Nonnull Plugin plugin) {
         registerPluginInternal(plugin);
         notifyPlugins(client, Collections.singletonList(plugin), Plugin::onInitialization);
+
+        // for extension plugins, we have a special case:
+        // if the KNX Client is already started -> kick in the onStart immediately!
+        if (plugin instanceof ExtensionPlugin && client.isRunning()) {
+            notifyPlugins(null, Collections.singletonList((ExtensionPlugin)plugin), (p, x) -> p.onStart());
+        }
+
+        log.info("Plugin registered: {}", plugin);
+    }
+
+    /**
+     * Registers the plugin from given URL and class path
+     * <p/>
+     * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
+     * {@code com.mycompany.MyPlugin} as {@code classPath}.
+     *
+     * @param filePath       path to the JAR file
+     * @param classPath fully qualified class name
+     */
+    public void registerPlugin(final @Nonnull Path filePath, final @Nonnull String classPath) {
+        Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
+                "File doesn't end with '.jar' extension: %s", filePath);
+        Preconditions.checkNotNull(classPath);
+
+        log.debug("Try to load plugin '{}' from path: {}", classPath, filePath);
+        try {
+            Preconditions.checkArgument(Files.isReadable(filePath),
+                    "File doesn't exists or is not readable: %s", filePath);
+
+            final var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()});
+            final var cls = classLoader.loadClass(classPath);
+            Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
+                    "Seems the given plugin is not an instance of %s: %s", Plugin.class, classPath);
+
+            final var plugin = Plugin.class.cast(cls.getDeclaredConstructor().newInstance());
+            log.debug("Plugin '{}' loaded from url '{}': {}", classPath, filePath, plugin);
+            registerPlugin(plugin);
+        } catch (final Throwable t) {
+            log.error("Could not load plugin '{}' (url: {})", classPath, filePath);
+        }
     }
 
     /**

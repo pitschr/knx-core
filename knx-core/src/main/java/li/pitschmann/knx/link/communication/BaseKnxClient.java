@@ -74,6 +74,8 @@ public class BaseKnxClient implements KnxClient {
     public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull byte[] apciData) {
         Preconditions.checkNotNull(address);
         Preconditions.checkNotNull(apciData);
+        Preconditions.checkState(isRunning());
+
         if (getConfig().isRoutingEnabled()) {
             // routing request
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, apciData);
@@ -97,6 +99,8 @@ public class BaseKnxClient implements KnxClient {
     @Override
     public boolean readRequest(final @Nonnull GroupAddress address) {
         Preconditions.checkNotNull(address);
+        Preconditions.checkState(isRunning());
+
         if (getConfig().isRoutingEnabled()) {
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, (byte[]) null);
             this.internalClient.send(RoutingIndicationBody.of(cemi));
@@ -136,8 +140,8 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public boolean isClosed() {
-        return this.internalClient.isClosed();
+    public boolean isRunning() {
+        return this.internalClient.getState() == InternalKnxClient.State.STARTED;
     }
 
     @Nonnull

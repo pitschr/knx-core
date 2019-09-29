@@ -59,7 +59,8 @@ public final class ConnectionStateMonitor implements Runnable {
         // send first packet
         this.sendConnectionStateRequest();
 
-        while (!this.client.isClosed()) {
+        while (this.client.getState() == InternalKnxClient.State.STARTED
+                || this.client.getState() == InternalKnxClient.State.START_REQUEST) {
             final var lastRequestTime = this.getLastRequestTime();
             final var lastResponseTime = this.getLastResponseTime();
 
@@ -102,7 +103,7 @@ public final class ConnectionStateMonitor implements Runnable {
             }
         }
 
-        log.trace("*** END *** (Client closed: {})", this.client.isClosed());
+        log.trace("*** END *** (Client state: {})", this.client.getState());
     }
 
     /**

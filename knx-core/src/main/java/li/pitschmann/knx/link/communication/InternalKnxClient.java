@@ -74,13 +74,14 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class InternalKnxClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(InternalKnxClient.class);
-    private final AtomicBoolean closed = new AtomicBoolean();
+    private final AtomicBoolean closed = new AtomicBoolean(true);
     private final Lock lock = new ReentrantLock();
     private final KnxEventPool eventPool = new KnxEventPool();
     private final KnxStatisticImpl statistics = new KnxStatisticImpl();
     private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
     private final PluginManager pluginManager;
     private final Configuration config;
+    private State state = State.NOT_STARTED;
     private List<AbstractChannelCommunicator> channelCommunicators = Collections.emptyList();
     private ExecutorService channelExecutor;
     private HPAI controlHPAI;
@@ -88,6 +89,37 @@ public final class InternalKnxClient implements AutoCloseable {
     private int channelId = -1;
     private InetSocketAddress remoteEndpoint;
 
+    /**
+     * States of Internal KNX Client
+     */
+    public enum State {
+        /**
+         * The KNX Client is not started (or has been stopped)
+         * <p/>
+         * Next state is: {@link #START_REQUEST}
+         */
+        NOT_STARTED,
+        /**
+         * The start has been requested and KNX Client may not communicate actively with KNX Net/IP device yet.
+         * <p/>
+         * Next State is either: {@link #STARTED} if successfully, otherwise {@link #STOP_REQUEST} if the
+         * communication cannot be established for some reasons.
+         */
+        START_REQUEST,
+        /**
+         * The communication has been established and the KNX Client is actively communicating with the
+         * KNX Net/IP device.
+         * <p/>
+         * Next State is: {@link #STOP_REQUEST}
+         */
+        STARTED,
+        /**
+         * The communication has been stopped. This can be happen successfully, or also because of failure.
+         * <p/>
+         * Next State is: {@link #NOT_STARTED} as soon the stop procedure is completed.
+         */
+        STOP_REQUEST;
+    }
 
     /**
      * KNX client constructor (package protected)
@@ -104,26 +136,32 @@ public final class InternalKnxClient implements AutoCloseable {
      * Starts the services and notifies the plug-ins about initialization
      */
     protected void start() {
-        Preconditions.checkState(!this.closed.get(), "It seems the KNX client is already running.");
+        this.lock.lock();
+            try {
+                Preconditions.checkState(this.closed.get(), "It seems the KNX client is already running.");
+                this.closed.set(false);
 
-        try {
-            // if remote control address is multicast address, then we know that we want to use the routing feature
-            if (config.isRoutingEnabled()) {
-                startRouting();
-            }
-            // otherwise use the tunneling
-            else {
-                startTunneling();
-            }
+                pluginManager.notifyClientStart();
+                this.state = State.START_REQUEST;
 
-            // notifies the extension plug-in about start of client
-            pluginManager.notifyClientStart();
-        } catch (final Exception ex) {
-            log.error("Exception caught on 'start()' method.", ex);
-            this.notifyError(ex);
-            this.close();
-            throw ex;
-        }
+                // if remote control address is multicast address, then we know that we want to use the routing feature
+                if (config.isRoutingEnabled()) {
+                    startRouting();
+                }
+                // otherwise use the tunneling
+                else {
+                    startTunneling();
+                }
+
+                this.state = State.STARTED;
+            } catch (final Exception ex) {
+                log.error("Exception caught on 'start()' method.", ex);
+                this.notifyError(ex);
+                this.close();
+                throw ex;
+            } finally {
+                this.lock.unlock();
+            }
     }
 
     /**
@@ -164,32 +202,6 @@ public final class InternalKnxClient implements AutoCloseable {
         }
     }
 
-    @Nonnull
-    public Configuration getConfig() {
-        return this.config;
-    }
-
-    @Nonnull
-    public KnxStatisticImpl getStatistic() {
-        return this.statistics;
-    }
-
-    @Nonnull
-    public KnxStatusPoolImpl getStatusPool() {
-        return this.statusPool;
-    }
-
-    /**
-     * Returns the remote endpoint. If specified by the config explicitly, the endpoint from config is taken,
-     * otherwise the endpoint has been discovered by the KNX client automatically.
-     *
-     * @return An instance of {@link InetSocketAddress}, it cannot be {@code null}
-     */
-    @Nonnull
-    public InetSocketAddress getRemoteEndpoint() {
-        return Objects.requireNonNull(this.remoteEndpoint);
-    }
-
     /**
      * Verify if the retrieved {@link DescriptionResponseBody} returned by the KNX Net/IP device
      * is applicable for current client implementation.
@@ -215,8 +227,6 @@ public final class InternalKnxClient implements AutoCloseable {
      * necessary for the communication.
      */
     private void startServices() {
-        this.lock.lock();
-        try {
             // some pre-checks
             Preconditions.checkState(this.channelId == -1);
             Preconditions.checkState(this.controlHPAI == null);
@@ -269,11 +279,9 @@ public final class InternalKnxClient implements AutoCloseable {
             // do not accept more services anymore!
             this.channelExecutor.shutdown();
             log.info("Channel Executor created: {}", this.channelExecutor);
-        } finally {
-            this.lock.unlock();
-        }
     }
 
+    @Override
     public void close() {
         log.trace("Method 'close()' called.");
 
@@ -281,12 +289,13 @@ public final class InternalKnxClient implements AutoCloseable {
         if (this.closed.getAndSet(true)) {
             log.debug("Already closed. Do nothing!");
             return;
-        } else {
-            log.info("Client will be closed.");
         }
 
         this.lock.lock();
         try {
+            this.state = State.STOP_REQUEST;
+            log.info("Client will be stopped.");
+
             this.stopServices();
         } finally {
             // notifies the extension plug-ins about shutdown
@@ -294,6 +303,7 @@ public final class InternalKnxClient implements AutoCloseable {
             pluginManager.close();
             log.info("Plugin Manager closed.");
 
+            this.state = State.NOT_STARTED;
             this.lock.unlock();
         }
 
@@ -344,6 +354,42 @@ public final class InternalKnxClient implements AutoCloseable {
         }
     }
 
+    /**
+     * Returns the state of {@link InternalKnxClient}.
+     *
+     * @return the current state
+     */
+    @Nonnull
+    public State getState() {
+        return state;
+    }
+
+    @Nonnull
+    public Configuration getConfig() {
+        return this.config;
+    }
+
+    @Nonnull
+    public KnxStatisticImpl getStatistic() {
+        return this.statistics;
+    }
+
+    @Nonnull
+    public KnxStatusPoolImpl getStatusPool() {
+        return this.statusPool;
+    }
+
+    /**
+     * Returns the remote endpoint. If specified by the config explicitly, the endpoint from config is taken,
+     * otherwise the endpoint has been discovered by the KNX client automatically.
+     *
+     * @return An instance of {@link InetSocketAddress}, it cannot be {@code null}
+     */
+    @Nonnull
+    public InetSocketAddress getRemoteEndpoint() {
+        return Objects.requireNonNull(this.remoteEndpoint);
+    }
+
     @Nonnull
     public HPAI getControlHPAI() {
         return this.controlHPAI == null ? HPAI.useDefault() : this.controlHPAI;
@@ -366,10 +412,6 @@ public final class InternalKnxClient implements AutoCloseable {
 
     public int getChannelId() {
         return this.channelId;
-    }
-
-    public boolean isClosed() {
-        return this.closed.get();
     }
 
     public void send(final @Nonnull Body body) {

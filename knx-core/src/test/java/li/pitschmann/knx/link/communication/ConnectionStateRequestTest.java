@@ -76,13 +76,14 @@ public class ConnectionStateRequestTest {
     public void testFailureNoResponse(final MockServer mockServer) {
         final var client = mockServer.createTestClient();
         try (client) {
+            assertThat(client.isRunning()).isTrue();
             mockServer.waitDone();
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
 
-        // asserts that client is closed
-        assertThat(client.isClosed()).isTrue();
+        // asserts that client is not running anymore
+        assertThat(client.isRunning()).isFalse();
 
         // assert packets (it may happen that 6 or 7 ConnectionStateRequestBody
         // are received by mock - depending how busy the machine is under test)

@@ -87,7 +87,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
             log.debug("MONITORING WITH PLUGINS for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
             log.debug("========================================================================");
             final var sw = Stopwatch.createStarted();
-            while (!client.isClosed() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
+            while (client.isRunning() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
                 Sleeper.seconds(1);
             }
             log.debug("========================================================================");
