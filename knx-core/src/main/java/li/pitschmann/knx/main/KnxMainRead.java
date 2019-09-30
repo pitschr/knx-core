@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.main;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.utils.ByteFormatter;
@@ -40,10 +41,10 @@ import java.util.function.Function;
  */
 public class KnxMainRead extends AbstractKnxMain {
     private static final Logger log = LoggerFactory.getLogger(KnxMainRead.class);
-    private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 100);
-    private static final int DEFAULT_LOOPS = 50;
+    private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 113);
+    private static final int DEFAULT_LOOPS = 3;
 
-    public static void main(final String[] args) {
+    public static void start(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
         final var ipAddress = getParameterValue(args, "-r", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
@@ -60,21 +61,44 @@ public class KnxMainRead extends AbstractKnxMain {
         log.trace("START");
         try (final var client = DefaultKnxClient.createStarted(ipAddress)) {
             final var statusPool = client.getStatusPool();
-            Sleeper.seconds(1);
-            log.debug("========================================================================");
-            log.debug("GROUP ADDRESS: 3-level: {}, 2-level: {}", groupAddress.getAddress(), groupAddress.getAddressLevel2());
-            client.readRequest(groupAddress);
+            for (int i = 0; i < loops; i++) {
+                log.debug("========================================================================");
+                log.debug("GROUP ADDRESS: 3-level: {}, 2-level: {}", groupAddress.getAddress(), groupAddress.getAddressLevel2());
+                client.readRequest(groupAddress);
 
-            // Wait bit for update (usually few 10ms, but up to 1 sec max)
-            // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
-            // KNX Net/IP device and status pool will be updated with the actual lamp status
-            statusPool.isUpdated(groupAddress, 1, TimeUnit.SECONDS);
-            log.debug("STATUS (APCI Data): {}", ByteFormatter.formatHexAsString(statusPool.getStatusFor(groupAddress).getApciData()));
-            log.debug("========================================================================");
+                // Wait bit for update (usually few 10ms, but up to 1 sec max)
+                // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
+                // KNX Net/IP device and status pool will be updated with the actual lamp status
+                statusPool.isUpdated(groupAddress, 1, TimeUnit.SECONDS);
+                log.debug("STATUS (APCI Data): {}", ByteFormatter.formatHexAsString(statusPool.getStatusFor(groupAddress).getApciData()));
+                log.debug("========================================================================");
+                Sleeper.seconds(1);
+            }
         } catch (final Throwable t) {
             log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         } finally {
             log.trace("FINALLY");
         }
+    }
+
+    public static void main(final String[] args) {
+        ((ch.qos.logback.classic.Logger) log).setLevel(ch.qos.logback.classic.Level.ALL);
+        ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.OFF);
+
+        // Routing
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        log.info(" R O U T I N G");
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        start(new String[]{"-r", Constants.Default.MULTICAST_ADDRESS.getHostAddress()});
+
+        // Tunneling
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        log.info(" T U N N E L I N G");
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        start(new String[0]);
     }
 }

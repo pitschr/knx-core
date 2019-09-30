@@ -55,7 +55,7 @@ public class SearchResponseTaskTest {
 
         // wrong body - should not be an issue - simply ignored
         final var wrongBody = mock(Body.class);
-        assertThatThrownBy(() -> task.onNext(wrongBody)).isInstanceOf(KnxBodyNotReceivedException.class);
+        task.onNext(wrongBody);
     }
 
     /**

@@ -34,6 +34,7 @@ import java.util.stream.Stream;
  * @author PITSCHR
  */
 public abstract class AbstractKnxMain {
+    protected static final Logger logRoot = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     private static final Logger log = LoggerFactory.getLogger(AbstractKnxMain.class);
 
     protected AbstractKnxMain() {

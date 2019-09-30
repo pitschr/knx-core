@@ -338,7 +338,7 @@ public final class Configuration {
     }
 
     public int getMulticastChannelPort() {
-        return getSetting("client.communication.multicast.port", 0, Integer::valueOf);
+        return getSetting("client.communication.multicast.port", Constants.Default.KNX_PORT, Integer::valueOf);
     }
 
     public long getSocketTimeoutMulticastChannel() {

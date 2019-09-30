@@ -50,6 +50,7 @@ import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -351,6 +352,10 @@ public final class InternalKnxClient implements AutoCloseable {
             // shutdown executor now
             isOk &= Closeables.shutdownQuietly(this.channelExecutor, 0, TimeUnit.SECONDS);
             log.info("KNX Services stopped gracefully. Status: {}", isOk);
+
+            // some time buffer for OS to close the underlying network bindings to avoid
+            // "Address already in use" when restarting the client immediately.
+            Sleeper.milliseconds(100);
         }
     }
 

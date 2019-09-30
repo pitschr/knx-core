@@ -140,15 +140,15 @@ public final class ChannelFactory {
             final var channel = DatagramChannel.open(StandardProtocolFamily.INET);
             channel.configureBlocking(false);
             final var socket = channel.socket();
-            socket.bind(new InetSocketAddress(localPort));
-            socket.setSoTimeout((int) socketTimeout);
-            if (socketAddress != null) {
-                socket.connect(socketAddress);
-            }
             if (socketOptionMap != null) {
                 for (final var option : socketOptionMap.entrySet()) {
                     channel.setOption(option.getKey(), option.getValue());
                 }
+            }
+            socket.bind(new InetSocketAddress(localPort));
+            socket.setSoTimeout((int) socketTimeout);
+            if (socketAddress != null) {
+                socket.connect(socketAddress);
             }
             return channel;
         } catch (final IOException e) {

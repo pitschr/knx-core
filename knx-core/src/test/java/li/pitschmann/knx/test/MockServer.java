@@ -478,8 +478,8 @@ public final class MockServer implements Runnable, Closeable {
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
                 .setting("client.communication.multicast.address", this.getMulticastAddress().getHostAddress())
-                // .setting("client.communication.multicast.port", String.valueOf(this.getPort()))
-                .setting("client.communication.multicast.timeToLive", "0")
+                .setting("client.communication.multicast.port", "0") // use random local port for multicast testing
+                .setting("client.communication.multicast.timeToLive", "0") // consider local only (no pass by any router)
                 .setting("client.plugin.executorPoolSize", "3") // 3 instead of 10
                 .setting("client.communication.executorPoolSize", "3") // 3 instead of 10
                 .setting("client.communication.discovery.requestTimeout", "2000") // 2s instead of 10s

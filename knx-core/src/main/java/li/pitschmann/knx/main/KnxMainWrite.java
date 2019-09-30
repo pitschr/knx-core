@@ -57,11 +57,15 @@ public class KnxMainWrite extends AbstractKnxMain {
         final var ipAddress = getParameterValue(args, "-r", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
-        // 2nd Argument: Get DPT
+        // 2nd Argument: NAT?
+        final var natEnabled = existsParameter(args, "-nat");
+        log.debug("NAT: {}", natEnabled);
+
+        // 3rd Argument: Get DPT
         final var dpt = getParameterValue(args, "-dpt", String::valueOf, DEFAULT_DPT);
         log.debug("DPT: {}", dpt);
 
-        // 3rd..Nth Arguments: Get Values
+        // 4th..Nth Arguments: Get Values
         final var values = getParameterValues(args, "-c", String[]::new, DEFAULT_VALUES);
         log.debug("Values: {}", Arrays.toString(values));
 
@@ -93,6 +97,9 @@ public class KnxMainWrite extends AbstractKnxMain {
     }
 
     public static void main(final String[] args) {
+        ((ch.qos.logback.classic.Logger) log).setLevel(ch.qos.logback.classic.Level.ALL);
+        ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.OFF);
+
         // Routing
         log.info("##########################################################################");
         log.info("##########################################################################");
@@ -108,5 +115,14 @@ public class KnxMainWrite extends AbstractKnxMain {
         log.info("##########################################################################");
         log.info("##########################################################################");
         start(new String[0]);
+
+        // Tunneling (NAT Mode)
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        log.info(" T U N N E L I N G    ( N A T - M O D E )");
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        //start(new String[] { "-nat" });
+        // TODO: NOT IMPLEMENTED in this main class YET!
     }
 }
