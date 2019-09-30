@@ -19,6 +19,7 @@
 package li.pitschmann.knx.main;
 
 import com.google.common.collect.Lists;
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
@@ -51,7 +52,7 @@ public class KnxMainWrite extends AbstractKnxMain {
     private static final String DEFAULT_DPT = "1.001"; // DPT1.SWITCH
     private static final String[] DEFAULT_VALUES = new String[]{"on", "off"}; // switch on, switch off
 
-    public static void main(final String[] args) {
+    public static void start(final String[] args) {
         // 1st Argument: Get KNX Net/IP Address
         final var ipAddress = getParameterValue(args, "-r", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
@@ -89,5 +90,23 @@ public class KnxMainWrite extends AbstractKnxMain {
         } finally {
             log.trace("FINALLY");
         }
+    }
+
+    public static void main(final String[] args) {
+        // Routing
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        log.info(" R O U T I N G");
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        start(new String[]{"-r", Constants.Default.MULTICAST_ADDRESS.getHostAddress()});
+
+        // Tunneling
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        log.info(" T U N N E L I N G");
+        log.info("##########################################################################");
+        log.info("##########################################################################");
+        start(new String[0]);
     }
 }

@@ -466,7 +466,7 @@ public final class MockServer implements Runnable, Closeable {
             log.info("Routing service will be used for mock server. Endpoint: {}:{}", address, port);
         } else if (mockServerAnnotation.useDiscovery()) {
             final var port = getPort();
-            configBuilder = Configuration.create(null, port);
+            configBuilder = Configuration.create(Networker.getAddressUnbound(), port);
             log.info("Discovery service will be used for mock server. Endpoint: 0.0.0.0:{}", port);
         } else {
             final var address = Networker.getLocalHost();

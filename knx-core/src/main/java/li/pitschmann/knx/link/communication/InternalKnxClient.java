@@ -184,7 +184,7 @@ public final class InternalKnxClient implements AutoCloseable {
         log.trace("Method 'startTunneling()' called");
 
         // check if endpoint is defined - if not, look up for an available KNX Net/IP device
-        if (config.getRemoteControlAddress() == null) {
+        if (config.getRemoteControlAddress().isAnyLocalAddress()) {
             final var discoveryResponse = this.fetchDiscoveryFromKNX();
             this.remoteEndpoint = Networker.toInetSocketAddress(discoveryResponse.getControlEndpoint());
             log.debug("Endpoint from discovery is taken: {} ({})", this.remoteEndpoint, discoveryResponse.getDeviceInformation().getDeviceFriendlyName());

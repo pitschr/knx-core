@@ -44,12 +44,16 @@ import java.util.function.Function;
  * @author PITSCHR
  */
 public final class Configuration {
+    private final boolean routingEnabled;
     private final InetAddress remoteControlAddress;
     private final Integer remoteControlPort;
     private final List<Plugin> plugins;
     private final Map<String, String> settings;
 
     private Configuration(final @Nonnull Builder builder) {
+        // communication type
+        this.routingEnabled = builder.routingEnabled;
+
         // remote endpoint
         this.remoteControlAddress = builder.remoteControlAddress;
         this.remoteControlPort = builder.remoteControlPort;
@@ -67,17 +71,18 @@ public final class Configuration {
     public static Builder create(final @Nullable String address) {
         // if address is null/blank then no address is provided and will be picked up using discovery approach
         if (address == null || address.isBlank()) {
-            return create();
+            return tunneling();
         }
         // address contains ':' character -> assuming it is <host>:<port>
         else if (address.contains(":")) {
             final var addressSplitted = address.split(":");
-            Preconditions.checkArgument(addressSplitted.length == 2, "Unsupported Address provided.");
+            Preconditions.checkArgument(addressSplitted.length == 2,
+                    "Unsupported Address format provided. Expected: <address>:<port>");
 
-            final var host = addressSplitted[0];
+            final var host = Networker.getByAddress(addressSplitted[0]);
             final var port = Integer.parseInt(addressSplitted[1]);
 
-            return create(Networker.getByAddress(host), port);
+            return create(host, port);
         }
         // otherwise assume it is full address (the default KNX port will be used)
         else {
@@ -86,42 +91,134 @@ public final class Configuration {
     }
 
     /**
-     * Creates a Builder for a customized configuration.
-     * The endpoint of KNX Net/IP device will be discovered and the first applicable device is taken
+     * Creates a Builder for customized configuration with specific address.
+     * <p/>
+     * If the given address is a multicast, then routing mode will be used.
+     * Otherwise the communication is using the tunneling mode.
+     * <p/>
+     * Default Port: {@link Constants.Default#KNX_PORT}<br/>
      *
-     * @return {@link Builder}
+     * @param address a specified address of KNX Net/IP device
+     * @return new builder
      */
-    public static Builder create() {
-        return create((InetAddress) null);
+    public static Builder create(final @Nonnull InetAddress address) {
+        Preconditions.checkNotNull(address);
+        if (address.isMulticastAddress()) {
+            return routing(address);
+        } else {
+            return tunneling(address);
+        }
     }
 
     /**
-     * Creates a Builder for a customized configuration
+     * Creates a Builder for customized configuration with specific address and port.
+     * <p/>
+     * If the given address is a multicast, then routing mode will be used.
+     * Otherwise the communication is using the tunneling mode.
      *
-     * @param address remote control address
-     * @return {@link Builder}
+     * @param address a specified address of KNX Net/IP device
+     * @param port    a specific port of KNX Net/IP device
+     * @return new builder
      */
-    public static Builder create(final @Nullable InetAddress address) {
-        return create(address, Constants.Default.KNX_PORT);
+
+    public static Builder create(final @Nonnull InetAddress address, final int port) {
+        Preconditions.checkNotNull(address);
+        if (address.isMulticastAddress()) {
+            return routing(address, port);
+        } else {
+            return tunneling(address, port);
+        }
     }
 
     /**
-     * Creates a Builder for a customized configuration
+     * Creates a Builder for customized configuration using <strong>ROUTING</strong> mode.
+     * <p/>
+     * Default Address: {@link Constants.Default#MULTICAST_ADDRESS}<br/>
+     * Default Port: {@link Constants.Default#KNX_PORT}<br/>
      *
-     * @param address remote control address
-     * @param port    remote control port
-     * @return {@link Builder}
+     * @return new builder for routing mode with standard settings according to the KNX specification
      */
-    public static Builder create(final @Nullable InetAddress address, final int port) {
-        return new Builder(address, port);
+    public static Builder routing() {
+        return routing(Constants.Default.MULTICAST_ADDRESS);
+    }
+
+    /**
+     * Creates a Builder for customized configuration using <strong>ROUTING</strong> mode with
+     * customized multicast {@code address} and default KNX port.
+     * address
+     * <p/>
+     * Default Port: {@link Constants.Default#KNX_PORT}<br/>
+     *
+     * @param address a specified multicast address of KNX Net/IP device
+     * @return new builder for routing mode with customized multicast address
+     */
+    public static Builder routing(final @Nonnull InetAddress address) {
+        return routing(address, Constants.Default.KNX_PORT);
+    }
+
+    /**
+     * Creates a Builder for customized configuration using <strong>ROUTING</strong> mode with
+     * customized multicast {@code address} and customized KNX port.
+     * address
+     *
+     * @param address a specified multicast address of KNX Net/IP device
+     * @param port    a specific port of KNX Net/IP device
+     * @return new builder for routing mode with customized multicast address and port
+     */
+    public static Builder routing(final @Nonnull InetAddress address, final int port) {
+        Preconditions.checkNotNull(address);
+        Preconditions.checkArgument(address.isMulticastAddress(),
+                "Given address is not suitable for routing: %s", address);
+        return new Builder(true, address, port);
+    }
+
+    /**
+     * Creates a Builder for customized configuration using <strong>TUNNELING</strong> mode.
+     * <p/>
+     * Default Address: {@link Networker#getAddressUnbound()} (=will use discovery service)<br/>
+     * Default Port: {@link Constants.Default#KNX_PORT}<br/>
+     *
+     * @return new builder for tunneling mode with standard settings according to the KNX specification
+     */
+    public static Builder tunneling() {
+        return tunneling(Networker.getAddressUnbound());
+    }
+
+    /**
+     * Creates a Builder for customized configuration using <strong>TUNNELING</strong> mode with
+     * customized {@code address} and default KNX port.
+     * address
+     * <p/>
+     * Default Port: {@link Constants.Default#KNX_PORT}<br/>
+     *
+     * @param address a specified address of KNX Net/IP device
+     * @return new builder for tunneling mode with customized address
+     */
+    public static Builder tunneling(final @Nonnull InetAddress address) {
+        return tunneling(address, Constants.Default.KNX_PORT);
+    }
+
+    /**
+     * Creates a Builder for customized configuration using <strong>TUNNELING</strong> mode with
+     * customized {@code address} and customized KNX port.
+     *
+     * @param address a specified address of KNX Net/IP device
+     * @param port    a specific port of KNX Net/IP device
+     * @return new builder for tunneling mode with customized address
+     */
+    public static Builder tunneling(final @Nonnull InetAddress address, final int port) {
+        Preconditions.checkNotNull(address);
+        Preconditions.checkArgument(address.isAnyLocalAddress() || !address.isMulticastAddress(),
+                "Given address is not suitable for tunneling: %s", address);
+        return new Builder(false, address, port);
     }
 
     /**
      * Remote Control Endpoint address of KNX Net/IP device to be connected.
      *
-     * @return {@link InetAddress}, if {@code null} then no endpoint is used and discovery service will be used.
+     * @return {@link InetAddress}, if {@link Networker#getAddressUnbound()} then discovery service will be used
      */
-    @Nullable
+    @Nonnull
     public InetAddress getRemoteControlAddress() {
         return this.remoteControlAddress;
     }
@@ -136,12 +233,12 @@ public final class Configuration {
     }
 
     /**
-     * Returns if the routing is enabled. It returns {@code true} if the remote control address is a multicast address.
+     * Returns if the routing is enabled.
      *
      * @return {@code true} if routing is enabled, otherwise {@code false}
      */
     public boolean isRoutingEnabled() {
-        return getRemoteControlAddress() != null && getRemoteControlAddress().isMulticastAddress();
+        return routingEnabled;
     }
 
     /**
@@ -320,15 +417,15 @@ public final class Configuration {
         private final Map<String, String> settings = Maps.newHashMap();
         private InetAddress remoteControlAddress;
         private Integer remoteControlPort;
+        private boolean routingEnabled;
 
-        private Builder() {
-            // empty
-        }
-
-        private Builder(final @Nullable InetAddress address, final int port) {
+        private Builder(final boolean routingEnabled, final @Nonnull InetAddress address, final int port) {
             // accept only 1024 .. 65535, other ports are reserved
-            Preconditions.checkArgument(port >= 1024 && port <= 65535, "Illegal Port for endpoint provided.");
-            this.remoteControlAddress = address;
+            Preconditions.checkArgument(port >= 1024 && port <= 65535,
+                    "Illegal Port for endpoint provided.");
+
+            this.routingEnabled = routingEnabled;
+            this.remoteControlAddress = Objects.requireNonNull(address);
             this.remoteControlPort = port;
         }
 

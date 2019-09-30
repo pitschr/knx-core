@@ -21,6 +21,7 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.Configuration;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Default KNX client implementation
@@ -57,7 +58,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @return
      */
     @Nonnull
-    public static DefaultKnxClient createStarted(final String address) {
+    public static DefaultKnxClient createStarted(final @Nullable String address) {
         return createStarted(Configuration.create(address).build());
     }
 
