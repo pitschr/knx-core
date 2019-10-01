@@ -57,9 +57,11 @@ public final class PluginManager implements AutoCloseable {
     private final List<ExtensionPlugin> extensionPlugins = new LinkedList<>();
     private final List<Plugin> allPlugins = new LinkedList<>();
     private final ExecutorService pluginExecutor;
-    private BaseKnxClient client;
+    private KnxClient client;
 
-    public PluginManager(final @Nonnull Configuration config) {
+    PluginManager(final @Nonnull Configuration config) {
+        Preconditions.checkNotNull(config);
+
         final var pluginExecutorPoolSize = config.getPluginExecutorPoolSize();
         pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
         log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
@@ -70,9 +72,9 @@ public final class PluginManager implements AutoCloseable {
      * <p/>
      * <strong>For internal use only!</strong>
      */
-    void notifyInitialization(final @Nonnull BaseKnxClient client) {
+    void notifyInitialization(final @Nonnull KnxClient client) {
         this.client = Objects.requireNonNull(client);
-        client.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
+        this.client.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
         log.info("Observer Plugins: {}", observerPlugins);
         log.info("Extension Plugins: {}", extensionPlugins);
         notifyPlugins(client, allPlugins, Plugin::onInitialization);

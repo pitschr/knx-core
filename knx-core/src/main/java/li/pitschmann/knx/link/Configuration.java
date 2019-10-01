@@ -19,8 +19,6 @@
 package li.pitschmann.knx.link;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
 
@@ -30,6 +28,8 @@ import java.net.InetAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,7 +55,7 @@ public final class Configuration {
         this.routingEnabled = builder.routingEnabled;
 
         // remote endpoint
-        this.remoteControlAddress = builder.remoteControlAddress;
+        this.remoteControlAddress = Objects.requireNonNull(builder.remoteControlAddress);
         this.remoteControlPort = builder.remoteControlPort;
 
         this.settings = Collections.unmodifiableMap(builder.settings);
@@ -68,6 +68,7 @@ public final class Configuration {
      * @param address remote control address (and port)
      * @return {@link Builder}
      */
+    @Nonnull
     public static Builder create(final @Nullable String address) {
         // if address is null/blank then no address is provided and will be picked up using discovery approach
         if (address == null || address.isBlank()) {
@@ -101,6 +102,7 @@ public final class Configuration {
      * @param address a specified address of KNX Net/IP device
      * @return new builder
      */
+    @Nonnull
     public static Builder create(final @Nonnull InetAddress address) {
         Preconditions.checkNotNull(address);
         if (address.isMulticastAddress()) {
@@ -120,7 +122,7 @@ public final class Configuration {
      * @param port    a specific port of KNX Net/IP device
      * @return new builder
      */
-
+    @Nonnull
     public static Builder create(final @Nonnull InetAddress address, final int port) {
         Preconditions.checkNotNull(address);
         if (address.isMulticastAddress()) {
@@ -138,6 +140,7 @@ public final class Configuration {
      *
      * @return new builder for routing mode with standard settings according to the KNX specification
      */
+    @Nonnull
     public static Builder routing() {
         return routing(Constants.Default.MULTICAST_ADDRESS);
     }
@@ -152,6 +155,7 @@ public final class Configuration {
      * @param address a specified multicast address of KNX Net/IP device
      * @return new builder for routing mode with customized multicast address
      */
+    @Nonnull
     public static Builder routing(final @Nonnull InetAddress address) {
         return routing(address, Constants.Default.KNX_PORT);
     }
@@ -165,10 +169,11 @@ public final class Configuration {
      * @param port    a specific port of KNX Net/IP device
      * @return new builder for routing mode with customized multicast address and port
      */
+    @Nonnull
     public static Builder routing(final @Nonnull InetAddress address, final int port) {
         Preconditions.checkNotNull(address);
         Preconditions.checkArgument(address.isMulticastAddress(),
-                "Given address is not suitable for routing: %s", address);
+                "Given address is not suitable for routing: %s", address.getHostAddress());
         return new Builder(true, address, port);
     }
 
@@ -180,6 +185,7 @@ public final class Configuration {
      *
      * @return new builder for tunneling mode with standard settings according to the KNX specification
      */
+    @Nonnull
     public static Builder tunneling() {
         return tunneling(Networker.getAddressUnbound());
     }
@@ -194,6 +200,7 @@ public final class Configuration {
      * @param address a specified address of KNX Net/IP device
      * @return new builder for tunneling mode with customized address
      */
+    @Nonnull
     public static Builder tunneling(final @Nonnull InetAddress address) {
         return tunneling(address, Constants.Default.KNX_PORT);
     }
@@ -206,10 +213,11 @@ public final class Configuration {
      * @param port    a specific port of KNX Net/IP device
      * @return new builder for tunneling mode with customized address
      */
+    @Nonnull
     public static Builder tunneling(final @Nonnull InetAddress address, final int port) {
         Preconditions.checkNotNull(address);
         Preconditions.checkArgument(address.isAnyLocalAddress() || !address.isMulticastAddress(),
-                "Given address is not suitable for tunneling: %s", address);
+                "Given address is not suitable for tunneling: %s", address.getHostAddress());
         return new Builder(false, address, port);
     }
 
@@ -305,7 +313,9 @@ public final class Configuration {
         return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
     }
 
+    //
     // client.communication.control
+    //
 
     public int getControlChannelPort() {
         return getSetting("client.communication.control.port", 0, Integer::valueOf);
@@ -315,7 +325,9 @@ public final class Configuration {
         return getSetting("client.communication.control.socketTimeout", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
+    //
     // client.communication.data
+    //
 
     public int getDataChannelPort() {
         return getSetting("client.communication.data.port", 0, Integer::valueOf);
@@ -325,14 +337,19 @@ public final class Configuration {
         return getSetting("client.communication.data.socketTimeout", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
+    //
     // client.communication.discovery
+    //
 
     public long getTimeoutDiscoveryRequest() {
         return getSetting("client.communication.discovery.requestTimeout", Constants.Timeouts.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
     }
 
+    //
     // client.communication.multicast
+    //
 
+    @Nonnull
     public InetAddress getMulticastChannelAddress() {
         return getSetting("client.communication.multicast.address", Constants.Default.MULTICAST_ADDRESS, Networker::getByAddress);
     }
@@ -349,7 +366,9 @@ public final class Configuration {
         return getSetting("client.communication.multicast.timeToLive", 4, Integer::valueOf);
     }
 
+    //
     // client.communication.description
+    //
 
     public int getDescriptionChannelPort() {
         return getSetting("client.communication.description.port", 0, Integer::valueOf);
@@ -363,7 +382,9 @@ public final class Configuration {
         return getSetting("client.communication.description.socketTimeout", Constants.Timeouts.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
+    //
     // client.communication.disconnect
+    //
 
     public long getTimeoutDisconnectRequest() {
         return getSetting("client.communication.disconnect.requestTimeout", Constants.Timeouts.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
@@ -373,13 +394,17 @@ public final class Configuration {
         return getSetting("client.communication.disconnect.responseTimeout", Constants.Timeouts.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
     }
 
+    //
     // client.communication.connect
+    //
 
     public long getTimeoutConnectRequest() {
         return getSetting("client.communication.connect.requestTimeout", Constants.Timeouts.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
     }
 
+    //
     // client.communication.connectionState
+    //
 
     public long getTimeoutConnectionStateRequest() {
         return getSetting("client.communication.connectionState.requestTimeout", Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
@@ -392,7 +417,6 @@ public final class Configuration {
     public long getIntervalConnectionState() {
         return getSetting("client.communication.connectionState.interval", Constants.Interval.CONNECTIONSTATE, Long::valueOf);
     }
-
 
     //
     // DAEMON
@@ -413,37 +437,66 @@ public final class Configuration {
      * @author PITSCHR
      */
     public static class Builder {
-        private final List<Plugin> plugins = Lists.newLinkedList();
-        private final Map<String, String> settings = Maps.newHashMap();
+        private final List<Plugin> plugins = new LinkedList<>();
+        private final Map<String, String> settings = new HashMap<>(64);
         private InetAddress remoteControlAddress;
         private Integer remoteControlPort;
         private boolean routingEnabled;
 
+        /**
+         * Creates a builder instance that is subject to end up with {@link Configuration} instance using
+         * {@link #build()} method.
+         *
+         * @param routingEnabled indicates if the routing or tunneling mode should be used for communication
+         * @param address the address of KNX Net/IP device
+         * @param port the port of KNX Net/IP device (must be within range of 1024 .. 65535)
+         */
         private Builder(final boolean routingEnabled, final @Nonnull InetAddress address, final int port) {
             // accept only 1024 .. 65535, other ports are reserved
             Preconditions.checkArgument(port >= 1024 && port <= 65535,
-                    "Illegal Port for endpoint provided.");
+                    "Port is outside of range [1024 .. 65535]: %s", port);
 
             this.routingEnabled = routingEnabled;
             this.remoteControlAddress = Objects.requireNonNull(address);
             this.remoteControlPort = port;
         }
 
+        /**
+         * Adds plugin to be used by KNX client
+         *
+         * @param plugin plugin to be provided
+         * @param morePlugins optionally an array of plugins can be provided, the array may not contain {@code null} element.
+         * @return myself
+         */
         @Nonnull
         public Builder plugin(final @Nonnull Plugin plugin, final @Nullable Plugin... morePlugins) {
             this.plugins.add(Objects.requireNonNull(plugin));
-            for (final Plugin morePlugin : morePlugins) {
-                this.plugins.add(Objects.requireNonNull(morePlugin));
+            if (morePlugins != null) {
+                for (final Plugin morePlugin : morePlugins) {
+                    this.plugins.add(Objects.requireNonNull(morePlugin));
+                }
             }
             return this;
         }
 
+        /**
+         * Adds setting to be used by KNX client
+         *
+         * @param key key of setting
+         * @param value if {@code null}, then default value should be used
+         * @return myself
+         */
         @Nonnull
         public Builder setting(final @Nonnull String key, final @Nullable String value) {
             this.settings.put(Objects.requireNonNull(key), value);
             return this;
         }
 
+        /**
+         * Converts the {@link Builder} instance into an immutable {@link Configuration} instance.
+         *
+         * @return a new instance of {@link Configuration}
+         */
         @Nonnull
         public Configuration build() {
             return new Configuration(this);
