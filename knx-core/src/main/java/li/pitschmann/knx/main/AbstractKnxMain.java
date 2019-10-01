@@ -70,12 +70,14 @@ public abstract class AbstractKnxMain {
         } else if (routingEnabled) {
             // routing
             configBuilder = Configuration.routing();
-        } else if (natEnabled) {
-            // tunneling in NAT mode
-            configBuilder = Configuration.tunneling().nat();
         } else {
             // tunneling
             configBuilder = Configuration.tunneling();
+        }
+
+        if (natEnabled) {
+            // enable NAT mode
+            configBuilder.nat();
         }
 
         return configBuilder;
