@@ -462,6 +462,18 @@ public final class Configuration {
         }
 
         /**
+         * Enables the Network Address Translation (NAT). This can be used with tunneling mode only.
+         *
+         * @return myself
+         */
+        @Nonnull
+        public Builder nat() {
+            Preconditions.checkState(!this.routingEnabled, "NAT can be enabled in tunneling mode only!");
+            setting("client.nat.enabled", "true");
+            return this;
+        }
+
+        /**
          * Adds plugin to be used by KNX client
          *
          * @param plugin plugin to be provided
