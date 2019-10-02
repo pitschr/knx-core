@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,7 +84,7 @@ public class BaseKnxClient implements KnxClient {
             // tunneling request
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
-                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Times.DATA_REQUEST_TIMEOUT).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during write request for tunneling", ex);
@@ -108,7 +107,7 @@ public class BaseKnxClient implements KnxClient {
         } else {
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
-                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Timeouts.DATA_REQUEST_TIMEOUT).get();
+                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Times.DATA_REQUEST_TIMEOUT).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during read response for tunneling", ex);

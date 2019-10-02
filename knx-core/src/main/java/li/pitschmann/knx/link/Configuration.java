@@ -19,12 +19,16 @@
 package li.pitschmann.knx.link;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -33,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.function.Function;
 
 /**
@@ -62,26 +67,81 @@ public final class Configuration {
         this.plugins = Collections.unmodifiableList(builder.plugins);
     }
 
+//    public class ConfigurationEntry {
+//        // key   (mandatory)
+//        // value  (default: null)
+//        // defaultValue (default: null)
+//        // string to type conversion  (default: null)
+//        // boolean canRuntimeChanged  (default: no)
+//        // equals / hashcode / toString (based on key)
+//    }
+
+    /**
+     * Creates a Builder from specified {@code filePath}.
+     *
+     * @param filePath
+     * @return a new instance of {@link Builder}
+     */
+    public static Builder create(final @Nonnull Path filePath) {
+        Preconditions.checkArgument(Files.isReadable(filePath),
+                "The file doesn't exists or is not readable: %s", filePath);
+
+        // read + parse file
+        try {
+            final var lines = Files.readAllLines(filePath);
+
+            // load them in Properties file?
+
+            // try to figure out endpoint address / port if possible
+            // "client.endpoint.address" / "client.endpoint.port"
+
+
+        } catch (final IOException e) {
+            throw new KnxConfigurationException("Cannot read file: " + filePath, e);
+        }
+
+        // parse file
+
+        // create Builder
+        // TODO: implement  (YAML, JSON, other format?) - e.g. SnakeYaml
+        return null;
+    }
+
     /**
      * Creates a Builder for a customized configuration
      *
+     * It supports a lot of different patterns:<br>
+     * <ul>
+     *     <li><strong>No-arg:</strong><br><i>null</i><br><i>empty</i><br>{@code :}</li>
+     *     <li><strong>Host and port</strong><br>{@code <host>:<port>"}</li>
+     *     <li><strong>Host only</strong><br>{@code <host>}<br>{@code <host>:}</li>
+     *     <li><strong>Port only</strong><br>{@code :<port>}</li>
+     * </ul>
+     *
      * @param address remote control address (and port)
-     * @return {@link Builder}
+     * @return a new instance of {@link Builder}
      */
     @Nonnull
     public static Builder create(final @Nullable String address) {
         // if address is null/blank then no address is provided and will be picked up using discovery approach
-        if (address == null || address.isBlank()) {
+        if (address == null || address.isBlank() || address.trim().equals(":")) {
             return tunneling();
+        }
+        // address format is: '<host>:'
+        else if (address.endsWith(":")) {
+            final var addressSplitted = address.split(":");
+            Preconditions.checkArgument(addressSplitted.length == 1,
+                    "Unsupported Address format provided (expected: '<host>:'): %s", address);
+            return create(Networker.getByAddress(addressSplitted[0]));
         }
         // address contains ':' character -> assuming it is <host>:<port>
         else if (address.contains(":")) {
             final var addressSplitted = address.split(":");
             Preconditions.checkArgument(addressSplitted.length == 2,
-                    "Unsupported Address format provided. Expected: <address>:<port>");
+                    "Unsupported Address format provided (expected: '<host>:<port>'): %s", address);
 
-            final var host = Networker.getByAddress(addressSplitted[0]);
-            final var port = Integer.parseInt(addressSplitted[1]);
+            final var host = Strings.isNullOrEmpty(addressSplitted[0]) ? Networker.getAddressUnbound() : Networker.getByAddress(addressSplitted[0]);
+            final var port = Integer.valueOf(addressSplitted[1]);
 
             return create(host, port);
         }
@@ -100,7 +160,7 @@ public final class Configuration {
      * Default Port: {@link Constants.Default#KNX_PORT}<br/>
      *
      * @param address a specified address of KNX Net/IP device
-     * @return new builder
+     * @return a new instance of {@link Builder}
      */
     @Nonnull
     public static Builder create(final @Nonnull InetAddress address) {
@@ -120,7 +180,7 @@ public final class Configuration {
      *
      * @param address a specified address of KNX Net/IP device
      * @param port    a specific port of KNX Net/IP device
-     * @return new builder
+     * @return a new instance of {@link Builder}
      */
     @Nonnull
     public static Builder create(final @Nonnull InetAddress address, final int port) {
@@ -305,10 +365,6 @@ public final class Configuration {
         return getSetting("client.communication.executorPoolSize", Constants.Default.COMMUNICATION_POOL_SIZE, Integer::valueOf);
     }
 
-    public long getIntervalEvent() {
-        return getSetting("client.communication.interval", Constants.Interval.EVENT, Long::valueOf);
-    }
-
     public boolean isNatEnabled() {
         return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
     }
@@ -322,7 +378,7 @@ public final class Configuration {
     }
 
     public long getSocketTimeoutControlChannel() {
-        return getSetting("client.communication.control.socketTimeout", Constants.Timeouts.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.control.socketTimeout", Constants.Times.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -334,7 +390,7 @@ public final class Configuration {
     }
 
     public long getSocketTimeoutDataChannel() {
-        return getSetting("client.communication.data.socketTimeout", Constants.Timeouts.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.data.socketTimeout", Constants.Times.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -342,7 +398,7 @@ public final class Configuration {
     //
 
     public long getTimeoutDiscoveryRequest() {
-        return getSetting("client.communication.discovery.requestTimeout", Constants.Timeouts.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.discovery.requestTimeout", Constants.Times.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -359,7 +415,7 @@ public final class Configuration {
     }
 
     public long getSocketTimeoutMulticastChannel() {
-        return getSetting("client.communication.multicast.socketTimeout", Constants.Timeouts.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.multicast.socketTimeout", Constants.Times.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     public int getMulticastTTL() {
@@ -375,11 +431,11 @@ public final class Configuration {
     }
 
     public long getTimeoutDescriptionRequest() {
-        return getSetting("client.communication.description.requestTimeout", Constants.Timeouts.DESCRIPTION_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.description.requestTimeout", Constants.Times.DESCRIPTION_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getSocketTimeoutDescriptionChannel() {
-        return getSetting("client.communication.description.socketTimeout", Constants.Timeouts.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.description.socketTimeout", Constants.Times.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -387,11 +443,11 @@ public final class Configuration {
     //
 
     public long getTimeoutDisconnectRequest() {
-        return getSetting("client.communication.disconnect.requestTimeout", Constants.Timeouts.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.disconnect.requestTimeout", Constants.Times.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutDisconnectResponse() {
-        return getSetting("client.communication.disconnect.responseTimeout", Constants.Timeouts.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.disconnect.responseTimeout", Constants.Times.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -399,7 +455,7 @@ public final class Configuration {
     //
 
     public long getTimeoutConnectRequest() {
-        return getSetting("client.communication.connect.requestTimeout", Constants.Timeouts.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.connect.requestTimeout", Constants.Times.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -407,15 +463,15 @@ public final class Configuration {
     //
 
     public long getTimeoutConnectionStateRequest() {
-        return getSetting("client.communication.connectionState.requestTimeout", Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting("client.communication.connectionState.requestTimeout", Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutAliveConnection() {
-        return getSetting("client.communication.connectionState.aliveTimeout", Constants.Timeouts.CONNECTION_ALIVE_TIME, Long::valueOf);
+        return getSetting("client.communication.connectionState.aliveTimeout", Constants.Times.CONNECTION_ALIVE_TIME, Long::valueOf);
     }
 
     public long getIntervalConnectionState() {
-        return getSetting("client.communication.connectionState.interval", Constants.Interval.CONNECTIONSTATE, Long::valueOf);
+        return getSetting("client.communication.connectionState.checkInterval", Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL, Long::valueOf);
     }
 
     //

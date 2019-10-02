@@ -33,11 +33,11 @@ public final class Constants {
     }
 
     /**
-     * Timeout Constants
+     * Times Constants
      *
      * @author PITSCHR
      */
-    public static final class Timeouts {
+    public static final class Times {
         /**
          * KNX client shall wait for 10 seconds for a SEARCH_RESPONSE frame from KNX Net/IP device.
          */
@@ -62,6 +62,10 @@ public final class Constants {
          * KNX client shall wait for 10 seconds for a CONNECTION_STATE_RESPONSE frame from KNX Net/IP device.
          */
         public static final long CONNECTIONSTATE_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+        /**
+         * Number of connection state request attempts before KNX connection will be disconnected.
+         */
+        public static final long CONNECTIONSTATE_CHECK_INTERVAL = TimeUnit.SECONDS.toMillis(60);
         /**
          * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
          * KNX Net/IP device.
@@ -98,25 +102,23 @@ public final class Constants {
          */
         public static final long DATA_CHANNEL_SOCKET_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
 
-        private Timeouts() {
-        }
+        private Times() {}
     }
 
     /**
-     * Interval Constants
+     * Event Constants
      */
-    public static final class Interval {
-        /**
-         * Number of connection state request attempts before KNX connection will be disconnected.
-         */
-        public static final long CONNECTIONSTATE = TimeUnit.SECONDS.toMillis(60);
+    public static final class Event {
         /**
          * Interval of look up for event pool (e.g. if request/ack received)
          */
-        public static final long EVENT = 10L;
+        public static final long CHECK_INTERVAL = 10L;
+        /**
+         * Number of total attempts to be retried when no requested packet was received
+         */
+        public static final int TOTAL_ATTEMPTS = 3;
 
-        private Interval() {
-        }
+        private Event() {}
     }
 
     /**
@@ -148,12 +150,6 @@ public final class Constants {
          */
         public static final boolean NAT_ENABLED = false;
 
-        /**
-         * Default value if ROUTING should be enabled
-         */
-        public static final boolean ROUTING_ENABLED = false;
-
-        private Default() {
-        }
+        private Default() {}
     }
 }

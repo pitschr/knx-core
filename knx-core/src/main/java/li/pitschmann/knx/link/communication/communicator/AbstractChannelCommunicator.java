@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
@@ -243,8 +244,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
         // send packet
         var attempts = 1;
-        final var totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)
-        final var eventWaiting = this.client.getConfig().getIntervalEvent();
+        final var totalAttempts = Constants.Event.TOTAL_ATTEMPTS;
+        final var checkInterval = Constants.Event.CHECK_INTERVAL;
         U responseBody;
 
         do {
@@ -260,7 +261,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
             while ( // true = no response yet
                     !event.hasResponse()
                             // true = not interrupted
-                            && Sleeper.milliseconds(eventWaiting)
+                            && Sleeper.milliseconds(checkInterval)
                             // true = request timeout not reached yet
                             && (System.currentTimeMillis() - start) < msTimeout
                             // true = no predicate defined or not meet

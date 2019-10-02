@@ -37,10 +37,25 @@ import static org.mockito.Mockito.mock;
 public class ConfigurationTest {
 
     @Test
+    @DisplayName("Creates a new config with null or empty String")
+    public void testCreateStringNoArg() {
+        // creates a new one without any configuration -> discovery service and default KNX port will be used
+        final var config0 = Configuration.create((String)null).build();
+        assertThat(config0.isRoutingEnabled()).isFalse();
+        assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
+        assertThat(config0.getRemoteControlPort()).isEqualTo(Constants.Default.KNX_PORT);
+
+        final var config1 = Configuration.create("").build();
+        assertThat(config1.isRoutingEnabled()).isFalse();
+        assertThat(config1.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
+        assertThat(config1.getRemoteControlPort()).isEqualTo(Constants.Default.KNX_PORT);
+    }
+
+    @Test
     @DisplayName("Creates a new config with String")
     public void testCreateString() {
-        // creates a new one without any configuration -> discovery service and default KNX port will be used
-        final var config0 = Configuration.create("").build();
+        // creates a new string without
+        final var config0 = Configuration.create(":").build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
         assertThat(config0.getRemoteControlPort()).isEqualTo(Constants.Default.KNX_PORT);
@@ -51,11 +66,35 @@ public class ConfigurationTest {
         assertThat(config1.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
         assertThat(config1.getRemoteControlPort()).isEqualTo(Constants.Default.KNX_PORT);
 
-        // creates a new with port
-        final var config2 = Configuration.create("127.0.1.2:4711").build();
+        // tunneling (with address and port)
+        final var config2 = Configuration.create("127.0.1.2:4710").build();
         assertThat(config2.isRoutingEnabled()).isFalse();
         assertThat(config2.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 2));
-        assertThat(config2.getRemoteControlPort()).isEqualTo(4711);
+        assertThat(config2.getRemoteControlPort()).isEqualTo(4710);
+
+        // tunneling (with address, no port)
+        final var config3 = Configuration.create("127.0.1.3:").build();
+        assertThat(config3.isRoutingEnabled()).isFalse();
+        assertThat(config3.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 3));
+        assertThat(config3.getRemoteControlPort()).isEqualTo(Constants.Default.KNX_PORT);
+
+        // tunneling (no address, with port)
+        final var config4 = Configuration.create(":4711").build();
+        assertThat(config4.isRoutingEnabled()).isFalse();
+        assertThat(config4.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
+        assertThat(config4.getRemoteControlPort()).isEqualTo(4711);
+
+        // routing (no port)
+        final var config5 = Configuration.create("224.0.1.4").build();
+        assertThat(config5.isRoutingEnabled()).isTrue();
+        assertThat(config5.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(224,0,1,4));
+        assertThat(config5.getRemoteControlPort()).isEqualTo(Constants.Default.KNX_PORT);
+
+        // routing (with port)
+        final var config6 = Configuration.create("224.0.1.5:4712").build();
+        assertThat(config6.isRoutingEnabled()).isTrue();
+        assertThat(config6.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(224,0,1,5));
+        assertThat(config6.getRemoteControlPort()).isEqualTo(4712);
     }
 
     @Test

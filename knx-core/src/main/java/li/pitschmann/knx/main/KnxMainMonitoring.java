@@ -50,7 +50,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //
                 ) //
                 .setting("client.communication.connectionState.requestTimeout", "10000") //
-                .setting("client.communication.connectionState.interval", "30000") //
+                .setting("client.communication.connectionState.checkInterval", "30000") //
                 .setting("client.communication.connectionState.aliveTimeout", "60000") //
                 .setting("client.communication.description.port", "40000") //
                 .setting("client.communication.description.port", "40001") //
