@@ -20,6 +20,7 @@ package li.pitschmann.knx.link;
 
 import li.pitschmann.utils.Networker;
 
+import javax.annotation.Nonnull;
 import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
@@ -151,5 +152,50 @@ public final class Constants {
         public static final boolean NAT_ENABLED = false;
 
         private Default() {}
+    }
+
+    public enum ConfigurationKey {
+        // not reloadable
+        ENDPOINT_ADDRESS("client.endpoint.address", false),
+        ENDPOINT_PORT("client.endpoint.port", false),
+        NAT("client.nat.enabled", false),
+        PLUGIN_EXECUTOR_POOL_SIZE("client.plugin.executorPoolSize", false),
+        COMMUNICATION_EXECUTOR_POOL_SIZE("client.communication.executorPoolSize", false),
+        CONTROL_CHANNEL_PORT("client.communication.control.port", false),
+        CONTROL_CHANNEL_SOCKET_TIMEOUT("client.communication.control.socketTimeout", false),
+        DATA_CHANNEL_PORT("client.communication.data.port", false),
+        DATA_CHANNEL_SOCKET_TIMEOUT("client.communication.data.socketTimeout", false),
+        MULTICAST_ADDRESS("client.communication.multicast.address", false),
+        MULTICAST_PORT("client.communication.multicast.port", false),
+        MULTICAST_SOCKET_TIMEOUT("client.communication.multicast.socketTimeout", false),
+        MULTICAST_TTL("client.communication.multicast.timeToLive", false),
+        DESCRIPTION_CHANNEL_PORT("client.communication.description.port", false),
+        DESCRIPTION_SOCKET_TIMEOUT("client.communication.description.socketTimeout", false),
+        DAEMON_PORT("daemon.port.http", false),
+        DAEMON_PROJECT_PATH("daemon.path.knxproj", false),
+        // reloadable
+        DISCOVERY_REQUEST_TIMEOUT("client.communication.discovery.requestTimeout", true),
+        DESCRIPTION_REQUEST_TIMEOUT("client.communication.description.requestTimeout", true),
+        DISCONNECT_REQUEST_TIMEOUT("client.communication.disconnect.requestTimeout", true),
+        DISCONNECT_RESPONSE_TIMEOUT("client.communication.disconnect.responseTimeout", true),
+        CONNECT_REQUEST_TIMEOUT("client.communication.connect.requestTimeout", true),
+        CONNECTIONSTATE_REQUEST_TIMEOUT("client.communication.connectionState.requestTimeout", true),
+        CONNECTIONSTATE_ALIVE_TIMEOUT("client.communication.connectionState.aliveTimeout", true),
+        CONNECTIONSTATE_CHECK_INTERVAL("client.communication.connectionState.checkInterval", true);
+
+        private final String key;
+        private final boolean reloadable;
+        ConfigurationKey(final @Nonnull String key, final boolean reloadable) {
+            this.key = key;
+            this.reloadable = reloadable;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public boolean isReloadable() {
+            return reloadable;
+        }
     }
 }

@@ -108,26 +108,26 @@ public class KnxClientTest {
         // verify number of notifications to observer plug-in
         verify(observerPlugin, times(1)).onInitialization(any());
 
-        verify(observerPlugin, times(1)).onIncomingBody(isA(DescriptionResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectionStateResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(TunnelingRequestBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(DisconnectResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(DescriptionResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(ConnectResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(ConnectionStateResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(TunnelingRequestBody.class));
+        verify(observerPlugin).onIncomingBody(isA(DisconnectResponseBody.class));
         verify(observerPlugin, times(5)).onIncomingBody(any());
 
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(DescriptionRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectionStateRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(TunnelingAckBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(DisconnectRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(DescriptionRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(ConnectRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(ConnectionStateRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(TunnelingAckBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(DisconnectRequestBody.class));
         verify(observerPlugin, times(5)).onOutgoingBody(any());
 
         verify(observerPlugin, times(2)).onError(any());
 
         // verify number of notifications to extension plug-in
-        verify(extensionPlugin, times(1)).onInitialization(any());
-        verify(extensionPlugin, times(1)).onStart();
-        verify(extensionPlugin, times(1)).onShutdown();
+        verify(extensionPlugin).onInitialization(any());
+        verify(extensionPlugin).onStart();
+        verify(extensionPlugin).onShutdown();
     }
 
 

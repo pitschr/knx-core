@@ -31,13 +31,13 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.function.Function;
 
 /**
@@ -51,7 +51,7 @@ import java.util.function.Function;
 public final class Configuration {
     private final boolean routingEnabled;
     private final InetAddress remoteControlAddress;
-    private final Integer remoteControlPort;
+    private final int remoteControlPort;
     private final List<Plugin> plugins;
     private final Map<String, String> settings;
 
@@ -63,8 +63,8 @@ public final class Configuration {
         this.remoteControlAddress = Objects.requireNonNull(builder.remoteControlAddress);
         this.remoteControlPort = builder.remoteControlPort;
 
-        this.settings = Collections.unmodifiableMap(builder.settings);
-        this.plugins = Collections.unmodifiableList(builder.plugins);
+        this.settings = Collections.unmodifiableMap(new HashMap<>(builder.settings));
+        this.plugins = Collections.unmodifiableList(new ArrayList<>(builder.plugins));
     }
 
 //    public class ConfigurationEntry {
@@ -297,7 +297,7 @@ public final class Configuration {
      * @return port
      */
     public int getRemoteControlPort() {
-        return getSetting(this.remoteControlPort, Constants.Default.KNX_PORT);
+        return this.remoteControlPort;
     }
 
     /**
@@ -321,32 +321,33 @@ public final class Configuration {
 
     /**
      * Returns the setting for given {@code key}. Defaults back to {@code defaultValue} in case the
-     * key is not defined or unknown.
+     * value of key is not defined or unknown.
      *
      * @param key          configuration key
      * @param defaultValue used if value for key is absent
      * @param function     for conversion from {@link String} to an instance of {@code T}
      * @param <T>
-     * @return the value of setting (key)
+     * @return the value of setting (key), may be {@code null} if undefined
      */
     @Nullable
-    private <T> T getSetting(final @Nonnull String key, final @Nullable T defaultValue, final @Nonnull Function<String, T> function) {
+    public <T> T getSetting(final @Nonnull String key, final @Nullable T defaultValue, final @Nonnull Function<String, T> function) {
         final var value = this.settings.get(Objects.requireNonNull(key));
         return value == null ? defaultValue : function.apply(value);
     }
 
     /**
-     * Returns the setting for given {@code value}. Defaults back to {@code defaultValue} in case the
-     * value is {@code null}
+     * Returns the setting for given {@code key}. Defaults back to {@code defaultValue} in case the
+     * value of key is not defined or unknown.
      *
-     * @param value        configuration value
-     * @param defaultValue used if configuration value is absent
+     * @param key          configuration key
+     * @param defaultValue used if value for key is absent
+     * @param function     for conversion from {@link String} to an instance of {@code T}
      * @param <T>
-     * @return the value of configuration
+     * @return the value of setting (key), may be {@code null} if undefined
      */
     @Nullable
-    private <T> T getSetting(final @Nullable T value, final @Nullable T defaultValue) {
-        return value == null ? defaultValue : value;
+    public <T> T getSetting(final @Nonnull Constants.ConfigurationKey key, final @Nullable T defaultValue, final @Nonnull Function<String, T> function) {
+        return getSetting(key.getKey(), defaultValue, function);
     }
 
     //
@@ -354,7 +355,7 @@ public final class Configuration {
     //
 
     public int getPluginExecutorPoolSize() {
-        return getSetting("client.plugin.executorPoolSize", Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.PLUGIN_EXECUTOR_POOL_SIZE, Constants.Default.PLUGIN_POOL_SIZE, Integer::valueOf);
     }
 
     //
@@ -362,11 +363,11 @@ public final class Configuration {
     //
 
     public int getCommunicationExecutorPoolSize() {
-        return getSetting("client.communication.executorPoolSize", Constants.Default.COMMUNICATION_POOL_SIZE, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.COMMUNICATION_EXECUTOR_POOL_SIZE, Constants.Default.COMMUNICATION_POOL_SIZE, Integer::valueOf);
     }
 
     public boolean isNatEnabled() {
-        return getSetting("client.nat.enabled", Constants.Default.NAT_ENABLED, Boolean::valueOf);
+        return getSetting(Constants.ConfigurationKey.NAT, Constants.Default.NAT_ENABLED, Boolean::valueOf);
     }
 
     //
@@ -374,11 +375,11 @@ public final class Configuration {
     //
 
     public int getControlChannelPort() {
-        return getSetting("client.communication.control.port", 0, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.CONTROL_CHANNEL_PORT, 0, Integer::valueOf);
     }
 
     public long getSocketTimeoutControlChannel() {
-        return getSetting("client.communication.control.socketTimeout", Constants.Times.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.CONTROL_CHANNEL_SOCKET_TIMEOUT, Constants.Times.CONTROL_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -386,11 +387,11 @@ public final class Configuration {
     //
 
     public int getDataChannelPort() {
-        return getSetting("client.communication.data.port", 0, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.DATA_CHANNEL_PORT, 0, Integer::valueOf);
     }
 
     public long getSocketTimeoutDataChannel() {
-        return getSetting("client.communication.data.socketTimeout", Constants.Times.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.DATA_CHANNEL_SOCKET_TIMEOUT, Constants.Times.DATA_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -398,7 +399,7 @@ public final class Configuration {
     //
 
     public long getTimeoutDiscoveryRequest() {
-        return getSetting("client.communication.discovery.requestTimeout", Constants.Times.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.DISCOVERY_REQUEST_TIMEOUT, Constants.Times.SEARCH_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -407,19 +408,19 @@ public final class Configuration {
 
     @Nonnull
     public InetAddress getMulticastChannelAddress() {
-        return getSetting("client.communication.multicast.address", Constants.Default.MULTICAST_ADDRESS, Networker::getByAddress);
+        return getSetting(Constants.ConfigurationKey.MULTICAST_ADDRESS, Constants.Default.MULTICAST_ADDRESS, Networker::getByAddress);
     }
 
     public int getMulticastChannelPort() {
-        return getSetting("client.communication.multicast.port", Constants.Default.KNX_PORT, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.MULTICAST_PORT, Constants.Default.KNX_PORT, Integer::valueOf);
     }
 
     public long getSocketTimeoutMulticastChannel() {
-        return getSetting("client.communication.multicast.socketTimeout", Constants.Times.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.MULTICAST_SOCKET_TIMEOUT, Constants.Times.MULTICAST_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     public int getMulticastTTL() {
-        return getSetting("client.communication.multicast.timeToLive", 4, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.MULTICAST_TTL, 4, Integer::valueOf);
     }
 
     //
@@ -427,15 +428,15 @@ public final class Configuration {
     //
 
     public int getDescriptionChannelPort() {
-        return getSetting("client.communication.description.port", 0, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.DESCRIPTION_CHANNEL_PORT, 0, Integer::valueOf);
     }
 
     public long getTimeoutDescriptionRequest() {
-        return getSetting("client.communication.description.requestTimeout", Constants.Times.DESCRIPTION_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.DESCRIPTION_REQUEST_TIMEOUT, Constants.Times.DESCRIPTION_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getSocketTimeoutDescriptionChannel() {
-        return getSetting("client.communication.description.socketTimeout", Constants.Times.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.DESCRIPTION_SOCKET_TIMEOUT, Constants.Times.DESCRIPTION_CHANNEL_SOCKET_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -443,11 +444,11 @@ public final class Configuration {
     //
 
     public long getTimeoutDisconnectRequest() {
-        return getSetting("client.communication.disconnect.requestTimeout", Constants.Times.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.DISCONNECT_REQUEST_TIMEOUT, Constants.Times.DISCONNECT_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutDisconnectResponse() {
-        return getSetting("client.communication.disconnect.responseTimeout", Constants.Times.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.DISCONNECT_RESPONSE_TIMEOUT, Constants.Times.DISCONNECT_RESPONSE_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -455,7 +456,7 @@ public final class Configuration {
     //
 
     public long getTimeoutConnectRequest() {
-        return getSetting("client.communication.connect.requestTimeout", Constants.Times.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.CONNECT_REQUEST_TIMEOUT, Constants.Times.CONNECT_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     //
@@ -463,15 +464,15 @@ public final class Configuration {
     //
 
     public long getTimeoutConnectionStateRequest() {
-        return getSetting("client.communication.connectionState.requestTimeout", Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT, Long::valueOf);
     }
 
     public long getTimeoutAliveConnection() {
-        return getSetting("client.communication.connectionState.aliveTimeout", Constants.Times.CONNECTION_ALIVE_TIME, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.CONNECTIONSTATE_ALIVE_TIMEOUT, Constants.Times.CONNECTION_ALIVE_TIME, Long::valueOf);
     }
 
     public long getIntervalConnectionState() {
-        return getSetting("client.communication.connectionState.checkInterval", Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL, Long::valueOf);
+        return getSetting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL, Long::valueOf);
     }
 
     //
@@ -479,12 +480,12 @@ public final class Configuration {
     //
 
     public int getDaemonPort() {
-        return getSetting("daemon.port.http", Constants.Default.HTTP_DAEMON_PORT, Integer::valueOf);
+        return getSetting(Constants.ConfigurationKey.DAEMON_PORT, Constants.Default.HTTP_DAEMON_PORT, Integer::valueOf);
     }
 
     @Nullable
     public Path getProjectPath() {
-        return getSetting("daemon.path.knxproj", null, Paths::get);
+        return getSetting(Constants.ConfigurationKey.DAEMON_PROJECT_PATH, null, Paths::get);
     }
 
     /**
@@ -496,7 +497,7 @@ public final class Configuration {
         private final List<Plugin> plugins = new LinkedList<>();
         private final Map<String, String> settings = new HashMap<>(64);
         private InetAddress remoteControlAddress;
-        private Integer remoteControlPort;
+        private int remoteControlPort;
         private boolean routingEnabled;
 
         /**
@@ -525,7 +526,7 @@ public final class Configuration {
         @Nonnull
         public Builder nat() {
             Preconditions.checkState(!this.routingEnabled, "NAT can be enabled in tunneling mode only!");
-            setting("client.nat.enabled", "true");
+            setting(Constants.ConfigurationKey.NAT, "true");
             return this;
         }
 
@@ -548,7 +549,7 @@ public final class Configuration {
         }
 
         /**
-         * Adds setting to be used by KNX client
+         * Adds setting to be used by KNX client (and plugins)
          *
          * @param key key of setting
          * @param value if {@code null}, then default value should be used
@@ -556,8 +557,26 @@ public final class Configuration {
          */
         @Nonnull
         public Builder setting(final @Nonnull String key, final @Nullable String value) {
+            // we have following protected keys and those cannot be set using this method
+            Preconditions.checkArgument(!(
+                            Constants.ConfigurationKey.ENDPOINT_ADDRESS.getKey().equalsIgnoreCase(key)
+                    || Constants.ConfigurationKey.ENDPOINT_PORT.getKey().equalsIgnoreCase(key)
+                    ), "This setting is protected: %s", key);
+
             this.settings.put(Objects.requireNonNull(key), value);
             return this;
+        }
+
+        /**
+         * Adds setting to be used by KNX client (and plugins)
+         *
+         * @param key key of setting
+         * @param value if {@code null}, then default value should be used
+         * @return myself
+         */
+        @Nonnull
+        public Builder setting(final @Nonnull Constants.ConfigurationKey key, final @Nullable String value) {
+            return setting(key.getKey(), value);
         }
 
         /**

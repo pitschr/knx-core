@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -477,19 +478,19 @@ public final class MockServer implements Runnable, Closeable {
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
-                .setting("client.communication.multicast.address", this.getMulticastAddress().getHostAddress())
-                .setting("client.communication.multicast.port", "0") // use random local port for multicast testing
-                .setting("client.communication.multicast.timeToLive", "0") // consider local only (no pass by any router)
-                .setting("client.plugin.executorPoolSize", "3") // 3 instead of 10
-                .setting("client.communication.executorPoolSize", "3") // 3 instead of 10
-                .setting("client.communication.discovery.requestTimeout", "2000") // 2s instead of 10s
-                .setting("client.communication.description.requestTimeout", "2000") // 2s instead of 10s
-                .setting("client.communication.connect.requestTimeout", "2000") // 2s instead of 10s
-                .setting("client.communication.disconnect.requestTimeout", "2000") // 2s instead of 10s
-                .setting("client.communication.connectionState.requestTimeout", "2000") // 2s instead of 10s
-                .setting("client.communication.connectionState.checkInterval", "6000") // 6s instead of 60s
-                .setting("client.communication.connectionState.aliveTimeout", "12000") // 12s instead of 120s
-                .setting("daemon.path.knxproj", mockServerAnnotation.projectPath())
+                .setting(Constants.ConfigurationKey.MULTICAST_ADDRESS, this.getMulticastAddress().getHostAddress())
+                .setting(Constants.ConfigurationKey.MULTICAST_PORT, "0") // use random local port for multicast testing
+                .setting(Constants.ConfigurationKey.MULTICAST_TTL, "0") // consider local only (no pass by any router)
+                .setting(Constants.ConfigurationKey.PLUGIN_EXECUTOR_POOL_SIZE, "3") // 3 instead of 10
+                .setting(Constants.ConfigurationKey.COMMUNICATION_EXECUTOR_POOL_SIZE, "3") // 3 instead of 10
+                .setting(Constants.ConfigurationKey.DISCOVERY_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
+                .setting(Constants.ConfigurationKey.DESCRIPTION_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
+                .setting(Constants.ConfigurationKey.CONNECT_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
+                .setting(Constants.ConfigurationKey.DISCONNECT_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, "6000") // 6s instead of 60s
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_ALIVE_TIMEOUT, "12000") // 12s instead of 120s
+                .setting(Constants.ConfigurationKey.DAEMON_PROJECT_PATH, mockServerAnnotation.projectPath())
                 ;
     }
 

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.main;
 
 import com.google.common.base.Stopwatch;
+import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.plugin.AuditPlugin;
 import li.pitschmann.knx.link.plugin.StatisticPlugin;
@@ -49,13 +50,12 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                         new AuditPlugin(), //
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //
                 ) //
-                .setting("client.communication.connectionState.requestTimeout", "10000") //
-                .setting("client.communication.connectionState.checkInterval", "30000") //
-                .setting("client.communication.connectionState.aliveTimeout", "60000") //
-                .setting("client.communication.description.port", "40000") //
-                .setting("client.communication.description.port", "40001") //
-                .setting("client.communication.control.port", "40002") //
-                .setting("client.communication.data.port", "40003") //
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, "10000") //
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, "30000") //
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_ALIVE_TIMEOUT, "60000") //
+                .setting(Constants.ConfigurationKey.DESCRIPTION_CHANNEL_PORT, "40001") //
+                .setting(Constants.ConfigurationKey.CONTROL_CHANNEL_PORT, "40002") //
+                .setting(Constants.ConfigurationKey.DATA_CHANNEL_PORT, "40003") //
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {

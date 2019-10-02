@@ -26,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -278,25 +279,40 @@ public class ConfigurationTest {
         final var configBuilder = Configuration.tunneling();
 
         // add settings
-        configBuilder.setting("client.plugin.executorPoolSize", "7");
-        configBuilder.setting("client.nat.enabled", "true");
-        configBuilder.setting("client.communication.multicast.address", "224.0.0.1");
-        configBuilder.setting("client.communication.multicast.timeToLive", null);
+        configBuilder.setting(Constants.ConfigurationKey.PLUGIN_EXECUTOR_POOL_SIZE, "7");
+        configBuilder.setting(Constants.ConfigurationKey.NAT, "true");
+        configBuilder.setting(Constants.ConfigurationKey.MULTICAST_ADDRESS, "224.0.0.1");
+        configBuilder.setting(Constants.ConfigurationKey.MULTICAST_TTL, null);
+        configBuilder.setting("foo", "bar");
 
         final var config = configBuilder.build();
-        assertThat(config.getPluginExecutorPoolSize()).isEqualTo(7);
-        assertThat(config.isNatEnabled()).isTrue();
         assertThat(config.getMulticastChannelAddress()).isEqualTo(Networker.getByAddress(224, 0, 0, 1));
         assertThat(config.getMulticastTTL()).isEqualTo(4); // fallback to default value
 
         // overwriting setting should be allowed
-        configBuilder.setting("client.plugin.executorPoolSize", "4");
-        configBuilder.setting("client.nat.enabled", null); // reset to default value
+        configBuilder.setting(Constants.ConfigurationKey.PLUGIN_EXECUTOR_POOL_SIZE, "4");
+        configBuilder.setting(Constants.ConfigurationKey.NAT, null); // reset to default value
+        configBuilder.setting("foo", "barNEW");
         final var configNew = configBuilder.build();
+
+        // old and new value should be still present
+        assertThat(config.getPluginExecutorPoolSize()).isEqualTo(7);
         assertThat(configNew.getPluginExecutorPoolSize()).isEqualTo(4);
+
+        assertThat(config.isNatEnabled()).isTrue();
         assertThat(configNew.isNatEnabled()).isFalse();
 
+        assertThat(config.getSetting("foo", null, Function.identity())).isEqualTo("bar");
+        assertThat(configNew.getSetting("foo", null, Function.identity())).isEqualTo("barNEW");
+
         // invalid cases
-        assertThatThrownBy(() -> configBuilder.setting(null, null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> configBuilder.setting((String)null, null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> configBuilder.setting((Constants.ConfigurationKey) null, null)).isInstanceOf(NullPointerException.class);
+
+        // protected cases
+        assertThatThrownBy(() -> configBuilder.setting("client.endpoint.address", null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting("client.endpoint.port", null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting(Constants.ConfigurationKey.ENDPOINT_ADDRESS, null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting(Constants.ConfigurationKey.ENDPOINT_PORT, null)).isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -67,9 +67,9 @@ public class PerformanceKnxTest {
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
                 // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
-                .setting("client.communication.connectionState.requestTimeout", String.valueOf(Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT))
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, String.valueOf(Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT))
                 // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
-                .setting("client.communication.connectionState.checkInterval", String.valueOf(Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL))
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, String.valueOf(Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL))
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
@@ -120,9 +120,9 @@ public class PerformanceKnxTest {
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
                 // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
-                .setting("client.communication.connectionState.requestTimeout", String.valueOf(Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT))
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, String.valueOf(Constants.Times.CONNECTIONSTATE_REQUEST_TIMEOUT))
                 // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
-                .setting("client.communication.connectionState.checkInterval", String.valueOf(Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL))
+                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, String.valueOf(Constants.Times.CONNECTIONSTATE_CHECK_INTERVAL))
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
