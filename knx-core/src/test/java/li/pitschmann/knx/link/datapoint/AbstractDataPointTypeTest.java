@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.datapoint.value.DPT1Value;
 import li.pitschmann.knx.link.datapoint.value.DPT2Value;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
+import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
         final var dpt = DPT1.SWITCH;
 
         // general failures
-        assertThatThrownBy(() -> dpt.toValue((byte[]) null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> dpt.toValue((byte[]) null)).isInstanceOf(KnxNullPointerException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
