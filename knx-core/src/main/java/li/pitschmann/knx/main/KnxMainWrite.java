@@ -18,15 +18,12 @@
 
 package li.pitschmann.knx.main;
 
-import com.google.common.collect.Lists;
-import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.utils.Sleeper;
 
 import java.util.Arrays;
-import java.util.concurrent.Future;
 
 /**
  * Demo class how to send a write request to a KNX group address.
@@ -74,7 +71,7 @@ public final class KnxMainWrite extends AbstractKnxMain {
         // start KNX communication
         log.trace("START");
 
-        final var config = getConfigurationBuilder(args).build();
+        final var config = parseConfigBuilder(args).build();
         try (final var client = DefaultKnxClient.createStarted(config)) {
             Sleeper.seconds(1);
             for (final String value : values) {

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.utils.Networker;
@@ -57,7 +57,7 @@ public class ChannelFactoryTest {
     @Test
     @DisplayName("Test creating a new channel for: description")
     public void testNewDescriptionChannel() throws SocketException {
-        final var configMock = mock(Configuration.class);
+        final var configMock = mock(Config.class);
         when(configMock.getSocketTimeoutDescriptionChannel()).thenReturn(1000L);
 
         final var client = mock(InternalKnxClient.class);
@@ -82,7 +82,7 @@ public class ChannelFactoryTest {
     @Test
     @DisplayName("Test creating a new channel for: control")
     public void testNewControlChannel() throws SocketException {
-        final var configMock = mock(Configuration.class);
+        final var configMock = mock(Config.class);
         when(configMock.getSocketTimeoutControlChannel()).thenReturn(2000L);
 
         final var client = mock(InternalKnxClient.class);
@@ -107,7 +107,7 @@ public class ChannelFactoryTest {
     @Test
     @DisplayName("Test creating a new channel for: data")
     public void testNewDataChannel() throws SocketException {
-        final var configMock = mock(Configuration.class);
+        final var configMock = mock(Config.class);
         when(configMock.getSocketTimeoutDataChannel()).thenReturn(3000L);
 
         final var client = mock(InternalKnxClient.class);
@@ -130,7 +130,7 @@ public class ChannelFactoryTest {
     @Test
     @DisplayName("Test creating a new channel with invalid data")
     public void testFailure() {
-        final var configMock = mock(Configuration.class);
+        final var configMock = mock(Config.class);
         when(configMock.getSocketTimeoutDataChannel()).thenReturn(4000L);
 
         final var socketAddressMock = mock(InetSocketAddress.class);

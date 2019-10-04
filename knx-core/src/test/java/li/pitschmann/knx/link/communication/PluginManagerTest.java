@@ -18,11 +18,13 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.utils.Sleeper;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,12 +57,13 @@ public final class PluginManagerTest {
         final var extensionPluginMock = mock(ExtensionPlugin.class);
 
         // 1) register two plugins (via config)
-        final var config = Configuration.tunneling().plugin(observerPluginMock, extensionPluginMock).build();
+        final var config = ConfigBuilder.tunneling().plugin(observerPluginMock, extensionPluginMock).build();
         final var knxClientMock = newKnxClientMock(config);
         final var pluginManager = new PluginManager(config);
 
         // 2) initialization
         pluginManager.notifyInitialization(knxClientMock);
+        Sleeper.milliseconds(100); // wait bit, as plugin executor is notifying the plugins
 
         // 3) verify
         verify(observerPluginMock).onInitialization(any(KnxClient.class));
@@ -79,6 +82,7 @@ public final class PluginManagerTest {
 
         // 1) initialization (no plugin registered yet)
         pluginManager.notifyInitialization(knxClientMock);
+        Sleeper.milliseconds(100); // wait bit, as plugin executor is notifying the plugins
 
         // 2) register two plugins
         pluginManager.registerPlugin(observerPluginMock);
@@ -106,15 +110,15 @@ public final class PluginManagerTest {
         pluginManager.notifyError(mock(Throwable.class));
     }
 
-    private KnxClient newKnxClientMock(final Configuration config) {
+    private KnxClient newKnxClientMock(final Config config) {
         final var knxClientMock = mock(BaseKnxClient.class);
         when(knxClientMock.getConfig()).thenReturn(config);
         when(knxClientMock.isRunning()).thenReturn(true);
         return knxClientMock;
     }
 
-    private Configuration newConfigMock() {
-        final var configMock = mock(Configuration.class);
+    private Config newConfigMock() {
+        final var configMock = mock(Config.class);
         when(configMock.getPluginExecutorPoolSize()).thenReturn(4);
         when(configMock.getPlugins()).thenReturn(Lists.emptyList());
         return configMock;

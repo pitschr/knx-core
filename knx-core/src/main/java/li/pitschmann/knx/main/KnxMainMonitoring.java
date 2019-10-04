@@ -19,8 +19,8 @@
 package li.pitschmann.knx.main;
 
 import com.google.common.base.Stopwatch;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.plugin.AuditPlugin;
 import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.utils.Sleeper;
@@ -45,17 +45,17 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         // start KNX communication
         log.trace("START");
 
-        final var config = getConfigurationBuilder(args) //
+        final var config = parseConfigBuilder(args) //
                 .plugin( //
                         new AuditPlugin(), //
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //
                 ) //
-                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, "10000") //
-                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, "30000") //
-                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_ALIVE_TIMEOUT, "60000") //
-                .setting(Constants.ConfigurationKey.DESCRIPTION_CHANNEL_PORT, "40001") //
-                .setting(Constants.ConfigurationKey.CONTROL_CHANNEL_PORT, "40002") //
-                .setting(Constants.ConfigurationKey.DATA_CHANNEL_PORT, "40003") //
+                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 10000L) //
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) //
+                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) //
+                .setting(ConfigConstants.Description.PORT, 40001) //
+                .setting(ConfigConstants.Control.PORT, 40002) //
+                .setting(ConfigConstants.Data.PORT, 40003) //
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {

@@ -19,8 +19,8 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.Preconditions;
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
@@ -59,7 +59,7 @@ public final class PluginManager implements AutoCloseable {
     private final ExecutorService pluginExecutor;
     private KnxClient client;
 
-    PluginManager(final @Nonnull Configuration config) {
+    PluginManager(final @Nonnull Config config) {
         Preconditions.checkNotNull(config);
 
         final var pluginExecutorPoolSize = config.getPluginExecutorPoolSize();
@@ -137,7 +137,7 @@ public final class PluginManager implements AutoCloseable {
         // for extension plugins, we have a special case:
         // if the KNX Client is already started -> kick in the onStart immediately!
         if (plugin instanceof ExtensionPlugin && client.isRunning()) {
-            notifyPlugins(null, Collections.singletonList((ExtensionPlugin)plugin), (p, x) -> p.onStart());
+            notifyPlugins(null, Collections.singletonList((ExtensionPlugin) plugin), (p, x) -> p.onStart());
         }
 
         log.info("Plugin registered: {}", plugin);
@@ -149,7 +149,7 @@ public final class PluginManager implements AutoCloseable {
      * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
      * {@code com.mycompany.MyPlugin} as {@code classPath}.
      *
-     * @param filePath       path to the JAR file
+     * @param filePath  path to the JAR file
      * @param classPath fully qualified class name
      */
     public void registerPlugin(final @Nonnull Path filePath, final @Nonnull String classPath) {
@@ -167,7 +167,7 @@ public final class PluginManager implements AutoCloseable {
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
                     "Seems the given plugin is not an instance of %s: %s", Plugin.class, classPath);
 
-            final var plugin = Plugin.class.cast(cls.getDeclaredConstructor().newInstance());
+            final var plugin = (Plugin) cls.getDeclaredConstructor().newInstance();
             log.debug("Plugin '{}' loaded from url '{}': {}", classPath, filePath, plugin);
             registerPlugin(plugin);
         } catch (final Throwable t) {

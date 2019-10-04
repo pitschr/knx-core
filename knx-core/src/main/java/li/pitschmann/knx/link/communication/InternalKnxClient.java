@@ -21,7 +21,6 @@ package li.pitschmann.knx.link.communication;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.ChannelIdAware;
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
@@ -39,6 +38,7 @@ import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.CommunicatorFactory;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
@@ -81,7 +81,7 @@ public final class InternalKnxClient implements AutoCloseable {
     private final KnxStatisticImpl statistics = new KnxStatisticImpl();
     private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
     private final PluginManager pluginManager;
-    private final Configuration config;
+    private final Config config;
     private State state = State.NOT_STARTED;
     private List<AbstractChannelCommunicator> channelCommunicators = Collections.emptyList();
     private ExecutorService channelExecutor;
@@ -91,43 +91,11 @@ public final class InternalKnxClient implements AutoCloseable {
     private InetSocketAddress remoteEndpoint;
 
     /**
-     * States of Internal KNX Client
-     */
-    public enum State {
-        /**
-         * The KNX Client is not started (or has been stopped)
-         * <p/>
-         * Next state is: {@link #START_REQUEST}
-         */
-        NOT_STARTED,
-        /**
-         * The start has been requested and KNX Client may not communicate actively with KNX Net/IP device yet.
-         * <p/>
-         * Next State is either: {@link #STARTED} if successfully, otherwise {@link #STOP_REQUEST} if the
-         * communication cannot be established for some reasons.
-         */
-        START_REQUEST,
-        /**
-         * The communication has been established and the KNX Client is actively communicating with the
-         * KNX Net/IP device.
-         * <p/>
-         * Next State is: {@link #STOP_REQUEST}
-         */
-        STARTED,
-        /**
-         * The communication has been stopped. This can be happen successfully, or also because of failure.
-         * <p/>
-         * Next State is: {@link #NOT_STARTED} as soon the stop procedure is completed.
-         */
-        STOP_REQUEST;
-    }
-
-    /**
      * KNX client constructor (package protected)
      *
-     * @param config an instance of {@link Configuration}
+     * @param config an instance of {@link Config}
      */
-    InternalKnxClient(final @Nonnull Configuration config) {
+    InternalKnxClient(final @Nonnull Config config) {
         log.trace("Abstract KNX Client constructor");
         this.config = Objects.requireNonNull(config);
         this.pluginManager = new PluginManager(config);
@@ -138,31 +106,31 @@ public final class InternalKnxClient implements AutoCloseable {
      */
     protected void start() {
         this.lock.lock();
-            try {
-                Preconditions.checkState(this.closed.get(), "It seems the KNX client is already running.");
-                this.closed.set(false);
+        try {
+            Preconditions.checkState(this.closed.get(), "It seems the KNX client is already running.");
+            this.closed.set(false);
 
-                pluginManager.notifyClientStart();
-                this.state = State.START_REQUEST;
+            pluginManager.notifyClientStart();
+            this.state = State.START_REQUEST;
 
-                // if remote control address is multicast address, then we know that we want to use the routing feature
-                if (config.isRoutingEnabled()) {
-                    startRouting();
-                }
-                // otherwise use the tunneling
-                else {
-                    startTunneling();
-                }
-
-                this.state = State.STARTED;
-            } catch (final Exception ex) {
-                log.error("Exception caught on 'start()' method.", ex);
-                this.notifyError(ex);
-                this.close();
-                throw ex;
-            } finally {
-                this.lock.unlock();
+            // if remote control address is multicast address, then we know that we want to use the routing feature
+            if (config.isRoutingEnabled()) {
+                startRouting();
             }
+            // otherwise use the tunneling
+            else {
+                startTunneling();
+            }
+
+            this.state = State.STARTED;
+        } catch (final Exception ex) {
+            log.error("Exception caught on 'start()' method.", ex);
+            this.notifyError(ex);
+            this.close();
+            throw ex;
+        } finally {
+            this.lock.unlock();
+        }
     }
 
     /**
@@ -228,58 +196,58 @@ public final class InternalKnxClient implements AutoCloseable {
      * necessary for the communication.
      */
     private void startServices() {
-            // some pre-checks
-            Preconditions.checkState(this.channelId == -1);
-            Preconditions.checkState(this.controlHPAI == null);
-            Preconditions.checkState(this.dataHPAI == null);
+        // some pre-checks
+        Preconditions.checkState(this.channelId == -1);
+        Preconditions.checkState(this.controlHPAI == null);
+        Preconditions.checkState(this.dataHPAI == null);
 
-            if (this.config.isRoutingEnabled()) {
-                // Routing is enabled -> communication will be done via multi cast
-                this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newRoutingChannelCommunicator(this));
+        if (this.config.isRoutingEnabled()) {
+            // Routing is enabled -> communication will be done via multi cast
+            this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newRoutingChannelCommunicator(this));
 
-                this.controlHPAI = HPAI.useDefault();
-                this.dataHPAI = HPAI.useDefault();
-            } else if (this.config.isNatEnabled()) {
-                // NAT is enabled -> only one communicator for control and data related packets
-                this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newControlAndDataChannelCommunicator(this));
+            this.controlHPAI = HPAI.useDefault();
+            this.dataHPAI = HPAI.useDefault();
+        } else if (this.config.isNatEnabled()) {
+            // NAT is enabled -> only one communicator for control and data related packets
+            this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newControlAndDataChannelCommunicator(this));
 
-                this.controlHPAI = HPAI.useDefault();
-                this.dataHPAI = HPAI.useDefault();
-            } else {
-                // NAT is not enabled -> two communicators (one for control, and one for data related packets)
-                final var controlChannelCommunicator = CommunicatorFactory.newControlChannelCommunicator(this);
-                final var dataChannelCommunicator = CommunicatorFactory.newDataChannelCommunicator(this);
-                this.channelCommunicators = ImmutableList.of(dataChannelCommunicator, controlChannelCommunicator);
+            this.controlHPAI = HPAI.useDefault();
+            this.dataHPAI = HPAI.useDefault();
+        } else {
+            // NAT is not enabled -> two communicators (one for control, and one for data related packets)
+            final var controlChannelCommunicator = CommunicatorFactory.newControlChannelCommunicator(this);
+            final var dataChannelCommunicator = CommunicatorFactory.newDataChannelCommunicator(this);
+            this.channelCommunicators = ImmutableList.of(dataChannelCommunicator, controlChannelCommunicator);
 
-                this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
-                this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());
-            }
+            this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
+            this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());
+        }
 
-            // logging
-            log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.remoteEndpoint.getAddress().getHostAddress(), this.remoteEndpoint.getPort());
-            log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
-            log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
-            log.info("Routing Enabled                  : {}", this.config.isRoutingEnabled());
-            log.info("NAT Enabled                      : {}", this.config.isNatEnabled());
+        // logging
+        log.info("Remote Endpoint (KNX Net/IP)     : {}:{}", this.remoteEndpoint.getAddress().getHostAddress(), this.remoteEndpoint.getPort());
+        log.info("Local Endpoint  (Control Channel): {}:{}", this.controlHPAI.getAddress().getHostAddress(), this.controlHPAI.getPort());
+        log.info("Local Endpoint  (Data Channel)   : {}:{}", this.dataHPAI.getAddress().getHostAddress(), this.dataHPAI.getPort());
+        log.info("Routing Enabled                  : {}", this.config.isRoutingEnabled());
+        log.info("NAT Enabled                      : {}", this.config.isNatEnabled());
 
-            // channel executors
-            this.channelExecutor = Executors.newFixedThreadPool(3, true);
-            this.channelCommunicators.forEach(channelExecutor::execute);
+        // channel executors
+        this.channelExecutor = Executors.newFixedThreadPool(3, true);
+        this.channelCommunicators.forEach(channelExecutor::execute);
 
-            // get channel for further communications
-            if (this.config.isRoutingEnabled()) {
-                log.info("No channel ID because of routing");
-            } else {
-                this.channelId = this.fetchChannelIdFromKNX();
-                log.info("Channel ID received: {}", this.channelId);
+        // get channel for further communications
+        if (this.config.isRoutingEnabled()) {
+            log.info("No channel ID because of routing");
+        } else {
+            this.channelId = this.fetchChannelIdFromKNX();
+            log.info("Channel ID received: {}", this.channelId);
 
-                // after obtaining channel id - start monitor as well
-                this.channelExecutor.submit(new ConnectionStateMonitor(this));
-            }
+            // after obtaining channel id - start monitor as well
+            this.channelExecutor.submit(new ConnectionStateMonitor(this));
+        }
 
-            // do not accept more services anymore!
-            this.channelExecutor.shutdown();
-            log.info("Channel Executor created: {}", this.channelExecutor);
+        // do not accept more services anymore!
+        this.channelExecutor.shutdown();
+        log.info("Channel Executor created: {}", this.channelExecutor);
     }
 
     @Override
@@ -370,7 +338,7 @@ public final class InternalKnxClient implements AutoCloseable {
     }
 
     @Nonnull
-    public Configuration getConfig() {
+    public Config getConfig() {
         return this.config;
     }
 
@@ -600,5 +568,37 @@ public final class InternalKnxClient implements AutoCloseable {
             log.error("Exception during fetch channel id from KNX Net/IP device", ex);
             throw new KnxChannelIdNotReceivedException(requestBody, responseBody, ex);
         }
+    }
+
+    /**
+     * States of Internal KNX Client
+     */
+    public enum State {
+        /**
+         * The KNX Client is not started (or has been stopped)
+         * <p/>
+         * Next state is: {@link #START_REQUEST}
+         */
+        NOT_STARTED,
+        /**
+         * The start has been requested and KNX Client may not communicate actively with KNX Net/IP device yet.
+         * <p/>
+         * Next State is either: {@link #STARTED} if successfully, otherwise {@link #STOP_REQUEST} if the
+         * communication cannot be established for some reasons.
+         */
+        START_REQUEST,
+        /**
+         * The communication has been established and the KNX Client is actively communicating with the
+         * KNX Net/IP device.
+         * <p/>
+         * Next State is: {@link #STOP_REQUEST}
+         */
+        STARTED,
+        /**
+         * The communication has been stopped. This can be happen successfully, or also because of failure.
+         * <p/>
+         * Next State is: {@link #NOT_STARTED} as soon the stop procedure is completed.
+         */
+        STOP_REQUEST;
     }
 }

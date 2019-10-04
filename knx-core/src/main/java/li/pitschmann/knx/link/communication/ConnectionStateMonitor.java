@@ -70,8 +70,8 @@ public final class ConnectionStateMonitor implements Runnable {
                 final var offsetLastRequest = Duration.between(lastRequestTime, now).toMillis();
                 final var offsetLastResponse = Duration.between(lastResponseTime, now).toMillis();
 
-                // duration between last response and now is bigger than connection alive -> disconnect
-                if (offsetLastResponse > this.client.getConfig().getTimeoutAliveConnection()) {
+                // duration between last response and now is bigger than heartbeat -> disconnect
+                if (offsetLastResponse > this.client.getConfig().getTimeoutHeartbeatConnectionState()) {
                     log.error("Could not get connection state response since {} ms. Disconnection will be initiated. Last heartbeat was received at {}.",
                             offsetLastResponse, DateTimeFormatter.ISO_INSTANT.format(lastResponseTime));
                     this.client.close();

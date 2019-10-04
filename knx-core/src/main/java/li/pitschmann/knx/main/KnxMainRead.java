@@ -69,7 +69,7 @@ public final class KnxMainRead extends AbstractKnxMain {
         // start KNX communication
         log.trace("START");
 
-        final var config = getConfigurationBuilder(args).build();
+        final var config = parseConfigBuilder(args).build();
         try (final var client = DefaultKnxClient.createStarted(config)) {
             final var statusPool = client.getStatusPool();
             for (int i = 0; i < loops; i++) {

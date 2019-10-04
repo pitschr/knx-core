@@ -19,8 +19,6 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.Preconditions;
-import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
@@ -32,6 +30,7 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +51,11 @@ public class BaseKnxClient implements KnxClient {
     private final InternalKnxClient internalClient;
 
     /**
-     * Starts KNX client with given configuration
+     * Starts KNX client with given config
      *
      * @param config
      */
-    protected BaseKnxClient(final @Nonnull Configuration config) {
+    protected BaseKnxClient(final @Nonnull Config config) {
         internalClient = new InternalKnxClient(config);
 
         // notifies all plug-ins about initialization
@@ -84,7 +83,7 @@ public class BaseKnxClient implements KnxClient {
             // tunneling request
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
-                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Times.DATA_REQUEST_TIMEOUT).get();
+                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), getConfig().getTimeoutDataRequest()).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during write request for tunneling", ex);
@@ -107,7 +106,7 @@ public class BaseKnxClient implements KnxClient {
         } else {
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
-                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), Constants.Times.DATA_REQUEST_TIMEOUT).get();
+                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), getConfig().getTimeoutDataRequest()).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during read response for tunneling", ex);
@@ -134,7 +133,7 @@ public class BaseKnxClient implements KnxClient {
 
     @Nonnull
     @Override
-    public Configuration getConfig() {
+    public Config getConfig() {
         return this.internalClient.getConfig();
     }
 

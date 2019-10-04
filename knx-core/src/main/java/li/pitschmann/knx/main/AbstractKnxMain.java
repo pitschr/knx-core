@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.main;
 
-import li.pitschmann.knx.link.Configuration;
+import li.pitschmann.knx.link.config.ConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,9 @@ public abstract class AbstractKnxMain {
      * </ul>
      *
      * @param args
-     * @return
+     * @return a new instance of {@link ConfigBuilder}
      */
-    protected Configuration.Builder getConfigurationBuilder(final @Nonnull String[] args) {
+    protected ConfigBuilder parseConfigBuilder(final @Nonnull String[] args) {
         // Argument: Routing enabled?
         final var routingEnabled = existsParameter(args, "-routing");
         log.debug("Routing: {}", routingEnabled);
@@ -63,24 +63,17 @@ public abstract class AbstractKnxMain {
         final var ipAddress = getParameterValue(args, "-endpoint", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
-        final Configuration.Builder configBuilder;
         if (ipAddress != null) {
             // specific endpoint defined
-            configBuilder = Configuration.create(ipAddress);
+            // decision of routing/tunneling will be done based on ip address
+            return ConfigBuilder.create(ipAddress);
         } else if (routingEnabled) {
             // routing
-            configBuilder = Configuration.routing();
+            return ConfigBuilder.routing();
         } else {
-            // tunneling
-            configBuilder = Configuration.tunneling();
+            // tunneling (with NAT / without NAT)
+            return ConfigBuilder.tunneling(natEnabled);
         }
-
-        if (natEnabled) {
-            // enable NAT mode
-            configBuilder.nat();
-        }
-
-        return configBuilder;
     }
 
     /**

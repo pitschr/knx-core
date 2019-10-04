@@ -26,7 +26,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
-import java.util.Objects;
 
 /**
  * Discovery Outbox Queue for KNX multicast packets to be sent to KNX Net/IP device

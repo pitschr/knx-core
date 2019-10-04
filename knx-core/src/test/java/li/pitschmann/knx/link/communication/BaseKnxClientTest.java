@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
@@ -109,20 +109,20 @@ public class BaseKnxClientTest {
     @MockServerTest
     @DisplayName("OK: Test read and write requests (incl. async) over NAT")
     public void testReadAndWriteRequestsOverNAT(final MockServer mockServer) {
-        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting(Constants.ConfigurationKey.NAT, "true").build());
+        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting(ConfigConstants.NAT, true).build());
     }
 
     /**
      * Tests read and write requests methods for {@link BaseKnxClient} using a
-     * specific configuration which is defined via {@code configBuilder} function.
+     * specific configuration which is defined via {@code configFunction} function.
      *
      * @param mockServer
-     * @param configBuilder defines which configuration should be used
+     * @param configFunction defines which configuration should be used
      */
-    private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Configuration> configBuilder) {
+    private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Config> configFunction) {
         final var groupAddress = GroupAddress.of(1, 2, 3);
 
-        final var config = configBuilder.apply(mockServer);
+        final var config = configFunction.apply(mockServer);
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // async read request
             client.readRequest(groupAddress);

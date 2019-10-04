@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
@@ -33,6 +32,7 @@ import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -229,12 +229,12 @@ public class KnxClientTest {
     }
 
     /**
-     * Creates a {@link Configuration} for testing
+     * Creates a {@link Config} for testing
      *
-     * @return a mocked instance of {@link Configuration}
+     * @return a mocked instance of {@link Config}
      */
-    private Configuration createConfigMock() {
-        final var configMock = mock(Configuration.class);
+    private Config createConfigMock() {
+        final var configMock = mock(Config.class);
         when(configMock.getCommunicationExecutorPoolSize()).thenReturn(1);
         when(configMock.getPluginExecutorPoolSize()).thenReturn(1);
         return configMock;

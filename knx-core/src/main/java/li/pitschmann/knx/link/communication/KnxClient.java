@@ -18,17 +18,16 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ControlChannelRelated;
 import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -45,11 +44,11 @@ public interface KnxClient extends AutoCloseable {
     void close();
 
     /**
-     * Returns the {@link Configuration} used by KNX client
+     * Returns the {@link Config} used by KNX client
      *
-     * @return an immutable {@link Configuration}
+     * @return an immutable {@link Config}
      */
-    Configuration getConfig();
+    Config getConfig();
 
     /**
      * Returns a copied {@link KnxStatistic} snapshot about the KNX communication

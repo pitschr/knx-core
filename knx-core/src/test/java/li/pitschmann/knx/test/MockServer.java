@@ -21,8 +21,6 @@ package li.pitschmann.knx.test;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -30,6 +28,8 @@ import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.config.ConfigBuilder;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Closeables;
@@ -452,45 +452,45 @@ public final class MockServer implements Runnable, Closeable {
     }
 
     /**
-     * Creates a new instance of {@link Configuration.Builder} for further usage
+     * Creates a new instance of {@link ConfigBuilder} for further usage
      *
-     * @return An instance of {@link Configuration.Builder}
+     * @return An instance of {@link ConfigBuilder}
      */
-    public Configuration.Builder newConfigBuilder() {
+    public ConfigBuilder newConfigBuilder() {
         Preconditions.checkArgument(getPort() > 0, "Knx Client cannot be returned when port is not defined.");
 
-        final Configuration.Builder configBuilder;
+        final ConfigBuilder configBuilder;
         if (mockServerAnnotation.useRouting()) {
             final var address = getMulticastAddress();
             final var port = getPort();
-            configBuilder = Configuration.create(address, port);
+            configBuilder = ConfigBuilder.create(address, port);
             log.info("Routing service will be used for mock server. Endpoint: {}:{}", address, port);
         } else if (mockServerAnnotation.useDiscovery()) {
             final var port = getPort();
-            configBuilder = Configuration.create(Networker.getAddressUnbound(), port);
+            configBuilder = ConfigBuilder.create(Networker.getAddressUnbound(), port);
             log.info("Discovery service will be used for mock server. Endpoint: 0.0.0.0:{}", port);
         } else {
             final var address = Networker.getLocalHost();
             final var port = getPort();
-            configBuilder = Configuration.create(address, port);
+            configBuilder = ConfigBuilder.create(address, port);
             log.info("Discovery service will NOT be used for mock server. Endpoint: {}:{}", address, port);
         }
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
-                .setting(Constants.ConfigurationKey.MULTICAST_ADDRESS, this.getMulticastAddress().getHostAddress())
-                .setting(Constants.ConfigurationKey.MULTICAST_PORT, "0") // use random local port for multicast testing
-                .setting(Constants.ConfigurationKey.MULTICAST_TTL, "0") // consider local only (no pass by any router)
-                .setting(Constants.ConfigurationKey.PLUGIN_EXECUTOR_POOL_SIZE, "3") // 3 instead of 10
-                .setting(Constants.ConfigurationKey.COMMUNICATION_EXECUTOR_POOL_SIZE, "3") // 3 instead of 10
-                .setting(Constants.ConfigurationKey.DISCOVERY_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
-                .setting(Constants.ConfigurationKey.DESCRIPTION_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
-                .setting(Constants.ConfigurationKey.CONNECT_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
-                .setting(Constants.ConfigurationKey.DISCONNECT_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
-                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_REQUEST_TIMEOUT, "2000") // 2s instead of 10s
-                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_CHECK_INTERVAL, "6000") // 6s instead of 60s
-                .setting(Constants.ConfigurationKey.CONNECTIONSTATE_ALIVE_TIMEOUT, "12000") // 12s instead of 120s
-                .setting(Constants.ConfigurationKey.DAEMON_PROJECT_PATH, mockServerAnnotation.projectPath())
+                .setting(ConfigConstants.Multicast.ADDRESS, this.getMulticastAddress())
+                .setting(ConfigConstants.Multicast.PORT, 0) // use random local port for multicast testing
+                .setting(ConfigConstants.Multicast.TIME_TO_LIVE, 0) // consider local only (no pass by any router)
+                .setting(ConfigConstants.Executor.PLUGIN_POOL_SIZE, 3) // 3 instead of 10
+                .setting(ConfigConstants.Executor.COMMUNICATION_POOL_SIZE, 3) // 3 instead of 10
+                .setting(ConfigConstants.Search.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.Description.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.Connect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.Disconnect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 6000L) // 6s instead of 60s
+                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 12000L) // 12s instead of 120s
+                .setting(ConfigConstants.PROJECT_PATH, Paths.get(mockServerAnnotation.projectPath()))
                 ;
     }
 

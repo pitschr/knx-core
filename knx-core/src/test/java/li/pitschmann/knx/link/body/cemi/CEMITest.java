@@ -94,15 +94,15 @@ public final class CEMITest {
         final var cemiOfWithRawData = new byte[]{
                 0x2E, // Message Code
                 0x00, // AdditionalInfo
-                (byte)0xBC, // ControlByte1
-                (byte)0xE0, // ControlByte2
+                (byte) 0xBC, // ControlByte1
+                (byte) 0xE0, // ControlByte2
                 0x00, 0x00, // source address
-                0x14, (byte)0xE6, // destination address
+                0x14, (byte) 0xE6, // destination address
                 0x03, // NDPU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
-                (byte)0x80, // APCI (8bits)
-                (byte)0xEE, (byte)0xFF // APCI value
-                };
+                (byte) 0x80, // APCI (8bits)
+                (byte) 0xEE, (byte) 0xFF // APCI value
+        };
 
         // assert
         assertThat(cemiOfWithRawData).containsExactly(cemiOfWithBytes.getRawData());

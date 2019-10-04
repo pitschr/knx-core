@@ -23,13 +23,11 @@ import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.KnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
-import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

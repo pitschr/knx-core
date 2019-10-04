@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.communicator.CommunicatorFactory;
 import li.pitschmann.knx.link.communication.task.ConnectResponseTask;
 import li.pitschmann.knx.link.communication.task.ConnectionStateResponseTask;
@@ -29,6 +28,7 @@ import li.pitschmann.knx.link.communication.task.RoutingIndicationTask;
 import li.pitschmann.knx.link.communication.task.SearchResponseTask;
 import li.pitschmann.knx.link.communication.task.TunnelingAckTask;
 import li.pitschmann.knx.link.communication.task.TunnelingRequestTask;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.utils.Networker;
 import org.junit.jupiter.api.DisplayName;
@@ -151,7 +151,7 @@ public class CommunicatorFactoryTest {
      */
     private InternalKnxClient mockInternalKnxClient() {
         final var knxClient = mock(InternalKnxClient.class);
-        final var config = mock(Configuration.class);
+        final var config = mock(Config.class);
         final var inetAddress = Networker.getByAddress(224, 0, 1, 0);
         when(knxClient.getConfig()).thenReturn(config);
         when(config.getMulticastChannelAddress()).thenReturn(inetAddress);

@@ -206,7 +206,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
                 .add("projectNumber", this.projectNumber)
                 .add("projectInstallationIdentifier", this.projectInstallationIdentifier)
                 .add("serialNumber", this.serialNumber)
-                .add("multicastAddress", this.multicastAddress)
+                .add("multicastAddress", this.multicastAddress.getHostAddress())
                 .add("macAddress", this.macAddress)
                 .add("deviceFriendlyName", this.deviceFriendlyName);
         // @formatter:on

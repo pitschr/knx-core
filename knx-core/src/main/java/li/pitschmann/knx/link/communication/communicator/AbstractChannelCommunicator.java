@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication.communicator;
 
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
@@ -28,6 +27,7 @@ import li.pitschmann.knx.link.communication.queue.AbstractInboxQueue;
 import li.pitschmann.knx.link.communication.queue.AbstractOutboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultInboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultOutboxQueue;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
@@ -244,8 +244,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
         // send packet
         var attempts = 1;
-        final var totalAttempts = Constants.Event.TOTAL_ATTEMPTS;
-        final var checkInterval = Constants.Event.CHECK_INTERVAL;
+        final var totalAttempts = ConfigConstants.Event.TOTAL_ATTEMPTS;
+        final var checkInterval = ConfigConstants.Event.CHECK_INTERVAL;
         U responseBody;
 
         do {
