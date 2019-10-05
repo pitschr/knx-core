@@ -19,10 +19,10 @@
 package li.pitschmann.knx.link.body;
 
 /**
- * Marker interface that this body is subject to be sent over discovery channel only.
+ * Marker interface that this body is subject to be sent over multicast channel
  *
  * @author PITSCHR
  */
-public interface DiscoveryChannelRelated {
+public interface MulticastChannelRelated {
     // empty
 }

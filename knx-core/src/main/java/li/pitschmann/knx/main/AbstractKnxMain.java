@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.main;
 
+import li.pitschmann.knx.link.config.ConfigBuilder;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +36,45 @@ import java.util.stream.Stream;
  * @author PITSCHR
  */
 public abstract class AbstractKnxMain {
-    private static final Logger log = LoggerFactory.getLogger(AbstractKnxMain.class);
+    protected final Logger logRoot = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected AbstractKnxMain() {
+    /**
+     * Returns the Configuration Builder based on following arguments:
+     * <ul>
+     * <li>{@code -endpoint} ... defined endpoint in {@code <address>:<port>} format.
+     * If the address is a multicast, then routing will be used, otherwise tunneling (no NAT)</li>
+     * <li>{@code -routing} ... if the communication should be over multicast (routing)</li>
+     * <li>{@code -nat} ... if the communication should be using Network Address Translation (tunneling)</li>
+     * </ul>
+     *
+     * @param args
+     * @return a new instance of {@link ConfigBuilder}
+     */
+    protected ConfigBuilder parseConfigBuilder(final @Nonnull String[] args) {
+        // Argument: Routing enabled?
+        final var routingEnabled = existsParameter(args, "-routing");
+        log.debug("Routing: {}", routingEnabled);
+
+        // Argument: NAT? (not to be used in routing mode)
+        final var natEnabled = existsParameter(args, "-nat");
+        log.debug("NAT: {}", natEnabled);
+
+        // Argument: Get KNX Net/IP Address (<address>:<port>)
+        final var ipAddress = getParameterValue(args, "-ip", Function.identity(), null);
+        log.debug("KNX Net/IP Address: {}", ipAddress);
+
+        if (ipAddress != null) {
+            // specific endpoint defined
+            // decision of routing/tunneling will be done based on ip address
+            return ConfigBuilder.create(ipAddress).setting(ConfigConstants.NAT, natEnabled);
+        } else if (routingEnabled) {
+            // routing
+            return ConfigBuilder.routing();
+        } else {
+            // tunneling (with NAT / without NAT)
+            return ConfigBuilder.tunneling(natEnabled);
+        }
     }
 
     /**
@@ -49,10 +87,10 @@ public abstract class AbstractKnxMain {
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
-    protected static <T> T getParameterValue(final @Nonnull String[] args,
-                                             final @Nonnull String parameterName,
-                                             final @Nonnull Function<String, T> function,
-                                             final @Nullable T defaultValue) {
+    protected <T> T getParameterValue(final @Nonnull String[] args,
+                                      final @Nonnull String parameterName,
+                                      final @Nonnull Function<String, T> function,
+                                      final @Nullable T defaultValue) {
         for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {
                 // found - next argument should be the value
@@ -78,8 +116,8 @@ public abstract class AbstractKnxMain {
      * @param parameterName
      * @return {@code true} if parameter was found, otherwise {@code false}
      */
-    protected static boolean existsParameter(final @Nonnull String[] args,
-                                             final @Nonnull String parameterName) {
+    protected boolean existsParameter(final @Nonnull String[] args,
+                                      final @Nonnull String parameterName) {
         return Arrays.stream(args).anyMatch(arg -> parameterName.equalsIgnoreCase(arg));
     }
 
@@ -93,10 +131,10 @@ public abstract class AbstractKnxMain {
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
-    protected static <T> T[] getParameterValues(final @Nonnull String[] args,
-                                                final @Nonnull String parameterName,
-                                                final @Nonnull IntFunction<T[]> function,
-                                                final @Nullable T[] defaultValues
+    protected <T> T[] getParameterValues(final @Nonnull String[] args,
+                                         final @Nonnull String parameterName,
+                                         final @Nonnull IntFunction<T[]> function,
+                                         final @Nullable T[] defaultValues
     ) {
         for (var i = 0; i < args.length; i++) {
             if (parameterName.equalsIgnoreCase(args[i])) {

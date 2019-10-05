@@ -22,7 +22,6 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +53,6 @@ public final class SearchResponseTask implements Subscriber<Body> {
             log.debug("Search response received: {}", responseBody);
             this.client.getEventPool().searchEvent().addResponse(responseBody);
             log.trace("Search response saved.");
-        } else {
-            // when using discovery then we MUST the SearchResponseBody otherwise something went wrong!
-            throw new KnxBodyNotReceivedException(SearchResponseBody.class);
         }
     }
 

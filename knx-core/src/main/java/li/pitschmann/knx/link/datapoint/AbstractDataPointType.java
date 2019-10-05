@@ -90,8 +90,6 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      */
     @Nonnull
     public final V toValue(final @Nonnull byte[] bytes) {
-        Preconditions.checkNotNull(bytes, "No byte array provided for conversion to data point value object.");
-
         if (bytes == null) {
             throw new KnxNullPointerException("bytes");
         }

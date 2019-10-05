@@ -32,15 +32,15 @@ import java.nio.channels.SelectableChannel;
  *
  * @author PITSCHR
  */
-public final class ControlChannelCommunicator extends AbstractChannelCommunicator<SelectableChannel> {
-    public ControlChannelCommunicator(final @Nonnull InternalKnxClient client) {
+public final class ControlChannelCommunicator extends AbstractChannelCommunicator {
+    ControlChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
     }
 
     @Override
     @Nonnull
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
-        return ChannelFactory.newControlChannel(internalClient);
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
+        return ChannelFactory.newControlChannel(client);
     }
 
     @Override

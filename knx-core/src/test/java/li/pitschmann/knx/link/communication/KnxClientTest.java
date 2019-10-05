@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
@@ -33,6 +32,7 @@ import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -66,9 +66,9 @@ public class KnxClientTest {
      * <ul>
      * <li>{@code InternalKnxClient#notifyPlugins(Object, List, BiConsumer)}
      * (internally used for initialization, start and shutdown)</li>
-     * <li>{@link InternalKnxClient#notifyPluginsIncomingBody(Body)}</li>
-     * <li>{@link InternalKnxClient#notifyPluginsOutgoingBody(Body)}</li>
-     * <li>{@link InternalKnxClient#notifyPluginsError(Throwable)}</li>
+     * <li>{@link InternalKnxClient#notifyIncomingBody(Body)}</li>
+     * <li>{@link InternalKnxClient#notifyOutgoingBody(Body)}</li>
+     * <li>{@link InternalKnxClient#notifyError(Throwable)}</li>
      * </ul>
      */
     @MockServerTest(requests = {
@@ -108,26 +108,26 @@ public class KnxClientTest {
         // verify number of notifications to observer plug-in
         verify(observerPlugin, times(1)).onInitialization(any());
 
-        verify(observerPlugin, times(1)).onIncomingBody(isA(DescriptionResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(ConnectionStateResponseBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(TunnelingRequestBody.class));
-        verify(observerPlugin, times(1)).onIncomingBody(isA(DisconnectResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(DescriptionResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(ConnectResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(ConnectionStateResponseBody.class));
+        verify(observerPlugin).onIncomingBody(isA(TunnelingRequestBody.class));
+        verify(observerPlugin).onIncomingBody(isA(DisconnectResponseBody.class));
         verify(observerPlugin, times(5)).onIncomingBody(any());
 
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(DescriptionRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(ConnectionStateRequestBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(TunnelingAckBody.class));
-        verify(observerPlugin, times(1)).onOutgoingBody(isA(DisconnectRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(DescriptionRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(ConnectRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(ConnectionStateRequestBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(TunnelingAckBody.class));
+        verify(observerPlugin).onOutgoingBody(isA(DisconnectRequestBody.class));
         verify(observerPlugin, times(5)).onOutgoingBody(any());
 
         verify(observerPlugin, times(2)).onError(any());
 
         // verify number of notifications to extension plug-in
-        verify(extensionPlugin, times(1)).onInitialization(any());
-        verify(extensionPlugin, times(1)).onStart();
-        verify(extensionPlugin, times(1)).onShutdown();
+        verify(extensionPlugin).onInitialization(any());
+        verify(extensionPlugin).onStart();
+        verify(extensionPlugin).onShutdown();
     }
 
 
@@ -162,7 +162,7 @@ public class KnxClientTest {
     }
 
     /**
-     * Test {@link InternalKnxClient#notifyPluginsError(Throwable)} after client close
+     * Test {@link InternalKnxClient#notifyError(Throwable)} after client close
      */
     @Test
     @DisplayName("Internal Client: Test plug-in notification after close")
@@ -171,18 +171,18 @@ public class KnxClientTest {
         final var observerPlugin = mock(ObserverPlugin.class);
 
         final var configMock = createConfigMock();
-        when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(observerPlugin));
+        when(configMock.getPlugins()).thenReturn(Collections.singletonList(observerPlugin));
 
         final var client = new InternalKnxClient(configMock);
         client.close();
 
         // should not be an issue (silently ignored, plug-in should never be called)
-        client.notifyPluginsError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
+        client.notifyError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
         verify(observerPlugin, never()).onError(any());
     }
 
     /**
-     * Test {@link InternalKnxClient#notifyPluginsError(Throwable)} when calling an erroneous plug-in.
+     * Test {@link InternalKnxClient#notifyError(Throwable)} when calling an erroneous plug-in.
      * <p/>
      * In case an exception is thrown by plug-in the KNX client should still be alive.
      */
@@ -194,13 +194,13 @@ public class KnxClientTest {
         doThrow(new RuntimeException()).when(erroneousPlugin).onError(any());
 
         final var configMock = createConfigMock();
-        when(configMock.getObserverPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
+        when(configMock.getPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
 
         final var client = new InternalKnxClient(configMock);
 
         try (client) {
             // should not be an issue
-            client.notifyPluginsError(new Throwable());
+            client.notifyError(new Throwable());
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
@@ -229,12 +229,12 @@ public class KnxClientTest {
     }
 
     /**
-     * Creates a {@link Configuration} for testing
+     * Creates a {@link Config} for testing
      *
-     * @return a mocked instance of {@link Configuration}
+     * @return a mocked instance of {@link Config}
      */
-    private Configuration createConfigMock() {
-        final var configMock = mock(Configuration.class);
+    private Config createConfigMock() {
+        final var configMock = mock(Config.class);
         when(configMock.getCommunicationExecutorPoolSize()).thenReturn(1);
         when(configMock.getPluginExecutorPoolSize()).thenReturn(1);
         return configMock;

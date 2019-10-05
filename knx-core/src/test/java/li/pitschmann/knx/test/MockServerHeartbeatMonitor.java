@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Health check thread for KNX mock server (package-protected)
  */
 class MockServerHeartbeatMonitor implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(MockServerHeartbeatMonitor.class);
+    private static final Logger log = LoggerFactory.getLogger(MockServerHeartbeatMonitor.class);
     private final MockServer mockServer;
     private final AtomicLong lastHeartbeat = new AtomicLong(System.currentTimeMillis());
 
@@ -38,12 +38,12 @@ class MockServerHeartbeatMonitor implements Runnable {
 
     @Override
     public void run() {
-        logger.info("*** KNX Mock Server [heartbeat] START ***");
+        log.info("*** KNX Mock Server [heartbeat] START ***");
         while (System.currentTimeMillis() - lastHeartbeat.get() < 10000
                 && !this.mockServer.isCancelled()) {
             Sleeper.seconds(1);
         }
-        logger.info("*** KNX Mock Server [heartbeat] END *** ({})", System.currentTimeMillis() - lastHeartbeat.get());
+        log.info("*** KNX Mock Server [heartbeat] END *** ({})", System.currentTimeMillis() - lastHeartbeat.get());
         this.mockServer.cancel();
     }
 

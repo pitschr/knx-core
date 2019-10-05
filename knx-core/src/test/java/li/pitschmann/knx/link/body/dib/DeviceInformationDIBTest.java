@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
@@ -154,8 +153,8 @@ public final class DeviceInformationDIBTest {
                 "DeviceHardwareInformationDIB{"
                         + "length=54 (0x36), descriptionType=%s, mediumType=%s, programmingMode=false, individualAddress=%s, "
                         + "projectNumber=582, projectInstallationIdentifier=4, serialNumber=0x00 88 99 AA BB CC, "
-                        + "multicastAddress=%s, macAddress=01:02:03:04:05:AA, deviceFriendlyName=MDT KNX IP Router, rawData=%s}",
+                        + "multicastAddress=224.0.23.12, macAddress=01:02:03:04:05:AA, deviceFriendlyName=MDT KNX IP Router, rawData=%s}",
                 DescriptionType.DEVICE_INFO, MediumType.TP, IndividualAddress.of(new byte[]{0x10, 0x00}).toString(false),
-                Constants.Default.KNX_MULTICAST_ADDRESS, ByteFormatter.formatHexAsString(BYTES)));
+                ByteFormatter.formatHexAsString(BYTES)));
     }
 }

@@ -27,7 +27,7 @@ import li.pitschmann.knx.daemon.v1.controllers.StatisticController;
 import li.pitschmann.knx.daemon.v1.controllers.StatusController;
 import li.pitschmann.knx.daemon.v1.controllers.WriteRequestController;
 import li.pitschmann.knx.daemon.v1.gson.DaemonGsonEngine;
-import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.parser.XmlProject;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.guice.GuiceControllerFactory;
@@ -38,10 +38,10 @@ import ro.pippo.guice.GuiceControllerFactory;
  * This loads the pippo relevant configuration, controllers, etc.
  */
 public class HttpDaemonApplication extends ControllerApplication {
-    private DefaultKnxClient knxClient;
+    private KnxClient knxClient;
     private XmlProject xmlProject;
 
-    public void setKnxClient(DefaultKnxClient knxClient) {
+    public void setKnxClient(KnxClient knxClient) {
         this.knxClient = knxClient;
     }
 
@@ -55,7 +55,7 @@ public class HttpDaemonApplication extends ControllerApplication {
         // create guice injector
         final var injector = Guice.createInjector(new AbstractModule() {
             @Provides
-            private final DefaultKnxClient providesKnxClient() {
+            private final KnxClient providesKnxClient() {
                 return knxClient;
             }
 

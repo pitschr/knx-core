@@ -45,7 +45,7 @@ import java.util.concurrent.Flow;
  * Project Logic for KNX mock server (package-protected)
  */
 public class MockServerProjectLogic implements Flow.Subscriber<Body> {
-    private final static Logger logger = LoggerFactory.getLogger(MockServerProjectLogic.class);
+    private final static Logger log = LoggerFactory.getLogger(MockServerProjectLogic.class);
     private final MockServer mockServer;
     private final XmlProject xmlProject;
     private final KnxStatusPoolImpl statusPool;
@@ -83,14 +83,14 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
             }
 
             final var knxStatusData = new KnxStatusData(groupAddress, APCI.GROUP_VALUE_WRITE, apciData);
-            logger.debug("KNX Status Data loaded: {}", knxStatusData);
+            log.debug("KNX Status Data loaded: {}", knxStatusData);
             statusPool.updateStatus(groupAddress, knxStatusData);
         }
     }
 
     @Override
     public void onNext(final Body body) {
-        logger.debug("Body received, but no logic defined: {}", body);
+        log.debug("Body received, but no logic defined: {}", body);
 
         if (body instanceof TunnelingRequestBody) {
             final var requestBody = (TunnelingRequestBody) body;
@@ -101,7 +101,7 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
                 final var statusData = this.statusPool.getStatusFor(destAddress);
                 if (statusData != null) {
                     final var apciData = statusData.getApciData();
-                    logger.debug("apciData: {}", Arrays.toString(apciData));
+                    log.debug("apciData: {}", Arrays.toString(apciData));
                     final var cemi = CEMI.of(
                             MessageCode.L_DATA_IND,
                             AdditionalInfo.empty(),
@@ -124,7 +124,7 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
 
     @Override
     public void onError(Throwable throwable) {
-        logger.error("Error during KNX Mock Server Communicator class", throwable);
+        log.error("Error during KNX Mock Server Communicator class", throwable);
     }
 
     @Override

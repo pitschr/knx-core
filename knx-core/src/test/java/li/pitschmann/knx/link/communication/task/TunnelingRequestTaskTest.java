@@ -43,13 +43,12 @@ import static org.mockito.Mockito.when;
 public class TunnelingRequestTaskTest {
 
     /**
-     * Tests the {@link TunnelingRequestTask#onNext(Body)}
+     * Tests the {@link TunnelingRequestTask#onNext(Body)} successfully
      */
     @Test
-    @DisplayName("Test 'onNext(Body)' method")
+    @DisplayName("OK: Test 'onNext(Body)' method")
     public void testOnNext() {
         final var task = createTask();
-
 
         final var cemi = mock(CEMI.class);
         final var correctBody = mock(TunnelingRequestBody.class);
@@ -71,10 +70,34 @@ public class TunnelingRequestTaskTest {
         when(cemi.getMessageCode()).thenReturn(MessageCode.L_DATA_CON);
         when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
         task.onNext(correctBody);
+    }
 
-        // wrong body - should not be an issue - simply ignored
+    /**
+     * Tests the {@link TunnelingRequestTask#onNext(Body)} with unexpected class type, message code and APCI type
+     */
+    @Test
+    @DisplayName("Error: Test 'onNext(Body)' method with unexpected data")
+    public void testOnNextError() {
+        final var task = createTask();
+
+        // wrong body
         final var wrongBody = mock(Body.class);
         task.onNext(wrongBody);
+
+        // wrong wrong message code
+        final var bodyWithWrongMessageCode = mock(TunnelingRequestBody.class);
+        final var cemiMock = mock(CEMI.class);
+        when(cemiMock.getMessageCode()).thenReturn(MessageCode.L_DATA_REQ);
+        when(bodyWithWrongMessageCode.getCEMI()).thenReturn(cemiMock);
+        task.onNext(bodyWithWrongMessageCode);
+
+        // wrong APCI for message indication
+        final var bodyWithWrongApciCode = mock(TunnelingRequestBody.class);
+        final var cemiMock2 = mock(CEMI.class);
+        when(cemiMock2.getMessageCode()).thenReturn(MessageCode.L_DATA_IND);
+        when(cemiMock2.getApci()).thenReturn(APCI.INDIVIDUAL_ADDRESS_WRITE);
+        when(bodyWithWrongApciCode.getCEMI()).thenReturn(cemiMock2);
+        task.onNext(bodyWithWrongApciCode);
     }
 
     /**

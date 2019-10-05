@@ -83,6 +83,8 @@ public final class BodyFactory {
             return (T) TunnelingRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.TUNNELING_ACK) {
             return (T) TunnelingAckBody.of(bodyBytes);
+        } else if (serviceType == ServiceType.ROUTING_INDICATION) {
+            return (T) RoutingIndicationBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECTION_STATE_REQUEST) {
             return (T) ConnectionStateRequestBody.of(bodyBytes);
         } else if (serviceType == ServiceType.CONNECTION_STATE_RESPONSE) {

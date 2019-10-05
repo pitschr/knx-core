@@ -19,64 +19,59 @@
 package li.pitschmann.knx.main;
 
 import com.google.common.base.Stopwatch;
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.plugin.AuditPlugin;
+import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.utils.Sleeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * Demo class how to monitor the KNX traffic
- * <ul>
- * <li>1st argument is the address of KNX Net/IP device; default value "192.168.1.16"</li>
- * <li>2nd argument is the monitoring time in seconds; default value is "forever" ({@link Long#MAX_VALUE})</li>
- * <li>Subsequent arguments are ignored.</li>
- * </ul>
+ * Demo class how to monitor the KNX traffic with support of plug-ins
  *
  * @author PITSCHR
  */
 public class KnxMainMonitoring extends AbstractKnxMain {
-    private static final Logger log = LoggerFactory.getLogger(KnxMainMonitoring.class);
-    private static final Logger logRoot = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-
     public static void main(final String[] args) {
-        // set level to Level#ALL for ROOT log implementation
-        final var logAll = getParameterValue(args, "-l", Boolean::parseBoolean, false);
-        if (logAll) {
-            ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.ALL);
-        }
-        log.debug("Log all: {}", logAll);
+        new KnxMainMonitoring().startMonitoring(args);
+    }
 
-        // Get KNX Net/IP Address
-        final var ipAddress = getParameterValue(args, "-r", Networker::getByAddress, null);
-        log.debug("KNX Net/IP Address: {}", ipAddress);
+    private void startMonitoring(final String[] args1) {
+        // final String[] args = new String[]{""};
+        // final String[] args = new String[]{"-ip","192.168.1.16"};
+        final String[] args = new String[]{"-ip","192.168.1.16", "-nat"};
 
         // Get Monitor Time in Seconds
-        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, Long.MAX_VALUE);
+        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 30L);
         log.debug("Monitor Time: {}s", monitorTime);
 
         // start KNX communication
         log.trace("START");
 
-        final var config = Configuration.create(ipAddress)//
-                .setting("timeout.request.connectionstate", "10000") //
-                .setting("interval.connectionstate", "30000") //
-                .setting("timeout.alive.connectionstate", "60000") //
+        final var config = parseConfigBuilder(args) //
+                .plugin( //
+                        new AuditPlugin(), //
+                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //
+                ) //
+                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 10000L) //
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) //
+                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) //
+                .setting(ConfigConstants.Description.PORT, 40001) //
+                .setting(ConfigConstants.Control.PORT, 40002) //
+                .setting(ConfigConstants.Data.PORT, 40003) //
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
             log.debug("========================================================================");
-            log.debug("MONITORING for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
+            log.debug("MONITORING WITH PLUGINS for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
             log.debug("========================================================================");
             final var sw = Stopwatch.createStarted();
-            while (!client.isClosed() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
+            while (client.isRunning() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
                 Sleeper.seconds(1);
             }
             log.debug("========================================================================");
-            log.debug("STOP MONITORING");
+            log.debug("STOP MONITORING WITH PLUGINS");
             log.debug("========================================================================");
         } catch (final Throwable t) {
             log.error("THROWABLE. Reason: {}", t.getMessage(), t);

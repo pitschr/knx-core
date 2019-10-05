@@ -27,21 +27,21 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 
 /**
- * Discovery Inbox Queue for KNX receiving discovery packets from KNX Net/IP device.
- * This class is special because the discovery communication is based on broadcast.
+ * Inbox Queue for KNX receiving multicast packets from KNX Net/IP device.
+ * This class is special because the multicast communication is based on broadcast.
  *
  * @author PITSCHR
  */
-public final class DiscoveryInboxQueue extends AbstractInboxQueue<DatagramChannel> {
+public final class MulticastInboxQueue extends AbstractInboxQueue<DatagramChannel> {
 
     /**
      * Constructor for KNX Discovery Inbox Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    public DiscoveryInboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        super(internalClient, channel);
+    public MulticastInboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        super(client, channel);
     }
 
     @Override

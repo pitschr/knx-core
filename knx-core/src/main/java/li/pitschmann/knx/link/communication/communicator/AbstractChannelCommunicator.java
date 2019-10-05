@@ -19,17 +19,15 @@
 package li.pitschmann.knx.link.communication.communicator;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.ControlChannelRelated;
-import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
-import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.event.KnxEvent;
 import li.pitschmann.knx.link.communication.queue.AbstractInboxQueue;
 import li.pitschmann.knx.link.communication.queue.AbstractOutboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultInboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultOutboxQueue;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
@@ -47,6 +45,7 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.Future;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 /**
  * Abstract channel communicator. It coordinates the communication for given channel
@@ -56,29 +55,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * It also controls the lifecycle of channel (opening, closing) and all receiving
  * KNX packets are forwarded to all subscribers.
  *
- * @param <C> Instance of {@link SelectableChannel}
  * @author PITSCHR
  */
-public abstract class AbstractChannelCommunicator<C extends SelectableChannel> extends SubmissionPublisher<Body> implements Runnable {
+public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Body> implements Runnable {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final InternalKnxClient internalClient;
+    private final InternalKnxClient client;
     private final AtomicBoolean closed = new AtomicBoolean();
     private final ExecutorService queueExecutor;
     private final ExecutorService communicationExecutor;
 
-    private final C channel;
+    private final SelectableChannel channel;
     private final AbstractInboxQueue<? extends ByteChannel> inboxQueue;
     private final AbstractOutboxQueue<? extends ByteChannel> outboxQueue;
 
     protected AbstractChannelCommunicator(final @Nonnull InternalKnxClient client) {
-        this.internalClient = Objects.requireNonNull(client);
+        this.client = Objects.requireNonNull(client);
 
-        this.channel = Objects.requireNonNull(newChannel(this.internalClient));
+        this.channel = Objects.requireNonNull(newChannel(this.client));
         log.info("Channel registered: {} (open: {}, registered: {}, blocking: {})", channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
 
         // creates inbox and outbox queues
-        this.inboxQueue = createInboxQueue(this.internalClient, this.channel);
-        this.outboxQueue = createOutboxQueue(this.internalClient, this.channel);
+        this.inboxQueue = createInboxQueue(this.client, this.channel);
+        this.outboxQueue = createOutboxQueue(this.client, this.channel);
         log.trace("Inbox and Outbox Queues created: InboxQueue={}, OutboxQueue={}.", this.inboxQueue, this.outboxQueue);
 
         // creates queue executor
@@ -89,46 +87,48 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
         log.info("Queue Executor created: {}", this.queueExecutor);
 
         // creates executor for communication
-        this.communicationExecutor = Executors.newFixedThreadPool(internalClient.getConfig().getCommunicationExecutorPoolSize(), true);
-        log.info("Communication Executor created with size of {}: {}", internalClient.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
+        this.communicationExecutor = Executors.newFixedThreadPool(this.client.getConfig().getCommunicationExecutorPoolSize(), true);
+        log.info("Communication Executor created with size of {}: {}", this.client.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
     }
 
     /**
      * Creates a new channel to be used by this communicator. It will be called during initialization
      * and only once time.
      *
-     * @param internalClient
+     * @param client
      * @return A new channel
      */
     @Nonnull
-    protected abstract C newChannel(final @Nonnull InternalKnxClient internalClient);
+    protected abstract SelectableChannel newChannel(final @Nonnull InternalKnxClient client);
 
     /**
      * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
      *
-     * @param internalClient
+     * @param client
      * @param channel
      * @return new instance of {@link AbstractInboxQueue}
      */
     @Nonnull
-    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull C channel) {
-        return new DefaultInboxQueue(internalClient, channel);
+    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient client,
+                                                                         final @Nonnull SelectableChannel channel) {
+        return new DefaultInboxQueue(client, channel);
     }
 
     /**
      * Creates a new instance of {@link AbstractOutboxQueue} that should be used by this communicator
      *
-     * @param internalClient
+     * @param client
      * @param channel
      * @return new instance of {@link AbstractOutboxQueue}
      */
     @Nonnull
-    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull C channel) {
-        return new DefaultOutboxQueue(internalClient, channel);
+    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient client,
+                                                                           final @Nonnull SelectableChannel channel) {
+        return new DefaultOutboxQueue(client, channel);
     }
 
     @Nonnull
-    public C getChannel() {
+    public SelectableChannel getChannel() {
         return channel;
     }
 
@@ -182,54 +182,73 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
      * @param body
      */
     public final void send(final @Nonnull Body body) {
-        this.outboxQueue.send(body);
+        this.outboxQueue.send(Objects.requireNonNull(body));
         log.debug("Body added to outbox queue: {}", body);
     }
 
     /**
-     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel. It returns a {@link Future} for further processing.
+     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
+     * It returns a {@link Future} for further processing.
      *
      * @param requestBody
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
-     * @return a {@link CompletableFuture} representing pending completion of the task containing either an instance of {@link ResponseBody},
-     * or {@code null} if no response was received because of e.g. timeout
+     * @return a {@link CompletableFuture} representing pending completion of the task containing
+     * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
     @Nonnull
-    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
-        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, msTimeout), this.communicationExecutor);
+    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
+                                                                    final long msTimeout) {
+        return send(requestBody, null, msTimeout);
     }
 
     /**
-     * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected body which
-     * is an instance of {@link ResponseBody}.
-     * <p>
-     * The appropriate channel will be chosen by {@link ControlChannelRelated} and {@link DataChannelRelated} marker
-     * interfaces.
+     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
+     * It returns a {@link Future} for further processing.
      *
      * @param requestBody
+     * @param predicate   predicates if the condition of {@link KnxEvent} was meet ({@code true}) or not ({@code false}),
+     *                    {@code null} means that no predicate check
+     * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
+     * @return a {@link CompletableFuture} representing pending completion of the task containing
+     * either an instance of {@link ResponseBody}, or {@code null} if no response was received
+     */
+    @Nonnull
+    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
+                                                                    final @Nullable Predicate<KnxEvent> predicate,
+                                                                    final long msTimeout) {
+        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, predicate, msTimeout), this.communicationExecutor);
+    }
+
+    /**
+     * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected response
+     * that meets the {@link Predicate} criteria and is an an instance of {@link ResponseBody}.
+     *
+     * @param requestBody
+     * @param predicate   predicates if the condition of {@link KnxEvent} was meet ({@code true}) or not ({@code false}),
+     *                    {@code null} means that no predicate check
      * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
-     * @return an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
+     * @return an instance of {@link ResponseBody}, or {@code null} if no response was received (timeout) or no response that meets the preconditions was received
      */
     @Nullable
-    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody, final long msTimeout) {
-        final var eventPool = this.internalClient.getEventPool();
+    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody,
+                                                                 final @Nullable Predicate<KnxEvent> predicate,
+                                                                 final long msTimeout) {
+        final var eventPool = this.client.getEventPool();
 
         // add request body to event pool
         eventPool.add(requestBody);
         log.trace("Request Body added to event pool.");
 
-        // mark as dirty
-        if (requestBody instanceof TunnelingRequestBody) {
-            this.internalClient.getStatusPool().setDirty(((TunnelingRequestBody) requestBody).getCEMI().getDestinationAddress());
-        }
+        // mark as dirty (if possible)
+        this.client.getStatusPool().setDirty(requestBody);
 
+        // send packet
         var attempts = 1;
-        final var totalAttempts = 3; // hard-coded (up to 3 times will be retried in case of no response)
-        final var eventWaiting = this.internalClient.getConfig().getIntervalEvent();
+        final var totalAttempts = ConfigConstants.Event.TOTAL_ATTEMPTS;
+        final var checkInterval = ConfigConstants.Event.CHECK_INTERVAL;
         U responseBody;
 
         do {
-            // send packet
             send(requestBody);
 
             // iterate for event response
@@ -242,11 +261,14 @@ public abstract class AbstractChannelCommunicator<C extends SelectableChannel> e
             while ( // true = no response yet
                     !event.hasResponse()
                             // true = not interrupted
-                            && Sleeper.milliseconds(eventWaiting)
+                            && Sleeper.milliseconds(checkInterval)
                             // true = request timeout not reached yet
-                            && (System.currentTimeMillis() - start) < msTimeout);
+                            && (System.currentTimeMillis() - start) < msTimeout
+                            // true = no predicate defined or not meet
+                            && (predicate == null || !predicate.test(event)));
 
-            responseBody = event.getResponse();
+            // additional check, as it may happen that there was a timeout
+            responseBody = (predicate == null || predicate.test(event)) ? event.getResponse() : null;
             if (responseBody == null) {
                 log.warn("No response received yet for request ({}/{}): {}", attempts, totalAttempts, requestBody);
             } else {

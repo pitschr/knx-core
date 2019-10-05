@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
@@ -27,6 +26,10 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
+import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.MockServer;
@@ -87,7 +90,7 @@ public class DefaultKnxClientTest {
      * Disconnect will be initiated by the KNX client.
      */
     @MockServerTest(disconnectStrategy = IgnoreStrategy.class)
-    @DisplayName("Disconnect by KNX client after 3 disconnect request attempts")
+    @DisplayName("Success: Disconnect by KNX client after 3 disconnect request attempts")
     public void testSuccessDisconnectByClientNoDisconnectResponse(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
             // after connection state request sent by client a disconnect will be initiated
@@ -169,13 +172,24 @@ public class DefaultKnxClientTest {
      * @param mockServer
      */
     @MockServerTest
-    @DisplayName("Test KNX client instantiation using host address as string")
-    public void testInstantiationViaHostAddress(final MockServer mockServer) {
+    @DisplayName("Success: Test KNX client instantiation using host address as string")
+    public void testHostAddressString(final MockServer mockServer) {
         try (final var client = DefaultKnxClient.createStarted("localhost:" + mockServer.getPort())) {
             // ok
+            mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+
+        mockServer.waitDone();
+
+        // assert packets
+        mockServer.assertReceivedPackets(//
+                DescriptionRequestBody.class, // #1
+                ConnectRequestBody.class, // #2
+                ConnectionStateRequestBody.class, // #3
+                DisconnectRequestBody.class // #4
+        );
     }
 
     /**
@@ -184,13 +198,47 @@ public class DefaultKnxClientTest {
      *
      * @param mockServer
      */
-    @MockServerTest(useDiscovery = true, discoveryPort = Constants.Default.KNX_PORT)
-    @DisplayName("Test KNX client instantiation using discovery service and default KNX port")
-    public void testInstantiationViaDiscovery(final MockServer mockServer) {
-        try (final var client = DefaultKnxClient.createStarted()) {
+    @MockServerTest(useDiscovery = true)
+    @DisplayName("Success: Test KNX client instantiation using discovery service and default KNX port")
+    public void testDiscovery(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
             // ok
+            mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+
+        mockServer.waitDone();
+
+        // assert packets
+        mockServer.assertReceivedPackets(//
+                SearchRequestBody.class, // #1
+                DescriptionRequestBody.class, // #2
+                ConnectRequestBody.class, // #3
+                ConnectionStateRequestBody.class, // #4
+                DisconnectRequestBody.class // #5
+        );
+    }
+
+    /**
+     * Test {@link DefaultKnxClient#createStarted(String)} with multicast address.
+     * Here we are testing the routing feature.
+     *
+     * @param mockServer
+     */
+    @MockServerTest(useRouting = true)
+    @DisplayName("Success: Test KNX client instantiation using routing service (via multicast)")
+    public void testRouting(final MockServer mockServer) {
+        try (final var client = mockServer.createTestClient()) {
+            client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.toValue(true));
+            mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION);
+        } catch (final Throwable t) {
+            fail("Unexpected test state", t);
+        }
+
+        // assert packets
+        mockServer.assertReceivedPackets(//
+                RoutingIndicationBody.class // #1
+        );
     }
 }

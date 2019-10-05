@@ -32,6 +32,8 @@ import li.pitschmann.knx.test.strategy.impl.DefaultDisconnectStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +49,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Logic for KNX mock server (package-protected)
  */
 public class MockServerCommunicator implements Flow.Subscriber<Body> {
-    private static final Logger logger = LoggerFactory.getLogger(MockServerCommunicator.class);
+    private static final Logger log = LoggerFactory.getLogger(MockServerCommunicator.class);
     private final Map<ServiceType, List<ResponseStrategy>> responseStrategies = new HashMap<>();
     private final Map<ServiceType, AtomicInteger> serviceTypeCounter = new HashMap<>();
     private final MockServer mockServer;
@@ -64,7 +66,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      *
      * @param mockServer
      */
-    MockServerCommunicator(final MockServer mockServer, final MockServerTest testAnnotation) {
+    MockServerCommunicator(final @Nonnull MockServer mockServer, final @Nonnull MockServerTest testAnnotation) {
         Preconditions.checkNotNull(testAnnotation);
         this.mockServer = Objects.requireNonNull(mockServer);
         this.commandParser = new MockServerCommandParser(mockServer, this);
@@ -76,6 +78,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
         registerResponseStrategies(ServiceType.CONNECTION_STATE_REQUEST, testAnnotation.connectionStateStrategy());
         registerResponseStrategies(ServiceType.DISCONNECT_REQUEST, testAnnotation.disconnectStrategy());
         registerResponseStrategies(ServiceType.TUNNELING_REQUEST, testAnnotation.tunnelingStrategy());
+        registerResponseStrategies(ServiceType.ROUTING_INDICATION, null);
 
         // Logic for Disconnect Trigger
         // --------------------------------
@@ -114,25 +117,30 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      * Registers the response strategies
      *
      * @param serviceType
-     * @param strategyClasses
+     * @param strategyClasses, if {@code null}, then {@link IgnoreStrategy} will be used
      */
-    private void registerResponseStrategies(final ServiceType serviceType, final Class<? extends ResponseStrategy>[] strategyClasses) {
+    private void registerResponseStrategies(final @Nonnull ServiceType serviceType,
+                                            final @Nullable Class<? extends ResponseStrategy>[] strategyClasses) {
         // re-init values for given service types
         responseStrategies.put(serviceType, Lists.newLinkedList());
         serviceTypeCounter.put(serviceType, new AtomicInteger());
         // add strategies
-        try {
-            for (final var strategyClass : strategyClasses) {
-                final var strategyInstance = strategyClass.getDeclaredConstructor().newInstance();
-                responseStrategies.get(serviceType).add(strategyInstance);
+        if (strategyClasses == null) {
+            responseStrategies.get(serviceType).add(IgnoreStrategy.DEFAULT);
+        } else {
+            try {
+                for (final var strategyClass : strategyClasses) {
+                    final var strategyInstance = strategyClass.getDeclaredConstructor().newInstance();
+                    responseStrategies.get(serviceType).add(strategyInstance);
+                }
+            } catch (final Exception e) {
+                log.error("Exception happened during creating strategy instance", e);
             }
-        } catch (final Exception e) {
-            logger.error("Exception happened during creating strategy instance", e);
         }
     }
 
     @Override
-    public void onNext(final Body body) {
+    public void onNext(final @Nullable Body body) {
         if (body instanceof RequestBody) {
             final var requestBody = (RequestBody) body;
             final var requestServiceType = requestBody.getServiceType();
@@ -147,9 +155,9 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
             final var responseStrategy = responseStrategiesList.get(index);
 
             if (responseStrategy instanceof IgnoreStrategy) {
-                logger.debug("Request being ignored because of IgnoreStrategy: {}", requestBody);
+                log.debug("Request being ignored because of IgnoreStrategy: {}", requestBody);
             } else {
-                logger.debug("Request processed by '{}': {}", responseStrategy.getClass().getName(), requestBody);
+                log.debug("Request processed by '{}': {}", responseStrategy.getClass().getName(), requestBody);
                 // get response body
                 final var mockResponse = responseStrategy.createResponse(this.mockServer, new MockRequest(requestBody));
 
@@ -158,29 +166,29 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
 
                 // checks if the disconnect should be done by KNX mock server
                 if (shouldDisconnectTrigger()) {
-                    logger.debug("KNX mock server disconnect triggered");
+                    log.debug("KNX mock server disconnect triggered");
                     this.mockServer.addToOutbox(new DefaultDisconnectStrategy().createRequest(this.mockServer, null).getBody());
                 }
                 // if the request body was a connect state request then internal runnable services may start
                 else if (!requestRunnableStarted && requestBody instanceof ConnectionStateRequestBody) {
                     requestRunnableStarted = true;
-                    logger.debug("Start with Mock Actions: {}", requests);
+                    log.debug("Start with Mock Actions: {}", requests);
                     CompletableFuture
                             .runAsync(() -> requests.stream().map(commandParser::parse).flatMap(Collection::stream).forEach(MockAction::apply))
-                            .thenRun(() -> logger.debug("Mock Actions fully performed."));
+                            .thenRun(() -> log.debug("Mock Actions fully performed."));
                 }
             }
 
         } else if (body instanceof ResponseBody) {
-            logger.trace("Response body received. Do nothing. Body: {}", body);
+            log.trace("Response body received. Do nothing. Body: {}", body);
         } else {
-            logger.warn("Unknown body received. Do nothing. Body: {}", body);
+            log.warn("Unknown body received. Do nothing. Body: {}", body);
         }
     }
 
     @Override
-    public void onError(final Throwable throwable) {
-        logger.error("Error during KNX Mock Server Logic class", throwable);
+    public void onError(final @Nullable Throwable throwable) {
+        log.error("Error during KNX Mock Server Logic class", throwable);
         // here we do not any error handling
         // call on complete to close mock server properly
         onComplete();
@@ -192,7 +200,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(Flow.Subscription subscription) {
+    public void onSubscribe(final @Nonnull Flow.Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 

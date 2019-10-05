@@ -163,7 +163,12 @@ public enum ServiceType implements KnxBytesEnum {
     /**
      * Used for indication of lost KNX/IP routing messages. This service is unconfirmed.
      */
-    ROUTING_LOST_MESSAGE(0x0531, "Routing lost message")
+    ROUTING_LOST_MESSAGE(0x0531, "Routing lost message"),
+    /**
+     * Used for busy signal if the KNX device exceeds the number of datagram that can
+     * be processed. This service is unconfirmed
+     */
+    ROUTING_BUSY(0x0532, "Routing busy message")
     // @formatter:on
     ;
 

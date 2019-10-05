@@ -35,16 +35,16 @@ import java.nio.channels.SelectableChannel;
  *
  * @author PITSCHR
  */
-public final class ControlAndDataChannelCommunicator extends AbstractChannelCommunicator<SelectableChannel> {
-    public ControlAndDataChannelCommunicator(final @Nonnull InternalKnxClient client) {
+public final class ControlAndDataChannelCommunicator extends AbstractChannelCommunicator {
+    ControlAndDataChannelCommunicator(final @Nonnull InternalKnxClient client) {
         super(client);
     }
 
     @Override
     @Nonnull
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient internalClient) {
+    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
         // we will use the control channel for data as well
-        return ChannelFactory.newControlChannel(internalClient);
+        return ChannelFactory.newControlChannel(client);
     }
 
     @Override

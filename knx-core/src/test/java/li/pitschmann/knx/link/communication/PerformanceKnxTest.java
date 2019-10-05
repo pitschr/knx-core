@@ -19,7 +19,6 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.collect.Lists;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
@@ -29,6 +28,7 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
@@ -67,9 +67,9 @@ public class PerformanceKnxTest {
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
                 // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
-                .setting("timeout.request.connectionstate", String.valueOf(Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT))
+                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, ConfigConstants.ConnectionState.REQUEST_TIMEOUT.getDefaultValue())
                 // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
-                .setting("interval.connectionstate", String.valueOf(Constants.Interval.CONNECTIONSTATE))
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, ConfigConstants.ConnectionState.CHECK_INTERVAL.getDefaultValue())
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
@@ -120,15 +120,15 @@ public class PerformanceKnxTest {
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
                 // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
-                .setting("timeout.request.connectionstate", String.valueOf(Constants.Timeouts.CONNECTIONSTATE_REQUEST_TIMEOUT))
+                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, ConfigConstants.ConnectionState.REQUEST_TIMEOUT.getDefaultValue())
                 // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
-                .setting("interval.connectionstate", String.valueOf(Constants.Interval.CONNECTIONSTATE))
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, ConfigConstants.ConnectionState.CHECK_INTERVAL.getDefaultValue())
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
             final var groupAddress = GroupAddress.of(1, 2, 3);
             for (int i = 0; i < TIMES; i++) {
-                assertThat(client.readRequest(groupAddress).get()).isNotNull();
+                client.readRequest(groupAddress);
             }
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, TIMES);
         } catch (final Throwable t) {

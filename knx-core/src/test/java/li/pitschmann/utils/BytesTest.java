@@ -100,6 +100,7 @@ public class BytesTest {
     @Test
     public void testToUnsignedShort() {
         // zero
+        assertThat(Bytes.toUnsignedShort(null)).isZero();
         assertThat(Bytes.toUnsignedShort((byte) 0x00)).isZero();
         assertThat(Bytes.toUnsignedShort((byte) 0x00, (byte) 0x00)).isZero();
         assertThat(Bytes.toUnsignedShort(new byte[]{(byte) 0x00, (byte) 0x00})).isZero();

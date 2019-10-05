@@ -35,11 +35,11 @@ public final class DefaultOutboxQueue extends AbstractOutboxQueue<ByteChannel> {
     /**
      * Constructor for Default KNX Outbox Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    public DefaultOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        super(internalClient, channel);
+    public DefaultOutboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        super(client, channel);
     }
 
     @Override

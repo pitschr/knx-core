@@ -208,7 +208,7 @@ public class AbstractKnxQueueTest {
             ).isTrue();
             Sleeper.seconds(1);
             // verifies if the notify plugins about error has been called
-            verify(clientMock).notifyPluginsError(any(Throwable.class));
+            verify(clientMock).notifyError(any(Throwable.class));
         } finally {
             Closeables.shutdownQuietly(executor);
         }

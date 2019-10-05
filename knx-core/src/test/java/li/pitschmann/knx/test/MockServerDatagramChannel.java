@@ -26,8 +26,7 @@ import li.pitschmann.knx.link.body.ControlChannelRelated;
 import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.DescriptionChannelRelated;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
-import li.pitschmann.knx.link.body.DiscoveryChannelRelated;
-import li.pitschmann.knx.link.body.SearchRequestBody;
+import li.pitschmann.knx.link.body.MulticastChannelRelated;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.utils.Closeables;
@@ -48,18 +47,17 @@ import java.util.Collections;
  * Mock Server Channel for UDP ({@link DatagramChannel}) communication
  */
 public final class MockServerDatagramChannel implements MockServerChannel<DatagramChannel> {
-    private final static Logger logger = LoggerFactory.getLogger(MockServerDatagramChannel.class);
+    private final static Logger log = LoggerFactory.getLogger(MockServerDatagramChannel.class);
     private final DatagramChannel channel;
-    private SocketAddress clientDiscoverySocketAddress;
+    private SocketAddress clientMulticastSocketAddress;
     private SocketAddress clientDescriptionSocketAddress;
     private SocketAddress clientControlSocketAddress;
     private SocketAddress clientDataSocketAddress;
-    private boolean useNAT;
 
     public MockServerDatagramChannel(final @Nonnull MockServerTest mockServerAnnotation) {
         // as mock server is used to test locally
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 0);
-        this.channel = ChannelFactory.newDatagramChannel(mockServerAnnotation.discoveryPort(), 3000, null, socketOptions);
+        this.channel = ChannelFactory.newDatagramChannel(0, 3000, null, socketOptions);
     }
 
     @Override
@@ -83,15 +81,15 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
             key.attach(address);
         }
 
-        // update client discovery address if SearchRequestBody from client is received
-        if (body instanceof SearchRequestBody) {
-            this.clientDiscoverySocketAddress = address;
-            logger.debug("Discovery Address: {}", this.clientDiscoverySocketAddress);
+        // update client multicast address if multicast related packet is received
+        if (body instanceof MulticastChannelRelated) {
+            this.clientMulticastSocketAddress = address;
+            log.debug("Multicast Address: {}", this.clientMulticastSocketAddress);
         }
         // update client description address if DescriptionRequestBody from client is received
         else if (body instanceof DescriptionRequestBody) {
             this.clientDescriptionSocketAddress = address;
-            logger.debug("Description Address: {}", this.clientDescriptionSocketAddress);
+            log.debug("Description Address: {}", this.clientDescriptionSocketAddress);
         }
         // update client control/data addresses if ConnectRequestBody from client is received
         else if (body instanceof ConnectRequestBody) {
@@ -110,8 +108,8 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
                 this.clientControlSocketAddress = new InetSocketAddress(clientControlHPAI.getAddress(), clientControlHPAI.getPort());
                 this.clientDataSocketAddress = new InetSocketAddress(clientDataHPAI.getAddress(), clientDataHPAI.getPort());
             }
-            logger.debug("Control Address: {}", this.clientControlSocketAddress);
-            logger.debug("Data Address   : {}", this.clientDataSocketAddress);
+            log.debug("Control Address: {}", this.clientControlSocketAddress);
+            log.debug("Data Address   : {}", this.clientDataSocketAddress);
         }
 
         return body;
@@ -133,13 +131,13 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
 
         // choose address based on body channel-relation
         final SocketAddress address;
-        if (body instanceof DiscoveryChannelRelated) {
-            address = this.clientDiscoverySocketAddress;
+        if (body instanceof MulticastChannelRelated) {
+            address = this.clientMulticastSocketAddress;
         } else if (body instanceof DescriptionChannelRelated) {
             address = this.clientDescriptionSocketAddress;
-        } else if (!useNAT && body instanceof ControlChannelRelated) {
+        } else if (body instanceof ControlChannelRelated) {
             address = this.clientControlSocketAddress;
-        } else if (!useNAT && body instanceof DataChannelRelated) {
+        } else if (body instanceof DataChannelRelated) {
             address = this.clientDataSocketAddress;
         } else {
             // otherwise just use the sender form previous received diagram
@@ -151,7 +149,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
 
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         Closeables.closeQuietly(this.channel);
     }
 }

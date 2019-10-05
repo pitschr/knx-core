@@ -18,9 +18,10 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
@@ -66,7 +67,7 @@ public class BaseKnxClientTest {
         try (client) {
             assertThat(client.getStatusPool()).isNotNull();
             assertThat(client.getConfig()).isNotNull();
-            assertThat(client.isClosed()).isFalse();
+            assertThat(client.isRunning()).isFalse(); // it is false, because it has not been started yet
 
             // verify if statistic is an unmodifiable instance
             final var statistic = client.getStatistic();
@@ -84,8 +85,6 @@ public class BaseKnxClientTest {
             assertThat(argCaptor.getValue()).isInstanceOf(BaseKnxClient.class).isSameAs(client);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
-        } finally {
-            assertThat(client.isClosed()).isTrue();
         }
     }
 
@@ -110,27 +109,27 @@ public class BaseKnxClientTest {
     @MockServerTest
     @DisplayName("OK: Test read and write requests (incl. async) over NAT")
     public void testReadAndWriteRequestsOverNAT(final MockServer mockServer) {
-        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting("client.nat.enabled", "true").build());
+        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting(ConfigConstants.NAT, true).build());
     }
 
     /**
      * Tests read and write requests methods for {@link BaseKnxClient} using a
-     * specific configuration which is defined via {@code configBuilder} function.
+     * specific configuration which is defined via {@code configFunction} function.
      *
      * @param mockServer
-     * @param configBuilder defines which configuration should be used
+     * @param configFunction defines which configuration should be used
      */
-    private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Configuration> configBuilder) {
+    private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Config> configFunction) {
         final var groupAddress = GroupAddress.of(1, 2, 3);
 
-        final var config = configBuilder.apply(mockServer);
+        final var config = configFunction.apply(mockServer);
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // async read request
-            client.readRequest(groupAddress).get();
+            client.readRequest(groupAddress);
             // async write request with DPT
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(false)).get();
+            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(false));
             // async write request with APCI data
-            client.writeRequest(groupAddress, new byte[]{0x00}).get();
+            client.writeRequest(groupAddress, new byte[]{0x00});
             // send via body
             client.send(KnxBody.TUNNELING_REQUEST_BODY);
             // send via body and timeout

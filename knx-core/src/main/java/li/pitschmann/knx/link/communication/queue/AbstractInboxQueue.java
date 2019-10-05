@@ -46,11 +46,11 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
     /**
      * Constructor for KNX Inbox Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    public AbstractInboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        super(internalClient, channel);
+    public AbstractInboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        super(client, channel);
     }
 
     @Override
@@ -111,7 +111,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
 
             // add body to queue
             this.add(body);
-            this.getInternalClient().notifyPluginsIncomingBody(body);
+            this.getInternalClient().notifyIncomingBody(body);
         }
     }
 

@@ -18,13 +18,16 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.Configuration;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ControlChannelRelated;
 import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -41,17 +44,18 @@ public interface KnxClient extends AutoCloseable {
     void close();
 
     /**
-     * Returns the {@link Configuration} used by KNX client
+     * Returns the {@link Config} used by KNX client
      *
-     * @return an immutable {@link Configuration}
+     * @return an immutable {@link Config}
      */
-    Configuration getConfig();
+    Config getConfig();
 
     /**
      * Returns a copied {@link KnxStatistic} snapshot about the KNX communication
      *
      * @return an immutable {@link KnxStatistic}
      */
+    @Nonnull
     KnxStatistic getStatistic();
 
     /**
@@ -59,14 +63,15 @@ public interface KnxClient extends AutoCloseable {
      *
      * @return an immutable {@link KnxStatusPool}
      */
+    @Nonnull
     KnxStatusPool getStatusPool();
 
     /**
-     * Returns {@code true} if the close has already been requested
+     * Returns {@code true} if the KNX Client is actively communicating with the KNX Net/IP device.
      *
-     * @return {@code true} if closed
+     * @return {@code true} if the client is running
      */
-    boolean isClosed();
+    boolean isRunning();
 
     /**
      * Sends any {@link Body} packet immediately to the appropriate channel.
@@ -76,18 +81,43 @@ public interface KnxClient extends AutoCloseable {
      *
      * @param body body to be sent
      */
-    void send(final Body body);
+    void send(final @Nonnull Body body);
 
     /**
-     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel. It returns a {@link Future} for further processing.
-     * <p>
-     * The appropriate channel will be chosen by {@link ControlChannelRelated} and {@link DataChannelRelated} marker
-     * interfaces.
+     * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
+     * It returns a {@link Future} for further processing.
      *
      * @param requestBody
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
-     * @return a {@link CompletableFuture} representing pending completion of the task containing either an instance of {@link ResponseBody},
-     * or {@code null} if no response was received because of e.g. timeout
+     * @return a {@link CompletableFuture} representing pending completion of the task containing either
+     * an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
-    <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout);
+    @Nonnull
+    <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, final long msTimeout);
+
+    /**
+     * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} <strong>asynchronously</strong>.
+     *
+     * @param address
+     * @param dataPointValue
+     * @return {@code true} if the write request was successful, otherwise {@code false}
+     */
+    boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue);
+
+    /**
+     * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
+     *
+     * @param address
+     * @param apciData
+     * @return {@code true} if the write request was successful, otherwise {@code false}
+     */
+    boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull byte[] apciData);
+
+    /**
+     * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>
+     *
+     * @param address
+     * @return {@code true} if the write request was successful, otherwise {@code false}
+     */
+    boolean readRequest(final @Nonnull GroupAddress address);
 }

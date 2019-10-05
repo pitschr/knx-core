@@ -65,7 +65,7 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class SearchResponseBody extends AbstractMultiRawData implements ResponseBody, DiscoveryChannelRelated {
+public final class SearchResponseBody extends AbstractMultiRawData implements ResponseBody, MulticastChannelRelated {
     /**
      * Structure Length for {@link SearchResponseBody}
      * <p>

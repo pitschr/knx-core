@@ -43,18 +43,18 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnable {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final InternalKnxClient internalClient;
+    private final InternalKnxClient client;
     private final SelectableChannel channel;
     private final BlockingQueue<Body> queue = new LinkedBlockingDeque<>();
 
     /**
      * Constructor for Abstract KNX Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    protected AbstractKnxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        this.internalClient = Objects.requireNonNull(internalClient);
+    protected AbstractKnxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        this.client = Objects.requireNonNull(client);
         this.channel = Objects.requireNonNull(channel);
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
                     // break loop due exception
                 } catch (final Throwable e) {
                     log.error("Error while processing KNX packets.", e);
-                    this.internalClient.notifyPluginsError(e);
+                    this.client.notifyError(e);
                     // proceed with next packet
                 }
             }
@@ -129,7 +129,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      */
     @Nonnull
     protected final InternalKnxClient getInternalClient() {
-        return internalClient;
+        return client;
     }
 
     /**

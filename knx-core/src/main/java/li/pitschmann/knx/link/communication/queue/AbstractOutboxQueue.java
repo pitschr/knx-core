@@ -41,16 +41,16 @@ import java.util.Collection;
  * @author PITSCHR
  */
 public abstract class AbstractOutboxQueue<T extends ByteChannel> extends AbstractKnxQueue<T> {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Constructor for KNX Outbox Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    public AbstractOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        super(internalClient, channel);
+    public AbstractOutboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        super(client, channel);
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
         }
         send(channel, ByteBuffer.wrap(packetToSend));
         log.trace("Packet sent.");
-        this.getInternalClient().notifyPluginsOutgoingBody(body);
+        this.getInternalClient().notifyOutgoingBody(body);
 
         if (log.isDebugEnabled()) {
             log.debug("SEND: {}\n" + //

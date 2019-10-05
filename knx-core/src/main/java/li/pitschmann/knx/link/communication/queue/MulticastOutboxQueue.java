@@ -28,29 +28,35 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 
 /**
- * Discovery Outbox Queue for KNX discovery packets to be sent to KNX Net/IP device
- * This class is special because the discovery communication is based on broadcast.
+ * Discovery Outbox Queue for KNX multicast packets to be sent to KNX Net/IP device
+ * This class is special because the multicast communication is based on broadcast.
  *
  * @author PITSCHR
  */
-public final class DiscoveryOutboxQueue extends AbstractOutboxQueue<DatagramChannel> {
-    private final InetSocketAddress discoverySocketAddress;
+public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChannel> {
+    private final InetSocketAddress multicastSocketAddress;
 
     /**
      * Constructor for KNX Discovery Inbox Queue
      *
-     * @param internalClient internal KNX client for internal actions like informing plug-ins
-     * @param channel        channel of communication
+     * @param client  internal KNX client for internal actions like informing plug-ins
+     * @param channel channel of communication
      */
-    public DiscoveryOutboxQueue(final @Nonnull InternalKnxClient internalClient, final @Nonnull SelectableChannel channel) {
-        super(internalClient, channel);
+    public MulticastOutboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+        super(client, channel);
 
-        final var config = internalClient.getConfig();
-        discoverySocketAddress = new InetSocketAddress(config.getRemoteDiscoveryAddress(), config.getRemoteDiscoveryPort());
+        final var config = client.getConfig();
+
+        // use config setting, otherwise fall back to default setting
+        final var remoteAddress = config.isRoutingEnabled() ? config.getRemoteControlAddress() : config.getMulticastChannelAddress();
+        final var remotePort = config.getRemoteControlPort();
+
+        multicastSocketAddress = new InetSocketAddress(remoteAddress, remotePort);
+        log.debug("Multicast Outbox Socket: {}", multicastSocketAddress);
     }
 
     @Override
     protected void send(final @Nonnull DatagramChannel channel, final @Nonnull ByteBuffer bb) throws IOException {
-        channel.send(bb, discoverySocketAddress);
+        channel.send(bb, multicastSocketAddress);
     }
 }

@@ -24,7 +24,7 @@ import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.datapoint.DPT2;
 import li.pitschmann.knx.test.MockDaemonTest;
-import li.pitschmann.knx.test.MockHttpDaemon;
+import li.pitschmann.knx.test.MockHttpDaemonPlugin;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -33,13 +33,11 @@ import ro.pippo.core.HttpConstants;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
 
 import static li.pitschmann.knx.test.TestUtils.asJson;
 import static li.pitschmann.knx.test.TestUtils.randomGroupAddress;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +53,7 @@ public class WriteRequestControllerTest {
      */
     @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Write Request for group address 0/0/22")
-    public void testWrite(final MockHttpDaemon daemon) throws Exception {
+    public void testWrite(final MockHttpDaemonPlugin daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
@@ -133,12 +131,8 @@ public class WriteRequestControllerTest {
         // Mocking
         //
 
-        // mock no ack body was found - an execution exception is thrown instead
-        try {
-            when(writeRequestController.getKnxClient().writeRequest(groupAddress, new byte[0]).get()).thenThrow(new ExecutionException(null));
-        } catch (final Throwable t) {
-            fail(t);
-        }
+        // mock no ack body was found
+        when(writeRequestController.getKnxClient().writeRequest(groupAddress, new byte[]{0x01})).thenReturn(false);
 
         //
         // Verification

@@ -21,8 +21,6 @@ package li.pitschmann.knx.test;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import li.pitschmann.knx.link.Configuration;
-import li.pitschmann.knx.link.Constants;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -30,6 +28,8 @@ import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.config.ConfigBuilder;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Closeables;
@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
+import java.net.InetAddress;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.MulticastChannel;
 import java.nio.channels.Selector;
@@ -67,7 +68,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * KNX client and KNX Net/IP device.
  */
 public final class MockServer implements Runnable, Closeable {
-    private static final Logger logger = LoggerFactory.getLogger(MockServer.class);
+    private static final Logger log = LoggerFactory.getLogger(MockServer.class);
     private static final AtomicInteger globalChannelIdPool = new AtomicInteger();
     private final AtomicInteger tunnelingRequestSequence = new AtomicInteger();
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
@@ -76,6 +77,7 @@ public final class MockServer implements Runnable, Closeable {
     private final MockServerChannel serverChannel;
     private final MockServerTest mockServerAnnotation;
     private final ExecutorService executorService;
+    private InetAddress multicastAddress;
     private HPAI hpai;
     private IndividualAddress individualAddress;
     private int channelId;
@@ -107,20 +109,20 @@ public final class MockServer implements Runnable, Closeable {
 
     @Override
     public void run() {
-        logger.info("*** KNX Mock Server [main] START ***");
+        log.info("*** KNX Mock Server [main] START ***");
 
         // set individual address
         individualAddress = IndividualAddress.of(15, 15, 242);
 
         // generate channel id [0 .. 255]
         this.channelId = globalChannelIdPool.incrementAndGet() % 256;
-        logger.info("Mock Server Channel ID: {}", this.channelId);
-        // Join Discovery Multicast Service if necessary
-        if (mockServerAnnotation.useDiscovery()) {
-            Preconditions.checkArgument(this.serverChannel.getChannel() instanceof MulticastChannel);
-            this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), Constants.Default.KNX_MULTICAST_ADDRESS);
-            logger.debug("Membership Keys: {}", membershipKeys);
-        }
+        log.info("Mock Server Channel ID: {}", this.channelId);
+
+        // join multicast (used for e.g. discovery, routing, ...)
+        multicastAddress = Networker.getByAddress(224, 0, 0, channelId);
+        log.debug("Multicast Address: {}", multicastAddress);
+        this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), multicastAddress);
+        log.debug("Membership Keys: {}", membershipKeys);
 
         // Start executor service heartbeat monitor
         final var executorService = Executors.newSingleThreadExecutor(true);
@@ -144,12 +146,12 @@ public final class MockServer implements Runnable, Closeable {
              this.serverChannel) {
             // channels, HPAIs
             this.hpai = HPAI.of(serverChannel.getChannel());
-            logger.info("Mock Server HPAI: {}", this.hpai);
+            log.info("Mock Server HPAI: {}", this.hpai);
 
             // prepare channel for non-blocking and register to selector
             serverChannel.getChannel().register(selector, this.serverChannel.getChannel().validOps());
-            logger.debug("Channel {} registered to selector: {}", this.serverChannel, selector);
-            logger.debug("Server Channel created and listening on port: {}", getPort());
+            log.debug("Channel {} registered to selector: {}", this.serverChannel, selector);
+            log.debug("Server Channel created and listening on port: {}", getPort());
 
             // mark mock server as "ready" for communication
             this.ready = true;
@@ -167,8 +169,8 @@ public final class MockServer implements Runnable, Closeable {
                         heartbeatMonitor.ping();
                         this.receivedBodies.add(body);
                         publisher.submit(body);
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("RECEIVED BODY from channel '{}': {}", key.channel(), body);
+                        if (log.isDebugEnabled()) {
+                            log.debug("RECEIVED BODY from channel '{}': {}", key.channel(), body);
                         }
                     }
                     // send
@@ -178,21 +180,21 @@ public final class MockServer implements Runnable, Closeable {
                         heartbeatMonitor.ping();
                         this.sentBodies.add(body);
 
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("SENT BODY to channel '{}': {}", key.channel(), body);
+                        if (log.isDebugEnabled()) {
+                            log.debug("SENT BODY to channel '{}': {}", key.channel(), body);
                         }
 
                         // special behavior for disconnect as the disconnect
                         // was initiated by KNX mock server
                         if (body instanceof DisconnectRequestBody) {
-                            logger.debug("Stopping KNX mock server, because disconnect request packet was sent: {}", body);
+                            log.debug("Stopping KNX mock server, because disconnect request packet was sent: {}", body);
                             CompletableFuture
                                     // wait until answer from client
                                     .runAsync(() -> this.waitForReceivedServiceType(ServiceType.DISCONNECT_RESPONSE))
                                     // then cancel it
                                     .thenRun(() -> this.cancel());
                         } else if (body instanceof DisconnectResponseBody) {
-                            logger.debug("Stopping KNX mock server, because disconnect response packet was sent: {}", body);
+                            log.debug("Stopping KNX mock server, because disconnect response packet was sent: {}", body);
                             this.cancel();
                         }
                     }
@@ -200,17 +202,17 @@ public final class MockServer implements Runnable, Closeable {
                 }
             }
         } catch (final Throwable t) {
-            logger.error("Throwable during KNX mock server", t);
+            log.error("Throwable during KNX mock server", t);
             throwable = t;
         } finally {
             // drop membership keys if it exists
             if (this.membershipKeys != null) {
-                //membershipKeys.stream().forEach(key -> key.drop());
+                membershipKeys.stream().forEach(key -> key.drop());
             }
 
             Closeables.shutdownQuietly(executorService);
             Closeables.closeQuietly(publisher);
-            logger.info("*** KNX Mock Server [main] END ***");
+            log.info("*** KNX Mock Server [main] END ***");
         }
     }
 
@@ -230,6 +232,16 @@ public final class MockServer implements Runnable, Closeable {
      */
     public int getChannelId() {
         return this.channelId;
+    }
+
+    /**
+     * Returns the multicast address used by the KNX mock server
+     *
+     * @return multicast address
+     */
+    @Nonnull
+    public InetAddress getMulticastAddress() {
+        return Objects.requireNonNull(this.multicastAddress);
     }
 
     /**
@@ -277,7 +289,7 @@ public final class MockServer implements Runnable, Closeable {
         final var notInterrupted = Sleeper.milliseconds(100, () -> this.executorService.isTerminated(), 30000);
 
         if (!notInterrupted) {
-            logger.error("It took too long for waitDone(), here are bodies which were received/sent:\n" +
+            log.error("It took too long for waitDone(), here are bodies which were received/sent:\n" +
                     "Received bodies:\n" +
                     "-------------------\n" +
                     "{}\n" +
@@ -308,7 +320,7 @@ public final class MockServer implements Runnable, Closeable {
         final var notInterrupted = Sleeper.milliseconds(100, () -> !isCancelled() && this.contains(new ArrayList<>(this.receivedBodies), serviceType, occurrence), 30000);
 
         if (!notInterrupted) {
-            logger.error("It took too long for 'waitForReceivedServiceType', here are bodies which were received/sent:\n" +
+            log.error("It took too long for 'waitForReceivedServiceType', here are bodies which were received/sent:\n" +
                     "Received bodies:\n" +
                     "-------------------\n" +
                     "{}\n" +
@@ -440,37 +452,45 @@ public final class MockServer implements Runnable, Closeable {
     }
 
     /**
-     * Creates a new instance of {@link Configuration.Builder} for further usage
+     * Creates a new instance of {@link ConfigBuilder} for further usage
      *
-     * @return An instance of {@link Configuration.Builder}
+     * @return An instance of {@link ConfigBuilder}
      */
-    public Configuration.Builder newConfigBuilder() {
+    public ConfigBuilder newConfigBuilder() {
         Preconditions.checkArgument(getPort() > 0, "Knx Client cannot be returned when port is not defined.");
 
-        final Configuration.Builder configBuilder;
-        if (mockServerAnnotation.useDiscovery()) {
-            configBuilder = Configuration.create()
-                    .setting("endpoint.discovery.port", String.valueOf(this.serverChannel.getPort()))
-                    .setting("client.channel.discovery.ttl", "0");
-            logger.info("Discovery service will be used for mock server");
+        final ConfigBuilder configBuilder;
+        if (mockServerAnnotation.useRouting()) {
+            final var address = getMulticastAddress();
+            final var port = getPort();
+            configBuilder = ConfigBuilder.create(address, port);
+            log.info("Routing service will be used for mock server. Endpoint: {}:{}", address, port);
+        } else if (mockServerAnnotation.useDiscovery()) {
+            final var port = getPort();
+            configBuilder = ConfigBuilder.create(Networker.getAddressUnbound(), port);
+            log.info("Discovery service will be used for mock server. Endpoint: 0.0.0.0:{}", port);
         } else {
             final var address = Networker.getLocalHost();
             final var port = getPort();
-            configBuilder = Configuration.create(address, port);
-            logger.info("Discovery service will NOT be used for mock server. Endpoint: {}:{}", address, port);
+            configBuilder = ConfigBuilder.create(address, port);
+            log.info("Discovery service will NOT be used for mock server. Endpoint: {}:{}", address, port);
         }
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
-                .setting("executor.pool.plugin", "3") // 3 instead of 10
-                .setting("executor.pool.communication", "3") // 3 instead of 10
-                .setting("timeout.request.discovery", "2000") // 2s instead of 10s
-                .setting("timeout.request.description", "2000") // 2s instead of 10s
-                .setting("timeout.request.connect", "2000") // 2s instead of 10s
-                .setting("timeout.request.disconnect", "2000") // 2s instead of 10s
-                .setting("timeout.request.connectionstate", "2000") // 2s instead of 10s
-                .setting("interval.connectionstate", "6000") // 6s instead of 60s
-                .setting("timeout.alive.connectionstate", "12000") // 12s instead of 120s
+                .setting(ConfigConstants.Multicast.ADDRESS, this.getMulticastAddress())
+                .setting(ConfigConstants.Multicast.PORT, 0) // use random local port for multicast testing
+                .setting(ConfigConstants.Multicast.TIME_TO_LIVE, 0) // consider local only (no pass by any router)
+                .setting(ConfigConstants.Executor.PLUGIN_POOL_SIZE, 3) // 3 instead of 10
+                .setting(ConfigConstants.Executor.COMMUNICATION_POOL_SIZE, 3) // 3 instead of 10
+                .setting(ConfigConstants.Search.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.Description.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.Connect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.Disconnect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 6000L) // 6s instead of 60s
+                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 12000L) // 12s instead of 120s
+                .setting(ConfigConstants.PROJECT_PATH, Paths.get(mockServerAnnotation.projectPath()))
                 ;
     }
 

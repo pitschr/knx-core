@@ -22,8 +22,12 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.CEMI;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
@@ -67,7 +71,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
     }
 
     /**
-     * Marks the status for given {@link KnxAddress} as dirty (not up to date)
+     * Marks the status for given {@link KnxAddress} as dirty (not up-to-date)
      *
      * @param address {@link KnxAddress} for which the status should be marked as dirty
      */
@@ -79,37 +83,64 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         }
     }
 
+    /**
+     * Marks the status for given RequestBody as dirty (not up-to-date)
+     *
+     * @param requestBody
+     */
+    public void setDirty(final @Nullable RequestBody requestBody) {
+        // for tunneling
+        if (requestBody instanceof TunnelingRequestBody) {
+            setDirty(((TunnelingRequestBody) requestBody).getCEMI().getDestinationAddress());
+        }
+        // for routing
+        else if (requestBody instanceof RoutingIndicationBody) {
+            setDirty(((RoutingIndicationBody) requestBody).getCEMI().getDestinationAddress());
+        }
+    }
+
+    @Override
     public boolean isUpdated(final @Nonnull KnxAddress address) {
         Preconditions.checkNotNull(address);
         final var knxStatus = this.statusMap.get(address);
         return knxStatus != null && !knxStatus.isDirty();
     }
 
-    public boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
-        return getStatusFor(address, duration, unit, true) != null;
+    @Override
+    public boolean existsStatusFor(final @Nonnull KnxAddress address) {
+        return this.statusMap.get(address) != null;
     }
 
     @Nullable
+    @Override
     public KnxStatusData getStatusFor(final @Nonnull KnxAddress address) {
-        Preconditions.checkNotNull(address);
-        final var statusData = this.statusMap.get(address);
-        if (statusData == null) {
-            log.warn("No KNX status data found for address: {}", address);
-        }
-        return statusData;
+        return getStatusFor(address, true);
     }
 
     @Nullable
-    public KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit) {
-        return getStatusFor(address, duration, unit, false);
+    @Override
+    public KnxStatusData getStatusFor(@Nonnull KnxAddress address, boolean mustUpToDate) {
+        return getStatusForInternal(address, ConfigConstants.Event.STATUS_LOOKUP_TIMEOUT, TimeUnit.MILLISECONDS, true);
     }
 
+    /**
+     * Returns the status for given {@link KnxAddress} immediately if it exists already or up to
+     * given {@code duration} and {@code unit}
+     *
+     * @param address      {@link KnxAddress} for which the status should be returned
+     * @param duration     duration of time unit
+     * @param unit         time unit
+     * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
+     *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
+     *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
+     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists (or dirty) within given time
+     */
     @Nullable
-    public KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
+    private KnxStatusData getStatusForInternal(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
         Preconditions.checkNotNull(address);
         Preconditions.checkNotNull(unit);
         final var end = System.currentTimeMillis() + unit.toMillis(duration);
-        KnxStatusData statusData = null;
+        KnxStatusData statusData;
         do {
             statusData = this.statusMap.get(address);
         } while ((statusData == null || (mustUpToDate && statusData.isDirty())) && Sleeper.milliseconds(10) && System.currentTimeMillis() < end);
@@ -120,14 +151,20 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
         } else if (mustUpToDate && statusData.isDirty()) {
             log.warn("No up-to-date KNX status data for address within defined timeout: {}", address);
             return null;
-        } else {
-            return statusData;
         }
+        return statusData;
     }
 
     @Nullable
+    @Override
     public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId) {
-        final var statusData = this.getStatusFor(address);
+        return getValue(address, dptId, true);
+    }
+
+    @Nullable
+    @Override
+    public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
+        final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
             @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
             return dataPointValue;
@@ -136,8 +173,15 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
     }
 
     @Nullable
+    @Override
     public <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt) {
-        final var statusData = this.getStatusFor(address);
+        return getValue(address, dpt, true);
+    }
+
+    @Nullable
+    @Override
+    public <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt, final boolean mustUpToDate) {
+        final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
             return dpt.toValue(statusData.getApciData());
         }
@@ -145,6 +189,7 @@ public final class KnxStatusPoolImpl implements KnxStatusPool {
     }
 
     @Nonnull
+    @Override
     public Map<KnxAddress, KnxStatusData> copyStatusMap() {
         return ImmutableMap.copyOf(this.statusMap);
     }
