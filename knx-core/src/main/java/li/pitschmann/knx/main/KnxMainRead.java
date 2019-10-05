@@ -121,6 +121,6 @@ public final class KnxMainRead extends AbstractKnxMain {
         log.info(" T U N N E L I N G    ( E N D P O I N T )");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startReadActions(new String[]{"-endpoint", "192.168.1.16"});
+        startReadActions(new String[]{"-ip", "192.168.1.16"});
     }
 }

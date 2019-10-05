@@ -6,187 +6,294 @@
 
 A reactive, non-blocking Java library for KNX Net/IP communication.
 
-This library is indented to allow you writing your own application communicating with your KNX Net/IP device 
-(either a router or an interface). It also contains few main classes for a basic understanding how the KNX 
-communication can be done in programmatically way.
-
-This project is more intended for developers which are interested in communication with KNX world. 
-See examples below to get a quick start using read-to-use classes.
+The purpose of this library is designed for developers to allow their applications 
+to communicate with KNX world via KNX Net/IP device (either a KNX router or a KNX 
+interface) and it supports _tunneling_ and _routing_ modes.
+ 
+For examples, to get a quick start see examples below. It contains few _main classes_ 
+to get a quick basic understanding how the communication with KNX can be done in 
+programmatically way.
 
 ### Known limitations
 
-* No KNX Secure implementation yet (because I do not have a KNX router that supports KNX secure)
-* No Additional Info support in CEMI frame yet
+* No KNX Secure which are offered by newest generation of KNX Net/IP devices 
+(because I do not have a KNX router that supports KNX secure)
  
 ### Prerequisites
 
 * **Java 11+**
-  * Make sure that you have Java 11 installed and running as Java 11
+  * Make sure that you have Java 11+ installed and running as Java 11+
 * **Tunneling: KNX Router or Interface**
   * One free tunneling connection available
   * IP-Address (optional, if not provided - the auto-discovery service will be used)
-* **Routing: KNX Router (only)**
-  * Filter table on your KNX router device is properly configured
-  * IP-Multicast Address that is used by your KNX router (default: 224.0.23.12)
+* **Routing: KNX Router only**
+  * Filter table on your KNX router device is properly configured, otherwise packets won't 
+  be forwarded
+  * IP Multicast Address that is used by your KNX router (optional, if not provided, the 
+  default 224.0.23.12 multicast address will be used)
 
 ### Architecture
 
 ![Architecture](./assets/readme_architecture.png)
 
-The communication between KNX and the client is reactive and non-blocking which allows a very fast communication 
-and we may have multiple channels simultaneously open: 
-* Discovery Channel (for discovery service; multicast)
-* Description Channel (for receiving description information)
-* Control Channel (for control-related frames like description, connect, disconnect and health-check)
-* Data Channel (for data-related frames like read/request frames to/from KNX)
-* Multicast Channel (for routing; multicast)
+The communication between KNX Net/IP device and the KNX client is reactive and non-blocking 
+which allows a very fast communication and we may have multiple channels simultaneously open: 
+* _Discovery Channel_ for discovery service (multicast)
+* _Description Channel_ for receiving description information
+* _Control Channel_ for tunneling; control-related frames like connect, disconnect and connection state
+* _Data Channel_ for tunneling; data-related frames like read/write requests from and to KNX
+* _Multicast Channel_ for routing; data-related frames
 
-All data requests of all group addresses that is sent by KNX Net/IP will be fetched by the KNX client internally. 
-If the KNX client is using NAT, then control channel and data channel are using a shared channel. 
+##### Communication mode (Tunneling, NAT, Routing)
+
+According to the KNX specification the communication is defaulted to _tunneling_ mode and without 
+Network Address Translation (NAT). If the communication should be using _routing_ then it must be
+explicitly defined using `-routing` parameter.
+
+Using _tunneling_ mode we need Network Address Translation (NAT) in some cases; this must be 
+enabled using `-nat` parameter. When NAT enabled, then the _Control Channel_ and _Data Channel_ 
+will use a shared channel.  One practical example, where we need NAT would be e.g. dockerized image. 
+
+Note: NAT is suitable for _tunneling_ mode only, in _routing_ mode it has no
+effect.
+
+##### KNX Client
+
+All data-related frames of all KNX group addresses that is sent by KNX Net/IP device will be 
+fetched and handled by the KNX client and it offers:
+* _Status Pool_ to fetch the latest status and data about the KNX group address
+* _Event Pool_ for more advanced and detailed diagnosis and stores the original request and 
+response frames 
+frame belongs to which request frame for more advanced and detailed diagnosis
+* _Statistic_ to get basic statistic how many bytes/frames/type of frames were sent or received
+* _Plugin Injector_ allowing to extend KNX client with plugin, for example: auditing, long-term 
+event logging, and much more.
+* _Data Point Type Translator_ to translate human-friendly (e.g. "on", "off"), Java data types 
+(e.g. true, false) into KNX compatible byte representation; and vice versa 
 
 
-## Ready-to-go Examples
-
-This project is more intended for developers which are interested in KNX communication. 
-However, it contains ready-to-use main classes to get a quick start.
-
-### Send a WRITE frame to KNX
-
-**Class:** ``li.pitschmann.knx.main.KnxMainWrite``
-
-**Arguments**
-* ``-r`` the IP-Address of your KNX Net/IP device (default: ``null``, uses auto-discovery) 
-* ``-ga`` the group address you want to communicate with (default: ``1/2/100``)
-* ``-dpt`` *(advanced)* the Data Point Type (default: ``1.001`` for DPT1 - Switch)
-* ``-c`` *(advanced)* a sequence of commands that is compatible with DPT argument (default: ``on off``)
-
-Given example
-````
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite
-````
-is equivalent to
-````
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/100 -dpt 1.001 -c on off
-````
-
-and will perform *DPT1 - Switch (DPT 1.001)* actions on group address ``1/2/100`` - connected to a 
-KNX switch actuator to switch ``on`` and then switch ``off`` a lamp. For demo purposes the delay 
-between commands is hardcoded with 2 seconds.
-
-Given command ``on off on off`` would perform the lamp to switch ``on``, ``off``, ``on`` and then 
-``off`` with a delay of 2 seconds between each command.
- 
-### Send a READ frame to KNX
-
-**Class:** ``li.pitschmann.knx.main.KnxMainRead``
-
-**Arguments**
-* ``-r`` the IP-Address of your KNX Net/IP device (default: ``null``, uses auto-discovery) 
-* ``-ga`` the group address you want to communicate with (default: ``1/2/100``)
-* ``-n`` number of echos to send to obtain the most recent status from group address (default: ``50``)
-
-Given example
-````
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -n 10
-````
- will send a *READ* request frame to KNX Net/IP on group address ``1/2/100`` at first to get the 
- most recent status of group address. Afterwards it will wait up to ``1`` second (hardcoded)
- to get the most recent status of the group address. 
+## Quick Start Guides
 
 ### KNX Monitoring
 
-**Class:** ``li.pitschmann.knx.main.KnxMainMonitoring``
+**Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
 
-**Arguments**
-* ``-r`` the IP-Address of your KNX Net/IP device (default: ``null``, uses auto-discovery) 
-* ``-t`` the time in seconds how long the monitoring should run (default: ``Long#MAX_VALUE``)
+**Arguments:**
+* `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
+* `-t` the time in seconds how long the monitoring should run (default: _infinity_)
 
-Given example
-````
+**Monitoring between KNX Net/IP device and KNX client**
+
+Start monitoring for one hour (`3600` seconds). After one hour a disconnect request
+frame will be sent by the KNX client to the KNX Net/IP device to close the communication
+gracefully and the application will exit.
+
+```shell
+# Tunneling (auto-discovery)
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -t 3600
-````
-will monitor the traffic of KNX for one hour (``3600`` seconds). After one hour a disconnect 
-frame will be sent by the KNX client to the KNX network and application will exit.
+# Tunneling (auto-discovery with NAT)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -nat -t 3600
+# Tunneling (IP Address)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -ip 192.168.1.16 -t 3600
+# Tunneling (IP Address with NAT)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -ip 192.168.1.16 -nat -t 3600
+# Routing
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -routing -t 3600
+```
 
-## API Programming
+### Send a WRITE request frame to KNX
 
-This tutorial is written for experienced Java developers and explains how to integrate the API with your
-own program. It looks basically like:
+**Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
 
-````
+**Arguments:**
+* ``-ip <address[:port]>`` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
+* ``-ga`` the KNX group address which has a _write_ flag
+* ``-dpt`` the KNX Data Point Type
+* ``-value`` a sequence of commands that is compatible with KNX Data Point Type argument
+
+**Switching lamp on KNX group address ``1/2/50``**
+
+Perform a DPT1 - Switch (`1.001`) _write request_ action on KNX group address `1/2/50` to switch 
+`on` and then `off` a lamp. For demo purposes the delay between commands is hardcoded with two seconds.
+
+```shell
+# Tunneling (auto-discovery)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/50 -dpt 1.001 -value on off
+# Tunneling (auto-discovery with NAT)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -nat -ga 1/2/50 -dpt 1.001 -value on off
+# Tunneling (IP Address)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -value on off
+# Tunneling (IP Address with NAT)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ip 192.168.1.16 -nat -ga 1/2/50 -dpt 1.001 -value on off
+# Routing
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -routing -ga 1/2/50 -dpt 1.001 -value on off
+```
+
+For sequence of commands you may use e.g. `-value on off on off` to switch on/off the lamp twice
+times. 
+ 
+### Send a READ request frame to KNX
+
+**Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
+
+**Arguments:**
+* `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
+* `-ga` the KNX group address which has a _read_ flag
+* `-n` number of read requests
+
+**Read the actual status of a lamp on KNX group address `1/2/113`**
+
+Send a _read request_ frames to KNX group address `1/2/113` up to `10` times. For demo purposes the delay 
+between read requests is hardcoded with one second.
+
+```shell
+# Tunneling (auto-discovery)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ga 1/2/113 -n 10
+# Tunneling (auto-discovery with NAT)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -nat -ga 1/2/113 -n 10
+# Tunneling (IP Address)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ip 192.168.1.16 -ga 1/2/113 -n 10
+# Tunneling (IP Address with NAT)
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ip 192.168.1.16 -nat -ga 1/2/113 -n 10
+# Routing
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -routing -ga 1/2/113 -n 10
+```
+
+## Programming
+
+This tutorial is written for experienced Java developers and explains how to integrate the 
+KNX client with your own application. It looks like:
+
+```
 // Creates KNX client and start communication with your KNX Net/IP.
-// The closure of KXN communication will be handled automatically by KNX client.
-try (final var client = DefaultKnxClient.createStarted("ip-address")) {
+// The closure of KNX communication will be handled automatically by KNX client.
+try (final var client = DefaultKnxClient.createStarted("address:port")) {
     // do your stuff you want to do ...
 } catch (final Throwable t) {
     // catch all throwable you want to handle here (optional)
 } finally {
     // do final actions (optional)
 }
-````
+```
 
-#### Example #1: Switch on/off lamp with boolean values
-You want to switch ``on`` a lamp on KNX group address ``1/2/3`` and switch ``off`` after three seconds. 
+#### Example One: Switch on/off lamp with boolean values
 
-````java
-public class KnxMain {    
-    public static void main(final String[] args) {    
-        // group address we want to communicate with
-        final var ga = GroupAddress.of(1,2,0);
-        // connect KNX client to 192.168.0.10
-        try (final var client = DefaultKnxClient.createStarted("192.168.0.10")) {   
-            // switch on (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
-            client.writeRequest(ga, DPT1.SWITCH.toValue(true));  // or DPT1.SWITCH.toValue((byte)0x01)
-                                                                 // or DPT1.SWITCH.toValue("on")
-            // wait 3 seconds
-            Thread.sleep(3000);
-            
-            // switch off (boolean: false) --> translated to '0x00' and sent to KNX Net/IP device
-            client.writeRequest(ga, DPT1.SWITCH.toValue(false)); // or DPT1.SWITCH.toValue((byte)0x00)
-                                                                 // or DPT1.SWITCH.toValue("off")
-        } catch (final InterruptedException ie) {
-            // do something ...
+Let's start with an easy sample: You want to switch `on` a lamp. The KNX actuator listens 
+on group address `1/2/110` which is configured for switching on/off a lamp. 
+
+```java
+public final class ExampleLampOn {
+    public static void main(final String[] args) {
+        // this is the group address where the KNX actuator listens to switch on/off a lamp
+        final var groupAddress = GroupAddress.of(1, 2, 110);
+
+        // create KNX client and connect to KNX Net/IP device using auto-discovery
+        try (final var client = DefaultKnxClient.createStarted()) {
+            // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
+            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(true));  // or DPT1.SWITCH.toValue((byte)0x01)
+                                                                           // or DPT1.SWITCH.toValue("on")
+        }
+
+        // auto-closed and disconnected by KNX client
+    }
+}
+```
+
+#### Example Two: Inverse the lamp status
+
+Given sample, you want to inverse the status of your lamp: 
+* if the lamp is `on`, the lamp should be `off`
+* if the lamp is `off`, the lamp should be `on`
+
+To get the most recent status of lamp, we need this information from the KNX actuator. As
+per KNX Project Design Guidelines we have multiple KNX group addresses, here in our example
+the group address `1/2/110` is responsible for switching on/off the lamp (=write). The group address
+`1/2/113` is used for status feedback of the lamp (=read). 
+
+```java
+public final class ExampleLampInverse {
+    public static void main(final String[] args) {
+        // this is the group address where the KNX actuator returns the status of lamp
+        final var readGroupAddress = GroupAddress.of(1, 2, 113);
+
+        // this is the group address where the KNX actuator listens to switch on/off the lamp
+        final var writeGroupAddress = GroupAddress.of(1, 2, 110);
+
+        // create KNX client and connect to KNX Net/IP device using auto-discovery
+        try (final var client = DefaultKnxClient.createStarted()) {
+            // send a 'read' request to KNX
+            client.readRequest(readGroupAddress);
+
+            // wait a bit (usually few milliseconds, but up to 1 second maximum)
+            // KNX actuator will send a response to the KNX client with actual lamp status
+            client.getStatusPool().isUpdated(readGroupAddress, 1, TimeUnit.SECONDS);
+            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getBooleanValue();
+
+            // lamp status will be inverted (on -> off / off -> on)
+            final var lampStatusInverted = !lampStatus;
+
+            // send a 'write' request to KNX
+            client.writeRequest(writeGroupAddress, DPT1.SWITCH.toValue(lampStatusInverted));
+        }
+
+        // auto-closed and disconnected by KNX client
+    }
+}
+```
+
+#### Example Three: Plugin
+
+This sample is demonstrating how we can implement and register the plugin in easy way.
+Here we want to print out the incoming and outgoing packets in format and this sample
+is a good one to get a better understanding which packets are sent for KNX communication.
+
+By writing own plugin we have thousand of possibilities, some examples are: Auditing, 
+Advanced Statistics, Logic, API, Integration to third-party applications (Grafana, Kafka, ...)
+
+```java
+public final class ExamplePlugin {
+    public static void main(final String[] args) {
+        // we want to monitor the KNX traffic for 60 seconds
+        final var endTimeMillis = System.currentTimeMillis() + 60000;
+
+        final var config = ConfigBuilder
+                .tunneling()  // communication mode: tunneling
+                .plugin(new MyPlugin()) // register my plugin
+                .build(); // create immutable config
+
+        // create KNX client and connect to KNX Net/IP device using auto-discovery
+        try (final var client = DefaultKnxClient.createStarted(config)) {
+            // loop until the
+            while (System.currentTimeMillis() < endTimeMillis) {
+                System.out.println("Ping ...");
+                Sleeper.seconds(3);
+            }
+        }
+
+        // auto-closed and disconnected by KNX client
+    }
+
+    public static class MyPlugin implements ObserverPlugin {
+
+        @Override
+        public void onIncomingBody(@Nonnull Body item) {
+            System.out.println("Incoming: " + item.getServiceType().getFriendlyName() + " (" + item.getRawDataAsHexString() + ")");
+        }
+
+        @Override
+        public void onOutgoingBody(@Nonnull Body item) {
+            System.out.println("Outgoing: " + item.getServiceType().getFriendlyName() + " (" + item.getRawDataAsHexString() + ")");
+        }
+
+        @Override
+        public void onError(@Nonnull Throwable throwable) {
+            System.out.println("On Error: " + throwable.getMessage());
+        }
+
+        @Override
+        public void onInitialization(KnxClient client) {
+            System.out.println("Initialized by client: " + client);
         }
     }
 }
-````
-
-#### Example #2: Inverse the status of lamp
-You want to inverse the status of your lamp on KNX group address ``1/2/3``:
-* if lamp is ``on`` then lamp will be ``off``
-* if lamp is ``off`` then lamp will be ``on``
- 
-````java
-public class KnxMain {    
-    public static void main(final String[] args) {    
-        // group address we want to communicate with
-        final var ga = GroupAddress.of(1,2,0);  // group address for on/off request
-        final var gaRead = GroupAddress.of(1,2,3);  // group address for read request
-        // connect KNX client to a KNX Net/IP device using auto-discovery (no-arg, null or empty)
-        try (final var client = DefaultKnxClient.createStarted()) {  
-            // Sends the read request
-            // The returned instance is the acknowledge sent by KNX Net/IP indicating that read request was received
-            final var readRequestAck = client.readRequest(gaRead).get();
-
-            // Wait bit for update (usually few 10ms, but up to 1 sec max)
-            // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
-            // KNX Net/IP and status pool will be updated by KNX client with the actual lamp status
-            client.getStatusPool().isUpdated(gaRead, 1, TimeUnit.SECONDS);
-
-            // read lamp state from status pool
-            final var lampStatus = client.getStatusPool().getValue(gaRead, DPT1.SWITCH).getBooleanValue();
-
-            // Sends the write request
-            // The returned instance is the acknowledge sent by KNX Net/IP indicating that write request was received
-            final var writeRequestAck = client.writeRequest(ga, DPT1.SWITCH.toValue(!lampStatus)).get();
-
-            // Wait bit for update (usually few 10ms, but up to 1 sec max)
-            // If communication and write flags on KNX group address are set the state of lamp will be changed.
-            // The state of lamp will be forwarded by the KNX Net/IP and status pool will be updated by KNX client
-            client.getStatusPool().isUpdated(ga, 1, TimeUnit.SECONDS);
-        } catch (final InterruptedException t) {
-            // do something ...
-        }
-    }
-}
-````
+```

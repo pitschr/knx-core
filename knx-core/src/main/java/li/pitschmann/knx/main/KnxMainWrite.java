@@ -119,6 +119,6 @@ public final class KnxMainWrite extends AbstractKnxMain {
         log.info(" T U N N E L I N G    ( E N D P O I N T )");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startWriteActions(new String[]{"-endpoint", "192.168.1.16"});
+        startWriteActions(new String[]{"-ip", "192.168.1.16"});
     }
 }

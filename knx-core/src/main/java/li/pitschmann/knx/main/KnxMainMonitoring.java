@@ -37,9 +37,13 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         new KnxMainMonitoring().startMonitoring(args);
     }
 
-    private void startMonitoring(final String[] args) {
+    private void startMonitoring(final String[] args1) {
+        // final String[] args = new String[]{""};
+        // final String[] args = new String[]{"-ip","192.168.1.16"};
+        final String[] args = new String[]{"-ip","192.168.1.16", "-nat"};
+
         // Get Monitor Time in Seconds
-        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, Long.MAX_VALUE);
+        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 30L);
         log.debug("Monitor Time: {}s", monitorTime);
 
         // start KNX communication
