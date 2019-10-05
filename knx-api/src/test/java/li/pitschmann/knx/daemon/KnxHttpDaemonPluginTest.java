@@ -35,9 +35,9 @@ import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test class for {@link DefaultHttpDaemon}
+ * Test class for {@link DefaultHttpDaemonPlugin}
  */
-public class KnxHttpDaemonTest {
+public class KnxHttpDaemonPluginTest {
     /**
      * Tests the combination of /read and /write requests
      */
