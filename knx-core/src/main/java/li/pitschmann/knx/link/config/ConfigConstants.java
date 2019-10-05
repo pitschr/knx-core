@@ -320,13 +320,17 @@ public final class ConfigConstants {
 
     public static final class Event {
         /**
-         * Interval of look up for event pool (e.g. if request/ack received)
+         * Interval in milliseconds of look up for event pool (e.g. if request/ack received)
          */
         public static final long CHECK_INTERVAL = 10L;
         /**
          * Number of total attempts to be retried when no requested packet was received
          */
         public static final int TOTAL_ATTEMPTS = 3;
+        /**
+         * Timeout for status look up in milliseconds
+         */
+        public static final long STATUS_LOOKUP_TIMEOUT = 3000L;
 
         private Event() {
         }

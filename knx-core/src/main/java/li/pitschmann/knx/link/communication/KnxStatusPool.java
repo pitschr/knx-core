@@ -53,23 +53,35 @@ public interface KnxStatusPool {
     boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit);
 
     /**
-     * Returns the current status for given {@link KnxAddress}. May return the invalidated status.
+     * Returns the current status for given {@link KnxAddress} immediately if it exists and is up-to-date already.
+     * It will use a specific timeout default timeout taken from {@link li.pitschmann.knx.link.config.ConfigConstants.Event#STATUS_LOOKUP_TIMEOUT}.
      *
      * @param address {@link KnxAddress} for which the status should be returned
-     * @return {@link KnxStatusData} or {@code null} if no status was found for given address
+     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists or dirty within given default time
      */
     @Nullable
     KnxStatusData getStatusFor(final @Nonnull KnxAddress address);
 
     /**
-     * Returns the status for given {@link KnxAddress} immediately if it exists already or up to
-     * given {@code duration} and {@code unit}. This method doesn't take care if the status data
-     * must be up-to-date or not.
+     * Returns the current status for given {@link KnxAddress}.
+     *
+     * @param address {@link KnxAddress} for which the status should be returned
+     * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
+     *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
+     *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
+     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists (or dirty) within given time
+     */
+    @Nullable
+    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final boolean mustUpToDate);
+
+    /**
+     * Returns the status for given {@link KnxAddress} immediately if it exists and is up-to-date already
+     * till to given {@code duration} and {@code unit}.
      *
      * @param address  {@link KnxAddress} for which the status should be returned
      * @param duration duration of time unit
      * @param unit     time unit
-     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists within given time out
+     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists or dirty within given time
      */
     @Nullable
     KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit);

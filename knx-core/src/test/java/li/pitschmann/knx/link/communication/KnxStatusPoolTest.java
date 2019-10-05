@@ -78,17 +78,21 @@ public class KnxStatusPoolTest {
 
         // found as it is known in status pool
         assertThat(pool.getStatusFor(ADDRESS)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, false)).isNotNull();
         assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS)).isNotNull();
-        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS, true)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS, false)).isNotNull();
 
         // set it as dirty
         pool.setDirty(ADDRESS);
 
         // should be able to find, because per default we don't filter for dirty/non-dirty
-        assertThat(pool.getStatusFor(ADDRESS)).isNotNull();
-        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, false)).isNotNull();
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS, false)).isNotNull();
 
         // not found because the status data is marked as dirty
+        assertThat(pool.getStatusFor(ADDRESS)).isNull();
+        assertThat(pool.getStatusFor(ADDRESS, true)).isNull();
+        assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS)).isNull();
         assertThat(pool.getStatusFor(ADDRESS, 30L, TimeUnit.MILLISECONDS, true)).isNull();
     }
 
