@@ -79,7 +79,6 @@ public final class KnxMainRead extends AbstractKnxMain {
                 // Wait bit for update (usually few 10ms, but up to 1 sec max)
                 // If communication and read flags on KNX group address are set the state of lamp will be forwarded by the
                 // KNX Net/IP device and status pool will be updated with the actual lamp status
-                statusPool.isUpdated(groupAddress, 1, TimeUnit.SECONDS);
                 log.debug("=> STATUS (APCI Data): {}", ByteFormatter.formatHexAsString(statusPool.getStatusFor(groupAddress).getApciData()));
                 Sleeper.seconds(1);
             }

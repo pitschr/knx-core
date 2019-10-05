@@ -42,15 +42,12 @@ public interface KnxStatusPool {
     boolean isUpdated(final @Nonnull KnxAddress address);
 
     /**
-     * Returns if the status for given {@link KnxAddress} is up to date or wait up to
-     * {@code duration} and {@code unit} until it is up to date.
+     * Returns if {@link KnxStatusData} exists for given {@link KnxAddress}
      *
-     * @param address  {@link KnxAddress} for which the status should be returned
-     * @param duration duration of time unit
-     * @param unit     time unit
-     * @return {@code true} if status is up to date, otherwise {@code false} when not being up to date within given time out
+     * @param address
+     * @return {@code true} if it exists (regardless if it is up-to-date or not), otherwise {@code false}
      */
-    boolean isUpdated(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit);
+    boolean existsStatusFor(final @Nonnull KnxAddress address);
 
     /**
      * Returns the current status for given {@link KnxAddress} immediately if it exists and is up-to-date already.
@@ -75,52 +72,51 @@ public interface KnxStatusPool {
     KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final boolean mustUpToDate);
 
     /**
-     * Returns the status for given {@link KnxAddress} immediately if it exists and is up-to-date already
-     * till to given {@code duration} and {@code unit}.
+     * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
      *
-     * @param address  {@link KnxAddress} for which the status should be returned
-     * @param duration duration of time unit
-     * @param unit     time unit
-     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists or dirty within given time
+     * @param address
+     * @param dptId
+     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found or was not up-to-date for default time
      */
     @Nullable
-    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit);
-
-    /**
-     * Returns the status for given {@link KnxAddress} immediately if it exists already or up to
-     * given {@code duration} and {@code unit}
-     *
-     * @param address      {@link KnxAddress} for which the status should be returned
-     * @param duration     duration of time unit
-     * @param unit         time unit
-     * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
-     *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
-     *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
-     * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists (or dirty) within given time
-     */
-    @Nullable
-    KnxStatusData getStatusFor(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate);
-
+    <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId);
 
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
      *
      * @param address
      * @param dptId
+     * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
+     *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
+     *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
      */
     @Nullable
-    <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId);
+    <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate);
 
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
      *
      * @param address
      * @param dpt
-     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
+     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found or was not up-to-date for default time
      */
     @Nullable
     <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt);
+
+    /**
+     * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
+     *
+     * @param address
+     * @param dpt
+     * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
+     *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
+     *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
+     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
+     */
+    @Nullable
+    <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt, final boolean mustUpToDate);
+
 
     /**
      * Returns copy of current status map with {@link KnxAddress} as key and {@link KnxStatusData} as value

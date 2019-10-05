@@ -51,7 +51,7 @@ public final class ReadRequestController extends AbstractController {
         }
 
         // wait for response from KNX Net/IP device to obtain the most recent raw values
-        final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress, 3, TimeUnit.SECONDS, true);
+        final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress);
         if (knxStatusData == null) {
             log.warn("Status data not found for group address: {}", groupAddress);
             getResponse().notFound();
