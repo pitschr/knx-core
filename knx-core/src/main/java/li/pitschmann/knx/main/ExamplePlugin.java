@@ -53,7 +53,7 @@ public final class ExamplePlugin {
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            // loop until the
+            // loop until the time ends
             while (System.currentTimeMillis() < endTimeMillis) {
                 System.out.println("Ping ...");
                 Sleeper.seconds(3);

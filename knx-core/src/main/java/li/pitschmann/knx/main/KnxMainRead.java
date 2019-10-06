@@ -40,11 +40,6 @@ public final class KnxMainRead extends AbstractKnxMain {
     private static final GroupAddress DEFAULT_GROUP_ADDRESS = GroupAddress.of(1, 2, 113);
     private static final int DEFAULT_LOOPS = 3;
 
-    private KnxMainRead() {
-        ((ch.qos.logback.classic.Logger) log).setLevel(ch.qos.logback.classic.Level.ALL);
-        ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.OFF);
-    }
-
     public static void main(final String[] args) {
         final var demo = new KnxMainRead();
         if (args.length == 0) {

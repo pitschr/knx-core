@@ -44,7 +44,7 @@ which allows a very fast communication and we may have multiple channels simulta
 * _Data Channel_ for tunneling; data-related frames like read/write requests from and to KNX
 * _Multicast Channel_ for routing; data-related frames
 
-##### Communication mode (Tunneling, NAT, Routing)
+#### Communication mode (Tunneling, NAT, Routing)
 
 According to the KNX specification the communication is defaulted to _tunneling_ mode and without 
 Network Address Translation (NAT). If the communication should be using _routing_ then it must be
@@ -57,7 +57,7 @@ will use a shared channel.  One practical example, where we need NAT would be e.
 Note: NAT is suitable for _tunneling_ mode only, in _routing_ mode it has no
 effect.
 
-##### KNX Client
+#### KNX Client
 
 All data-related frames of all KNX group addresses that is sent by KNX Net/IP device will be 
 fetched and handled by the KNX client and it offers:
@@ -262,7 +262,7 @@ public final class ExamplePlugin {
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            // loop until the
+            // loop until the time ends
             while (System.currentTimeMillis() < endTimeMillis) {
                 System.out.println("Ping ...");
                 Sleeper.seconds(3);

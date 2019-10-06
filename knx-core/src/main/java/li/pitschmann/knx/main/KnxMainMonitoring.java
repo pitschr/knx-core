@@ -18,13 +18,21 @@
 
 package li.pitschmann.knx.main;
 
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.core.ConsoleAppender;
 import com.google.common.base.Stopwatch;
+import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.plugin.AuditPlugin;
+import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.utils.Sleeper;
+import org.slf4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,10 +45,24 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         new KnxMainMonitoring().startMonitoring(args);
     }
 
-    private void startMonitoring(final String[] args1) {
+    private void startMonitoring(final String[] args) {
         // final String[] args = new String[]{""};
         // final String[] args = new String[]{"-ip","192.168.1.16"};
-        final String[] args = new String[]{"-ip","192.168.1.16", "-nat"};
+        // final String[] args = new String[]{"-ip","192.168.1.16", "-nat", "-l"};
+
+        // Logging all?
+        final var logAll = existsParameter(args, "-l");
+        final var rootLogger = ((ch.qos.logback.classic.Logger) logRoot);
+        if (logAll) {
+            rootLogger.setLevel(ch.qos.logback.classic.Level.ALL);
+        } else {
+            // change the pattern of console appender
+            final var consoleAppender = (ConsoleAppender)rootLogger.getAppender("STDOUT");
+            final var encoder = (PatternLayoutEncoder)consoleAppender.getEncoder();
+            encoder.setPattern("%date - %msg%n");
+            encoder.start();
+        }
+        log.debug("Log all?: {}", logAll);
 
         // Get Monitor Time in Seconds
         final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 30L);
@@ -52,7 +74,8 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         final var config = parseConfigBuilder(args) //
                 .plugin( //
                         new AuditPlugin(), //
-                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000) //
+                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
+                        new PrintPlugin(log)
                 ) //
                 .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 10000L) //
                 .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) //
@@ -62,21 +85,60 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .setting(ConfigConstants.Data.PORT, 40003) //
                 .build();
 
+        log.debug("========================================================================");
+        log.debug("MONITORING WITH PLUGINS for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
+        log.debug("========================================================================");
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            log.debug("========================================================================");
-            log.debug("MONITORING WITH PLUGINS for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
-            log.debug("========================================================================");
             final var sw = Stopwatch.createStarted();
             while (client.isRunning() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
                 Sleeper.seconds(1);
             }
-            log.debug("========================================================================");
-            log.debug("STOP MONITORING WITH PLUGINS");
-            log.debug("========================================================================");
         } catch (final Throwable t) {
             log.error("THROWABLE. Reason: {}", t.getMessage(), t);
         } finally {
-            log.trace("FINALLY");
+            log.debug("========================================================================");
+            log.debug("STOP MONITORING WITH PLUGINS");
+            log.debug("========================================================================");
+        }
+
+        Sleeper.seconds(1);
+    }
+
+    private static final class PrintPlugin implements ObserverPlugin, ExtensionPlugin {
+        private final Logger log;
+
+        private PrintPlugin(final Logger log) {
+            this.log = log;
+        }
+
+        @Override
+        public void onStart() {
+            log.debug("\033[0;35m[ START  ] KNX Client started.\033[0m");
+        }
+
+        @Override
+        public void onShutdown() {
+            log.debug("\033[0;35m[  STOP  ] KNX Client stopped.\033[0m");
+        }
+
+        @Override
+        public void onIncomingBody(@Nonnull Body item) {
+            log.debug(String.format("\033[0;32m[INCOMING] %s: %s\033[0m", item.getServiceType().getFriendlyName(), item.getRawDataAsHexString()));
+        }
+
+        @Override
+        public void onOutgoingBody(@Nonnull Body item) {
+            log.debug(String.format("\033[0;37m[OUTGOING] %s: %s\033[0m", item.getServiceType().getFriendlyName(), item.getRawDataAsHexString()));
+        }
+
+        @Override
+        public void onError(@Nonnull Throwable throwable) {
+            log.debug(String.format("\033[0;31m[ ERROR  ] %s\033[0m", throwable.getMessage()));
+        }
+
+        @Override
+        public void onInitialization(KnxClient client) {
+            log.debug(String.format("\033[0;34m[  INIT  ] Client initialized (%s)\033[0m", client));
         }
     }
 }

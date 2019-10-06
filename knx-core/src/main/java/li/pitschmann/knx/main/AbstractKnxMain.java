@@ -39,6 +39,11 @@ public abstract class AbstractKnxMain {
     protected final Logger logRoot = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    protected AbstractKnxMain() {
+        ((ch.qos.logback.classic.Logger) log).setLevel(ch.qos.logback.classic.Level.ALL);
+        ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.OFF);
+    }
+
     /**
      * Returns the Configuration Builder based on following arguments:
      * <ul>

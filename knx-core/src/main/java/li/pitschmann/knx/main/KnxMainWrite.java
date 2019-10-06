@@ -41,11 +41,6 @@ public final class KnxMainWrite extends AbstractKnxMain {
     private static final String DEFAULT_DPT = "1.001"; // DPT1.SWITCH
     private static final String[] DEFAULT_VALUES = new String[]{"on", "off"}; // switch on, switch off
 
-    private KnxMainWrite() {
-        ((ch.qos.logback.classic.Logger) log).setLevel(ch.qos.logback.classic.Level.ALL);
-        ((ch.qos.logback.classic.Logger) logRoot).setLevel(ch.qos.logback.classic.Level.OFF);
-    }
-
     public static void main(final String[] args) {
         final var demo = new KnxMainWrite();
         if (args.length == 0) {

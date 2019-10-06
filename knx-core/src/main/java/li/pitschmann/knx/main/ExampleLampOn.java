@@ -21,6 +21,8 @@ package li.pitschmann.knx.main;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DPT1;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Example One: Switch Lamp Status On
@@ -31,6 +33,11 @@ import li.pitschmann.knx.link.datapoint.DPT1;
  * @author PITSCHR
  */
 public final class ExampleLampOn {
+    // disable logging as we only want to print System.out.println(..)
+    static {
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(ch.qos.logback.classic.Level.OFF);
+    }
+
     public static void main(final String[] args) {
         // this is the group address where the KNX actuator listens to switch on/off a lamp
         final var groupAddress = GroupAddress.of(1, 2, 110);
