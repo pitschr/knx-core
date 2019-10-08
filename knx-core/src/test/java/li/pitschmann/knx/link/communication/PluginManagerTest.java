@@ -31,9 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Test class for {@link PluginManager}
@@ -63,7 +61,7 @@ public final class PluginManagerTest {
 
         // 2) initialization
         pluginManager.notifyInitialization(knxClientMock);
-        Sleeper.milliseconds(100); // wait bit, as plugin executor is notifying the plugins
+        Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
 
         // 3) verify
         verify(observerPluginMock).onInitialization(any(KnxClient.class));
@@ -82,13 +80,18 @@ public final class PluginManagerTest {
 
         // 1) initialization (no plugin registered yet)
         pluginManager.notifyInitialization(knxClientMock);
-        Sleeper.milliseconds(100); // wait bit, as plugin executor is notifying the plugins
+        Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
 
-        // 2) register two plugins
+        // 2 verify (init method never called)
+        verify(observerPluginMock, never()).onInitialization(any(KnxClient.class));
+        verify(extensionPluginMock, never()).onInitialization(any(KnxClient.class));
+
+        // 3) register two plugins
         pluginManager.registerPlugin(observerPluginMock);
         pluginManager.registerPlugin(extensionPluginMock);
+        Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
 
-        // 3) verify
+        // 4) verify (init method should be called)
         verify(observerPluginMock).onInitialization(any(KnxClient.class));
         verify(extensionPluginMock).onInitialization(any(KnxClient.class));
     }
