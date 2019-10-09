@@ -29,6 +29,7 @@ import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.link.header.ServiceType;
@@ -37,6 +38,7 @@ import li.pitschmann.knx.test.MockServerTest;
 import li.pitschmann.knx.test.strategy.IgnoreStrategy;
 import org.junit.jupiter.api.DisplayName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -230,15 +232,23 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Test KNX client instantiation using routing service (via multicast)")
     public void testRouting(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            client.readRequest(GroupAddress.of(11,4,67));
             client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.toValue(true));
-            mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION);
+            mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION, 2);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
 
         // assert packets
         mockServer.assertReceivedPackets(//
-                RoutingIndicationBody.class // #1
+                RoutingIndicationBody.class, // #1 (read request)
+                RoutingIndicationBody.class // #2 (write request)
         );
+
+        final var readPacket = (RoutingIndicationBody)mockServer.getReceivedBodies().get(0);
+        assertThat(readPacket.getCEMI().getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
+
+        final var writePacket = (RoutingIndicationBody)mockServer.getReceivedBodies().get(1);
+        assertThat(writePacket.getCEMI().getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
     }
 }

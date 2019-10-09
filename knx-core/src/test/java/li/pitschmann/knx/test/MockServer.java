@@ -119,7 +119,7 @@ public final class MockServer implements Runnable, Closeable {
         log.info("Mock Server Channel ID: {}", this.channelId);
 
         // join multicast (used for e.g. discovery, routing, ...)
-        multicastAddress = Networker.getByAddress(224, 0, 0, channelId);
+        multicastAddress = Networker.getByAddress(224, 0, 1, channelId);
         log.debug("Multicast Address: {}", multicastAddress);
         this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), multicastAddress);
         log.debug("Membership Keys: {}", membershipKeys);

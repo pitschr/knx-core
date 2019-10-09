@@ -236,7 +236,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
         // get channel for further communications
         if (this.config.isRoutingEnabled()) {
-            log.info("No channel ID because of routing");
+            log.info("No channel ID required because of routing");
         } else {
             this.channelId = this.fetchChannelIdFromKNX();
             log.info("Channel ID received: {}", this.channelId);
@@ -315,11 +315,11 @@ public final class InternalKnxClient implements AutoCloseable {
             for (final var channelCommunicator : this.channelCommunicators) {
                 isOk &= Closeables.closeQuietly(channelCommunicator);
             }
-            log.info("Channel Communicator stopped gracefully. Status: {}", isOk);
+            log.info("Channel Communicator stopped gracefully?: {}", isOk);
 
             // shutdown executor now
             isOk &= Closeables.shutdownQuietly(this.channelExecutor, 0, TimeUnit.SECONDS);
-            log.info("KNX Services stopped gracefully. Status: {}", isOk);
+            log.info("KNX Services stopped gracefully?: {}", isOk);
 
             // some time buffer for OS to close the underlying network bindings to avoid
             // "Address already in use" when restarting the client immediately.
