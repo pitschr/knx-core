@@ -41,10 +41,6 @@ import java.util.stream.Collectors;
  * @author PITSCHR
  */
 public final class ConfigConstants {
-    private static final Logger log = LoggerFactory.getLogger(ConfigConstants.class);
-    private static final Map<String, ConfigConstant<?>> CONFIG_CONSTANTS;
-    private static final Map<String, Object> CONFIG_CONSTANT_VALUES;
-
     /**
      * Standard KNX/IP Port Number
      */
@@ -59,7 +55,8 @@ public final class ConfigConstants {
     public static final ConfigConstant<Boolean> NAT = new ConfigConstant<>(
             "client.nat.enabled",
             Boolean.class,
-            Boolean.FALSE
+            Boolean.FALSE,
+            Boolean::valueOf
     );
     /**
      * Default port for HTTP Daemon (same as Pippo)
@@ -67,7 +64,8 @@ public final class ConfigConstants {
     public static final ConfigConstant<Integer> HTTP_DAEMON_PORT = new ConfigConstant<>(
             "daemon.port.http",
             Integer.class,
-            8338
+            8338,
+            Integer::valueOf
     );
     /**
      * Path to Project file
@@ -75,13 +73,23 @@ public final class ConfigConstants {
     public static final ConfigConstant<Path> PROJECT_PATH = new ConfigConstant<>(
             "daemon.path.knxproj",
             Path.class,
-            Paths.get("knx-client.config")
+            Paths.get("knx-client.config"),
+            Paths::get
     );
+    private static final Logger log = LoggerFactory.getLogger(ConfigConstants.class);
+    /**
+     * Map of lower-cased {@link String} keys and {@link ConfigConstant} values
+     */
+    private static final Map<String, ConfigConstant<?>> CONFIG_CONSTANTS;
+    /**
+     * Map of lower-cased {@link String} keys and {@link Object} default values
+     */
+    private static final Map<String, Object> CONFIG_CONSTANT_DEFAULT_VALUES;
 
     static {
         final var map = getConfigConstants(ConfigConstants.class);
         CONFIG_CONSTANTS = Collections.unmodifiableMap(map);
-        CONFIG_CONSTANT_VALUES = map.entrySet().stream().collect(
+        CONFIG_CONSTANT_DEFAULT_VALUES = map.entrySet().stream().collect(
                 Collectors.toUnmodifiableMap(
                         Map.Entry::getKey,
                         e -> e.getValue().getDefaultValue()
@@ -96,14 +104,14 @@ public final class ConfigConstants {
     /**
      * Returns {@link ConfigConstant} for given {@code key}
      *
-     * @param key
+     * @param key lower-cased
      * @param <T>
      * @return an instance of {@link ConfigConstant}, otherwise {@link NullPointerException} will be thrown
      */
     @Nullable
     @SuppressWarnings("unchecked")
     public static <T> ConfigConstant<T> getConfigConstantByKey(final @Nonnull String key) {
-        return (ConfigConstant<T>) CONFIG_CONSTANTS.get(key);
+        return (ConfigConstant<T>) CONFIG_CONSTANTS.get(key.toLowerCase());
     }
 
     /**
@@ -113,14 +121,14 @@ public final class ConfigConstants {
      */
     @Nonnull
     public static Map<String, Object> getConfigConstants() {
-        return CONFIG_CONSTANT_VALUES;
+        return CONFIG_CONSTANT_DEFAULT_VALUES;
     }
 
     /**
-     * Returns a map of {@link String} and {@link ConfigConstant}
+     * Returns a map of lower-cased {@link String} keys and {@link ConfigConstant} values
      *
      * @param clazz class to be scanned
-     * @return map with a pair of key as {@link String} and value as {@link ConfigConstant}
+     * @return map with a pair of key as {@link String} (in lower-case) and value as {@link ConfigConstant}
      */
     @Nonnull
     private static Map<String, ConfigConstant<?>> getConfigConstants(final @Nonnull Class<?> clazz) {
@@ -159,7 +167,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.search.requestTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(10)
+                TimeUnit.SECONDS.toMillis(10),
+                Long::valueOf
         );
 
         private Search() {
@@ -173,7 +182,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.description.requestTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(10)
+                TimeUnit.SECONDS.toMillis(10),
+                Long::valueOf
         );
         /**
          * Description Channel Port
@@ -181,7 +191,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> PORT = new ConfigConstant<>(
                 "client.communication.description.port",
                 Integer.class,
-                0
+                0,
+                Integer::valueOf
         );
         /**
          * Timeout for Description Channel Socket
@@ -189,7 +200,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> SOCKET_TIMEOUT = new ConfigConstant<>(
                 "client.communication.description.socketTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(3)
+                TimeUnit.SECONDS.toMillis(3),
+                Long::valueOf
         );
 
         private Description() {
@@ -203,7 +215,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.connect.requestTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(10)
+                TimeUnit.SECONDS.toMillis(10),
+                Long::valueOf
         );
 
         private Connect() {
@@ -217,7 +230,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.disconnect.requestTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(5)
+                TimeUnit.SECONDS.toMillis(5),
+                Long::valueOf
         );
         /**
          * KNX client shall wait for 1 seconds after sending a DISCONNECT_RESPONSE frame to KNX Net/IP device.
@@ -225,7 +239,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> RESPONSE_TIMEOUT = new ConfigConstant<>(
                 "client.communication.disconnect.responseTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(1)
+                TimeUnit.SECONDS.toMillis(1),
+                Long::valueOf
         );
 
         private Disconnect() {
@@ -239,7 +254,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.connectionState.requestTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(10)
+                TimeUnit.SECONDS.toMillis(10),
+                Long::valueOf
         );
         /**
          * Number of connection state request attempts before KNX connection will be disconnected.
@@ -247,7 +263,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> CHECK_INTERVAL = new ConfigConstant<>(
                 "client.communication.connectionState.checkInterval",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(60)
+                TimeUnit.SECONDS.toMillis(60),
+                Long::valueOf
         );
 
         /**
@@ -258,7 +275,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> HEARTBEAT_TIMEOUT = new ConfigConstant<>(
                 "client.communication.connectionState.heartbeatTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(120)
+                TimeUnit.SECONDS.toMillis(120),
+                Long::valueOf
         );
 
         private ConnectionState() {
@@ -272,7 +290,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> PORT = new ConfigConstant<>(
                 "client.communication.control.port",
                 Integer.class,
-                0
+                0,
+                Integer::valueOf
         );
         /**
          * Timeout for Control Channel Socket
@@ -280,7 +299,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> SOCKET_TIMEOUT = new ConfigConstant<>(
                 "client.communication.control.socketTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(3)
+                TimeUnit.SECONDS.toMillis(3),
+                Long::valueOf
         );
 
         private Control() {
@@ -294,7 +314,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> PORT = new ConfigConstant<>(
                 "client.communication.data.port",
                 Integer.class,
-                0
+                0,
+                Integer::valueOf
         );
         /**
          * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
@@ -303,7 +324,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> DATA_REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.data.requestTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(1)
+                TimeUnit.SECONDS.toMillis(1),
+                Long::valueOf
         );
         /**
          * Timeout for Data Channel Socket
@@ -311,7 +333,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> SOCKET_TIMEOUT = new ConfigConstant<>(
                 "client.communication.data.socketTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(3)
+                TimeUnit.SECONDS.toMillis(3),
+                Long::valueOf
         );
 
         private Data() {
@@ -345,6 +368,7 @@ public final class ConfigConstants {
                 "client.endpoint.address",
                 InetAddress.class,
                 Networker.getAddressUnbound(),
+                Networker::getByAddress,
                 false
         );
         /**
@@ -354,6 +378,7 @@ public final class ConfigConstants {
                 "client.endpoint.port",
                 Integer.class,
                 KNX_PORT,
+                Integer::valueOf,
                 false
         );
 
@@ -368,7 +393,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<InetAddress> ADDRESS = new ConfigConstant<>(
                 "client.communication.multicast.address",
                 InetAddress.class,
-                MULTICAST_ADDRESS
+                MULTICAST_ADDRESS,
+                Networker::getByAddress
         );
         /**
          * Multicast Port
@@ -376,7 +402,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> PORT = new ConfigConstant<>(
                 "client.communication.multicast.port",
                 Integer.class,
-                KNX_PORT
+                KNX_PORT,
+                Integer::valueOf
         );
         /**
          * Default Time-To-Live (TTL) for multicast communication
@@ -384,7 +411,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> TIME_TO_LIVE = new ConfigConstant<>(
                 "client.communication.multicast.timeToLive",
                 Integer.class,
-                4
+                4,
+                Integer::valueOf
         );
         /**
          * Timeout for Multicast Channel Socket
@@ -392,7 +420,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> SOCKET_TIMEOUT = new ConfigConstant<>(
                 "client.communication.multicast.socketTimeout",
                 Long.class,
-                TimeUnit.SECONDS.toMillis(3)
+                TimeUnit.SECONDS.toMillis(3),
+                Long::valueOf
         );
 
         private Multicast() {
@@ -406,7 +435,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> COMMUNICATION_POOL_SIZE = new ConfigConstant<>(
                 "client.communication.executorPoolSize",
                 Integer.class,
-                10
+                10,
+                Integer::valueOf
         );
         /**
          * Default size for Plugin Executor Pool Size
@@ -414,7 +444,8 @@ public final class ConfigConstants {
         public static final ConfigConstant<Integer> PLUGIN_POOL_SIZE = new ConfigConstant<>(
                 "client.plugin.executorPoolSize",
                 Integer.class,
-                10
+                10,
+                Integer::valueOf
         );
 
         private Executor() {

@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.config;
 
+import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
@@ -26,11 +27,11 @@ import java.util.Objects;
 /**
  * An immutable Constant Value Holder for Configuration containing
  * <ul>
- *     <li>{@code key} ... fully qualified name of key</li>
+ *     <li>{@code key} ... fully qualified name of key, will be lower-cased</li>
  *     <li>{@code classType} ... for type of class, also used for casting</li>
  *     <li>{@code defaultValue} ... default Value</li>
  *     <li>{@code settable} ... flag if the value of config key can be set
- *           via {@link ConfigBuilder.Builder#setting(String, Object)}</li>
+ *           via {@link ConfigBuilder#setting(String, Object)}</li>
  * </ul>
  *
  * @param <T>
@@ -39,19 +40,26 @@ public final class ConfigConstant<T> {
     private final String key;
     private final Class<T> classType;
     private final T defaultValue;
+    private final Function<String, T> conversion;
     private final boolean settable;
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull T defaultValue) {
-        this(key, classType, defaultValue, true);
+    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull T defaultValue, final @Nonnull Function<String, T> conversion) {
+        this(key, classType, defaultValue, conversion, true);
     }
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull T defaultValue, final boolean settable) {
-        this.key = Objects.requireNonNull(key);
+    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull T defaultValue, final @Nonnull Function<String, T> conversion, final boolean settable) {
+        this.key = Objects.requireNonNull(key).toLowerCase();
         this.classType = Objects.requireNonNull(classType);
         this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.conversion = Objects.requireNonNull(conversion);
         this.settable = settable;
     }
 
+    /**
+     * Key in lower-case
+     *
+     * @return
+     */
     @Nonnull
     public String getKey() {
         return key;
@@ -65,6 +73,17 @@ public final class ConfigConstant<T> {
     @Nonnull
     public T getDefaultValue() {
         return defaultValue;
+    }
+
+    /**
+     * Converts from a {@link String} representation to an instance of type {@code <T>}
+     *
+     * @param value
+     * @return value with an instance type of {@code <T>}
+     */
+    @Nonnull
+    public T convert(final String value) {
+        return this.conversion.apply(value);
     }
 
     public boolean isSettable() {

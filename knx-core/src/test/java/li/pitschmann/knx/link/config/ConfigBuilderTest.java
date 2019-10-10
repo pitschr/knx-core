@@ -16,11 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.link;
+package li.pitschmann.knx.link.config;
 
-import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.knx.link.config.ConfigConstant;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.Plugin;
@@ -348,5 +346,47 @@ public class ConfigBuilderTest {
         assertThatThrownBy(() -> configBuilder.setting("client.endpoint.port", null)).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.ADDRESS, null)).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.PORT, null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Test config with null-value settings")
+    public void testSettingsNullValue() {
+        final var configBuilder = ConfigBuilder.tunneling(true);
+
+        // 1) verify if it is "enabled" as we set above
+        assertThat(configBuilder.build().isNatEnabled()).isTrue();
+        // 2) re-set the value of NAT (should be "false" as default value)
+        configBuilder.setting(ConfigConstants.NAT.getKey(), null);
+        // 3) verify if it is "disabled"
+        assertThat(configBuilder.build().isNatEnabled()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test config with wrong value setting")
+    public void testSettingsWithValueInstance() {
+        final var configBuilder = ConfigBuilder
+                .tunneling(true)
+                .setting("foo", "bar")
+                .setting(ConfigConstants.Description.PORT.getKey(), 4711)
+                .setting(ConfigConstants.Multicast.TIME_TO_LIVE.getKey(), "23");
+
+        // 1) verify if it is defined as above
+        final var config1 = configBuilder.build();
+        assertThat(config1.isNatEnabled()).isTrue();
+        assertThat(config1.<String>getSetting("FOO")).isEqualTo("bar");
+        assertThat(config1.getDescriptionChannelPort()).isEqualTo(4711);
+        assertThat(config1.getMulticastTTL()).isEqualTo(23);
+        // 2) set value of NAT with wrong type (expected: boolean),
+        //    overwrite of "foo" should not be a problem as it is not a ConfigConstant
+        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.NAT.getKey(), Integer.MAX_VALUE))
+                .isInstanceOf(KnxConfigurationException.class)
+                .hasMessage("Instance type of value is 'java.lang.Integer'. Expected: java.lang.Boolean");
+        configBuilder.setting("foo", Integer.MAX_VALUE);
+        configBuilder.setting(ConfigConstants.Description.PORT, 4712);
+        // 3) verify if it remains as "enabled", and "foo" / "port" settings should be overwritten
+        final var config2 = configBuilder.build();
+        assertThat(config2.isNatEnabled()).isTrue();
+        assertThat(config2.<Integer>getSetting("FOO")).isEqualTo(Integer.MAX_VALUE);
+        assertThat(config2.getDescriptionChannelPort()).isEqualTo(4712);
     }
 }

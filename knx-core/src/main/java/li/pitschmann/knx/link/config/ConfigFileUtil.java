@@ -39,10 +39,10 @@ import java.util.Map;
  * <p/>
  * This class is package-protected and should be called by {@link ConfigBuilder} instance only.
  */
-final class ConfigUtil {
-    private static final Logger log = LoggerFactory.getLogger(ConfigUtil.class);
+final class ConfigFileUtil {
+    private static final Logger log = LoggerFactory.getLogger(ConfigFileUtil.class);
 
-    private ConfigUtil() {
+    private ConfigFileUtil() {
         throw new AssertionError("Do not touch me!");
     }
 
@@ -91,7 +91,7 @@ final class ConfigUtil {
      * like {@code my.package.MyClass}
      *
      * @param lines
-     * @return list of plugin instances
+     * @return list of {@link Plugin} instances
      */
     private static List<Plugin> asPluginList(final @Nonnull List<String> lines) {
         final var filteredLines = filterBySection(lines, "plugins");
@@ -111,9 +111,10 @@ final class ConfigUtil {
 
     /**
      * Returns the list of String lines which should follow the pattern {@code key=value}
+     * <p/>
      *
      * @param lines
-     * @return map of settings
+     * @return map of settings, key is a lower-cased and trimmed {@link String}, value is trimmed {@link String}
      */
     @Nonnull
     private static Map<String, String> asSettingMap(final @Nonnull List<String> lines) {
@@ -121,9 +122,10 @@ final class ConfigUtil {
         final var settings = Maps.<String, String>newHashMapWithExpectedSize(filteredLines.size());
 
         for (final var line : filteredLines) {
-            final var keyAndValue = line.split("=", 1);
-            Preconditions.checkArgument(keyAndValue.length == 2,
-                    "It must be a key=value pair, but what I got is: %s", line);
+            final var keyAndValue = line.split("=", 2);
+            if (keyAndValue.length != 2) {
+                throw new KnxConfigurationException("It must be a key=value pair, but what I got is: " + line);
+            }
             final var key = keyAndValue[0].trim().toLowerCase();
             final var value = keyAndValue[1].trim();
             settings.put(key, value);

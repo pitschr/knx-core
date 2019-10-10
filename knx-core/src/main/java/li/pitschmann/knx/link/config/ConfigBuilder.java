@@ -20,6 +20,7 @@ package li.pitschmann.knx.link.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
 import org.slf4j.Logger;
@@ -29,11 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * KNX specific configurations like KNX Net/IP device address. This class can be created
@@ -78,7 +75,7 @@ public final class ConfigBuilder {
      * @return a new instance of {@link ConfigBuilder}
      */
     public static ConfigBuilder create(final @Nonnull Path filePath) {
-        return ConfigUtil.loadFile(filePath);
+        return ConfigFileUtil.loadFile(filePath);
     }
 
     /**
@@ -319,16 +316,22 @@ public final class ConfigBuilder {
         Preconditions.checkNotNull(key);
         final var configConstant = ConfigConstants.getConfigConstantByKey(key);
         if (configConstant == null) {
-            this.settings.put(key, value);
+            this.settings.put(key.toLowerCase(), value);
         } else if (value == null) {
             setting(configConstant, null);
         } else {
             // additional check because we want to be ensure that value has right instance type
             final var classType = configConstant.getClassType();
             final var valueClassType = value.getClass();
-            Preconditions.checkArgument(classType.isInstance(valueClassType),
-                    "Instance type of value is '%s'. Expected: %s", valueClassType, classType);
-            setting(configConstant, value);
+            if (classType.isInstance(value)) {
+                // all good
+                setting(configConstant, value);
+            } else if (value instanceof String) {
+                // try with conversion
+                setting(configConstant, configConstant.convert((String) value));
+            } else {
+                throw new KnxConfigurationException("Instance type of value is '" + valueClassType.getName() + "'. Expected: " + classType.getName());
+            }
         }
         return this;
     }

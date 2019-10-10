@@ -26,12 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Immutable Config
@@ -64,6 +59,19 @@ public final class Config {
     }
 
     /**
+     * Returns the setting for given {@code key}. Defaults back to {@code null} in case the
+     * value of key is not defined or unknown.
+     *
+     * @param key configuration key
+     * @param <T>
+     * @return the value of setting (key), may be {@code null} if not found
+     */
+    @Nullable
+    public <T> T getSetting(final @Nonnull String key) {
+        return getSetting(key, null);
+    }
+
+    /**
      * Returns the setting for given {@code key}. Defaults back to {@code defaultValue} in case the
      * value of key is not defined or unknown.
      *
@@ -74,7 +82,7 @@ public final class Config {
      */
     @Nullable
     public <T> T getSetting(final @Nonnull String key, final @Nullable T defaultValue) {
-        final var value = this.settings.get(Objects.requireNonNull(key));
+        final var value = this.settings.get(key.toLowerCase());
         if (value == null) {
             return defaultValue;
         } else {
