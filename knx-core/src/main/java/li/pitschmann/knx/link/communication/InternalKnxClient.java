@@ -47,6 +47,7 @@ import li.pitschmann.knx.link.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.link.plugin.PluginManager;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;

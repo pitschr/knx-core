@@ -16,18 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.link.communication;
+package li.pitschmann.knx.link.plugin;
 
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.knx.link.communication.BaseKnxClient;
+import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.knx.link.plugin.ExtensionPlugin;
-import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.Sleeper;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,6 +114,42 @@ public final class PluginManagerTest {
         pluginManager.notifyIncomingBody(mock(ResponseBody.class));
         pluginManager.notifyOutgoingBody(mock(RequestBody.class));
         pluginManager.notifyError(mock(Throwable.class));
+    }
+
+    @Test
+    @DisplayName("Error: Test registration by a wrong JAR path")
+    public void testNonexistentJARPath() {
+        final var configMock = newConfigMock();
+        final var pluginManager = new PluginManager(configMock);
+
+        // wrong JAR file path
+        final var pathToJAR = Paths.get("src/test/resources/plugin/this-file-does-not-exists.jar");
+        final var className = "my.plugin.MyTestPlugin";
+        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
+    }
+
+    // @Test
+    @DisplayName("Error: Test registration by a non-existent plugin")
+    public void testNonexistentPlugin() {
+        final var configMock = newConfigMock();
+        final var pluginManager = new PluginManager(configMock);
+
+        // wrong JAR file path
+        final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
+        final var className = "my.plugin.MyTestPluginTHATDOESNOTEXISTS";
+        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
+    }
+
+    // @Test
+    @DisplayName("OK: Test registration of plugin by JAR file")
+    public void testJARPlugin() {
+        final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
+        final var className = "my.plugin.MyTestPlugin";
+
+        final var configMock = newConfigMock();
+        final var pluginManager = new PluginManager(configMock);
+
+        pluginManager.registerPlugin(pathToJAR, className);
     }
 
     private KnxClient newKnxClientMock(final Config config) {

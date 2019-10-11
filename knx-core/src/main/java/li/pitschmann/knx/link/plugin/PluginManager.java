@@ -16,14 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.link.communication;
+package li.pitschmann.knx.link.plugin;
 
 import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.plugin.ExtensionPlugin;
-import li.pitschmann.knx.link.plugin.ObserverPlugin;
-import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import org.slf4j.Logger;
@@ -59,7 +58,7 @@ public final class PluginManager implements AutoCloseable {
     private final ExecutorService pluginExecutor;
     private KnxClient client;
 
-    PluginManager(final @Nonnull Config config) {
+    public PluginManager(final @Nonnull Config config) {
         Preconditions.checkNotNull(config);
 
         final var pluginExecutorPoolSize = config.getPluginExecutorPoolSize();
@@ -72,7 +71,7 @@ public final class PluginManager implements AutoCloseable {
      * <p/>
      * <strong>For internal use only!</strong>
      */
-    void notifyInitialization(final @Nonnull KnxClient client) {
+    public void notifyInitialization(final @Nonnull KnxClient client) {
         this.client = Objects.requireNonNull(client);
         this.client.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
         log.info("Observer Plugins: {}", observerPlugins);
@@ -112,7 +111,7 @@ public final class PluginManager implements AutoCloseable {
      * <p/>
      * <strong>For internal use only!</strong>
      */
-    void notifyClientStart() {
+    public void notifyClientStart() {
         notifyPlugins(null, extensionPlugins, (p, x) -> p.onStart());
     }
 
@@ -121,7 +120,7 @@ public final class PluginManager implements AutoCloseable {
      * <p/>
      * <strong>For internal use only!</strong>
      */
-    void notifyClientShutdown() {
+    public void notifyClientShutdown() {
         notifyPlugins(null, extensionPlugins, (p, x) -> p.onShutdown());
     }
 
@@ -171,7 +170,7 @@ public final class PluginManager implements AutoCloseable {
             log.debug("Plugin '{}' loaded from url '{}': {}", classPath, filePath, plugin);
             registerPlugin(plugin);
         } catch (final Throwable t) {
-            log.error("Could not load plugin '{}' (url: {})", classPath, filePath);
+            throw new KnxException("Could not load plugin '" + classPath + "' at: " + filePath);
         }
     }
 

@@ -142,8 +142,8 @@ public final class ConfigConstants {
                     if (obj instanceof ConfigConstant) {
                         final var configConstant = (ConfigConstant<?>) obj;
                         map.put(configConstant.getKey(), configConstant);
+                        log.trace("Field '{}' added to map: {}", field.getName(), configConstant);
                     }
-                    log.trace("");
                 } catch (final ReflectiveOperationException e) {
                     throw new KnxConfigurationException("Could not load field '" + field.getName() + "' from class '" + clazz.getName() + "'");
                 }
