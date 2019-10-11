@@ -52,6 +52,15 @@ import java.util.function.BiConsumer;
  */
 public final class PluginManager implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
+    private static final BiConsumer<List<? extends Plugin>, Class<? extends Plugin>> UNREGISTER_PLUGIN_FUNCTION =
+            (pluginList, pluginClass) -> {
+                for (var p : pluginList) {
+                    if (pluginClass.equals(p.getClass())) {
+                        pluginList.remove(p);
+                        break;
+                    }
+                }
+            };
     private final List<ObserverPlugin> observerPlugins = new LinkedList<>();
     private final List<ExtensionPlugin> extensionPlugins = new LinkedList<>();
     private final List<Plugin> allPlugins = new LinkedList<>();
@@ -146,31 +155,34 @@ public final class PluginManager implements AutoCloseable {
      * Registers the plugin from given URL and class path
      * <p/>
      * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
-     * {@code com.mycompany.MyPlugin} as {@code classPath}.
+     * {@code com.mycompany.MyPlugin} as {@code className}.
      *
      * @param filePath  path to the JAR file
-     * @param classPath fully qualified class name
+     * @param className fully qualified class name
+     * @return a new {@link Plugin} loaded from given URL and fully qualified class name
      */
-    public void registerPlugin(final @Nonnull Path filePath, final @Nonnull String classPath) {
+    @Nonnull
+    public Plugin registerPlugin(final @Nonnull Path filePath, final @Nonnull String className) {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
                 "File doesn't end with '.jar' extension: %s", filePath);
-        Preconditions.checkNotNull(classPath);
+        Preconditions.checkNotNull(className);
 
-        log.debug("Try to load plugin '{}' from path: {}", classPath, filePath);
+        log.debug("Try to load plugin '{}' from path: {}", className, filePath);
         try {
             Preconditions.checkArgument(Files.isReadable(filePath),
                     "File doesn't exists or is not readable: %s", filePath);
 
             final var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()});
-            final var cls = classLoader.loadClass(classPath);
+            final var cls = classLoader.loadClass(className);
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
-                    "Seems the given plugin is not an instance of %s: %s", Plugin.class, classPath);
+                    "Seems the given plugin is not an instance of %s: %s", Plugin.class, className);
 
             final var plugin = (Plugin) cls.getDeclaredConstructor().newInstance();
-            log.debug("Plugin '{}' loaded from url '{}': {}", classPath, filePath, plugin);
+            log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
             registerPlugin(plugin);
+            return plugin;
         } catch (final Throwable t) {
-            throw new KnxException("Could not load plugin '" + classPath + "' at: " + filePath);
+            throw new KnxException("Could not load plugin '" + className + "' at: " + filePath);
         }
     }
 
@@ -215,6 +227,24 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
+     * Returns an an already-registered Plugin for given {@code className}
+     *
+     * @param className
+     * @param <T>
+     * @return An existing instance of {@link Plugin} if found, otherwise {@code null}
+     */
+    public <T extends Plugin> T getPlugin(final @Nonnull String className) {
+        Preconditions.checkNotNull(className);
+        for (final var plugin : allPlugins) {
+            if (className.equals(plugin.getClass().getName())) {
+                @SuppressWarnings("unchecked") final var pluginCast = (T) plugin;
+                return pluginCast;
+            }
+        }
+        return null;
+    }
+
+    /**
      * De-Registers the plugin
      *
      * @param plugin
@@ -225,18 +255,9 @@ public final class PluginManager implements AutoCloseable {
                 "No plugin is registered for class: %s", pluginClass);
 
         // plugin class is registered, remove it from extension and/or observer plugin lists
-        for (var extensionPlugin : extensionPlugins) {
-            if (pluginClass.equals(extensionPlugin.getClass())) {
-                extensionPlugins.remove(extensionPlugin);
-                break;
-            }
-        }
-        for (var observerPlugin : observerPlugins) {
-            if (pluginClass.equals(observerPlugin.getClass())) {
-                observerPlugins.remove(observerPlugin);
-                break;
-            }
-        }
+        UNREGISTER_PLUGIN_FUNCTION.accept(allPlugins, pluginClass);
+        UNREGISTER_PLUGIN_FUNCTION.accept(extensionPlugins, pluginClass);
+        UNREGISTER_PLUGIN_FUNCTION.accept(observerPlugins, pluginClass);
     }
 
     /**

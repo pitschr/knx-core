@@ -24,6 +24,7 @@ import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.ConfigBuilder;
+import li.pitschmann.knx.link.config.TestPlugin;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.Sleeper;
 import org.assertj.core.util.Lists;
@@ -32,9 +33,13 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link PluginManager}
@@ -128,28 +133,76 @@ public final class PluginManagerTest {
         assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
     }
 
-    // @Test
+    @Test
     @DisplayName("Error: Test registration by a non-existent plugin")
     public void testNonexistentPlugin() {
-        final var configMock = newConfigMock();
-        final var pluginManager = new PluginManager(configMock);
+        final var pluginManager = new PluginManager(newConfigMock());
 
         // wrong JAR file path
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
-        final var className = "my.plugin.MyTestPluginTHATDOESNOTEXISTS";
+        final var className = "my.test.HelloWorldPluginV1_THATDOESNOTEXISTS";
         assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
+
+        // wrong class type
+        final var plugin2 = pluginManager.getPlugin(Plugin.class);
+        assertThat(plugin2).isNull();
+
+        // wrong class name
+        final var plugin3 = pluginManager.getPlugin("unknown.class.name");
+        assertThat(plugin3).isNull();
     }
 
-    // @Test
+    @Test
     @DisplayName("OK: Test registration of plugin by JAR file")
     public void testJARPlugin() {
+        final var pluginManager = new PluginManager(newConfigMock());
+
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
-        final var className = "my.plugin.MyTestPlugin";
+        final var className = "my.test.HelloWorldPluginV1";
 
-        final var configMock = newConfigMock();
-        final var pluginManager = new PluginManager(configMock);
+        final var plugin = pluginManager.registerPlugin(pathToJAR, className);
+        assertThat(plugin).isInstanceOf(Plugin.class);
+        assertThat(plugin.getClass().getName()).isEqualTo(className);
 
-        pluginManager.registerPlugin(pathToJAR, className);
+        // correct class type
+        final var plugin2 = pluginManager.getPlugin(plugin.getClass());
+        assertThat(plugin2).isSameAs(plugin);
+
+        // correct class name
+        final var plugin3 = pluginManager.getPlugin(className);
+        assertThat(plugin3).isSameAs(plugin);
+
+        // de-register the old plugin and re-register the plugin (new plugin should be born)
+        pluginManager.unregisterPlugin(plugin);
+        final var newPlugin = pluginManager.registerPlugin(pathToJAR, className);
+        assertThat(newPlugin).isInstanceOf(Plugin.class);
+        assertThat(newPlugin.getClass().getName()).isEqualTo(className);
+        assertThat(newPlugin).isNotSameAs(plugin);
+    }
+
+    @Test
+    @DisplayName("OK: Register and register of plugin")
+    public void testRegisterAndDeregister() {
+        final var pluginManager = new PluginManager(newConfigMock());
+        final var testPlugin = new TestPlugin();
+        final var testPluginClass = testPlugin.getClass();
+        final var testPluginClassName = testPluginClass.getName();
+
+        // 1) check if plugin doesn't exists
+        assertThat(pluginManager.getPlugin(testPluginClass)).isNull();
+        assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isNull();
+
+        // 2) add plugin and check if plugin exists
+        pluginManager.registerPlugin(testPlugin);
+        assertThat(pluginManager.getPlugin(testPluginClass)).isSameAs(testPlugin);
+        assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isSameAs(testPlugin);
+
+        // 3) unregister
+        pluginManager.unregisterPlugin(testPlugin);
+
+        // 4) check if plugin doesn't exists anymore again
+        assertThat(pluginManager.getPlugin(testPluginClass)).isNull();
+        assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isNull();
     }
 
     private KnxClient newKnxClientMock(final Config config) {
