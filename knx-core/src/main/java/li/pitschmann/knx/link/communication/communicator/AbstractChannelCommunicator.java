@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.event.KnxEvent;
+import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
 import li.pitschmann.knx.link.communication.queue.AbstractInboxQueue;
 import li.pitschmann.knx.link.communication.queue.AbstractOutboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultInboxQueue;
@@ -196,7 +197,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
     @Nonnull
-    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
+    public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody,
                                                                     final long msTimeout) {
         return send(requestBody, null, msTimeout);
     }
@@ -213,8 +214,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
     @Nonnull
-    public final <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody,
-                                                                    final @Nullable Predicate<KnxEvent> predicate,
+    public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody,
+                                                                    final @Nullable Predicate<T> predicate,
                                                                     final long msTimeout) {
         return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, predicate, msTimeout), this.communicationExecutor);
     }
@@ -230,8 +231,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received (timeout) or no response that meets the preconditions was received
      */
     @Nullable
-    private final <U extends ResponseBody> U sendAndWaitInternal(final @Nonnull RequestBody requestBody,
-                                                                 final @Nullable Predicate<KnxEvent> predicate,
+    private final <T extends ResponseBody> T sendAndWaitInternal(final @Nonnull RequestBody requestBody,
+                                                                 final @Nullable Predicate<T> predicate,
                                                                  final long msTimeout) {
         final var eventPool = this.client.getEventPool();
 
@@ -246,33 +247,47 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         var attempts = 1;
         final var totalAttempts = ConfigConstants.Event.TOTAL_ATTEMPTS;
         final var checkInterval = ConfigConstants.Event.CHECK_INTERVAL;
-        U responseBody;
+        T responseBody = null;
 
         do {
             send(requestBody);
 
             // iterate for event response
             final var start = System.currentTimeMillis();
-            KnxEvent<RequestBody, U> event;
+            KnxEvent<RequestBody, T> event;
             do {
                 event = eventPool.get(requestBody);
-            }
-            // no null check required here because we know that eventData is always present here
-            while ( // true = no response yet
-                    !event.hasResponse()
-                            // true = not interrupted
-                            && Sleeper.milliseconds(checkInterval)
+
+                if (event.hasResponse()) {
+                    // any response received
+                    if (predicate == null) {
+                        // no predicate defined -> just take the first response
+                        responseBody = event.getResponse();
+                    } else if (event instanceof KnxMultiEvent) {
+                        // multi knx event -> try to find the response that meets the predicate
+                        // may be null
+                        final var multiEvent = (KnxMultiEvent<RequestBody, T>) event;
+                        responseBody = multiEvent.getResponse(predicate);
+                    } else {
+                        // predicate defined -> test it, if it is meet then returns the response
+                        // otherwise null
+                        final var tmpResponse = event.getResponse();
+                        responseBody = predicate.test(tmpResponse) ? tmpResponse : null;
+                    }
+
+                    if (responseBody != null) {
+                        log.debug("Response received for request ({}/{}): {}", attempts, totalAttempts, responseBody);
+                        break;
+                    }
+                }
+            } while ( // true = not interrupted
+                    Sleeper.milliseconds(checkInterval)
                             // true = request timeout not reached yet
-                            && (System.currentTimeMillis() - start) < msTimeout
-                            // true = no predicate defined or not meet
-                            && (predicate == null || !predicate.test(event)));
+                            && (System.currentTimeMillis() - start) < msTimeout);
 
             // additional check, as it may happen that there was a timeout
-            responseBody = (predicate == null || predicate.test(event)) ? event.getResponse() : null;
             if (responseBody == null) {
                 log.warn("No response received yet for request ({}/{}): {}", attempts, totalAttempts, requestBody);
-            } else {
-                log.debug("Response received for request ({}/{}): {}, Response: {}", attempts, totalAttempts, requestBody, responseBody);
             }
 
             // if no response and not interrupted try to repeat this step up to 'totalAttempts'

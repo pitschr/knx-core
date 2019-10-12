@@ -25,8 +25,10 @@ import li.pitschmann.knx.link.body.ResponseBody;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> implements KnxEvent<REQUEST, RESPONSE> {
     private RequestEvent<REQUEST> requestEvent;
@@ -51,7 +53,13 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     @Nullable
     @Override
     public RESPONSE getResponse() {
-        return this.responseEvents.isEmpty() ? null : this.responseEvents.get(0).getResponse();
+        return this.getResponse(0);
+    }
+
+    @Nullable
+    public RESPONSE getResponse(final @Nonnull Predicate<RESPONSE> predicate) {
+        final var responseEvent = getResponseEvent(predicate);
+        return responseEvent == null ? null : responseEvent.getResponse();
     }
 
     @Override
@@ -87,7 +95,22 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     @Nullable
     @Override
     public Instant getResponseTime() {
-        return this.responseEvents.isEmpty() ? null : this.responseEvents.get(0).getResponseTime();
+        return this.getResponseTime(0);
+    }
+    @Nullable
+    public Instant getResponseTime(final @Nonnull Predicate<RESPONSE> predicate) {
+        final var responseEvent = getResponseEvent(predicate);
+        return responseEvent == null ? null : responseEvent.getResponseTime();
+    }
+
+    @Nullable
+    public ResponseEvent<RESPONSE> getResponseEvent(final @Nonnull Predicate<RESPONSE> predicate) {
+        for (final var responseEvent : new ArrayList<>(this.responseEvents)) {
+            if (predicate.test(responseEvent.getResponse())) {
+                return responseEvent;
+            }
+        }
+        return null;
     }
 
     @Nonnull

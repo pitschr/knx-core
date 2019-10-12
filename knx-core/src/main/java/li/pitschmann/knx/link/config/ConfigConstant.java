@@ -23,13 +23,14 @@ import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * An immutable Constant Value Holder for Configuration containing
  * <ul>
  *     <li>{@code key} ... fully qualified name of key, will be lower-cased</li>
  *     <li>{@code classType} ... for type of class, also used for casting</li>
- *     <li>{@code defaultValue} ... default Value</li>
+ *     <li>{@code defaultSupplier} ... supplier for default value</li>
  *     <li>{@code settable} ... flag if the value of config key can be set
  *           via {@link ConfigBuilder#setting(String, Object)}</li>
  * </ul>
@@ -39,19 +40,19 @@ import java.util.Objects;
 public final class ConfigConstant<T> {
     private final String key;
     private final Class<T> classType;
-    private final T defaultValue;
-    private final Function<String, T> conversion;
+    private final Supplier<T> defaultSupplier;
+    private final Function<String, T> converter;
     private final boolean settable;
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull T defaultValue, final @Nonnull Function<String, T> conversion) {
-        this(key, classType, defaultValue, conversion, true);
+    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier) {
+        this(key, classType, converter, defaultSupplier, true);
     }
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull T defaultValue, final @Nonnull Function<String, T> conversion, final boolean settable) {
+    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier, final boolean settable) {
         this.key = Objects.requireNonNull(key).toLowerCase();
         this.classType = Objects.requireNonNull(classType);
-        this.defaultValue = Objects.requireNonNull(defaultValue);
-        this.conversion = Objects.requireNonNull(conversion);
+        this.converter = Objects.requireNonNull(converter);
+        this.defaultSupplier = Objects.requireNonNull(defaultSupplier);
         this.settable = settable;
     }
 
@@ -72,7 +73,15 @@ public final class ConfigConstant<T> {
 
     @Nonnull
     public T getDefaultValue() {
-        return defaultValue;
+        return defaultSupplier.get();
+    }
+
+    public Function<String, T> getConverter() {
+        return this.converter;
+    }
+
+    public boolean isSettable() {
+        return settable;
     }
 
     /**
@@ -83,12 +92,9 @@ public final class ConfigConstant<T> {
      */
     @Nonnull
     public T convert(final String value) {
-        return this.conversion.apply(value);
+        return this.converter.apply(value);
     }
 
-    public boolean isSettable() {
-        return settable;
-    }
 
     @Override
     public String toString() {
@@ -96,7 +102,8 @@ public final class ConfigConstant<T> {
                 .add("key", this.key)
                 .add("settable", this.settable)
                 .add("classType", this.classType)
-                .add("defaultValue", this.defaultValue)
+                .add("converter", this.converter)
+                .add("defaultValue", this.getDefaultValue())
                 .toString();
     }
 }

@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.body.TunnelingAckBody;
+import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
 import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.utils.Sleeper;
@@ -76,9 +78,9 @@ public class KnxMultiEventTest {
      * Tests {@link KnxMultiEvent#getResponse()} and {@link KnxMultiEvent#getResponseTime()}
      */
     @Test
-    @DisplayName("Check one and two responses (overwrite) for multi event")
+    @DisplayName("Check two responses for KNX multi event")
     public void testResponse() {
-        final var event = new KnxMultiEvent<>();
+        final var event = new KnxMultiEvent<TunnelingRequestBody, TunnelingAckBody>();
 
         // first response
         final var instantBeforeResponse = Instant.now();
@@ -95,14 +97,32 @@ public class KnxMultiEventTest {
         assertThat(event.hasRequest()).isFalse();
         assertThat(event.getRequest()).isNull();
         assertThat(event.getRequestTime()).isNull();
+        assertThat(event.hasResponse()).isTrue();
+        assertThat(event.getResponse()).isSameAs(KnxBody.TUNNELING_ACK_BODY); // first
+        assertThat(event.getResponse(0)).isSameAs(KnxBody.TUNNELING_ACK_BODY);
+        assertThat(event.getResponse(1)).isSameAs(KnxBody.TUNNELING_ACK_BODY_2);
+        assertThat(event.getResponseTime()).isBetween(instantBeforeResponse, instantAfterResponse);
+        assertThat(event.getResponseTime(0)).isBetween(instantBeforeResponse, instantAfterResponse);
+        assertThat(event.getResponseTime(1)).isBetween(instantBeforeResponse2, instantAfterResponse2);
 
-        assertThat(event.hasResponse()).isTrue(); // no change
-        assertThat(event.getResponse()).isEqualTo(KnxBody.TUNNELING_ACK_BODY); // unchanged
-        assertThat(event.getResponse(0)).isEqualTo(KnxBody.TUNNELING_ACK_BODY); // unchanged
-        assertThat(event.getResponse(1)).isEqualTo(KnxBody.TUNNELING_ACK_BODY_2); // new added
-        assertThat(event.getResponseTime()).isBetween(instantBeforeResponse, instantAfterResponse); // unchanged
-        assertThat(event.getResponseTime(0)).isBetween(instantBeforeResponse, instantAfterResponse); // unchanged
-        assertThat(event.getResponseTime(1)).isBetween(instantBeforeResponse2, instantAfterResponse2); // new added
+        // try to get the first ack (seq=27)
+        assertThat(event.getResponse((res) -> res.getSequence() == 27)).isSameAs(KnxBody.TUNNELING_ACK_BODY);
+        assertThat(event.getResponseTime((res) -> res.getSequence() == 27)).isBetween(instantBeforeResponse, instantAfterResponse);
+        final var responseEvent1 = event.getResponseEvent((res) -> res.getSequence() == 27);
+        assertThat(responseEvent1.getResponse()).isSameAs(event.getResponse(0));
+        assertThat(responseEvent1.getResponseTime()).isSameAs(event.getResponseTime(0));
+
+        // try to get the second ack (seq=11)
+        assertThat(event.getResponse((res) -> res.getSequence() == 11)).isSameAs(KnxBody.TUNNELING_ACK_BODY_2);
+        assertThat(event.getResponseTime((res) -> res.getSequence() == 11)).isBetween(instantBeforeResponse2, instantAfterResponse2);
+        final var responseEvent2 = event.getResponseEvent((res) -> res.getSequence() == 11);
+        assertThat(responseEvent2.getResponse()).isSameAs(event.getResponse(1));
+        assertThat(responseEvent2.getResponseTime()).isSameAs(event.getResponseTime(1));
+
+        // try to get an unknown ack
+        assertThat(event.getResponse((res) -> false)).isNull();
+        assertThat(event.getResponseTime((res) -> false)).isNull();
+        assertThat(event.getResponseEvent((res) -> false)).isNull();
     }
 
     /**

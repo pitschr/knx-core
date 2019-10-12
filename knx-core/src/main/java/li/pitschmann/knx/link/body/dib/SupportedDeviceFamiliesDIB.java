@@ -121,6 +121,21 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         return this.serviceFamilies;
     }
 
+    /**
+     * Returns if the {@link ServiceTypeFamily} exists in the current DIB
+     *
+     * @param serviceTypeFamily
+     * @return {@code true} if the service type family exists, otherwise {@code false}
+     */
+    public boolean hasServiceTypeFamily(final @Nonnull ServiceTypeFamily serviceTypeFamily) {
+        for (final var family : this.serviceFamilies) {
+            if (serviceTypeFamily == family.getFamily()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Nonnull
     @Override
     public String toString(boolean inclRawData) {

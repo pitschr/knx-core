@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public final class SupportedDeviceFamiliesDIBTest {
             0x02, // Description Type Code
             0x02, 0x01, // Service Family ID + Version #1
             0x03, 0x02, // Service Family ID + Version #2
-            0x04, 0x01, // Service Family ID + Version #3
-            0x05, 0x03 // Service Family ID + Version #4
+            0x04, 0x01, // Service Family ID + Version #1
+            0x05, 0x03 // Service Family ID + Version #3
     };
 
     /**
@@ -63,6 +64,7 @@ public final class SupportedDeviceFamiliesDIBTest {
      * </pre>
      */
     @Test
+    @DisplayName("OK: Test with Core, DevMgmt, Tunneling and Routing Service Type Families")
     public void validCases() {
         // create by bytes
         final var supportedDevicesFamiliesByValueOf = SupportedDeviceFamiliesDIB.of(BYTES);
@@ -92,10 +94,8 @@ public final class SupportedDeviceFamiliesDIBTest {
         assertThat(svcRouting.getVersion()).isEqualTo(3);
     }
 
-    /**
-     * Tests {@link SupportedDeviceFamiliesDIB} with invalid arguments
-     */
     @Test
+    @DisplayName("ERROR: Test with invalid arguments")
     public void invalidCases() {
         // null check
         assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(null)).isInstanceOf(KnxNullPointerException.class)
@@ -112,10 +112,27 @@ public final class SupportedDeviceFamiliesDIBTest {
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
     }
 
-    /**
-     * Test {@link SupportedDeviceFamiliesDIB#toString()} and {@link SupportedDeviceFamiliesDIB#toString(boolean)}
-     */
     @Test
+    @DisplayName("Test if has supported service type family")
+    public void testServiceTypeFamily() {
+        final var dib = SupportedDeviceFamiliesDIB.of(
+                new byte[]{ //
+                        0x06, // Structure Length
+                        0x02, // Description Type Code
+                        0x02, 0x01, // Service Family ID + Version #1
+                        0x04, 0x01, // Service Family ID + Version #1
+                }
+        );
+
+        assertThat(dib.getServiceFamilies()).hasSize(2);
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.CORE)).isTrue();
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.DEVICE_MANAGEMENT)).isFalse();
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.TUNNELING)).isTrue();
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.ROUTING)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #toString() and #toString(boolean)")
     public void testToString() {
         final var supportedDevicesFamiliesDIB = SupportedDeviceFamiliesDIB.of(BYTES);
 
