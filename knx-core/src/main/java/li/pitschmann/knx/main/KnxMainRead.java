@@ -23,8 +23,6 @@ import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Sleeper;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Demo class how to send a read request to a KNX group address.
  * <p/>

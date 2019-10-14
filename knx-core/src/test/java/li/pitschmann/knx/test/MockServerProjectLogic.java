@@ -22,6 +22,7 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
+import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.AdditionalInfo;
 import li.pitschmann.knx.link.body.cemi.CEMI;
@@ -30,7 +31,6 @@ import li.pitschmann.knx.link.body.cemi.ControlByte2;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.body.cemi.TPCI;
 import li.pitschmann.knx.link.communication.KnxStatusData;
-import li.pitschmann.knx.link.communication.KnxStatusPoolImpl;
 import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.knx.test.strategy.impl.DefaultTunnelingStrategy;
 import li.pitschmann.utils.Bytes;
@@ -38,6 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Flow;
 
@@ -48,12 +50,12 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
     private final static Logger log = LoggerFactory.getLogger(MockServerProjectLogic.class);
     private final MockServer mockServer;
     private final XmlProject xmlProject;
-    private final KnxStatusPoolImpl statusPool;
+    private final Map<KnxAddress, KnxStatusData> groupAddressStatusMap;
 
     MockServerProjectLogic(final MockServer mockServer, final XmlProject xmlProject) {
         this.mockServer = Objects.requireNonNull(mockServer);
         this.xmlProject = Objects.requireNonNull(xmlProject);
-        this.statusPool = new KnxStatusPoolImpl();
+        this.groupAddressStatusMap = new HashMap<>(1024);
 
         // load project
         initGroupAddresses();
@@ -84,7 +86,7 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
 
             final var knxStatusData = new KnxStatusData(groupAddress, APCI.GROUP_VALUE_WRITE, apciData);
             log.debug("KNX Status Data loaded: {}", knxStatusData);
-            statusPool.updateStatus(groupAddress, knxStatusData);
+            groupAddressStatusMap.put(groupAddress, knxStatusData);
         }
     }
 
@@ -94,15 +96,16 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
 
         if (body instanceof TunnelingRequestBody) {
             final var requestBody = (TunnelingRequestBody) body;
-            if (requestBody.getCEMI().getApci() == APCI.GROUP_VALUE_READ) {
+            final var cemi = requestBody.getCEMI();
+            final var destAddress = cemi.getDestinationAddress();
+            if (cemi.getApci() == APCI.GROUP_VALUE_READ) {
                 // TODO: analyze if response should be done at all? (e.g. communication flag, ...)
                 // read
-                final var destAddress = requestBody.getCEMI().getDestinationAddress();
-                final var statusData = this.statusPool.getStatusFor(destAddress);
+                final var statusData = this.groupAddressStatusMap.get(destAddress);
                 if (statusData != null) {
                     final var apciData = statusData.getApciData();
                     log.debug("apciData: {}", Arrays.toString(apciData));
-                    final var cemi = CEMI.of(
+                    final var cemiIndication = CEMI.of(
                             MessageCode.L_DATA_IND,
                             AdditionalInfo.empty(),
                             ControlByte1.useDefault(),
@@ -113,11 +116,11 @@ public class MockServerProjectLogic implements Flow.Subscriber<Body> {
                             0,
                             APCI.GROUP_VALUE_RESPONSE,
                             apciData);
-                    this.mockServer.addToOutbox(new DefaultTunnelingStrategy().createRequest(this.mockServer, cemi).getBody());
+                    this.mockServer.addToOutbox(new DefaultTunnelingStrategy().createRequest(this.mockServer, cemiIndication).getBody());
                 }
             } else if (requestBody.getCEMI().getApci() == APCI.GROUP_VALUE_WRITE) {
                 // write action
-                this.statusPool.updateStatus(requestBody.getCEMI());
+                this.groupAddressStatusMap.put(cemi.getDestinationAddress(), new KnxStatusData(cemi));
             }
         }
     }

@@ -56,15 +56,15 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
         return this.getResponse(0);
     }
 
+    @Override
+    public void setResponse(final @Nonnull RESPONSE response) {
+        addResponse(response);
+    }
+
     @Nullable
     public RESPONSE getResponse(final @Nonnull Predicate<RESPONSE> predicate) {
         final var responseEvent = getResponseEvent(predicate);
         return responseEvent == null ? null : responseEvent.getResponse();
-    }
-
-    @Override
-    public void setResponse(final @Nonnull RESPONSE response) {
-        addResponse(response);
     }
 
     public boolean hasRequest() {
@@ -97,6 +97,7 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     public Instant getResponseTime() {
         return this.getResponseTime(0);
     }
+
     @Nullable
     public Instant getResponseTime(final @Nonnull Predicate<RESPONSE> predicate) {
         final var responseEvent = getResponseEvent(predicate);

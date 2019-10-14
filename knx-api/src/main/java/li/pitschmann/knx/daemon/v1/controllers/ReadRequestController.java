@@ -8,8 +8,6 @@ import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Body;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Controller for read requests
  */

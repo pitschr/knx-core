@@ -28,11 +28,11 @@ import java.util.function.Supplier;
 /**
  * An immutable Constant Value Holder for Configuration containing
  * <ul>
- *     <li>{@code key} ... fully qualified name of key, will be lower-cased</li>
- *     <li>{@code classType} ... for type of class, also used for casting</li>
- *     <li>{@code defaultSupplier} ... supplier for default value</li>
- *     <li>{@code settable} ... flag if the value of config key can be set
- *           via {@link ConfigBuilder#setting(String, Object)}</li>
+ * <li>{@code key} ... fully qualified name of key, will be lower-cased</li>
+ * <li>{@code classType} ... for type of class, also used for casting</li>
+ * <li>{@code defaultSupplier} ... supplier for default value</li>
+ * <li>{@code settable} ... flag if the value of config key can be set
+ * via {@link ConfigBuilder#setting(String, Object)}</li>
  * </ul>
  *
  * @param <T>

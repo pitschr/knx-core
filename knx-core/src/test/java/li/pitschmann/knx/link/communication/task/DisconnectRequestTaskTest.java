@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.communication.task;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.link.config.Config;
 import org.junit.jupiter.api.DisplayName;
@@ -89,7 +89,7 @@ public class DisconnectRequestTaskTest {
     private DisconnectRequestTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
         final var config = mock(Config.class);
-        final var eventPool = mock(KnxEventPool.class);
+        final var eventPool = mock(InternalKnxEventPool.class);
         final var eventData = mock(KnxSingleEvent.class);
         final var subscription = mock(Flow.Subscription.class);
 

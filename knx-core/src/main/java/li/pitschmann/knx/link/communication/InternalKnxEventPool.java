@@ -49,8 +49,8 @@ import java.util.Map;
  *
  * @author PITSCHR
  */
-public final class KnxEventPool {
-    private static final Logger log = LoggerFactory.getLogger(KnxEventPool.class);
+public final class InternalKnxEventPool {
+    private static final Logger log = LoggerFactory.getLogger(InternalKnxEventPool.class);
     private static final int DEFAULT_TUNNELING_REQUEST_CAPACITY = 0xFF + 1; // 1 byte only according to KNX specification
     private final Map<Integer, KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody>> tunnelingMap;
     private final KnxMultiEvent<SearchRequestBody, SearchResponseBody> searchEvent = new KnxMultiEvent<>();
@@ -59,12 +59,16 @@ public final class KnxEventPool {
     private final KnxSingleEvent<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent = new KnxSingleEvent<>();
     private final KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent = new KnxSingleEvent<>();
 
-    public KnxEventPool() {
+    /**
+     * KNX event pool (package protected)
+     */
+    InternalKnxEventPool() {
         // initialize tunneling map and fill with default KnxSingleEvent entries (we will need it anyway)
         tunnelingMap = Maps.newHashMapWithExpectedSize(DEFAULT_TUNNELING_REQUEST_CAPACITY);
         for (var i = 0; i < DEFAULT_TUNNELING_REQUEST_CAPACITY; i++) {
             tunnelingMap.put(i, new KnxSingleEvent<>());
         }
+        log.trace("Internal KNX Event Pool object created.");
     }
 
     /**

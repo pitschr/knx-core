@@ -78,9 +78,9 @@ public final class InternalKnxClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(InternalKnxClient.class);
     private final AtomicBoolean closed = new AtomicBoolean(true);
     private final Lock lock = new ReentrantLock();
-    private final KnxEventPool eventPool = new KnxEventPool();
-    private final KnxStatisticImpl statistics = new KnxStatisticImpl();
-    private final KnxStatusPoolImpl statusPool = new KnxStatusPoolImpl();
+    private final InternalKnxEventPool eventPool = new InternalKnxEventPool();
+    private final InternalKnxStatistic statistics = new InternalKnxStatistic();
+    private final InternalKnxStatusPool statusPool = new InternalKnxStatusPool();
     private final PluginManager pluginManager;
     private final Config config;
     private State state = State.NOT_STARTED;
@@ -344,12 +344,12 @@ public final class InternalKnxClient implements AutoCloseable {
     }
 
     @Nonnull
-    public KnxStatisticImpl getStatistic() {
+    public InternalKnxStatistic getStatistic() {
         return this.statistics;
     }
 
     @Nonnull
-    public KnxStatusPoolImpl getStatusPool() {
+    public InternalKnxStatusPool getStatusPool() {
         return this.statusPool;
     }
 
@@ -375,7 +375,7 @@ public final class InternalKnxClient implements AutoCloseable {
     }
 
     @Nonnull
-    public KnxEventPool getEventPool() {
+    public InternalKnxEventPool getEventPool() {
         return this.eventPool;
     }
 
@@ -511,7 +511,7 @@ public final class InternalKnxClient implements AutoCloseable {
      * Returns the discovery response body containing available KNX Net/IP devices including device information,
      * supported device capabilities.
      *
-     * @return First {@link SearchResponseBody} (subsequent should be requested by {@link KnxEventPool}),
+     * @return First {@link SearchResponseBody} (subsequent should be requested by {@link InternalKnxEventPool}),
      * otherwise {@link KnxDiscoveryNotReceivedException} will be thrown
      */
     @Nonnull
@@ -600,6 +600,6 @@ public final class InternalKnxClient implements AutoCloseable {
          * <p/>
          * Next State is: {@link #NOT_STARTED} as soon the stop procedure is completed.
          */
-        STOP_REQUEST;
+        STOP_REQUEST
     }
 }

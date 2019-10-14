@@ -29,11 +29,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 /**
- * Tests the {@link KnxEventPool}
+ * Tests the {@link InternalKnxEventPool}
  *
  * @author PITSCHR
  */
-public class KnxEventPoolTest {
+public class InternalKnxEventPoolTest {
     /**
      * Test events:
      * <ol>
@@ -46,7 +46,7 @@ public class KnxEventPoolTest {
      */
     @Test
     public void testEvents() {
-        final var pool = new KnxEventPool();
+        final var pool = new InternalKnxEventPool();
 
         assertThat(pool.searchEvent()).isNotNull().isSameAs(pool.get(KnxBody.SEARCH_REQUEST_BODY));
         assertThat(pool.descriptionEvent()).isNotNull().isSameAs(pool.get(KnxBody.DESCRIPTION_REQUEST_BODY));
@@ -59,11 +59,11 @@ public class KnxEventPoolTest {
     }
 
     /**
-     * Test {@link KnxEventPool#add(RequestBody)}
+     * Test {@link InternalKnxEventPool#add(RequestBody)}
      */
     @Test
     public void testAdd() {
-        final var pool = new KnxEventPool();
+        final var pool = new InternalKnxEventPool();
         final var eventData = pool.descriptionEvent();
 
         assertThat(eventData.getRequest()).isNull();
@@ -78,13 +78,13 @@ public class KnxEventPoolTest {
     }
 
     /**
-     * Test failures for {@link KnxEventPool#add(RequestBody)}
+     * Test failures for {@link InternalKnxEventPool#add(RequestBody)}
      */
     @Test
     public void testAddFailures() {
-        assertThatThrownBy(() -> new KnxEventPool().add(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new InternalKnxEventPool().add(null)).isInstanceOf(IllegalArgumentException.class);
 
         final var requestBody = mock(RequestBody.class);
-        assertThatThrownBy(() -> new KnxEventPool().add(requestBody)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new InternalKnxEventPool().add(requestBody)).isInstanceOf(IllegalArgumentException.class);
     }
 }
