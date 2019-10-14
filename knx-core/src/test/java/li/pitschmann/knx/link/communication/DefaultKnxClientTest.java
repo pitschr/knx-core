@@ -232,7 +232,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Test KNX client instantiation using routing service (via multicast)")
     public void testRouting(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
-            client.readRequest(GroupAddress.of(11,4,67));
+            client.readRequest(GroupAddress.of(11, 4, 67));
             client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.toValue(true));
             mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION, 2);
         } catch (final Throwable t) {
@@ -245,10 +245,10 @@ public class DefaultKnxClientTest {
                 RoutingIndicationBody.class // #2 (write request)
         );
 
-        final var readPacket = (RoutingIndicationBody)mockServer.getReceivedBodies().get(0);
+        final var readPacket = (RoutingIndicationBody) mockServer.getReceivedBodies().get(0);
         assertThat(readPacket.getCEMI().getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
 
-        final var writePacket = (RoutingIndicationBody)mockServer.getReceivedBodies().get(1);
+        final var writePacket = (RoutingIndicationBody) mockServer.getReceivedBodies().get(1);
         assertThat(writePacket.getCEMI().getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
     }
 }

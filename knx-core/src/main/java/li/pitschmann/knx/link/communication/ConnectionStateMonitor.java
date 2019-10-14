@@ -25,14 +25,19 @@ import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
- * Task to send connection frames from local to KNX Net/IP device. This class will send {@link ConnectRequestBody} to the
- * KNX Net/IP device and waits for {@link ConnectResponseBody} to obtain the channel id which is used as identifier for
+ * Task to send connection frames from local to KNX Net/IP device. This class will
+ * send {@link ConnectRequestBody} to the KNX Net/IP device and waits for
+ * {@link ConnectResponseBody} to obtain the channel id which is used as identifier for
  * further communications.
+ * <p/>
+ * The connection state monitor is used in Tunneling mode only!
  *
  * @author PITSCHR
  */
@@ -48,8 +53,11 @@ public final class ConnectionStateMonitor implements Runnable {
     private static final int WAITING_FOR_RESPONSE_CHECK_INTERVAL = 100;
     private final InternalKnxClient client;
 
-    public ConnectionStateMonitor(final InternalKnxClient client) {
-        this.client = client;
+    /**
+     * KNX Connection State Monitor (package protected)
+     */
+    ConnectionStateMonitor(final @Nonnull InternalKnxClient client) {
+        this.client = Objects.requireNonNull(client);
     }
 
     @Override

@@ -44,18 +44,18 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the {@link KnxStatisticImpl}
+ * Tests the {@link InternalKnxStatistic}
  *
  * @author PITSCHR
  */
-public class KnxStatisticTest {
+public class InternalKnxStatisticTest {
     /**
-     * Test at initialization for {@link KnxStatisticImpl}
+     * Test at initialization for {@link InternalKnxStatistic}
      */
     @Test
     @DisplayName("Test at initialization of KNX statistic")
     public void testInitialization() {
-        final var knxStatistic = new KnxStatisticImpl();
+        final var knxStatistic = new InternalKnxStatistic();
 
         // expected is that all are zero at initialization
         assertThat(knxStatistic.getNumberOfBytesReceived()).isZero();
@@ -70,12 +70,12 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Test for {@link KnxStatisticImpl}
+     * Test for {@link InternalKnxStatistic}
      */
     @Test
     @DisplayName("Check for KNX statistic")
     public void testKnxStatistic() {
-        final var knxStatistic = new KnxStatisticImpl();
+        final var knxStatistic = new InternalKnxStatistic();
 
         // fill KNX statistic
         addIncomingBodies(knxStatistic);
@@ -117,7 +117,7 @@ public class KnxStatisticTest {
     @Test
     @DisplayName("Test unmodifiable KNX statistic")
     public void testUnmodifiableKnxStatistic() {
-        final var statistic = new KnxStatisticImpl();
+        final var statistic = new InternalKnxStatistic();
 
         // fill KNX statistic
         addIncomingBodies(statistic);
@@ -189,7 +189,7 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Adds 55 <strong>incoming</strong> bodies to {@link KnxStatisticImpl}
+     * Adds 55 <strong>incoming</strong> bodies to {@link InternalKnxStatistic}
      * <p/>
      * <ul>
      * <li>1x {@link DescriptionRequestBody}</li>
@@ -206,7 +206,7 @@ public class KnxStatisticTest {
      *
      * @param knxStatistic
      */
-    private void addIncomingBodies(final KnxStatisticImpl knxStatistic) {
+    private void addIncomingBodies(final InternalKnxStatistic knxStatistic) {
         final var bodies = new LinkedList<Body>();
 
         bodies.addAll(generateBodyList(KnxBody.DESCRIPTION_REQUEST_BODY, 1));
@@ -224,7 +224,7 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Adds 155 <strong>outgoing</strong> bodies to {@link KnxStatisticImpl}
+     * Adds 155 <strong>outgoing</strong> bodies to {@link InternalKnxStatistic}
      * <p/>
      * <ul>
      * <li>21x {@link DescriptionRequestBody}</li>
@@ -241,7 +241,7 @@ public class KnxStatisticTest {
      *
      * @param knxStatistic
      */
-    private void addOutgoingBodies(final KnxStatisticImpl knxStatistic) {
+    private void addOutgoingBodies(final InternalKnxStatistic knxStatistic) {
         final var bodies = new LinkedList<Body>();
 
         bodies.addAll(generateBodyList(KnxBody.DESCRIPTION_REQUEST_BODY, 21));
@@ -267,7 +267,7 @@ public class KnxStatisticTest {
     }
 
     /**
-     * Adds 40 <strong>errors</strong> to {@link KnxStatisticImpl}
+     * Adds 40 <strong>errors</strong> to {@link InternalKnxStatistic}
      * <p/>
      * <ul>
      * <li>8x {@link IllegalArgumentException}</li>
@@ -279,7 +279,7 @@ public class KnxStatisticTest {
      *
      * @param knxStatistic
      */
-    private void addErrors(final KnxStatisticImpl knxStatistic) {
+    private void addErrors(final InternalKnxStatistic knxStatistic) {
         for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new IllegalArgumentException());
         }

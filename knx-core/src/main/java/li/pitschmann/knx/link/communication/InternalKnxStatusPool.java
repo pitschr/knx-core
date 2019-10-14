@@ -45,9 +45,16 @@ import java.util.concurrent.TimeUnit;
  *
  * @author PITSCHR
  */
-public final class KnxStatusPoolImpl implements KnxStatusPool {
-    private static final Logger log = LoggerFactory.getLogger(KnxStatusPoolImpl.class);
+public final class InternalKnxStatusPool implements KnxStatusPool {
+    private static final Logger log = LoggerFactory.getLogger(InternalKnxStatusPool.class);
     private final Map<KnxAddress, KnxStatusData> statusMap = Maps.newHashMapWithExpectedSize(1024);
+
+    /**
+     * KNX status pool (package protected)
+     */
+    InternalKnxStatusPool() {
+        log.trace("Internal KNX Status Pool object created.");
+    }
 
     /**
      * Updates the status by given {@link KnxAddress} and {@link KnxStatusData}

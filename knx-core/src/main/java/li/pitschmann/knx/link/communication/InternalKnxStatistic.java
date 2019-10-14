@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
  *
  * @author PITSCHR
  */
-public final class KnxStatisticImpl implements KnxStatistic {
-    private static final Logger log = LoggerFactory.getLogger(KnxStatisticImpl.class);
+public final class InternalKnxStatistic implements KnxStatistic {
+    private static final Logger log = LoggerFactory.getLogger(InternalKnxStatistic.class);
     /**
      * 14 bytes for Ethernet packet<br>
      * 20 bytes for IPV4<br>
@@ -54,10 +54,10 @@ public final class KnxStatisticImpl implements KnxStatistic {
     private final AtomicLong numberOfErrors = new AtomicLong();
 
     /**
-     * Default package-private constructor for {@link KnxStatisticImpl}
+     * Default package-private constructor for {@link InternalKnxStatistic}
      */
-    KnxStatisticImpl() {
-        log.trace("Default KNX Statistic object created.");
+    InternalKnxStatistic() {
+        log.trace("Internal KNX Statistic object created.");
     }
 
     @Override
@@ -153,7 +153,7 @@ public final class KnxStatisticImpl implements KnxStatistic {
         private final long numberOfErrors;
         private final double errorRate;
 
-        private UnmodifiableKnxStatistic(final @Nonnull KnxStatisticImpl statistic) {
+        private UnmodifiableKnxStatistic(final @Nonnull InternalKnxStatistic statistic) {
             this.numberOfBodyReceivedMap = deepCopy(statistic.numberOfBodyReceivedMap);
             this.numberOfBodySentMap = deepCopy(statistic.numberOfBodySentMap);
             this.numberOfBytesReceived = statistic.getNumberOfBytesReceived();

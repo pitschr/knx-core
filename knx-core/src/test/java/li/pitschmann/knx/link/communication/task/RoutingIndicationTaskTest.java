@@ -26,7 +26,7 @@ import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxStatusPoolImpl;
+import li.pitschmann.knx.link.communication.InternalKnxStatusPool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -131,7 +131,7 @@ public class RoutingIndicationTaskTest {
      */
     private RoutingIndicationTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
-        final var statusPool = mock(KnxStatusPoolImpl.class);
+        final var statusPool = mock(InternalKnxStatusPool.class);
         final var subscription = mock(Flow.Subscription.class);
 
         when(internalClient.getStatusPool()).thenReturn(statusPool);

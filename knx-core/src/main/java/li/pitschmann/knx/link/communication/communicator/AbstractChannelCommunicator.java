@@ -88,8 +88,9 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         log.info("Queue Executor created: {}", this.queueExecutor);
 
         // creates executor for communication
-        this.communicationExecutor = Executors.newFixedThreadPool(this.client.getConfig().getCommunicationExecutorPoolSize(), true);
-        log.info("Communication Executor created with size of {}: {}", this.client.getConfig().getCommunicationExecutorPoolSize(), this.communicationExecutor);
+        final var poolSize = this.client.getConfig().getCommunicationExecutorPoolSize();
+        this.communicationExecutor = Executors.newFixedThreadPool(poolSize, true);
+        log.info("Communication Executor created with size of {}: {}", poolSize, this.communicationExecutor);
     }
 
     /**
@@ -217,7 +218,12 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody,
                                                                     final @Nullable Predicate<T> predicate,
                                                                     final long msTimeout) {
-        return CompletableFuture.supplyAsync(() -> sendAndWaitInternal(requestBody, predicate, msTimeout), this.communicationExecutor);
+        return CompletableFuture
+                .supplyAsync(() -> sendAndWaitInternal(requestBody, predicate, msTimeout), this.communicationExecutor)
+                .exceptionally((throwable) -> {
+                    this.client.notifyError(throwable);
+                    return null;
+                });
     }
 
     /**

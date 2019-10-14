@@ -105,7 +105,7 @@ public final class MockDaemonTestExtension
             executorService.execute(
                     () -> {
                         try (final var client = DefaultKnxClient.createStarted(configBuilder.build())) {
-                            this.knxClients.put(context, client);
+                            knxClients.put(context, client);
                             while (client.isRunning() && Sleeper.seconds(1)) {
                                 // do nothing ...
                                 log.debug("ping ...");

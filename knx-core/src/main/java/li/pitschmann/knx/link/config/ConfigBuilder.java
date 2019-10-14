@@ -30,7 +30,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * KNX specific configurations like KNX Net/IP device address. This class can be created
@@ -83,10 +87,10 @@ public final class ConfigBuilder {
      * <p>
      * It supports a lot of different patterns:<br>
      * <ul>
-     *     <li><strong>Config-arg:</strong><br><i>null</i><br><i>empty</i><br>{@code :}</li>
-     *     <li><strong>Host and port</strong><br>{@code <host>:<port>"}</li>
-     *     <li><strong>Host only</strong><br>{@code <host>}<br>{@code <host>:}</li>
-     *     <li><strong>Port only</strong><br>{@code :<port>}</li>
+     * <li><strong>Config-arg:</strong><br><i>null</i><br><i>empty</i><br>{@code :}</li>
+     * <li><strong>Host and port</strong><br>{@code <host>:<port>"}</li>
+     * <li><strong>Host only</strong><br>{@code <host>}<br>{@code <host>:}</li>
+     * <li><strong>Port only</strong><br>{@code :<port>}</li>
      * </ul>
      *
      * @param address remote control address (and port)

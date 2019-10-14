@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.communication.task;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ public class TunnelingAckTaskTest {
      */
     private TunnelingAckTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(KnxEventPool.class);
+        final var eventPool = mock(InternalKnxEventPool.class);
         final var subscription = mock(Flow.Subscription.class);
 
         // 0 = (normal) not acknowledged

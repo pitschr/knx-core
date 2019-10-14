@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.communication.task;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.KnxEventPool;
+import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ public class DescriptionResponseTaskTest {
      */
     private DescriptionResponseTask createTask() {
         final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(KnxEventPool.class);
+        final var eventPool = mock(InternalKnxEventPool.class);
         final var eventData = mock(KnxSingleEvent.class);
         final var subscription = mock(Flow.Subscription.class);
 

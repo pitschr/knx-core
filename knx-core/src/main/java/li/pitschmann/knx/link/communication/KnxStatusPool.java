@@ -25,7 +25,6 @@ import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * KNX Status Pool holding all statuses of KNX addresses which have been sent by KNX/Net IP device
@@ -62,7 +61,7 @@ public interface KnxStatusPool {
     /**
      * Returns the current status for given {@link KnxAddress}.
      *
-     * @param address {@link KnxAddress} for which the status should be returned
+     * @param address      {@link KnxAddress} for which the status should be returned
      * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
      *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
      *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not

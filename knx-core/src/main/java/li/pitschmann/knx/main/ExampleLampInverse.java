@@ -24,8 +24,6 @@ import li.pitschmann.knx.link.datapoint.DPT1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Example Two: Inverse Lamp Status
  * <p/>

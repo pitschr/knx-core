@@ -46,7 +46,7 @@ public final class ExampleLampOn {
         try (final var client = DefaultKnxClient.createStarted()) {
             // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
             client.writeRequest(groupAddress, DPT1.SWITCH.toValue(true));  // or DPT1.SWITCH.toValue((byte)0x01)
-                                                                                       // or DPT1.SWITCH.toValue("on")
+            // or DPT1.SWITCH.toValue("on")
         }
 
         // auto-closed and disconnected by KNX client
