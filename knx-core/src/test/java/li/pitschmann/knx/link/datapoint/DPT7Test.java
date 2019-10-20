@@ -52,17 +52,17 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"-1"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"65536"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("65536")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00, 0x00})).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT7Value.class);
         assertThat(dpt.toValue(0)).isInstanceOf(DPT7Value.class);
         assertThat(dpt.toValue(65535)).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue(new String[]{"0"})).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue(new String[]{"65535"})).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.toValue("0")).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.toValue("65535")).isInstanceOf(DPT7Value.class);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT7
-        assertThat(dpt.toValue(new String[]{String.valueOf(intValue)})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(bValueArray);
     }
 }

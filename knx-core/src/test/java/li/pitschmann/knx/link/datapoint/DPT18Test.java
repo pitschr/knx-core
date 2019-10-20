@@ -49,19 +49,19 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"-1"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"64"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0xFF})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT18Value.class);
         assertThat(dpt.toValue(false, 0)).isInstanceOf(DPT18Value.class);
         assertThat(dpt.toValue(true, 63)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(new String[]{"0"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(new String[]{"controlled", "1"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(new String[]{"62"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(new String[]{"controlled", "63"})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.toValue("0")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.toValue("controlled", "1")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.toValue("62")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.toValue("controlled", "63")).isInstanceOf(DPT18Value.class);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
     @Test
     public void testOfInvalid() {
         // wrong value
-        assertThat(DPT18.SCENE_CONTROL.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT18.SCENE_CONTROL.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT18.SCENE_CONTROL.toValue((byte) 0x00)).isNotEqualTo(DPT18.SCENE_CONTROL.toValue((byte) 0x01));
     }
 
     /**
@@ -103,9 +103,9 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
         // assert specific DPT18
         if (controlled) {
-            assertThat(dpt.toValue(new String[]{"controlled", String.valueOf(intValue)})).isEqualTo(dptValue);
+            assertThat(dpt.toValue("controlled", String.valueOf(intValue))).isEqualTo(dptValue);
         } else {
-            assertThat(dpt.toValue(new String[]{String.valueOf(intValue)})).isEqualTo(dptValue);
+            assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
         }
         assertThat(dpt.toByteArray(controlled, intValue)).containsExactly(bValue);
     }

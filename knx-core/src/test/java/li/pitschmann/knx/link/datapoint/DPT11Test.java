@@ -54,9 +54,9 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
 
         // OK
         assertThat(DPT_DATE.toValue(new byte[]{0x01, 0x01, 0x00})).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue(new byte[]{(byte) 0x1f, (byte) 0x0c, (byte) 0x63})).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.toValue(new byte[]{0x1f, 0x0c, 0x63})).isInstanceOf(DPT11Value.class);
         assertThat(DPT_DATE.toValue(LocalDate.now())).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue(new String[]{"2000-01-02"})).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.toValue("2000-01-02")).isInstanceOf(DPT11Value.class);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT11
-        assertThat(dpt.toValue(new String[]{localDate.toString()})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(localDate.toString())).isEqualTo(dptValue);
         assertThat(dpt.toValue(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth())).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(localDate)).containsExactly(bValueArray);
         assertThat(dptValue.getDate()).isEqualTo(localDate);

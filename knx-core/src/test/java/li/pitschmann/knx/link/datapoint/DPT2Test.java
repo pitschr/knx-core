@@ -47,18 +47,18 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
         final var dpt = DPT2.SWITCH_CONTROL;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[]{0x04})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue((byte) 0x04)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"false", "true", "false"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("false", "true", "false")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.toValue(new byte[]{0x01})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.toValue(new String[]{"false"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.toValue(new String[]{"true"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.toValue(new String[]{"0"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.toValue(new String[]{"1"})).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue((byte) 0x01)).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue("false")).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue("true")).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue("0")).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue("1")).isInstanceOf(DPT2Value.class);
     }
 
     @Override
@@ -86,15 +86,15 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT2.ALARM_CONTROL.toValue(new byte[]{(byte) 0x00}));
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x01})).isNotEqualTo(DPT2.ALARM_CONTROL.toValue(new byte[]{(byte) 0x01}));
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x02})).isNotEqualTo(DPT2.ALARM_CONTROL.toValue(new byte[]{(byte) 0x02}));
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x03})).isNotEqualTo(DPT2.ALARM_CONTROL.toValue(new byte[]{(byte) 0x03}));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x00)).isNotEqualTo(DPT2.ALARM_CONTROL.toValue((byte) 0x00));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x01)).isNotEqualTo(DPT2.ALARM_CONTROL.toValue((byte) 0x01));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x02)).isNotEqualTo(DPT2.ALARM_CONTROL.toValue((byte) 0x02));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x03)).isNotEqualTo(DPT2.ALARM_CONTROL.toValue((byte) 0x03));
         // wrong value
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x03}));
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x01})).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x02}));
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x02})).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x01}));
-        assertThat(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x03})).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue(new byte[]{(byte) 0x00}));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x00)).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue((byte) 0x03));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x01)).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue((byte) 0x02));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x02)).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue((byte) 0x01));
+        assertThat(DPT2.SWITCH_CONTROL.toValue((byte) 0x03)).isNotEqualTo(DPT2.SWITCH_CONTROL.toValue((byte) 0x00));
     }
 
     /**
@@ -109,8 +109,8 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
      * @param strValue
      * @param strIntValue
      */
-    private void assertDPT(final DPT2 dpt, final byte byteValue, final boolean controlled, final boolean boolValue, final String[] strValue,
-                           final String[] strIntValue) {
+    private void assertDPT(final DPT2 dpt, final byte byteValue, final boolean controlled, final boolean boolValue,
+                           final String[] strValue, final String[] strIntValue) {
         final var dptValue = dpt.toValue(controlled, boolValue);
 
         // assert base DPT

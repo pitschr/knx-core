@@ -71,6 +71,23 @@ event logging, and much more.
 * _Data Point Type Translator_ to translate human-friendly (e.g. "on", "off"), Java data types 
 (e.g. true, false) into KNX compatible byte representation; and vice versa 
 
+### Data Point Types
+
+This KNX library (incl. KNX Client) supports following data point types below and is designed to 
+translate data point types in a fluent way into a KNX byte-array compatible format.
+
+| DPT    | Description              | DPT    | Description                      | DPT    | Description             |
+| ------ | ------------------------ | ------ | -------------------------------- | ------ | ----------------------- |
+| 1.xxx  | Binary                   | 11.xxx | Date (Year: 1990..2089)          | 21.xxx | 8-Bit Flagged Messages  |        
+| 2.xxx  | Controlled Binary        | 12.xxx | 4-Octet Unsigned Value           | 22.xxx | 16-Bit Flagged Messages |
+| 3.xxx  | Controlled Step/Interval | 13.xxx | 4-Octet Signed Value             | 23.xxx | 2-Bit Enumeration       |
+| 4.xxx  | Character                | 14.xxx | 4-Octet Float Value              | 
+| 5.xxx  | 8-Bit Unsigned Value     | 15.xxx | Access Data                      |
+| 6.xxx  | 8-Bit Signed Value       | 16.xxx | 14-Octet Characters              |
+| 7.xxx  | 2-Octet Unsigned Value   | 17.xxx | Scene Number                     |
+| 8.xxx  | 2-Octet Signed Value     | 18.xxx | Controlled Scene Number          |
+| 9.xxx  | 2-Octet Float Value      | 19.xxx | Date and Time (Year: 1900..2155) |
+| 10.xxx | Time                     | 20.xxx | 8-Bit Enumeration                |
 
 ## Quick Start Guides
 
@@ -176,7 +193,7 @@ try (final var client = DefaultKnxClient.createStarted("address:port")) {
 }
 ```
 
-#### Example One: Switch on/off lamp with boolean values
+#### Example: Switch on/off lamp with boolean values
 
 Let's start with an easy sample: You want to switch `on` a lamp. The KNX actuator listens 
 on group address `1/2/110` which is configured for switching on/off a lamp. 
@@ -199,7 +216,7 @@ public final class ExampleLampOn {
 }
 ```
 
-#### Example Two: Inverse the lamp status
+#### Example: Inverse the lamp status
 
 Given sample, you want to inverse the status of your lamp: 
 * if the lamp is `on`, the lamp should be `off`
@@ -240,9 +257,9 @@ public final class ExampleLampInverse {
 }
 ```
 
-#### Example Three: Plugin
+#### Example: Plugin
 
-This sample is demonstrating how we can implement and register the plugin in easy way.
+This sample is demonstrating how we can implement and register the plugin in direct way.
 Here we want to print out the incoming and outgoing packets in format and this sample
 is a good one to get a better understanding which packets are sent for KNX communication.
 
@@ -295,4 +312,22 @@ public final class ExamplePlugin {
         }
     }
 }
+```
+
+#### Example: Work with Data Point Type
+
+Given snippet, we want to convert a date and time objects into KNX compatible byte array:
+
+```
+// Saturday, 2013-08-17 04:10:45
+final var dayOfWeek = DayOfWeek.SATURDAY;
+final var date = LocalDate.of(2013, 08, 17);
+final var time = LocalTime.of(04, 10, 45);
+
+DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
+```
+
+This can be also more simplified using direct string representation:
+```
+DPT19.toByteArray("Saturday", "2013-08-17", "04:10:45");
 ```

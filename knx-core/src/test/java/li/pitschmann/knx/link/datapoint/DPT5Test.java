@@ -52,17 +52,17 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"-1"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"256"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00})).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0xFF})).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT5Value.class);
         assertThat(dpt.toValue(0)).isInstanceOf(DPT5Value.class);
         assertThat(dpt.toValue(255)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue(new String[]{"0"})).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue(new String[]{"255"})).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.toValue("0")).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.toValue("255")).isInstanceOf(DPT5Value.class);
     }
 
     @Test
@@ -79,13 +79,13 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
         // value: 0%
         assertThat(dptScaling.toValue(0).getUnsignedValue()).isEqualTo(0d);
         // value: ~25%
-        assertThat(dptScaling.toValue(new byte[]{0x40}).getUnsignedValue()).isCloseTo(25.0f, Percentage.withPercentage(0.4));
+        assertThat(dptScaling.toValue((byte) 0x40).getUnsignedValue()).isCloseTo(25.0f, Percentage.withPercentage(0.4));
         // value: ~50%
-        assertThat(dptScaling.toValue(new byte[]{0x7F}).getUnsignedValue()).isCloseTo(50.0f, Percentage.withPercentage(0.4));
+        assertThat(dptScaling.toValue((byte) 0x7F).getUnsignedValue()).isCloseTo(50.0f, Percentage.withPercentage(0.4));
         // value: ~75%
-        assertThat(dptScaling.toValue(new byte[]{(byte) 0xC0}).getUnsignedValue()).isCloseTo(75.0f, Percentage.withPercentage(0.4));
+        assertThat(dptScaling.toValue((byte) 0xC0).getUnsignedValue()).isCloseTo(75.0f, Percentage.withPercentage(0.4));
         // value: 100%
-        assertThat(dptScaling.toValue(new byte[]{(byte) 0xFF}).getUnsignedValue()).isEqualTo(100d);
+        assertThat(dptScaling.toValue((byte) 0xFF).getUnsignedValue()).isEqualTo(100d);
 
         /*
          * ANGLE
@@ -120,9 +120,9 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT5.ANGLE.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT5.SCALING.toValue(new byte[]{(byte) 0x00}));
+        assertThat(DPT5.ANGLE.toValue((byte) 0x00)).isNotEqualTo(DPT5.SCALING.toValue((byte) 0x00));
         // wrong value
-        assertThat(DPT5.ANGLE.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT5.ANGLE.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT5.ANGLE.toValue((byte) 0x00)).isNotEqualTo(DPT5.ANGLE.toValue((byte) 0x01));
     }
 
     /**
@@ -138,7 +138,7 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
         // assert specific DPT5
-        assertThat(dpt.toValue(new String[]{String.valueOf(intValue)})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(byteValue);
     }
 }

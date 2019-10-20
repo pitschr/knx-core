@@ -51,8 +51,8 @@ public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
         assertThatThrownBy(() -> DPT_ACCESS_DATA.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
 
         // OK
-        assertThat(DPT_ACCESS_DATA.toValue(new byte[]{0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT15Value.class);
-        assertThat(DPT_ACCESS_DATA.toValue(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT15Value.class);
+        assertThat(DPT_ACCESS_DATA.toValue((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT15Value.class);
+        assertThat(DPT_ACCESS_DATA.toValue((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT15Value.class);
     }
 
     @Override
@@ -83,9 +83,9 @@ public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
         // assert specific DPT15
-        assertThat(dpt.toValue(new String[]{ByteFormatter.formatHexAsString(accessIdData, ""),
+        assertThat(dpt.toValue(ByteFormatter.formatHexAsString(accessIdData, ""),
                 // get 2nd hex string (remove leading '0x'
-                ByteFormatter.formatHex(flags.getAsByte()).substring(2)})).isEqualTo(dptValue);
+                ByteFormatter.formatHex(flags.getAsByte()).substring(2))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(accessIdData, flags)).containsExactly(bValueArray);
     }
 }

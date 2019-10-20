@@ -49,18 +49,18 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo", "bar"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"-671088.65"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"670760.97"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("-671088.65")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("670760.97")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00, 0x00})).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT9Value.class);
         assertThat(dpt.toValue(-671088.64)).isInstanceOf(DPT9Value.class);
         assertThat(dpt.toValue(670433.28)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue(new String[]{"-671088.64"})).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue(new String[]{"670433.28"})).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.toValue("-671088.64")).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.toValue("670433.28")).isInstanceOf(DPT9Value.class);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT9
-        assertThat(dpt.toValue(new String[]{String.valueOf(doubleValue)})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(String.valueOf(doubleValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(doubleValue)).containsExactly(bValueArray);
     }
 }

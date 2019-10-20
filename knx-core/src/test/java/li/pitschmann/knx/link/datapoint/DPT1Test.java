@@ -47,18 +47,18 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
         final var dpt = DPT1.SWITCH;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[]{0x02})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue((byte) 0x02)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT1.SWITCH.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT1.SWITCH.toValue(new String[]{"false", "true"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT1.SWITCH.toValue("false", "true")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue(new byte[]{0x01})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue(new String[]{"false"})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue(new String[]{"true"})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue(new String[]{"0"})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue(new String[]{"1"})).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.toValue((byte) 0x01)).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.toValue("false")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.toValue("true")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.toValue("0")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.toValue("1")).isInstanceOf(DPT1Value.class);
     }
 
     /**
@@ -68,9 +68,9 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
     @Test
     public void testOf() {
         // value: false
-        this.assertDPT(DPT1.SWITCH, (byte) 0x00, false, new String[]{"false"}, new String[]{"0"});
+        this.assertDPT(DPT1.SWITCH, (byte) 0x00, false, "false", "0");
         // value: true
-        this.assertDPT(DPT1.SWITCH, (byte) 0x01, true, new String[]{"true"}, new String[]{"1"});
+        this.assertDPT(DPT1.SWITCH, (byte) 0x01, true, "true", "1");
     }
 
     /**
@@ -95,11 +95,11 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT1.SWITCH.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT1.ACK.toValue(new byte[]{(byte) 0x00}));
-        assertThat(DPT1.SWITCH.toValue(new byte[]{(byte) 0x01})).isNotEqualTo(DPT1.ACK.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT1.SWITCH.toValue((byte) 0x00)).isNotEqualTo(DPT1.ACK.toValue((byte) 0x00));
+        assertThat(DPT1.SWITCH.toValue((byte) 0x01)).isNotEqualTo(DPT1.ACK.toValue((byte) 0x01));
         // wrong value
-        assertThat(DPT1.SWITCH.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT1.SWITCH.toValue(new byte[]{(byte) 0x01}));
-        assertThat(DPT1.SWITCH.toValue(new byte[]{(byte) 0x01})).isNotEqualTo(DPT1.SWITCH.toValue(new byte[]{(byte) 0x00}));
+        assertThat(DPT1.SWITCH.toValue((byte) 0x00)).isNotEqualTo(DPT1.SWITCH.toValue((byte) 0x01));
+        assertThat(DPT1.SWITCH.toValue((byte) 0x01)).isNotEqualTo(DPT1.SWITCH.toValue((byte) 0x00));
     }
 
     /**
@@ -113,7 +113,7 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
      * @param strValue
      * @param strIntValue
      */
-    private void assertDPT(final DPT1 dpt, final byte byteValue, final boolean boolValue, final String[] strValue, final String[] strIntValue) {
+    private void assertDPT(final DPT1 dpt, final byte byteValue, final boolean boolValue, final String strValue, final String strIntValue) {
         final var dptValue = dpt.toValue(boolValue);
 
         // assert base DPT
