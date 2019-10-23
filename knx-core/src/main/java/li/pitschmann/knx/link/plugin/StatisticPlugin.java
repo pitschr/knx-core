@@ -26,6 +26,7 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
@@ -131,7 +132,10 @@ public final class StatisticPlugin implements ExtensionPlugin {
                 statistics.getNumberOfBodyReceived(DisconnectRequestBody.class), // %17
                 statistics.getNumberOfBodySent(DisconnectRequestBody.class), // %18
                 statistics.getNumberOfBodyReceived(DisconnectResponseBody.class), // %19
-                statistics.getNumberOfBodySent(DisconnectResponseBody.class) // %20
+                statistics.getNumberOfBodySent(DisconnectResponseBody.class), // %20
+                // Indication
+                statistics.getNumberOfBodyReceived(RoutingIndicationBody.class), // %21
+                statistics.getNumberOfBodySent(RoutingIndicationBody.class) // %22
         );
         // @formatter:on
     }
@@ -150,12 +154,14 @@ public final class StatisticPlugin implements ExtensionPlugin {
             "%n\t\t[Connect         ] Request: 0, Response: %9$s" + //
             "%n\t\t[Connection State] Request: 0, Response: %11$s" + //
             "%n\t\t[Tunneling       ] Request: %13$s, Response: %15$s" + //
+            "%n\t\t[Indication      ] Request: 0, Response: %21$s" + //
             "%n\t\t[Disconnect      ] Request: %17$s, Response: %19$s" + //
             "%n\t%3$s packets sent (%4$s bytes)" + //
             "%n\t\t[Description     ] Request: %8$s, Response: 0" + //
             "%n\t\t[Connect         ] Request: %10$s, Response: 0" + //
             "%n\t\t[Connection State] Request: %12$s, Response: 0" + //
             "%n\t\t[Tunneling       ] Request: %14$s, Response: %16$s" + //
+            "%n\t\t[Indication      ] Request: %22$s, Response: 0" + //
             "%n\t\t[Disconnect      ] Request: %18$s, Response: %20$s" + //
             "%n\t%5$s errors (%6$.2f%%)"),
          /**
@@ -184,6 +190,10 @@ public final class StatisticPlugin implements ExtensionPlugin {
                         "\"request\":%13$s," + //
                         "\"acknowledge\":%15$s" + //
                     "}," + //
+                    "\"indication\":{" + //
+                        "\"request\":0," + //
+                        "\"response\":%21$s" + //
+                    "}," + //
                     "\"disconnect\":{" + //
                         "\"request\":%17$s," + //
                         "\"response\":%19$s" + //
@@ -209,6 +219,10 @@ public final class StatisticPlugin implements ExtensionPlugin {
                     "\"tunneling\":{" + //
                         "\"request\":%14$s," + //
                         "\"acknowledge\":%16$s" + //
+                    "}," + //
+                    "\"indication\":{" + //
+                        "\"request\":%22$s," + //
+                        "\"response\":0" + //
                     "}," + //
                     "\"disconnect\":{" + //
                         "\"request\":%18$s," + //

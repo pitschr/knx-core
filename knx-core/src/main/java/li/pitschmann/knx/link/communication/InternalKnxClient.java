@@ -100,6 +100,9 @@ public final class InternalKnxClient implements AutoCloseable {
         log.trace("Abstract KNX Client constructor");
         this.config = Objects.requireNonNull(config);
         this.pluginManager = new PluginManager(config);
+
+        // In case of forced shutdown (e.g. CTRL+C) we should try to close the client properly
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> close()));
     }
 
     /**

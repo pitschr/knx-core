@@ -26,6 +26,7 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
+import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
@@ -64,6 +65,7 @@ public class StatisticPluginTest {
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connectionState\":{\"request\":0,\"response\":0}," +
                         "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
+                        "\"indication\":{\"request\":0,\"response\":0}," +
                         "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
                     "\"outbound\":{" +
@@ -72,6 +74,7 @@ public class StatisticPluginTest {
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connectionState\":{\"request\":0,\"response\":0}," +
                         "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
+                        "\"indication\":{\"request\":0,\"response\":0}," +
                         "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
                     "\"error\":{" +
@@ -102,6 +105,7 @@ public class StatisticPluginTest {
                         "\"connect\":{\"request\":0,\"response\":18}," +
                         "\"connectionState\":{\"request\":0,\"response\":20}," +
                         "\"tunneling\":{\"request\":22,\"acknowledge\":24}," +
+                        "\"indication\":{\"request\":0,\"response\":30}," +
                         "\"disconnect\":{\"request\":26,\"response\":28}" +
                     "}," +
                     "\"outbound\":{" +
@@ -110,6 +114,7 @@ public class StatisticPluginTest {
                         "\"connect\":{\"request\":19,\"response\":0}," +
                         "\"connectionState\":{\"request\":21,\"response\":0}," +
                         "\"tunneling\":{\"request\":23,\"acknowledge\":25}," +
+                        "\"indication\":{\"request\":31,\"response\":0}," +
                         "\"disconnect\":{\"request\":27,\"response\":29}" +
                     "}," +
                     "\"error\":{" +
@@ -158,6 +163,9 @@ public class StatisticPluginTest {
         when(statistic.getNumberOfBodySent(DisconnectRequestBody.class)).thenReturn(27L);
         when(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).thenReturn(28L);
         when(statistic.getNumberOfBodySent(DisconnectResponseBody.class)).thenReturn(29L);
+        // Indication
+        when(statistic.getNumberOfBodyReceived(RoutingIndicationBody.class)).thenReturn(30L);
+        when(statistic.getNumberOfBodySent(RoutingIndicationBody.class)).thenReturn(31L);
 
         return statistic;
     }

@@ -18,13 +18,14 @@
 
 package li.pitschmann.knx.main;
 
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.plugin.AuditPlugin;
 import li.pitschmann.knx.link.plugin.StatisticPlugin;
+import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.utils.Sleeper;
 
 import java.util.concurrent.TimeUnit;
@@ -36,31 +37,38 @@ import java.util.concurrent.TimeUnit;
  */
 public class KnxMainMonitoring extends AbstractKnxMain {
     public static void main(final String[] args) {
-        new KnxMainMonitoring().startMonitoring(args);
+        final String[] newArgs;
+        if (args == null || args.length == 0) {
+            // newArgs = new String[]{""};
+            // newArgs = new String[]{"-ip","192.168.1.16"};
+            // newArgs = new String[]{"-ip","192.168.1.16", "-nat", "-l"};
+            newArgs = new String[]{"-routing"};
+        } else {
+            newArgs = args;
+        }
+
+        new KnxMainMonitoring().startMonitoring(newArgs);
     }
 
-    private void startMonitoring(final String[] args1) {
-        // final String[] args = new String[]{""};
-        // final String[] args = new String[]{"-ip","192.168.1.16"};
-        // final String[] args = new String[]{"-ip","192.168.1.16", "-nat", "-l"};
-        final String[] args = new String[]{"-routing"};
+    private void startMonitoring(final String[] args) {
+        // Detach Console Appender
+        final var rootLogger = (Logger) logRoot;
+        final var consoleAppender = rootLogger.getAppender("STDOUT");
+        rootLogger.detachAppender(consoleAppender);
 
         // Logging all?
-        final var logAll = existsParameter(args, "-l");
-        final var rootLogger = ((ch.qos.logback.classic.Logger) logRoot);
+        final var logAll = existsParameter(args, "-log");
         if (logAll) {
-            rootLogger.setLevel(ch.qos.logback.classic.Level.ALL);
+            rootLogger.setLevel(Level.ALL);
+            ((Logger) log).setLevel(Level.ALL);
         } else {
-            // change the pattern of console appender
-            final var consoleAppender = (ConsoleAppender) rootLogger.getAppender("STDOUT");
-            final var encoder = (PatternLayoutEncoder) consoleAppender.getEncoder();
-            encoder.setPattern("%date - %msg%n");
-            encoder.start();
+            rootLogger.setLevel(Level.OFF);
+            ((Logger) log).setLevel(Level.OFF);
         }
         log.debug("Log all?: {}", logAll);
 
         // Get Monitor Time in Seconds
-        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 20L);
+        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 300L);
         log.debug("Monitor Time: {}s", monitorTime);
 
         // start KNX communication
@@ -70,7 +78,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .plugin( //
                         new AuditPlugin(), //
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
-                        new MonitoringPlugin()
+                        new TTYMonitorPlugin()
                 ) //
                 .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 10000L) //
                 .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) //
@@ -95,9 +103,5 @@ public class KnxMainMonitoring extends AbstractKnxMain {
             log.debug("STOP MONITORING WITH PLUGINS");
             log.debug("========================================================================");
         }
-
-        Sleeper.seconds(1);
     }
-
-
 }
