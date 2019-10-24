@@ -30,7 +30,7 @@
             <maxHistory>14</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%date %msg%n</pattern>
+            <pattern>%msg%n</pattern>
         </encoder>
     </appender>
 

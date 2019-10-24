@@ -1,14 +1,19 @@
 package li.pitschmann.knx.link.plugin.monitor;
 
+import com.google.common.base.Strings;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
+import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.datapoint.DPT8;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +23,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -107,16 +110,16 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         return null;
     }
 
-    private static final String getHeader() {
-        return "  #      | Date / Time         | Source    | Target    | Type     | Hex Value";
+    private final String getHeader() {
+        return "  #        | Date / Time         | Source    | Target    | Type     | Hex Value";
     }
 
-    private static final String getHeaderSeparator() {
-        return "---------+---------------------+-----------+-----------+----------+-------------------------------------------";
+    private final String getHeaderSeparator() {
+        return "-----------+---------------------+-----------+-----------+----------+" + Strings.repeat("-", columns - 70);
     }
 
-    private static final String getEmptyLine() {
-        return "         |                     |           |           |          |";
+    private final String getEmptyLine() {
+        return "           |                     |           |           |          |";
     }
 
     @Override
@@ -132,7 +135,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         // define scroll area
         out.print("\033[5;" + (lines - 3) + "r\033[5;0H\0337");
         es.execute(new TimeRunnable());
-        //es.execute(new DataRunnable());
+        // es.execute(new DataRunnable());
     }
 
     @Override
@@ -170,13 +173,13 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         out.println(String.format("\033[0;0HKNX MONITOR (%s x %s, Routing: %s, NAT: %s)", columns, lines, knxClient.getConfig().isRoutingEnabled(), knxClient.getConfig().isNatEnabled()));
         out.println();
         out.println("\033[1;32m" + getHeader() + "\033[0m");
-        out.println("\033[0;32m" + getHeaderSeparator() + "\033[0m");
+        out.println("\033[1;32m" + getHeaderSeparator() + "\033[0m");
 
         for (int i = 0; i < lines - 5 - 2; i++) {
             out.println("\033[0;32m" + getEmptyLine() + "\033[0m");
         }
-        out.println("\033[0;32m" + getHeaderSeparator() + "\033[0m");
-        out.println("Press CTRL+C to stop the monitoring.");
+        out.println("\033[1;32m" + getHeaderSeparator() + "\033[0m");
+        out.println("Press CTRL+C to quit");
     }
 
     /**
@@ -186,7 +189,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private final void printLineInTable(final Body item) {
         final var sb = new StringBuilder();
-        sb.append(String.format("%8s", numberOfIncomingBodies.incrementAndGet()))
+        sb.append(String.format("%10s", numberOfIncomingBodies.incrementAndGet()))
                 .append(" | ")
                 .append(String.format("%19s", dateTimeFormatter.format(LocalDateTime.now())))
                 .append(" | ");
@@ -238,36 +241,37 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         out.print(String.format("\0338\033[K%s%s%s\033[0m\0337", escapeCode, emptyTable.getAndSet(false) ? "" : System.lineSeparator(), str));
     }
 
-    public class TimeRunnable implements Runnable {
+    /**
+     * Runnable for updating the time
+     */
+    private class TimeRunnable implements Runnable {
+        private final String timePattern = "yyyy-MM-dd HH:mm:ss";
+        private final String timePosition = "\033[1;70H\033[K\033[" + (columns - timePattern.length()) + "G";
+
         @Override
         public void run() {
-            final var dateTimeLength = "2019-10-14T09:08:23Z".length();
-            final var timePosition = "\033[1;70H\033[K\033[" + (columns - dateTimeLength) + "G";
-            while (!Thread.currentThread().isInterrupted()) {
-                System.out.print(String.format("\0338%s%s\0338", timePosition, DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS))));
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+            final var pattern = DateTimeFormatter.ofPattern(timePattern);
+
+            do {
+                final var nowStr = pattern.format(LocalDateTime.now());
+                System.out.print(String.format("\0338%s%s\0338", timePosition, nowStr));
+            } while (Sleeper.seconds(1));
         }
     }
 
 
-    public class DataRunnable implements Runnable {
-        private AtomicInteger ai = new AtomicInteger();
+    /**
+     * Runnable for fake data (helpful for debugging purposes)
+     */
+    private class DataRunnable implements Runnable {
+        private final CEMI dummyCEMI = CEMI.useDefault(MessageCode.L_DATA_IND, GroupAddress.of(1, 2, 3), APCI.GROUP_VALUE_WRITE, DPT8.VALUE_2_OCTET_COUNT.toValue(4711));
+        private final Body dummyBody = TunnelingRequestBody.of(1, 1, dummyCEMI);
 
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                printToTerminal(String.format(" %7s |                     |           |           |          |", ai.getAndIncrement()));
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+            do {
+                printLineInTable(dummyBody);
+            } while (Sleeper.milliseconds(10));
         }
     }
 }
