@@ -10,8 +10,10 @@ import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.datapoint.DPT8;
+import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -227,8 +229,22 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
 
         sb.append(" | ")
                 .append(String.format("%8s", apciString))
-                .append(" | ")
-                .append(ByteFormatter.formatHexAsString(cemi.getApciData()));
+                .append(" | ");
+
+        String valueAsString = ByteFormatter.formatHexAsString(cemi.getApciData());
+        final var xmlProject = knxClient.getConfig().getProject();
+        if (xmlProject != null) {
+            // project file exists -> try with Data Point Value
+            final var xmlGroupAddress = xmlProject.getGroupAddress((GroupAddress)cemi.getDestinationAddress());
+            if (xmlGroupAddress!=null) {
+                final var dpt = DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
+                if (dpt != null) {
+                    final var dptValue = dpt.toValue(cemi.getApciData());
+                    valueAsString = String.format("%s: %s (%s)", dpt.getId(), dptValue.toText(), valueAsString);
+                }
+            }
+        }
+        sb.append(valueAsString);
         printToTerminal(sb.toString());
     }
 

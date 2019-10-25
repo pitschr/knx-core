@@ -22,7 +22,9 @@ import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -42,17 +44,19 @@ public final class ConfigConstant<T> {
     private final Class<T> classType;
     private final Supplier<T> defaultSupplier;
     private final Function<String, T> converter;
+    private final Predicate<T> predicate;
     private final boolean settable;
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier) {
-        this(key, classType, converter, defaultSupplier, true);
+    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier, final boolean settable) {
+        this(key, classType, converter, defaultSupplier, null, settable);
     }
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier, final boolean settable) {
+    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier, final @Nullable Predicate<T> predicate, final boolean settable) {
         this.key = Objects.requireNonNull(key).toLowerCase();
         this.classType = Objects.requireNonNull(classType);
         this.converter = Objects.requireNonNull(converter);
         this.defaultSupplier = Objects.requireNonNull(defaultSupplier);
+        this.predicate = predicate;
         this.settable = settable;
     }
 
@@ -85,6 +89,16 @@ public final class ConfigConstant<T> {
     }
 
     /**
+     * Returns {@code true} if the given value is valid/applicable for the config.
+     *
+     * @param value value to be tested
+     * @return {@code true} if valid/applicable, otherwise {@code false}
+     */
+    public boolean isValid(final T value) {
+        return predicate == null || predicate.test(value);
+    }
+
+    /**
      * Converts from a {@link String} representation to an instance of type {@code <T>}
      *
      * @param value
@@ -104,6 +118,7 @@ public final class ConfigConstant<T> {
                 .add("classType", this.classType)
                 .add("converter", this.converter)
                 .add("defaultValue", this.getDefaultValue())
+                .add("predicate", this.predicate)
                 .toString();
     }
 }

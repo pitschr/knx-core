@@ -25,11 +25,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +59,8 @@ public final class ConfigConstants {
             "client.nat.enabled",
             Boolean.class,
             Boolean::valueOf,
-            () -> Boolean.FALSE
+            () -> Boolean.FALSE,
+            true
     );
     /**
      * Default port for HTTP Daemon (same as Pippo)
@@ -65,7 +69,8 @@ public final class ConfigConstants {
             "daemon.port.http",
             Integer.class,
             Integer::valueOf,
-            () -> 8338
+            () -> 8338,
+            true
     );
     /**
      * Path to Project file
@@ -74,7 +79,25 @@ public final class ConfigConstants {
             "daemon.path.knxproj",
             Path.class,
             Paths::get,
-            () -> Paths.get("knx-client.knxproj")
+            () -> {
+                // look up for latest *.knxproj file in current directory
+                final var dir = Paths.get(".");
+                try {
+                    return Files.list(dir)
+                            .filter(Files::isRegularFile)
+                            // filter for *.knxproj file extensions
+                            .filter(f -> f.getFileName().toString().toLowerCase().endsWith(".knxproj"))
+                            // take the latest file
+                            .max(Comparator.comparingLong(f -> f.toFile().lastModified()))
+                            // dummy file (mostly non-readable) just to return a non-null value
+                            .orElse(Paths.get("knx-client.knxproj"));
+                } catch (final IOException e) {
+                    throw new KnxConfigurationException("I/O during getting an applicable *.knxproj: "
+                            + dir.toFile().getAbsolutePath(), e);
+                }
+            },
+            Files::isReadable,
+            true
     );
     private static final Logger log = LoggerFactory.getLogger(ConfigConstants.class);
     /**
@@ -167,9 +190,9 @@ public final class ConfigConstants {
         public static final ConfigConstant<Long> REQUEST_TIMEOUT = new ConfigConstant<>(
                 "client.communication.search.requestTimeout",
                 Long.class,
-
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(10)
+                () -> TimeUnit.SECONDS.toMillis(10),
+                true
         );
 
         private Search() {
@@ -184,7 +207,8 @@ public final class ConfigConstants {
                 "client.communication.description.requestTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(10)
+                () -> TimeUnit.SECONDS.toMillis(10),
+                true
         );
         /**
          * Description Channel Port
@@ -193,7 +217,8 @@ public final class ConfigConstants {
                 "client.communication.description.port",
                 Integer.class,
                 Integer::valueOf,
-                () -> 0
+                () -> 0,
+                true
         );
         /**
          * Timeout for Description Channel Socket
@@ -202,7 +227,8 @@ public final class ConfigConstants {
                 "client.communication.description.socketTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(3)
+                () -> TimeUnit.SECONDS.toMillis(3),
+                true
         );
 
         private Description() {
@@ -217,7 +243,8 @@ public final class ConfigConstants {
                 "client.communication.connect.requestTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(10)
+                () -> TimeUnit.SECONDS.toMillis(10),
+                true
         );
 
         private Connect() {
@@ -232,7 +259,8 @@ public final class ConfigConstants {
                 "client.communication.disconnect.requestTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(5)
+                () -> TimeUnit.SECONDS.toMillis(5),
+                true
         );
         /**
          * KNX client shall wait for 1 seconds after sending a DISCONNECT_RESPONSE frame to KNX Net/IP device.
@@ -241,7 +269,8 @@ public final class ConfigConstants {
                 "client.communication.disconnect.responseTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(1)
+                () -> TimeUnit.SECONDS.toMillis(1),
+                true
         );
 
         private Disconnect() {
@@ -256,7 +285,8 @@ public final class ConfigConstants {
                 "client.communication.connectionState.requestTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(10)
+                () -> TimeUnit.SECONDS.toMillis(10),
+                true
         );
         /**
          * Number of connection state request attempts before KNX connection will be disconnected.
@@ -265,7 +295,8 @@ public final class ConfigConstants {
                 "client.communication.connectionState.checkInterval",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(60)
+                () -> TimeUnit.SECONDS.toMillis(60),
+                true
         );
 
         /**
@@ -277,7 +308,8 @@ public final class ConfigConstants {
                 "client.communication.connectionState.heartbeatTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(120)
+                () -> TimeUnit.SECONDS.toMillis(120),
+                true
         );
 
         private ConnectionState() {
@@ -292,7 +324,8 @@ public final class ConfigConstants {
                 "client.communication.control.port",
                 Integer.class,
                 Integer::valueOf,
-                () -> 0
+                () -> 0,
+                true
         );
         /**
          * Timeout for Control Channel Socket
@@ -301,7 +334,8 @@ public final class ConfigConstants {
                 "client.communication.control.socketTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(3)
+                () -> TimeUnit.SECONDS.toMillis(3),
+                true
         );
 
         private Control() {
@@ -316,7 +350,8 @@ public final class ConfigConstants {
                 "client.communication.data.port",
                 Integer.class,
                 Integer::valueOf,
-                () -> 0
+                () -> 0,
+                true
         );
         /**
          * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
@@ -326,7 +361,8 @@ public final class ConfigConstants {
                 "client.communication.data.requestTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(1)
+                () -> TimeUnit.SECONDS.toMillis(1),
+                true
         );
         /**
          * Timeout for Data Channel Socket
@@ -335,7 +371,8 @@ public final class ConfigConstants {
                 "client.communication.data.socketTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(3)
+                () -> TimeUnit.SECONDS.toMillis(3),
+                true
         );
 
         private Data() {
@@ -395,7 +432,8 @@ public final class ConfigConstants {
                 "client.communication.multicast.address",
                 InetAddress.class,
                 Networker::getByAddress,
-                () -> MULTICAST_ADDRESS
+                () -> MULTICAST_ADDRESS,
+                true
         );
         /**
          * Multicast Port
@@ -404,7 +442,8 @@ public final class ConfigConstants {
                 "client.communication.multicast.port",
                 Integer.class,
                 Integer::valueOf,
-                () -> KNX_PORT
+                () -> KNX_PORT,
+                true
         );
         /**
          * Default Time-To-Live (TTL) for multicast communication
@@ -413,7 +452,8 @@ public final class ConfigConstants {
                 "client.communication.multicast.timeToLive",
                 Integer.class,
                 Integer::valueOf,
-                () -> 4
+                () -> 4,
+                true
         );
         /**
          * Timeout for Multicast Channel Socket
@@ -422,7 +462,8 @@ public final class ConfigConstants {
                 "client.communication.multicast.socketTimeout",
                 Long.class,
                 Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(3)
+                () -> TimeUnit.SECONDS.toMillis(3),
+                true
         );
 
         private Multicast() {
@@ -437,7 +478,8 @@ public final class ConfigConstants {
                 "client.communication.executorPoolSize",
                 Integer.class,
                 Integer::valueOf,
-                () -> 10
+                () -> 10,
+                true
         );
         /**
          * Default size for Plugin Executor Pool Size
@@ -446,7 +488,8 @@ public final class ConfigConstants {
                 "client.plugin.executorPoolSize",
                 Integer.class,
                 Integer::valueOf,
-                () -> 10
+                () -> 10,
+                true
         );
 
         private Executor() {

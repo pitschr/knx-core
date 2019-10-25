@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -388,5 +389,22 @@ public class ConfigBuilderTest {
         assertThat(config2.isNatEnabled()).isTrue();
         assertThat(config2.<Integer>getSetting("FOO")).isEqualTo(Integer.MAX_VALUE);
         assertThat(config2.getDescriptionChannelPort()).isEqualTo(4712);
+    }
+
+    @Test
+    @DisplayName("Test config with validator/predicate")
+    public void testSettingWithPredicate() {
+        final var configBuilder = ConfigBuilder.tunneling();
+
+        // test with invalid path
+        final var invalidPath = Paths.get("path/to/file/doesn't exists.xml");
+        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.PROJECT_PATH, invalidPath))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("The value seems not be applicable for config");
+
+        // test with valid path
+        final var validPath = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
+        assertThat(configBuilder.setting(ConfigConstants.PROJECT_PATH, validPath).build()).isNotNull();
+        assertThat(configBuilder.setting(ConfigConstants.PROJECT_PATH.getKey(), validPath.toFile().getAbsolutePath()).build()).isNotNull();
     }
 }

@@ -82,8 +82,10 @@ public final class KnxprojParser {
      */
     @Nonnull
     public static XmlProject parse(final @Nonnull Path path) {
-        Preconditions.checkArgument(Files.exists(path), "File '%s' doesn't exists.", path);
-        Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION), "Only '%s' is supported.", FILE_EXTENSION);
+        Preconditions.checkArgument(Files.isReadable(path),
+                "File '%s' doesn't exists or is not readable.", path);
+        Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION),
+                "Only '%s' is supported.", FILE_EXTENSION);
 
         log.debug("File '{}' to be parsed.", path);
 

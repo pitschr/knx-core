@@ -28,6 +28,7 @@ import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.utils.Sleeper;
 
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,10 +72,15 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 300L);
         log.debug("Monitor Time: {}s", monitorTime);
 
+        // Get XML project path
+        final var projectPath = getParameterValue(args, "-knxproj", Paths::get, null);
+        log.debug("KNXPROJ Path: {}", projectPath);
+
         // start KNX communication
         log.trace("START");
 
         final var config = parseConfigBuilder(args) //
+                .setting(ConfigConstants.PROJECT_PATH, projectPath)
                 .plugin( //
                         new AuditPlugin(), //
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //

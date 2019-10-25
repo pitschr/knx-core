@@ -98,6 +98,7 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 **Arguments:**
 * `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
 * `-t` the time in seconds how long the monitoring should run (default: _infinity_)
+* `-knxproj` KNX project file (default: _latest *.knxproj in the folder_)
 
 **Monitoring between KNX Net/IP device and KNX client**
 
