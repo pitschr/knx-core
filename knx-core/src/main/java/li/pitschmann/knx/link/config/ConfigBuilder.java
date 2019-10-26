@@ -351,7 +351,7 @@ public final class ConfigBuilder {
     public <T> ConfigBuilder setting(final @Nonnull ConfigConstant<T> key, final @Nullable T value) {
         Preconditions.checkArgument(key.isSettable(),
                 "This key is protected and cannot be used for setting: %s", key.getKey());
-        Preconditions.checkArgument(key.isValid(value),
+        Preconditions.checkArgument(value == null || key.isValid(value),
                 "The value seems not be applicable for config '%s': %s", key.getKey(), value);
 
         this.settings.put(key.getKey(), value);

@@ -6,6 +6,7 @@ cd $SCRIPTS_DIR/..
 
 # delete 'knx.log'
 rm -f knx.log
+
 # delete all with:
 #   knx-*.log
 #   knx-*.log.0000-00-00.gz

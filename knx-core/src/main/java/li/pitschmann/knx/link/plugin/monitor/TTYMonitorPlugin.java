@@ -5,14 +5,21 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
+import li.pitschmann.knx.link.body.cemi.AdditionalInfo;
 import li.pitschmann.knx.link.body.cemi.CEMI;
+import li.pitschmann.knx.link.body.cemi.ControlByte1;
+import li.pitschmann.knx.link.body.cemi.ControlByte2;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
+import li.pitschmann.knx.link.body.cemi.TPCI;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.datapoint.DPT8;
+import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Sleeper;
@@ -41,7 +48,10 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     private static final Logger log = LoggerFactory.getLogger(TTYMonitorPlugin.class);
     private static final int DEFAULT_SIZE_COLUMN = 80;
     private static final int DEFAULT_SIZE_LINES = 20;
-    private static final ExecutorService es = Executors.newFixedThreadPool(4);
+    private static final ExecutorService es = Executors.newFixedThreadPool(2);
+    private static final String DEFAULT_TABLE_HEADER_FOOTER_COLOR = "\033[1;32m";
+    private static final String DEFAULT_TABLE_BODY_COLOR = "\033[0;32m";
+
     private final PrintStream out;
     private final int columns;
     private final int lines;
@@ -49,6 +59,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     private final AtomicInteger numberOfIncomingBodies = new AtomicInteger();
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
     private KnxClient knxClient;
+    private XmlProject xmlProject;
 
     public TTYMonitorPlugin() {
         this(System.out);
@@ -113,7 +124,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     }
 
     private final String getHeader() {
-        return "  #        | Date / Time         | Source    | Target    | Type     | Hex Value";
+        return "  #        | Date / Time         | Source    | Target    | DPT      | Value";
     }
 
     private final String getHeaderSeparator() {
@@ -127,6 +138,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     @Override
     public void onInitialization(final KnxClient knxClient) {
         this.knxClient = knxClient;
+        this.xmlProject = knxClient.getConfig().getProject();
     }
 
     @Override
@@ -134,8 +146,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         // creates the screen
         printInitialScreen();
 
-        // define scroll area
-        out.print("\033[5;" + (lines - 3) + "r\033[5;0H\0337");
+        // Execute the time
         es.execute(new TimeRunnable());
         // es.execute(new DataRunnable());
     }
@@ -143,7 +154,15 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     @Override
     public void onShutdown() {
         es.shutdownNow();
-        out.println("\033[r\033[1J\033[2J");
+
+        final var sb = new StringBuilder(25);
+        // reset scroll region
+        sb.append("\033[r");
+        // go to top+left position
+        sb.append("\033[0;0H");
+        // clear screen
+        sb.append("\033[2J");
+        out.println(sb.toString());
     }
 
     @Override
@@ -161,27 +180,79 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override
     public void onError(@Nonnull Throwable throwable) {
-        printToTerminal(String.format("[ ERROR ] %s", throwable.getMessage()), "\033[K\033[0;31m");
+        printToTerminal(String.format("[ ERROR ] %s", throwable.getMessage()), "\033[0;31m");
     }
 
     /**
      * Prints the initial screen, containing header, footer and empty table
      */
     private final void printInitialScreen() {
-        // clear whole screen
-        out.print("\033[r\033[0;0H\033[2J");
+        final var sb = new StringBuilder(200);
 
-        // print initial screen
-        out.println(String.format("\033[0;0HKNX MONITOR (%s x %s, Routing: %s, NAT: %s)", columns, lines, knxClient.getConfig().isRoutingEnabled(), knxClient.getConfig().isNatEnabled()));
-        out.println();
-        out.println("\033[1;32m" + getHeader() + "\033[0m");
-        out.println("\033[1;32m" + getHeaderSeparator() + "\033[0m");
+        // reset screen region
+        sb.append("\033[r");
 
-        for (int i = 0; i < lines - 5 - 2; i++) {
-            out.println("\033[0;32m" + getEmptyLine() + "\033[0m");
+        // go to top+left position
+        sb.append("\033[0;0H");
+
+        // clear entire screen
+        sb.append("\033[2J");
+
+        // Headline
+        // --------
+        sb.append(String.format("KNX MONITOR (%s x %s, Routing: %s, NAT: %s)",
+                        columns,
+                        lines,
+                        knxClient.getConfig().isRoutingEnabled(),
+                        knxClient.getConfig().isNatEnabled()))
+                .append(System.lineSeparator());
+
+        // additional space between headline and table
+        sb.append(System.lineSeparator());
+
+        // Table Header and Separator
+        // --------------------------
+        sb.append(DEFAULT_TABLE_HEADER_FOOTER_COLOR)
+                .append(getHeader())
+                .append(System.lineSeparator())
+                .append(getHeaderSeparator())
+                .append(System.lineSeparator());
+
+        // Table Body
+        // ----------
+        // number of console lines - 4 top lines - 3 bottom lines
+        for (int i = 0; i < lines - 4 - 3; i++) {
+            sb.append(DEFAULT_TABLE_BODY_COLOR)
+                    .append(getEmptyLine())
+                    .append(System.lineSeparator());
         }
-        out.println("\033[1;32m" + getHeaderSeparator() + "\033[0m");
-        out.println("Press CTRL+C to quit");
+
+        // Table Separator (footer)
+        // ------------------------
+        sb.append(DEFAULT_TABLE_HEADER_FOOTER_COLOR)
+                .append(getHeaderSeparator())
+                .append(System.lineSeparator());
+
+        // Footline
+        // --------
+        sb.append("\033[0m")
+                .append("Press CTRL+C to quit")
+                .append(System.lineSeparator());
+
+        // Scroll Region (Table body)
+        // --------------------------
+        // start region at line: 5 (4 header lines + 1)
+        // end region at line: (console lines - 3)
+        sb.append("\033[5;" + (lines - 3) + "r");
+
+        // go to first line of table body
+        sb.append("\033[5;0H");
+
+        // save cursor position
+        sb.append("\0337");
+
+        // print
+        out.print(sb.toString());
     }
 
     /**
@@ -190,70 +261,81 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param item
      */
     private final void printLineInTable(final Body item) {
-        final var sb = new StringBuilder();
-        sb.append(String.format("%10s", numberOfIncomingBodies.incrementAndGet()))
-                .append(" | ")
-                .append(String.format("%19s", dateTimeFormatter.format(LocalDateTime.now())))
-                .append(" | ");
+        try {
+            final var sb = new StringBuilder();
+            sb.append(String.format("%10s", numberOfIncomingBodies.incrementAndGet()))
+                    .append(" | ")
+                    .append(String.format("%19s", dateTimeFormatter.format(LocalDateTime.now())))
+                    .append(" | ");
 
-        final CEMI cemi;
-        if (item instanceof TunnelingRequestBody) {
-            cemi = ((TunnelingRequestBody) item).getCEMI();
-        } else if (item instanceof RoutingIndicationBody) {
-            cemi = ((RoutingIndicationBody) item).getCEMI();
-        } else {
-            throw new AssertionError();
-        }
+            final CEMI cemi;
+            if (item instanceof TunnelingRequestBody) {
+                cemi = ((TunnelingRequestBody) item).getCEMI();
+            } else if (item instanceof RoutingIndicationBody) {
+                cemi = ((RoutingIndicationBody) item).getCEMI();
+            } else {
+                throw new AssertionError();
+            }
 
-        sb.append(String.format("%9s", cemi.getSourceAddress().getAddress()))
-                .append(" | ");
-        if (cemi.getDestinationAddress() instanceof GroupAddress) {
-            final var ga = (GroupAddress) cemi.getDestinationAddress();
-            sb.append(String.format("%9s", ga.getAddressLevel3()));
-        }
+            final var sourceGA = cemi.getSourceAddress();
+            final var targetGA = (GroupAddress) cemi.getDestinationAddress();
 
-        final String apciString;
-        switch (cemi.getApci()) {
-            case GROUP_VALUE_READ:
-                apciString = "Read";
-                break;
-            case GROUP_VALUE_WRITE:
-                apciString = "Write";
-                break;
-            case GROUP_VALUE_RESPONSE:
-                apciString = "Response";
-                break;
-            default:
-                apciString = "N/A";
-        }
+            sb.append(String.format("%9s", sourceGA.getAddress()))
+                    .append(" | ")
+                    .append(String.format("%9s", targetGA.getAddressLevel3()));
 
-        sb.append(" | ")
-                .append(String.format("%8s", apciString))
-                .append(" | ");
 
-        String valueAsString = ByteFormatter.formatHexAsString(cemi.getApciData());
-        final var xmlProject = knxClient.getConfig().getProject();
-        if (xmlProject != null) {
-            // project file exists -> try with Data Point Value
-            final var xmlGroupAddress = xmlProject.getGroupAddress((GroupAddress)cemi.getDestinationAddress());
-            if (xmlGroupAddress!=null) {
-                final var dpt = DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
-                if (dpt != null) {
-                    final var dptValue = dpt.toValue(cemi.getApciData());
-                    valueAsString = String.format("%s: %s (%s)", dpt.getId(), dptValue.toText(), valueAsString);
+            // get datapoint type
+            XmlGroupAddress xmlGroupAddress = null;
+            DataPointType<?> dpt = null;
+            if (xmlProject != null) {
+                xmlGroupAddress = xmlProject.getGroupAddress(targetGA);
+                if (xmlGroupAddress != null) {
+                    final var dptString = xmlGroupAddress.getDataPointType();
+                    if (!Strings.isNullOrEmpty(dptString)) {
+                        dpt = DataPointTypeRegistry.getDataPointType(dptString);
+                    }
                 }
             }
+
+            final var dptString = (dpt == null) ? "n/a" : dpt.getId();
+            sb.append(" | ")
+                    .append(String.format("%8s", dptString))
+                    .append(" | ");
+
+            final String dptValueString;
+            if (dpt != null) {
+                final var dptValue = dpt.toValue(cemi.getApciData());
+                dptValueString = String.format("%s %s", dptValue.toText(), dpt.getUnit());
+            } else {
+                dptValueString = ByteFormatter.formatHexAsString(cemi.getApciData());
+            }
+
+            sb.append(dptValueString);
+            printToTerminal(sb.toString());
+        } catch (final Throwable t) {
+            t.printStackTrace();
         }
-        sb.append(valueAsString);
-        printToTerminal(sb.toString());
     }
 
+    /**
+     * Prints the line to terminal table with default {@code escapeCode} taken
+     * from {@link #DEFAULT_TABLE_BODY_COLOR}
+     *
+     * @param str
+     */
     public final void printToTerminal(final String str) {
-        printToTerminal(str, "\033[0;32m");
+        printToTerminal(str, DEFAULT_TABLE_BODY_COLOR);
     }
 
 
-    private final void printToTerminal(final String str, final String escapeCode) {
+    /**
+     * Prints the line to terminal table with specific {@code escapeCode}
+     *
+     * @param str
+     * @param escapeCode
+     */
+    private synchronized final void printToTerminal(final String str, final String escapeCode) {
         out.print(String.format("\0338\033[K%s%s%s\033[0m\0337", escapeCode, emptyTable.getAndSet(false) ? "" : System.lineSeparator(), str));
     }
 
@@ -275,19 +357,35 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         }
     }
 
-
     /**
      * Runnable for fake data (helpful for debugging purposes)
      */
     private class DataRunnable implements Runnable {
-        private final CEMI dummyCEMI = CEMI.useDefault(MessageCode.L_DATA_IND, GroupAddress.of(1, 2, 3), APCI.GROUP_VALUE_WRITE, DPT8.VALUE_2_OCTET_COUNT.toValue(4711));
-        private final Body dummyBody = TunnelingRequestBody.of(1, 1, dummyCEMI);
+        private final AtomicInteger dummyIncrement = new AtomicInteger();
 
         @Override
         public void run() {
             do {
-                printLineInTable(dummyBody);
-            } while (Sleeper.milliseconds(10));
+                final var inc = dummyIncrement.getAndIncrement() % 256;
+
+                final var sourceAddress = IndividualAddress.of(15,15, inc);
+                final var destinationAddress = GroupAddress.of(31, 7, inc);
+                final CEMI cemi = CEMI.of(
+                        MessageCode.L_DATA_IND,
+                        AdditionalInfo.empty(),
+                        ControlByte1.useDefault(),
+                        ControlByte2.of(destinationAddress),
+                        sourceAddress,
+                        destinationAddress,
+                        TPCI.UNNUMBERED_PACKAGE,
+                        0,
+                        APCI.GROUP_VALUE_WRITE,
+                        DPT8.VALUE_2_OCTET_COUNT.toValue(inc * 127)
+                );
+                final Body body = TunnelingRequestBody.of(1, inc, cemi);
+
+                printLineInTable(body);
+            } while (Sleeper.milliseconds(100));
         }
     }
 }
