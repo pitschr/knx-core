@@ -47,14 +47,14 @@ which allows a very fast communication and we may have multiple channels simulta
 #### Communication mode (Tunneling, NAT, Routing)
 
 According to the KNX specification the communication is defaulted to _tunneling_ mode and without 
-Network Address Translation (NAT). If the communication should be using _routing_ then it must be
-explicitly defined using `-routing` parameter.
+Network Address Translation (NAT). If you have multiple KNX Net/IP devices and want to specify
+the IP-Address use the `--ip <address[:port]>`. If the communication should be using _routing_ instead
+of tunneling then it must be explicitly defined using `--routing` argument.
 
 Using _tunneling_ mode we need Network Address Translation (NAT) in some cases; this must be 
-enabled using `-nat` parameter. When NAT enabled, then the _Control Channel_ and _Data Channel_ 
+enabled using `--nat` parameter. When NAT enabled, then the _Control Channel_ and _Data Channel_ 
 will use a shared channel.  One practical example, where we need NAT would be e.g. dockerized image. 
-
-Note: NAT is suitable for _tunneling_ mode only, in _routing_ mode it has no
+NAT is suitable for _tunneling_ mode only, in _routing_ mode it has no
 effect.
 
 #### KNX Client
@@ -96,9 +96,8 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 **Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
 
 **Arguments:**
-* `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
-* `-t` the time in seconds how long the monitoring should run (default: _infinity_)
-* `-knxproj` KNX project file (default: _latest *.knxproj in the folder_)
+* `-t`, `--time` the time in seconds how long the monitoring should run (default: _"infinity"_)
+* `-p`, `--knxproj` KNX project file (default: _latest *.knxproj in the folder_)
 
 **Monitoring between KNX Net/IP device and KNX client**
 
@@ -110,13 +109,13 @@ gracefully and the application will exit.
 # Tunneling (auto-discovery)
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -t 3600
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -nat -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --nat -t 3600
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -ip 192.168.1.16 -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 -t 3600
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -ip 192.168.1.16 -nat -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 --nat -t 3600
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -routing -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --routing -t 3600
 ```
 
 ### Send a WRITE request frame to KNX
@@ -124,30 +123,29 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -routing -t 3600
 **Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
 
 **Arguments:**
-* ``-ip <address[:port]>`` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
-* ``-ga`` the KNX group address which has a _write_ flag
-* ``-dpt`` the KNX Data Point Type
-* ``-value`` a sequence of commands that is compatible with KNX Data Point Type argument
+* `-ga`, `--groupAddress` the KNX group address which has a _write_ flag
+* `-dpt`,`--dataPointType` the KNX Data Point Type
+* `-v`, `--value` a sequence of commands that is compatible with KNX Data Point Type argument
 
-**Switching lamp on KNX group address ``1/2/50``**
+**Switching lamp on KNX group address `1/2/50`**
 
 Perform a DPT1 - Switch (`1.001`) _write request_ action on KNX group address `1/2/50` to switch 
 `on` and then `off` a lamp. For demo purposes the delay between commands is hardcoded with two seconds.
 
 ```shell
 # Tunneling (auto-discovery)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -nat -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --nat -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ip 192.168.1.16 -nat -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --ip 192.168.1.16 --nat -ga 1/2/50 -dpt 1.001 -v on off
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -routing -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --routing -ga 1/2/50 -dpt 1.001 -v on off
 ```
 
-For sequence of commands you may use e.g. `-value on off on off` to switch on/off the lamp twice
+For sequence of commands you may use e.g. `(-v|--value) on off on off` to switch on/off the lamp twice
 times. 
  
 ### Send a READ request frame to KNX
@@ -155,9 +153,8 @@ times.
 **Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
 
 **Arguments:**
-* `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
-* `-ga` the KNX group address which has a _read_ flag
-* `-n` number of read requests
+* `-ga`, `--groupAddress` the KNX group address which has a _read_ flag
+* `-n`, `--loops` number of read requests
 
 **Read the actual status of a lamp on KNX group address `1/2/113`**
 
@@ -168,13 +165,13 @@ between read requests is hardcoded with one second.
 # Tunneling (auto-discovery)
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ga 1/2/113 -n 10
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -nat -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --nat -ga 1/2/113 -n 10
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ip 192.168.1.16 -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --ip 192.168.1.16 -ga 1/2/113 -n 10
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ip 192.168.1.16 -nat -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --ip 192.168.1.16 --nat -ga 1/2/113 -n 10
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -routing -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --routing -ga 1/2/113 -n 10
 ```
 
 ## Programming

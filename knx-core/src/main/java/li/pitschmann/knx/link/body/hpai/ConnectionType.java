@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum ConnectionType implements KnxByteEnum {
-    // @formatter:off
     /**
      * Data connection used to configure a KNX device.
      */
@@ -53,9 +52,7 @@ public enum ConnectionType implements KnxByteEnum {
      * Data connection used for configuration and data transfer with an Object Server
      * in a KNX device.
      */
-    OBJECT_SERVER_CONNECTION(0x08, "Object Server Connection"),
-    // @formatter:on
-    ;
+    OBJECT_SERVER_CONNECTION(0x08, "Object Server Connection");
 
     private final int code;
     private final String friendlyName;

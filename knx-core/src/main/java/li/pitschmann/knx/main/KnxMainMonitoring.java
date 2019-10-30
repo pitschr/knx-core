@@ -29,6 +29,7 @@ import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.utils.Sleeper;
 
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,48 +38,76 @@ import java.util.concurrent.TimeUnit;
  * @author PITSCHR
  */
 public class KnxMainMonitoring extends AbstractKnxMain {
-    public static void main(final String[] args) {
-        final String[] newArgs;
-        if (args == null || args.length == 0) {
-            // newArgs = new String[]{""};
-            // newArgs = new String[]{"-ip","192.168.1.16"};
-            // newArgs = new String[]{"-ip","192.168.1.16", "-nat", "-l"};
-            newArgs = new String[]{"-routing"};
-        } else {
-            newArgs = args;
-        }
+    private static final String[] EXAMPLE_DEFAULT = new String[0];
+    private static final String[] EXAMPLE_TUNNELING = new String[]{"--ip", "192.168.1.16"};
+    private static final String[] EXAMPLE_TUNNELING_WITH_NAT = new String[]{"--ip", "192.168.1.16", "--nat"};
+    private static final String[] EXAMPLE_ROUTING = new String[]{"--routing"};
 
-        new KnxMainMonitoring().startMonitoring(newArgs);
+    public static void main(final String[] args) {
+        new KnxMainMonitoring().startMonitoring(
+                // if arguments is null or empty - fall back to use EXAMPLE_*
+                (args != null && args.length > 0) ? args : EXAMPLE_ROUTING
+        );
     }
 
+    /**
+     * Checks if the time is overdue
+     *
+     * @param stopwatch the current timer
+     * @param monitorTimeInSeconds maximum monitor time in seconds
+     * @return {@code true} if overdue, otherwise {@code false}
+     */
+    private static boolean isOverdue(final Stopwatch stopwatch, long monitorTimeInSeconds) {
+        return stopwatch.elapsed(TimeUnit.SECONDS) > monitorTimeInSeconds;
+    }
+
+    /**
+     * Returns given {@code seconds} into a human readable format
+     *
+     * @param seconds number of seconds to be converted
+     * @return human readable time format in 0 days, 0 hours, 0 minutes, 0 seconds
+     */
+    private static String toHumanReadableTimeFormat(final long seconds) {
+        long sec = seconds % 60;
+        long minutes = seconds % 3600 / 60;
+        long hours = seconds % 86400 / 3600;
+        long days = seconds / 86400;
+
+        return String.format("%d days, %d hours, %d minutes, %d seconds", days, hours, minutes, sec);
+    }
+
+    /**
+     * Start KNX Monitor
+     *
+     * @param args
+     */
     private void startMonitoring(final String[] args) {
         // Detach Console Appender
         final var rootLogger = (Logger) logRoot;
+        final var currentLogger = (Logger) log;
         final var consoleAppender = rootLogger.getAppender("STDOUT");
         rootLogger.detachAppender(consoleAppender);
 
         // Logging all?
-        final var logAll = existsParameter(args, "-log");
+        final var logAll = existsParameter(args, "--log");
         if (logAll) {
             rootLogger.setLevel(Level.ALL);
-            ((Logger) log).setLevel(Level.ALL);
+            currentLogger.setLevel(Level.ALL);
         } else {
             rootLogger.setLevel(Level.OFF);
-            ((Logger) log).setLevel(Level.OFF);
+            currentLogger.setLevel(Level.OFF);
         }
         log.debug("Log all?: {}", logAll);
 
         // Get Monitor Time in Seconds
-        final var monitorTime = getParameterValue(args, "-t", Long::parseLong, 300L);
-        log.debug("Monitor Time: {}s", monitorTime);
+        final var monitorTime = getParameterValue(args, "-t,--time", Long::parseLong, 300L);
+        log.debug("Monitor Time: {}", toHumanReadableTimeFormat(monitorTime));
 
-        // Get XML project path
-        final var projectPath = getParameterValue(args, "-knxproj", Paths::get, null);
-        log.debug("KNXPROJ Path: {}", projectPath);
+        // Get XML Project Path
+        final var projectPath = getParameterValue(args, "-p,--knxproj", Paths::get, null);
+        log.debug("KNX Project Path: {}", Objects.requireNonNullElse(projectPath, "<empty>"));
 
-        // start KNX communication
-        log.trace("START");
-
+        // Create Config
         final var config = parseConfigBuilder(args) //
                 .setting(ConfigConstants.PROJECT_PATH, projectPath)
                 .plugin( //
@@ -86,28 +115,45 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
                         new TTYMonitorPlugin()
                 ) //
-                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 10000L) //
-                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) //
-                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) //
+                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
+                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
                 .setting(ConfigConstants.Description.PORT, 40001) //
                 .setting(ConfigConstants.Control.PORT, 40002) //
                 .setting(ConfigConstants.Data.PORT, 40003) //
                 .build();
 
-        log.debug("========================================================================");
-        log.debug("MONITORING WITH PLUGINS for {} minutes and {} seconds", (int) (monitorTime / 60), monitorTime % 60);
-        log.debug("========================================================================");
-        try (final var client = DefaultKnxClient.createStarted(config)) {
-            final var sw = Stopwatch.createStarted();
-            while (client.isRunning() && sw.elapsed(TimeUnit.SECONDS) <= monitorTime) {
-                Sleeper.seconds(1);
-            }
-        } catch (final Throwable t) {
-            log.error("THROWABLE. Reason: {}", t.getMessage(), t);
+        final var sw = Stopwatch.createStarted();
+        final var maxAttempts = 10;
+        var attempts = 1;
+        try {
+            log.debug("===================================================================================");
+            log.debug("MONITORING WITH PLUGINS for: {}", toHumanReadableTimeFormat(monitorTime));
+            log.debug("===================================================================================");
+
+            // loop in case the KNX client loses the connection for some reasons (e.g. power outage?, connection/firewall issue)
+            do {
+
+                // create connection and keep alive until monitor time is not overdue
+                try (final var client = DefaultKnxClient.createStarted(config)) {
+                    while (client.isRunning() && !isOverdue(sw, monitorTime)) {
+                        Sleeper.seconds(1);
+                    }
+                } catch (final Throwable t) {
+                    log.error("THROWABLE. Reason: {}", t.getMessage(), t);
+                }
+
+                // add small delay in re-connect in case the time is not overdue
+                if (!isOverdue(sw, monitorTime)) {
+                    log.warn("Re-Connecting ...");
+                    Sleeper.seconds(5);
+                }
+
+                // quit this loop if max attempts exceeded or if time is overdue
+            } while (attempts++ < maxAttempts && !isOverdue(sw, monitorTime));
         } finally {
-            log.debug("========================================================================");
-            log.debug("STOP MONITORING WITH PLUGINS");
-            log.debug("========================================================================");
+            log.debug("===================================================================================");
+            log.debug("STOP MONITORING WITH PLUGINS after {} attempts: {}", attempts, toHumanReadableTimeFormat(sw.elapsed(TimeUnit.SECONDS)));
+            log.debug("===================================================================================");
         }
     }
 }

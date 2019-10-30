@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum APCI implements KnxBytesEnum {
-    // @formatter:off
     /**
      * A_GroupValue_Read-PDU
      * <pre>
@@ -86,9 +85,7 @@ public enum APCI implements KnxBytesEnum {
      * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * </pre>
      */
-    INDIVIDUAL_ADDRESS_RESPONSE(0x0140, "Individual Address Response"),
-    // @formatter:on
-    ;
+    INDIVIDUAL_ADDRESS_RESPONSE(0x0140, "Individual Address Response");
 
     private final int codeRangeStart;
     private final int codeRangeEnd;

@@ -27,13 +27,22 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum Priority implements KnxByteEnum {
-    // @formatter:off
+    /**
+     * System priority
+     */
     SYSTEM(0x00, "System Priority"),
+    /**
+     * Normal priority
+     */
     NORMAL(0x01, "Normal Priority"),
+    /**
+     * Urgent priority
+     */
     URGENT(0x02, "Urgent Priority"),
-    LOW(0x03, "Low Priority")
-    // @formatter:on
-    ;
+    /**
+     * Low priority
+     */
+    LOW(0x03, "Low Priority");
 
     private final int code;
     private final String friendlyName;

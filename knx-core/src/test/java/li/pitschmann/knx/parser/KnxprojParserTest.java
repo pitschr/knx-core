@@ -62,7 +62,7 @@ public class KnxprojParserTest {
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0501");
         assertThat(project.getName()).isEqualTo("Project (3-Level)");
-        assertThat(project.getGroupAddressStyle()).isEqualTo("ThreeLevel");
+        assertThat(project.getGroupAddressStyle()).isSameAs(XmlGroupAddressStyle.THREE_LEVEL);
         assertThat(project.getGroupAddresses()).hasSize(189);
         assertThat(project.getGroupRanges()).hasSize(18);
 
@@ -111,7 +111,7 @@ public class KnxprojParserTest {
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-06EF");
         assertThat(project.getName()).isEqualTo("Project (Free-Level)");
-        assertThat(project.getGroupAddressStyle()).isEqualTo("Free");
+        assertThat(project.getGroupAddressStyle()).isSameAs(XmlGroupAddressStyle.FREE_LEVEL);
         assertThat(project.getGroupAddresses()).hasSize(7);
         assertThat(project.getGroupRanges()).hasSize(2);
         assertThat(project.getGroupRangeById("P-06EF-0_GR-3").getGroupAddresses()).hasSize(3);
@@ -177,7 +177,7 @@ public class KnxprojParserTest {
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0700");
         assertThat(project.getName()).isEqualTo("Project (Empty)");
-        assertThat(project.getGroupAddressStyle()).isEqualTo("Free");
+        assertThat(project.getGroupAddressStyle()).isSameAs(XmlGroupAddressStyle.FREE_LEVEL);
         assertThat(project.getGroupAddresses()).isEmpty();
     }
 

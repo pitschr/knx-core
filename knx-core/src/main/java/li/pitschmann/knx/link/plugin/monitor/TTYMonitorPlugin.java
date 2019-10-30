@@ -51,13 +51,14 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     private static final ExecutorService es = Executors.newFixedThreadPool(2);
     private static final String DEFAULT_TABLE_HEADER_FOOTER_COLOR = "\033[1;32m";
     private static final String DEFAULT_TABLE_BODY_COLOR = "\033[0;32m";
+    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_PATTERN);
 
     private final PrintStream out;
     private final int columns;
     private final int lines;
     private final AtomicBoolean emptyTable = new AtomicBoolean(true);
     private final AtomicInteger numberOfIncomingBodies = new AtomicInteger();
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
     private KnxClient knxClient;
     private XmlProject xmlProject;
 
@@ -82,9 +83,9 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      *
      * @return width of terminal in number of columns
      */
-    private static final int getTerminalColumns() {
+    private static int getTerminalColumns() {
         final var strColumns = getTerminalOutput("tput cols");
-        return strColumns == null ? DEFAULT_SIZE_COLUMN : Integer.valueOf(strColumns);
+        return strColumns == null ? DEFAULT_SIZE_COLUMN : Integer.parseInt(strColumns);
     }
 
     /**
@@ -93,9 +94,9 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      *
      * @return height of terminal in number of lines
      */
-    private static final int getTerminalLines() {
+    private static int getTerminalLines() {
         final var strLines = getTerminalOutput("tput lines");
-        return strLines == null ? DEFAULT_SIZE_LINES : Integer.valueOf(strLines);
+        return strLines == null ? DEFAULT_SIZE_LINES : Integer.parseInt(strLines);
     }
 
     /**
@@ -103,11 +104,11 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      * <p>
      * See: {@link #getTerminalColumns()} and {@link #getTerminalLines()}
      *
-     * @param command
+     * @param command command to be executed
      * @return output from terminal, {@code null} if something went wrong
      */
     @Nullable
-    private static final String getTerminalOutput(final @Nonnull String command) {
+    private static String getTerminalOutput(final @Nonnull String command) {
         final var pb = new ProcessBuilder().command("bash", "-c", command + " 2> /dev/tty");
         try {
             final var process = pb.start();
@@ -118,7 +119,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
                 }
             }
         } catch (final IOException ioe) {
-            log.error("I/O Exception during terminal output: ", command, ioe);
+            log.error("I/O Exception during terminal output: {}", command, ioe);
         }
         return null;
     }
@@ -186,7 +187,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     /**
      * Prints the initial screen, containing header, footer and empty table
      */
-    private final void printInitialScreen() {
+    private void printInitialScreen() {
         final var sb = new StringBuilder(200);
 
         // reset screen region
@@ -243,7 +244,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         // --------------------------
         // start region at line: 5 (4 header lines + 1)
         // end region at line: (console lines - 3)
-        sb.append("\033[5;" + (lines - 3) + "r");
+        sb.append("\033[5;").append(lines - 3).append('r');
 
         // go to first line of table body
         sb.append("\033[5;0H");
@@ -260,12 +261,12 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      *
      * @param item
      */
-    private final void printLineInTable(final Body item) {
+    private void printLineInTable(final Body item) {
         try {
             final var sb = new StringBuilder();
             sb.append(String.format("%10s", numberOfIncomingBodies.incrementAndGet()))
                     .append(" | ")
-                    .append(String.format("%19s", dateTimeFormatter.format(LocalDateTime.now())))
+                    .append(String.format("%19s", DATE_TIME_FORMATTER.format(LocalDateTime.now())))
                     .append(" | ");
 
             final CEMI cemi;
@@ -277,19 +278,25 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
                 throw new AssertionError();
             }
 
-            final var sourceGA = cemi.getSourceAddress();
-            final var targetGA = (GroupAddress) cemi.getDestinationAddress();
+            final var sourceAddress = cemi.getSourceAddress();
+            final var destinationAddress = cemi.getDestinationAddress();
 
-            sb.append(String.format("%9s", sourceGA.getAddress()))
-                    .append(" | ")
-                    .append(String.format("%9s", targetGA.getAddressLevel3()));
+            // source address (always individual)
+            sb.append(String.format("%9s", sourceAddress.getAddress()))
+                    .append(" | ");
 
+            // destination address in proper style
+            if (xmlProject != null && destinationAddress instanceof GroupAddress) {
+                sb.append(String.format("%9s", xmlProject.getGroupAddressStyle().toString((GroupAddress)destinationAddress)));
+            } else {
+                sb.append(String.format("%9s", destinationAddress.getRawDataAsHexString()));
+            }
 
-            // get datapoint type
-            XmlGroupAddress xmlGroupAddress = null;
+            // get data point type
+            XmlGroupAddress xmlGroupAddress;
             DataPointType<?> dpt = null;
-            if (xmlProject != null) {
-                xmlGroupAddress = xmlProject.getGroupAddress(targetGA);
+            if (xmlProject != null && destinationAddress instanceof GroupAddress) {
+                xmlGroupAddress = xmlProject.getGroupAddress((GroupAddress)destinationAddress);
                 if (xmlGroupAddress != null) {
                     final var dptString = xmlGroupAddress.getDataPointType();
                     if (!Strings.isNullOrEmpty(dptString)) {
@@ -303,6 +310,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
                     .append(String.format("%8s", dptString))
                     .append(" | ");
 
+            // value of data
             final String dptValueString;
             if (dpt != null) {
                 final var dptValue = dpt.toValue(cemi.getApciData());
@@ -310,11 +318,11 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
             } else {
                 dptValueString = ByteFormatter.formatHexAsString(cemi.getApciData());
             }
-
             sb.append(dptValueString);
+
             printToTerminal(sb.toString());
         } catch (final Throwable t) {
-            t.printStackTrace();
+            log.error("Error during print to terminal", t);
         }
     }
 
@@ -324,7 +332,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      *
      * @param str
      */
-    public final void printToTerminal(final String str) {
+    private void printToTerminal(final String str) {
         printToTerminal(str, DEFAULT_TABLE_BODY_COLOR);
     }
 
@@ -343,16 +351,12 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      * Runnable for updating the time
      */
     private class TimeRunnable implements Runnable {
-        private final String timePattern = "yyyy-MM-dd HH:mm:ss";
-        private final String timePosition = "\033[1;70H\033[K\033[" + (columns - timePattern.length()) + "G";
-
         @Override
         public void run() {
-            final var pattern = DateTimeFormatter.ofPattern(timePattern);
-
+            final var timePosition = "\033[1;70H\033[K\033[" + (columns - TIME_PATTERN.length()) + "G";
             do {
-                final var nowStr = pattern.format(LocalDateTime.now());
-                System.out.print(String.format("\0338%s%s\0338", timePosition, nowStr));
+                final var nowStr = DATE_TIME_FORMATTER.format(LocalDateTime.now());
+                out.print(String.format("\0338%s%s\0338", timePosition, nowStr));
             } while (Sleeper.seconds(1));
         }
     }

@@ -27,11 +27,14 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum BroadcastType implements KnxByteEnum {
-    // @formatter:off
+    /**
+     * System Broadcast
+     */
     SYSTEM(0x00, "System Broadcast"),
-    NORMAL(0x01, "Normal Broadcast")
-    // @formatter:on
-    ;
+    /**
+     * Normal Broadcast
+     */
+    NORMAL(0x01, "Normal Broadcast");
 
     private final int code;
     private final String friendlyName;

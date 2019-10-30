@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum HostProtocol implements KnxByteEnum {
-    // @formatter:off
     /**
      * Identifies an Internet Protocol version 4 address and
      * port number for UDP communication.
@@ -42,9 +41,7 @@ public enum HostProtocol implements KnxByteEnum {
      * Identifies an Internet Protocol version 4 address and
      * port number for TCP communication.
      */
-    IPV4_TCP(0x02, "IP v4 TCP communication")
-    // @formatter:on
-    ;
+    IPV4_TCP(0x02, "IP v4 TCP communication");
 
     private final int code;
     private final String friendlyName;

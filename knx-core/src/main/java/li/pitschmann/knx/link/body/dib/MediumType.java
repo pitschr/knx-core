@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum MediumType implements KnxByteEnum {
-    // @formatter:off
     /**
      * KNX Medium for Twisted Pair 1
      */
@@ -48,9 +47,7 @@ public enum MediumType implements KnxByteEnum {
     /**
      * KNX addresses for KNX IP
      */
-    KNX_IP(0x20, "KNX IP")
-    // @formatter:on
-    ;
+    KNX_IP(0x20, "KNX IP");
 
     private final int code;
     private final String friendlyName;

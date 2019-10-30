@@ -32,13 +32,22 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum TPCI implements KnxByteEnum {
-    // @formatter:off
+    /**
+     * Unnumbered Package
+     */
     UNNUMBERED_PACKAGE(0x00, "UDT unnumbered package"),
+    /**
+     * Numbered Package
+     */
     NUMBERED_PACKAGE(0x40, "NDT numbered package"),
+    /**
+     * Unnumbered Control Data
+     */
     UNNUMBERED_CONTROL_DATA(0x80, "UCD unnumbered control data"),
-    NUMBERED_CONTROL_DATA(0xC0, "NCD numbered control data")
-    // @formatter:on
-    ;
+    /**
+     * Numbered Control Data
+     */
+    NUMBERED_CONTROL_DATA(0xC0, "NCD numbered control data");
 
     private final int code;
     private final String friendlyName;

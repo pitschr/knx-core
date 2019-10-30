@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum Status implements KnxByteEnum {
-    // @formatter:off
     /**
      * Indicates that there was no error and operation was successful.
      */
@@ -81,9 +80,11 @@ public enum Status implements KnxByteEnum {
      * The KNX Net/IP device device does not support the requested KNX/IP
      * Tunneling layer.
      */
-    E_TUNNELING_LAYER(0x29, "Requested KNX/IP Tunneling layer not supported")
-    // @formatter:on
-    ;
+    E_TUNNELING_LAYER(0x29, "Requested KNX/IP Tunneling layer not supported"),
+    /**
+     * Unknown Status (not in KNX specification)
+     */
+    E_UNDEFINED_STATUS(0xFF, "Undefined status");
 
     private final int code;
     private final String friendlyName;
@@ -97,13 +98,13 @@ public enum Status implements KnxByteEnum {
      * A matching {@link Status} for the given {@code code}
      *
      * @param code
-     * @return existing {@link Status}, or {@link KnxEnumNotFoundException} if no {@link Status}
+     * @return existing {@link Status}, or {@link #E_UNDEFINED_STATUS} if no {@link Status}
      * for given {@code code} exists
      */
     @Nonnull
     public static Status valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
-                .orElseThrow(() -> new KnxEnumNotFoundException(Status.class, code));
+                .orElse(E_UNDEFINED_STATUS);
     }
 
     @Override

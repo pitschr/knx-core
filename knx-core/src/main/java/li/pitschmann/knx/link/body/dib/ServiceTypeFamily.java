@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum ServiceTypeFamily implements KnxByteEnum {
-    // @formatter:off
     /**
      * KNX/IP Core
      */
@@ -48,9 +47,7 @@ public enum ServiceTypeFamily implements KnxByteEnum {
     /**
      * KNX/IP Routing
      */
-    ROUTING(0x05, "KNX/IP Routing")
-    // @formatter:on
-    ;
+    ROUTING(0x05, "KNX/IP Routing");
 
     private final int code;
     private final String friendlyName;
