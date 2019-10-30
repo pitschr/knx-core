@@ -57,7 +57,7 @@ public class XmlGroupAddressStyleTest {
     @DisplayName("Test #toString()")
     public void testToString() {
         assertThat(XmlGroupAddressStyle.THREE_LEVEL).hasToString(
-                "XmlGroupAddressStyle{name=THREE_LEVEL, xmlMappingValue=ThreeLevel}"
+                "XmlGroupAddressStyle{name=THREE_LEVEL, code=ThreeLevel, friendlyName=3-Level}"
         );
     }
 

@@ -43,27 +43,29 @@ public enum XmlGroupAddressStyle {
     /**
      * Free-Level Project
      */
-    FREE_LEVEL("Free", GroupAddress::getAddress),
+    FREE_LEVEL("Free", "Free Level", GroupAddress::getAddress),
     /**
      * 2-Level Project
      */
-    TWO_LEVEL("TwoLevel", GroupAddress::getAddressLevel2),
+    TWO_LEVEL("TwoLevel", "2-Level", GroupAddress::getAddressLevel2),
     /**
      * 3-Level Project
      */
-    THREE_LEVEL("ThreeLevel", GroupAddress::getAddressLevel3);
+    THREE_LEVEL("ThreeLevel", "3-Level", GroupAddress::getAddressLevel3);
 
-    private final String xmlMappingValue;
+    private final String code;
+    private final String friendlyName;
     private final Function<GroupAddress, String> resolver;
 
     /**
      * Constructor for Response/Acknowledge Service Type identifiers
      *
-     * @param xmlMappingValue
+     * @param code
      * @param resolver
      */
-    XmlGroupAddressStyle(final @Nonnull String xmlMappingValue, final @Nonnull Function<GroupAddress, String> resolver) {
-        this.xmlMappingValue = xmlMappingValue;
+    XmlGroupAddressStyle(final @Nonnull String code, final @Nonnull String friendlyName, final @Nonnull Function<GroupAddress, String> resolver) {
+        this.code = code;
+        this.friendlyName = friendlyName;
         this.resolver = resolver;
     }
 
@@ -78,8 +80,22 @@ public enum XmlGroupAddressStyle {
      */
     @Nonnull
     public static XmlGroupAddressStyle parse(final @Nullable String id) {
-        return Arrays.stream(values()).filter(x -> x.xmlMappingValue.equals(id)).findFirst()
+        return Arrays.stream(values()).filter(x -> x.code.equals(id)).findFirst()
                 .orElseThrow(() -> new KnxprojParserException("No group address style found for: " + id));
+    }
+
+    /**
+     * Returns the code of group address style
+     *
+     * @return code
+     */
+    public String getCode() {
+        return this.code;
+    }
+
+    @Nonnull
+    public String getFriendlyName() {
+        return this.friendlyName;
     }
 
     /**
@@ -99,7 +115,8 @@ public enum XmlGroupAddressStyle {
         // @formatter:off
         return MoreObjects.toStringHelper(this)
                 .add("name", this.name())
-                .add("xmlMappingValue", this.xmlMappingValue)
+                .add("code", code)
+                .add("friendlyName", this.friendlyName)
                 .toString();
         // @formatter:on
     }

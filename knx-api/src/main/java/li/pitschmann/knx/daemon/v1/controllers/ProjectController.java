@@ -37,7 +37,7 @@ public final class ProjectController extends AbstractController {
             response.setName(xmlProject.getName());
         }
         if (containsExpand("groupAddressStyle")) {
-            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle().getCode());
         }
         if (containsExpand("numberOfGroupRanges")) {
             response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
