@@ -9,15 +9,19 @@ PROJECT_ROOT_FOLDER="$(cd "$DOCKER_FOLDER/.." >/dev/null 2>&1 && pwd)"
 # sort by last modification reversed (newer top), return 1st line and file name only
 LATEST_DEPENDENCIES_JAR=$(
   cd "$PROJECT_ROOT_FOLDER"
-  find "knx-core/target" -name '*-jar-with-dependencies.jar' -printf "%T@ %p\n" | sort -rn | head -n1 | cut -d " " -f 2
+  ls -r knx-core/target/*-jar-with-dependencies.jar 2>/dev/null | head -n1 | cut -d " " -f 2
 )
+if [ -z "$LATEST_DEPENDENCIES_JAR" ]; then
+  echo "No suitable JAR file found. Please run 'maven clean package' first"
+  return
+fi
 
 # Take version from Maven POM
 POM_VERSION=$(
   cd "$PROJECT_ROOT_FOLDER"
-  fgrep "<version>" pom.xml | head -n1 | sed 's/.*>\(.*\)<.*/\1/gi'
+  fgrep "<version>" pom.xml | head -n1 | sed 's/.*>\(.*\)<.*/\1/g'
 )
-DOCKER_TAG_VERSION="pitschr/knx-link:${POM_VERSION,,}"
+DOCKER_TAG_VERSION="pitschr/knx-link:$(echo "$POM_VERSION" | awk '{print toupper($0)}')"
 DOCKER_TAG_LATEST="pitschr/knx-link:latest"
 
 #
