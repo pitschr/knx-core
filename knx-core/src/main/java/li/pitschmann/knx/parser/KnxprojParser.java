@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -82,8 +83,10 @@ public final class KnxprojParser {
      */
     @Nonnull
     public static XmlProject parse(final @Nonnull Path path) {
-        Preconditions.checkArgument(Files.exists(path), "File '%s' doesn't exists.", path);
-        Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION), "Only '%s' is supported.", FILE_EXTENSION);
+        Preconditions.checkArgument(Files.isReadable(path),
+                "File '%s' doesn't exists or is not readable.", path);
+        Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION),
+                "Only '%s' is supported.", FILE_EXTENSION);
 
         log.debug("File '{}' to be parsed.", path);
 
@@ -101,7 +104,8 @@ public final class KnxprojParser {
             project.setGroupAddresses(groupAddresses);
 
             // links the KNX group ranges with KNX group addresses
-            linkGroupRangeAndAddresses(project);
+            linkGroupRanges(project);
+            linkGroupAddresses(project);
         } catch (final IOException | VTDException ex) {
             throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
         }
@@ -113,7 +117,7 @@ public final class KnxprojParser {
     /**
      * Returns {@link XmlProject} based on project information from '*.knxproj' file
      *
-     * @param zipFile to be parsed
+     * @param zipFile zip file to be parsed
      * @return KNX project information
      * @throws IOException  I/O exception when reading ZIP stream
      * @throws VTDException exception from VTD-XML
@@ -140,8 +144,9 @@ public final class KnxprojParser {
         project.setName(readAttributeValue(vtdNav, "Name",
                 () -> new KnxprojParserException("Attribute <ProjectInformation @Name /> not found.")));
 
-        project.setGroupAddressStyle(readAttributeValue(vtdNav, "GroupAddressStyle",
-                () -> new KnxprojParserException("Attribute <ProjectInformation @GroupAddressStyle /> not found.")));
+        final var groupAddressStyleStr = readAttributeValue(vtdNav, "GroupAddressStyle",
+                () -> new KnxprojParserException("Attribute <ProjectInformation @GroupAddressStyle /> not found."));
+        project.setGroupAddressStyle(XmlGroupAddressStyle.parse(groupAddressStyleStr));
 
         return project;
     }
@@ -150,7 +155,7 @@ public final class KnxprojParser {
      * Returns a list of {@link XmlGroupRange} based on project information from '*.knxproj' file in the same order
      * which is written in the '*.knxproj' file.
      *
-     * @param zipFile to be parsed
+     * @param zipFile zip file to be parsed
      * @return list of KNX Group Ranges
      * @throws IOException
      * @throws VTDException
@@ -278,20 +283,42 @@ public final class KnxprojParser {
     }
 
     /**
-     * Creates a link between {@link XmlGroupRange} and {@link XmlGroupAddress}
+     * Links between parent {@link XmlGroupRange} and child {@link XmlGroupRange}
      *
      * @param xmlProject
      */
-    private static void linkGroupRangeAndAddresses(final @Nonnull XmlProject xmlProject) {
-        // link Group Range (parent) with Group Ranges (child)
-        xmlProject.getGroupRanges().forEach(xgr -> {
-            if (xgr.getParentId() != null) {
-                xmlProject.getGroupRangeById(xgr.getParentId()).getChildGroupRanges().add(xgr);
+    private static void linkGroupRanges(final @Nonnull XmlProject xmlProject) {
+        // create temporary map of parent group range (key) and list of child group ranges (values)
+        final var tmp = new LinkedHashMap<String, List<XmlGroupRange>>();
+        for (final var xmlGroupRange : xmlProject.getGroupRanges()) {
+            final var parentId = xmlGroupRange.getParentId();
+            if (parentId != null) {
+                tmp.computeIfAbsent(parentId, k -> new LinkedList<>()).add(xmlGroupRange);
             }
-        });
+        }
 
-        // link Group Range with Group Addresses
-        xmlProject.getGroupAddresses().forEach(xga -> xmlProject.getGroupRangeById(xga.getParentId()).getGroupAddresses().add(xga));
+        // link Group Range (parent) with Group Ranges (child)
+        for (final var entry : tmp.entrySet()) {
+            xmlProject.getGroupRangeById(entry.getKey()).setChildGroupRanges(entry.getValue());
+        }
+    }
+
+    /**
+     * Links between {@link XmlGroupRange} and {@link XmlGroupAddress}
+     *
+     * @param xmlProject
+     */
+    private static void linkGroupAddresses(final @Nonnull XmlProject xmlProject) {
+        // create temporary map of group range (key) and child group addresses (values)
+        final var tmp = new LinkedHashMap<String, List<XmlGroupAddress>>();
+        for (final var xmlGroupAddress : xmlProject.getGroupAddresses()) {
+            final var parentId = Objects.requireNonNull(xmlGroupAddress.getParentId());
+            tmp.computeIfAbsent(parentId, k -> new LinkedList<>()).add(xmlGroupAddress);
+        }
+        // link Group Range (parent) with Group Addresses (child)
+        for (final var entry : tmp.entrySet()) {
+            xmlProject.getGroupRangeById(entry.getKey()).setGroupAddresses(entry.getValue());
+        }
     }
 
     /**
@@ -324,7 +351,7 @@ public final class KnxprojParser {
      * @return value of attribute, otherwise {@link KnxprojParserException}
      * @throws NavException navigation exception by VTD-XML
      */
-    @Nullable
+    @Nonnull
     private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
                                              final @Nonnull String attribute,
                                              final @Nonnull Supplier<KnxprojParserException> throwable) throws NavException {

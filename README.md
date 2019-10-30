@@ -47,14 +47,14 @@ which allows a very fast communication and we may have multiple channels simulta
 #### Communication mode (Tunneling, NAT, Routing)
 
 According to the KNX specification the communication is defaulted to _tunneling_ mode and without 
-Network Address Translation (NAT). If the communication should be using _routing_ then it must be
-explicitly defined using `-routing` parameter.
+Network Address Translation (NAT). If you have multiple KNX Net/IP devices and want to specify
+the IP-Address use the `--ip <address[:port]>`. If the communication should be using _routing_ instead
+of tunneling then it must be explicitly defined using `--routing` argument.
 
 Using _tunneling_ mode we need Network Address Translation (NAT) in some cases; this must be 
-enabled using `-nat` parameter. When NAT enabled, then the _Control Channel_ and _Data Channel_ 
+enabled using `--nat` parameter. When NAT enabled, then the _Control Channel_ and _Data Channel_ 
 will use a shared channel.  One practical example, where we need NAT would be e.g. dockerized image. 
-
-Note: NAT is suitable for _tunneling_ mode only, in _routing_ mode it has no
+NAT is suitable for _tunneling_ mode only, in _routing_ mode it has no
 effect.
 
 #### KNX Client
@@ -71,6 +71,23 @@ event logging, and much more.
 * _Data Point Type Translator_ to translate human-friendly (e.g. "on", "off"), Java data types 
 (e.g. true, false) into KNX compatible byte representation; and vice versa 
 
+### Data Point Types
+
+This KNX library (incl. KNX Client) supports following data point types below and is designed to 
+translate data point types in a fluent way into a KNX byte-array compatible format.
+
+| DPT    | Description              | DPT    | Description                      | DPT    | Description             |
+| ------ | ------------------------ | ------ | -------------------------------- | ------ | ----------------------- |
+| 1.xxx  | Binary                   | 11.xxx | Date (Year: 1990..2089)          | 21.xxx | 8-Bit Flagged Messages  |        
+| 2.xxx  | Controlled Binary        | 12.xxx | 4-Octet Unsigned Value           | 22.xxx | 16-Bit Flagged Messages |
+| 3.xxx  | Controlled Step/Interval | 13.xxx | 4-Octet Signed Value             | 23.xxx | 2-Bit Enumeration       |
+| 4.xxx  | Character                | 14.xxx | 4-Octet Float Value              | 
+| 5.xxx  | 8-Bit Unsigned Value     | 15.xxx | Access Data                      |
+| 6.xxx  | 8-Bit Signed Value       | 16.xxx | 14-Octet Characters              |
+| 7.xxx  | 2-Octet Unsigned Value   | 17.xxx | Scene Number                     |
+| 8.xxx  | 2-Octet Signed Value     | 18.xxx | Controlled Scene Number          |
+| 9.xxx  | 2-Octet Float Value      | 19.xxx | Date and Time (Year: 1900..2155) |
+| 10.xxx | Time                     | 20.xxx | 8-Bit Enumeration                |
 
 ## Quick Start Guides
 
@@ -79,8 +96,8 @@ event logging, and much more.
 **Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
 
 **Arguments:**
-* `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
-* `-t` the time in seconds how long the monitoring should run (default: _infinity_)
+* `-t`, `--time` the time in seconds how long the monitoring should run (default: _"infinity"_)
+* `-p`, `--knxproj` KNX project file (default: _latest *.knxproj in the folder_)
 
 **Monitoring between KNX Net/IP device and KNX client**
 
@@ -92,13 +109,13 @@ gracefully and the application will exit.
 # Tunneling (auto-discovery)
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -t 3600
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -nat -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --nat -t 3600
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -ip 192.168.1.16 -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 -t 3600
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -ip 192.168.1.16 -nat -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 --nat -t 3600
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -routing -t 3600
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --routing -t 3600
 ```
 
 ### Send a WRITE request frame to KNX
@@ -106,30 +123,29 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -routing -t 3600
 **Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
 
 **Arguments:**
-* ``-ip <address[:port]>`` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
-* ``-ga`` the KNX group address which has a _write_ flag
-* ``-dpt`` the KNX Data Point Type
-* ``-value`` a sequence of commands that is compatible with KNX Data Point Type argument
+* `-ga`, `--groupAddress` the KNX group address which has a _write_ flag
+* `-dpt`,`--dataPointType` the KNX Data Point Type
+* `-v`, `--value` a sequence of commands that is compatible with KNX Data Point Type argument
 
-**Switching lamp on KNX group address ``1/2/50``**
+**Switching lamp on KNX group address `1/2/50`**
 
 Perform a DPT1 - Switch (`1.001`) _write request_ action on KNX group address `1/2/50` to switch 
 `on` and then `off` a lamp. For demo purposes the delay between commands is hardcoded with two seconds.
 
 ```shell
 # Tunneling (auto-discovery)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -nat -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --nat -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ip 192.168.1.16 -nat -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --ip 192.168.1.16 --nat -ga 1/2/50 -dpt 1.001 -v on off
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -routing -ga 1/2/50 -dpt 1.001 -value on off
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --routing -ga 1/2/50 -dpt 1.001 -v on off
 ```
 
-For sequence of commands you may use e.g. `-value on off on off` to switch on/off the lamp twice
+For sequence of commands you may use e.g. `(-v|--value) on off on off` to switch on/off the lamp twice
 times. 
  
 ### Send a READ request frame to KNX
@@ -137,9 +153,8 @@ times.
 **Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
 
 **Arguments:**
-* `-ip <address[:port]>` the ip address of your KNX Net/IP device (default: uses auto-discovery) 
-* `-ga` the KNX group address which has a _read_ flag
-* `-n` number of read requests
+* `-ga`, `--groupAddress` the KNX group address which has a _read_ flag
+* `-n`, `--loops` number of read requests
 
 **Read the actual status of a lamp on KNX group address `1/2/113`**
 
@@ -150,13 +165,13 @@ between read requests is hardcoded with one second.
 # Tunneling (auto-discovery)
 java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ga 1/2/113 -n 10
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -nat -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --nat -ga 1/2/113 -n 10
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ip 192.168.1.16 -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --ip 192.168.1.16 -ga 1/2/113 -n 10
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ip 192.168.1.16 -nat -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --ip 192.168.1.16 --nat -ga 1/2/113 -n 10
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -routing -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --routing -ga 1/2/113 -n 10
 ```
 
 ## Programming
@@ -176,7 +191,7 @@ try (final var client = DefaultKnxClient.createStarted("address:port")) {
 }
 ```
 
-#### Example One: Switch on/off lamp with boolean values
+#### Example: Switch on/off lamp with boolean values
 
 Let's start with an easy sample: You want to switch `on` a lamp. The KNX actuator listens 
 on group address `1/2/110` which is configured for switching on/off a lamp. 
@@ -199,7 +214,7 @@ public final class ExampleLampOn {
 }
 ```
 
-#### Example Two: Inverse the lamp status
+#### Example: Inverse the lamp status
 
 Given sample, you want to inverse the status of your lamp: 
 * if the lamp is `on`, the lamp should be `off`
@@ -240,9 +255,9 @@ public final class ExampleLampInverse {
 }
 ```
 
-#### Example Three: Plugin
+#### Example: Plugin
 
-This sample is demonstrating how we can implement and register the plugin in easy way.
+This sample is demonstrating how we can implement and register the plugin in direct way.
 Here we want to print out the incoming and outgoing packets in format and this sample
 is a good one to get a better understanding which packets are sent for KNX communication.
 
@@ -295,4 +310,22 @@ public final class ExamplePlugin {
         }
     }
 }
+```
+
+#### Example: Work with Data Point Type
+
+Given snippet, we want to convert a date and time objects into KNX compatible byte array:
+
+```
+// Saturday, 2013-08-17 04:10:45
+final var dayOfWeek = DayOfWeek.SATURDAY;
+final var date = LocalDate.of(2013, 08, 17);
+final var time = LocalTime.of(04, 10, 45);
+
+DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
+```
+
+This can be also more simplified using direct string representation:
+```
+DPT19.toByteArray("Saturday", "2013-08-17", "04:10:45");
 ```

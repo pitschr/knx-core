@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
     @Override
     protected int numberOfElements() {
-        return 11;
+        return 12;
     }
 
     @Test
@@ -50,6 +50,15 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
         assertThat(Status.valueOf(0x26)).isEqualTo(Status.E_DATA_CONNECTION);
         assertThat(Status.valueOf(0x27)).isEqualTo(Status.E_KNX_CONNECTION);
         assertThat(Status.valueOf(0x29)).isEqualTo(Status.E_TUNNELING_LAYER);
+        // else
+        assertThat(Status.valueOf(0xFF)).isEqualTo(Status.E_UNDEFINED_STATUS);
+    }
+
+    @Test
+    @Override
+    public void invalidValueOf() {
+        // doesn't exists --> fallback to undefined status
+        assertThat(Status.valueOf(0xEE)).isEqualTo(Status.E_UNDEFINED_STATUS);
     }
 
     @Test
@@ -68,6 +77,8 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
         assertThat(Status.E_DATA_CONNECTION.getFriendlyName()).isEqualTo("Error in data connection for specified id");
         assertThat(Status.E_KNX_CONNECTION.getFriendlyName()).isEqualTo("Error in KNX connection for specified id");
         assertThat(Status.E_TUNNELING_LAYER.getFriendlyName()).isEqualTo("Requested KNX/IP Tunneling layer not supported");
+        // else
+        assertThat(Status.E_UNDEFINED_STATUS.getFriendlyName()).isEqualTo("Undefined status");
     }
 
     @Test

@@ -54,15 +54,12 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[15])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[2])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"Hello World Overflow!"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("Hello World Overflow!")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
         assertThat(dpt.toValue(Bytes.fillByteArray(new byte[14], new byte[]{'a'}, FillDirection.LEFT_TO_RIGHT))).isInstanceOf(DPT16Value.class);
         assertThat(dpt.toValue(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue("abc")).isInstanceOf(DPT16Value.class);
         assertThat(dpt.toValue("Hello World!!!")).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue(new String[]{"abc"})).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue(new String[]{"Hello World!!!"})).isInstanceOf(DPT16Value.class);
     }
 
     /**
@@ -97,7 +94,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
                 (byte) 0x49, (byte) 0x4a, (byte) 0x4b, (byte) 0x4c, (byte) 0x4d}, "ABCDEFGHIJKLM");
 
         // character: 'ä' (not supported by ASCII)
-        assertThatThrownBy(() -> dptAscii.toValue(new byte[]{(byte) 0xe4})).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> dptAscii.toValue((byte) 0xe4)).isInstanceOf(KnxException.class);
 
         // --------
         // ISO_8859_1
@@ -121,9 +118,9 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT16.ASCII.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT16.ISO_8859_1.toValue(new byte[]{(byte) 0x00}));
+        assertThat(DPT16.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT16.ISO_8859_1.toValue((byte) 0x00));
         // wrong value
-        assertThat(DPT16.ASCII.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT16.ASCII.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT16.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT16.ASCII.toValue((byte) 0x01));
     }
 
     /**
@@ -140,7 +137,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArrayPadded, dptValue);
         // assert specific DPT16
-        assertThat(dpt.toValue(new String[]{strValue})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(strValue)).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(strValue)).containsExactly(bValueArrayPadded);
     }
 }

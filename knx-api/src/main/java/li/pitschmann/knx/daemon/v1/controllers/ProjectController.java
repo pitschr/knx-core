@@ -3,6 +3,7 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import com.google.common.base.Preconditions;
 import li.pitschmann.knx.daemon.v1.json.ProjectStructureRequest;
 import li.pitschmann.knx.parser.XmlGroupAddress;
+import li.pitschmann.knx.parser.XmlGroupAddressStyle;
 import li.pitschmann.knx.parser.XmlGroupRange;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
@@ -37,7 +38,7 @@ public final class ProjectController extends AbstractController {
             response.setName(xmlProject.getName());
         }
         if (containsExpand("groupAddressStyle")) {
-            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle());
+            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle().getCode());
         }
         if (containsExpand("numberOfGroupRanges")) {
             response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
@@ -66,8 +67,8 @@ public final class ProjectController extends AbstractController {
         final var xmlProject = getXmlProject();
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
         Preconditions.checkArgument(
-                "ThreeLevel".equals(groupAddressStyle) ||
-                        "TwoLevel".equals(groupAddressStyle));
+                groupAddressStyle == XmlGroupAddressStyle.THREE_LEVEL ||
+                        groupAddressStyle == XmlGroupAddressStyle.TWO_LEVEL);
 
         final var mainGroups = xmlProject.getMainGroups();
         log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroups);
@@ -92,7 +93,7 @@ public final class ProjectController extends AbstractController {
         checkArgumentMainGroup(main);
 
         final var xmlProject = getXmlProject();
-        Preconditions.checkArgument("ThreeLevel".equals(xmlProject.getGroupAddressStyle()));
+        Preconditions.checkArgument(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL);
 
         final var mainGroup = xmlProject.getMainGroup(main);
         log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
@@ -117,7 +118,7 @@ public final class ProjectController extends AbstractController {
         checkArgumentMainGroup(main);
 
         final var xmlProject = getXmlProject();
-        Preconditions.checkArgument("TwoLevel".equals(xmlProject.getGroupAddressStyle()));
+        Preconditions.checkArgument(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.TWO_LEVEL);
 
         final var middleGroup = xmlProject.getMainGroup(main);
         log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
@@ -144,7 +145,7 @@ public final class ProjectController extends AbstractController {
         checkArgumentMiddleGroup(middle);
 
         final var xmlProject = getXmlProject();
-        Preconditions.checkArgument("ThreeLevel".equals(xmlProject.getGroupAddressStyle()));
+        Preconditions.checkArgument(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL);
 
         final var middleGroup = xmlProject.getMiddleGroup(main, middle);
         log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);

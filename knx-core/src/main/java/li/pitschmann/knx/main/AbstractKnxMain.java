@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.main;
 
+import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.config.ConfigConstants;
 import org.slf4j.Logger;
@@ -47,10 +48,10 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the Configuration Builder based on following arguments:
      * <ul>
-     * <li>{@code -endpoint} ... defined endpoint in {@code <address>:<port>} format.
+     * <li>{@code --ip} ... defined endpoint in {@code <address>:<port>} format.
      * If the address is a multicast, then routing will be used, otherwise tunneling (no NAT)</li>
-     * <li>{@code -routing} ... if the communication should be over multicast (routing)</li>
-     * <li>{@code -nat} ... if the communication should be using Network Address Translation (tunneling)</li>
+     * <li>{@code --routing} ... if the communication should be over multicast (routing)</li>
+     * <li>{@code --nat} ... if the communication should be using Network Address Translation (tunneling)</li>
      * </ul>
      *
      * @param args
@@ -58,22 +59,24 @@ public abstract class AbstractKnxMain {
      */
     protected ConfigBuilder parseConfigBuilder(final @Nonnull String[] args) {
         // Argument: Routing enabled?
-        final var routingEnabled = existsParameter(args, "-routing");
+        final var routingEnabled = existsParameter(args, "--routing");
         log.debug("Routing: {}", routingEnabled);
 
         // Argument: NAT? (not to be used in routing mode)
-        final var natEnabled = existsParameter(args, "-nat");
+        final var natEnabled = existsParameter(args, "--nat");
         log.debug("NAT: {}", natEnabled);
 
         // Argument: Get KNX Net/IP Address (<address>:<port>)
-        final var ipAddress = getParameterValue(args, "-ip", Function.identity(), null);
+        final var ipAddress = getParameterValue(args, "--ip", Function.identity(), null);
         log.debug("KNX Net/IP Address: {}", ipAddress);
 
         if (ipAddress != null) {
+            Preconditions.checkState(!routingEnabled, "You cannot use tunneling and routing at same time!");
             // specific endpoint defined
             // decision of routing/tunneling will be done based on ip address
             return ConfigBuilder.create(ipAddress).setting(ConfigConstants.NAT, natEnabled);
         } else if (routingEnabled) {
+            Preconditions.checkState(!natEnabled, "NAT is available for tunneling only!");
             // routing
             return ConfigBuilder.routing();
         } else {
@@ -86,26 +89,28 @@ public abstract class AbstractKnxMain {
      * Returns the value of parameter if supplied
      *
      * @param args
-     * @param parameterName
-     * @param defaultValue  default value in case the parameter could not be found or not parsed correctly
+     * @param parameterNames parameter names, may be comma-separated
+     * @param defaultValue   default value in case the parameter could not be found or not parsed correctly
      * @param function
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
     protected <T> T getParameterValue(final @Nonnull String[] args,
-                                      final @Nonnull String parameterName,
+                                      final @Nonnull String parameterNames,
                                       final @Nonnull Function<String, T> function,
                                       final @Nullable T defaultValue) {
-        for (var i = 0; i < args.length; i++) {
-            if (parameterName.equalsIgnoreCase(args[i])) {
-                // found - next argument should be the value
-                if ((i + 1) < args.length) {
-                    try {
-                        return function.apply(args[i + 1]);
-                    } catch (final Throwable t) {
-                        log.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], defaultValue);
-                        // could not be parsed
-                        return defaultValue;
+        for (final var parameterName : parameterNames.split(",")) {
+            for (var i = 0; i < args.length; i++) {
+                if (parameterName.equals(args[i])) {
+                    // found - next argument should be the value
+                    if ((i + 1) < args.length) {
+                        try {
+                            return function.apply(args[i + 1]);
+                        } catch (final Throwable t) {
+                            log.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], defaultValue);
+                            // could not be parsed
+                            return defaultValue;
+                        }
                     }
                 }
             }
@@ -118,49 +123,56 @@ public abstract class AbstractKnxMain {
      * Returns the value if parameter exists
      *
      * @param args
-     * @param parameterName
+     * @param parameterNames parameter names, may be comma-separated
      * @return {@code true} if parameter was found, otherwise {@code false}
      */
     protected boolean existsParameter(final @Nonnull String[] args,
-                                      final @Nonnull String parameterName) {
-        return Arrays.stream(args).anyMatch(arg -> parameterName.equalsIgnoreCase(arg));
+                                      final @Nonnull String parameterNames) {
+        for (final var parameterName : parameterNames.split(",")) {
+            if (Arrays.stream(args).anyMatch(parameterName::equals)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * Returns the value of parameter if supplied
      *
      * @param args
-     * @param parameterName
+     * @param parameterNames parameter names, may be comma-separated
      * @param defaultValues default values in case the parameter could not be found or not parsed correctly
      * @param function
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
     protected <T> T[] getParameterValues(final @Nonnull String[] args,
-                                         final @Nonnull String parameterName,
+                                         final @Nonnull String parameterNames,
                                          final @Nonnull IntFunction<T[]> function,
                                          final @Nullable T[] defaultValues
     ) {
-        for (var i = 0; i < args.length; i++) {
-            if (parameterName.equalsIgnoreCase(args[i])) {
-                // found - next arguments should be the values
-                if ((i + 1) < args.length) {
-                    final var start = i + 1;
-                    var end = args.length;
-                    for (var j = start; j < args.length; j++) {
-                        if (args[j].startsWith("-")) {
-                            // next argument name found
-                            end = j - 1;
+        for (final var parameterName : parameterNames.split(",")) {
+            for (var i = 0; i < args.length; i++) {
+                if (parameterName.equals(args[i])) {
+                    // found - next arguments should be the values
+                    if ((i + 1) < args.length) {
+                        final var start = i + 1;
+                        var end = args.length;
+                        for (var j = start; j < args.length; j++) {
+                            if (args[j].startsWith("-")) {
+                                // next argument name found
+                                end = j - 1;
+                            }
                         }
-                    }
 
-                    log.debug("Values [Start: {}, End: {}]", start, end);
-                    try {
-                        return Stream.of(args).skip(start).limit(end - start).toArray(function::apply);
-                    } catch (final Throwable t) {
-                        log.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], Arrays.toString(defaultValues));
-                        // could not be parsed
-                        return defaultValues;
+                        log.debug("Values [Start: {}, End: {}]", start, end);
+                        try {
+                            return Stream.of(args).skip(start).limit(end - start).toArray(function::apply);
+                        } catch (final Throwable t) {
+                            log.info("Could not parse value '{}'. Default value to be returned: {}", args[i + 1], Arrays.toString(defaultValues));
+                            // could not be parsed
+                            return defaultValues;
+                        }
                     }
                 }
             }

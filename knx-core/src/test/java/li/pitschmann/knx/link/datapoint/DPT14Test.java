@@ -50,17 +50,17 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"-3.40282348e+38"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"3.40282348e+38"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("-3.40282348e+38")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("3.40282348e+38")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT14Value.class);
         assertThat(dpt.toValue(-3.40282347e+38)).isInstanceOf(DPT14Value.class);
         assertThat(dpt.toValue(3.40282347e+38)).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.toValue(new String[]{"-3.40282347e+38"})).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.toValue(new String[]{"3.40282347e+38"})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.toValue("-3.40282347e+38")).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.toValue("3.40282347e+38")).isInstanceOf(DPT14Value.class);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
         // assert specific DPT14
-        assertThat(dpt.toValue(new String[]{String.valueOf(doubleValue)})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(String.valueOf(doubleValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(doubleValue)).containsExactly(bValueArray);
     }
 

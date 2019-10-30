@@ -49,17 +49,17 @@ public class DPT17Test extends AbstractDataPointTypeTest<DPT17, DPT17Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"-1"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"64"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00})).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0x3F})).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.toValue((byte) 0x3F)).isInstanceOf(DPT17Value.class);
         assertThat(dpt.toValue(0)).isInstanceOf(DPT17Value.class);
         assertThat(dpt.toValue(63)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue(new String[]{"0"})).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue(new String[]{"63"})).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.toValue("0")).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.toValue("63")).isInstanceOf(DPT17Value.class);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class DPT17Test extends AbstractDataPointTypeTest<DPT17, DPT17Value> {
     @Test
     public void testOfInvalid() {
         // wrong value
-        assertThat(DPT17.SCENE_NUMBER.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT17.SCENE_NUMBER.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT17.SCENE_NUMBER.toValue((byte) 0x00)).isNotEqualTo(DPT17.SCENE_NUMBER.toValue((byte) 0x01));
     }
 
     /**
@@ -99,7 +99,7 @@ public class DPT17Test extends AbstractDataPointTypeTest<DPT17, DPT17Value> {
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
         // assert specific DPT17
-        assertThat(dpt.toValue(new String[]{String.valueOf(intValue)})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(bValue);
     }
 }

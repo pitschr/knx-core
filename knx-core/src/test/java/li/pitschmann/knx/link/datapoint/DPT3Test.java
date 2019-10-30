@@ -48,18 +48,18 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
         final var dpt = DPT3.DPT_CONTROL_BLINDS;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[]{0x10})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue((byte) 0x10)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"false", "true", "false"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("false", "true", "false")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
         for (var i = 0; i < 0x10; i++) {
-            assertThat(dpt.toValue(new byte[]{(byte) i})).isInstanceOf(DPT3Value.class);
+            assertThat(dpt.toValue((byte) i)).isInstanceOf(DPT3Value.class);
         }
         for (var i = 0; i < 7; i++) {
-            assertThat(dpt.toValue(new String[]{String.valueOf(i)})).isInstanceOf(DPT3Value.class);
-            assertThat(dpt.toValue(new String[]{"controlled", String.valueOf(i)})).isInstanceOf(DPT3Value.class);
+            assertThat(dpt.toValue(String.valueOf(i))).isInstanceOf(DPT3Value.class);
+            assertThat(dpt.toValue("controlled", String.valueOf(i))).isInstanceOf(DPT3Value.class);
         }
     }
 
@@ -88,11 +88,11 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT3.DPT_CONTROL_BLINDS.toValue(new byte[]{(byte) 0x00}))
-                .isNotEqualTo(DPT3.DPT_CONTROL_DIMMING.toValue(new byte[]{(byte) 0x00}));
+        assertThat(DPT3.DPT_CONTROL_BLINDS.toValue((byte) 0x00))
+                .isNotEqualTo(DPT3.DPT_CONTROL_DIMMING.toValue((byte) 0x00));
         // wrong value
-        assertThat(DPT3.DPT_CONTROL_BLINDS.toValue(new byte[]{(byte) 0x00}))
-                .isNotEqualTo(DPT3.DPT_CONTROL_BLINDS.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT3.DPT_CONTROL_BLINDS.toValue((byte) 0x00))
+                .isNotEqualTo(DPT3.DPT_CONTROL_BLINDS.toValue((byte) 0x01));
     }
 
     /**

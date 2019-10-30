@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum LayerType implements KnxByteEnum {
-    // @formatter:off
     /**
      * Establish a Data Link Layer tunnel to the KNX network.
      */
@@ -44,9 +43,7 @@ public enum LayerType implements KnxByteEnum {
     /**
      * Establish a Busmonitor tunnel to the KNX network.
      */
-    TUNNEL_BUSMONITOR(0x80, "Tunneling Busmonitor Layer")
-    // @formatter:on
-    ;
+    TUNNEL_BUSMONITOR(0x80, "Tunneling Busmonitor Layer");
 
     private final int code;
     private final String friendlyName;

@@ -52,13 +52,15 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"a", "b"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         // OK
-        assertThat(dpt.toValue(new byte[]{'a'})).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue(new byte[]{'z'})).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue(new String[]{"b"})).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue(new String[]{"y"})).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue((byte) 'a')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue((byte) 'z')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue('a')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue('z')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue("a")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue("z")).isInstanceOf(DPT4Value.class);
     }
 
     @Test
@@ -89,7 +91,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         this.assertDPT(dptAscii, (byte) 0x39, '9');
 
         // character: 'ä' (not supported by ASCII)
-        assertThatThrownBy(() -> dptAscii.toValue(new byte[]{(byte) 0xE4})).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> dptAscii.toValue((byte) 0xE4)).isInstanceOf(KnxException.class);
 
         /*
          * ISO_8859_1
@@ -115,9 +117,9 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT4.ASCII.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT4.ISO_8859_1.toValue(new byte[]{(byte) 0x00}));
+        assertThat(DPT4.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT4.ISO_8859_1.toValue((byte) 0x00));
         // wrong value
-        assertThat(DPT4.ASCII.toValue(new byte[]{(byte) 0x00})).isNotEqualTo(DPT4.ASCII.toValue(new byte[]{(byte) 0x01}));
+        assertThat(DPT4.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT4.ASCII.toValue((byte) 0x01));
     }
 
     /**
@@ -133,7 +135,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
         // assert specific DPT4
-        assertThat(dpt.toValue(new String[]{String.valueOf(charValue)})).isEqualTo(dptValue);
+        assertThat(dpt.toValue(String.valueOf(charValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(charValue)).containsExactly(byteValue);
     }
 }

@@ -51,20 +51,20 @@ public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
         assertThatThrownBy(() -> DPT_TIME.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue(new byte[4])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.toValue(new String[]{"foo", "bar"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.toValue(new String[]{"foo", "bar", "far"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.toValue(new String[]{"99:99:99"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.toValue(new String[]{"FRIDAY", "99:99:99"}))
+        assertThatThrownBy(() -> DPT_TIME.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("foo", "bar", "far")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("99:99:99")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("FRIDAY", "99:99:99"))
                 .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(DPT_TIME.toValue(new byte[]{0x00, 0x00, 0x00})).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.toValue(new byte[]{(byte) 0xef, (byte) 0x3b, (byte) 0x3b})).isInstanceOf(DPT10Value.class);
+        assertThat(DPT_TIME.toValue((byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT10Value.class);
+        assertThat(DPT_TIME.toValue((byte) 0xef, (byte) 0x3b, (byte) 0x3b)).isInstanceOf(DPT10Value.class);
         assertThat(DPT_TIME.toValue(null, LocalTime.now())).isInstanceOf(DPT10Value.class);
         assertThat(DPT_TIME.toValue(DayOfWeek.MONDAY, LocalTime.now())).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.toValue(new String[]{"14:56:30"})).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.toValue(new String[]{"FrIDaY", "14:56:30"})).isInstanceOf(DPT10Value.class);
+        assertThat(DPT_TIME.toValue("14:56:30")).isInstanceOf(DPT10Value.class);
+        assertThat(DPT_TIME.toValue("FrIDaY", "14:56:30")).isInstanceOf(DPT10Value.class);
     }
 
     @Override
@@ -102,9 +102,9 @@ public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
 
         // assert specific DPT10
         if (dayOfWeek == null) {
-            assertThat(dpt.toValue(new String[]{localTime.toString()})).isEqualTo(dptValue);
+            assertThat(dpt.toValue(localTime.toString())).isEqualTo(dptValue);
         } else {
-            assertThat(dpt.toValue(new String[]{dayOfWeek.toString(), localTime.toString()})).isEqualTo(dptValue);
+            assertThat(dpt.toValue(dayOfWeek.toString(), localTime.toString())).isEqualTo(dptValue);
         }
         assertThat(dpt.toByteArray(dayOfWeek, localTime)).containsExactly(bValueArray);
     }

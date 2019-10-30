@@ -1,0 +1,40 @@
+################################################
+# START KNX CLIENT (inside Docker)
+################################################
+# java -jar knx-core.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 --nat --time 30
+# java -jar knx-core.jar li.pitschmann.knx.main.KnxMainMonitoring --nat
+# java -jar knx-core.jar li.pitschmann.knx.main.KnxMainMonitoring --routing
+
+################################################
+# TEST UDP (Remote -> Docker)
+################################################
+# Docker
+# ------------
+# tcpdump -i eth0 udp port 40000 -vv -X
+
+# Remote
+# ------------
+# echo -n -e 'test from remote' > /dev/udp/192.168.1.49/40000
+
+################################################
+# TEST UDP (Docker -> Remote)
+################################################
+# Docker
+# ------------
+# echo -n -e 'test from docker' > /dev/udp/192.168.1.3/40000
+
+# Remote
+# ------------
+# tcpdump -i eth0 udp port 40000 -vv -X
+
+################################################
+# TEST MULTICAST (Docker -> Remote)
+################################################
+#
+# Docker
+# ------------
+# iperf -c 224.0.23.11 -u -T 32 -t 3 -i 1 -p 40000
+
+# Remote
+# ------------
+# iperf -s -u -B 224.0.23.11 -i 1 -p 40000

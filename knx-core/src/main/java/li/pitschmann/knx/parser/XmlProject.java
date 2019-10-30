@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,7 +67,7 @@ public final class XmlProject {
      * <p>
      * <ProjectInformation @GroupAddressStyle />
      */
-    private String groupAddressStyle;
+    private XmlGroupAddressStyle groupAddressStyle;
     /**
      * <strong>Unsorted Map</strong> of KNX Group Ranges taken from '*.knxproj' file. Key is by Id (e.g. P-06EF-0_GR-4)
      * <pre>{@code
@@ -75,13 +76,13 @@ public final class XmlProject {
      * </GroupRanges>
      * }</pre>
      */
-    private Map<String, XmlGroupRange> groupRangeMap;
+    private Map<String, XmlGroupRange> groupRangeMap = Collections.emptyMap();
     /**
      * <strong>Unsorted Map</strong> of KNX Group Addresses by Key {@code Id} (e.g. P-06EF-0_GA-3), taken from '*.knxproj' file.
      * <p/>
      * {@code <GroupAddresses Id="..." />}
      */
-    private Map<String, XmlGroupAddress> groupAddressMap;
+    private Map<String, XmlGroupAddress> groupAddressMap = Collections.emptyMap();
     /**
      * <strong>Sorted Map</strong> of KNX Group Addresses by {@code Address} (e.g. 1025), taken from '*.knxproj' file.
      * The key of map is the address as an integer and sorted by the key.
@@ -90,7 +91,7 @@ public final class XmlProject {
      * <p/>
      * The group address in KNX is unique.
      */
-    private Map<Integer, XmlGroupAddress> groupAddressMapSortedByGA;
+    private Map<Integer, XmlGroupAddress> groupAddressMapSortedByGA = Collections.emptyMap();
 
     public String getId() {
         return id;
@@ -108,22 +109,22 @@ public final class XmlProject {
         this.name = name;
     }
 
-    public String getGroupAddressStyle() {
+    public XmlGroupAddressStyle getGroupAddressStyle() {
         return groupAddressStyle;
     }
 
-    public void setGroupAddressStyle(final String groupAddressStyle) {
+    public void setGroupAddressStyle(final XmlGroupAddressStyle groupAddressStyle) {
         this.groupAddressStyle = groupAddressStyle;
     }
 
     /**
-     * Returns an unmodifiable collection of {@link XmlGroupRange}
+     * Returns an unmodifiable list of {@link XmlGroupRange}
      *
-     * @return unmodifiable collection of {@link XmlGroupRange}
+     * @return unmodifiable list of {@link XmlGroupRange}
      */
     @Nonnull
-    public Collection<XmlGroupRange> getGroupRanges() {
-        return Collections.unmodifiableCollection(this.groupRangeMap.values());
+    public List<XmlGroupRange> getGroupRanges() {
+        return List.copyOf(this.groupRangeMap.values());
     }
 
     /**
@@ -145,13 +146,13 @@ public final class XmlProject {
     }
 
     /**
-     * Returns an unmodifiable collection of {@link XmlGroupAddress}
+     * Returns an unmodifiable list of {@link XmlGroupAddress}
      *
-     * @return unmodifiable collection of {@link XmlGroupAddress}
+     * @return unmodifiable list of {@link XmlGroupAddress}
      */
     @Nonnull
-    public Collection<XmlGroupAddress> getGroupAddresses() {
-        return Collections.unmodifiableCollection(this.groupAddressMapSortedByGA.values());
+    public List<XmlGroupAddress> getGroupAddresses() {
+        return List.copyOf(this.groupAddressMapSortedByGA.values());
     }
 
     /**
@@ -242,8 +243,10 @@ public final class XmlProject {
      * @return collection of {@link XmlGroupRange}, or empty list if not found
      */
     @Nonnull
-    public Collection<XmlGroupRange> getMainGroups() {
-        return groupRangeMap.values().stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toUnmodifiableList());
+    public List<XmlGroupRange> getMainGroups() {
+        return groupRangeMap.isEmpty()
+                ? Collections.emptyList()
+                : groupRangeMap.values().stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -254,7 +257,7 @@ public final class XmlProject {
      */
     @Nonnull
     public XmlGroupRange getMainGroup(final int main) {
-        Preconditions.checkArgument(groupRangeMap != null && !groupRangeMap.isEmpty(), "No main groups available");
+        Preconditions.checkArgument(!groupRangeMap.isEmpty(), "No main groups available");
 
         // find the group range with the proper range start (see GroupAddresses)
         // special rule for main group 0/-/- it is not allowed to have 0/0/0 and the first group address is 0/0/1

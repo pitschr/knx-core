@@ -50,9 +50,10 @@ public class AuditPluginTest {
 
         plugin.onIncomingBody(body);
 
+        // @formatter:off
         assertLogLine(appender,
-                // @formatter:off
                 "{" +
+                    "\"time\":\\d+\\.\\d+," +
                     "\"type\":\"incoming\"," +
                     "\"header\":{" +
                         "\"totalLength\":9," +
@@ -66,8 +67,8 @@ public class AuditPluginTest {
                         "\"raw\":\"0x11 22 33\"" +
                     "}" +
                 "}"
-                // @formatter:on
         );
+        // @formatter:on
     }
 
     /**
@@ -85,9 +86,10 @@ public class AuditPluginTest {
 
         plugin.onOutgoingBody(body);
 
+        // @formatter:off
         assertLogLine(appender,
-                // @formatter:off
                 "{" +
+                    "\"time\":\\d+\\.\\d+," +
                     "\"type\":\"outgoing\"," + //
                     "\"header\":{" +
                         "\"totalLength\":8," +
@@ -101,8 +103,8 @@ public class AuditPluginTest {
                         "\"raw\":\"0x22 33\"" +
                     "}" +
                 "}"
-                // @formatter:on
         );
+        // @formatter:on
     }
 
     /**
@@ -134,9 +136,10 @@ public class AuditPluginTest {
 
         plugin.onError(exception);
 
+        // @formatter:off
         assertLogLine(appender,
-                // @formatter:off
                 "{" +
+                    "\"time\":\\d+\\.\\d+," +
                     "\"type\":\"error\"," +
                     "\"message\":\"I am a RuntimeException\"," +
                     "\"stacktrace\":[" +
@@ -144,8 +147,8 @@ public class AuditPluginTest {
                         "\"org.class.Bar.addAll(Bar.java:456)\"" +
                     "]" +
                 "}"
-                // @formatter:on
         );
+        // @formatter:on
     }
 
     /**
@@ -159,7 +162,13 @@ public class AuditPluginTest {
         // send init signal (No client required for plugin)
         plugin.onInitialization(null);
 
-        assertLogLine(appender, "{\"type\":\"init\"}");
+        // @formatter:off
+        assertLogLine(appender,
+                "{" +
+                    "\"time\":\\d+\\.\\d+," +
+                    "\"type\":\"init\"" +
+                "}");
+        // @formatter:on
     }
 
     /**
@@ -173,7 +182,13 @@ public class AuditPluginTest {
         // send start signal
         plugin.onStart();
 
-        assertLogLine(appender, "{\"type\":\"start\"}");
+        // @formatter:off
+        assertLogLine(appender,
+                "{" +
+                    "\"time\":\\d+\\.\\d+," +
+                    "\"type\":\"start\"" +
+                "}");
+        // @formatter:on
     }
 
     /**
@@ -187,7 +202,10 @@ public class AuditPluginTest {
         // send shutdown signal
         plugin.onShutdown();
 
-        assertLogLine(appender, "{\"type\":\"shutdown\"}");
+        assertLogLine(appender, "{" +
+                    "\"time\":\\d+.\\d+," +
+                    "\"type\":\"shutdown\"" +
+                "}");
     }
 
     /**
@@ -197,8 +215,16 @@ public class AuditPluginTest {
      * @param expected the expected string
      */
     private void assertLogLine(final MemoryAppender appender, final String expected) {
+        final var expectedPattern = expected
+                .replace("{", "\\{")
+                .replace("}", "\\}")
+                .replace("(", "\\(")
+                .replace(")", "\\)")
+                .replace("[", "\\[")
+                .replace("]", "\\]");
+
         final var logLines = appender.all();
         assertThat(logLines).hasSize(1);
-        assertThat(logLines.get(0)).isEqualTo(expected);
+        assertThat(logLines.get(0)).containsPattern(expectedPattern);
     }
 }

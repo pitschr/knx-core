@@ -18,13 +18,16 @@
 
 package li.pitschmann.knx.link.body;
 
+import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Factory for {@link Body}. The proper body will be picked up based on {@link ServiceType} code.
@@ -47,7 +50,8 @@ public final class BodyFactory {
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
-    public static <T extends Body> T valueOf(final byte[] headerAndBodyBytes) {
+    @Nonnull
+    public static <T extends Body> T valueOf(final @Nonnull byte[] headerAndBodyBytes) {
         final var header = Header.of(headerAndBodyBytes);
         return valueOf(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
     }
@@ -62,7 +66,8 @@ public final class BodyFactory {
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
-    public static <T extends Body> T valueOf(final Header header, final byte[] bodyBytes) {
+    @Nonnull
+    public static <T extends Body> T valueOf(final @Nonnull Header header, final @Nonnull byte[] bodyBytes) {
         return valueOf(header.getServiceType(), bodyBytes);
     }
 
@@ -77,7 +82,11 @@ public final class BodyFactory {
      * @throws KnxUnknownBodyException in case the body is not known
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Body> T valueOf(final ServiceType serviceType, final byte[] bodyBytes) {
+    @Nonnull
+    public static <T extends Body> T valueOf(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bodyBytes) {
+        Objects.requireNonNull(serviceType);
+        Objects.requireNonNull(bodyBytes);
+
         // try to find the correct body
         if (serviceType == ServiceType.TUNNELING_REQUEST) {
             return (T) TunnelingRequestBody.of(bodyBytes);

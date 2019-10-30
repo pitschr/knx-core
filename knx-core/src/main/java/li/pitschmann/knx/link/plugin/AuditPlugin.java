@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -46,6 +48,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private static final String JSON_TEMPLATE_SIGNAL = "" + //
             "{" + //
+                "\"time\":%2$s.%3$s," + //
                 "\"type\":\"%1$s\"" + //
             "}"; //
     /**
@@ -53,6 +56,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private static final String JSON_TEMPLATE_ERROR = "" + //
             "{" + //
+                "\"time\":%4$s.%5$s," + //
                 "\"type\":\"%1$s\"," + //
                 "\"message\":%2$s," + //
                 "\"stacktrace\":[%3$s]" + //
@@ -62,6 +66,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private static final String JSON_TEMPLATE_BODY = "" + //
             "{" + //
+                "\"time\":%7$s.%8$s," + //
                 "\"type\":\"%1$s\"," + //
                 "\"header\":{" + //
                     "\"totalLength\":%5$s," + //
@@ -104,10 +109,13 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override
     public void onError(final @Nonnull Throwable throwable) {
+        final var now = Instant.now();
         log.info(String.format(JSON_TEMPLATE_ERROR, //
                 AuditType.ERROR, // #1
                 gson.toJson(throwable.getMessage()), // #2
-                Arrays.stream(throwable.getStackTrace()).map(e -> gson.toJson(e.toString())).collect(Collectors.joining(",")) // #3
+                Arrays.stream(throwable.getStackTrace()).map(e -> gson.toJson(e.toString())).collect(Collectors.joining(",")), // #3
+                now.getEpochSecond(), // #4
+                now.getNano() // #5
         ));
     }
 
@@ -118,6 +126,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param body body to be printed
      */
     private void auditBody(final @Nonnull AuditType type, final @Nonnull Body body) {
+        final var now = Instant.now();
         final var header = Header.of(body);
         log.info(String.format(JSON_TEMPLATE_BODY, //
                 type, // #1
@@ -125,7 +134,9 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 body.getServiceType().name(), // #3
                 body.getRawDataAsHexString(), // #4
                 header.getTotalLength(), // #5
-                header.getRawDataAsHexString() // #6
+                header.getRawDataAsHexString(), // #6
+                now.getEpochSecond(), // #7
+                now.getNano() // #8
         ));
     }
 
@@ -135,7 +146,12 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param type audit type
      */
     private void auditSignal(final @Nonnull AuditType type) {
-        log.info(String.format(JSON_TEMPLATE_SIGNAL, type));
+        final var now = Instant.now();
+        log.info(String.format(JSON_TEMPLATE_SIGNAL, //
+                type, // #1
+                now.getEpochSecond(), // #2
+                now.getNano() // #3
+        ));
     }
 
     /**

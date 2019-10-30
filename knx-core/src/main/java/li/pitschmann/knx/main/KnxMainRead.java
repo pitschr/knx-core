@@ -28,8 +28,8 @@ import li.pitschmann.utils.Sleeper;
  * <p/>
  * Examples:
  * <pre>
- * -routing -ga 1/2/113
- * -endpoint 192.168.1.16 -nat -ga 1/2/113 -n 10
+ * --routing --groupAddress 1/2/113
+ * --ip 192.168.1.16 --nat --groupAddress 1/2/113 -n 10
  * </pre>
  *
  * @author PITSCHR
@@ -49,14 +49,14 @@ public final class KnxMainRead extends AbstractKnxMain {
 
     private void startReadActions(final String[] args) {
         // Argument: Group Address
-        final var groupAddress = getParameterValue(args, "-ga", GroupAddress::of, DEFAULT_GROUP_ADDRESS);
+        final var groupAddress = getParameterValue(args, "-ga,--groupAddress", GroupAddress::of, DEFAULT_GROUP_ADDRESS);
         log.debug("Group Address: {}", groupAddress);
         log.debug("=> free-level: {}", groupAddress.getAddress());
         log.debug("=> 2-level   : {}", groupAddress.getAddressLevel2());
         log.debug("=> 3-level   : {}", groupAddress.getAddressLevel3());
 
         // Argument: Number of requests for Group Address
-        final var loops = getParameterValue(args, "-n", Integer::valueOf, DEFAULT_LOOPS);
+        final var loops = getParameterValue(args, "-n,--loops", Integer::valueOf, DEFAULT_LOOPS);
         log.debug("Number of Requests: {}", loops);
 
         // start KNX communication
@@ -89,7 +89,7 @@ public final class KnxMainRead extends AbstractKnxMain {
         log.info(" R O U T I N G");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startReadActions(new String[]{"-routing"});
+        startReadActions(new String[]{"--routing"});
 
         // Tunneling
         log.info("##########################################################################");
@@ -105,7 +105,7 @@ public final class KnxMainRead extends AbstractKnxMain {
         log.info(" T U N N E L I N G    ( N A T - M O D E )");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startReadActions(new String[]{"-nat"});
+        startReadActions(new String[]{"--nat"});
 
         // Tunneling (endpoint defined)
         log.info("##########################################################################");
@@ -113,6 +113,6 @@ public final class KnxMainRead extends AbstractKnxMain {
         log.info(" T U N N E L I N G    ( E N D P O I N T )");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startReadActions(new String[]{"-ip", "192.168.1.16"});
+        startReadActions(new String[]{"--ip", "192.168.1.16"});
     }
 }

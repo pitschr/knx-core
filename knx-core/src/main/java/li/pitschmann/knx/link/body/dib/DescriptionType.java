@@ -32,7 +32,6 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public enum DescriptionType implements KnxByteEnum {
-    // @formatter:off
     /**
      * Device information e.g. KNX medium.
      */
@@ -56,9 +55,7 @@ public enum DescriptionType implements KnxByteEnum {
     /**
      * DIB structure for further data defined by device manufacturer.
      */
-    MANUFACTURER_DATA(0xFE, "Manufacturer Data")
-    // @formatter:on
-    ;
+    MANUFACTURER_DATA(0xFE, "Manufacturer Data");
 
     private final int code;
     private final String friendlyName;

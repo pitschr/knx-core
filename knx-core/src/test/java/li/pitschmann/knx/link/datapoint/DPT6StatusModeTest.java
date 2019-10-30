@@ -51,12 +51,12 @@ public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMod
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"foo"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{0x00})).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.toValue(new byte[]{(byte) 0xFF})).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.toValue(new String[]{"0xFF"})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.toValue("0xFF")).isInstanceOf(DPT6Value.StatusMode.class);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMod
         // assert base DPT
         this.assertBaseDPT(dptStatusMode, new byte[]{byteValue}, dptStatusModeValue);
         // assert specific DPT6
-        assertThat(dptStatusMode.toValue(new String[]{ByteFormatter.formatHex(byteValue)})).isEqualTo(dptStatusModeValue);
+        assertThat(dptStatusMode.toValue(ByteFormatter.formatHex(byteValue))).isEqualTo(dptStatusModeValue);
         assertThat(dptStatusMode.toByteArray(bool1, bool2, bool3, bool4, bool5, mode)).containsExactly(byteValue);
     }
 }

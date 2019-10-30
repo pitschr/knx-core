@@ -56,21 +56,19 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
         assertThatThrownBy(() -> DPT_ENUM.toValue(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new String[]{""})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue(new String[]{null})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new String[]{"foo", "bar"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new String[]{"-1"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new String[]{"256"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.toValue("")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.toValue("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue(-1)).isInstanceOf(KnxEnumNotFoundException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue(256)).isInstanceOf(KnxEnumNotFoundException.class);
 
         // OK
-        assertThat(DPT_ENUM.toValue(new byte[]{0x00})).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(new byte[]{(byte) 0xFF})).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(new String[]{"0"})).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(new String[]{"255"})).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(new String[]{"DATA_LINK_LAYER"})).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(new String[]{"NO_LAYER"})).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.toValue("0")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.toValue("255")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.toValue("DATA_LINK_LAYER")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.toValue("NO_LAYER")).isInstanceOf(DPTEnumValue.class);
         assertThat(DPT_ENUM.toValue(0)).isInstanceOf(DPTEnumValue.class);
         assertThat(DPT_ENUM.toValue(255)).isInstanceOf(DPTEnumValue.class);
     }

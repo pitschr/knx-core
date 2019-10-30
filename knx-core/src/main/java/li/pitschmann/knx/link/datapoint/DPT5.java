@@ -208,6 +208,10 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
         return new DPT5Value(this, Integer.parseInt(args[0]));
     }
 
+    public DPT5Value toValue(final byte value) {
+        return toValue(new byte[]{value});
+    }
+
     public DPT5Value toValue(final int value) {
         return new DPT5Value(this, value);
     }

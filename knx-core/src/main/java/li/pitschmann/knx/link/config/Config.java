@@ -20,13 +20,17 @@ package li.pitschmann.knx.link.config;
 
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.knx.parser.KnxprojParser;
+import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.Networker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +41,13 @@ import java.util.Objects;
  * Immutable Config
  */
 public final class Config {
+    private static final Logger log = LoggerFactory.getLogger(Config.class);
     private final boolean routingEnabled;
     private final InetAddress remoteControlAddress;
     private final int remoteControlPort;
     private final List<Plugin> plugins;
     private final Map<String, Object> settings;
+    private final XmlProject xmlProject;
 
     Config(final boolean routingEnabled,
            final @Nonnull InetAddress remoteControlAddress,
@@ -60,7 +66,19 @@ public final class Config {
         mergeSettings.putAll(settings);
         this.settings = Collections.unmodifiableMap(mergeSettings);
 
-        this.plugins = Collections.unmodifiableList(new ArrayList<>(plugins));
+        // plugins
+        this.plugins = List.copyOf(plugins);
+
+        // try to parse the project file
+        final var projectPath = getProjectPath();
+        XmlProject tmpXmlProject;
+        try {
+            tmpXmlProject = Files.isReadable(projectPath) ? KnxprojParser.parse(projectPath) : null;
+        } catch (final Throwable t) {
+            log.warn("Could not parse KNX Project file: {}. Omitted!", projectPath, t);
+            tmpXmlProject = null;
+        }
+        this.xmlProject = tmpXmlProject;
     }
 
     /**
@@ -295,8 +313,24 @@ public final class Config {
         return getSetting(ConfigConstants.HTTP_DAEMON_PORT);
     }
 
+    /**
+     * Returns the path of *.knxproj (KNX Project)
+     *
+     * @return the path to KNX project
+     */
     @Nonnull
     public Path getProjectPath() {
         return getSetting(ConfigConstants.PROJECT_PATH);
+    }
+
+    /**
+     * Returns the parsed KNX Project file from {@link #getProjectPath()}.
+     * May be {@code null} if the file was not parsable.
+     *
+     * @return an instance of {@link XmlProject} or {@code null} if not readable
+     */
+    @Nullable
+    public XmlProject getProject() {
+        return this.xmlProject;
     }
 }

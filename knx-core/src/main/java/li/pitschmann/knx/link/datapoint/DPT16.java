@@ -157,10 +157,6 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
         return new DPT16Value(this, args[0]);
     }
 
-    public DPT16Value toValue(final String text) {
-        return new DPT16Value(this, text);
-    }
-
     /**
      * Converts string representation to 14-octet array
      *

@@ -30,8 +30,8 @@ import java.util.Arrays;
  * <p/>
  * Examples:
  * <pre>
- * -routing -ga 1/2/50 -dpt 1.001 -value on off
- * -endpoint 192.168.1.16 -nat -ga 1/2/50 -dpt 1.001 -value on off
+ * --routing --groupAddress 1/2/50 --dataPointType 1.001 --value on off
+ * --ip 192.168.1.16 --nat --groupAddress 1/2/50 --dataPointType 1.001 --value on off
  * </pre>
  *
  * @author PITSCHR
@@ -52,15 +52,15 @@ public final class KnxMainWrite extends AbstractKnxMain {
 
     private void startWriteActions(final String[] args) {
         // Argument: Group Address
-        final var groupAddress = getParameterValue(args, "-ga", GroupAddress::of, DEFAULT_GROUP_ADDRESS);
+        final var groupAddress = getParameterValue(args, "-ga,--groupAddress", GroupAddress::of, DEFAULT_GROUP_ADDRESS);
         log.debug("Group Address: {}", groupAddress);
 
         // Argument: Get DPT
-        final var dpt = getParameterValue(args, "-dpt", String::valueOf, DEFAULT_DPT);
+        final var dpt = getParameterValue(args, "-dpt,--dataPointType", String::valueOf, DEFAULT_DPT);
         log.debug("DPT: {}", dpt);
 
         // More Arguments: Get Values
-        final var values = getParameterValues(args, "-value", String[]::new, DEFAULT_VALUES);
+        final var values = getParameterValues(args, "-v,--value", String[]::new, DEFAULT_VALUES);
         log.debug("Values: {}", Arrays.toString(values));
 
         // start KNX communication
@@ -90,7 +90,7 @@ public final class KnxMainWrite extends AbstractKnxMain {
         log.info(" R O U T I N G");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startWriteActions(new String[]{"-routing"});
+        startWriteActions(new String[]{"--routing"});
 
         // Tunneling
         log.info("##########################################################################");
@@ -106,7 +106,7 @@ public final class KnxMainWrite extends AbstractKnxMain {
         log.info(" T U N N E L I N G    ( N A T - M O D E )");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startWriteActions(new String[]{"-nat"});
+        startWriteActions(new String[]{"--nat"});
 
         // Tunneling (endpoint defined)
         log.info("##########################################################################");
@@ -114,6 +114,6 @@ public final class KnxMainWrite extends AbstractKnxMain {
         log.info(" T U N N E L I N G    ( E N D P O I N T )");
         log.info("##########################################################################");
         log.info("##########################################################################");
-        startWriteActions(new String[]{"-ip", "192.168.1.16"});
+        startWriteActions(new String[]{"--ip", "192.168.1.16"});
     }
 }

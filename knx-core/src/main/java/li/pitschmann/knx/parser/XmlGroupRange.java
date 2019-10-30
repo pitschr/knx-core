@@ -19,11 +19,11 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * XML DTO holding KNX Group Range data which were taken from '*.knxproj' file
@@ -97,26 +97,32 @@ public final class XmlGroupRange {
         this.rangeStart = rangeStart;
     }
 
+    /**
+     * Returns an immutable list of child {@link XmlGroupRange}
+     *
+     * @return immutable list
+     */
     @Nonnull
     public List<XmlGroupRange> getChildGroupRanges() {
-        return childGroupRanges;
+        return List.copyOf(childGroupRanges);
     }
 
     public void setChildGroupRanges(final @Nonnull List<XmlGroupRange> childGroupRanges) {
-        Preconditions.checkNotNull(childGroupRanges);
-        this.childGroupRanges.clear();
-        this.childGroupRanges.addAll(childGroupRanges);
+        this.childGroupRanges = Objects.requireNonNull(childGroupRanges);
     }
 
+    /**
+     * Returns an immutable list of child {@link XmlGroupAddress}
+     *
+     * @return immutable list
+     */
     @Nonnull
     public List<XmlGroupAddress> getGroupAddresses() {
-        return groupAddresses;
+        return List.copyOf(groupAddresses);
     }
 
     public void setGroupAddresses(final @Nonnull List<XmlGroupAddress> groupAddresses) {
-        Preconditions.checkNotNull(groupAddresses);
-        this.groupAddresses.clear();
-        this.groupAddresses.addAll(groupAddresses);
+        this.groupAddresses = Objects.requireNonNull(groupAddresses);
     }
 
     @Nonnull

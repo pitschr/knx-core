@@ -53,8 +53,8 @@ public class DPT22Test implements DPTTest {
         assertThatThrownBy(() -> DPT22.CHANNEL_ACTIVATION_16.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
 
         // OK
-        assertThat(DPT22.CHANNEL_ACTIVATION_16.toValue(new byte[]{0x00, 0x00})).isInstanceOf(DPT22Value.ChannelActivation16.class);
-        assertThat(DPT22.MEDIA.toValue(new byte[]{(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT22Value.Media.class);
+        assertThat(DPT22.CHANNEL_ACTIVATION_16.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT22Value.ChannelActivation16.class);
+        assertThat(DPT22.MEDIA.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT22Value.Media.class);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DPT22Test implements DPTTest {
         // DHW Controller Status (1010 1001 = 0xA9)
         DPT22.StatusDHWController statusDHWControllerDPT = DPT22.STATUS_DHW_CONTROLLER;
         DPT22Value.StatusDHWController statusDHWControllerDPV = statusDHWControllerDPT.toValue(true, false, false, true, false, true, false, true);
-        assertThat(statusDHWControllerDPT.toValue(new byte[]{0x00, (byte) 0xA9})).isEqualTo(statusDHWControllerDPV);
+        assertThat(statusDHWControllerDPT.toValue((byte) 0x00, (byte) 0xA9)).isEqualTo(statusDHWControllerDPV);
         assertThat(statusDHWControllerDPT.toValue(true, false, false, true, false, true, false, true)).isEqualTo(statusDHWControllerDPV);
         assertThat(statusDHWControllerDPT.toByteArray(true, false, false, true, false, true, false, true)).containsExactly(0x00, 0xA9);
         assertThat(statusDHWControllerDPV.toByteArray()).containsExactly(0x00, 0xA9);
@@ -73,7 +73,7 @@ public class DPT22Test implements DPTTest {
         DPT22.StatusRoomHeatinCoolingController statusRoomHeatingCoolingControllerDPT = DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER;
         DPT22Value.StatusRoomHeatinCoolingController statusRoomHeatingCoolingControllerDPV = statusRoomHeatingCoolingControllerDPT.toValue(true, true,
                 false, false, true, true, false, true, true, false, false, true, false, false, true);
-        assertThat(statusRoomHeatingCoolingControllerDPT.toValue(new byte[]{0x49, (byte) 0xB3})).isEqualTo(statusRoomHeatingCoolingControllerDPV);
+        assertThat(statusRoomHeatingCoolingControllerDPT.toValue((byte) 0x49, (byte) 0xB3)).isEqualTo(statusRoomHeatingCoolingControllerDPV);
         assertThat(statusRoomHeatingCoolingControllerDPT.toValue(true, true, false, false, true, true, false, true, true, false, false, true, false,
                 false, true)).isEqualTo(statusRoomHeatingCoolingControllerDPV);
         assertThat(statusRoomHeatingCoolingControllerDPT.toByteArray(true, true, false, false, true, true, false, true, true, false, false, true,
@@ -85,7 +85,7 @@ public class DPT22Test implements DPTTest {
         // Media (0000 0110 = 0x06)
         DPT22.Media mediaDPT = DPT22.MEDIA;
         DPT22Value.Media mediaDPV = mediaDPT.toValue(true, true, false, false);
-        assertThat(mediaDPT.toValue(new byte[]{0x00, 0x06})).isEqualTo(mediaDPV);
+        assertThat(mediaDPT.toValue((byte) 0x00, (byte) 0x06)).isEqualTo(mediaDPV);
         assertThat(mediaDPT.toValue(true, true, false, false)).isEqualTo(mediaDPV);
         assertThat(mediaDPT.toByteArray(true, true, false, false)).containsExactly(0x00, 0x06);
         assertThat(mediaDPV.toByteArray()).containsExactly(0x00, 0x06);
@@ -95,7 +95,7 @@ public class DPT22Test implements DPTTest {
         DPT22.ChannelActivation16 channel16DPT = DPT22.CHANNEL_ACTIVATION_16;
         DPT22Value.ChannelActivation16 channel16DPV = channel16DPT.toValue(false, true, false, false, false, false, true, false, false, true, false,
                 true, true, false, false, true);
-        assertThat(channel16DPT.toValue(new byte[]{(byte) 0x9A, 0x42})).isEqualTo(channel16DPV);
+        assertThat(channel16DPT.toValue((byte) 0x9A, (byte) 0x42)).isEqualTo(channel16DPV);
         assertThat(channel16DPT.toValue(false, true, false, false, false, false, true, false, false, true, false, true, true, false, false, true))
                 .isEqualTo(channel16DPV);
         assertThat(channel16DPT.toByteArray(false, true, false, false, false, false, true, false, false, true, false, true, true, false, false, true))

@@ -27,11 +27,14 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum AddressType implements KnxByteEnum {
-    // @formatter:off
+    /**
+     * Individual Address
+     */
     INDIVIDUAL(0x00, "Individual Address"),
-    GROUP(0x01, "Group Address")
-    // @formatter:on
-    ;
+    /**
+     * Group Address
+     */
+    GROUP(0x01, "Group Address");
 
     private final int code;
     private final String friendlyName;
