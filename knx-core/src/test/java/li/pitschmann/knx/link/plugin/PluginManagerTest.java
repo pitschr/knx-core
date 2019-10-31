@@ -122,15 +122,31 @@ public final class PluginManagerTest {
     }
 
     @Test
-    @DisplayName("Error: Test registration by a wrong JAR path")
-    public void testNonexistentJARPath() {
+    @DisplayName("Error: Test registration by a path that doesn't end with *.jar extension")
+    public void testWithoutJarExtension() {
         final var configMock = newConfigMock();
         final var pluginManager = new PluginManager(configMock);
 
         // wrong JAR file path
-        final var pathToJAR = Paths.get("src/test/resources/plugin/this-file-does-not-exists.jar");
+        final var pathToJAR = Paths.get("file-with-wrong.extension");
         final var className = "my.plugin.MyTestPlugin";
-        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("File doesn't end with '.jar' extension: file-with-wrong.extension");
+    }
+
+    @Test
+    @DisplayName("Error: Test registration by a wrong JAR path")
+    public void testNonexistentJarPath() {
+        final var configMock = newConfigMock();
+        final var pluginManager = new PluginManager(configMock);
+
+        // wrong JAR file path
+        final var pathToJAR = Paths.get("non-existent-file.jar");
+        final var className = "my.plugin.MyTestPlugin";
+        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("File doesn't exists or is not readable: non-existent-file.jar");
     }
 
     @Test

@@ -164,11 +164,10 @@ public final class PluginManager implements AutoCloseable {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
                 "File doesn't end with '.jar' extension: {}", filePath);
         Preconditions.checkNonNull(className);
-
-        log.debug("Try to load plugin '{}' from path: {}", className, filePath);
         Preconditions.checkArgument(Files.isReadable(filePath),
                 "File doesn't exists or is not readable: {}", filePath);
 
+        log.debug("Try to load plugin '{}' from path: {}", className, filePath);
         try (var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()})) {
             final var cls = classLoader.loadClass(className);
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
