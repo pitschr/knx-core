@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 

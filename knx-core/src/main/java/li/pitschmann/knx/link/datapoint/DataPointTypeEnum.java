@@ -19,7 +19,6 @@
 package li.pitschmann.knx.link.datapoint;
 
 import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
-import li.pitschmann.knx.link.datapoint.value.DataPointValueEnum;
 
 /**
  * Interface representing that data point type is an enumeration
@@ -31,7 +30,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
     /**
      * Returns the Data Point Value of current enumeration instance
      *
-     * @return {@link DataPointValueEnum}
+     * @return {@link DPTEnumValue}
      */
     @SuppressWarnings("unchecked")
     default DPTEnumValue<T> toValue() {
@@ -64,7 +63,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
      */
     default String getId() {
         final var value = toValue();
-        return value.getDPT().getId() + " - " + value.getEnumField();
+        return value.getDPT().getId() + " - " + value.getEnum();
     }
 
     /**

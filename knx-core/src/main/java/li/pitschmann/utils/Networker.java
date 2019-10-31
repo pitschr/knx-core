@@ -262,8 +262,7 @@ public final class Networker {
             log.error("Error during getting network interfaces", se);
         }
 
-        networkInterfaceMap = Collections.unmodifiableMap(tmpMap);
-        return networkInterfaceMap;
+        return networkInterfaceMap = Map.copyOf(tmpMap);
     }
 
     /**

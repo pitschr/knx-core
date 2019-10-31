@@ -88,7 +88,7 @@ public final class PluginManagerTest {
 
         // 1) initialization (no plugin registered yet)
         pluginManager.notifyInitialization(knxClientMock);
-        Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
+        Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
         // 2 verify (init method never called)
         verify(observerPluginMock, never()).onInitialization(any(KnxClient.class));
@@ -97,7 +97,7 @@ public final class PluginManagerTest {
         // 3) register two plugins
         pluginManager.registerPlugin(observerPluginMock);
         pluginManager.registerPlugin(extensionPluginMock);
-        Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
+        Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
         // 4) verify (init method should be called)
         verify(observerPluginMock).onInitialization(any(KnxClient.class));

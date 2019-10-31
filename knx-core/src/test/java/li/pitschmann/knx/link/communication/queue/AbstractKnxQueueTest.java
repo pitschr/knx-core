@@ -146,7 +146,7 @@ public class AbstractKnxQueueTest {
             assertThat(
                     Sleeper.milliseconds(
                             () -> appender.anyMatch(s -> s.contains("Channel is interrupted")),
-                            1000)
+                            3000)
             ).isTrue();
         } finally {
             Closeables.shutdownQuietly(executor);

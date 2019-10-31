@@ -72,14 +72,16 @@ public class DataPointTypeRegistryTest {
         final DPTEnum<DPT20.LightApplicationMode> dpt20 = DataPointTypeRegistry.getDataPointType("20.005");
         assertThat(dpt20.getId()).isEqualTo("20.005");
         assertThat(dpt20.getDescription()).isEqualTo("Light Application Mode");
-        assertThat(dpt20.toValue(2).getEnumField()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
+        assertThat(dpt20.toValue(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
+        assertThat(dpt20.toValue(2).getOrdinal()).isEqualTo(2);
 
         // direct check
         assertThat(DataPointTypeRegistry.getDataPointType("20.005").getId()).isEqualTo("20.005");
         assertThat(DataPointTypeRegistry.getDataPointType("20.005").getDescription()).isEqualTo("Light Application Mode");
-        assertThat(DataPointTypeRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getEnumField())
-                .isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
-        assertThat(DataPointTypeRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getValue()).isEqualTo(1);
+        assertThat(DataPointTypeRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
+        assertThat(DataPointTypeRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getOrdinal()).isEqualTo(2);
+        assertThat(DataPointTypeRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getEnum()).isEqualTo(DPT20.LightApplicationMode.PRESENCE_SIMULATION);
+        assertThat(DataPointTypeRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getOrdinal()).isEqualTo(1);
 
         // should match
         final DPTEnum<DPT20.LightApplicationMode> dpt20Created = new DPTEnum<>("20.005", "Light Application Mode");

@@ -77,13 +77,13 @@ public class BaseKnxClient implements KnxClient {
         if (getConfig().isRoutingEnabled()) {
             // routing request
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, apciData);
-            this.internalClient.send(RoutingIndicationBody.of(cemi));
+            getInternalClient().send(RoutingIndicationBody.of(cemi));
             return true; // unconfirmed
         } else {
             // tunneling request
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, apciData);
-                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), getConfig().getTimeoutDataRequest()).get();
+                final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig().getTimeoutDataRequest()).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during write request for tunneling", ex);
@@ -101,12 +101,12 @@ public class BaseKnxClient implements KnxClient {
 
         if (getConfig().isRoutingEnabled()) {
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, (byte[]) null);
-            this.internalClient.send(RoutingIndicationBody.of(cemi));
+            getInternalClient().send(RoutingIndicationBody.of(cemi));
             return true; // unconfirmed
         } else {
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
-                final var ackBody = this.internalClient.<TunnelingAckBody>send(TunnelingRequestBody.of(this.internalClient.getChannelId(), this.getNextSequence(), cemi), getConfig().getTimeoutDataRequest()).get();
+                final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig().getTimeoutDataRequest()).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during read response for tunneling", ex);
@@ -134,39 +134,39 @@ public class BaseKnxClient implements KnxClient {
     @Nonnull
     @Override
     public Config getConfig() {
-        return this.internalClient.getConfig();
+        return getInternalClient().getConfig();
     }
 
     @Override
     public boolean isRunning() {
-        return this.internalClient.getState() == InternalKnxClient.State.STARTED;
+        return getInternalClient().getState() == InternalKnxClient.State.STARTED;
     }
 
     @Nonnull
     @Override
     public KnxStatistic getStatistic() {
-        return this.internalClient.getStatistic().asUnmodifiable();
+        return getInternalClient().getStatistic().asUnmodifiable();
     }
 
     @Nonnull
     @Override
     public KnxStatusPool getStatusPool() {
-        return this.internalClient.getStatusPool();
+        return getInternalClient().getStatusPool();
     }
 
     @Override
     public void close() {
-        this.internalClient.close();
+        getInternalClient().close();
     }
 
     @Override
     public void send(final @Nonnull Body body) {
-        this.internalClient.send(body);
+        getInternalClient().send(body);
     }
 
     @Nonnull
     @Override
     public <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, long timeout) {
-        return this.internalClient.send(requestBody, timeout);
+        return getInternalClient().send(requestBody, timeout);
     }
 }

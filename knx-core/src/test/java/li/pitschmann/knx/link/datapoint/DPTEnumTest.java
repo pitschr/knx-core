@@ -19,10 +19,10 @@
 package li.pitschmann.knx.link.datapoint;
 
 import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
-import li.pitschmann.knx.link.datapoint.value.DataPointValueEnum;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.CommunicationMode>, DataPointValueEnum<DPT20.CommunicationMode>> {
+public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.CommunicationMode>, DPTEnumValue<DPT20.CommunicationMode>> {
     private static final DPTEnum<DPT20.CommunicationMode> DPT_ENUM = new DPTEnum<>("123.456", "foobar");
 
     static {
@@ -71,6 +71,34 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
         assertThat(DPT_ENUM.toValue("NO_LAYER")).isInstanceOf(DPTEnumValue.class);
         assertThat(DPT_ENUM.toValue(0)).isInstanceOf(DPTEnumValue.class);
         assertThat(DPT_ENUM.toValue(255)).isInstanceOf(DPTEnumValue.class);
+    }
+
+    @Test
+    @DisplayName("Try to parse and test methods of DPTEnumValue")
+    public void testParse() {
+        final var enumValueDataLinkLayer = DPT_ENUM.parse(new byte[] { 0x00 });
+        assertThat(DPT_ENUM.parse(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.toValue(0x00)).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.toValue("DATA_LINK_LAYER")).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.toValue(new byte[]{ 0x00 })).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.toValue(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
+        assertThat(enumValueDataLinkLayer.getDPT()).isSameAs(DPT_ENUM);
+        assertThat(enumValueDataLinkLayer.getOrdinal()).isEqualTo(0);
+        assertThat(enumValueDataLinkLayer.getDescription()).isEqualTo("DATA_LINK_LAYER");
+        assertThat(enumValueDataLinkLayer.toText()).isEqualTo("DATA_LINK_LAYER");
+        assertThat(enumValueDataLinkLayer.getEnum()).isSameAs(DPT20.CommunicationMode.DATA_LINK_LAYER);
+
+        final var enumValueNoLayer = DPT_ENUM.parse(new byte[] { (byte)0xFF });
+        assertThat(DPT_ENUM.parse(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.toValue(0xFF)).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.toValue("NO_LAYER")).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.toValue(new byte[]{ (byte)0xFF })).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.toValue(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
+        assertThat(enumValueNoLayer.getDPT()).isSameAs(DPT_ENUM);
+        assertThat(enumValueNoLayer.getOrdinal()).isEqualTo(0xFF);
+        assertThat(enumValueNoLayer.getDescription()).isEqualTo("NO_LAYER");
+        assertThat(enumValueNoLayer.toText()).isEqualTo("NO_LAYER");
+        assertThat(enumValueNoLayer.getEnum()).isSameAs(DPT20.CommunicationMode.NO_LAYER);
     }
 
     @Override

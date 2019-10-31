@@ -136,7 +136,7 @@ public final class DataPointTypeRegistry {
                 final var dptEnumValue = new DPTEnumValue<>(dptEnum, fieldInstance, fieldAnnotation.value(),
                         fieldAnnotation.description());
                 dptEnum.addValue(dptEnumValue);
-                dataPointEnumMap.put(dptEnumValue.getEnumField(), dptEnumValue);
+                dataPointEnumMap.put(dptEnumValue.getEnum(), dptEnumValue);
                 log.debug("Enum Value registered: {}", dptEnumValue);
             } catch (final Exception ex) {
                 log.error("Exception for field '{}'", field.getName(), ex);

@@ -47,16 +47,16 @@ public final class DPTEnumValueTest {
 
         // instance methods
         assertThat(priorityHigh.getDPT()).isEqualTo(DPT_ENUM);
-        assertThat(priorityHigh.getEnumField()).isEqualTo(DPT20.Priority.HIGH);
-        assertThat(priorityHigh.getValue()).isEqualTo(0);
+        assertThat(priorityHigh.getEnum()).isEqualTo(DPT20.Priority.HIGH);
+        assertThat(priorityHigh.getOrdinal()).isEqualTo(0);
         assertThat(priorityHigh.getDescription()).isEqualTo("high");
         assertThat(priorityHigh.toByteArray()).containsExactly(0x00);
         assertThat(priorityHigh.toText()).isEqualTo("high");
 
-        // equals (here we only compare DPT and enum field
+        // equals (here we only compare DPT and enum field, ordinal and description are not checked)
         assertThat(priorityHigh).isEqualTo(priorityHigh);
         assertThat(priorityHigh).isEqualTo(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.HIGH, 0, "high"));
-        assertThat(priorityHigh).isEqualTo(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.HIGH, 1, "nothigh"));
+        assertThat(priorityHigh).isEqualTo(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.HIGH, 1, "nothing"));
         assertThat(priorityHigh).isEqualTo(new DPTEnumValue<>(new DPTEnum<>("123.456", "foobar"), DPT20.Priority.HIGH, 0, "high"));
         assertThat(priorityHigh).hasSameHashCodeAs(priorityHigh);
         assertThat(priorityHigh).hasSameHashCodeAs(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.HIGH, 0, "high"));
@@ -65,12 +65,12 @@ public final class DPTEnumValueTest {
         assertThat(priorityHigh).isNotEqualTo(null);
         // not equals because enum field is different
         assertThat(priorityHigh).isNotEqualTo(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.MEDIUM, 0, "high"));
-        assertThat(priorityHigh).isNotEqualTo(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.MEDIUM, 1, "nothigh"));
+        assertThat(priorityHigh).isNotEqualTo(new DPTEnumValue<>(DPT_ENUM, DPT20.Priority.MEDIUM, 1, "nothing"));
         // not equals because DPT is different
         assertThat(priorityHigh).isNotEqualTo(new DPTEnumValue<>(new DPTEnum<>("456.123", "foobar"), DPT20.Priority.HIGH, 0, "high"));
 
         // toString
-        final var toString = String.format("DPTEnumValue{dpt=%s, enumField=%s.HIGH, value=0, description=high, byteArray=0x00}", DPT_ENUM,
+        final var toString = String.format("DPTEnumValue{dpt=%s, ordinal=0, enumField=%s.HIGH, description=high, byteArray=0x00}", DPT_ENUM,
                 DPT20.Priority.class.getName());
         assertThat(priorityHigh).hasToString(toString);
     }
