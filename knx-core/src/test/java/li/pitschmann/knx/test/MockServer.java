@@ -18,9 +18,7 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -35,6 +33,7 @@ import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -72,8 +72,8 @@ public final class MockServer implements Runnable, Closeable {
     private static final AtomicInteger globalChannelIdPool = new AtomicInteger();
     private final AtomicInteger tunnelingRequestSequence = new AtomicInteger();
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
-    private final List<Body> receivedBodies = Collections.synchronizedList(Lists.newLinkedList());
-    private final List<Body> sentBodies = Collections.synchronizedList(Lists.newLinkedList());
+    private final List<Body> receivedBodies = Collections.synchronizedList(new LinkedList<>());
+    private final List<Body> sentBodies = Collections.synchronizedList(new LinkedList<>());
     private final MockServerChannel serverChannel;
     private final MockServerTest mockServerAnnotation;
     private final ExecutorService executorService;
@@ -137,7 +137,7 @@ public final class MockServer implements Runnable, Closeable {
         // Subscribe KNX Mock Server Project Logic if KNX project path is defined
         if (!Strings.isNullOrEmpty(mockServerAnnotation.projectPath())) {
             final var xmlProjectPath = Paths.get(mockServerAnnotation.projectPath());
-            Preconditions.checkArgument(Files.exists(xmlProjectPath), "Project file doesn't exists at: %s", xmlProjectPath);
+            Preconditions.checkArgument(Files.exists(xmlProjectPath), "Project file doesn't exists at: {}", xmlProjectPath);
             final var projectLogic = new MockServerProjectLogic(this, KnxprojParser.parse(xmlProjectPath));
             publisher.subscribe(Executors.wrapSubscriberWithMDC(projectLogic));
         }

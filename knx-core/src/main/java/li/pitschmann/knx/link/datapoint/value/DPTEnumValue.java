@@ -19,13 +19,13 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT20;
 import li.pitschmann.knx.link.datapoint.DPT23;
 import li.pitschmann.knx.link.datapoint.DPTEnum;
 import li.pitschmann.knx.link.datapoint.DataPointTypeEnum;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,8 +52,8 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
      * @param description
      */
     public DPTEnumValue(final @Nonnull DPTEnum<T> dpEnum, final @Nonnull T enumField, final int ordinal, final @Nullable String description) {
-        Preconditions.checkNotNull(dpEnum);
-        Preconditions.checkNotNull(enumField);
+        Preconditions.checkNonNull(dpEnum);
+        Preconditions.checkNonNull(enumField);
         Preconditions.checkArgument(ordinal >= 0 && ordinal <= 0xFF, "The ordinal of enum should be between 0 and 255.");
         this.dpt = dpEnum;
         this.enumField = enumField;

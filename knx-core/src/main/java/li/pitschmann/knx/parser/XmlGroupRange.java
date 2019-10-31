@@ -19,9 +19,9 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,8 +46,8 @@ public final class XmlGroupRange {
     private int rangeStart;
     private int rangeEnd;
 
-    private List<XmlGroupRange> childGroupRanges = Lists.newLinkedList();
-    private List<XmlGroupAddress> groupAddresses = Lists.newLinkedList();
+    private List<XmlGroupRange> childGroupRanges = new LinkedList<>();
+    private List<XmlGroupAddress> groupAddresses = new LinkedList<>();
 
     public String getId() {
         return id;

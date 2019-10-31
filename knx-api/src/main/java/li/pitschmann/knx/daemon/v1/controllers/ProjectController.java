@@ -1,10 +1,10 @@
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.daemon.v1.json.ProjectStructureRequest;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupAddressStyle;
 import li.pitschmann.knx.parser.XmlGroupRange;
+import li.pitschmann.utils.Preconditions;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
@@ -156,11 +156,11 @@ public final class ProjectController extends AbstractController {
 
     private void checkArgumentMainGroup(final int main) {
         Preconditions.checkArgument(main >= 0 && main <= 31,
-                "Invalid number of main group provided, should be within range [0-31]: %s", main);
+                "Invalid number of main group provided, should be within range [0-31]: {}", main);
     }
 
     private void checkArgumentMiddleGroup(final int middle) {
         Preconditions.checkArgument(middle >= 0 && middle <= 7,
-                "Invalid number of middle group provided, should be within range [0-7]: %s", middle);
+                "Invalid number of middle group provided, should be within range [0-7]: {}", middle);
     }
 }

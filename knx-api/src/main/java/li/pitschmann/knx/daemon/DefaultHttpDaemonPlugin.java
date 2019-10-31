@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.daemon;
 
-import com.google.common.base.Preconditions;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.parser.KnxprojParser;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.core.HttpConstants;
@@ -51,11 +51,7 @@ public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
 
     @Override
     public void onStart() {
-        Preconditions.checkNotNull(client);
-        Preconditions.checkState(client.getConfig().getProjectPath() != null, "Project Path is not provided!");
-
         final var xmlProject = KnxprojParser.parse(Objects.requireNonNull(client.getConfig().getProjectPath()));
-
         final var httpDaemonApplication = new HttpDaemonApplication();
         httpDaemonApplication.setXmlProject(xmlProject);
         httpDaemonApplication.setKnxClient(client);

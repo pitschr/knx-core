@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 
@@ -137,7 +137,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      */
     @Nonnull
     default V toValue(final @Nonnull String arg, final String... moreArgs) {
-        Preconditions.checkNotNull(arg);
+        Preconditions.checkNonNull(arg);
         if (moreArgs.length == 0) {
             return toValue(new String[]{arg});
         } else {

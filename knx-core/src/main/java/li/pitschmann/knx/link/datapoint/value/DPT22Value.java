@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT22;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 
@@ -246,7 +246,8 @@ public final class DPT22Value {
         }
 
         public boolean isChannelActive(final int channel) {
-            Preconditions.checkArgument(channel >= 1 && channel <= 16, "Channel must be between 1 and 16 (actual: " + channel + ")");
+            Preconditions.checkArgument(channel >= 1 && channel <= 16,
+                    "Channel must be between 1 and 16 (actual: {})", channel);
             return this.isSet(channel - 1);
         }
 

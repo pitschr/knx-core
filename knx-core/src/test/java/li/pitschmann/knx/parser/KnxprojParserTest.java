@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.collect.Iterables;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +72,7 @@ public class KnxprojParserTest {
         assertThat(xmlGroupRanges).hasSize(3);
 
         // Main Group: 0
-        final var mainGroup0 = Iterables.get(xmlGroupRanges, 0);
+        final var mainGroup0 = xmlGroupRanges.get(0);
         assertThat(mainGroup0.getId()).isEqualTo("P-0501-0_GR-47");
         assertThat(mainGroup0.getChildGroupRanges()).hasSize(8);
         assertThat(mainGroup0.getGroupAddresses()).isEmpty();
@@ -82,7 +81,7 @@ public class KnxprojParserTest {
         assertThat(subGroup0_0.getGroupAddresses()).hasSize(46);
 
         // Main Group: 1
-        final var mainGroup1 = Iterables.get(xmlGroupRanges, 1);
+        final var mainGroup1 = xmlGroupRanges.get(1);
         assertThat(mainGroup1.getId()).isEqualTo("P-0501-0_GR-67");
         assertThat(mainGroup1.getChildGroupRanges()).hasSize(5);
         assertThat(mainGroup1.getGroupAddresses()).isEmpty();
@@ -91,7 +90,7 @@ public class KnxprojParserTest {
         assertThat(subGroup1_2.getGroupAddresses()).hasSize(3);
 
         // Main Group: 2
-        final var mainGroup2 = Iterables.get(xmlGroupRanges, 2);
+        final var mainGroup2 = xmlGroupRanges.get(2);
         assertThat(mainGroup2.getId()).isEqualTo("P-0501-0_GR-69");
         assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
         assertThat(mainGroup2.getGroupAddresses()).isEmpty();

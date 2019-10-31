@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ final class ConfigFileUtil {
      */
     public static ConfigBuilder loadFile(final @Nonnull Path filePath) {
         Preconditions.checkArgument(Files.isReadable(filePath),
-                "The file doesn't exists or is not readable: %s", filePath);
+                "The file doesn't exists or is not readable: {}", filePath);
 
         try {
             final var lines = Files.readAllLines(filePath);

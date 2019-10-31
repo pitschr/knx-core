@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
@@ -32,6 +31,7 @@ import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +70,8 @@ public class BaseKnxClient implements KnxClient {
 
     @Override
     public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull byte[] apciData) {
-        Preconditions.checkNotNull(address);
-        Preconditions.checkNotNull(apciData);
+        Preconditions.checkNonNull(address);
+        Preconditions.checkNonNull(apciData);
         Preconditions.checkState(isRunning());
 
         if (getConfig().isRoutingEnabled()) {
@@ -96,7 +96,7 @@ public class BaseKnxClient implements KnxClient {
 
     @Override
     public boolean readRequest(final @Nonnull GroupAddress address) {
-        Preconditions.checkNotNull(address);
+        Preconditions.checkNonNull(address);
         Preconditions.checkState(isRunning());
 
         if (getConfig().isRoutingEnabled()) {

@@ -18,15 +18,13 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,9 +82,9 @@ public final class KnxprojParser {
     @Nonnull
     public static XmlProject parse(final @Nonnull Path path) {
         Preconditions.checkArgument(Files.isReadable(path),
-                "File '%s' doesn't exists or is not readable.", path);
+                "File '{}' doesn't exists or is not readable.", path);
         Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION),
-                "Only '%s' is supported.", FILE_EXTENSION);
+                "Only '{}' is supported.", FILE_EXTENSION);
 
         log.debug("File '{}' to be parsed.", path);
 
@@ -171,7 +169,7 @@ public final class KnxprojParser {
         vtdGen.parse(false);
         final var vtdNav = vtdGen.getNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
-        final var groupRanges = Lists.<XmlGroupRange>newLinkedList();
+        final var groupRanges = new LinkedList<XmlGroupRange>();
 
         vtdAutoPilot.selectXPath("/KNX/Project/Installations//GroupAddresses/GroupRanges");
         vtdAutoPilot.evalXPath();
@@ -404,8 +402,8 @@ public final class KnxprojParser {
     @Nonnull
     private static byte[] findAndReadToBytes(final @Nonnull ZipFile zipFile,
                                              final @Nonnull String filePathRegEx) throws IOException {
-        Preconditions.checkNotNull(zipFile);
-        Preconditions.checkNotNull(filePathRegEx);
+        Preconditions.checkNonNull(zipFile);
+        Preconditions.checkNonNull(filePathRegEx);
         // find file that matches filePathRegEx in ZIP file
         final var zipEntry = zipFile.stream().filter(f -> f.getName().matches(filePathRegEx))
                 .findFirst()
@@ -414,7 +412,7 @@ public final class KnxprojParser {
 
         byte[] bytes;
         try (final var in = zipFile.getInputStream(zipEntry)) {
-            bytes = ByteStreams.toByteArray(in);
+            bytes = in.readAllBytes();
             if (log.isDebugEnabled()) {
                 log.debug("Data stream from file '{}':\n{}", zipEntry.getName(), new String(bytes, StandardCharsets.UTF_8));
             }

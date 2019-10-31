@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.main;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,9 +18,10 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -55,8 +56,8 @@ public class XmlGroupRangeTest {
         xmlGroupRange.setRangeStart(13);
         xmlGroupRange.setRangeEnd(17);
         xmlGroupRange.setName("XGR-NAME");
-        xmlGroupRange.setChildGroupRanges(Lists.newArrayList(xmlSubGroupRange1, xmlSubGroupRange2));
-        xmlGroupRange.setGroupAddresses(Lists.newArrayList(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3));
+        xmlGroupRange.setChildGroupRanges(List.of(xmlSubGroupRange1, xmlSubGroupRange2));
+        xmlGroupRange.setGroupAddresses(List.of(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3));
 
         // check if setter/getter are working
         assertThat(xmlGroupRange.getId()).isEqualTo("XGR-ID");

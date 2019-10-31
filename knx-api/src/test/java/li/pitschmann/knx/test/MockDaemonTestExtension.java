@@ -79,11 +79,11 @@ public final class MockDaemonTestExtension
 
             // wait until mock server is ready for receiving packets from client
             // if will take longer than 30 seconds -> abort
-            if (!Sleeper.milliseconds(100, () -> mockServer.isReady(), 30000)) {
-                throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
+            if (!Sleeper.milliseconds(100, mockServer::isReady, 30000)) {
+                throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms).");
             }
             mockServers.put(context, mockServer);
-            log.debug("KNX Mock Server started (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            log.debug("KNX Mock Server started (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
             // -------------------------------------
             // 2) create HTTP Mock Daemon Extension
@@ -91,7 +91,7 @@ public final class MockDaemonTestExtension
             stopwatch.reset();
             final var mockHttpDaemon = new MockHttpDaemonPlugin();
             mockDaemons.put(context, mockHttpDaemon);
-            log.debug("KNX Mock Daemon created (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            log.debug("KNX Mock Daemon created (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
             // -------------------------------------
             // 3) start KNX client
@@ -118,8 +118,8 @@ public final class MockDaemonTestExtension
             executorService.shutdown();
 
             // wait mock http daemon is ready (it will be started by KNX client as plugin)
-            if (!Sleeper.milliseconds(100, () -> mockHttpDaemon.isReady(), 30000)) {
-                throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms).");
+            if (!Sleeper.milliseconds(100, mockHttpDaemon::isReady, 30000)) {
+                throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms).");
             }
             //Sleeper.seconds(5);
             log.debug("KNX Client started (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));

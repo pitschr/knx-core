@@ -21,6 +21,7 @@ package li.pitschmann.knx.link.body;
 import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,8 +84,8 @@ public final class BodyFactory {
     @SuppressWarnings("unchecked")
     @Nonnull
     public static <T extends Body> T valueOf(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bodyBytes) {
-        Objects.requireNonNull(serviceType);
-        Objects.requireNonNull(bodyBytes);
+        Preconditions.checkNonNull(serviceType);
+        Preconditions.checkNonNull(bodyBytes);
 
         // try to find the correct body
         if (serviceType == ServiceType.TUNNELING_REQUEST) {

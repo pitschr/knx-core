@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -62,7 +62,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      */
     final void addValue(final @Nonnull DPTEnumValue<T> enumValue) {
         Preconditions.checkArgument(!this.values.containsKey(enumValue.getOrdinal()),
-                String.format("Data point field with value '%s' already registered. Please check your DPT implementation!", enumValue));
+                "Data point field with value '{}' already registered. Please check your DPT implementation!", enumValue);
         this.values.put(enumValue.getOrdinal(), enumValue);
     }
 
