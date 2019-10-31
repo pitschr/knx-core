@@ -19,10 +19,10 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT19;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +83,10 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                       final @Nonnull LocalTime time,
                       final @Nullable Flags flags) {
         super(DPT19.DATE_TIME);
-        Preconditions.checkNotNull(date);
-        Preconditions.checkNotNull(time);
+        Preconditions.checkNonNull(date);
+        Preconditions.checkNonNull(time);
         Preconditions.checkArgument(date.getYear() >= 1900 && date.getYear() <= 2155,
-                "Year must be between '1900..2155'. Got: " + date.getYear());
+                "Year must be between '1900..2155'. Got: {}", date.getYear());
 
         this.dayOfWeek = dayOfWeek;
         this.date = date;

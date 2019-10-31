@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,10 +62,10 @@ public final class ConfigBuilder {
      * @param port           the port of KNX Net/IP device (must be within range of 1024 .. 65535)
      */
     private ConfigBuilder(final boolean routingEnabled, final @Nonnull InetAddress address, final int port) {
-        Preconditions.checkNotNull(address);
+        Preconditions.checkNonNull(address);
         // accept only 1024 .. 65535, other ports are reserved
         Preconditions.checkArgument(port >= 1024 && port <= 65535,
-                "Port is outside of range [1024 .. 65535]: %s", port);
+                "Port is outside of range [1024 .. 65535]: {}", port);
 
         this.routingEnabled = routingEnabled;
         this.remoteControlAddress = address;
@@ -106,14 +106,14 @@ public final class ConfigBuilder {
         else if (address.endsWith(":")) {
             final var addressSplitted = address.split(":");
             Preconditions.checkArgument(addressSplitted.length == 1,
-                    "Unsupported Address format provided (expected: '<host>:'): %s", address);
+                    "Unsupported Address format provided (expected: '<host>:'): {}", address);
             return create(Networker.getByAddress(addressSplitted[0]));
         }
         // address contains ':' character -> assuming it is <host>:<port>
         else if (address.contains(":")) {
             final var addressSplitted = address.split(":");
             Preconditions.checkArgument(addressSplitted.length == 2,
-                    "Unsupported Address format provided (expected: '<host>:<port>'): %s", address);
+                    "Unsupported Address format provided (expected: '<host>:<port>'): {}", address);
 
             final var host = Strings.isNullOrEmpty(addressSplitted[0]) ? Networker.getAddressUnbound() : Networker.getByAddress(addressSplitted[0]);
             final var port = Integer.valueOf(addressSplitted[1]);
@@ -139,7 +139,6 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public static ConfigBuilder create(final @Nonnull InetAddress address) {
-        Preconditions.checkNotNull(address);
         if (address.isMulticastAddress()) {
             return routing(address);
         } else {
@@ -159,7 +158,6 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public static ConfigBuilder create(final @Nonnull InetAddress address, final int port) {
-        Preconditions.checkNotNull(address);
         if (address.isMulticastAddress()) {
             return routing(address, port);
         } else {
@@ -206,9 +204,8 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public static ConfigBuilder routing(final @Nonnull InetAddress address, final int port) {
-        Preconditions.checkNotNull(address);
         Preconditions.checkArgument(address.isMulticastAddress(),
-                "Given address is not suitable for routing: %s", address.getHostAddress());
+                "Given address is not suitable for routing: {}", address.getHostAddress());
         return new ConfigBuilder(true, address, port);
     }
 
@@ -284,9 +281,8 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public static ConfigBuilder tunneling(final @Nonnull InetAddress address, final int port, final boolean natEnabled) {
-        Preconditions.checkNotNull(address);
         Preconditions.checkArgument(address.isAnyLocalAddress() || !address.isMulticastAddress(),
-                "Given address is not suitable for tunneling: %s", address.getHostAddress());
+                "Given address is not suitable for tunneling: {}", address.getHostAddress());
         return new ConfigBuilder(false, address, port).setting(ConfigConstants.NAT, natEnabled);
     }
 
@@ -317,8 +313,7 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public ConfigBuilder setting(final @Nonnull String key, final @Nullable Object value) {
-        Preconditions.checkNotNull(key);
-        final var configConstant = ConfigConstants.getConfigConstantByKey(key);
+        final var configConstant = ConfigConstants.getConfigConstantByKey(Objects.requireNonNull(key));
         if (configConstant == null) {
             this.settings.put(key.toLowerCase(), value);
         } else if (value == null) {
@@ -350,9 +345,9 @@ public final class ConfigBuilder {
     @Nonnull
     public <T> ConfigBuilder setting(final @Nonnull ConfigConstant<T> key, final @Nullable T value) {
         Preconditions.checkArgument(key.isSettable(),
-                "This key is protected and cannot be used for setting: %s", key.getKey());
+                "This key is protected and cannot be used for setting: {}", key.getKey());
         Preconditions.checkArgument(value == null || key.isValid(value),
-                "The value seems not be applicable for config '%s': %s", key.getKey(), value);
+                "The value seems not be applicable for config '{}': {}", key.getKey(), value);
 
         this.settings.put(key.getKey(), value);
         return this;

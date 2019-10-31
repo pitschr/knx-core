@@ -1,12 +1,12 @@
 package li.pitschmann.knx.daemon.v1.gson;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.KnxAddress;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

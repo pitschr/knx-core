@@ -19,13 +19,13 @@
 package li.pitschmann.knx.link.datapoint;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +134,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      */
     @Nonnull
     public final V toValue(final @Nonnull String[] args) {
-        Preconditions.checkNotNull(args, "No arguments provided for conversion to data point value object.");
+        Preconditions.checkNonNull(args, "No arguments provided for conversion to data point value object.");
 
         // not compatible?
         boolean isCompatible;
@@ -201,7 +201,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      */
     @Nonnull
     private V tryParseAsHexString(final @Nonnull String[] args) {
-        Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string starting with '0x' expected: %s", args[0]);
+        Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string should start with '0x'. Actual: {}", args[0]);
         final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
         return this.toValue(Bytes.toByteArray(joinedString));
     }

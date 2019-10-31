@@ -19,8 +19,8 @@
 package li.pitschmann.knx.parser;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.body.address.GroupAddress;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

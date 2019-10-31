@@ -18,9 +18,7 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointTypeEnum;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointValueEnum;
@@ -28,6 +26,7 @@ import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.link.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +119,7 @@ public final class DataPointTypeRegistry {
         // inner class is enum class and has data point type annotation
         log.debug("Inner Class: {} [id={}, description={}]", enumInnerClass, classAnnotation.id(), classAnnotation.description());
         Preconditions.checkArgument(!dataPointTypeMap.containsKey(classAnnotation.id()),
-                String.format("Data point type key '%s' is already registered. Please check your DPT implementation!", classAnnotation.id()));
+                String.format("Data point type key '{}' is already registered. Please check your DPT implementation!", classAnnotation.id()));
         final var dptEnum = new DPTEnum<T>(classAnnotation.id(), classAnnotation.description());
 
         // iterate for all enum constant fields which have the desired annotation
@@ -136,7 +135,7 @@ public final class DataPointTypeRegistry {
                 final var dptEnumValue = new DPTEnumValue<>(dptEnum, fieldInstance, fieldAnnotation.value(),
                         fieldAnnotation.description());
                 dptEnum.addValue(dptEnumValue);
-                dataPointEnumMap.put(dptEnumValue.getEnumField(), dptEnumValue);
+                dataPointEnumMap.put(dptEnumValue.getEnum(), dptEnumValue);
                 log.debug("Enum Value registered: {}", dptEnumValue);
             } catch (final Exception ex) {
                 log.error("Exception for field '{}'", field.getName(), ex);
@@ -166,8 +165,8 @@ public final class DataPointTypeRegistry {
 
             try {
                 Preconditions.checkArgument(!dataPointTypeMap.containsKey(fieldAnnotation.id()), String.format(
-                        "Data Point Type key '%s' is already registered. Please check your DPT implementation!", fieldAnnotation.id()));
-                final var fieldInstance = (DataPointType) field.get(null);
+                        "Data Point Type key '{}' is already registered. Please check your DPT implementation!", fieldAnnotation.id()));
+                final var fieldInstance = (DataPointType<?>) field.get(null);
                 dataPointTypeMap.put(fieldAnnotation.id(), fieldInstance);
 
                 // register DPT-x and DPST-x-y format as well which are used in '*.knxproj' file
@@ -180,7 +179,7 @@ public final class DataPointTypeRegistry {
                 }
                 // register DPST-x-y for all fields
                 // example: 1.001 -> DPST-1-1
-                dataPointTypeMap.put("DPST-" + dptIds[0] + "-" + Ints.tryParse(dptIds[1]), fieldInstance);
+                dataPointTypeMap.put("DPST-" + dptIds[0] + "-" + Integer.parseInt(dptIds[1]), fieldInstance);
 
             } catch (final Exception ex) {
                 log.error("Exception for field '{}'", field.getName(), ex);

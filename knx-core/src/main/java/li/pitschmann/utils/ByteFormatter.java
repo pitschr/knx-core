@@ -18,8 +18,6 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.Preconditions;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.stream.Collectors;
@@ -54,7 +52,7 @@ public final class ByteFormatter {
      */
     @Nonnull
     public static String formatHex(final int number) {
-        Preconditions.checkArgument(number >= 0, "Argument 'number' must be positive.");
+        Preconditions.checkArgument(number >= 0, "Argument 'number' must be positive. Got: {}", number);
 
         final var chars = Integer.toHexString(number).toUpperCase().toCharArray();
         final var sb = new StringBuilder();

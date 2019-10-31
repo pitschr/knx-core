@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.main;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +141,7 @@ public abstract class AbstractKnxMain {
      *
      * @param args
      * @param parameterNames parameter names, may be comma-separated
-     * @param defaultValues default values in case the parameter could not be found or not parsed correctly
+     * @param defaultValues  default values in case the parameter could not be found or not parsed correctly
      * @param function
      * @return the value of parameter, otherwise {@code defaultValue}
      */

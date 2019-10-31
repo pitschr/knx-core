@@ -19,10 +19,10 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT10;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
 
     public DPT10Value(final @Nullable DayOfWeek dayOfWeek, final @Nonnull LocalTime time) {
         super(DPT10.TIME_OF_DAY);
-        Preconditions.checkNotNull(time);
+        Preconditions.checkNonNull(time);
 
         this.dayOfWeek = dayOfWeek;
         this.time = time;

@@ -18,7 +18,6 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
@@ -45,6 +44,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -262,8 +262,7 @@ public final class Networker {
             log.error("Error during getting network interfaces", se);
         }
 
-        networkInterfaceMap = Collections.unmodifiableMap(tmpMap);
-        return networkInterfaceMap;
+        return networkInterfaceMap = Map.copyOf(tmpMap);
     }
 
     /**
@@ -275,7 +274,7 @@ public final class Networker {
      */
     @Nonnull
     public static List<MembershipKey> joinChannels(final @Nonnull MulticastChannel channel, final @Nonnull InetAddress group) {
-        Preconditions.checkNotNull(group);
+        Preconditions.checkNonNull(group);
         // add all applicable network interfaces for discovery and join the multicast group
         // the membership keys will be return to allow to leave the joined multicast groups
         // by dropping of membership

@@ -18,13 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
-import li.pitschmann.knx.link.datapoint.value.DataPointValueEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -43,7 +42,7 @@ import java.util.Map;
  * @param <T>
  * @author PITSCHR
  */
-public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends AbstractDataPointType<DataPointValueEnum<T>> {
+public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends AbstractDataPointType<DPTEnumValue<T>> {
     private final Map<Integer, DPTEnumValue<T>> values = Maps.newHashMapWithExpectedSize(255);
 
     /**
@@ -62,13 +61,13 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      * @param enumValue
      */
     final void addValue(final @Nonnull DPTEnumValue<T> enumValue) {
-        Preconditions.checkArgument(!this.values.containsKey(enumValue.getValue()),
-                String.format("Data point field with value '%s' already registered. Please check your DPT implementation!", enumValue));
-        this.values.put(enumValue.getValue(), enumValue);
+        Preconditions.checkArgument(!this.values.containsKey(enumValue.getOrdinal()),
+                "Data point field with value '{}' already registered. Please check your DPT implementation!", enumValue);
+        this.values.put(enumValue.getOrdinal(), enumValue);
     }
 
     /**
-     * Returns a {@link DataPointValueEnum} for specified value.
+     * Returns a {@link DPTEnumValue} for specified value.
      *
      * @param value
      * @return data point enumeration value
@@ -92,7 +91,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
 
     @Nonnull
     @Override
-    protected DataPointValueEnum<T> parse(final @Nonnull byte[] bytes) {
+    protected DPTEnumValue<T> parse(final @Nonnull byte[] bytes) {
         return this.toValue(Bytes.toUnsignedInt(bytes[0]));
     }
 
@@ -103,7 +102,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
 
     @Nonnull
     @Override
-    protected DataPointValueEnum<T> parse(final @Nonnull String[] args) {
+    protected DPTEnumValue<T> parse(final @Nonnull String[] args) {
         // first try to parse it as digits only
         var digitsOnly = true;
         for (final var c : args[0].toCharArray()) {

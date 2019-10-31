@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.RequestBody;
@@ -29,14 +27,17 @@ import li.pitschmann.knx.test.action.MockAction;
 import li.pitschmann.knx.test.strategy.IgnoreStrategy;
 import li.pitschmann.knx.test.strategy.ResponseStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultDisconnectStrategy;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -65,9 +66,10 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      * Package-protected constructor for logic thread
      *
      * @param mockServer
+     * @param testAnnotation
      */
     MockServerCommunicator(final @Nonnull MockServer mockServer, final @Nonnull MockServerTest testAnnotation) {
-        Preconditions.checkNotNull(testAnnotation);
+        Preconditions.checkNonNull(testAnnotation);
         this.mockServer = Objects.requireNonNull(mockServer);
         this.commandParser = new MockServerCommandParser(mockServer, this);
 
@@ -84,7 +86,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
         // --------------------------------
         var shouldDisconnectAfterTrigger = false;
         if (testAnnotation.disconnectTrigger().length > 0) {
-            disconnectTriggers = Lists.newArrayListWithCapacity(testAnnotation.disconnectTrigger().length);
+            disconnectTriggers = new ArrayList<>(testAnnotation.disconnectTrigger().length);
             // hardcoded for now, to make it more dynamic the command must be parsed
             // no reason to do it for now!
             for (final var command : testAnnotation.disconnectTrigger()) {
@@ -103,7 +105,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
 
         // Runnable for Requests
         // --------------------------------
-        requests = Lists.newArrayListWithExpectedSize(testAnnotation.requests().length + 1);
+        requests = new ArrayList<>(testAnnotation.requests().length + 1);
         for (final var command : testAnnotation.requests()) {
             requests.add(command);
         }
@@ -122,7 +124,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     private void registerResponseStrategies(final @Nonnull ServiceType serviceType,
                                             final @Nullable Class<? extends ResponseStrategy>[] strategyClasses) {
         // re-init values for given service types
-        responseStrategies.put(serviceType, Lists.newLinkedList());
+        responseStrategies.put(serviceType, new LinkedList<>());
         serviceTypeCounter.put(serviceType, new AtomicInteger());
         // add strategies
         if (strategyClasses == null) {

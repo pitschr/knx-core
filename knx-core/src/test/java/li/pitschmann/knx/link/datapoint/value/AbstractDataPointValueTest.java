@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test {@link AbstractDataPointValue}
@@ -41,17 +43,12 @@ public class AbstractDataPointValueTest {
 
         // values
         assertThat(value1.getDPT()).isEqualTo(DPT1.SWITCH);
-        assertThatThrownBy(() -> value1.toByteArray()).isInstanceOf(UnsupportedOperationException.class);
 
         // equals + hashcode not implemented
+        assertThat(value1).isNotEqualTo(null);
         assertThat(value1).isEqualTo(value1);
         assertThat(value2).isNotEqualTo(value1);
         assertThat(value2.hashCode()).isNotEqualTo(value1.hashCode());
-
-        // not equals
-        assertThat(value1).isNotEqualTo(null);
-        assertThat(value1).isNotEqualTo(new Object());
-        assertThat(value1).isNotEqualTo(new TestDataPointValue(DPT1.SWITCH));
     }
 
     /**
@@ -64,7 +61,10 @@ public class AbstractDataPointValueTest {
         assertThat(AbstractDataPointValue.getValueAsText(45678.90f)).isEqualTo("45678.898438"); // float is not precise
         assertThat(AbstractDataPointValue.getValueAsText(1234567890)).isEqualTo("1234567890");
         assertThat(AbstractDataPointValue.getValueAsText(1234567890123456789L)).isEqualTo("1234567890123456789");
-        assertThat(AbstractDataPointValue.getValueAsText(new HelloWorldObject())).isEqualTo("Hello World!");
+
+        final var helloWorldObjectMock = mock(Object.class);
+        when(helloWorldObjectMock.toString()).thenReturn("Hello World!");
+        assertThat(AbstractDataPointValue.getValueAsText(helloWorldObjectMock)).isEqualTo("Hello World!");
     }
 
     /**
@@ -88,18 +88,6 @@ public class AbstractDataPointValueTest {
         @Override
         public byte[] toByteArray() {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
-     * Test {@link Object} class
-     *
-     * @author PITSCHR
-     */
-    private static class HelloWorldObject {
-        @Override
-        public String toString() {
-            return "Hello World!";
         }
     }
 }

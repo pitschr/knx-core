@@ -19,10 +19,10 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.DPT11;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +74,8 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
 
     public DPT11Value(final @Nonnull LocalDate date) {
         super(DPT11.DATE);
-        Preconditions.checkNotNull(date);
-        Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
+        Preconditions.checkNonNull(date);
+        Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: {}", date.getYear());
         this.date = date;
         this.byteArray = toByteArray(date);
     }

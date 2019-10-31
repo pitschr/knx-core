@@ -18,26 +18,28 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import li.pitschmann.knx.link.datapoint.DPTEnum;
-import li.pitschmann.knx.link.datapoint.DataPointTypeEnum;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
- * Enum interface for Data Point Value implementations
+ * Test {@link DataPointValue}
  *
  * @author PITSCHR
  */
-public interface DataPointValueEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends DataPointValue<DPTEnum<T>> {
-    /**
-     * Returns the human-friendly description of current {@link DataPointValueEnum}
-     *
-     * @return description
-     */
-    String getDescription();
+public class DataPointValueTest {
 
-    /**
-     * Returns the value of current {@link DataPointValueEnum}
-     *
-     * @return value
-     */
-    int getValue();
+    @Test
+    @DisplayName("Test #toText() that is not being overridden")
+    public void testToText() {
+        final var dptValue = mock(DataPointValue.class);
+        when(dptValue.toByteArray()).thenReturn(new byte[]{0x44, 0x56, 0x78});
+        when(dptValue.toText()).thenCallRealMethod();
+
+        assertThat(dptValue.toText()).isEqualTo("0x44 56 78");
+    }
+
 }

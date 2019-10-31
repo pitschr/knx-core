@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -54,7 +54,7 @@ public class XmlProjectTest {
         when(xmlGroupAddress3.getId()).thenReturn("xga3-id");
         when(xmlGroupAddress3.getAddress()).thenReturn("3");
         when(xmlGroupAddress3.toString()).thenReturn("xga3");
-        final var xmlGroupAddresses = Lists.newArrayList(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3);
+        final var xmlGroupAddresses = List.of(xmlGroupAddress1, xmlGroupAddress2, xmlGroupAddress3);
 
         final var groupRange1 = mock(XmlGroupRange.class);
         when(groupRange1.getId()).thenReturn("xgg1-id");
@@ -62,7 +62,7 @@ public class XmlProjectTest {
         final var groupRange2 = mock(XmlGroupRange.class);
         when(groupRange2.getId()).thenReturn("xgg2-id");
         when(groupRange2.toString()).thenReturn("xgg2");
-        final var groupRanges = Lists.newArrayList(groupRange1, groupRange2);
+        final var groupRanges = List.of(groupRange1, groupRange2);
 
         // given
         final var xmlProject = new XmlProject();

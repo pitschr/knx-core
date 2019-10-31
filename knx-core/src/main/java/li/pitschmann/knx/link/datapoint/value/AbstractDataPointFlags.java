@@ -19,9 +19,9 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,7 +61,7 @@ abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extend
 
     public final boolean isSet(final int bit) {
         Preconditions.checkArgument(bit >= 0 && bit < this.bytes.length * 8,
-                "Bit must be between 0 and " + ((this.bytes.length * 8) - 1) + " (actual: " + bit + ")");
+                "Bit must be between 0 and {} (actual: {})", ((this.bytes.length * 8) - 1), bit);
         // e.g. 2-bytes:
         // b15 ... b8 = byte0
         // b7 ... b0 = byte1

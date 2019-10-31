@@ -1,9 +1,9 @@
 package li.pitschmann.knx.daemon.v1.controllers;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.parser.XmlProject;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
@@ -65,7 +65,7 @@ abstract class AbstractController extends Controller {
      * @return {@code true} if searched expand parameter exists, otherwise {@code false}
      */
     protected final boolean containsExpand(final @Nonnull String name) {
-        Preconditions.checkNotNull(name);
+        Preconditions.checkNonNull(name);
         for (final var expandParameter : getExpandParameters()) {
             if ("*".equals(expandParameter) || name.equals(expandParameter)) {
                 return true;
@@ -86,8 +86,8 @@ abstract class AbstractController extends Controller {
     protected final <T> List<T> limitAndGetAsList(final Collection<T> list) {
         final int start = getRequest().getParameter("start").toInt(0);
         final int limit = getRequest().getParameter("limit").toInt(Integer.MAX_VALUE);
-        Preconditions.checkArgument(start >= 0, "Start should be 0 or greater: %s", start);
-        Preconditions.checkArgument(limit >= 0, "Limit should be 0 or greater: %s", limit);
+        Preconditions.checkArgument(start >= 0, "Start should be 0 or greater: {}", start);
+        Preconditions.checkArgument(limit >= 0, "Limit should be 0 or greater: {}", limit);
 
         if (start == 0 && limit == Integer.MAX_VALUE) {
             log.trace("No range defined.");

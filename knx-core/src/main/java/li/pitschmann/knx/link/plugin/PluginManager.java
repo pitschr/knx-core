@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
+import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +68,6 @@ public final class PluginManager implements AutoCloseable {
     private KnxClient client;
 
     public PluginManager(final @Nonnull Config config) {
-        Preconditions.checkNotNull(config);
-
         final var pluginExecutorPoolSize = config.getPluginExecutorPoolSize();
         pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
         log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
@@ -164,18 +162,16 @@ public final class PluginManager implements AutoCloseable {
     @Nonnull
     public Plugin registerPlugin(final @Nonnull Path filePath, final @Nonnull String className) {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
-                "File doesn't end with '.jar' extension: %s", filePath);
-        Preconditions.checkNotNull(className);
+                "File doesn't end with '.jar' extension: {}", filePath);
+        Preconditions.checkNonNull(className);
+        Preconditions.checkArgument(Files.isReadable(filePath),
+                "File doesn't exists or is not readable: {}", filePath);
 
         log.debug("Try to load plugin '{}' from path: {}", className, filePath);
-        try {
-            Preconditions.checkArgument(Files.isReadable(filePath),
-                    "File doesn't exists or is not readable: %s", filePath);
-
-            final var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()});
+        try (var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()})) {
             final var cls = classLoader.loadClass(className);
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
-                    "Seems the given plugin is not an instance of %s: %s", Plugin.class, className);
+                    "Seems the given plugin is not an instance of {}: {}", Plugin.class, className);
 
             final var plugin = (Plugin) cls.getDeclaredConstructor().newInstance();
             log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
@@ -194,7 +190,7 @@ public final class PluginManager implements AutoCloseable {
     private void registerPluginInternal(final @Nonnull Plugin plugin) {
         final var pluginClass = plugin.getClass();
         Preconditions.checkArgument(getPlugin(pluginClass) == null,
-                "There is already a plugin registered for class: %s", pluginClass);
+                "There is already a plugin registered for class: {}", pluginClass);
 
         log.debug("Register plugin: {}", plugin);
         allPlugins.add(plugin);
@@ -217,7 +213,7 @@ public final class PluginManager implements AutoCloseable {
      */
     @Nullable
     public <T extends Plugin> T getPlugin(final @Nonnull Class<T> pluginClass) {
-        Preconditions.checkNotNull(pluginClass);
+        Preconditions.checkNonNull(pluginClass);
         for (final var plugin : allPlugins) {
             if (pluginClass.equals(plugin.getClass())) {
                 return pluginClass.cast(plugin);
@@ -234,7 +230,7 @@ public final class PluginManager implements AutoCloseable {
      * @return An existing instance of {@link Plugin} if found, otherwise {@code null}
      */
     public <T extends Plugin> T getPlugin(final @Nonnull String className) {
-        Preconditions.checkNotNull(className);
+        Preconditions.checkNonNull(className);
         for (final var plugin : allPlugins) {
             if (className.equals(plugin.getClass().getName())) {
                 @SuppressWarnings("unchecked") final var pluginCast = (T) plugin;
@@ -252,7 +248,7 @@ public final class PluginManager implements AutoCloseable {
     public void unregisterPlugin(final @Nonnull Plugin plugin) {
         final var pluginClass = plugin.getClass();
         Preconditions.checkArgument(getPlugin(pluginClass) != null,
-                "No plugin is registered for class: %s", pluginClass);
+                "No plugin is registered for class: {}", pluginClass);
 
         // plugin class is registered, remove it from extension and/or observer plugin lists
         UNREGISTER_PLUGIN_FUNCTION.accept(allPlugins, pluginClass);

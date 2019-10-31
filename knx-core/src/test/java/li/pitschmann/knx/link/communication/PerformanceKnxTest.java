@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
@@ -34,6 +33,7 @@ import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,7 +83,7 @@ public class PerformanceKnxTest {
         mockServer.waitDone();
 
         // assert packets
-        final var expectedClasses = Lists.<Class<? extends Body>>newLinkedList();
+        final var expectedClasses = new LinkedList<Class<? extends Body>>();
         expectedClasses.add(DescriptionRequestBody.class);
         expectedClasses.add(ConnectRequestBody.class);
         expectedClasses.add(ConnectionStateRequestBody.class);
@@ -136,7 +136,7 @@ public class PerformanceKnxTest {
         }
 
         // assert packets
-        final var expectedClasses = Lists.<Class<? extends Body>>newLinkedList();
+        final var expectedClasses = new LinkedList<Class<? extends Body>>();
         expectedClasses.add(DescriptionRequestBody.class);
         expectedClasses.add(ConnectRequestBody.class);
         expectedClasses.add(ConnectionStateRequestBody.class);

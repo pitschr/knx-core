@@ -18,9 +18,12 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
@@ -30,16 +33,25 @@ import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link BaseKnxClient}
@@ -86,6 +98,39 @@ public class BaseKnxClientTest {
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
+    }
+
+    @Test
+    @DisplayName("ERROR: Test read and write request throwing exceptions")
+    @SuppressWarnings("unchecked")
+    public void testReadAndWriteRequestsWithExceptions() throws ExecutionException, InterruptedException {
+        final var groupAddress = GroupAddress.of(1, 2, 3);
+
+        final var config = ConfigBuilder.tunneling().build();
+        final var baseKnxClient = spy(new BaseKnxClient(config));
+        final var internalKnxClientMock = mock(InternalKnxClient.class);
+        final var completableFutureMock = (CompletableFuture<ResponseBody>) mock(CompletableFuture.class);
+
+        when(baseKnxClient.isRunning()).thenReturn(true);
+        when(baseKnxClient.getInternalClient()).thenReturn(internalKnxClientMock);
+        when(internalKnxClientMock.getConfig()).thenReturn(config);
+        when(internalKnxClientMock.getChannelId()).thenReturn(0);
+        when(internalKnxClientMock.send(any(RequestBody.class), anyLong())).thenReturn(completableFutureMock);
+
+        // throwing ExecutionException
+        doThrow(new ExecutionException(new Throwable())).when(completableFutureMock).get();
+        assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
+        assertThat(baseKnxClient.writeRequest(groupAddress, new byte[1])).isFalse();
+
+        // throwing InterruptedException
+        // run this test in a sub-thread because it may interrupt parallel JUnit test cases otherwise
+        doThrow(new InterruptedException()).when(completableFutureMock).get();
+        final var executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
+            assertThat(baseKnxClient.writeRequest(groupAddress, new byte[1])).isFalse();
+        });
+        executor.shutdown();
     }
 
     /**

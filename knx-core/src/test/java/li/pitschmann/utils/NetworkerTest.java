@@ -20,6 +20,8 @@ package li.pitschmann.utils;
 
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.hpai.HostProtocol;
+import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,10 +35,13 @@ import java.net.SocketException;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.FileChannel;
+import java.nio.channels.MembershipKey;
+import java.nio.channels.MulticastChannel;
 import java.nio.channels.SocketChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -191,6 +196,8 @@ public class NetworkerTest {
 
         // at least one network interface available
         assertThat(netInterfaces).isNotEmpty();
+        // should return exactly same instance (cached!)
+        assertThat(Networker.getNetworkInterfaces()).isSameAs(netInterfaces);
 
         // all network interfaces should be up + list of addresses should be IPv4 only
         for (final var netInterface : netInterfaces.entrySet()) {
@@ -203,6 +210,27 @@ public class NetworkerTest {
         // should contain only one loopback address
         final var numberOfLoopbackAddress = netInterfaces.values().stream().flatMap(v -> v.stream()).filter(InetAddress::isLoopbackAddress).count();
         assertThat(numberOfLoopbackAddress).isEqualTo(1);
+    }
+
+    /**
+     * Test {@link Networker#joinChannels(MulticastChannel, InetAddress)}
+     */
+    @Test
+    @DisplayName("Test join channels (multi-cast)")
+    public void testJoinChannels() throws IOException {
+        final var channel = mock(MulticastChannel.class);
+        final var membershipKey = mock(MembershipKey.class);
+
+        // test success
+        when(channel.join(any(InetAddress.class), any(NetworkInterface.class))).thenReturn(membershipKey);
+        final var membershipKeys = Networker.joinChannels(channel, ConfigConstants.MULTICAST_ADDRESS);
+        assertThat(membershipKeys).hasSize(Networker.getNetworkInterfaces().size()); // should have same size
+        assertThat(membershipKeys.get(0)).isSameAs(membershipKey);
+        assertThatThrownBy(() -> membershipKeys.add(membershipKey)).isInstanceOf(UnsupportedOperationException.class); // should be immutable
+
+        // test failure
+        when(channel.join(any(InetAddress.class), any(NetworkInterface.class))).thenThrow(new IOException("Test I/O Exception"));
+        assertThatThrownBy(() -> Networker.joinChannels(channel, ConfigConstants.MULTICAST_ADDRESS)).isInstanceOf(KnxCommunicationException.class);
     }
 
     /**

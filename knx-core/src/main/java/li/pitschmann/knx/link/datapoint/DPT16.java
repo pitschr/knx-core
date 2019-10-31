@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.link.datapoint.value.DPT16Value;
 
+import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
@@ -120,11 +120,11 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
      *
      * @param id
      * @param desc
+     * @param charset
      */
-    private DPT16(final String id, final String desc, final Charset charset) {
+    private DPT16(final String id, final String desc, final @Nonnull Charset charset) {
         super(id, desc);
 
-        Preconditions.checkNotNull(charset);
         this.charset = charset;
         this.charsetDecoder = charset.newDecoder();
     }

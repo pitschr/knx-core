@@ -19,7 +19,6 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.body.RequestBody;
@@ -31,6 +30,7 @@ import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -63,8 +64,8 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      * @param statusData status data to be analyzed for pool
      */
     public void updateStatus(final @Nonnull KnxAddress address, final @Nullable KnxStatusData statusData) {
+        Preconditions.checkNonNull(address);
         log.trace("Update status by KNX address {}: {}", address, statusData);
-        Preconditions.checkNotNull(address);
         this.statusMap.put(address, statusData);
     }
 
@@ -83,7 +84,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      * @param address {@link KnxAddress} for which the status should be marked as dirty
      */
     public void setDirty(final @Nonnull KnxAddress address) {
-        Preconditions.checkNotNull(address);
+        Preconditions.checkNonNull(address);
         final var knxStatus = this.statusMap.get(address);
         if (knxStatus != null) {
             knxStatus.setDirty(true);
@@ -108,8 +109,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Override
     public boolean isUpdated(final @Nonnull KnxAddress address) {
-        Preconditions.checkNotNull(address);
-        final var knxStatus = this.statusMap.get(address);
+        final var knxStatus = this.statusMap.get(Objects.requireNonNull(address));
         return knxStatus != null && !knxStatus.isDirty();
     }
 
@@ -144,8 +144,8 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      */
     @Nullable
     private KnxStatusData getStatusForInternal(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
-        Preconditions.checkNotNull(address);
-        Preconditions.checkNotNull(unit);
+        Preconditions.checkNonNull(address);
+        Preconditions.checkNonNull(unit);
         final var end = System.currentTimeMillis() + unit.toMillis(duration);
         KnxStatusData statusData;
         do {

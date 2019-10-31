@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.datapoint;
 
 import li.pitschmann.knx.link.datapoint.DPT20.Priority;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,27 +31,30 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DataPointTypeEnumTest {
 
-    /**
-     * Test {@link DataPointTypeEnum} if default methods behaves correctly.
-     */
     @Test
-    public void test() {
+    @DisplayName("Test the methods of enum value")
+    public void testEnum() {
         // using an enumeration that is using DataPointTypeEnum
         final var priorityValue = Priority.HIGH.toValue();
         assertThat(priorityValue).isNotNull();
         assertThat(priorityValue.getDPT().getId()).isEqualTo("20.004");
         assertThat(priorityValue.getDPT().getDescription()).isEqualTo("Priority");
         assertThat(priorityValue.getDescription()).isEqualTo("High");
-        assertThat(priorityValue.getEnumField()).isEqualTo(Priority.HIGH);
-        assertThat(priorityValue.getValue()).isEqualTo(0);
+        assertThat(priorityValue.getEnum()).isEqualTo(Priority.HIGH);
+        assertThat(priorityValue.getOrdinal()).isEqualTo(0);
+    }
 
-        // interface methods
+    @Test
+    @DisplayName("Test the enum interfaces")
+    public void testInterfaces() {
         assertThat(Priority.HIGH.getId()).isEqualTo("20.004 - HIGH");
         assertThat(Priority.HIGH.getDescription()).isEqualTo("Priority - High");
         assertThat(Priority.HIGH.toByteArray()).containsExactly(0x00);
+        assertThat(Priority.HIGH.toText()).isEqualTo("High");
 
         assertThat(Priority.MEDIUM.getId()).isEqualTo("20.004 - MEDIUM");
         assertThat(Priority.MEDIUM.getDescription()).isEqualTo("Priority - Medium");
         assertThat(Priority.MEDIUM.toByteArray()).containsExactly(0x01);
+        assertThat(Priority.MEDIUM.toText()).isEqualTo("Medium");
     }
 }

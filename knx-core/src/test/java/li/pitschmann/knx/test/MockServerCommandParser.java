@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.collect.Lists;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.action.MockAction;
@@ -31,6 +30,7 @@ import li.pitschmann.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class MockServerCommandParser {
         // 100-times tunnelling request with CEMI bytes
         // (used in PerformanceKnxTest)
         else if ("cemi(260)={2E00BCE010FF0A96010081}".equals(command)) {
-            final var actions = Lists.<MockAction>newArrayListWithCapacity(260);
+            final var actions = new ArrayList<MockAction>(260);
             for (int i = 0; i < 260; i++) {
                 final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2E00BCE010FF0A96010081")));
                 actions.add(new RequestMockAction(this.mockServer, mockRequest.getBody()));
@@ -86,7 +86,7 @@ public class MockServerCommandParser {
         // Two corrupted bodies (used in KnxClientTest)
         else if ("raw(2)={0610020600140000000100000000000004000000}".equals(command)) {
             final var mockRequest = new MockResponse(Bytes.toByteArray("0610020600140000000100000000000004000000"));
-            return Lists.newArrayList(
+            return List.of(
                     new RequestMockAction(this.mockServer, mockRequest.getBody()), // 1
                     new RequestMockAction(this.mockServer, mockRequest.getBody()) // 2
             );

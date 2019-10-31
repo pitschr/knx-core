@@ -31,6 +31,22 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class XmlGroupAddressStyleTest {
 
     @Test
+    @DisplayName("Test code and friendly names")
+    public void testCodeAndFriendlyName() {
+        final var freeLevel = XmlGroupAddressStyle.FREE_LEVEL;
+        assertThat(freeLevel.getCode()).isEqualTo("Free");
+        assertThat(freeLevel.getFriendlyName()).isEqualTo("Free Level");
+
+        final var twoLevel = XmlGroupAddressStyle.TWO_LEVEL;
+        assertThat(twoLevel.getCode()).isEqualTo("TwoLevel");
+        assertThat(twoLevel.getFriendlyName()).isEqualTo("2-Level");
+
+        final var threeLevel = XmlGroupAddressStyle.THREE_LEVEL;
+        assertThat(threeLevel.getCode()).isEqualTo("ThreeLevel");
+        assertThat(threeLevel.getFriendlyName()).isEqualTo("3-Level");
+    }
+
+    @Test
     @DisplayName("Test #parse(String)")
     public void testParse() {
         // valid cases

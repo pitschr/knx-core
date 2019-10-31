@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import li.pitschmann.knx.link.ChannelIdAware;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
@@ -51,6 +49,7 @@ import li.pitschmann.knx.link.plugin.PluginManager;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,13 +206,13 @@ public final class InternalKnxClient implements AutoCloseable {
 
         if (this.config.isRoutingEnabled()) {
             // Routing is enabled -> communication will be done via multi cast
-            this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newRoutingChannelCommunicator(this));
+            this.channelCommunicators = List.of(CommunicatorFactory.newRoutingChannelCommunicator(this));
 
             this.controlHPAI = HPAI.useDefault();
             this.dataHPAI = HPAI.useDefault();
         } else if (this.config.isNatEnabled()) {
             // NAT is enabled -> only one communicator for control and data related packets
-            this.channelCommunicators = ImmutableList.of(CommunicatorFactory.newControlAndDataChannelCommunicator(this));
+            this.channelCommunicators = List.of(CommunicatorFactory.newControlAndDataChannelCommunicator(this));
 
             this.controlHPAI = HPAI.useDefault();
             this.dataHPAI = HPAI.useDefault();
@@ -221,7 +220,7 @@ public final class InternalKnxClient implements AutoCloseable {
             // NAT is not enabled -> two communicators (one for control, and one for data related packets)
             final var controlChannelCommunicator = CommunicatorFactory.newControlChannelCommunicator(this);
             final var dataChannelCommunicator = CommunicatorFactory.newDataChannelCommunicator(this);
-            this.channelCommunicators = ImmutableList.of(dataChannelCommunicator, controlChannelCommunicator);
+            this.channelCommunicators = List.of(dataChannelCommunicator, controlChannelCommunicator);
 
             this.controlHPAI = HPAI.of(controlChannelCommunicator.getChannel());
             this.dataHPAI = HPAI.of(dataChannelCommunicator.getChannel());

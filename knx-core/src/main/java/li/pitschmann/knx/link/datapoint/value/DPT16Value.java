@@ -19,12 +19,12 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import li.pitschmann.knx.link.datapoint.DPT16;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -101,7 +101,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     public DPT16Value(final @Nonnull DPT16 dpt, final @Nullable String characters) {
         super(dpt);
         Preconditions.checkArgument(characters == null || characters.length() <= 14,
-                String.format("The length of characters is too long (expected up to 14 characters): %s", characters));
+                "The length of characters is too long (expected up to 14 characters): {}", characters);
         this.characters = Objects.toString(characters, "");
         this.byteArray = toByteArray(characters, dpt.getCharset());
     }

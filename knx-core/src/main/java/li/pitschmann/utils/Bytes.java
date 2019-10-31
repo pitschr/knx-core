@@ -18,8 +18,6 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.Preconditions;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
@@ -92,8 +90,7 @@ public final class Bytes {
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
         // max size of short is Short#MAX_VALUE
         Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
-                "Byte array cannot be converted to unsigned short because it exceeds Short#MAX_VALUE: "
-                        + ByteFormatter.formatHexAsString(adjustedBytes));
+                "Byte array cannot be converted to unsigned short because it exceeds Short#MAX_VALUE: {}", adjustedBytes);
         return (short) (adjustedBytes[0] << 8 | adjustedBytes[1] & 0xFF);
     }
 
@@ -258,9 +255,8 @@ public final class Bytes {
         final var adjustedBytes = toByteArrayWithCapacity(bytes, 8);
         // max size of long is Long#MAX_VALUE
         Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
-                "Byte array cannot be converted to unsigned long because it exceeds Long#MAX_VALUE: "
-                        + ByteFormatter.formatHexAsString(adjustedBytes) + " (original: " + ByteFormatter.formatHexAsString(bytes)
-                        + ")");
+                "Byte array cannot be converted to unsigned long because it exceeds Long#MAX_VALUE: {} (original: {})"
+                , adjustedBytes, bytes);
         return ByteBuffer.wrap(adjustedBytes).getLong();
     }
 
@@ -321,7 +317,8 @@ public final class Bytes {
     public static byte[] fillByteArray(final @Nonnull byte[] templateArray,
                                        final @Nonnull byte[] bytes,
                                        final @Nonnull FillDirection direction) {
-        Preconditions.checkArgument(bytes.length <= templateArray.length, "Length of bytes cannot exceed the template array capacity.");
+        Preconditions.checkArgument(bytes.length <= templateArray.length,
+                "Length of bytes cannot exceed the template array capacity.");
 
         if (bytes.length == templateArray.length) {
             return bytes;
@@ -381,7 +378,7 @@ public final class Bytes {
     @Nonnull
     public static byte[] padRight(final @Nonnull byte[] bytes, final byte b, final int newCapacity) {
         Preconditions.checkArgument(bytes.length <= newCapacity,
-                "Capacity cannot be smaller than " + bytes.length + " (actual: " + newCapacity + ")");
+                "Capacity cannot be smaller than {} (actual: {})", bytes.length, newCapacity);
 
         if (bytes.length == newCapacity) {
             return bytes.clone();
@@ -416,10 +413,12 @@ public final class Bytes {
             return new byte[0];
         }
 
-        Preconditions.checkArgument(PATTERN_HEX_STRING.matcher(hexString).matches(), "Illegal hex string format: " + hexString);
+        Preconditions.checkArgument(PATTERN_HEX_STRING.matcher(hexString).matches(),
+                "Illegal hex string format: {}", hexString);
+
         final String newHexString;
         if (hexString.startsWith("0x")) {
-            newHexString = hexString.substring(2).replaceAll(" ", "");
+            newHexString = hexString.substring(2).replace(" ", "");
         } else {
             newHexString = hexString;
         }
@@ -481,7 +480,8 @@ public final class Bytes {
      * @return one byte
      */
     public static byte toByte(final boolean b, final boolean... moreBits) {
-        Preconditions.checkArgument(moreBits.length <= 7, "You can provide only up to 8 booleans for byte (actual: " + (moreBits.length + 1) + ")");
+        Preconditions.checkArgument(moreBits.length <= 7,
+                "You can provide only up to 8 booleans for byte (actual: {})", (moreBits.length + 1));
         if (moreBits.length == 0) {
             return (byte) (b ? 0x01 : 0x00);
         } else {
