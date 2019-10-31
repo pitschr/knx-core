@@ -203,8 +203,8 @@ public class AuditPluginTest {
         plugin.onShutdown();
 
         assertLogLine(appender, "{" +
-                    "\"time\":\\d+.\\d+," +
-                    "\"type\":\"shutdown\"" +
+                "\"time\":\\d+.\\d+," +
+                "\"type\":\"shutdown\"" +
                 "}");
     }
 

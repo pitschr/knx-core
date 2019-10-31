@@ -141,7 +141,7 @@ public abstract class AbstractKnxMain {
      *
      * @param args
      * @param parameterNames parameter names, may be comma-separated
-     * @param defaultValues default values in case the parameter could not be found or not parsed correctly
+     * @param defaultValues  default values in case the parameter could not be found or not parsed correctly
      * @param function
      * @return the value of parameter, otherwise {@code defaultValue}
      */

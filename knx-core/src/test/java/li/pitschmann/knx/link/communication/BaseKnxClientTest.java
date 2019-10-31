@@ -103,20 +103,20 @@ public class BaseKnxClientTest {
 
     @Test
     @DisplayName("ERROR: Test read and write request throwing exceptions")
+    @SuppressWarnings("unchecked")
     public void testReadAndWriteRequestsWithExceptions() throws ExecutionException, InterruptedException {
-        final var groupAddress = GroupAddress.of(1,2,3);
+        final var groupAddress = GroupAddress.of(1, 2, 3);
 
         final var config = ConfigBuilder.tunneling().build();
         final var baseKnxClient = spy(new BaseKnxClient(config));
         final var internalKnxClientMock = mock(InternalKnxClient.class);
-        @SuppressWarnings("unchecked")
-        final var completableFutureMock = (CompletableFuture<TunnelingAckBody>)mock(CompletableFuture.class);
+        final var completableFutureMock = (CompletableFuture<ResponseBody>) mock(CompletableFuture.class);
 
         when(baseKnxClient.isRunning()).thenReturn(true);
         when(baseKnxClient.getInternalClient()).thenReturn(internalKnxClientMock);
         when(internalKnxClientMock.getConfig()).thenReturn(config);
         when(internalKnxClientMock.getChannelId()).thenReturn(0);
-        when(internalKnxClientMock.<TunnelingAckBody>send(any(RequestBody.class), anyLong())).thenReturn(completableFutureMock);
+        when(internalKnxClientMock.send(any(RequestBody.class), anyLong())).thenReturn(completableFutureMock);
 
         // throwing ExecutionException
         doThrow(new ExecutionException(new Throwable())).when(completableFutureMock).get();
@@ -128,9 +128,9 @@ public class BaseKnxClientTest {
         doThrow(new InterruptedException()).when(completableFutureMock).get();
         final var executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
-                assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
-                assertThat(baseKnxClient.writeRequest(groupAddress, new byte[1])).isFalse();
-            });
+            assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
+            assertThat(baseKnxClient.writeRequest(groupAddress, new byte[1])).isFalse();
+        });
         executor.shutdown();
     }
 

@@ -53,7 +53,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
     /**
      * Checks if the time is overdue
      *
-     * @param stopwatch the current timer
+     * @param stopwatch            the current timer
      * @param monitorTimeInSeconds maximum monitor time in seconds
      * @return {@code true} if overdue, otherwise {@code false}
      */

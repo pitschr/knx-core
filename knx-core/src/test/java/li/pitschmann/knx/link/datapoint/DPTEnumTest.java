@@ -76,11 +76,11 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
     @Test
     @DisplayName("Try to parse and test methods of DPTEnumValue")
     public void testParse() {
-        final var enumValueDataLinkLayer = DPT_ENUM.parse(new byte[] { 0x00 });
+        final var enumValueDataLinkLayer = DPT_ENUM.parse(new byte[]{0x00});
         assertThat(DPT_ENUM.parse(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
         assertThat(DPT_ENUM.toValue(0x00)).isSameAs(enumValueDataLinkLayer);
         assertThat(DPT_ENUM.toValue("DATA_LINK_LAYER")).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.toValue(new byte[]{ 0x00 })).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.toValue(new byte[]{0x00})).isSameAs(enumValueDataLinkLayer);
         assertThat(DPT_ENUM.toValue(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
         assertThat(enumValueDataLinkLayer.getDPT()).isSameAs(DPT_ENUM);
         assertThat(enumValueDataLinkLayer.getOrdinal()).isEqualTo(0);
@@ -88,11 +88,11 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
         assertThat(enumValueDataLinkLayer.toText()).isEqualTo("DATA_LINK_LAYER");
         assertThat(enumValueDataLinkLayer.getEnum()).isSameAs(DPT20.CommunicationMode.DATA_LINK_LAYER);
 
-        final var enumValueNoLayer = DPT_ENUM.parse(new byte[] { (byte)0xFF });
+        final var enumValueNoLayer = DPT_ENUM.parse(new byte[]{(byte) 0xFF});
         assertThat(DPT_ENUM.parse(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
         assertThat(DPT_ENUM.toValue(0xFF)).isSameAs(enumValueNoLayer);
         assertThat(DPT_ENUM.toValue("NO_LAYER")).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.toValue(new byte[]{ (byte)0xFF })).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.toValue(new byte[]{(byte) 0xFF})).isSameAs(enumValueNoLayer);
         assertThat(DPT_ENUM.toValue(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
         assertThat(enumValueNoLayer.getDPT()).isSameAs(DPT_ENUM);
         assertThat(enumValueNoLayer.getOrdinal()).isEqualTo(0xFF);

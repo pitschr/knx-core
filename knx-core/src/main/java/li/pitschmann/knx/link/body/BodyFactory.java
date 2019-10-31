@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.base.Preconditions;
 import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;

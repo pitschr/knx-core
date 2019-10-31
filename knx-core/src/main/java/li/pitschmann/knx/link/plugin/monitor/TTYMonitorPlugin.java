@@ -202,10 +202,10 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
         // Headline
         // --------
         sb.append(String.format("KNX MONITOR (%s x %s, Routing: %s, NAT: %s)",
-                        columns,
-                        lines,
-                        knxClient.getConfig().isRoutingEnabled(),
-                        knxClient.getConfig().isNatEnabled()))
+                columns,
+                lines,
+                knxClient.getConfig().isRoutingEnabled(),
+                knxClient.getConfig().isNatEnabled()))
                 .append(System.lineSeparator());
 
         // additional space between headline and table
@@ -287,7 +287,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
 
             // destination address in proper style
             if (xmlProject != null && destinationAddress instanceof GroupAddress) {
-                sb.append(String.format("%9s", xmlProject.getGroupAddressStyle().toString((GroupAddress)destinationAddress)));
+                sb.append(String.format("%9s", xmlProject.getGroupAddressStyle().toString((GroupAddress) destinationAddress)));
             } else {
                 sb.append(String.format("%9s", destinationAddress.getRawDataAsHexString()));
             }
@@ -296,7 +296,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
             XmlGroupAddress xmlGroupAddress;
             DataPointType<?> dpt = null;
             if (xmlProject != null && destinationAddress instanceof GroupAddress) {
-                xmlGroupAddress = xmlProject.getGroupAddress((GroupAddress)destinationAddress);
+                xmlGroupAddress = xmlProject.getGroupAddress((GroupAddress) destinationAddress);
                 if (xmlGroupAddress != null) {
                     final var dptString = xmlGroupAddress.getDataPointType();
                     if (!Strings.isNullOrEmpty(dptString)) {
@@ -372,7 +372,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
             do {
                 final var inc = dummyIncrement.getAndIncrement() % 256;
 
-                final var sourceAddress = IndividualAddress.of(15,15, inc);
+                final var sourceAddress = IndividualAddress.of(15, 15, inc);
                 final var destinationAddress = GroupAddress.of(31, 7, inc);
                 final CEMI cemi = CEMI.of(
                         MessageCode.L_DATA_IND,
