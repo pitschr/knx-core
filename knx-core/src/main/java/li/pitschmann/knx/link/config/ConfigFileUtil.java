@@ -18,10 +18,9 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Supporter for Configuration for file-based solutions
@@ -62,8 +62,8 @@ final class ConfigFileUtil {
             final var allSettings = asSettingMap(lines);
 
             // first try to find: "endpoint address" and "endpoint port"
-            final var endpointAddress = Strings.nullToEmpty(allSettings.get(ConfigConstants.Endpoint.ADDRESS.getKey()));
-            final var endpointPort = Strings.nullToEmpty(allSettings.get(ConfigConstants.Endpoint.PORT.getKey()));
+            final var endpointAddress = Objects.requireNonNullElse(allSettings.get(ConfigConstants.Endpoint.ADDRESS.getKey()), "");
+            final var endpointPort = Objects.requireNonNullElse(allSettings.get(ConfigConstants.Endpoint.PORT.getKey()), "");
 
             final var configBuilder = ConfigBuilder.create(endpointAddress + ":" + endpointPort);
 
@@ -119,7 +119,7 @@ final class ConfigFileUtil {
     @Nonnull
     private static Map<String, String> asSettingMap(final @Nonnull List<String> lines) {
         final var filteredLines = filterBySection(lines, "settings");
-        final var settings = Maps.<String, String>newHashMapWithExpectedSize(filteredLines.size());
+        final var settings = Maps.<String, String>newHashMap(filteredLines.size());
 
         for (final var line : filteredLines) {
             final var keyAndValue = line.split("=", 2);

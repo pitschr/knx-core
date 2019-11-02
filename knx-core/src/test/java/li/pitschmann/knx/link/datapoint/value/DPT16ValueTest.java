@@ -135,6 +135,7 @@ public final class DPT16ValueTest {
 
         // class methods
         assertThat(DPT16Value.toByteArray(null, dpt.getCharset())).containsExactly(emptyBytes);
+        assertThat(DPT16Value.toByteArray("", dpt.getCharset())).containsExactly(emptyBytes);
 
         // equals
         assertThat(dptValueNull).isEqualTo(dptValueNull);

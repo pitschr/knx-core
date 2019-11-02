@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.base.Strings;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.DisconnectResponseBody;
@@ -135,7 +134,7 @@ public final class MockServer implements Runnable, Closeable {
         publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerAnnotation)));
 
         // Subscribe KNX Mock Server Project Logic if KNX project path is defined
-        if (!Strings.isNullOrEmpty(mockServerAnnotation.projectPath())) {
+        if (!mockServerAnnotation.projectPath().isEmpty()) {
             final var xmlProjectPath = Paths.get(mockServerAnnotation.projectPath());
             Preconditions.checkArgument(Files.exists(xmlProjectPath), "Project file doesn't exists at: {}", xmlProjectPath);
             final var projectLogic = new MockServerProjectLogic(this, KnxprojParser.parse(xmlProjectPath));

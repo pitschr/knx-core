@@ -18,7 +18,6 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.Splitter;
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
@@ -44,9 +43,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 /**
  * Network utility class
@@ -98,7 +97,7 @@ public final class Networker {
         }
 
         // more strict implementation rather than InetAddress#getByName(String)
-        final var blocks = StreamSupport.stream(Splitter.on('.').split(addressAsString).spliterator(), false).mapToInt(Integer::parseInt).toArray();
+        final var blocks = Stream.of(addressAsString.split(Pattern.quote("."))).mapToInt(Integer::parseInt).toArray();
         Preconditions.checkArgument(blocks.length == 4);
         return getByAddress(blocks[0], blocks[1], blocks[2], blocks[3]);
     }

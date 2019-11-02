@@ -19,8 +19,6 @@
 package li.pitschmann.knx.link.communication;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
@@ -30,6 +28,7 @@ import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
+import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
@@ -48,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class InternalKnxStatusPool implements KnxStatusPool {
     private static final Logger log = LoggerFactory.getLogger(InternalKnxStatusPool.class);
-    private final Map<KnxAddress, KnxStatusData> statusMap = Maps.newHashMapWithExpectedSize(1024);
+    private final Map<KnxAddress, KnxStatusData> statusMap = Maps.newHashMap(1024);
 
     /**
      * KNX status pool (package protected)
@@ -63,8 +62,9 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      * @param address    KNX address
      * @param statusData status data to be analyzed for pool
      */
-    public void updateStatus(final @Nonnull KnxAddress address, final @Nullable KnxStatusData statusData) {
+    public void updateStatus(final @Nonnull KnxAddress address, final @Nonnull KnxStatusData statusData) {
         Preconditions.checkNonNull(address);
+        Preconditions.checkNonNull(statusData);
         log.trace("Update status by KNX address {}: {}", address, statusData);
         this.statusMap.put(address, statusData);
     }
@@ -115,7 +115,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Override
     public boolean existsStatusFor(final @Nonnull KnxAddress address) {
-        return this.statusMap.get(address) != null;
+        return this.statusMap.containsKey(address);
     }
 
     @Nullable
@@ -198,7 +198,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     @Nonnull
     @Override
     public Map<KnxAddress, KnxStatusData> copyStatusMap() {
-        return ImmutableMap.copyOf(this.statusMap);
+        return Map.copyOf(this.statusMap);
     }
 
     @Nonnull

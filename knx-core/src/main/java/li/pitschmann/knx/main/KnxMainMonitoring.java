@@ -20,13 +20,13 @@ package li.pitschmann.knx.main;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.plugin.AuditPlugin;
 import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.Stopwatch;
 
 import java.nio.file.Paths;
 import java.util.Objects;

@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.Stopwatch;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

@@ -1,6 +1,5 @@
 package li.pitschmann.knx.link.plugin.monitor;
 
-import com.google.common.base.Strings;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
@@ -23,6 +22,7 @@ import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +129,7 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     }
 
     private final String getHeaderSeparator() {
-        return "-----------+---------------------+-----------+-----------+----------+" + Strings.repeat("-", columns - 70);
+        return "-----------+---------------------+-----------+-----------+----------+" + "-".repeat(columns - 70);
     }
 
     private final String getEmptyLine() {

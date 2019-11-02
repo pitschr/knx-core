@@ -143,6 +143,7 @@ public class BytesTest {
         assertThat(Bytes.toUnsignedInt((byte) 0x00, (byte) 0x00, (byte) 0x00)).isZero();
         assertThat(Bytes.toUnsignedInt((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isZero();
         assertThat(Bytes.toUnsignedInt(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00})).isZero();
+        assertThat(Bytes.toUnsignedInt((byte[])null)).isZero();
         // 0xff
         assertThat(Bytes.toUnsignedInt((byte) 0xff)).isEqualTo(255);
         assertThat(Bytes.toUnsignedInt((byte) 0x00, (byte) 0xff)).isEqualTo(255);

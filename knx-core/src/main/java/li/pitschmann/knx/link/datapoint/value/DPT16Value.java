@@ -19,12 +19,12 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 import li.pitschmann.knx.link.datapoint.DPT16;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -110,11 +110,11 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
      * Converts characters to byte array
      *
      * @param characters may not be longer than 14 characters
-     * @param charset
+     * @param charset    used to encode the characters
      * @return byte array
      */
     @Nonnull
-    public static byte[] toByteArray(final String characters, final Charset charset) {
+    public static byte[] toByteArray(final @Nullable String characters, final @Nonnull Charset charset) {
         if (Strings.isNullOrEmpty(characters)) {
             return new byte[14];
         } else if (characters.length() > 14) {

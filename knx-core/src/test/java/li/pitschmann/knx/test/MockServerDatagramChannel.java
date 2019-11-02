@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.primitives.Bytes;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.BodyFactory;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
@@ -29,6 +28,7 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.MulticastChannelRelated;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.header.Header;
+import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

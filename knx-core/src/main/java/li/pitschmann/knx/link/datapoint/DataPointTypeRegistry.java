@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointTypeEnum;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointValueEnum;
@@ -26,6 +25,7 @@ import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.link.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +45,8 @@ import java.util.stream.Stream;
  */
 public final class DataPointTypeRegistry {
     private static final Logger log = LoggerFactory.getLogger(DataPointTypeRegistry.class);
-    private static final Map<String, DataPointType> dataPointTypeMap = Maps.newHashMapWithExpectedSize(1024);
-    private static final Map<Enum, DPTEnumValue> dataPointEnumMap = Maps.newHashMapWithExpectedSize(1024);
+    private static final Map<String, DataPointType> dataPointTypeMap = Maps.newHashMap(1024);
+    private static final Map<Enum, DPTEnumValue> dataPointEnumMap = Maps.newHashMap(1024);
 
     static {
         // add DPT fields

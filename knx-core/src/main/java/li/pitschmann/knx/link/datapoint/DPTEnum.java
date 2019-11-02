@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -43,7 +43,7 @@ import java.util.Map;
  * @author PITSCHR
  */
 public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends AbstractDataPointType<DPTEnumValue<T>> {
-    private final Map<Integer, DPTEnumValue<T>> values = Maps.newHashMapWithExpectedSize(255);
+    private final Map<Integer, DPTEnumValue<T>> values = Maps.newHashMap(255);
 
     /**
      * Constructor is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.

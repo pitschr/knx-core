@@ -18,7 +18,6 @@
 
 package li.pitschmann.utils;
 
-import com.google.common.base.Stopwatch;
 import li.pitschmann.knx.test.TestHelpers;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.DisplayName;

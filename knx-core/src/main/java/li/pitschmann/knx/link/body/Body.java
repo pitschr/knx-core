@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.primitives.Bytes;
 import li.pitschmann.knx.link.MultiRawDataAware;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Bytes;
 
 import javax.annotation.Nonnull;
 
