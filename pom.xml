@@ -276,7 +276,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-Duser.timezone=UTC -Duser.language=en -Duser.country=US -Dfile.encoding=UTF-8</argLine>
+                    <argLine>@{argLine} -Duser.timezone=UTC -Duser.language=en -Duser.country=US -Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
 
