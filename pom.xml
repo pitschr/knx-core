@@ -31,7 +31,7 @@
     <!-- Sub Modules -->
     <modules>
         <module>knx-core</module>
-        <module>knx-api</module>
+        <module>knx-core-plugins</module>
         <module>knx-examples</module>
     </modules>
 
@@ -255,6 +255,19 @@
     </build>
 
     <profiles>
+        <!--
+        Default Profile
+        ===============
+        -->
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <argLine /> <!-- empty arg line -->
+            </properties>
+        </profile>
         <!--
         Travis Profile
         ==============
