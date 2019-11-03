@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.plugin;
 
-import com.google.gson.Gson;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.header.Header;
@@ -39,7 +38,6 @@ import java.util.stream.Collectors;
  */
 public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     private static final Logger log = LoggerFactory.getLogger(AuditPlugin.class);
-    private static final Gson gson = new Gson();
 
     // @formatter:off
     /**
@@ -57,7 +55,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
             "{" + //
                 "\"time\":%4$s.%5$s," + //
                 "\"type\":\"%1$s\"," + //
-                "\"message\":%2$s," + //
+                "\"message\":\"%2$s\"," + //
                 "\"stacktrace\":[%3$s]" + //
             "}"; //
     /**
@@ -111,11 +109,19 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
         final var now = Instant.now();
         log.info(String.format(JSON_TEMPLATE_ERROR, //
                 AuditType.ERROR, // #1
-                gson.toJson(throwable.getMessage()), // #2
-                Arrays.stream(throwable.getStackTrace()).map(e -> gson.toJson(e.toString())).collect(Collectors.joining(",")), // #3
+                escapeForJson(throwable.getMessage()), // #2
+                Arrays.stream(throwable.getStackTrace()).map(e -> "\"" + escapeForJson(e.toString()) + "\"").collect(Collectors.joining(",")), // #3
                 now.getEpochSecond(), // #4
                 now.getNano() // #5
         ));
+    }
+
+    // TODO: --> move to Strings Utility class?
+    private static String escapeForJson(final String str) {
+        return str.replace("\"", "\\\"")
+                .replace("\\", "\\\\")
+                .replace("/", "\\/")
+                .replaceAll("\\\\u\\d{4}","");
     }
 
     /**

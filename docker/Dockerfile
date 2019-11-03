@@ -2,7 +2,7 @@ FROM openjdk:11-slim
 
 # Copy the jar file into package
 # The name is hardcoded and copied by 'create-docker-image.sh' script
-COPY "knx-core.jar" .
+COPY "knx-link.jar" .
 EXPOSE 3671/udp 40000/udp 40001/udp 40002/udp 40003/udp
 
 # Install required packages

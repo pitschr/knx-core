@@ -1,9 +1,9 @@
 ################################################
 # START KNX CLIENT (inside Docker)
 ################################################
-# java -jar knx-core.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 --nat --time 30
-# java -jar knx-core.jar li.pitschmann.knx.main.KnxMainMonitoring --nat
-# java -jar knx-core.jar li.pitschmann.knx.main.KnxMainMonitoring --routing
+# java -jar knx-link.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 --nat --time 30
+# java -jar knx-link.jar li.pitschmann.knx.main.KnxMainMonitoring --nat
+# java -jar knx-link.jar li.pitschmann.knx.main.KnxMainMonitoring --routing
 
 ################################################
 # TEST UDP (Remote -> Docker)

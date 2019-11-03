@@ -93,7 +93,7 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 
 ### KNX Monitoring
 
-**Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
+**Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
 
 **Arguments:**
 * `-t`, `--time` the time in seconds how long the monitoring should run (default: _"infinity"_)
@@ -120,7 +120,7 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --routing -t 3600
 
 ### Send a WRITE request frame to KNX
 
-**Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
+**Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
 
 **Arguments:**
 * `-ga`, `--groupAddress` the KNX group address which has a _write_ flag
@@ -150,7 +150,7 @@ times.
  
 ### Send a READ request frame to KNX
 
-**Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
+**Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
 
 **Arguments:**
 * `-ga`, `--groupAddress` the KNX group address which has a _read_ flag

@@ -23,12 +23,11 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.test.KnxBody;
-import li.pitschmann.knx.test.MemoryAppender;
-import li.pitschmann.knx.test.MemoryLog;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
@@ -94,25 +93,24 @@ public class AbstractKnxQueueTest {
      * Tests an inbox packet from KNX Net/IP device with wrong channel id information
      */
     @Test
-    @MemoryLog(TestKnxQueue.class)
     @DisplayName("Test KNX packet with wrong channel")
-    public void testInboxWrongChannel(final MemoryAppender appender) throws Exception {
+    public void testInboxWrongChannel() throws Exception {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(KnxWrongChannelIdException.class).thenReturn(0);
 
-        final var queue = spy(new TestKnxQueue(mock(InternalKnxClient.class)));
+        final var clientMock = mock(InternalKnxClient.class);
+        final var queue = spy(new TestKnxQueue(clientMock));
         doReturn(selectorMock).when(queue).openSelector();
 
         final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queue);
-            // wait until task is done or wait for timeout
-            // when timeout the return is false, otherwise true which passes the test
-            assertThat(
-                    Sleeper.milliseconds(
-                            () -> appender.anyMatch(s -> s.contains("KNX packet with wrong channel retrieved")),
-                            3000)
-            ).isTrue();
+            // wait bit as the task is async
+            Sleeper.seconds(1);
+            // verifies if the notify plugins about error has been called
+            final var captor = ArgumentCaptor.forClass(Throwable.class);
+            verify(clientMock).notifyError(captor.capture());
+            assertThat(captor.getValue()).isInstanceOf(KnxWrongChannelIdException.class);
         } finally {
             Closeables.shutdownQuietly(executor);
         }
@@ -122,9 +120,8 @@ public class AbstractKnxQueueTest {
      * Tests an queue when {@link InterruptedException} was thrown
      */
     @Test
-    @MemoryLog(TestKnxQueue.class)
     @DisplayName("Test interrupted queue")
-    public void testInterruption(final MemoryAppender appender) throws Exception {
+    public void testInterruption() throws Exception {
         final var selectionKeyMock = mock(SelectionKey.class);
 
         final var selectedKeys = new HashSet<SelectionKey>();
@@ -133,21 +130,16 @@ public class AbstractKnxQueueTest {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.selectedKeys()).thenReturn(selectedKeys);
 
-        final var queueMock = spy(new TestKnxQueue(mock(InternalKnxClient.class)));
+        final var clientMock = mock(InternalKnxClient.class);
+        final var queueMock = spy(new TestKnxQueue(clientMock));
         doReturn(selectorMock).when(queueMock).openSelector();
         doReturn(true).when(queueMock).valid(any(SelectionKey.class));
         doThrow(InterruptedException.class).when(queueMock).action(any(SelectionKey.class));
 
         final var executor = Executors.newSingleThreadExecutor();
         try {
-            executor.submit(queueMock);
-            // wait until task is done or wait for timeout
-            // when timeout the return is false, otherwise true which passes the test
-            assertThat(
-                    Sleeper.milliseconds(
-                            () -> appender.anyMatch(s -> s.contains("Channel is interrupted")),
-                            3000)
-            ).isTrue();
+            final var taskFuture = executor.submit(queueMock);
+            assertThat(taskFuture.get()).isNull();
         } finally {
             Closeables.shutdownQuietly(executor);
         }
@@ -157,25 +149,18 @@ public class AbstractKnxQueueTest {
      * Tests queue when {@link IOException} was thrown
      */
     @Test
-    @MemoryLog(TestKnxQueue.class)
     @DisplayName("Test queue with IOException")
-    public void testInboxIOException(final MemoryAppender appender) throws Exception {
+    public void testInboxIOException() throws Exception {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(IOException.class).thenReturn(0);
 
-        final var queueMock = spy(new TestKnxQueue(mock(InternalKnxClient.class)));
+        final var clientMock = mock(InternalKnxClient.class);
+        final var queueMock = spy(new TestKnxQueue(clientMock));
         doReturn(selectorMock).when(queueMock).openSelector();
 
         final var executor = Executors.newSingleThreadExecutor();
         try {
             final var taskFuture = executor.submit(queueMock);
-            // wait until task is done or wait for timeout
-            // when timeout the return is false, otherwise true which passes the test
-            assertThat(
-                    Sleeper.milliseconds(
-                            () -> appender.anyMatch(s -> s.contains("IOException for channel")),
-                            3000)
-            ).isTrue();
             assertThatThrownBy(() -> taskFuture.get()).hasCauseInstanceOf(KnxException.class);
         } finally {
             Closeables.shutdownQuietly(executor);
@@ -186,9 +171,8 @@ public class AbstractKnxQueueTest {
      * Tests queue when an unexpected exception was thrown
      */
     @Test
-    @MemoryLog(TestKnxQueue.class)
     @DisplayName("Test queue with an unexpected exception")
-    public void testInboxCorrupted(final MemoryAppender appender) throws Exception {
+    public void testInboxCorrupted() throws Exception {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(RuntimeException.class).thenReturn(0);
 
@@ -199,16 +183,12 @@ public class AbstractKnxQueueTest {
         final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queueSpy);
-            // wait until task is done or wait for timeout
-            // when timeout the return is false, otherwise true which passes the test
-            assertThat(
-                    Sleeper.milliseconds(
-                            () -> appender.anyMatch(s -> s.contains("Error while processing KNX packets")),
-                            3000)
-            ).isTrue();
+            // wait bit as the task is async
             Sleeper.seconds(1);
             // verifies if the notify plugins about error has been called
-            verify(clientMock).notifyError(any(Throwable.class));
+            final var captor = ArgumentCaptor.forClass(Throwable.class);
+            verify(clientMock).notifyError(captor.capture());
+            assertThat(captor.getValue()).hasMessage("Error while processing KNX packets.");
         } finally {
             Closeables.shutdownQuietly(executor);
         }

@@ -34,6 +34,7 @@ import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.test.MemoryAppender;
 import li.pitschmann.knx.test.MemoryLog;
 import li.pitschmann.utils.Sleeper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -183,7 +184,7 @@ public class StatisticPluginTest {
         assertThat(Sleeper.milliseconds(() -> !appender.all().isEmpty(), 3000)).isTrue();
         // all ok - assert the log lines now
         final var logLines = appender.all();
-        assertThat(logLines).hasSize(expectedSize);
-        assertThat(logLines.get(index)).isEqualTo(expectedLogLine);
+        Assertions.assertThat(logLines).hasSize(expectedSize);
+        Assertions.assertThat(logLines.get(index)).isEqualTo(expectedLogLine);
     }
 }

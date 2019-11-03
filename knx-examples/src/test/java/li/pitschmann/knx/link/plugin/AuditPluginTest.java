@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.MemoryAppender;
 import li.pitschmann.knx.test.MemoryLog;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -224,7 +225,7 @@ public class AuditPluginTest {
                 .replace("]", "\\]");
 
         final var logLines = appender.all();
-        assertThat(logLines).hasSize(1);
-        assertThat(logLines.get(0)).containsPattern(expectedPattern);
+        Assertions.assertThat(logLines).hasSize(1);
+        Assertions.assertThat(logLines.get(0)).containsPattern(expectedPattern);
     }
 }

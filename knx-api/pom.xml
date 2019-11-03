@@ -34,6 +34,20 @@
     <name>KNX API</name>
     <description>KNX for RESTful API</description>
 
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <!-- Properties -->
+    <properties>
+        <version.pippo>1.12.0</version.pippo>
+        <version.json-unit>2.8.0</version.json-unit>
+    </properties>
+
     <!-- Dependencies -->
     <dependencies>
         <!-- KNX Core dependencies for compile and test -->
@@ -51,6 +65,37 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
+        <!-- HTTP server -->
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-undertow</artifactId>
+            <version>${version.pippo}</version>
+        </dependency>
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-gson</artifactId>
+            <version>${version.pippo}</version>
+        </dependency>
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-controller</artifactId>
+            <version>${version.pippo}</version>
+        </dependency>
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-guice</artifactId>
+            <version>${version.pippo}</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>net.javacrumbs.json-unit</groupId>
+            <artifactId>json-unit-assertj</artifactId>
+            <version>${version.json-unit}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
 </project>
 

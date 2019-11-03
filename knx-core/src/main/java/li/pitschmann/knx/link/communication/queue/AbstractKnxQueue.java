@@ -82,7 +82,8 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
                     }
                 } catch (final KnxWrongChannelIdException wrongChannelIdException) {
                     log.warn("KNX packet with wrong channel retrieved: {}", wrongChannelIdException.getMessage());
-                    // silently ignore and proceed with next packet
+                    this.client.notifyError(wrongChannelIdException);
+                    // ignore and proceed with next packet
                 } catch (final InterruptedException ie) {
                     log.debug("Channel is interrupted: {}", selector);
                     Thread.currentThread().interrupt();
@@ -92,7 +93,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
                     // break loop due exception
                 } catch (final Throwable e) {
                     log.error("Error while processing KNX packets.", e);
-                    this.client.notifyError(e);
+                    this.client.notifyError(new Throwable("Error while processing KNX packets.", e));
                     // proceed with next packet
                 }
             }
