@@ -20,9 +20,14 @@ package li.pitschmann.utils;
 
 import li.pitschmann.knx.link.communication.task.DescriptionResponseTask;
 import li.pitschmann.knx.test.TestHelpers;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
+import org.slf4j.helpers.BasicMDCAdapter;
+import org.slf4j.helpers.NOPMDCAdapter;
+import org.slf4j.spi.MDCAdapter;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +42,41 @@ import static org.mockito.Mockito.mock;
  * @author PITSCHR
  */
 public class ExecutorsTest {
+    private static MDCAdapter tmpAdapter;
+
+    /**
+     * This project is shipped with SLF4J only and without any bindings
+     * (see: http://www.slf4j.org/codes.html#no_static_mdc_binder )
+     *
+     * It defaults back to {@link org.slf4j.helpers.NOPMDCAdapter} which
+     * doesn't store any data for MDC. We want to use the {@link BasicMDCAdapter}
+     * per default in case {@link org.slf4j.helpers.NOPMDCAdapter} is used
+     * because the tests are otherwise failing because of no-operation.
+     *
+     * In concrete project a proper binding should be used (e.g. logback, ...)
+     */
+    @BeforeAll
+    public static void setBasicMDCAdapter() throws ReflectiveOperationException {
+        if (MDC.getMDCAdapter() instanceof NOPMDCAdapter) {
+            final var mdcAdapterField = MDC.class.getDeclaredField("mdcAdapter");
+            mdcAdapterField.setAccessible(true);
+            tmpAdapter = (MDCAdapter) mdcAdapterField.get(null);
+            mdcAdapterField.set(null, new BasicMDCAdapter());
+        }
+    }
+
+    /**
+     * Reset to previous MDCAdapter (it may be {@link org.slf4j.helpers.NOPMDCAdapter} )
+     * which is OK!
+     */
+    @AfterAll
+    public static void resetMDCAdapter() throws ReflectiveOperationException {
+        if (tmpAdapter != null) {
+            final var mdcAdapterField = MDC.class.getDeclaredField("mdcAdapter");
+            mdcAdapterField.setAccessible(true);
+            mdcAdapterField.set(null, tmpAdapter);
+        }
+    }
 
     /**
      * Test {@link Executors#newSingleThreadExecutor(boolean)}
@@ -96,7 +136,6 @@ public class ExecutorsTest {
     @Test
     @DisplayName("Test Runnable, Callable with non-empty MDC")
     public void testNonEmptyMDC() throws ExecutionException, InterruptedException {
-
         MDC.put("key", "foobar");
 
         final var executorService = Executors.newSingleThreadExecutor(true);
