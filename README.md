@@ -319,7 +319,7 @@ Given snippet, we want to convert a date and time objects into KNX compatible by
 ```
 // Saturday, 2013-08-17 04:10:45
 final var dayOfWeek = DayOfWeek.SATURDAY;
-final var date = LocalDate.of(2013, 08, 17);
+final var date = LocalDate.of(2013, 8, 17);
 final var time = LocalTime.of(04, 10, 45);
 
 DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
@@ -327,5 +327,5 @@ DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
 
 This can be also more simplified using direct string representation:
 ```
-DPT19.toByteArray("Saturday", "2013-08-17", "04:10:45");
+DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45");
 ```

@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.datapoint.value.DPT19Value.Flags;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
 import li.pitschmann.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
@@ -94,6 +95,24 @@ public class DPT19Test extends AbstractDataPointTypeTest<DPT19, DPT19Value> {
         // hour 23 => ...1 0111
         this.assertDPT(new byte[]{(byte) 0xff, 0x0c, 0x1f, (byte) 0xf7, 0x3b, 0x3b, (byte) 0xff, (byte) 0x80}, DayOfWeek.SUNDAY,
                 LocalDate.of(2155, 12, 31), LocalTime.of(23, 59, 59), new Flags(true, true, true, true, true, true, true, true, true));
+    }
+
+    @Test
+    @DisplayName("Test #toValue(..) and #toByteArray(..) without flags, no-flags")
+    public void testToValueAndByteArrayWithNoFlags() {
+        // reference value
+        final var dayOfWeek = DayOfWeek.WEDNESDAY;
+        final var date = LocalDate.of(2019, 10, 21);
+        final var time = LocalTime.of(13, 45, 47);
+        final var flags = new Flags(false, false, false, false, false, false, false, false, false);
+        final var dptValue = DPT_DATE_TIME.toValue(dayOfWeek, date, time, flags);
+
+        // verify
+        assertThat(DPT_DATE_TIME.toValue(dayOfWeek, date, time, Flags.NO_FLAGS)).isEqualTo(dptValue);
+        assertThat(DPT_DATE_TIME.toByteArray(dayOfWeek, date, time, Flags.NO_FLAGS)).isEqualTo(dptValue.toByteArray());
+
+        assertThat(DPT_DATE_TIME.toValue(dayOfWeek, date, time)).isEqualTo(dptValue);
+        assertThat(DPT_DATE_TIME.toByteArray(dayOfWeek, date, time)).isEqualTo(dptValue.toByteArray());
     }
 
     /**
