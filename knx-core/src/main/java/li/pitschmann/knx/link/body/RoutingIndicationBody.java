@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -109,7 +109,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("cemi", this.cemi.toString(false));
         // @formatter:on
         if (inclRawData) {

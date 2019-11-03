@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT3;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -131,7 +131,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT3Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("controlled", this.controlled)
                 .add("stepCode", this.stepCode)

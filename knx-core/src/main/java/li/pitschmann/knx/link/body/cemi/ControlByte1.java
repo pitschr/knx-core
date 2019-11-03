@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractSingleRawData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -179,7 +179,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("standardFrame", this.standardFrame)
                 .add("repeatEnabled", this.repeatEnabled)
                 .add("broadcastType", this.broadcastType)

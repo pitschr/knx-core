@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Networker;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.net.InetAddress;
@@ -197,7 +197,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("length", this.getLength() + " (" + ByteFormatter.formatHex(this.getLength()) + ")")
                 .add("descriptionType", this.getDescriptionType())
                 .add("mediumType", this.mediumType)

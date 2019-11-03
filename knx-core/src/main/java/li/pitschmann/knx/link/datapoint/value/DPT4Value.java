@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT4;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,7 +92,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT4Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("character", this.character)
                 .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))

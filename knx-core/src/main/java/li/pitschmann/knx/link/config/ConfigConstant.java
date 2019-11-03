@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.MoreObjects;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -112,7 +112,7 @@ public final class ConfigConstant<T> {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("key", this.key)
                 .add("settable", this.settable)
                 .add("classType", this.classType)

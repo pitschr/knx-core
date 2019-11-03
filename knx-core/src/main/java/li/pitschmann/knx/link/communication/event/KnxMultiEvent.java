@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.communication.event;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -117,7 +117,7 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     @Nonnull
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this) //
+        return Strings.toStringHelper(this) //
                 .add("requestEvent", this.requestEvent) //
                 .add("responseEvents", this.responseEvents) //
                 .toString();

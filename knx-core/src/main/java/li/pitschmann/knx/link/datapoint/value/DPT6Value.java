@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT6;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,7 +88,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT6Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("relativeSignedValue", this.relativeSignedValue)
                 .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))

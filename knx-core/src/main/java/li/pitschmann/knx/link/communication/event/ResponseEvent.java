@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.link.communication.event;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.ResponseBody;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
@@ -69,7 +69,7 @@ public class ResponseEvent<T extends ResponseBody> {
     @Nonnull
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this) //
+        return Strings.toStringHelper(this) //
                 .add("responseTime", this.responseTime) //
                 .add("response", this.response) //
                 .toString();

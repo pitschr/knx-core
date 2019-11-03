@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
@@ -31,6 +30,7 @@ import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Sleeper;
+import li.pitschmann.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,6 +204,8 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     @Nonnull
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("statusMap", this.statusMap).toString();
+        return Strings.toStringHelper(this) //
+                .add("statusMap", this.statusMap) //
+                .toString();
     }
 }

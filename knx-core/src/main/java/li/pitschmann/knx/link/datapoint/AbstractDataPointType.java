@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
@@ -26,6 +25,7 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -284,7 +284,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this.getClass())
+        return Strings.toStringHelper(this)
                 .add("id", this.id)
                 .add("description", this.getDescription())
                 .toString();

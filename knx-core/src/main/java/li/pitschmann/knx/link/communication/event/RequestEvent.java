@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.link.communication.event;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.RequestBody;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
@@ -68,7 +68,7 @@ public class RequestEvent<T extends RequestBody> {
     @Nonnull
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this) //
+        return Strings.toStringHelper(this) //
                 .add("requestTime", this.requestTime) //
                 .add("request", this.request) //
                 .toString();

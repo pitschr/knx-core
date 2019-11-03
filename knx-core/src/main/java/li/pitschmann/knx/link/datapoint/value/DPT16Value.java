@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT16;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.utils.ByteFormatter;
@@ -157,7 +156,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT16Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("characters", this.characters)
                 .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))

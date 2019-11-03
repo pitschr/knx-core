@@ -23,6 +23,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for {@link Strings} utility class
@@ -42,8 +44,38 @@ public class StringsTest {
     }
 
     @Test
+    @DisplayName("Test ToStringHelper")
+    public void testToStringHelper() {
+        final var testObject = new TestObject();
+
+        // with no field
+        assertThat(Strings.toStringHelper(testObject)).isInstanceOf(Strings.ToStringHelper.class);
+        assertThat(Strings.toStringHelper(testObject).toString()).isEqualTo("TestObject{}");
+
+        // with single field
+        final var helper1 = Strings.toStringHelper(testObject);
+        helper1.add("name", "Chris");
+        assertThat(helper1.toString()).isEqualTo("TestObject{name=Chris}");
+
+        // with many fields
+        final var helper2 = Strings.toStringHelper(testObject);
+        helper2.add("key1", "value1")
+                .add("key2", "value2")
+                .add("key3", "value3");
+        assertThat(helper2.toString()).isEqualTo("TestObject{key1=value1, key2=value2, key3=value3}");
+    }
+
+    @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Strings.class);
+    }
+
+
+    /**
+     * Dummy class as we cannot mock 'Class.class'
+     */
+    private static class TestObject {
+        // empty
     }
 }

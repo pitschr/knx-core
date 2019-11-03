@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.base.MoreObjects;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
@@ -129,7 +129,7 @@ public final class XmlGroupRange {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("id", id)
                 .add("level", level)
                 .add("rangeStart", rangeStart)

@@ -1,9 +1,9 @@
 package li.pitschmann.knx.daemon.v1.json;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 /**
  * JSON read response
@@ -75,7 +75,7 @@ public class ReadResponse {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("name", name) //
                 .add("description", description) //
                 .add("dataPointType", dataPointType) //

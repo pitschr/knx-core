@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -86,7 +86,7 @@ public final class AdditionalInfo extends AbstractMultiRawData {
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("length", this.length)
                 .add("totalLength", this.totalLength);
         // @formatter:on

@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -87,7 +87,7 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT1Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("booleanValue", this.booleanValue)
                 .add("booleanText", this.getBooleanText())

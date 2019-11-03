@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT8;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -101,7 +101,7 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT8Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("signedValue", this.getSignedValue())
                 .add("rawSignedValue", this.rawSignedValue)

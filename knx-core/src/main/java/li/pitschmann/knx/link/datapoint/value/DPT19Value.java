@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT19;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -248,7 +248,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT19Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("dayOfWeek", this.dayOfWeek)
                 .add("date", this.date)
@@ -447,7 +447,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         @Override
         public String toString() {
             // @formatter:off
-            return MoreObjects.toStringHelper(Flags.class)
+            return Strings.toStringHelper(this)
                     // byte 6
                     .add("fault", this.fault)
                     .add("workingDay", this.workingDay)

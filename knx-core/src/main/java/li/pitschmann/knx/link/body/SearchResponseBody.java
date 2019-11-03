@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.body.dib.DeviceHardwareInformationDIB;
 import li.pitschmann.knx.link.body.dib.SupportedDeviceFamiliesDIB;
@@ -29,6 +28,7 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -191,7 +191,7 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("controlEndpoint", this.controlEndpoint.toString(false))
                 .add("deviceHardwareInformation", this.deviceHardwareInformation.toString(false))
                 .add("supportedDeviceFamilies", this.supportedDeviceFamilies.toString(false));

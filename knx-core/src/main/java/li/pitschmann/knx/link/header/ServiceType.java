@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.link.header;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.KnxBytesEnum;
 import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxServiceTypeHasNoResponseIdentifier;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -268,7 +268,7 @@ public enum ServiceType implements KnxBytesEnum {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("name", this.name())
                 .add("friendlyName", this.friendlyName)
                 .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")

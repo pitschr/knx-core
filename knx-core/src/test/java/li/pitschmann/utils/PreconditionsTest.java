@@ -19,7 +19,6 @@
 package li.pitschmann.utils;
 
 import li.pitschmann.knx.test.TestHelpers;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -125,14 +124,14 @@ public class PreconditionsTest {
         assertThat(Preconditions.toErrorMessage("My Message")).isEqualTo("My Message");
         assertThat(Preconditions.toErrorMessage("{} {}!", "Hello", "World")).isEqualTo("Hello World!");
         assertThat(Preconditions.toErrorMessage("%s %s!", "Hello", "Earth")).isEqualTo("Hello Earth!");
-        assertThat(Preconditions.toErrorMessage("1+2 = %d", 1+2)).isEqualTo("1+2 = 3");
+        assertThat(Preconditions.toErrorMessage("1+2 = %d", 1 + 2)).isEqualTo("1+2 = 3");
         assertThat(Preconditions.toErrorMessage("My Message", "Hallo", "Erde")).isEqualTo("My Message (Arguments: [Hallo, Erde])");
 
         // customized formatting
-        final var bytes = new byte[] { (byte)0xFF, (byte)0xCE, 0x56 };
+        final var bytes = new byte[]{(byte) 0xFF, (byte) 0xCE, 0x56};
         assertThat(Preconditions.toErrorMessage("Bytes: {}", bytes)).isEqualTo("Bytes: 0xFF CE 56");
-        assertThat(Preconditions.toErrorMessage("Null: {}", (Object)null)).isEqualTo("Null: <null>");
-        assertThat(Preconditions.toErrorMessage("Null: {}", (Object[])null)).isEqualTo("Null: <null>");
+        assertThat(Preconditions.toErrorMessage("Null: {}", (Object) null)).isEqualTo("Null: <null>");
+        assertThat(Preconditions.toErrorMessage("Null: {}", (Object[]) null)).isEqualTo("Null: <null>");
         assertThat(Preconditions.toErrorMessage("Null: {} {}", null, null)).isEqualTo("Null: <null> <null>");
     }
 

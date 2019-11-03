@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.GroupAddress;
@@ -31,6 +30,7 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -459,7 +459,7 @@ public final class CEMI extends AbstractMultiRawData {
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("messageCode", this.messageCode)
                 .add("additionalInfo", this.additionalInfo)
                 .add("controlByte1", this.controlByte1)

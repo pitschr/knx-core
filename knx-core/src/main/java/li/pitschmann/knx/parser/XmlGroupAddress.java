@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.base.MoreObjects;
+import li.pitschmann.utils.Strings;
 
 /**
  * XML DTO holding KNX Group Address data which were taken from '*.knxproj' file
@@ -138,7 +138,7 @@ public final class XmlGroupAddress {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("id",id)
                 .add("parentId", parentId)
                 .add("address", address)

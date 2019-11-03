@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.daemon;
 
-import com.google.common.net.HttpHeaders;
-import com.google.common.net.MediaType;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
@@ -105,8 +103,9 @@ public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
     /**
      * Creates a new {@link HttpRequest.Builder} for requests to KNX Daemon.
      * <p/>
-     * As we are using communicating via JSON only, the headers {@link HttpHeaders#ACCEPT},
-     * {@link HttpHeaders#CONTENT_TYPE} are pre-defined with {@link MediaType#JSON_UTF_8}
+     * As we are using communicating via JSON only, the headers
+     * {@link HttpConstants.Header#ACCEPT} and {@link HttpConstants.Header#CONTENT_TYPE}
+     * are pre-defined with {@link HttpConstants.ContentType#APPLICATION_JSON}.
      *
      * @param path the path to be requested to KNX Daemon
      * @return Builder for HttpRequest
@@ -115,8 +114,8 @@ public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
         Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
         try {
             return HttpRequest.newBuilder(new URI("http://localhost:" + getPort() + path))
-                    .header(HttpHeaders.ACCEPT, MediaType.JSON_UTF_8.toString())
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
+                    .header(HttpConstants.Header.ACCEPT, HttpConstants.ContentType.APPLICATION_JSON)
+                    .header(HttpConstants.Header.CONTENT_TYPE, HttpConstants.ContentType.APPLICATION_JSON);
         } catch (URISyntaxException e) {
             throw new KnxIllegalArgumentException("Invalid path provided: " + path);
         }

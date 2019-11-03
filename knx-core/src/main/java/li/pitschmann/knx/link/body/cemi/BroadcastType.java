@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.KnxByteEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -72,7 +72,7 @@ public enum BroadcastType implements KnxByteEnum {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("name", name())
                 .add("friendlyName", this.friendlyName)
                 .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")

@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.test;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.header.ServiceType;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -52,6 +52,10 @@ public abstract class BytesBody extends AbstractMultiRawData implements Body {
 
     @Override
     public String toString(boolean inclRawData) {
-        return MoreObjects.toStringHelper(this).add("rawData", this.getRawDataAsHexString()).toString();
+        // @formatter:off
+        return Strings.toStringHelper(this)
+                .add("rawData", this.getRawDataAsHexString())
+                .toString();
+        // @formatter:on
     }
 }
