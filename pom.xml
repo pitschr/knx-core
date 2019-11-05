@@ -52,6 +52,10 @@
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
         <version.plugin.maven-surefire-plugin>2.22.1</version.plugin.maven-surefire-plugin>
         <version.plugin.maven-assembly-plugin>3.1.0</version.plugin.maven-assembly-plugin>
+        <!-- Utility -->
+        <version.vtd-xml>2.11</version.vtd-xml>
+        <version.jsr305>3.0.2</version.jsr305>
+        <rotating-fos.version>0.7</rotating-fos.version>
         <!-- Logging -->
         <version.slf4j>1.7.25</version.slf4j>
         <version.logback-classic>1.2.3</version.logback-classic>
@@ -68,6 +72,22 @@
     <!-- Dependency Management -->
     <dependencyManagement>
         <dependencies>
+            <!-- Utility -->
+            <dependency>
+                <groupId>com.ximpleware</groupId>
+                <artifactId>vtd-xml</artifactId>
+                <version>${version.vtd-xml}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${version.jsr305}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vlkan.rfos</groupId>
+                <artifactId>rotating-fos</artifactId>
+                <version>${rotating-fos.version}</version>
+            </dependency>
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -108,13 +128,8 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- Dependencies -->
+    <!-- Dependencies (that should be inherited by all sub-modules as well) -->
     <dependencies>
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

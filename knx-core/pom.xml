@@ -42,23 +42,21 @@
         </license>
     </licenses>
 
-    <!-- Properties -->
-    <properties>
-        <version.vtd-xml>2.11</version.vtd-xml>
-        <version.jsr305>3.0.2</version.jsr305>
-    </properties>
-
     <!-- Dependencies -->
     <dependencies>
+        <!-- Utilities -->
         <dependency>
             <groupId>com.ximpleware</groupId>
             <artifactId>vtd-xml</artifactId>
-            <version>${version.vtd-xml}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>${version.jsr305}</version>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

@@ -22,30 +22,6 @@
         </encoder>
     </appender>
 
-    <!-- File Logging (DEBUG or higher) -->
-    <appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>knx-audit.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>knx-audit.log.%d.gz</fileNamePattern>
-            <maxHistory>14</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- File Logging (DEBUG or higher) -->
-    <appender name="STATISTIC" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>knx-statistic.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>knx-statistic.log.%d.gz</fileNamePattern>
-            <maxHistory>14</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%date %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <!--
     Log Levels: ALL < TRACE < DEBUG < INFO < WARN < ERROR < OFF
     -->
@@ -61,12 +37,6 @@
     <log name="li.pitschmann.knx.link.communication.Communicator" level="DEBUG" />
     <log name="li.pitschmann.knx.link.datapoint.DataPointTypeRegistry" level="ALL" />
       -->
-    <logger name="li.pitschmann.knx.link.plugin.AuditPlugin" level="INFO" additivity="false">
-        <appender-ref ref="AUDIT"/>
-    </logger>
-    <logger name="li.pitschmann.knx.link.plugin.StatisticPlugin" level="INFO" additivity="false">
-        <appender-ref ref="STATISTIC"/>
-    </logger>
 
     <root level="${root-level:-ALL}">
         <appender-ref ref="STDOUT"/>

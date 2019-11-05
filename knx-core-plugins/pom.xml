@@ -45,6 +45,7 @@
     <!-- Modules -->
     <modules>
         <module>api</module>
+        <module>audit</module>
     </modules>
 
 </project>

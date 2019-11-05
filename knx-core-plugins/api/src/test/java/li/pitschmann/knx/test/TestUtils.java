@@ -77,7 +77,7 @@ public final class TestUtils {
         try {
             final var path = Paths.get(TestUtils.class.getResource(filePath).toURI());
             if (Files.isReadable(path)) {
-                final var content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+                final var content = Files.readString(path);
                 log.debug("Content of file '{}': {}", filePath, content);
                 // minify json
                 return new JsonParser().parse(content).toString();

@@ -22,9 +22,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
-import li.pitschmann.knx.link.plugin.AuditPlugin;
 import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
+import li.pitschmann.knx.plugins.audit.AuditPlugin;
 import li.pitschmann.utils.Sleeper;
 import li.pitschmann.utils.Stopwatch;
 
@@ -111,7 +111,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         final var config = parseConfigBuilder(args) //
                 .setting(ConfigConstants.PROJECT_PATH, projectPath)
                 .plugin( //
-                        new AuditPlugin(), //
+                        new AuditPlugin(Paths.get("knx-audit.log")), //
                         new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
                         new TTYMonitorPlugin()
                 ) //

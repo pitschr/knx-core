@@ -16,17 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.link.plugin;
+package li.pitschmann.knx.plugins.audit;
 
+import com.vlkan.rfos.RotatingFileOutputStream;
+import com.vlkan.rfos.RotationConfig;
+import com.vlkan.rfos.policy.DailyRotationPolicy;
+import com.vlkan.rfos.policy.SizeBasedRotationPolicy;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.header.Header;
+import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -38,8 +48,7 @@ import java.util.stream.Collectors;
  */
 public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     private static final Logger log = LoggerFactory.getLogger(AuditPlugin.class);
-
-    // @formatter:off
+    private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
     /**
      * JSON Audit Template for signal
      */
@@ -58,6 +67,8 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 "\"message\":\"%2$s\"," + //
                 "\"stacktrace\":[%3$s]" + //
             "}"; //
+
+    // @formatter:off
     /**
      * JSON Audit Template with body details
      */
@@ -77,10 +88,46 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
                     "\"raw\":\"%4$s\"" + //
                 "}" + //
             "}"; //
+    private final Path path;
+    private RotatingFileOutputStream fos;
     // @formatter:on
+
+    public AuditPlugin(final @Nonnull Path path) {
+        this.path = path.toAbsolutePath();
+        log.debug("Set path for AuditPlugin: {}", path);
+    }
+
+    private static String escapeForJson(final String str) {
+        return str.replace("\"", "\\\"")
+                .replace("\\", "\\\\")
+                .replace("/", "\\/")
+                .replaceAll("\\\\u\\d{4}", "");
+    }
 
     @Override
     public void onInitialization(final @Nullable KnxClient client) {
+        final var baseFile = path.toString();
+
+        // get file pattern for rollover
+        final var lastExtensionDotPosition = baseFile.lastIndexOf('.');
+        final var rolloverFile = new StringBuilder()
+                .append(baseFile, 0, lastExtensionDotPosition)
+                .append(FILE_ROLLOVER_PATTERN)
+                .append(baseFile.substring(lastExtensionDotPosition))
+                .toString();
+
+        final var config = RotationConfig
+                .builder()
+                .file(baseFile)
+                .filePattern(rolloverFile)
+                .policy(new SizeBasedRotationPolicy(0 /* 5s */, 1024  /* 1 kb */))
+                .policy(DailyRotationPolicy.getInstance())
+                .append(false)
+                .build();
+
+        // start rollover stream
+        fos = new RotatingFileOutputStream(config);
+
         auditSignal(AuditType.INIT);
     }
 
@@ -92,6 +139,9 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     @Override
     public void onShutdown() {
         auditSignal(AuditType.SHUTDOWN);
+
+        // close the rollover stream
+        Closeables.closeQuietly(fos);
     }
 
     @Override
@@ -107,21 +157,13 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     @Override
     public void onError(final @Nonnull Throwable throwable) {
         final var now = Instant.now();
-        log.info(String.format(JSON_TEMPLATE_ERROR, //
+        writeToAuditFile(String.format(JSON_TEMPLATE_ERROR, //
                 AuditType.ERROR, // #1
                 escapeForJson(throwable.getMessage()), // #2
                 Arrays.stream(throwable.getStackTrace()).map(e -> "\"" + escapeForJson(e.toString()) + "\"").collect(Collectors.joining(",")), // #3
                 now.getEpochSecond(), // #4
                 now.getNano() // #5
         ));
-    }
-
-    // TODO: --> move to Strings Utility class?
-    private static String escapeForJson(final String str) {
-        return str.replace("\"", "\\\"")
-                .replace("\\", "\\\\")
-                .replace("/", "\\/")
-                .replaceAll("\\\\u\\d{4}","");
     }
 
     /**
@@ -133,7 +175,7 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
     private void auditBody(final @Nonnull AuditType type, final @Nonnull Body body) {
         final var now = Instant.now();
         final var header = Header.of(body);
-        log.info(String.format(JSON_TEMPLATE_BODY, //
+        writeToAuditFile(String.format(JSON_TEMPLATE_BODY, //
                 type, // #1
                 ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes()), // #2
                 body.getServiceType().name(), // #3
@@ -152,11 +194,25 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private void auditSignal(final @Nonnull AuditType type) {
         final var now = Instant.now();
-        log.info(String.format(JSON_TEMPLATE_SIGNAL, //
+        writeToAuditFile(String.format(JSON_TEMPLATE_SIGNAL, //
                 type, // #1
                 now.getEpochSecond(), // #2
                 now.getNano() // #3
         ));
+    }
+
+    /**
+     * Writes the {@link String} line to audit file
+     *
+     * @param line
+     */
+    private void writeToAuditFile(final @Nonnull String line) {
+        try {
+            fos.write(line.getBytes(StandardCharsets.UTF_8));
+            fos.write(System.lineSeparator().getBytes());
+        } catch (final IOException e) {
+            log.error("Error writing to audit file '{}': {}", path, line, e);
+        }
     }
 
     /**
