@@ -149,6 +149,26 @@ public final class PluginManager implements AutoCloseable {
         log.info("Plugin registered: {}", plugin);
     }
 
+//    /**
+//     * Registers the plugin and calls the initialization
+//     *
+//     * @param pluginClass
+//     * @return An instance of {@link Plugin}
+//     */
+//    public <T extends Plugin> T registerPlugin(final @Nonnull Class<T> pluginClass) {
+//        final var plugin = registerPluginInternal(pluginClass);
+//        notifyPlugins(client, Collections.singletonList(plugin), Plugin::onInitialization);
+//
+//        // for extension plugins, we have a special case:
+//        // if the KNX Client is already started -> kick in the onStart immediately!
+//        if (plugin instanceof ExtensionPlugin && client.isRunning()) {
+//            notifyPlugins(null, Collections.singletonList((ExtensionPlugin) plugin), (p, x) -> p.onStart());
+//        }
+//
+//        log.info("Plugin registered: {}", plugin);
+//        return plugin;
+//    }
+
     /**
      * Registers the plugin from given URL and class path
      * <p/>
@@ -173,6 +193,9 @@ public final class PluginManager implements AutoCloseable {
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
                     "Seems the given plugin is not an instance of {}: {}", Plugin.class, className);
 
+//            @SuppressWarnings("unchecked")
+//            final var castedClass = (Class<Plugin>)cls;
+//            return registerPluginInternal(castedClass);
             final var plugin = (Plugin) cls.getDeclaredConstructor().newInstance();
             log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
             registerPlugin(plugin);
@@ -203,6 +226,37 @@ public final class PluginManager implements AutoCloseable {
             log.trace("Register plugin as Observer Plugin: {}", plugin);
         }
     }
+
+//    /**
+//     * Registers the plugin
+//     *
+//     * @param pluginClass
+//     */
+//    @Nonnull
+//    private <T extends Plugin> T registerPluginInternal(final @Nonnull Class<T> pluginClass) {
+//        Preconditions.checkArgument(getPlugin(pluginClass) == null,
+//                "There is already a plugin registered for class: {}", pluginClass);
+//
+//        try {
+//            final var plugin = pluginClass.getDeclaredConstructor().newInstance();
+//
+//            log.debug("Register plugin: {}", plugin);
+//            allPlugins.add(plugin);
+//            if (plugin instanceof ExtensionPlugin) {
+//                extensionPlugins.add((ExtensionPlugin) plugin);
+//                log.trace("Register plugin as Extension Plugin: {}", plugin);
+//            }
+//            if (plugin instanceof ObserverPlugin) {
+//                observerPlugins.add((ObserverPlugin) plugin);
+//                log.trace("Register plugin as Observer Plugin: {}", plugin);
+//            }
+//
+//            return plugin;
+//        } catch (final ReflectiveOperationException ex) {
+//            log.error("Could not instantiate plugin class: {}", pluginClass.getName(), ex);
+//            throw new RuntimeException(ex);
+//        }
+//    }
 
     /**
      * Returns an an already-registered Plugin for given {@code pluginClass}
@@ -241,12 +295,11 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * De-Registers the plugin
+     * De-Registers the plugin by class
      *
-     * @param plugin
+     * @param pluginClass
      */
-    public void unregisterPlugin(final @Nonnull Plugin plugin) {
-        final var pluginClass = plugin.getClass();
+    public void unregisterPlugin(final @Nonnull Class<? extends Plugin> pluginClass) {
         Preconditions.checkArgument(getPlugin(pluginClass) != null,
                 "No plugin is registered for class: {}", pluginClass);
 

@@ -13,6 +13,7 @@ import li.pitschmann.knx.link.body.cemi.ControlByte2;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.body.cemi.TPCI;
 import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.config.PluginConfigValue;
 import li.pitschmann.knx.link.datapoint.DPT8;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
@@ -34,6 +35,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,17 +65,9 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     private XmlProject xmlProject;
 
     public TTYMonitorPlugin() {
-        this(System.out);
-    }
-
-    public TTYMonitorPlugin(final PrintStream out) {
-        this(out, getTerminalColumns(), getTerminalLines());
-    }
-
-    public TTYMonitorPlugin(final PrintStream out, final int columns, final int lines) {
-        this.out = out;
-        this.columns = columns;
-        this.lines = lines;
+        this.out = System.out;
+        this.columns = getTerminalColumns();
+        this.lines = getTerminalLines();
         log.info("Terminal initialized with: out={}, columns={}, lines={}", this.out, this.columns, this.lines);
     }
 
@@ -140,6 +134,11 @@ public final class TTYMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     public void onInitialization(final KnxClient knxClient) {
         this.knxClient = knxClient;
         this.xmlProject = knxClient.getConfig().getProject();
+    }
+
+    @Override
+    public List<PluginConfigValue<?>> getConfigValues() {
+        return List.of();
     }
 
     @Override

@@ -20,6 +20,7 @@ package li.pitschmann.knx.plugins.audit;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.header.ServiceType;
 import org.junit.jupiter.api.Test;
 
@@ -29,15 +30,16 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test {@link AuditPlugin}
+ * Test {@link FileAuditPlugin}
  */
-public class AuditPluginTest {
+public class FileAuditPluginTest {
     /**
-     * Test {@link AuditPlugin#onIncomingBody(Body)}
+     * Test {@link FileAuditPlugin#onIncomingBody(Body)}
      */
     @Test
     public void auditIncomingBody() throws IOException {
@@ -46,9 +48,15 @@ public class AuditPluginTest {
         when(body.getRawData()).thenReturn(new byte[]{0x11, 0x22, 0x33});
         when(body.getRawDataAsHexString()).thenReturn("0x11 22 33");
 
-        final var path = Paths.get("target/test-AuditPluginTest-auditIncomingBody-" + UUID.randomUUID() + ".log");
-        final var plugin = new AuditPlugin(path);
-        plugin.onInitialization(mock(KnxClient.class));
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBody-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
+        final var knxClientMock = mock(KnxClient.class);
+        final var configMock = mock(Config.class);
+        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+
+        plugin.onInitialization(knxClientMock);
         plugin.onStart();
         plugin.onIncomingBody(body);
         plugin.onShutdown();
@@ -107,7 +115,7 @@ public class AuditPluginTest {
 
 
     /**
-     * Test {@link AuditPlugin#onOutgoingBody(Body)}
+     * Test {@link FileAuditPlugin#onOutgoingBody(Body)}
      */
     @Test
     public void auditOutgoingBody() throws IOException {
@@ -116,9 +124,15 @@ public class AuditPluginTest {
         when(body.getRawData()).thenReturn(new byte[]{0x22, 0x33});
         when(body.getRawDataAsHexString()).thenReturn("0x22 33");
 
-        final var path = Paths.get("target/test-AuditPluginTest-auditOutgoingBody-" + UUID.randomUUID() + ".log");
-        final var plugin = new AuditPlugin(path);
-        plugin.onInitialization(mock(KnxClient.class));
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBody-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
+        final var knxClientMock = mock(KnxClient.class);
+        final var configMock = mock(Config.class);
+        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+
+        plugin.onInitialization(knxClientMock);
         plugin.onStart();
         plugin.onOutgoingBody(body);
         plugin.onShutdown();
@@ -147,7 +161,7 @@ public class AuditPluginTest {
     }
 
     /**
-     * Test {@link AuditPlugin#onError(Throwable)}
+     * Test {@link FileAuditPlugin#onError(Throwable)}
      */
     @Test
     public void auditOnError() throws IOException {
@@ -170,9 +184,15 @@ public class AuditPluginTest {
                 }
         );
 
-        final var path = Paths.get("target/test-AuditPluginTest-auditOnError-" + UUID.randomUUID() + ".log");
-        final var plugin = new AuditPlugin(path);
-        plugin.onInitialization(mock(KnxClient.class));
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOnError-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
+        final var knxClientMock = mock(KnxClient.class);
+        final var configMock = mock(Config.class);
+        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+
+        plugin.onInitialization(knxClientMock);
         plugin.onStart();
         plugin.onError(exception);
         plugin.onShutdown();

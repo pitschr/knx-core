@@ -70,14 +70,19 @@ final class ConfigFileUtil {
             // add plugins
             for (final var plugin : allPlugins) {
                 configBuilder.plugin(plugin);
+
+                // plugin.getDeclaredFields() + static + final + PluginConfigValue instance
+                // TODO - get all ConfigValues
             }
 
             // add settings
             for (final var setting : allSettings.entrySet()) {
-                final var configConstant = ConfigConstants.getConfigConstantByKey(setting.getKey());
+                final var configValue = ConfigConstants.getConfigValueByKey(setting.getKey());
                 // exclude which are config constants and NOT settable
-                if (configConstant == null || configConstant.isSettable()) {
-                    configBuilder.setting(setting.getKey(), setting.getValue());
+                if (configValue != null && configValue.isSettable()) {
+                    configBuilder.setting(configValue, setting.getValue());
+                } else {
+                    log.warn("Unknown config '{}' found. Ignored!", setting.getKey());
                 }
             }
             return configBuilder;
@@ -91,17 +96,18 @@ final class ConfigFileUtil {
      * like {@code my.package.MyClass}
      *
      * @param lines
-     * @return list of {@link Plugin} instances
+     * @return list of {@link Plugin} classes
      */
-    private static List<Plugin> asPluginList(final @Nonnull List<String> lines) {
+    private static List<Class<Plugin>> asPluginList(final @Nonnull List<String> lines) {
         final var filteredLines = filterBySection(lines, "plugins");
-        final var plugins = new ArrayList<Plugin>(filteredLines.size());
+        final var plugins = new ArrayList<Class<Plugin>>(filteredLines.size());
 
         for (final var line : filteredLines) {
             try {
-                final var plugin = (Plugin) Class.forName(line).getDeclaredConstructor().newInstance();
-                log.info("Plugin loaded: {}", plugin);
-                plugins.add(plugin);
+                @SuppressWarnings("unchecked")
+                final var pluginClass = (Class<Plugin>) Class.forName(line);
+                log.info("Plugin class: {}", pluginClass);
+                plugins.add(pluginClass);
             } catch (final Exception notFoundException) {
                 throw new KnxConfigurationException("Could not load plugin: " + line);
             }

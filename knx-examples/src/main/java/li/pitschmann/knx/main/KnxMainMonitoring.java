@@ -22,12 +22,12 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
-import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
-import li.pitschmann.knx.plugins.audit.AuditPlugin;
+import li.pitschmann.knx.plugins.audit.FileAuditPlugin;
 import li.pitschmann.utils.Sleeper;
 import li.pitschmann.utils.Stopwatch;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -110,16 +110,19 @@ public class KnxMainMonitoring extends AbstractKnxMain {
         // Create Config
         final var config = parseConfigBuilder(args) //
                 .setting(ConfigConstants.PROJECT_PATH, projectPath)
-                .plugin( //
-                        new AuditPlugin(Paths.get("knx-audit.log")), //
-                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
-                        new TTYMonitorPlugin()
-                ) //
+                .plugin(FileAuditPlugin.class)
+                .plugin(TTYMonitorPlugin.class)
+//                .plugin( //
+//                        new FileAuditPlugin(Paths.get("knx-audit.log")), //
+//                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
+//                        new TTYMonitorPlugin()
+//                ) //
                 .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
                 .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
                 .setting(ConfigConstants.Description.PORT, 40001) //
                 .setting(ConfigConstants.Control.PORT, 40002) //
                 .setting(ConfigConstants.Data.PORT, 40003) //
+                .setting(FileAuditPlugin.PATH, Paths.get("."))
                 .build();
 
         final var sw = Stopwatch.createStarted();

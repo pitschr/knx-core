@@ -24,8 +24,10 @@ import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.knx.link.config.TestPlugin;
 import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.test.data.TestExtensionPlugin;
+import li.pitschmann.knx.test.data.TestObserverPlugin;
+import li.pitschmann.knx.test.data.TestPlugin;
 import li.pitschmann.utils.Sleeper;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
@@ -59,11 +61,15 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test initial initialization of plugins through configuration instance")
     public void testOnInitialization() {
-        final var observerPluginMock = mock(ObserverPlugin.class);
+        final var observerPluginMock = TestObserverPlugin.class;
         final var extensionPluginMock = mock(ExtensionPlugin.class);
 
         // 1) register two plugins (via config)
-        final var config = ConfigBuilder.tunneling().plugin(observerPluginMock, extensionPluginMock).build();
+        final var config = ConfigBuilder
+                .tunneling()
+                .plugin(TestObserverPlugin.class)
+                .plugin(TestExtensionPlugin.class)
+                .build();
         final var knxClientMock = newKnxClientMock(config);
         final var pluginManager = new PluginManager(config);
 
@@ -72,8 +78,10 @@ public final class PluginManagerTest {
         Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
 
         // 3) verify
-        verify(observerPluginMock).onInitialization(any(KnxClient.class));
-        verify(extensionPluginMock).onInitialization(any(KnxClient.class));
+        final var observerPlugin = pluginManager.getPlugin(TestObserverPlugin.class);
+        final var extensionPlugin = pluginManager.getPlugin(TestExtensionPlugin.class);
+        assertThat(observerPlugin.getInitInvocations()).isOne();
+        assertThat(extensionPlugin.getInitInvocations()).isOne();
     }
 
     @Test
@@ -189,7 +197,7 @@ public final class PluginManagerTest {
         assertThat(plugin3).isSameAs(plugin);
 
         // de-register the old plugin and re-register the plugin (new plugin should be born)
-        pluginManager.unregisterPlugin(plugin);
+        pluginManager.unregisterPlugin(plugin.getClass());
         final var newPlugin = pluginManager.registerPlugin(pathToJAR, className);
         assertThat(newPlugin).isInstanceOf(Plugin.class);
         assertThat(newPlugin.getClass().getName()).isEqualTo(className);
@@ -214,7 +222,7 @@ public final class PluginManagerTest {
         assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isSameAs(testPlugin);
 
         // 3) unregister
-        pluginManager.unregisterPlugin(testPlugin);
+        pluginManager.unregisterPlugin(testPluginClass);
 
         // 4) check if plugin doesn't exists anymore again
         assertThat(pluginManager.getPlugin(testPluginClass)).isNull();

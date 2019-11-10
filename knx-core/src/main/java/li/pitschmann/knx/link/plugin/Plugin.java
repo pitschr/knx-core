@@ -19,6 +19,9 @@
 package li.pitschmann.knx.link.plugin;
 
 import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.config.PluginConfigValue;
+
+import java.util.List;
 
 /**
  * Marker interface for plugin to extend the {@link KnxClient} with some features.
@@ -32,4 +35,10 @@ public interface Plugin {
      * @param client
      */
     void onInitialization(KnxClient client);
+
+    /**
+     * Returns the context for Plugin
+     * @return
+     */
+    List<PluginConfigValue<?>> getConfigValues();
 }

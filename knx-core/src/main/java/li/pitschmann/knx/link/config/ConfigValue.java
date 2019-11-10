@@ -28,18 +28,17 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * An immutable Constant Value Holder for Configuration containing
+ * An immutable Config Value Holder for Configuration containing
  * <ul>
  * <li>{@code key} ... fully qualified name of key, will be lower-cased</li>
  * <li>{@code classType} ... for type of class, also used for casting</li>
  * <li>{@code defaultSupplier} ... supplier for default value</li>
  * <li>{@code settable} ... flag if the value of config key can be set
- * via {@link ConfigBuilder#setting(String, Object)}</li>
  * </ul>
  *
  * @param <T>
  */
-public final class ConfigConstant<T> {
+public class ConfigValue<T> {
     private final String key;
     private final Class<T> classType;
     private final Supplier<T> defaultSupplier;
@@ -47,11 +46,13 @@ public final class ConfigConstant<T> {
     private final Predicate<T> predicate;
     private final boolean settable;
 
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier, final boolean settable) {
-        this(key, classType, converter, defaultSupplier, null, settable);
-    }
-
-    public ConfigConstant(final @Nonnull String key, final @Nonnull Class<T> classType, final @Nonnull Function<String, T> converter, final @Nonnull Supplier<T> defaultSupplier, final @Nullable Predicate<T> predicate, final boolean settable) {
+    protected ConfigValue(
+            final @Nonnull String key,
+            final @Nonnull Class<T> classType,
+            final @Nonnull Function<String, T> converter,
+            final @Nonnull Supplier<T> defaultSupplier,
+            final @Nullable Predicate<T> predicate,
+            final boolean settable) {
         this.key = Objects.requireNonNull(key).toLowerCase();
         this.classType = Objects.requireNonNull(classType);
         this.converter = Objects.requireNonNull(converter);
@@ -84,9 +85,14 @@ public final class ConfigConstant<T> {
         return this.converter;
     }
 
+    public Predicate<T> getPredicate() {
+        return this.predicate;
+    }
+
     public boolean isSettable() {
         return settable;
     }
+
 
     /**
      * Returns {@code true} if the given value is valid/applicable for the config.
@@ -108,7 +114,6 @@ public final class ConfigConstant<T> {
     public T convert(final String value) {
         return this.converter.apply(value);
     }
-
 
     @Override
     public String toString() {

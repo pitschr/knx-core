@@ -24,9 +24,12 @@ import com.vlkan.rfos.policy.DailyRotationPolicy;
 import com.vlkan.rfos.policy.SizeBasedRotationPolicy;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
+import li.pitschmann.knx.link.config.PluginConfigValue;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
+import li.pitschmann.knx.link.plugin.PathConfigValue;
+import li.pitschmann.knx.link.plugin.StringConfigValue;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Closeables;
 import org.slf4j.Logger;
@@ -37,35 +40,49 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Audit Plug-in that logs every signal arriving KNX client to a log file
+ * Audit Plug-in that logs every signal arriving KNX client to a file
  *
  * @author PITSCHR
  */
-public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
-    private static final Logger log = LoggerFactory.getLogger(AuditPlugin.class);
+public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
+    public static final PathConfigValue PATH = new PathConfigValue(
+            FileAuditPlugin.class,
+            "path",
+            () -> Paths.get("."),
+            (x) -> true);
+
+    public static final StringConfigValue NAME = new StringConfigValue(
+            FileAuditPlugin.class,
+            "name",
+            () -> "",
+            (x) -> true);
+
+    private static final Logger log = LoggerFactory.getLogger(FileAuditPlugin.class);
     private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
     /**
      * JSON Audit Template for signal
      */
     private static final String JSON_TEMPLATE_SIGNAL = "" + //
             "{" + //
-                "\"time\":%2$s.%3$s," + //
-                "\"type\":\"%1$s\"" + //
+            "\"time\":%2$s.%3$s," + //
+            "\"type\":\"%1$s\"" + //
             "}"; //
     /**
      * JSON Audit Template for error
      */
     private static final String JSON_TEMPLATE_ERROR = "" + //
             "{" + //
-                "\"time\":%4$s.%5$s," + //
-                "\"type\":\"%1$s\"," + //
-                "\"message\":\"%2$s\"," + //
-                "\"stacktrace\":[%3$s]" + //
+            "\"time\":%4$s.%5$s," + //
+            "\"type\":\"%1$s\"," + //
+            "\"message\":\"%2$s\"," + //
+            "\"stacktrace\":[%3$s]" + //
             "}"; //
 
     // @formatter:off
@@ -88,14 +105,9 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
                     "\"raw\":\"%4$s\"" + //
                 "}" + //
             "}"; //
-    private final Path path;
+    private Path path;
     private RotatingFileOutputStream fos;
     // @formatter:on
-
-    public AuditPlugin(final @Nonnull Path path) {
-        this.path = path.toAbsolutePath();
-        log.debug("Set path for AuditPlugin: {}", path);
-    }
 
     private static String escapeForJson(final String str) {
         return str.replace("\"", "\\\"")
@@ -104,8 +116,17 @@ public final class AuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 .replaceAll("\\\\u\\d{4}", "");
     }
 
+
+    // TODO: Axiom: PluginConfigValue within this plugin class???? requirement: public + static + final
+    // --> remove getConfigValues()
+    @Override
+    public List<PluginConfigValue<?>> getConfigValues() {
+        return List.of(PATH, NAME);
+    }
+
     @Override
     public void onInitialization(final @Nullable KnxClient client) {
+        path = client.getConfig().getSetting(FileAuditPlugin.PATH);
         final var baseFile = path.toString();
 
         // get file pattern for rollover
