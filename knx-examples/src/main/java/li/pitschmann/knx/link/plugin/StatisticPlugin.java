@@ -51,8 +51,8 @@ public final class StatisticPlugin implements ExtensionPlugin {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor(true);
     private static final long DEFAULT_INTERVAL_MILLISECONDS = TimeUnit.MINUTES.toMillis(1); // 60000 ms
     private static final StatisticFormat DEFAULT_FORMAT = StatisticFormat.JSON;
-    private final long intervalMilliseconds;
-    private final StatisticFormat format;
+    private long intervalMilliseconds = DEFAULT_INTERVAL_MILLISECONDS;
+    private StatisticFormat format = DEFAULT_FORMAT;
     private KnxClient client;
 
     /**
@@ -62,19 +62,6 @@ public final class StatisticPlugin implements ExtensionPlugin {
      * Default interval is {@link #DEFAULT_INTERVAL_MILLISECONDS}<br/>
      */
     public StatisticPlugin() {
-        this(DEFAULT_FORMAT, DEFAULT_INTERVAL_MILLISECONDS);
-    }
-
-    /**
-     * Starts Statistic Plug-In with specific format and interval setting. Choose the interval (ms) wisely.
-     * Smaller the interval (ms) more frequently the statistic will be updated and resulting into more CPU resources.
-     *
-     * @param format               the format how statistic should look like (see: {@link StatisticFormat})
-     * @param intervalMilliseconds interval in milliseconds
-     */
-    public StatisticPlugin(final @Nonnull StatisticFormat format, final long intervalMilliseconds) {
-        this.format = Objects.requireNonNull(format);
-        this.intervalMilliseconds = intervalMilliseconds;
     }
 
     @Override

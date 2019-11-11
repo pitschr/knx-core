@@ -24,7 +24,6 @@ import com.vlkan.rfos.policy.DailyRotationPolicy;
 import com.vlkan.rfos.policy.SizeBasedRotationPolicy;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
-import li.pitschmann.knx.link.config.PluginConfigValue;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
@@ -43,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -66,26 +64,26 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(FileAuditPlugin.class);
     private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
+
+    // @formatter:off
     /**
      * JSON Audit Template for signal
      */
     private static final String JSON_TEMPLATE_SIGNAL = "" + //
             "{" + //
-            "\"time\":%2$s.%3$s," + //
-            "\"type\":\"%1$s\"" + //
+                "\"time\":%2$s.%3$s," + //
+                "\"type\":\"%1$s\"" + //
             "}"; //
     /**
      * JSON Audit Template for error
      */
     private static final String JSON_TEMPLATE_ERROR = "" + //
             "{" + //
-            "\"time\":%4$s.%5$s," + //
-            "\"type\":\"%1$s\"," + //
-            "\"message\":\"%2$s\"," + //
-            "\"stacktrace\":[%3$s]" + //
+                "\"time\":%4$s.%5$s," + //
+                "\"type\":\"%1$s\"," + //
+                "\"message\":\"%2$s\"," + //
+                "\"stacktrace\":[%3$s]" + //
             "}"; //
-
-    // @formatter:off
     /**
      * JSON Audit Template with body details
      */
@@ -105,23 +103,16 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
                     "\"raw\":\"%4$s\"" + //
                 "}" + //
             "}"; //
+    // @formatter:on
+
     private Path path;
     private RotatingFileOutputStream fos;
-    // @formatter:on
 
     private static String escapeForJson(final String str) {
         return str.replace("\"", "\\\"")
                 .replace("\\", "\\\\")
                 .replace("/", "\\/")
                 .replaceAll("\\\\u\\d{4}", "");
-    }
-
-
-    // TODO: Axiom: PluginConfigValue within this plugin class???? requirement: public + static + final
-    // --> remove getConfigValues()
-    @Override
-    public List<PluginConfigValue<?>> getConfigValues() {
-        return List.of(PATH, NAME);
     }
 
     @Override

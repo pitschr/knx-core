@@ -271,9 +271,9 @@ public final class ExamplePlugin {
         final var endTimeMillis = System.currentTimeMillis() + 60000;
 
         final var config = ConfigBuilder
-                .tunneling()  // communication mode: tunneling
-                .plugin(new MyPlugin()) // register my plugin
-                .build(); // create immutable config
+                .tunneling()            // communication mode: tunneling
+                .plugin(MyPlugin.class) // register my plugin
+                .build();               // create immutable config
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {

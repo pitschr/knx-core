@@ -28,6 +28,7 @@ import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -72,11 +74,13 @@ public class BaseKnxClientTest {
     @MockServerTest
     @DisplayName("OK: Check Base KNX Client")
     public void testCommonMethods(final MockServer mockServer) {
-        // mock extension plugin to verify if the init method is invoked with correct client instance
-        final var extensionPlugin = mock(ExtensionPlugin.class);
+        final var configSpy = spy(mockServer.newConfigBuilder().build());
 
-        final var client = new BaseKnxClient(mockServer.newConfigBuilder().plugin(extensionPlugin).build());
-        try (client) {
+        // mock a plugin
+        final var pluginMock = mock(Plugin.class);
+        when(configSpy.getPlugins()).thenReturn(List.of(pluginMock));
+
+        try (final var client = new BaseKnxClient(configSpy)) {
             assertThat(client.getStatusPool()).isNotNull();
             assertThat(client.getConfig()).isNotNull();
             assertThat(client.isRunning()).isFalse(); // it is false, because it has not been started yet
@@ -89,11 +93,11 @@ public class BaseKnxClientTest {
             // wait bit until the extension plugin has been invoked asynchronously
             // it may rarely happen that verify(..) fails because onInitialization(..)
             // was not called in time
-            Sleeper.milliseconds(() -> !mockingDetails(extensionPlugin).getInvocations().isEmpty(), 1000);
+            Sleeper.milliseconds(() -> !mockingDetails(pluginMock).getInvocations().isEmpty(), 1000);
             // verify if the init method of extension plugin has been called and the parameter is
             // the client (and not e.g. internal client)
             final var argCaptor = ArgumentCaptor.forClass(KnxClient.class);
-            verify(extensionPlugin).onInitialization(argCaptor.capture());
+            verify(pluginMock).onInitialization(argCaptor.capture());
             assertThat(argCaptor.getValue()).isInstanceOf(BaseKnxClient.class).isSameAs(client);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

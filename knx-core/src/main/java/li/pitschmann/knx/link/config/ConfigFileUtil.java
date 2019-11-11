@@ -27,9 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +54,7 @@ final class ConfigFileUtil {
      * @param filePath
      * @return a new instance of {@link ConfigBuilder}
      */
-    public static ConfigBuilder loadFile(final @Nonnull Path filePath) {
+    static ConfigBuilder loadFile(final @Nonnull Path filePath) {
         Preconditions.checkArgument(Files.isReadable(filePath),
                 "The file doesn't exists or is not readable: {}", filePath);
 
@@ -67,22 +69,30 @@ final class ConfigFileUtil {
 
             final var configBuilder = ConfigBuilder.create(endpointAddress + ":" + endpointPort);
 
+            // all registered config values
+            final var allRegisteredConfigValues = Maps.<String, ConfigValue<Object>>newHashMap(allPlugins.size() * 32);
+            allRegisteredConfigValues.putAll(ConfigConstants.getConfigValues());
+
             // add plugins
             for (final var plugin : allPlugins) {
                 configBuilder.plugin(plugin);
-
-                // plugin.getDeclaredFields() + static + final + PluginConfigValue instance
-                // TODO - get all ConfigValues
+                allRegisteredConfigValues.putAll(getConfigValues(plugin));
             }
 
             // add settings
             for (final var setting : allSettings.entrySet()) {
-                final var configValue = ConfigConstants.getConfigValueByKey(setting.getKey());
-                // exclude which are config constants and NOT settable
-                if (configValue != null && configValue.isSettable()) {
-                    configBuilder.setting(configValue, setting.getValue());
+                final var configValue = allRegisteredConfigValues.get(setting.getKey());
+                // consider only which are known and settable
+                if (configValue != null) {
+                    if (configValue.isSettable()) {
+                        final var settingValue = configValue.convert(setting.getValue());
+                        configBuilder.setting(configValue, settingValue);
+                        log.debug("Config '{}' loaded with value: {}", configValue.getKey(), settingValue);
+                    } else {
+                        log.warn("Config '{}' is not settable. Ignored!", configValue.getKey());
+                    }
                 } else {
-                    log.warn("Unknown config '{}' found. Ignored!", setting.getKey());
+                    log.debug("Config '{}' is not registered. Ignored!", setting.getKey());
                 }
             }
             return configBuilder;
@@ -104,8 +114,7 @@ final class ConfigFileUtil {
 
         for (final var line : filteredLines) {
             try {
-                @SuppressWarnings("unchecked")
-                final var pluginClass = (Class<Plugin>) Class.forName(line);
+                @SuppressWarnings("unchecked") final var pluginClass = (Class<Plugin>) Class.forName(line);
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
             } catch (final Exception notFoundException) {
@@ -165,5 +174,42 @@ final class ConfigFileUtil {
             }
         }
         return filteredLines;
+    }
+
+    /**
+     * Parses the given {@link Class} for all public+static+final fields that are instanec of {@link ConfigValue}
+     *
+     * @param clazz
+     * @return map of config key and {@link ConfigValue}
+     */
+    static Map<String, ConfigValue<Object>> getConfigValues(final @Nonnull Class<?> clazz) {
+        final var map = new HashMap<String, ConfigValue<Object>>();
+
+        // get config value fields from current class
+        for (final var field : clazz.getFields()) {
+            if (Modifier.isPublic(field.getModifiers())
+                    && Modifier.isStatic(field.getModifiers())
+                    && Modifier.isFinal(field.getModifiers())) {
+                try {
+                    final var obj = field.get(null);
+                    if (obj instanceof ConfigValue) {
+                        @SuppressWarnings("unchecked") final var configValue = (ConfigValue<Object>) obj;
+                        map.put(configValue.getKey(), configValue);
+                        log.trace("Field '{}' added to map: {}", field.getName(), configValue);
+                    }
+                } catch (final ReflectiveOperationException e) {
+                    throw new KnxConfigurationException("Could not load field '" + field.getName() + "' from class '" + clazz.getName() + "'");
+                }
+            } else {
+                log.trace("Field '{}' ignored because it is not 'public static final'", field.getName());
+            }
+        }
+
+        // get config constants from sub-class
+        for (final var subClass : clazz.getClasses()) {
+            map.putAll(getConfigValues(subClass));
+        }
+
+        return map;
     }
 }

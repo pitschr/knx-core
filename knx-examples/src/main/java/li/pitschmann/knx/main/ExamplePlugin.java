@@ -48,7 +48,7 @@ public final class ExamplePlugin {
 
         final var config = ConfigBuilder
                 .tunneling()  // communication mode: tunneling
-                .plugin(new MyPlugin()) // register my plugin
+                .plugin(MyPlugin.class) // register my plugin
                 .build(); // create immutable config
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery

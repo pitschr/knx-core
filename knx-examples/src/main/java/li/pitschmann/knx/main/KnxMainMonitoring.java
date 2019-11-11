@@ -22,12 +22,12 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.knx.plugins.audit.FileAuditPlugin;
 import li.pitschmann.utils.Sleeper;
 import li.pitschmann.utils.Stopwatch;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -112,11 +112,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .setting(ConfigConstants.PROJECT_PATH, projectPath)
                 .plugin(FileAuditPlugin.class)
                 .plugin(TTYMonitorPlugin.class)
-//                .plugin( //
-//                        new FileAuditPlugin(Paths.get("knx-audit.log")), //
-//                        new StatisticPlugin(StatisticPlugin.StatisticFormat.TEXT, 30000), //
-//                        new TTYMonitorPlugin()
-//                ) //
+                .plugin(StatisticPlugin.class)
                 .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
                 .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
                 .setting(ConfigConstants.Description.PORT, 40001) //

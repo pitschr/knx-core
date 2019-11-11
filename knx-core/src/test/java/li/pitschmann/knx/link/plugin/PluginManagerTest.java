@@ -34,12 +34,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,27 +63,26 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test initial initialization of plugins through configuration instance")
     public void testOnInitialization() {
-        final var observerPluginMock = TestObserverPlugin.class;
-        final var extensionPluginMock = mock(ExtensionPlugin.class);
-
         // 1) register two plugins (via config)
-        final var config = ConfigBuilder
+        final var configSpy = spy(ConfigBuilder
                 .tunneling()
                 .plugin(TestObserverPlugin.class)
                 .plugin(TestExtensionPlugin.class)
-                .build();
-        final var knxClientMock = newKnxClientMock(config);
-        final var pluginManager = new PluginManager(config);
+                .build());
+
+        final var observerPluginMock = mock(ObserverPlugin.class);
+        final var extensionPluginMock = mock(ExtensionPlugin.class);
+        when(configSpy.getPlugins()).thenReturn(List.of(observerPluginMock, extensionPluginMock));
 
         // 2) initialization
+        final var knxClientMock = newKnxClientMock(configSpy);
+        final var pluginManager = new PluginManager(configSpy);
         pluginManager.notifyInitialization(knxClientMock);
         Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
 
         // 3) verify
-        final var observerPlugin = pluginManager.getPlugin(TestObserverPlugin.class);
-        final var extensionPlugin = pluginManager.getPlugin(TestExtensionPlugin.class);
-        assertThat(observerPlugin.getInitInvocations()).isOne();
-        assertThat(extensionPlugin.getInitInvocations()).isOne();
+        verify(observerPluginMock).onInitialization(any(KnxClient.class));
+        verify(extensionPluginMock).onInitialization(any(KnxClient.class));
     }
 
     @Test

@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class PathConfigValue extends PluginConfigValue<Path> {
-    
+
     public PathConfigValue(final Class<? extends Plugin> pluginClass, final String key, final Supplier<Path> defaultSupplier, final Predicate<Path> predicate) {
         super(pluginClass, key, Path.class, Paths::get, defaultSupplier, predicate);
     }

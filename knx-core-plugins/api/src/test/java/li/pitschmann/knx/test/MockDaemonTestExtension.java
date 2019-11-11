@@ -86,10 +86,11 @@ public final class MockDaemonTestExtension
             log.debug("KNX Mock Server started (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
             // -------------------------------------
-            // 2) create HTTP Mock Daemon Extension
+            // 2) Config
             // -------------------------------------
             stopwatch.reset();
-            final var mockHttpDaemon = new MockHttpDaemonPlugin();
+            final var config = mockServer.newConfigBuilder().plugin(MockHttpDaemonPlugin.class).build();
+            final var mockHttpDaemon = (MockHttpDaemonPlugin) config.getPlugins().stream().filter(MockHttpDaemonPlugin.class::isInstance).findFirst().get();
             mockDaemons.put(context, mockHttpDaemon);
             log.debug("KNX Mock Daemon created (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
@@ -98,13 +99,10 @@ public final class MockDaemonTestExtension
             //    (with mock http daemon as plugin)
             // -------------------------------------
             stopwatch.reset();
-            final var configBuilder = mockServer.newConfigBuilder();
-            configBuilder.plugin(mockHttpDaemon);
-
             final ExecutorService executorService = Executors.newSingleThreadExecutor(true);
             executorService.execute(
                     () -> {
-                        try (final var client = DefaultKnxClient.createStarted(configBuilder.build())) {
+                        try (final var client = DefaultKnxClient.createStarted()) {
                             knxClients.put(context, client);
                             while (client.isRunning() && Sleeper.seconds(1)) {
                                 // do nothing ...
@@ -121,7 +119,7 @@ public final class MockDaemonTestExtension
             if (!Sleeper.milliseconds(100, mockHttpDaemon::isReady, 30000)) {
                 throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms).");
             }
-            //Sleeper.seconds(5);
+
             log.debug("KNX Client started (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         } else {
             throw new IllegalStateException("KNX Mock Server already running.");

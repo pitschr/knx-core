@@ -22,7 +22,6 @@ import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.knx.parser.XmlProject;
-import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +33,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Immutable Config
@@ -66,44 +64,18 @@ public final class Config {
 
         // plugins
         final var plugins = new ArrayList<Plugin>(pluginClasses.size());
-        final var pluginConfigValues = new LinkedList<PluginConfigValue<?>>();
         for (final var pluginClass : pluginClasses) {
             try {
                 final var plugin = pluginClass.getDeclaredConstructor().newInstance();
                 plugins.add(plugin);
-                pluginConfigValues.addAll(plugin.getConfigValues());
             } catch (final ReflectiveOperationException ex) {
-                new KnxConfigurationException("Could not instantiate plugin: " + pluginClass);
+                throw new KnxConfigurationException("Could not instantiate plugin: " + pluginClass);
             }
         }
         this.plugins = List.copyOf(plugins);
 
-        // load default settings and potentially overwrite settings
-        // 1. add constant settings
-        // 2. add plugin settings
-        // 3. add custom settings
-        final var constantConfigValues = ConfigConstants.getConfigValues();
-//        final var mergeSettings = Maps.<String, Object>newHashMap(constantConfigValues.size() + pluginConfigValues.size() + settings.size());
-//        for (final var config : constantConfigValues) {
-//            mergeSettings.put(config.getKey(), config.getDefaultValue());
-//        }
-//        for (final var config : pluginConfigValues) {
-//            mergeSettings.put(config.getKey(), config.getDefaultValue());
-//        }
-//        mergeSettings.putAll(settings);
-//        this.settings = Collections.unmodifiableMap(mergeSettings);
-
-        final var mergeSettings = Maps.<ConfigValue<?>, Object>newHashMap(constantConfigValues.size() + pluginConfigValues.size() + settings.size());
-        for (final var config : constantConfigValues) {
-            mergeSettings.put(config, config.getDefaultValue());
-        }
-        for (final var config : pluginConfigValues) {
-            if (!settings.containsKey(config)) {
-                mergeSettings.put(config, config.getDefaultValue());
-            }
-        }
-        mergeSettings.putAll(settings);
-        this.settings = Collections.unmodifiableMap(mergeSettings);
+        // defensive copy of custom settings
+        this.settings = Collections.unmodifiableMap(new HashMap<>(settings));
 
         // try to parse the project file
         final var projectPath = getProjectPath();
@@ -116,44 +88,6 @@ public final class Config {
         }
         this.xmlProject = tmpXmlProject;
     }
-
-//    /**
-//     * Returns the setting for given {@code key}. Defaults back to {@code null} in case the
-//     * value of key is not defined or unknown.
-//     *
-//     * @param key configuration key
-//     * @param <T>
-//     * @return the value of setting (key), may be {@code null} if not found
-//     */
-//    @Nullable
-//    public <T> T getSetting(final @Nonnull String key) {
-//        return getSetting(key, null);
-//    }
-//
-//    /**
-//     * Returns the setting for given {@code key}. Defaults back to {@code defaultValue} in case the
-//     * value of key is not defined or unknown.
-//     *
-//     * @param key          configuration key
-//     * @param defaultValue used if value for key is absent
-//     * @param <T>
-//     * @return the value of setting (key), may be {@code null} if undefined
-//     */
-//    @Nullable
-//    public <T> T getSetting(final @Nonnull String key, final @Nullable T defaultValue) {
-//        final var value = this.settings.get(key.toLowerCase());
-//        if (value == null) {
-//            return defaultValue;
-//        } else {
-//            final var configValue = ConfigConstants.<T>getConfigValueByKey(key);
-//            if (configValue != null) {
-//                return configValue.getClassType().cast(value);
-//            } else {
-//                @SuppressWarnings("unchecked") final T uncheckedValue = (T) value;
-//                return uncheckedValue;
-//            }
-//        }
-//    }
 
     /**
      * Returns the setting for given {@code configValue}. If key is not known, then a

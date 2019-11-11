@@ -23,8 +23,6 @@ import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,10 +41,7 @@ import java.util.Map;
  * @author PITSCHR
  */
 public final class ConfigBuilder {
-    private final static Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
-
     private final List<Class<Plugin>> pluginClasses = new LinkedList<>();
-//    private final Map<String, Object> settings = Maps.newHashMap(100);
     private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
     private InetAddress remoteControlAddress;
     private int remoteControlPort;
@@ -295,44 +290,12 @@ public final class ConfigBuilder {
     public ConfigBuilder plugin(final @Nonnull Class<? extends Plugin> pluginClass) {
         Preconditions.checkNonNull(pluginClass);
         Preconditions.checkArgument(!this.pluginClasses.contains(pluginClass),
-                "Plugin already added: {}", pluginClass);
-
+                "Plugin already added: {}", pluginClass.getName());
 
         @SuppressWarnings("unchecked") final var pluginClassCasted = (Class<Plugin>) pluginClass;
         this.pluginClasses.add(pluginClassCasted);
         return this;
     }
-
-//    /**
-//     * Adds setting to be used by KNX client (and plugins)
-//     *
-//     * @param key   key of setting
-//     * @param value if {@code null}, then default value should be used
-//     * @return myself
-//     */
-//    @Nonnull
-//    public ConfigBuilder setting(final @Nonnull String key, final @Nullable Object value) {
-//        final var configValue = ConfigConstants.getConfigValueByKey(Objects.requireNonNull(key));
-//        if (configValue == null) {
-//            this.settings.put(key.toLowerCase(), value);
-//        } else if (value == null) {
-//            setting(configValue, null);
-//        } else {
-//            // additional check because we want to be ensure that value has right instance type
-//            final var classType = configValue.getClassType();
-//            final var valueClassType = value.getClass();
-//            if (classType.isInstance(value)) {
-//                // all good
-//                setting(configValue, value);
-//            } else if (value instanceof String) {
-//                // try with conversion
-//                setting(configValue, configValue.convert((String) value));
-//            } else {
-//                throw new KnxConfigurationException("Instance type of value is '" + valueClassType.getName() + "'. Expected: " + classType.getName());
-//            }
-//        }
-//        return this;
-//    }
 
     /**
      * Adds setting to be used by KNX client (and plugins)

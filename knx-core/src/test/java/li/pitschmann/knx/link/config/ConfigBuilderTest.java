@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.config;
 
-import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
@@ -289,6 +288,10 @@ public class ConfigBuilderTest {
         // invalid cases because of "null" reference
         assertThatThrownBy(() -> configBuilder.plugin(null))
                 .isInstanceOf(NullPointerException.class);
+        // invalid case when re-try adding same plugin
+        assertThatThrownBy(() -> configBuilder.plugin(TestPlugin.class))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Plugin already added: li.pitschmann.knx.test.data.TestPlugin");
     }
 
     @Test
@@ -301,7 +304,6 @@ public class ConfigBuilderTest {
         configBuilder.setting(ConfigConstants.NAT, true);
         configBuilder.setting(ConfigConstants.Multicast.ADDRESS, Networker.getByAddress("224.0.0.1"));
         configBuilder.setting(ConfigConstants.Multicast.TIME_TO_LIVE, null);
-//        configBuilder.setting("foo", "bar");
 
         final var config = configBuilder.build();
         assertThat(config.getMulticastChannelAddress()).isEqualTo(Networker.getByAddress(224, 0, 0, 1));
@@ -310,7 +312,6 @@ public class ConfigBuilderTest {
         // overwriting setting should be allowed
         configBuilder.setting(ConfigConstants.Executor.PLUGIN_POOL_SIZE, 4);
         configBuilder.setting(ConfigConstants.NAT, null); // reset to default value
-//        configBuilder.setting("foo", "barNEW");
         final var configNew = configBuilder.build();
 
         // old and new value should be still present
@@ -320,16 +321,10 @@ public class ConfigBuilderTest {
         assertThat(config.isNatEnabled()).isTrue();
         assertThat(configNew.isNatEnabled()).isFalse();
 
-        // assertThat(config.getSetting("foo", Function.identity())).isEqualTo("bar");
-        // assertThat(configNew.getSetting("foo", Function.identity())).isEqualTo("barNEW");
-
         // invalid cases
-//        assertThatThrownBy(() -> configBuilder.setting((String) null, null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> configBuilder.setting((ConfigValue<?>) null, null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> configBuilder.setting(null, null)).isInstanceOf(NullPointerException.class);
 
         // protected cases
-//        assertThatThrownBy(() -> configBuilder.setting("client.endpoint.address", null)).isInstanceOf(IllegalArgumentException.class);
-//        assertThatThrownBy(() -> configBuilder.setting("client.endpoint.port", null)).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.ADDRESS, null)).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.PORT, null)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -347,36 +342,6 @@ public class ConfigBuilderTest {
         assertThat(configBuilder.build().isNatEnabled()).isFalse();
     }
 
-//    @Test
-//    @DisplayName("Test config with wrong value setting")
-//    public void testSettingsWithValueInstance() {
-//        final var configBuilder = ConfigBuilder
-//                .tunneling(true)
-////                .setting("foo", "bar")
-//                .setting(ConfigConstants.Description.PORT, 4711)
-////                .setting(ConfigConstants.Multicast.TIME_TO_LIVE, 23)
-//                ;
-//
-//        // 1) verify if it is defined as above
-//        final var config1 = configBuilder.build();
-//        assertThat(config1.isNatEnabled()).isTrue();
-////        assertThat(config1.<String>getSetting("FOO")).isEqualTo("bar");
-//        assertThat(config1.getDescriptionChannelPort()).isEqualTo(4711);
-//        assertThat(config1.getMulticastTTL()).isEqualTo(23);
-//        // 2) set value of NAT with wrong type (expected: boolean),
-////        //    overwrite of "foo" should not be a problem as it is not a ConfigValue
-////        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.NAT, Integer.MAX_VALUE))
-////                .isInstanceOf(KnxConfigurationException.class)
-////                .hasMessage("Instance type of value is 'java.lang.Integer'. Expected: java.lang.Boolean");
-////        configBuilder.setting("foo", Integer.MAX_VALUE);
-//        configBuilder.setting(ConfigConstants.Description.PORT, 4712);
-//        // 3) verify if it remains as "enabled", and "foo" / "port" settings should be overwritten
-//        final var config2 = configBuilder.build();
-//        assertThat(config2.isNatEnabled()).isTrue();
-////        assertThat(config2.<Integer>getSetting("FOO")).isEqualTo(Integer.MAX_VALUE);
-//        assertThat(config2.getDescriptionChannelPort()).isEqualTo(4712);
-//    }
-
     @Test
     @DisplayName("Test config with validator/predicate")
     public void testSettingWithPredicate() {
@@ -391,6 +356,5 @@ public class ConfigBuilderTest {
         // test with valid path
         final var validPath = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
         assertThat(configBuilder.setting(ConfigConstants.PROJECT_PATH, validPath).build()).isNotNull();
-//        assertThat(configBuilder.setting(ConfigConstants.PROJECT_PATH.getKey(), validPath.toFile().getAbsolutePath()).build()).isNotNull();
     }
 }

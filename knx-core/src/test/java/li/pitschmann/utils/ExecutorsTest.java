@@ -47,12 +47,12 @@ public class ExecutorsTest {
     /**
      * This project is shipped with SLF4J only and without any bindings
      * (see: http://www.slf4j.org/codes.html#no_static_mdc_binder )
-     *
+     * <p>
      * It defaults back to {@link org.slf4j.helpers.NOPMDCAdapter} which
      * doesn't store any data for MDC. We want to use the {@link BasicMDCAdapter}
      * per default in case {@link org.slf4j.helpers.NOPMDCAdapter} is used
      * because the tests are otherwise failing because of no-operation.
-     *
+     * <p>
      * In concrete project a proper binding should be used (e.g. logback, ...)
      */
     @BeforeAll

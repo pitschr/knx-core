@@ -20,21 +20,15 @@ package li.pitschmann.knx.link.config;
 
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.utils.Networker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -102,16 +96,11 @@ public final class ConfigConstants {
             Files::isReadable,
             true
     );
-    private static final Logger log = LoggerFactory.getLogger(ConfigConstants.class);
-    /**
-     * Map of lower-cased {@link String} keys and {@link ConfigValue} values
-     */
-    private static final Map<String, ConfigValue<?>> CONFIG_CONSTANTS;
 
-    static {
-        final var map = getConfigValues(ConfigConstants.class);
-        CONFIG_CONSTANTS = Collections.unmodifiableMap(map);
-    }
+    /**
+     * Immutable map of lower-cased {@link String} keys and {@link ConfigValue} values
+     */
+    private static final Map<String, ConfigValue<Object>> CONFIG_CONSTANTS = Map.copyOf(ConfigFileUtil.getConfigValues(ConfigConstants.class));
 
     private ConfigConstants() {
         throw new AssertionError("Do not touch me!");
@@ -136,44 +125,8 @@ public final class ConfigConstants {
      * @return immutable list of {@link ConfigValue}
      */
     @Nonnull
-    public static List<ConfigValue<?>> getConfigValues() {
-        return List.copyOf(CONFIG_CONSTANTS.values());
-    }
-
-    /**
-     * Returns a map of lower-cased {@link String} keys and {@link ConfigValue} values
-     *
-     * @param clazz class to be scanned
-     * @return map with a pair of key as {@link String} (in lower-case) and value as {@link ConfigValue}
-     */
-    @Nonnull
-    private static Map<String, ConfigValue<?>> getConfigValues(final @Nonnull Class<?> clazz) {
-        final var map = new HashMap<String, ConfigValue<?>>();
-
-        // get config value fields from current class
-        for (final var field : clazz.getFields()) {
-            if (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers())) {
-                try {
-                    final var obj = field.get(null);
-                    if (obj instanceof ConfigValue) {
-                        final var ConfigValue = (ConfigValue<?>) obj;
-                        map.put(ConfigValue.getKey(), ConfigValue);
-                        log.trace("Field '{}' added to map: {}", field.getName(), ConfigValue);
-                    }
-                } catch (final ReflectiveOperationException e) {
-                    throw new KnxConfigurationException("Could not load field '" + field.getName() + "' from class '" + clazz.getName() + "'");
-                }
-            } else {
-                log.trace("Field '{}' ignored because it is not 'static final'", field.getName());
-            }
-        }
-
-        // get config constants from sub-class
-        for (final var subClass : clazz.getClasses()) {
-            map.putAll(getConfigValues(subClass));
-        }
-
-        return map;
+    public static Map<String, ConfigValue<Object>> getConfigValues() {
+        return CONFIG_CONSTANTS;
     }
 
     public static final class Search {
