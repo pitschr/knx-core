@@ -102,7 +102,7 @@ public final class MockDaemonTestExtension
             final ExecutorService executorService = Executors.newSingleThreadExecutor(true);
             executorService.execute(
                     () -> {
-                        try (final var client = DefaultKnxClient.createStarted()) {
+                        try (final var client = DefaultKnxClient.createStarted(config)) {
                             knxClients.put(context, client);
                             while (client.isRunning() && Sleeper.seconds(1)) {
                                 // do nothing ...

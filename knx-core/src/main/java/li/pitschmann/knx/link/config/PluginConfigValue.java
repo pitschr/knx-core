@@ -28,7 +28,7 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
                 // (in lower-case, to be done in parent class)
                 pluginClass.getName() + "." + name,
                 // rest remain same like ConfigValue
-                classType, converter, defaultSupplier, predicate, false);
+                classType, converter, defaultSupplier, predicate, true);
         this.pluginClass = pluginClass;
     }
 
