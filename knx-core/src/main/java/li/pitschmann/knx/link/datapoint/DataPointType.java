@@ -147,4 +147,17 @@ public interface DataPointType<V extends DataPointValue<?>> {
             return toValue(newArray);
         }
     }
+
+    /**
+     * Returns byte array based for specified string arguments. This method is handy one
+     * that calls {@link #toValue(String, String...)} to return the byte array.
+     *
+     * @param arg
+     * @param moreArgs
+     * @return byte array
+     */
+    @Nonnull
+    default byte[] toByteArray(final @Nonnull String arg, final String... moreArgs) {
+        return toValue(arg, moreArgs).toByteArray();
+    }
 }

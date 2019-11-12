@@ -20,6 +20,8 @@ package li.pitschmann.knx.link.plugin;
 
 import li.pitschmann.knx.link.communication.KnxClient;
 
+import javax.annotation.Nonnull;
+
 /**
  * Marker interface for plugin to extend the {@link KnxClient} with some features.
  *
@@ -31,5 +33,5 @@ public interface Plugin {
      *
      * @param client
      */
-    void onInitialization(KnxClient client);
+    void onInitialization(final @Nonnull KnxClient client);
 }

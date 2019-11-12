@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body.address;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -243,7 +243,7 @@ public final class GroupAddress extends KnxAddress {
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("addressType", this.getAddressType())
                 .add("address", this.getAddress())
                 .add("address(2-level)", this.getAddressLevel2())

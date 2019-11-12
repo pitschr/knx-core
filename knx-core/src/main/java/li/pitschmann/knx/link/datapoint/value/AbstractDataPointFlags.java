@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.AbstractDataPointType;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +52,7 @@ abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extend
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this.getClass())
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
                 .toString();

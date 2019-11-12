@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT15;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -158,7 +158,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPT15Value.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT())
                 .add("accessIdentificationData", ByteFormatter.formatHexAsString(this.accessIdentificationData))
                 .add("flags", this.flags)
@@ -284,7 +284,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         @Override
         public String toString() {
             // @formatter:off
-            return MoreObjects.toStringHelper(Flags.class)
+            return Strings.toStringHelper(this)
                     .add("error", this.error)
                     .add("permissionAccepted", this.permissionAccepted)
                     .add("readDirectionRightToLeft", this.readDirectionRightToLeft)

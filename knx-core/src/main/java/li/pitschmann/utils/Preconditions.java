@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 public final class Preconditions {
     private Preconditions() {
-        new AssertionError("Do not touch me!");
+        throw new AssertionError("Do not touch me!");
     }
 
     /**
@@ -59,24 +59,6 @@ public final class Preconditions {
     }
 
     /**
-     * Returns the first argument if it is non-{@code null} and
-     * otherwise returns the non-{@code null} second argument.
-     * <p/>
-     * Example:
-     * <pre>
-     *     checkNotNull(obj, anotherObj);
-     * </pre>
-     *
-     * @param obj        the object reference to check for nullity
-     * @param defaultObj a non-{@code null} object to return if the first argument
-     *                   is {@code null}
-     * @throws NullPointerException if {@code obj} is {@code null}
-     */
-    public static <T> T checkNonNullElse(final @Nullable T obj, final @Nonnull T defaultObj) {
-        return Objects.requireNonNullElse(obj, defaultObj);
-    }
-
-    /**
      * Checks the truth of given {@code expression}
      *
      * @param expression a boolean expression
@@ -98,16 +80,16 @@ public final class Preconditions {
      *     checkArgument(bool, "The value '{}' should should be between {} and {}.", valueName, 1, 10);
      * </pre>
      *
-     * @param expression   a boolean expression
-     * @param obj           an object reference that should be printed in default error message,
-     *                      or the error message itself
-     * @param args         arguments for customized error message
+     * @param expression a boolean expression
+     * @param obj        an object reference that should be printed in default error message,
+     *                   or the error message itself
+     * @param args       arguments for customized error message
      * @throws IllegalArgumentException if expression is {@code false}
      */
     public static void checkArgument(boolean expression, final @Nonnull Object obj, final @Nullable Object... args) {
         if (!expression) {
             if (obj instanceof String) {
-                throw new IllegalArgumentException(toErrorMessage((String)obj, args));
+                throw new IllegalArgumentException(toErrorMessage((String) obj, args));
             } else {
                 throw new IllegalArgumentException(toErrorMessage("Illegal Argument for: {}. More Arguments: {}", obj, Arrays.toString(args)));
             }
@@ -137,16 +119,16 @@ public final class Preconditions {
      *     checkState(bool, "The value '{}' should should be between {} and {}.", valueName, 1, 10);
      * </pre>
      *
-     * @param expression   a boolean expression
-     * @param obj           an object reference that should be printed in default error message,
-     *                      or the error message itself
-     * @param args         arguments for customized error message
+     * @param expression a boolean expression
+     * @param obj        an object reference that should be printed in default error message,
+     *                   or the error message itself
+     * @param args       arguments for customized error message
      * @throws IllegalStateException if expression is {@code false}
      */
     public static void checkState(boolean expression, final @Nullable Object obj, final @Nullable Object... args) {
         if (!expression) {
             if (obj instanceof String) {
-                throw new IllegalStateException(toErrorMessage((String)obj, args));
+                throw new IllegalStateException(toErrorMessage((String) obj, args));
             } else {
                 throw new IllegalStateException(toErrorMessage("Illegal State for: {}. More Arguments: {}", obj, Arrays.toString(args)));
             }
@@ -185,6 +167,10 @@ public final class Preconditions {
      * @return array of formatted arguments
      */
     private static Object[] toErrorMessageArguments(final @Nonnull Object[] args) {
+        if (args == null) {
+            return new Object[]{toErrorMessageArgument(null)};
+        }
+
         final Object[] tmpArgs = new Object[args.length];
         for (var i = 0; i < args.length; i++) {
             tmpArgs[i] = toErrorMessageArgument(args[i]);

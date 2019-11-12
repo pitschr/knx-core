@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.datapoint.value;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.DPT20;
 import li.pitschmann.knx.link.datapoint.DPT23;
 import li.pitschmann.knx.link.datapoint.DPTEnum;
@@ -26,6 +25,7 @@ import li.pitschmann.knx.link.datapoint.DataPointTypeEnum;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,7 +113,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(DPTEnumValue.class)
+        return Strings.toStringHelper(this)
                 .add("dpt", this.dpt)
                 .add("ordinal", this.ordinal)
                 .add("enumField", this.enumField.getDeclaringClass().getName() + "." + this.enumField.name())

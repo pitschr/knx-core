@@ -18,21 +18,23 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Supporter for Configuration for file-based solutions
@@ -52,7 +54,7 @@ final class ConfigFileUtil {
      * @param filePath
      * @return a new instance of {@link ConfigBuilder}
      */
-    public static ConfigBuilder loadFile(final @Nonnull Path filePath) {
+    static ConfigBuilder loadFile(final @Nonnull Path filePath) {
         Preconditions.checkArgument(Files.isReadable(filePath),
                 "The file doesn't exists or is not readable: {}", filePath);
 
@@ -62,22 +64,35 @@ final class ConfigFileUtil {
             final var allSettings = asSettingMap(lines);
 
             // first try to find: "endpoint address" and "endpoint port"
-            final var endpointAddress = Strings.nullToEmpty(allSettings.get(ConfigConstants.Endpoint.ADDRESS.getKey()));
-            final var endpointPort = Strings.nullToEmpty(allSettings.get(ConfigConstants.Endpoint.PORT.getKey()));
+            final var endpointAddress = Objects.requireNonNullElse(allSettings.get(ConfigConstants.Endpoint.ADDRESS.getKey()), "");
+            final var endpointPort = Objects.requireNonNullElse(allSettings.get(ConfigConstants.Endpoint.PORT.getKey()), "");
 
             final var configBuilder = ConfigBuilder.create(endpointAddress + ":" + endpointPort);
+
+            // all registered config values
+            final var allRegisteredConfigValues = Maps.<String, ConfigValue<Object>>newHashMap(allPlugins.size() * 32);
+            allRegisteredConfigValues.putAll(ConfigConstants.getConfigValues());
 
             // add plugins
             for (final var plugin : allPlugins) {
                 configBuilder.plugin(plugin);
+                allRegisteredConfigValues.putAll(getConfigValues(plugin));
             }
 
             // add settings
             for (final var setting : allSettings.entrySet()) {
-                final var configConstant = ConfigConstants.getConfigConstantByKey(setting.getKey());
-                // exclude which are config constants and NOT settable
-                if (configConstant == null || configConstant.isSettable()) {
-                    configBuilder.setting(setting.getKey(), setting.getValue());
+                final var configValue = allRegisteredConfigValues.get(setting.getKey());
+                // consider only which are known and settable
+                if (configValue != null) {
+                    if (configValue.isSettable()) {
+                        final var settingValue = configValue.convert(setting.getValue());
+                        configBuilder.setting(configValue, settingValue);
+                        log.debug("Config '{}' loaded with value: {}", configValue.getKey(), settingValue);
+                    } else {
+                        log.warn("Config '{}' is not settable. Ignored!", configValue.getKey());
+                    }
+                } else {
+                    log.debug("Config '{}' is not registered. Ignored!", setting.getKey());
                 }
             }
             return configBuilder;
@@ -91,17 +106,17 @@ final class ConfigFileUtil {
      * like {@code my.package.MyClass}
      *
      * @param lines
-     * @return list of {@link Plugin} instances
+     * @return list of {@link Plugin} classes
      */
-    private static List<Plugin> asPluginList(final @Nonnull List<String> lines) {
+    private static List<Class<Plugin>> asPluginList(final @Nonnull List<String> lines) {
         final var filteredLines = filterBySection(lines, "plugins");
-        final var plugins = new ArrayList<Plugin>(filteredLines.size());
+        final var plugins = new ArrayList<Class<Plugin>>(filteredLines.size());
 
         for (final var line : filteredLines) {
             try {
-                final var plugin = (Plugin) Class.forName(line).getDeclaredConstructor().newInstance();
-                log.info("Plugin loaded: {}", plugin);
-                plugins.add(plugin);
+                @SuppressWarnings("unchecked") final var pluginClass = (Class<Plugin>) Class.forName(line);
+                log.info("Plugin class: {}", pluginClass);
+                plugins.add(pluginClass);
             } catch (final Exception notFoundException) {
                 throw new KnxConfigurationException("Could not load plugin: " + line);
             }
@@ -119,7 +134,7 @@ final class ConfigFileUtil {
     @Nonnull
     private static Map<String, String> asSettingMap(final @Nonnull List<String> lines) {
         final var filteredLines = filterBySection(lines, "settings");
-        final var settings = Maps.<String, String>newHashMapWithExpectedSize(filteredLines.size());
+        final var settings = Maps.<String, String>newHashMap(filteredLines.size());
 
         for (final var line : filteredLines) {
             final var keyAndValue = line.split("=", 2);
@@ -159,5 +174,42 @@ final class ConfigFileUtil {
             }
         }
         return filteredLines;
+    }
+
+    /**
+     * Parses the given {@link Class} for all public+static+final fields that are instanec of {@link ConfigValue}
+     *
+     * @param clazz
+     * @return map of config key and {@link ConfigValue}
+     */
+    static Map<String, ConfigValue<Object>> getConfigValues(final @Nonnull Class<?> clazz) {
+        final var map = new HashMap<String, ConfigValue<Object>>();
+
+        // get config value fields from current class
+        for (final var field : clazz.getFields()) {
+            if (Modifier.isPublic(field.getModifiers())
+                    && Modifier.isStatic(field.getModifiers())
+                    && Modifier.isFinal(field.getModifiers())) {
+                try {
+                    final var obj = field.get(null);
+                    if (obj instanceof ConfigValue) {
+                        @SuppressWarnings("unchecked") final var configValue = (ConfigValue<Object>) obj;
+                        map.put(configValue.getKey(), configValue);
+                        log.trace("Field '{}' added to map: {}", field.getName(), configValue);
+                    }
+                } catch (final ReflectiveOperationException e) {
+                    throw new KnxConfigurationException("Could not load field '" + field.getName() + "' from class '" + clazz.getName() + "'");
+                }
+            } else {
+                log.trace("Field '{}' ignored because it is not 'public static final'", field.getName());
+            }
+        }
+
+        // get config constants from sub-class
+        for (final var subClass : clazz.getClasses()) {
+            map.putAll(getConfigValues(subClass));
+        }
+
+        return map;
     }
 }

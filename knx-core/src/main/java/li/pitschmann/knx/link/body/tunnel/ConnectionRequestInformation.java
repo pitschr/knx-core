@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.link.body.tunnel;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.body.hpai.ConnectionType;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -143,7 +143,7 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
                 .add("connectionType", this.connectionType)
                 .add("layerType", this.layerType);

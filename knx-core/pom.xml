@@ -34,8 +34,31 @@
     <name>KNX Core</name>
     <description>KNX Core (Client, DPTs, ...)</description>
 
-    <!-- No special dependencies -->
-    <dependencies/>
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Utilities -->
+        <dependency>
+            <groupId>com.ximpleware</groupId>
+            <artifactId>vtd-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
 

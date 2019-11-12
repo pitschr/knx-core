@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.datapoint;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.datapoint.value.DPT1Value;
 import li.pitschmann.knx.link.datapoint.value.DPT2Value;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
@@ -104,8 +103,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
      */
     @Test
     public void testToString() {
-        assertThat(DPT1.ACK.toString()).contains(
-                MoreObjects.toStringHelper(DPT1.class).add("id", DPT1.ACK.getId()).add("description", DPT1.ACK.getDescription()).toString());
+        assertThat(DPT1.ACK.toString()).hasToString("DPT1{id=1.016, description=Acknowledge}");
     }
 
     /**

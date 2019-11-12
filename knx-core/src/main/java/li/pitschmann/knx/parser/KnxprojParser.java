@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.base.Stopwatch;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

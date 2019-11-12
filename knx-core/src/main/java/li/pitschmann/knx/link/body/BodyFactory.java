@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Factory for {@link Body}. The proper body will be picked up based on {@link ServiceType} code.

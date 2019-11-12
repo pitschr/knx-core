@@ -18,23 +18,19 @@
 
 package li.pitschmann.knx.link.config;
 
-import com.google.common.base.Strings;
-import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
+import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * KNX specific configurations like KNX Net/IP device address. This class can be created
@@ -45,10 +41,8 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class ConfigBuilder {
-    private final static Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
-
-    private final List<Plugin> plugins = new LinkedList<>();
-    private final Map<String, Object> settings = new HashMap<>(64);
+    private final List<Class<Plugin>> pluginClasses = new LinkedList<>();
+    private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
     private InetAddress remoteControlAddress;
     private int remoteControlPort;
     private boolean routingEnabled;
@@ -289,18 +283,17 @@ public final class ConfigBuilder {
     /**
      * Adds plugin to be used by KNX client
      *
-     * @param plugin      plugin to be provided
-     * @param morePlugins optionally an array of plugins can be provided, the array may not contain {@code null} element.
+     * @param pluginClass plugin class to be provided for registering the plugin
      * @return myself
      */
     @Nonnull
-    public ConfigBuilder plugin(final @Nonnull Plugin plugin, final @Nullable Plugin... morePlugins) {
-        this.plugins.add(Objects.requireNonNull(plugin));
-        if (morePlugins != null) {
-            for (final Plugin morePlugin : morePlugins) {
-                this.plugins.add(Objects.requireNonNull(morePlugin));
-            }
-        }
+    public ConfigBuilder plugin(final @Nonnull Class<? extends Plugin> pluginClass) {
+        Preconditions.checkNonNull(pluginClass);
+        Preconditions.checkArgument(!this.pluginClasses.contains(pluginClass),
+                "Plugin already added: {}", pluginClass.getName());
+
+        @SuppressWarnings("unchecked") final var pluginClassCasted = (Class<Plugin>) pluginClass;
+        this.pluginClasses.add(pluginClassCasted);
         return this;
     }
 
@@ -312,44 +305,13 @@ public final class ConfigBuilder {
      * @return myself
      */
     @Nonnull
-    public ConfigBuilder setting(final @Nonnull String key, final @Nullable Object value) {
-        final var configConstant = ConfigConstants.getConfigConstantByKey(Objects.requireNonNull(key));
-        if (configConstant == null) {
-            this.settings.put(key.toLowerCase(), value);
-        } else if (value == null) {
-            setting(configConstant, null);
-        } else {
-            // additional check because we want to be ensure that value has right instance type
-            final var classType = configConstant.getClassType();
-            final var valueClassType = value.getClass();
-            if (classType.isInstance(value)) {
-                // all good
-                setting(configConstant, value);
-            } else if (value instanceof String) {
-                // try with conversion
-                setting(configConstant, configConstant.convert((String) value));
-            } else {
-                throw new KnxConfigurationException("Instance type of value is '" + valueClassType.getName() + "'. Expected: " + classType.getName());
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Adds setting to be used by KNX client (and plugins)
-     *
-     * @param key   key of setting
-     * @param value if {@code null}, then default value should be used
-     * @return myself
-     */
-    @Nonnull
-    public <T> ConfigBuilder setting(final @Nonnull ConfigConstant<T> key, final @Nullable T value) {
+    public <T> ConfigBuilder setting(final @Nonnull ConfigValue<T> key, final @Nullable T value) {
         Preconditions.checkArgument(key.isSettable(),
                 "This key is protected and cannot be used for setting: {}", key.getKey());
         Preconditions.checkArgument(value == null || key.isValid(value),
                 "The value seems not be applicable for config '{}': {}", key.getKey(), value);
 
-        this.settings.put(key.getKey(), value);
+        this.settings.put(key, value);
         return this;
     }
 
@@ -365,7 +327,7 @@ public final class ConfigBuilder {
                 remoteControlAddress,
                 remoteControlPort,
                 settings,
-                plugins
+                pluginClasses
         );
     }
 }

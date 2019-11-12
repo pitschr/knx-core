@@ -74,13 +74,14 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Notifies all {@link ExtensionPlugin} and {@link ObserverPlugin} about KNX Client initialization
+     * Notifies all {@link Plugin} about KNX Client initialization
      * <p/>
      * <strong>For internal use only!</strong>
      */
     public void notifyInitialization(final @Nonnull KnxClient client) {
         this.client = Objects.requireNonNull(client);
         this.client.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
+        log.info("All Plugins: {}", allPlugins);
         log.info("Observer Plugins: {}", observerPlugins);
         log.info("Extension Plugins: {}", extensionPlugins);
         notifyPlugins(client, allPlugins, Plugin::onInitialization);
@@ -178,7 +179,7 @@ public final class PluginManager implements AutoCloseable {
             registerPlugin(plugin);
             return plugin;
         } catch (final Throwable t) {
-            throw new KnxException("Could not load plugin '" + className + "' at: " + filePath);
+            throw new KnxException("Could not load plugin '" + className + "' at: " + filePath, t);
         }
     }
 
@@ -241,12 +242,11 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * De-Registers the plugin
+     * De-Registers the plugin by class
      *
-     * @param plugin
+     * @param pluginClass
      */
-    public void unregisterPlugin(final @Nonnull Plugin plugin) {
-        final var pluginClass = plugin.getClass();
+    public void unregisterPlugin(final @Nonnull Class<? extends Plugin> pluginClass) {
         Preconditions.checkArgument(getPlugin(pluginClass) != null,
                 "No plugin is registered for class: {}", pluginClass);
 

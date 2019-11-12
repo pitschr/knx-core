@@ -42,6 +42,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -51,6 +52,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -77,17 +79,14 @@ public class KnxClientTest {
     )
     @DisplayName("Default Client: Test notification of plug-ins")
     public void testPlugins(final MockServer mockServer) {
-        final var configBuilder = mockServer.newConfigBuilder();
+        final var configSpy = spy(mockServer.newConfigBuilder().build());
 
-        // observer plug-in
-        final var observerPlugin = mock(ObserverPlugin.class);
-        configBuilder.plugin(observerPlugin);
+        // observer + extension plug-ins
+        final var observerPluginMock = mock(ObserverPlugin.class);
+        final var extensionPluginMock = mock(ExtensionPlugin.class);
+        when(configSpy.getPlugins()).thenReturn(List.of(observerPluginMock, extensionPluginMock));
 
-        // extension plug-in
-        final var extensionPlugin = mock(ExtensionPlugin.class);
-        configBuilder.plugin(extensionPlugin);
-
-        try (final var client = DefaultKnxClient.createStarted(configBuilder.build())) {
+        try (final var client = DefaultKnxClient.createStarted(configSpy)) {
             // wait for first tunneling ack body sent by client
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK);
         } catch (final Throwable t) {
@@ -106,28 +105,28 @@ public class KnxClientTest {
         mockServer.waitDone();
 
         // verify number of notifications to observer plug-in
-        verify(observerPlugin, times(1)).onInitialization(any());
+        verify(observerPluginMock, times(1)).onInitialization(any());
 
-        verify(observerPlugin).onIncomingBody(isA(DescriptionResponseBody.class));
-        verify(observerPlugin).onIncomingBody(isA(ConnectResponseBody.class));
-        verify(observerPlugin).onIncomingBody(isA(ConnectionStateResponseBody.class));
-        verify(observerPlugin).onIncomingBody(isA(TunnelingRequestBody.class));
-        verify(observerPlugin).onIncomingBody(isA(DisconnectResponseBody.class));
-        verify(observerPlugin, times(5)).onIncomingBody(any());
+        verify(observerPluginMock).onIncomingBody(isA(DescriptionResponseBody.class));
+        verify(observerPluginMock).onIncomingBody(isA(ConnectResponseBody.class));
+        verify(observerPluginMock).onIncomingBody(isA(ConnectionStateResponseBody.class));
+        verify(observerPluginMock).onIncomingBody(isA(TunnelingRequestBody.class));
+        verify(observerPluginMock).onIncomingBody(isA(DisconnectResponseBody.class));
+        verify(observerPluginMock, times(5)).onIncomingBody(any());
 
-        verify(observerPlugin).onOutgoingBody(isA(DescriptionRequestBody.class));
-        verify(observerPlugin).onOutgoingBody(isA(ConnectRequestBody.class));
-        verify(observerPlugin).onOutgoingBody(isA(ConnectionStateRequestBody.class));
-        verify(observerPlugin).onOutgoingBody(isA(TunnelingAckBody.class));
-        verify(observerPlugin).onOutgoingBody(isA(DisconnectRequestBody.class));
-        verify(observerPlugin, times(5)).onOutgoingBody(any());
+        verify(observerPluginMock).onOutgoingBody(isA(DescriptionRequestBody.class));
+        verify(observerPluginMock).onOutgoingBody(isA(ConnectRequestBody.class));
+        verify(observerPluginMock).onOutgoingBody(isA(ConnectionStateRequestBody.class));
+        verify(observerPluginMock).onOutgoingBody(isA(TunnelingAckBody.class));
+        verify(observerPluginMock).onOutgoingBody(isA(DisconnectRequestBody.class));
+        verify(observerPluginMock, times(5)).onOutgoingBody(any());
 
-        verify(observerPlugin, times(2)).onError(any());
+        verify(observerPluginMock, times(2)).onError(any());
 
         // verify number of notifications to extension plug-in
-        verify(extensionPlugin).onInitialization(any());
-        verify(extensionPlugin).onStart();
-        verify(extensionPlugin).onShutdown();
+        verify(extensionPluginMock).onInitialization(any());
+        verify(extensionPluginMock).onStart();
+        verify(extensionPluginMock).onShutdown();
     }
 
 

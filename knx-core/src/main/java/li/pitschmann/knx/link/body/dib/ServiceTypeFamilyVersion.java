@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.MoreObjects;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -50,7 +50,7 @@ public final class ServiceTypeFamilyVersion {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("family", this.family)
                 .add("version", this.version)
                 .toString();

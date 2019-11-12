@@ -1,0 +1,24 @@
+{
+  "plugin": {
+    "name": {
+      "en": "File Audit Plugin",
+      "de": "Datei Audit Plugin"
+    },
+    "description": {
+      "en": "Auditing KNX events (inbound, outbound and error) and writing to a log file",
+      "de": "Inspiziert KNX Ereignisse (Eingang, Ausgang und Fehler) und schreibt in eine Log Datei"
+    }
+  },
+  "config": {
+    "path": {
+      "name": {
+        "en": "Path",
+        "de": "Pfad"
+      },
+      "description": {
+        "en": "Path to the log file (absolute path recommended)",
+        "de": "Pfad zu Log Datei (absolute Pfad empfohlen)"
+      }
+    }
+  }
+}

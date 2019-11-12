@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.body;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.body.dib.DescriptionType;
 import li.pitschmann.knx.link.body.dib.DeviceHardwareInformationDIB;
@@ -32,6 +31,7 @@ import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -252,7 +252,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 // mandatory
                 .add("deviceHardwareInformation", this.deviceHardwareInformation.toString(false))
                 .add("supportedDeviceFamilies", this.supportedDeviceFamilies.toString(false))

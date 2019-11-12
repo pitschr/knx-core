@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.utils.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -45,8 +46,8 @@ public final class InternalKnxStatistic implements KnxStatistic {
     private static final long KNX_PACKET_SIZE = 48L;
 
     // General statistics
-    private final Map<Class<? extends Body>, AtomicLong> numberOfBodyReceivedMap = Maps.newHashMapWithExpectedSize(10);
-    private final Map<Class<? extends Body>, AtomicLong> numberOfBodySentMap = Maps.newHashMapWithExpectedSize(10);
+    private final Map<Class<? extends Body>, AtomicLong> numberOfBodyReceivedMap = Maps.newHashMap(10);
+    private final Map<Class<? extends Body>, AtomicLong> numberOfBodySentMap = Maps.newHashMap(10);
     private final AtomicLong numberOfBytesReceived = new AtomicLong();
     private final AtomicLong numberOfBytesSent = new AtomicLong();
     private final AtomicLong numberOfBodyReceived = new AtomicLong();
@@ -172,7 +173,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
          */
         @Nonnull
         private static Map<Class<? extends Body>, Long> deepCopy(final @Nonnull Map<Class<? extends Body>, AtomicLong> map) {
-            return Maps.newHashMap(map).entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().longValue()));
+            return new HashMap<>(map).entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().longValue()));
         }
 
         @Override

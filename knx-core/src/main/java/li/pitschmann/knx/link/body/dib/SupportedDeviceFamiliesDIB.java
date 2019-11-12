@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.link.body.dib;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Bytes;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -140,7 +140,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("length", this.getLength() + " (" + ByteFormatter.formatHex(this.getLength()) + ")")
                 .add("descriptionType", this.getDescriptionType())
                 .add("serviceFamilies", this.serviceFamilies);

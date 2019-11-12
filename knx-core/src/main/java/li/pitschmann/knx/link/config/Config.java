@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,14 +47,14 @@ public final class Config {
     private final InetAddress remoteControlAddress;
     private final int remoteControlPort;
     private final List<Plugin> plugins;
-    private final Map<String, Object> settings;
+    private final Map<ConfigValue<?>, Object> settings;
     private final XmlProject xmlProject;
 
     Config(final boolean routingEnabled,
            final @Nonnull InetAddress remoteControlAddress,
            final int remoteControlPort,
-           final @Nonnull Map<String, Object> settings,
-           final @Nonnull List<Plugin> plugins) {
+           final @Nonnull Map<ConfigValue<?>, Object> settings,
+           final @Nonnull List<Class<Plugin>> pluginClasses) {
         // communication type
         this.routingEnabled = routingEnabled;
 
@@ -61,13 +62,20 @@ public final class Config {
         this.remoteControlAddress = Objects.requireNonNull(remoteControlAddress);
         this.remoteControlPort = remoteControlPort;
 
-        // load default settings and potentially overwrite settings
-        final var mergeSettings = new HashMap<>(ConfigConstants.getConfigConstants());
-        mergeSettings.putAll(settings);
-        this.settings = Collections.unmodifiableMap(mergeSettings);
-
         // plugins
+        final var plugins = new ArrayList<Plugin>(pluginClasses.size());
+        for (final var pluginClass : pluginClasses) {
+            try {
+                final var plugin = pluginClass.getDeclaredConstructor().newInstance();
+                plugins.add(plugin);
+            } catch (final ReflectiveOperationException ex) {
+                throw new KnxConfigurationException("Could not instantiate plugin: " + pluginClass);
+            }
+        }
         this.plugins = List.copyOf(plugins);
+
+        // defensive copy of custom settings
+        this.settings = Collections.unmodifiableMap(new HashMap<>(settings));
 
         // try to parse the project file
         final var projectPath = getProjectPath();
@@ -82,59 +90,21 @@ public final class Config {
     }
 
     /**
-     * Returns the setting for given {@code key}. Defaults back to {@code null} in case the
-     * value of key is not defined or unknown.
-     *
-     * @param key configuration key
-     * @param <T>
-     * @return the value of setting (key), may be {@code null} if not found
-     */
-    @Nullable
-    public <T> T getSetting(final @Nonnull String key) {
-        return getSetting(key, null);
-    }
-
-    /**
-     * Returns the setting for given {@code key}. Defaults back to {@code defaultValue} in case the
-     * value of key is not defined or unknown.
-     *
-     * @param key          configuration key
-     * @param defaultValue used if value for key is absent
-     * @param <T>
-     * @return the value of setting (key), may be {@code null} if undefined
-     */
-    @Nullable
-    public <T> T getSetting(final @Nonnull String key, final @Nullable T defaultValue) {
-        final var value = this.settings.get(key.toLowerCase());
-        if (value == null) {
-            return defaultValue;
-        } else {
-            final var configConstant = ConfigConstants.<T>getConfigConstantByKey(key);
-            if (configConstant != null) {
-                return configConstant.getClassType().cast(value);
-            } else {
-                @SuppressWarnings("unchecked") final T uncheckedValue = (T) value;
-                return uncheckedValue;
-            }
-        }
-    }
-
-    /**
-     * Returns the setting for given {@code configConstant}. If key is not known, then a
+     * Returns the setting for given {@code configValue}. If key is not known, then a
      * {@link KnxConfigurationException} will be thrown.
      *
-     * @param configConstant the key to be used to find the value
+     * @param configValue the key to be used to find the value
      * @param <T>
      * @return the value of setting (key)
      * @throws KnxConfigurationException if value of setting could not be found
      */
     @Nonnull
-    private <T> T getSetting(final @Nonnull ConfigConstant<T> configConstant) {
-        final var value = this.settings.get(Objects.requireNonNull(configConstant.getKey()));
+    public <T> T getSetting(final @Nonnull ConfigValue<T> configValue) {
+        final var value = this.settings.get(Objects.requireNonNull(configValue));
         if (value == null) {
-            return configConstant.getDefaultValue();
+            return configValue.getDefaultValue();
         } else {
-            return configConstant.getClassType().cast(value);
+            return configValue.getClassType().cast(value);
         }
     }
 
@@ -167,9 +137,9 @@ public final class Config {
     }
 
     /**
-     * Returns list of all plug-ins
+     * Returns list of all plug-in classes
      *
-     * @return unmodifiable list of all {@link Plugin} instances
+     * @return unmodifiable list of all {@link Plugin}
      */
     @Nonnull
     public List<Plugin> getPlugins() {

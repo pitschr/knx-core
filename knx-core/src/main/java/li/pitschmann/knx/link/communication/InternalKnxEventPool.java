@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.collect.Maps;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
@@ -36,6 +35,7 @@ import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.event.KnxEvent;
 import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
+import li.pitschmann.utils.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public final class InternalKnxEventPool {
      */
     InternalKnxEventPool() {
         // initialize tunneling map and fill with default KnxSingleEvent entries (we will need it anyway)
-        tunnelingMap = Maps.newHashMapWithExpectedSize(DEFAULT_TUNNELING_REQUEST_CAPACITY);
+        tunnelingMap = Maps.newHashMap(DEFAULT_TUNNELING_REQUEST_CAPACITY);
         for (var i = 0; i < DEFAULT_TUNNELING_REQUEST_CAPACITY; i++) {
             tunnelingMap.put(i, new KnxSingleEvent<>());
         }

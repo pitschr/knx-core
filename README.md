@@ -93,7 +93,7 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 
 ### KNX Monitoring
 
-**Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
+**Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
 
 **Arguments:**
 * `-t`, `--time` the time in seconds how long the monitoring should run (default: _"infinity"_)
@@ -120,7 +120,7 @@ java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --routing -t 3600
 
 ### Send a WRITE request frame to KNX
 
-**Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
+**Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
 
 **Arguments:**
 * `-ga`, `--groupAddress` the KNX group address which has a _write_ flag
@@ -150,7 +150,7 @@ times.
  
 ### Send a READ request frame to KNX
 
-**Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-core/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
+**Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
 
 **Arguments:**
 * `-ga`, `--groupAddress` the KNX group address which has a _read_ flag
@@ -271,9 +271,9 @@ public final class ExamplePlugin {
         final var endTimeMillis = System.currentTimeMillis() + 60000;
 
         final var config = ConfigBuilder
-                .tunneling()  // communication mode: tunneling
-                .plugin(new MyPlugin()) // register my plugin
-                .build(); // create immutable config
+                .tunneling()            // communication mode: tunneling
+                .plugin(MyPlugin.class) // register my plugin
+                .build();               // create immutable config
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
@@ -319,7 +319,7 @@ Given snippet, we want to convert a date and time objects into KNX compatible by
 ```
 // Saturday, 2013-08-17 04:10:45
 final var dayOfWeek = DayOfWeek.SATURDAY;
-final var date = LocalDate.of(2013, 08, 17);
+final var date = LocalDate.of(2013, 8, 17);
 final var time = LocalTime.of(04, 10, 45);
 
 DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
@@ -327,5 +327,5 @@ DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
 
 This can be also more simplified using direct string representation:
 ```
-DPT19.toByteArray("Saturday", "2013-08-17", "04:10:45");
+DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45");
 ```

@@ -551,15 +551,24 @@ public final class Bytes {
     /**
      * Returns the values from each provided array combined into a single array. For example, {@code
      * concat(new byte[] {a, b}, new byte[] {}, new byte[] {c}} returns the array {@code {a, b, c}}.
-     * <p/>
-     * This method is simply a wrapper to: {@link com.google.common.primitives.Bytes#concat(byte[]...)} method.
      *
      * @param arrays zero or more {@code byte} arrays
      * @return a single array containing all the values from the source arrays, in order
      */
     @Nonnull
     public static byte[] concat(final @Nonnull byte[]... arrays) {
-        return com.google.common.primitives.Bytes.concat(arrays);
+        var length = 0;
+        for (final var array : arrays) {
+            length += array.length;
+        }
+
+        final var result = new byte[length];
+        int pos = 0;
+        for (final var array : arrays) {
+            System.arraycopy(array, 0, result, pos, array.length);
+            pos += array.length;
+        }
+        return result;
     }
 
     /**

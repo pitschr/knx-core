@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.AbstractSingleRawData;
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -141,7 +141,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("addressType", this.addressType)
                 .add("hopCount", this.hopCount + " (" + ByteFormatter.formatHex(this.hopCount) + ")")
                 .add("extendedFrameFormat", this.extendedFrameFormat + " (" + ByteFormatter.formatHex(this.extendedFrameFormat) + ")")

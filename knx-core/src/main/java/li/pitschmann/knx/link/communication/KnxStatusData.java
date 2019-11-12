@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.link.communication;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -128,7 +128,7 @@ public final class KnxStatusData {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(KnxStatusData.class)
+        return Strings.toStringHelper(this)
                 .add("dirty", this.dirty)
                 .add("timestamp", this.timestamp)
                 .add("sourceAddress", this.sourceAddress)

@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.link.body.cemi;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.KnxBytesEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -145,7 +145,7 @@ public enum APCI implements KnxBytesEnum {
     @Override
     public String toString() {
         // @formatter:off
-        final var h = MoreObjects.toStringHelper(this)
+        final var h = Strings.toStringHelper(this)
                 .add("name", this.name())
                 .add("friendlyName", this.friendlyName);
         if (this.isCodeRange()) {

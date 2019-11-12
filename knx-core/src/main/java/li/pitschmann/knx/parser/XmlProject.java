@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.parser;
 
-import com.google.common.base.MoreObjects;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -327,7 +327,7 @@ public final class XmlProject {
     @Override
     public String toString() {
         // @formatter:off
-        return MoreObjects.toStringHelper(this)
+        return Strings.toStringHelper(this)
                 .add("id", this.id)
                 .add("name", this.name)
                 .add("groupAddressStyle", this.groupAddressStyle)

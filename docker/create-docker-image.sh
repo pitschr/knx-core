@@ -9,7 +9,7 @@ PROJECT_ROOT_FOLDER="$(cd "$DOCKER_FOLDER/.." >/dev/null 2>&1 && pwd)"
 # sort by last modification reversed (newer top), return 1st line and file name only
 LATEST_DEPENDENCIES_JAR=$(
   cd "$PROJECT_ROOT_FOLDER"
-  ls -r knx-core/target/*-jar-with-dependencies.jar 2>/dev/null | head -n1 | cut -d " " -f 2
+  ls -r knx-examples/target/*-jar-with-dependencies.jar 2>/dev/null | head -n1 | cut -d " " -f 2
 )
 if [ -z "$LATEST_DEPENDENCIES_JAR" ]; then
   echo "No suitable JAR file found. Please run 'maven clean package' first"
@@ -30,7 +30,7 @@ DOCKER_TAG_LATEST="pitschr/knx-link:latest"
 function createDockerImage() {
   # create temporary folder and copy the jar file there
   local TMP_DIR=$(mktemp -d -t tmp-XXXXXXXXXX)
-  local TMP_JAR_FILE="$TMP_DIR/knx-core.jar"
+  local TMP_JAR_FILE="$TMP_DIR/knx-link.jar"
   cp "$DOCKER_FOLDER/Dockerfile" "$TMP_DIR/Dockerfile"
   cp "$LATEST_DEPENDENCIES_JAR" "$TMP_JAR_FILE"
 
