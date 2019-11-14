@@ -325,8 +325,8 @@ public class ConfigBuilderTest {
         assertThatThrownBy(() -> configBuilder.setting(null, null)).isInstanceOf(NullPointerException.class);
 
         // protected cases
-        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.ADDRESS, null)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.PORT, null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.ADDRESS, Networker.getAddressUnbound())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.PORT, 4711)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

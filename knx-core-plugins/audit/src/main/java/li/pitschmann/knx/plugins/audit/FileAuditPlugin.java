@@ -25,10 +25,10 @@ import com.vlkan.rfos.policy.SizeBasedRotationPolicy;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.header.Header;
+import li.pitschmann.knx.link.plugin.EnumConfigValue;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.link.plugin.PathConfigValue;
-import li.pitschmann.knx.link.plugin.StringConfigValue;
 import li.pitschmann.utils.ByteFormatter;
 import li.pitschmann.utils.Closeables;
 import org.slf4j.Logger;
@@ -41,8 +41,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * Audit Plug-in that logs every signal arriving KNX client to a file
@@ -50,74 +48,20 @@ import java.util.stream.Collectors;
  * @author PITSCHR
  */
 public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
-    public static final PathConfigValue PATH = new PathConfigValue(
-            FileAuditPlugin.class,
-            "path",
-            () -> Paths.get("."),
-            (x) -> true);
-
-    public static final StringConfigValue NAME = new StringConfigValue(
-            FileAuditPlugin.class,
-            "name",
-            () -> "",
-            (x) -> true);
-
+    public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("."), null);
+    public static final EnumConfigValue<FileAuditFormat> FORMAT = new EnumConfigValue<>("format", FileAuditFormat.class, () -> FileAuditFormat.JSON);
     private static final Logger log = LoggerFactory.getLogger(FileAuditPlugin.class);
     private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
 
-    // @formatter:off
-    /**
-     * JSON Audit Template for signal
-     */
-    private static final String JSON_TEMPLATE_SIGNAL = "" + //
-            "{" + //
-                "\"time\":%2$s.%3$s," + //
-                "\"type\":\"%1$s\"" + //
-            "}"; //
-    /**
-     * JSON Audit Template for error
-     */
-    private static final String JSON_TEMPLATE_ERROR = "" + //
-            "{" + //
-                "\"time\":%4$s.%5$s," + //
-                "\"type\":\"%1$s\"," + //
-                "\"message\":\"%2$s\"," + //
-                "\"stacktrace\":[%3$s]" + //
-            "}"; //
-    /**
-     * JSON Audit Template with body details
-     */
-    private static final String JSON_TEMPLATE_BODY = "" + //
-            "{" + //
-                "\"time\":%7$s.%8$s," + //
-                "\"type\":\"%1$s\"," + //
-                "\"header\":{" + //
-                    "\"totalLength\":%5$s," + //
-                    "\"raw\":\"%6$s\"" + //
-                "}," + //
-                "\"body\":{" + //
-                    "\"service\":{" + //
-                        "\"code\":\"%2$s\"," + //
-                        "\"text\":\"%3$s\"" + //
-                    "}," + //
-                    "\"raw\":\"%4$s\"" + //
-                "}" + //
-            "}"; //
-    // @formatter:on
-
     private Path path;
+    private FileAuditFormat format;
     private RotatingFileOutputStream fos;
-
-    private static String escapeForJson(final String str) {
-        return str.replace("\"", "\\\"")
-                .replace("\\", "\\\\")
-                .replace("/", "\\/")
-                .replaceAll("\\\\u\\d{4}", "");
-    }
 
     @Override
     public void onInitialization(final @Nullable KnxClient client) {
         path = client.getConfig().getSetting(FileAuditPlugin.PATH);
+        format = client.getConfig().getSetting(FileAuditPlugin.FORMAT);
+
         final var baseFile = path.toString();
 
         // get file pattern for rollover
@@ -169,12 +113,12 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     @Override
     public void onError(final @Nonnull Throwable throwable) {
         final var now = Instant.now();
-        writeToAuditFile(String.format(JSON_TEMPLATE_ERROR, //
-                AuditType.ERROR, // #1
-                escapeForJson(throwable.getMessage()), // #2
-                Arrays.stream(throwable.getStackTrace()).map(e -> "\"" + escapeForJson(e.toString()) + "\"").collect(Collectors.joining(",")), // #3
-                now.getEpochSecond(), // #4
-                now.getNano() // #5
+        writeToAuditFile(String.format(format.getErrorTemplate(), //
+                now.getEpochSecond(), // #1
+                now.getNano(), // #2
+                format.escape(AuditType.ERROR), // #3
+                format.escape(throwable.getMessage()), // #4
+                format.escape(throwable.getStackTrace()) // #5
         ));
     }
 
@@ -187,15 +131,15 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     private void auditBody(final @Nonnull AuditType type, final @Nonnull Body body) {
         final var now = Instant.now();
         final var header = Header.of(body);
-        writeToAuditFile(String.format(JSON_TEMPLATE_BODY, //
-                type, // #1
-                ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes()), // #2
-                body.getServiceType().name(), // #3
-                body.getRawDataAsHexString(), // #4
-                header.getTotalLength(), // #5
-                header.getRawDataAsHexString(), // #6
-                now.getEpochSecond(), // #7
-                now.getNano() // #8
+        writeToAuditFile(String.format(format.getBodyTemplate(), //
+                now.getEpochSecond(), // #1
+                now.getNano(), // #2
+                format.escape(type), // #3
+                format.escape(header.getTotalLength()), // #4
+                format.escape(header.getRawDataAsHexString()), // #5
+                format.escape(ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes())), // #6
+                format.escape(body.getServiceType().name()), // #7
+                format.escape(body.getRawDataAsHexString()) // #8
         ));
     }
 
@@ -206,10 +150,10 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     private void auditSignal(final @Nonnull AuditType type) {
         final var now = Instant.now();
-        writeToAuditFile(String.format(JSON_TEMPLATE_SIGNAL, //
-                type, // #1
-                now.getEpochSecond(), // #2
-                now.getNano() // #3
+        writeToAuditFile(String.format(format.getSignalTemplate(), //
+                now.getEpochSecond(), // #1
+                now.getNano(), // #2
+                format.escape(type) // #3
         ));
     }
 
