@@ -23,6 +23,8 @@ import li.pitschmann.utils.Maps;
 import li.pitschmann.utils.Networker;
 import li.pitschmann.utils.Preconditions;
 import li.pitschmann.utils.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +43,7 @@ import java.util.Map;
  * @author PITSCHR
  */
 public final class ConfigBuilder {
+    private final static Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
     private final List<Class<Plugin>> pluginClasses = new LinkedList<>();
     private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
     private InetAddress remoteControlAddress;
@@ -306,12 +309,18 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public <T> ConfigBuilder setting(final @Nonnull ConfigValue<T> key, final @Nullable T value) {
-        Preconditions.checkArgument(key.isSettable(),
-                "This key is protected and cannot be used for setting: {}", key.getKey());
-        Preconditions.checkArgument(value == null || key.isValid(value),
-                "The value seems not be applicable for config '{}': {}", key.getKey(), value);
-
-        this.settings.put(key, value);
+        Preconditions.checkNonNull(key);
+        if (value == null) {
+            final var oldValue = this.settings.remove(key);
+            log.debug("Customized setting removed for key '{}'. Old Value: {}", key.getKey(), oldValue);
+        } else {
+            Preconditions.checkArgument(key.isSettable(),
+                    "This key is protected and cannot be used for setting: {}", key.getKey());
+            Preconditions.checkArgument(key.isValid(value),
+                    "The value seems not be applicable for config '{}': {}", key.getKey(), value);
+            this.settings.put(key, value);
+            log.debug("Customized setting added for key '{}'. New Value: {}", key.getKey(), value);
+        }
         return this;
     }
 

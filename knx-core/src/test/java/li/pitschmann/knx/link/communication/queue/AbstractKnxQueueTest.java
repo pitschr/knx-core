@@ -43,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,7 +107,7 @@ public class AbstractKnxQueueTest {
         try {
             executor.submit(queue);
             // wait bit as the task is async
-            Sleeper.seconds(1);
+            Sleeper.milliseconds(() -> !mockingDetails(clientMock).getInvocations().isEmpty(), 1000);
             // verifies if the notify plugins about error has been called
             final var captor = ArgumentCaptor.forClass(Throwable.class);
             verify(clientMock).notifyError(captor.capture());
@@ -184,7 +185,7 @@ public class AbstractKnxQueueTest {
         try {
             executor.submit(queueSpy);
             // wait bit as the task is async
-            Sleeper.seconds(1);
+            Sleeper.milliseconds(() -> !mockingDetails(clientMock).getInvocations().isEmpty(), 1000);
             // verifies if the notify plugins about error has been called
             final var captor = ArgumentCaptor.forClass(Throwable.class);
             verify(clientMock).notifyError(captor.capture());

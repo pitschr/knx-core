@@ -81,10 +81,12 @@ public class ConfigValue<T> {
         return defaultSupplier.get();
     }
 
+    @Nonnull
     public Function<String, T> getConverter() {
         return this.converter;
     }
 
+    @Nullable
     public Predicate<T> getPredicate() {
         return this.predicate;
     }
@@ -100,7 +102,8 @@ public class ConfigValue<T> {
      * @param value value to be tested
      * @return {@code true} if valid/applicable, otherwise {@code false}
      */
-    public boolean isValid(final T value) {
+    public boolean isValid(final @Nonnull T value) {
+        final var predicate = getPredicate();
         return predicate == null || predicate.test(value);
     }
 
@@ -111,19 +114,19 @@ public class ConfigValue<T> {
      * @return value with an instance type of {@code <T>}
      */
     @Nonnull
-    public T convert(final String value) {
+    public T convert(final @Nonnull String value) {
         return this.converter.apply(value);
     }
 
     @Override
     public String toString() {
         return Strings.toStringHelper(this)
-                .add("key", this.key)
-                .add("settable", this.settable)
-                .add("classType", this.classType)
-                .add("converter", this.converter)
+                .add("key", this.getKey())
+                .add("settable", this.isSettable())
+                .add("classType", this.getClassType())
+                .add("converter", this.getConverter())
                 .add("defaultValue", this.getDefaultValue())
-                .add("predicate", this.predicate)
+                .add("predicate", this.getPredicate())
                 .toString();
     }
 }

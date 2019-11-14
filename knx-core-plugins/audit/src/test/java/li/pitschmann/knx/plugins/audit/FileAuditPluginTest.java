@@ -22,10 +22,12 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.header.ServiceType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -38,25 +40,19 @@ import static org.mockito.Mockito.when;
  * Test {@link FileAuditPlugin}
  */
 public class FileAuditPluginTest {
-    /**
-     * Test {@link FileAuditPlugin#onIncomingBody(Body)}
-     */
+
     @Test
-    public void auditIncomingBody() throws IOException {
+    @DisplayName("JSON: Test File Audit Signal and Incoming")
+    public void auditIncomingBodyJson() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBodyJson-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
         final var body = mock(Body.class);
         when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
         when(body.getRawData()).thenReturn(new byte[]{0x11, 0x22, 0x33});
-        when(body.getRawDataAsHexString()).thenReturn("0x11 22 33");
+        when(body.getRawDataAsHexString()).thenCallRealMethod();
 
-        final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBody-" + UUID.randomUUID() + ".log");
-        final var plugin = new FileAuditPlugin();
-
-        final var knxClientMock = mock(KnxClient.class);
-        final var configMock = mock(Config.class);
-        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
-        when(knxClientMock.getConfig()).thenReturn(configMock);
-
-        plugin.onInitialization(knxClientMock);
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.JSON));
         plugin.onStart();
         plugin.onIncomingBody(body);
         plugin.onShutdown();
@@ -87,18 +83,20 @@ public class FileAuditPluginTest {
                 // @formatter:off
                 "\\{" +
                     "\"time\":\\d+\\.\\d+," +
+                    "\\Q" + // start pattern quote
                     "\"type\":\"incoming\"," +
-                    "\"header\":\\{" +
+                    "\"header\":{" +
                         "\"totalLength\":9," +
                         "\"raw\":\"0x06 10 02 05 00 09\"" +
-                    "\\}," +
-                    "\"body\":\\{" +
-                        "\"service\":\\{" +
+                    "}," +
+                    "\"body\":{" +
+                        "\"service\":{" +
                             "\"code\":\"0x02 05\"," +
                             "\"text\":\"CONNECT_REQUEST\"" +
-                        "\\}," +
+                        "}," +
                         "\"raw\":\"0x11 22 33\"" +
-                    "\\}" +
+                    "}" +
+                    "\\E" + // end pattern quote
                 "\\}"
                 // @formatter:on
         );
@@ -113,26 +111,18 @@ public class FileAuditPluginTest {
         );
     }
 
-
-    /**
-     * Test {@link FileAuditPlugin#onOutgoingBody(Body)}
-     */
     @Test
-    public void auditOutgoingBody() throws IOException {
+    @DisplayName("JSON: Test File Audit Outgoing")
+    public void auditOutgoingBodyJson() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBodyJson-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
         final var body = mock(Body.class);
         when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
         when(body.getRawData()).thenReturn(new byte[]{0x22, 0x33});
-        when(body.getRawDataAsHexString()).thenReturn("0x22 33");
+        when(body.getRawDataAsHexString()).thenCallRealMethod();
 
-        final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBody-" + UUID.randomUUID() + ".log");
-        final var plugin = new FileAuditPlugin();
-
-        final var knxClientMock = mock(KnxClient.class);
-        final var configMock = mock(Config.class);
-        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
-        when(knxClientMock.getConfig()).thenReturn(configMock);
-
-        plugin.onInitialization(knxClientMock);
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.JSON));
         plugin.onStart();
         plugin.onOutgoingBody(body);
         plugin.onShutdown();
@@ -143,30 +133,162 @@ public class FileAuditPluginTest {
                 // @formatter:off
                 "\\{" +
                     "\"time\":\\d+\\.\\d+," +
+                    "\\Q" + // start pattern quote
                     "\"type\":\"outgoing\"," + //
-                    "\"header\":\\{" +
+                    "\"header\":{" +
                         "\"totalLength\":8," +
                         "\"raw\":\"0x06 10 04 21 00 08\"" +
-                    "\\}," +
-                    "\"body\":\\{" +
-                        "\"service\":\\{" +
+                    "}," +
+                    "\"body\":{" +
+                        "\"service\":{" +
                             "\"code\":\"0x04 21\"," +
                             "\"text\":\"TUNNELING_ACK\"" +
-                        "\\}," +
+                        "}," +
                         "\"raw\":\"0x22 33\"" +
-                    "\\}" +
+                    "}" +
+                    "\\E" + // end pattern quote
                 "\\}"
                 // @formatter:on
         );
     }
 
-    /**
-     * Test {@link FileAuditPlugin#onError(Throwable)}
-     */
     @Test
-    public void auditOnError() throws IOException {
+    @DisplayName("JSON: Test File Audit Error")
+    public void auditOnErrorJson() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOnErrorJson-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+        final var exceptionMock = mockException();
+
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.JSON));
+        plugin.onStart();
+        plugin.onError(exceptionMock);
+        plugin.onShutdown();
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(4);
+        assertThat(lines.get(2)).containsPattern(
+                // @formatter:off
+                "\\{" +
+                    "\"time\":\\d+\\.\\d+," +
+                    "\\Q" + // start pattern quote
+                    "\"type\":\"error\"," +
+                    "\"message\":\"I'm a \\\"Runtime;Exception\\\"!\"," +
+                    "\"stacktrace\":[" +
+                        "\"org.class.Foo.add(Foo.java:123)\"," +
+                        "\"org.class.Bar.addAll(Bar.java:456)\"" +
+                    "]" +
+                    "\\E" + // end pattern quote
+                "\\}"
+                // @formatter:on
+        );
+    }
+
+    @Test
+    @DisplayName("CSV: Test File Audit Signal and Incoming")
+    public void auditIncomingBodyCsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBodyCsv-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
+        final var body = mock(Body.class);
+        when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
+        when(body.getRawData()).thenReturn(new byte[]{0x33, 0x44, 0x55});
+        when(body.getRawDataAsHexString()).thenCallRealMethod();
+
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.CSV));
+        plugin.onStart();
+        plugin.onIncomingBody(body);
+        plugin.onShutdown();
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(4);
+
+        // init
+        assertThat(lines.get(0)).containsPattern("\\d+\\.\\d+;\"init\"");
+        // start
+        assertThat(lines.get(1)).containsPattern("\\d+\\.\\d+;\"start\"");
+        // incoming
+        assertThat(lines.get(2)).containsPattern(
+                // @formatter:off
+                "\\d+\\.\\d+;" +
+                        "\\Q" +  // start pattern quote
+                        "\"incoming\";" +
+                        "9;\"0x06 10 02 05 00 09\";" + // header
+                        "\"0x02 05\";\"CONNECT_REQUEST\";\"0x33 44 55\"" + // body
+                        "\\E" // end pattern quote
+                // @formatter:on
+        );
+        // shutdown
+        assertThat(lines.get(3)).containsPattern("\\d+\\.\\d+;\"shutdown\"");
+    }
+
+    @Test
+    @DisplayName("CSV: Test File Audit Outgoing")
+    public void auditOutgoingBodyCsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBodyCsv-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+
+        final var body = mock(Body.class);
+        when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
+        when(body.getRawData()).thenReturn(new byte[]{0x44, 0x55});
+        when(body.getRawDataAsHexString()).thenCallRealMethod();
+
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.CSV));
+        plugin.onStart();
+        plugin.onOutgoingBody(body);
+        plugin.onShutdown();
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(4);
+        assertThat(lines.get(2)).containsPattern(
+                // @formatter:off
+                "\\d+\\.\\d+;" +
+                        "\\Q" +  // start pattern quote
+                        "\"outgoing\";" +
+                        "8;\"0x06 10 04 21 00 08\";" + // header
+                        "\"0x04 21\";\"TUNNELING_ACK\";\"0x44 55\"" + // body
+                        "\\E" // end pattern quote
+                // @formatter:on
+        );
+    }
+
+    @Test
+    @DisplayName("CSV: Test File Audit Error")
+    public void auditOnErrorCsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOnErrorCsv-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileAuditPlugin();
+        final var exceptionMock = mockException();
+
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.CSV));
+        plugin.onStart();
+        plugin.onError(exceptionMock);
+        plugin.onShutdown();
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(4);
+        assertThat(lines.get(2)).containsPattern(
+                // @formatter:off
+                "\\d+\\.\\d+;" +
+                        "\\Q" +  // start pattern quote
+                        "\"error\";;;;;;" +
+                        "\"I'm a \"\"Runtime\\;Exception\"\"!\";" +
+                        "\"[org.class.Foo.add(Foo.java:123), org.class.Bar.addAll(Bar.java:456)]\"" +
+                        "\\E" // end pattern quote
+                // @formatter:on
+        );
+    }
+
+    private KnxClient mockKnxClient(final Path path, FileAuditFormat format) {
+        final var knxClientMock = mock(KnxClient.class);
+        final var configMock = mock(Config.class);
+        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
+        when(configMock.getSetting(eq(FileAuditPlugin.FORMAT))).thenReturn(format);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+        return knxClientMock;
+    }
+
+    private Exception mockException() {
         final var exception = mock(RuntimeException.class);
-        when(exception.getMessage()).thenReturn("I am a RuntimeException");
+        when(exception.getMessage()).thenReturn("I'm a \"Runtime;Exception\"!");
         when(exception.getStackTrace()).thenReturn(
                 new StackTraceElement[]{
                         new StackTraceElement(
@@ -183,35 +305,6 @@ public class FileAuditPluginTest {
                         )
                 }
         );
-
-        final var path = Paths.get("target/test-FileAuditPluginTest-auditOnError-" + UUID.randomUUID() + ".log");
-        final var plugin = new FileAuditPlugin();
-
-        final var knxClientMock = mock(KnxClient.class);
-        final var configMock = mock(Config.class);
-        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
-        when(knxClientMock.getConfig()).thenReturn(configMock);
-
-        plugin.onInitialization(knxClientMock);
-        plugin.onStart();
-        plugin.onError(exception);
-        plugin.onShutdown();
-
-        final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(4);
-        assertThat(lines.get(2)).containsPattern(
-                // @formatter:off
-                "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
-                    "\"type\":\"error\"," +
-                    "\"message\":\"I am a RuntimeException\"," +
-                    "\"stacktrace\":\\[" +
-                        "\"org.class.Foo.add\\(Foo.java:123\\)\"," +
-                        "\"org.class.Bar.addAll\\(Bar.java:456\\)\"" +
-                    "\\]" +
-                "\\}"
-                // @formatter:on
-        );
-        // @formatter:on
+        return exception;
     }
 }

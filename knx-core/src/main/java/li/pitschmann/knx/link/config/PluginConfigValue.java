@@ -14,32 +14,52 @@ import java.util.function.Supplier;
  * @param <T>
  */
 public class PluginConfigValue<T> extends ConfigValue<T> {
-    private final Class<? extends Plugin> pluginClass;
+    /**
+     * Key is the qualified name of
+     */
+    // key = fully qualified name of plugin + "." + key
+    // (in lower-case, to be done in parent class)
+    private final static String KEY_PREFIX = "plugin.config.";
+    private final String key;
 
     protected PluginConfigValue(
-            final @Nonnull Class<? extends Plugin> pluginClass,
             final @Nonnull String name,
             final @Nonnull Class<T> classType,
             final @Nonnull Function<String, T> converter,
             final @Nonnull Supplier<T> defaultSupplier,
             final @Nullable Predicate<T> predicate) {
         super(
-                // key = fully qualified name of plugin + "." + key
-                // (in lower-case, to be done in parent class)
-                pluginClass.getName() + "." + name,
+                // here we only define the name -> the key will be overwritten
+                name,
                 // rest remain same like ConfigValue
                 classType, converter, defaultSupplier, predicate, true);
-        this.pluginClass = pluginClass;
+        this.key = KEY_PREFIX + (findPluginClass().getSimpleName() + super.getKey()).toLowerCase();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Class<?> findPluginClass() {
+        try {
+            for (final var stackTraceElement : Thread.currentThread().getStackTrace()) {
+                final var clazz = Class.forName(stackTraceElement.getClassName());
+                if (Plugin.class.isAssignableFrom(clazz)) {
+                    return clazz;
+                }
+            }
+        } catch (final ClassNotFoundException e) {
+            // should not happen!
+        }
+        throw new AssertionError();
     }
 
     /**
-     * Returns the class of {@link Plugin}
+     * Plugin Config specific key with following format:
+     * {@code plugin.config.<pluginName>.<configName>}
      *
-     * @return Instance of Plugin
+     * @return
      */
-    @SuppressWarnings("unchecked")
     @Nonnull
-    public final <T extends Plugin> Class<T> getPluginClass() {
-        return (Class<T>) pluginClass;
+    @Override
+    public String getKey() {
+        return key;
     }
 }
