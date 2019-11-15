@@ -5,9 +5,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
@@ -53,25 +51,20 @@ public final class Stopwatch {
      * @return the type of {@link TimeUnit} to be printed in {@link #toString()}
      */
     private static TimeUnit chooseUnit(final long nanos) {
-        if (DAYS.convert(nanos, NANOSECONDS) > 0) {
-            return DAYS;
-        }
         if (HOURS.convert(nanos, NANOSECONDS) > 0) {
             return HOURS;
         }
-        if (MINUTES.convert(nanos, NANOSECONDS) > 0) {
+        else if (MINUTES.convert(nanos, NANOSECONDS) > 0) {
             return MINUTES;
         }
-        if (SECONDS.convert(nanos, NANOSECONDS) > 0) {
+        else if (SECONDS.convert(nanos, NANOSECONDS) > 0) {
             return SECONDS;
         }
-        if (MILLISECONDS.convert(nanos, NANOSECONDS) > 0) {
+        else if (MILLISECONDS.convert(nanos, NANOSECONDS) > 0) {
             return MILLISECONDS;
+        } else {
+            return NANOSECONDS;
         }
-        if (MICROSECONDS.convert(nanos, NANOSECONDS) > 0) {
-            return MICROSECONDS;
-        }
-        return NANOSECONDS;
     }
 
     /**
@@ -84,8 +77,6 @@ public final class Stopwatch {
      */
     private static String toStringUnit(final @Nonnull TimeUnit unit) {
         switch (unit) {
-            case MICROSECONDS:
-                return "\u03bcs"; // μs
             case MILLISECONDS:
                 return "ms";
             case SECONDS:
@@ -94,8 +85,6 @@ public final class Stopwatch {
                 return "min";
             case HOURS:
                 return "h";
-            case DAYS:
-                return "d";
             default:
                 return "ns";
         }
