@@ -275,14 +275,6 @@ public final class Config {
         return getSetting(ConfigConstants.ConnectionState.CHECK_INTERVAL);
     }
 
-    //
-    // DAEMON
-    //
-
-    public int getDaemonPort() {
-        return getSetting(ConfigConstants.HTTP_DAEMON_PORT);
-    }
-
     /**
      * Returns the path of *.knxproj (KNX Project)
      *

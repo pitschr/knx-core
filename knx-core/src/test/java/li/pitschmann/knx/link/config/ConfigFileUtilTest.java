@@ -110,9 +110,6 @@ public class ConfigFileUtilTest {
                 .hasMessageStartingWith("Cannot read or parse file:");
     }
 
-    /**
-     * Test constructor of {@link ConfigFileUtil}
-     */
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {

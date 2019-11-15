@@ -21,6 +21,7 @@ package li.pitschmann.knx.daemon;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
+import li.pitschmann.knx.link.plugin.IntegerConfigValue;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
@@ -37,6 +38,15 @@ import java.util.Objects;
  * Abstract HTTP Daemon
  */
 public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
+    /**
+     * Default port for HTTP Daemon (same as Pippo)
+     */
+    public static final IntegerConfigValue PORT = new IntegerConfigValue(
+            "port",
+            () -> 8338,
+            Objects::nonNull
+    );
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private KnxClient client;
     private Pippo pippo;
@@ -78,7 +88,7 @@ public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
      * @param pippo
      */
     protected void startPippo(final Pippo pippo) {
-        pippo.start(client.getConfig().getDaemonPort());
+        pippo.start(client.getConfig().getSetting(PORT));
     }
 
     /**

@@ -59,21 +59,10 @@ public final class ConfigConstants {
             true
     );
     /**
-     * Default port for HTTP Daemon (same as Pippo)
-     */
-    public static final ConfigValue<Integer> HTTP_DAEMON_PORT = new ConfigValue<>(
-            "daemon.port.http",
-            Integer.class,
-            Integer::valueOf,
-            () -> 8338,
-            Objects::nonNull,
-            true
-    );
-    /**
      * Path to Project file
      */
     public static final ConfigValue<Path> PROJECT_PATH = new ConfigValue<>(
-            "daemon.path.knxproj",
+            "project.path",
             Path.class,
             Paths::get,
             () -> {
@@ -104,19 +93,6 @@ public final class ConfigConstants {
 
     private ConfigConstants() {
         throw new AssertionError("Do not touch me!");
-    }
-
-    /**
-     * Returns {@link ConfigValue} for given {@code key}
-     *
-     * @param key lower-cased
-     * @param <T>
-     * @return an instance of {@link ConfigValue}, otherwise {@link NullPointerException} will be thrown
-     */
-    @Nullable
-    @SuppressWarnings("unchecked")
-    public static <T> ConfigValue<T> getConfigValueByKey(final @Nonnull String key) {
-        return (ConfigValue<T>) CONFIG_CONSTANTS.get(key.toLowerCase());
     }
 
     /**
