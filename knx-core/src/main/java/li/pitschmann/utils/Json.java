@@ -21,13 +21,18 @@ public final class Json {
     public static String toJson(final @Nullable Object object) {
         if (object == null) {
             return "null";
-        } else if (object instanceof Number) {
+        } else if (object instanceof Boolean || object instanceof Number) {
             return object.toString();
         } else if (object.getClass().isArray()) {
-            final var newArray = (Object[]) object;
+            // primitive array not supported by this class
+            // otherwise this class would be become too big
+            if (object.getClass().getComponentType().isPrimitive()) {
+                throw new UnsupportedOperationException("Primitive Array is not supported using this class -> please use Gson!");
+            }
+
             final var sb = new StringBuilder();
             sb.append('[');
-            for (final Object obj : newArray) {
+            for (final Object obj : (Object[]) object) {
                 if (sb.length() > 1) {
                     sb.append(',');
                 }
