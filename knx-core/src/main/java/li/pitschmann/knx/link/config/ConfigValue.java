@@ -100,9 +100,13 @@ public class ConfigValue<T> {
      * Returns {@code true} if the given value is valid/applicable for the config.
      *
      * @param value value to be tested
-     * @return {@code true} if valid/applicable, otherwise {@code false}
+     * @return {@code true} if valid/applicable, otherwise {@code false}.
+     * Returns {@code false} if value is {@code null}
      */
-    public boolean isValid(final @Nonnull T value) {
+    public boolean isValid(final @Nullable T value) {
+        if (value == null) {
+            return false;
+        }
         final var predicate = getPredicate();
         return predicate == null || predicate.test(value);
     }

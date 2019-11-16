@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Test for {@link ConfigValue}
  */
-public class ConfigValueTest {
+public final class ConfigValueTest {
 
     @Test
     @DisplayName("Test config constant")
@@ -47,6 +47,7 @@ public class ConfigValueTest {
         assertThat(ConfigValue.getPredicate()).isEqualTo(predicate);
         assertThat(ConfigValue.isSettable()).isFalse();
 
+        assertThat(ConfigValue.isValid(null)).isFalse();
         assertThat(ConfigValue.isValid(0)).isFalse();
         assertThat(ConfigValue.isValid(4)).isTrue();
         assertThat(ConfigValue.isValid(8)).isTrue();
@@ -73,6 +74,7 @@ public class ConfigValueTest {
         assertThat(ConfigValue.getPredicate()).isNull();
         assertThat(ConfigValue.isSettable()).isTrue();
 
+        assertThat(ConfigValue.isValid(null)).isFalse();
         assertThat(ConfigValue.isValid(true)).isTrue();
         assertThat(ConfigValue.isValid(false)).isTrue();
         assertThat(ConfigValue.convert("yes")).isTrue();

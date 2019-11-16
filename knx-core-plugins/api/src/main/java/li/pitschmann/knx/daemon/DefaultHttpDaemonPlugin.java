@@ -21,7 +21,7 @@ package li.pitschmann.knx.daemon;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
-import li.pitschmann.knx.link.plugin.IntegerConfigValue;
+import li.pitschmann.knx.link.plugin.config.IntegerConfigValue;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
