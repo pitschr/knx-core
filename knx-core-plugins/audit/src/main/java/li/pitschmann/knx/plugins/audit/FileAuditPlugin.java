@@ -44,11 +44,19 @@ import java.time.Instant;
 
 /**
  * Audit Plug-in that logs every signal arriving KNX client to a file
+ * <p/>
+ * JSON (default) and CSV formats are supported.
  *
  * @author PITSCHR
  */
 public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
+    /**
+     * File path
+     */
     public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("."), null);
+    /**
+     * File format (e.g. JSON, CSV)
+     */
     public static final EnumConfigValue<FileAuditFormat> FORMAT = new EnumConfigValue<>("format", FileAuditFormat.class, () -> FileAuditFormat.JSON);
     private static final Logger log = LoggerFactory.getLogger(FileAuditPlugin.class);
     private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
@@ -59,6 +67,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override
     public void onInitialization(final @Nullable KnxClient client) {
+        // configurations
         path = client.getConfig().getSetting(FileAuditPlugin.PATH);
         format = client.getConfig().getSetting(FileAuditPlugin.FORMAT);
 
@@ -76,9 +85,8 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 .builder()
                 .file(baseFile)
                 .filePattern(rolloverFile)
-                .policy(new SizeBasedRotationPolicy(0 /* 5s */, 1024  /* 1 kb */))
                 .policy(DailyRotationPolicy.getInstance())
-                .append(false)
+                .append(true)
                 .build();
 
         // start rollover stream

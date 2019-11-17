@@ -16,23 +16,24 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
+
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- Parent Project -->
     <parent>
         <groupId>li.pitschmann</groupId>
-        <artifactId>knx-link</artifactId>
+        <artifactId>knx-core-plugins</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>knx-examples</artifactId>
+    <artifactId>knx-core-plugin-statistic</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>KNX Examples</name>
-    <description>KNX Examples</description>
+    <name>KNX Core Plugin - Statistic</name>
+    <description>Statistic Plugin for KNX Core</description>
 
     <!-- Licenses -->
     <licenses>
@@ -41,9 +42,6 @@
             <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
         </license>
     </licenses>
-
-    <!-- Properties -->
-    <properties />
 
     <!-- Dependencies -->
     <dependencies>
@@ -54,26 +52,10 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- For Rotating Files -->
         <dependency>
-            <groupId>li.pitschmann</groupId>
-            <artifactId>knx-core-plugin-audit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>li.pitschmann</groupId>
-            <artifactId>knx-core-plugin-statistic</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-
-        <!-- Logging -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>compile</scope>
+            <groupId>com.vlkan.rfos</groupId>
+            <artifactId>rotating-fos</artifactId>
         </dependency>
     </dependencies>
-
 </project>
-

@@ -22,9 +22,10 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigConstants;
-import li.pitschmann.knx.link.plugin.StatisticPlugin;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.knx.plugins.audit.FileAuditPlugin;
+import li.pitschmann.knx.plugins.statistic.FileStatisticFormat;
+import li.pitschmann.knx.plugins.statistic.FileStatisticPlugin;
 import li.pitschmann.utils.Sleeper;
 import li.pitschmann.utils.Stopwatch;
 
@@ -112,13 +113,15 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .setting(ConfigConstants.PROJECT_PATH, projectPath)
                 .plugin(FileAuditPlugin.class)
                 .plugin(TTYMonitorPlugin.class)
-                .plugin(StatisticPlugin.class)
+                .plugin(FileStatisticPlugin.class)
                 .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
                 .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
                 .setting(ConfigConstants.Description.PORT, 40001) //
                 .setting(ConfigConstants.Control.PORT, 40002) //
                 .setting(ConfigConstants.Data.PORT, 40003) //
-                .setting(FileAuditPlugin.PATH, Paths.get("."))
+                .setting(FileAuditPlugin.PATH, Paths.get("knx-audit.log"))
+                .setting(FileStatisticPlugin.PATH, Paths.get("knx-statistic.log"))
+                .setting(FileStatisticPlugin.FORMAT, FileStatisticFormat.TEXT)
                 .build();
 
         final var sw = Stopwatch.createStarted();

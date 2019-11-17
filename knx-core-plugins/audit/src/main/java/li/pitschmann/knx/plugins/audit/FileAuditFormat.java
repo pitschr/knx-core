@@ -7,6 +7,11 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 
+/**
+ * Format for {@link FileAuditPlugin}
+ * <p/>
+ * JSON and CSV are supported.
+ */
 public enum FileAuditFormat {
     // @formatter:off
     /**
