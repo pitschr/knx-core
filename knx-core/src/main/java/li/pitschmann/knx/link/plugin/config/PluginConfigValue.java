@@ -2,8 +2,6 @@ package li.pitschmann.knx.link.plugin.config;
 
 import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.plugin.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

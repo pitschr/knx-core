@@ -28,46 +28,46 @@ import javax.annotation.Nonnull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test class for {@link IntegerConfigValue}
+ * Test class for {@link LongConfigValue}
  */
-public final class IntegerConfigValueTest {
+public final class LongConfigValueTest {
 
     @Test
-    @DisplayName("OK: Test Integer Config Value without predicate")
+    @DisplayName("OK: Test Long Config Value without predicate")
     public void testWithoutPredicate() {
         final var plugin = new DummyPlugin();
 
         final var configValue = plugin.TEST;
-        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.int-key"); // lower-cased!
-        assertThat(configValue.getClassType()).isSameAs(Integer.class);
-        assertThat(configValue.getDefaultValue()).isEqualTo(13);
-        assertThat(configValue.convert("4711")).isEqualTo(4711);
+        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.long-key"); // lower-cased!
+        assertThat(configValue.getClassType()).isSameAs(Long.class);
+        assertThat(configValue.getDefaultValue()).isEqualTo(12345678901L);
+        assertThat(configValue.convert("567890912345")).isEqualTo(567890912345L);
         assertThat(configValue.isValid(null)).isFalse();
-        assertThat(configValue.isValid(9)).isTrue();
+        assertThat(configValue.isValid(45678901234L)).isTrue();
         assertThat(configValue.getPredicate()).isNull();
         assertThat(configValue.isSettable()).isTrue();
     }
 
     @Test
-    @DisplayName("OK: Test Integer Config Value with predicate")
+    @DisplayName("OK: Test Long Config Value with predicate")
     public void testWithPredicate() {
         final var plugin = new DummyPlugin();
 
         final var configValue = plugin.TEST_2;
-        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.int-key2"); // lower-cased!
-        assertThat(configValue.getClassType()).isSameAs(Integer.class);
-        assertThat(configValue.getDefaultValue()).isEqualTo(17);
-        assertThat(configValue.convert("4711")).isEqualTo(4711);
+        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.long-key2"); // lower-cased!
+        assertThat(configValue.getClassType()).isSameAs(Long.class);
+        assertThat(configValue.getDefaultValue()).isEqualTo(2345678901L);
+        assertThat(configValue.convert("567890912345")).isEqualTo(567890912345L);
         assertThat(configValue.isValid(null)).isFalse();
-        assertThat(configValue.isValid(9)).isFalse();
-        assertThat(configValue.isValid(10)).isTrue();
+        assertThat(configValue.isValid(45678901234L)).isFalse();
+        assertThat(configValue.isValid(22251617052L)).isTrue();
         assertThat(configValue.getPredicate()).isNotNull();
         assertThat(configValue.isSettable()).isTrue();
     }
 
     private static class DummyPlugin implements Plugin {
-        final IntegerConfigValue TEST = new IntegerConfigValue("int-key", () -> 13, null);
-        final IntegerConfigValue TEST_2 = new IntegerConfigValue("int-key2", () -> 17, (x) -> x % 2 == 0);
+        final LongConfigValue TEST = new LongConfigValue("long-key", () -> 12345678901L, null);
+        final LongConfigValue TEST_2 = new LongConfigValue("long-key2", () -> 2345678901L, (x) -> x % 4711 == 0);
 
         @Override
         public void onInitialization(@Nonnull KnxClient client) {

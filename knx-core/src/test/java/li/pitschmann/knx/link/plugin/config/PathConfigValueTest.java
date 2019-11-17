@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class PathConfigValueTest {
 
     @Test
-    @DisplayName("OK: Test without predicate")
+    @DisplayName("OK: Test Path Config Value without predicate")
     public void testWithoutPredicate() {
         final var plugin = new DummyPlugin();
 
@@ -51,7 +51,7 @@ public final class PathConfigValueTest {
     }
 
     @Test
-    @DisplayName("OK: Test with predicate")
+    @DisplayName("OK: Test Path Config Value with predicate")
     public void testWithPredicate() {
         final var plugin = new DummyPlugin();
 

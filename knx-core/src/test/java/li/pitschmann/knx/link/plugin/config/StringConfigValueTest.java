@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class StringConfigValueTest {
 
     @Test
-    @DisplayName("OK: Test without predicate")
+    @DisplayName("OK: Test String Config Value without predicate")
     public void testWithoutPredicate() {
         final var plugin = new DummyPlugin();
 
@@ -49,7 +49,7 @@ public final class StringConfigValueTest {
     }
 
     @Test
-    @DisplayName("OK: Test with predicate")
+    @DisplayName("OK: Test String Config Value with predicate")
     public void testWithPredicate() {
         final var plugin = new DummyPlugin();
 

@@ -1,7 +1,5 @@
 package li.pitschmann.knx.link.plugin.config;
 
-import li.pitschmann.knx.link.plugin.config.PluginConfigValue;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;

@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public final class PluginConfigValueTest {
 
     @Test
-    @DisplayName("Error: Test in wrong class")
+    @DisplayName("Error: Test General Plugin Config Value  in wrong class")
     public void testWrongClass() {
         assertThatThrownBy(() -> new PluginConfigValue<>("a-name", Object.class, x -> x, () -> "a-value", null))
                 .isInstanceOf(AssertionError.class)
@@ -42,16 +42,17 @@ public final class PluginConfigValueTest {
     }
 
     @Test
-    @DisplayName("OK: Test in Plugin class")
+    @DisplayName("OK: Test General Plugin Config Value in Plugin class")
     public void testInPluginClass() {
         final var plugin = new DummyPlugin();
 
-        final var configValue = plugin.TEST;
+        final var configValue = plugin.configValueObject;
         assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.b-name"); // lower-cased!
     }
 
 
     private static class DummyPlugin implements Plugin {
+        private static final PluginConfigValue<Object> configValueObject = new PluginConfigValue<>("b-name", Object.class, x -> x, () -> "", null);
         final PluginConfigValue<Object> TEST = new PluginConfigValue<>("b-name", Object.class, x -> x, () -> "", null);
 
         @Override
