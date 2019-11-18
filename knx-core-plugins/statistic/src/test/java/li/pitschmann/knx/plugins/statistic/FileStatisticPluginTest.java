@@ -74,9 +74,63 @@ public class FileStatisticPluginTest {
         when(knxClientMock.getStatistic()).thenReturn(statisticAtShutdown);
         plugin.onShutdown();
 
-        // we should have two statistic (one at start up and one at shutdown)
+        // we should have two statistics (one at start up and one at shutdown)
         final var lines = Files.readAllLines(path);
         assertThat(lines).hasSize(2);
+        assertThat(lines.get(0)).isEqualTo(
+                // @formatter:off
+                "{" +
+                    "\"inbound\":{" +
+                        "\"total\":{\"packets\":0,\"bytes\":0}," +
+                        "\"description\":{\"request\":0,\"response\":0}," +
+                        "\"connect\":{\"request\":0,\"response\":0}," +
+                        "\"connectionState\":{\"request\":0,\"response\":0}," +
+                        "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
+                        "\"indication\":{\"request\":0,\"response\":0}," +
+                        "\"disconnect\":{\"request\":0,\"response\":0}" +
+                    "}," +
+                    "\"outbound\":{" +
+                        "\"total\":{\"packets\":0,\"bytes\":0}," +
+                        "\"description\":{\"request\":0,\"response\":0}," +
+                        "\"connect\":{\"request\":0,\"response\":0}," +
+                        "\"connectionState\":{\"request\":0,\"response\":0}," +
+                        "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
+                        "\"indication\":{\"request\":0,\"response\":0}," +
+                        "\"disconnect\":{\"request\":0,\"response\":0}" +
+                    "}," +
+                    "\"error\":{" +
+                        "\"total\":{\"packets\":0,\"rate\":0.00}" +
+                    "}" +
+                "}"
+                // @formatter:on
+        );
+        assertThat(lines.get(1)).isEqualTo(
+                // @formatter:off
+                "{" +
+                    "\"inbound\":{" +
+                        "\"total\":{\"packets\":10,\"bytes\":11}," +
+                        "\"description\":{\"request\":0,\"response\":21}," +
+                        "\"connect\":{\"request\":0,\"response\":31}," +
+                        "\"connectionState\":{\"request\":0,\"response\":41}," +
+                        "\"tunneling\":{\"request\":50,\"acknowledge\":51}," +
+                        "\"indication\":{\"request\":0,\"response\":60}," +
+                        "\"disconnect\":{\"request\":70,\"response\":71}" +
+                    "}," +
+                    "\"outbound\":{" +
+                        "\"total\":{\"packets\":12,\"bytes\":13}," +
+                        "\"description\":{\"request\":22,\"response\":0}," +
+                        "\"connect\":{\"request\":32,\"response\":0}," +
+                        "\"connectionState\":{\"request\":42,\"response\":0}," +
+                        "\"tunneling\":{\"request\":52,\"acknowledge\":53}," +
+                        "\"indication\":{\"request\":61,\"response\":0}," +
+                        "\"disconnect\":{\"request\":72,\"response\":73}" +
+                    "}," +
+                    "\"error\":{" +
+                        "\"total\":{\"packets\":14,\"rate\":1.50}" +
+                    "}" +
+                "}"
+                // @formatter:on
+        );
     }
 
     @Test
@@ -98,88 +152,43 @@ public class FileStatisticPluginTest {
         when(knxClientMock.getStatistic()).thenReturn(statisticAtShutdown);
         plugin.onShutdown();
 
-        // we should have two statistic (one at start up and one at shutdown)
+        // we should have two statistics (one at start up and one at shutdown)
         final var lines = Files.readAllLines(path);
         assertThat(lines).hasSize(2 * 16); // 1 statistic output = 16 lines for TEXT
+        var i =0;
+        assertThat(lines.get(i++)).isEqualTo("0 packets received (0 bytes)");
+        assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connect         ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connection State] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Tunneling       ] Request: 0, Acknowledge: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Indication      ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Disconnect      ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("0 packets sent (0 bytes)");
+        assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connect         ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connection State] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Tunneling       ] Request: 0, Acknowledge: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Indication      ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Disconnect      ] Request: 0, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("0 errors (0.00%)");
+        assertThat(lines.get(i++)).isEqualTo("-----------------------------------------------------------------");
+        assertThat(lines.get(i++)).isEqualTo("10 packets received (11 bytes)");
+        assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 21");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connect         ] Request: 0, Response: 31");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connection State] Request: 0, Response: 41");
+        assertThat(lines.get(i++)).isEqualTo("\t[Tunneling       ] Request: 50, Acknowledge: 51");
+        assertThat(lines.get(i++)).isEqualTo("\t[Indication      ] Request: 0, Response: 60");
+        assertThat(lines.get(i++)).isEqualTo("\t[Disconnect      ] Request: 70, Response: 71");
+        assertThat(lines.get(i++)).isEqualTo("12 packets sent (13 bytes)");
+        assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 22, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connect         ] Request: 32, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Connection State] Request: 42, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Tunneling       ] Request: 52, Acknowledge: 53");
+        assertThat(lines.get(i++)).isEqualTo("\t[Indication      ] Request: 61, Response: 0");
+        assertThat(lines.get(i++)).isEqualTo("\t[Disconnect      ] Request: 72, Response: 73");
+        assertThat(lines.get(i++)).isEqualTo("14 errors (1.50%)");
+        assertThat(lines.get(i++)).isEqualTo("-----------------------------------------------------------------");
     }
-
-
-//        final var client = mock(KnxClient.class);
-//        when(client.getStatistic()).thenReturn(mock(KnxStatistic.class));
-//
-//        // on init (will print the first statistic)
-//        plugin.onInitialization(client);
-//        assertLogLine(appender, 1, 0,
-//                // @formatter:off
-//                "{" +
-//                    "\"inbound\":{" +
-//                        "\"total\":{\"packets\":0,\"bytes\":0}," +
-//                        "\"description\":{\"request\":0,\"response\":0}," +
-//                        "\"connect\":{\"request\":0,\"response\":0}," +
-//                        "\"connectionState\":{\"request\":0,\"response\":0}," +
-//                        "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
-//                        "\"indication\":{\"request\":0,\"response\":0}," +
-//                        "\"disconnect\":{\"request\":0,\"response\":0}" +
-//                    "}," +
-//                    "\"outbound\":{" +
-//                        "\"total\":{\"packets\":0,\"bytes\":0}," +
-//                        "\"description\":{\"request\":0,\"response\":0}," +
-//                        "\"connect\":{\"request\":0,\"response\":0}," +
-//                        "\"connectionState\":{\"request\":0,\"response\":0}," +
-//                        "\"tunneling\":{\"request\":0,\"acknowledge\":0}," +
-//                        "\"indication\":{\"request\":0,\"response\":0}," +
-//                        "\"disconnect\":{\"request\":0,\"response\":0}" +
-//                    "}," +
-//                    "\"error\":{" +
-//                        "\"total\":{" +
-//                            "\"packets\":0," +
-//                            "\"rate\":\"0.00%\"" +
-//                        "}" +
-//                    "}" +
-//                "}"
-//                // @formatter:on
-//        );
-//
-//        // on start (NO-OP)
-//        plugin.onStart();
-//
-//        // modify statistic
-//        final var statistic = createKnxStatisticMock();
-//        when(client.getStatistic()).thenReturn(statistic);
-//
-//        // on shutdown (will print the last statistic)
-//        plugin.onShutdown();
-//        assertLogLine(appender, 2, 1,
-//                // @formatter:off
-//                "{" +
-//                    "\"inbound\":{" +
-//                        "\"total\":{\"packets\":10,\"bytes\":11}," +
-//                        "\"description\":{\"request\":0,\"response\":16}," +
-//                        "\"connect\":{\"request\":0,\"response\":18}," +
-//                        "\"connectionState\":{\"request\":0,\"response\":20}," +
-//                        "\"tunneling\":{\"request\":22,\"acknowledge\":24}," +
-//                        "\"indication\":{\"request\":0,\"response\":30}," +
-//                        "\"disconnect\":{\"request\":26,\"response\":28}" +
-//                    "}," +
-//                    "\"outbound\":{" +
-//                        "\"total\":{\"packets\":12,\"bytes\":13}," +
-//                        "\"description\":{\"request\":17,\"response\":0}," +
-//                        "\"connect\":{\"request\":19,\"response\":0}," +
-//                        "\"connectionState\":{\"request\":21,\"response\":0}," +
-//                        "\"tunneling\":{\"request\":23,\"acknowledge\":25}," +
-//                        "\"indication\":{\"request\":31,\"response\":0}," +
-//                        "\"disconnect\":{\"request\":27,\"response\":29}" +
-//                    "}," +
-//                    "\"error\":{" +
-//                        "\"total\":{" +
-//                            "\"packets\":14," +
-//                            "\"rate\":\"1.50%\"" +
-//                        "}" +
-//                    "}" +
-//                "}"
-//                // @formatter:on
-//        );
-//
 
     private KnxClient mockKnxClient(final Path path, final FileStatisticFormat format, final long intervalMs) {
         final var knxClientMock = mock(KnxClient.class);
@@ -197,7 +206,6 @@ public class FileStatisticPluginTest {
         final var statistic = mock(KnxStatistic.class);
         when(statistic.getNumberOfBodyReceived()).thenReturn(10L);
         when(statistic.getNumberOfBytesReceived()).thenReturn(11L);
-
         when(statistic.getNumberOfBodySent()).thenReturn(12L);
         when(statistic.getNumberOfBytesSent()).thenReturn(13L);
 
@@ -205,27 +213,33 @@ public class FileStatisticPluginTest {
         when(statistic.getErrorRate()).thenReturn(1.5d);
 
         // Description
-        when(statistic.getNumberOfBodyReceived(DescriptionResponseBody.class)).thenReturn(16L);
-        when(statistic.getNumberOfBodySent(DescriptionRequestBody.class)).thenReturn(17L);
+        when(statistic.getNumberOfBodyReceived(DescriptionRequestBody.class)).thenReturn(20L); // not used
+        when(statistic.getNumberOfBodyReceived(DescriptionResponseBody.class)).thenReturn(21L);
+        when(statistic.getNumberOfBodySent(DescriptionRequestBody.class)).thenReturn(22L);
+        when(statistic.getNumberOfBodySent(DescriptionResponseBody.class)).thenReturn(23L); // not used
         // Connect
-        when(statistic.getNumberOfBodyReceived(ConnectResponseBody.class)).thenReturn(18L);
-        when(statistic.getNumberOfBodySent(ConnectRequestBody.class)).thenReturn(19L);
+        when(statistic.getNumberOfBodyReceived(ConnectRequestBody.class)).thenReturn(30L); // not used
+        when(statistic.getNumberOfBodyReceived(ConnectResponseBody.class)).thenReturn(31L);
+        when(statistic.getNumberOfBodySent(ConnectRequestBody.class)).thenReturn(32L);
+        when(statistic.getNumberOfBodySent(ConnectResponseBody.class)).thenReturn(33L); // not used
         // Connection State
-        when(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).thenReturn(20L);
-        when(statistic.getNumberOfBodySent(ConnectionStateRequestBody.class)).thenReturn(21L);
+        when(statistic.getNumberOfBodyReceived(ConnectionStateRequestBody.class)).thenReturn(40L); // not used
+        when(statistic.getNumberOfBodyReceived(ConnectionStateResponseBody.class)).thenReturn(41L);
+        when(statistic.getNumberOfBodySent(ConnectionStateRequestBody.class)).thenReturn(42L);
+        when(statistic.getNumberOfBodySent(ConnectionStateResponseBody.class)).thenReturn(43L); // not used
         // Tunneling
-        when(statistic.getNumberOfBodyReceived(TunnelingRequestBody.class)).thenReturn(22L);
-        when(statistic.getNumberOfBodySent(TunnelingRequestBody.class)).thenReturn(23L);
-        when(statistic.getNumberOfBodyReceived(TunnelingAckBody.class)).thenReturn(24L);
-        when(statistic.getNumberOfBodySent(TunnelingAckBody.class)).thenReturn(25L);
-        // Disconnect
-        when(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).thenReturn(26L);
-        when(statistic.getNumberOfBodySent(DisconnectRequestBody.class)).thenReturn(27L);
-        when(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).thenReturn(28L);
-        when(statistic.getNumberOfBodySent(DisconnectResponseBody.class)).thenReturn(29L);
+        when(statistic.getNumberOfBodyReceived(TunnelingRequestBody.class)).thenReturn(50L);
+        when(statistic.getNumberOfBodyReceived(TunnelingAckBody.class)).thenReturn(51L);
+        when(statistic.getNumberOfBodySent(TunnelingRequestBody.class)).thenReturn(52L);
+        when(statistic.getNumberOfBodySent(TunnelingAckBody.class)).thenReturn(53L);
         // Indication
-        when(statistic.getNumberOfBodyReceived(RoutingIndicationBody.class)).thenReturn(30L);
-        when(statistic.getNumberOfBodySent(RoutingIndicationBody.class)).thenReturn(31L);
+        when(statistic.getNumberOfBodyReceived(RoutingIndicationBody.class)).thenReturn(60L);
+        when(statistic.getNumberOfBodySent(RoutingIndicationBody.class)).thenReturn(61L);
+        // Disconnect
+        when(statistic.getNumberOfBodyReceived(DisconnectRequestBody.class)).thenReturn(70L);
+        when(statistic.getNumberOfBodyReceived(DisconnectResponseBody.class)).thenReturn(71L);
+        when(statistic.getNumberOfBodySent(DisconnectRequestBody.class)).thenReturn(72L);
+        when(statistic.getNumberOfBodySent(DisconnectResponseBody.class)).thenReturn(73L);
 
         return statistic;
     }
