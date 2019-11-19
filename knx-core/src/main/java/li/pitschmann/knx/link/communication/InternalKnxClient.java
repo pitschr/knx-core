@@ -113,7 +113,6 @@ public final class InternalKnxClient implements AutoCloseable {
             Preconditions.checkState(this.closed.get(), "It seems the KNX client is already running.");
             this.closed.set(false);
 
-            pluginManager.notifyClientStart();
             this.state = State.START_REQUEST;
 
             // if remote control address is multicast address, then we know that we want to use the routing feature
@@ -126,6 +125,7 @@ public final class InternalKnxClient implements AutoCloseable {
             }
 
             this.state = State.STARTED;
+            pluginManager.notifyClientStart();
         } catch (final Exception ex) {
             log.error("Exception caught on 'start()' method.", ex);
             this.notifyError(ex);

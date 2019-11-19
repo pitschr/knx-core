@@ -27,10 +27,10 @@ import li.pitschmann.knx.link.communication.KnxClient;
  */
 public interface ExtensionPlugin extends Plugin {
     /**
-     * Notifies the plug-in when KNX communication starts.
+     * Notifies the plug-in when KNX communication is established.
      * <p>
-     * The start of KNX communication is done when description & connect frames have been exchanged between this client
-     * and the KNX Net/IP device.
+     * The start of KNX communication is done when description & connect frames
+     * have been exchanged between this client and the KNX Net/IP device.
      */
     void onStart();
 
