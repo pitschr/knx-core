@@ -41,7 +41,8 @@ public class PreconditionsTest {
 
         // no exceptions
         assertThat(Preconditions.checkNonNull(objMock)).isSameAs(objMock);
-        assertThat(Preconditions.checkNonNull(objMock, "This is not null.")).isSameAs(objMock);
+        assertThat(Preconditions.checkNonNull(objMock, "This is null.")).isSameAs(objMock);
+        assertThat(Preconditions.checkNonNull(objMock, "This is null for: {}", new Object())).isSameAs(objMock);
 
         // with exceptions
         assertThatThrownBy(() -> Preconditions.checkNonNull(null))
@@ -51,6 +52,10 @@ public class PreconditionsTest {
         assertThatThrownBy(() -> Preconditions.checkNonNull(null, "#checkNonNull"))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("#checkNonNull");
+
+        assertThatThrownBy(() -> Preconditions.checkNonNull(null, "1: {}, 2: %s, 3: %.2f", "NULL", "nothing", 0d))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("1: NULL, 2: nothing, 3: 0.00");
     }
 
     @Test

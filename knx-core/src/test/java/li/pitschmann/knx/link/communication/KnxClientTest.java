@@ -20,41 +20,28 @@ package li.pitschmann.knx.link.communication;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
-import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
-import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
 import li.pitschmann.knx.link.body.ControlChannelRelated;
 import li.pitschmann.knx.link.body.DataChannelRelated;
 import li.pitschmann.knx.link.body.DescriptionRequestBody;
-import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
-import li.pitschmann.knx.link.body.DisconnectResponseBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
-import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.knx.link.plugin.ExtensionPlugin;
-import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
+import li.pitschmann.knx.test.data.TestExtensionPlugin;
+import li.pitschmann.knx.test.data.TestObserverPlugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -79,18 +66,22 @@ public class KnxClientTest {
     )
     @DisplayName("Default Client: Test notification of plug-ins")
     public void testPlugins(final MockServer mockServer) {
-        final var configSpy = spy(mockServer.newConfigBuilder().build());
+        final var config = mockServer
+                .newConfigBuilder()
+                .plugin(TestObserverPlugin.class)
+                .plugin(TestExtensionPlugin.class)
+                .build();
 
-        // observer + extension plug-ins
-        final var observerPluginMock = mock(ObserverPlugin.class);
-        final var extensionPluginMock = mock(ExtensionPlugin.class);
-        when(configSpy.getPlugins()).thenReturn(List.of(observerPluginMock, extensionPluginMock));
+        final TestObserverPlugin observerPlugin;
+        final TestExtensionPlugin extensionPlugin;
+        try (final var client = DefaultKnxClient.createStarted(config)) {
+            observerPlugin = Objects.requireNonNull(client.getInternalClient().getPluginManager().getPlugin(TestObserverPlugin.class));
+            extensionPlugin = Objects.requireNonNull(client.getInternalClient().getPluginManager().getPlugin(TestExtensionPlugin.class));
 
-        try (final var client = DefaultKnxClient.createStarted(configSpy)) {
             // wait for first tunneling ack body sent by client
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK);
         } catch (final Throwable t) {
-            fail("Unexpected test state", t);
+            throw new AssertionError("Unexpected test state", t);
         }
 
         // assert packets
@@ -105,28 +96,15 @@ public class KnxClientTest {
         mockServer.waitDone();
 
         // verify number of notifications to observer plug-in
-        verify(observerPluginMock, times(1)).onInitialization(any());
-
-        verify(observerPluginMock).onIncomingBody(isA(DescriptionResponseBody.class));
-        verify(observerPluginMock).onIncomingBody(isA(ConnectResponseBody.class));
-        verify(observerPluginMock).onIncomingBody(isA(ConnectionStateResponseBody.class));
-        verify(observerPluginMock).onIncomingBody(isA(TunnelingRequestBody.class));
-        verify(observerPluginMock).onIncomingBody(isA(DisconnectResponseBody.class));
-        verify(observerPluginMock, times(5)).onIncomingBody(any());
-
-        verify(observerPluginMock).onOutgoingBody(isA(DescriptionRequestBody.class));
-        verify(observerPluginMock).onOutgoingBody(isA(ConnectRequestBody.class));
-        verify(observerPluginMock).onOutgoingBody(isA(ConnectionStateRequestBody.class));
-        verify(observerPluginMock).onOutgoingBody(isA(TunnelingAckBody.class));
-        verify(observerPluginMock).onOutgoingBody(isA(DisconnectRequestBody.class));
-        verify(observerPluginMock, times(5)).onOutgoingBody(any());
-
-        verify(observerPluginMock, times(2)).onError(any());
+        assertThat(observerPlugin.getInitInvocations()).isOne();
+        assertThat(observerPlugin.getIncomingBodies()).hasSize(5);
+        assertThat(observerPlugin.getOutgoingBodies()).hasSize(5);
+        assertThat(observerPlugin.getErrors()).hasSize(2);
 
         // verify number of notifications to extension plug-in
-        verify(extensionPluginMock).onInitialization(any());
-        verify(extensionPluginMock).onStart();
-        verify(extensionPluginMock).onShutdown();
+        assertThat(extensionPlugin.getInitInvocations()).isOne();
+        assertThat(extensionPlugin.getStartInvocations()).isOne();
+        assertThat(extensionPlugin.getShutdownInvocations()).isOne();
     }
 
 
@@ -161,26 +139,6 @@ public class KnxClientTest {
     }
 
     /**
-     * Test {@link InternalKnxClient#notifyError(Throwable)} after client close
-     */
-    @Test
-    @DisplayName("Internal Client: Test plug-in notification after close")
-    public void testPlugInNotificationAfterShutdown() {
-        // observer plug-in
-        final var observerPlugin = mock(ObserverPlugin.class);
-
-        final var configMock = createConfigMock();
-        when(configMock.getPlugins()).thenReturn(Collections.singletonList(observerPlugin));
-
-        final var client = new InternalKnxClient(configMock);
-        client.close();
-
-        // should not be an issue (silently ignored, plug-in should never be called)
-        client.notifyError(new Throwable("Test from testPlugInNotificationAfterShutdown"));
-        verify(observerPlugin, never()).onError(any());
-    }
-
-    /**
      * Test {@link InternalKnxClient#notifyError(Throwable)} when calling an erroneous plug-in.
      * <p/>
      * In case an exception is thrown by plug-in the KNX client should still be alive.
@@ -188,14 +146,7 @@ public class KnxClientTest {
     @Test
     @DisplayName("Internal Client: Test erroneous plug-in")
     public void testErroneousPlugIn() {
-        // erroneous plug-in
-        final var erroneousPlugin = mock(ObserverPlugin.class);
-        doThrow(new RuntimeException()).when(erroneousPlugin).onError(any());
-
-        final var configMock = createConfigMock();
-        when(configMock.getPlugins()).thenReturn(Collections.singletonList(erroneousPlugin));
-
-        final var client = new InternalKnxClient(configMock);
+        final var client = new InternalKnxClient(createConfigMock());
 
         try (client) {
             // should not be an issue
@@ -205,7 +156,7 @@ public class KnxClientTest {
         }
 
         // verify that onError has been invoked
-        assertThat(client.getStatistic().getNumberOfErrors()).isEqualTo(1);
+        assertThat(client.getStatistic().getNumberOfErrors()).isOne();
     }
 
     /**

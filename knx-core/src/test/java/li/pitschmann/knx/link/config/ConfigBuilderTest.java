@@ -282,8 +282,8 @@ public class ConfigBuilderTest {
         // verify
         final var config = configBuilder.build();
         assertThat(config.getPlugins()).hasSize(3);
-        assertThat(config.getPlugins().stream().filter(ObserverPlugin.class::isInstance).count()).isOne();
-        assertThat(config.getPlugins().stream().filter(ExtensionPlugin.class::isInstance).count()).isOne();
+        assertThat(config.getPlugins().stream().filter(ObserverPlugin.class::isAssignableFrom).count()).isOne();
+        assertThat(config.getPlugins().stream().filter(ExtensionPlugin.class::isAssignableFrom).count()).isOne();
 
         // invalid cases because of "null" reference
         assertThatThrownBy(() -> configBuilder.plugin(null))

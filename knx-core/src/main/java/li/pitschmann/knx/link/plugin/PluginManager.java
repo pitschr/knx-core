@@ -21,10 +21,11 @@ package li.pitschmann.knx.link.plugin;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.exceptions.KnxPluginException;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Preconditions;
+import li.pitschmann.utils.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public final class PluginManager implements AutoCloseable {
      */
     public void notifyInitialization(final @Nonnull KnxClient client) {
         this.client = Objects.requireNonNull(client);
-        this.client.getConfig().getPlugins().stream().forEach(this::registerPluginInternal);
+        this.client.getConfig().getPlugins().forEach(this::registerPluginInternal);
         log.info("All Plugins: {}", allPlugins);
         log.info("Observer Plugins: {}", observerPlugins);
         log.info("Extension Plugins: {}", extensionPlugins);
@@ -93,7 +94,7 @@ public final class PluginManager implements AutoCloseable {
      * @param body any KNX body
      */
     public void notifyIncomingBody(final @Nonnull Body body) {
-        notifyPlugins(body, observerPlugins, ObserverPlugin::onIncomingBody);
+        notifyPlugins(Objects.requireNonNull(body), observerPlugins, ObserverPlugin::onIncomingBody);
     }
 
     /**
@@ -102,7 +103,7 @@ public final class PluginManager implements AutoCloseable {
      * @param body any KNX body
      */
     public void notifyOutgoingBody(final @Nonnull Body body) {
-        notifyPlugins(body, observerPlugins, ObserverPlugin::onOutgoingBody);
+        notifyPlugins(Objects.requireNonNull(body), observerPlugins, ObserverPlugin::onOutgoingBody);
     }
 
     /**
@@ -111,7 +112,7 @@ public final class PluginManager implements AutoCloseable {
      * @param throwable an instance of {@link Throwable} to be sent to plug-ins
      */
     public void notifyError(final @Nonnull Throwable throwable) {
-        notifyPlugins(throwable, observerPlugins, ObserverPlugin::onError);
+        notifyPlugins(Objects.requireNonNull(throwable), observerPlugins, ObserverPlugin::onError);
     }
 
     /**
@@ -133,25 +134,7 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Registers the plugin and calls the initialization
-     *
-     * @param plugin
-     */
-    public void registerPlugin(final @Nonnull Plugin plugin) {
-        registerPluginInternal(plugin);
-        notifyPlugins(client, Collections.singletonList(plugin), Plugin::onInitialization);
-
-        // for extension plugins, we have a special case:
-        // if the KNX Client is already started -> kick in the onStart immediately!
-        if (plugin instanceof ExtensionPlugin && client.isRunning()) {
-            notifyPlugins(null, Collections.singletonList((ExtensionPlugin) plugin), (p, x) -> p.onStart());
-        }
-
-        log.info("Plugin registered: {}", plugin);
-    }
-
-    /**
-     * Registers the plugin from given URL and class path
+     * Adds and registers the plugin from given URL and class path
      * <p/>
      * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
      * {@code com.mycompany.MyPlugin} as {@code className}.
@@ -161,7 +144,7 @@ public final class PluginManager implements AutoCloseable {
      * @return a new {@link Plugin} loaded from given URL and fully qualified class name
      */
     @Nonnull
-    public Plugin registerPlugin(final @Nonnull Path filePath, final @Nonnull String className) {
+    public Plugin addPlugin(final @Nonnull Path filePath, final @Nonnull String className) {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
                 "File doesn't end with '.jar' extension: {}", filePath);
         Preconditions.checkNonNull(className);
@@ -174,26 +157,55 @@ public final class PluginManager implements AutoCloseable {
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
                     "Seems the given plugin is not an instance of {}: {}", Plugin.class, className);
 
-            final var plugin = (Plugin) cls.getDeclaredConstructor().newInstance();
+            @SuppressWarnings("unchecked") final var plugin = addPlugin((Class<Plugin>) cls);
             log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
-            registerPlugin(plugin);
             return plugin;
         } catch (final Throwable t) {
-            throw new KnxException("Could not load plugin '" + className + "' at: " + filePath, t);
+            throw new KnxPluginException("Could not load plugin '" + className + "' at: " + filePath, t);
         }
     }
 
     /**
-     * Registers the plugin
+     * Creates and registers the plugin
      *
-     * @param plugin
+     * @param pluginClass
+     * @return new instance of {@link Plugin}
      */
-    private void registerPluginInternal(final @Nonnull Plugin plugin) {
-        final var pluginClass = plugin.getClass();
+    @Nonnull
+    public <T extends Plugin> T addPlugin(final @Nonnull Class<T> pluginClass) {
+        final var plugin = registerPluginInternal(pluginClass);
+        notifyPlugins(client, Collections.singletonList(plugin), Plugin::onInitialization);
+
+        // for extension plugins, we have a special case:
+        // if the KNX Client is already started -> kick in the onStart immediately!
+        if (plugin instanceof ExtensionPlugin && client.isRunning()) {
+            notifyPlugins(null, Collections.singletonList((ExtensionPlugin) plugin), (p, x) -> p.onStart());
+        }
+
+        return plugin;
+    }
+
+    /**
+     * Creates and registers the plugin based on {@code pluginClass}
+     *
+     * @param pluginClass
+     * @param <T>
+     * @return new instance of plugin
+     */
+    @Nonnull
+    private <T extends Plugin> T registerPluginInternal(final @Nonnull Class<T> pluginClass) {
         Preconditions.checkArgument(getPlugin(pluginClass) == null,
                 "There is already a plugin registered for class: {}", pluginClass);
 
-        log.debug("Register plugin: {}", plugin);
+        final T plugin;
+        try {
+            final var sw = Stopwatch.createStarted();
+            plugin = pluginClass.getDeclaredConstructor().newInstance();
+            log.info("Plugin '{}' created in {} ms", plugin, sw.elapsed(TimeUnit.MILLISECONDS));
+        } catch (final Throwable t) {
+            throw new KnxPluginException("Could not load plugin: " + pluginClass.getName(), t);
+        }
+
         allPlugins.add(plugin);
         if (plugin instanceof ExtensionPlugin) {
             extensionPlugins.add((ExtensionPlugin) plugin);
@@ -203,6 +215,8 @@ public final class PluginManager implements AutoCloseable {
             observerPlugins.add((ObserverPlugin) plugin);
             log.trace("Register plugin as Observer Plugin: {}", plugin);
         }
+
+        return plugin;
     }
 
     /**
@@ -224,36 +238,25 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Returns an an already-registered Plugin for given {@code className}
-     *
-     * @param className
-     * @param <T>
-     * @return An existing instance of {@link Plugin} if found, otherwise {@code null}
-     */
-    public <T extends Plugin> T getPlugin(final @Nonnull String className) {
-        Preconditions.checkNonNull(className);
-        for (final var plugin : allPlugins) {
-            if (className.equals(plugin.getClass().getName())) {
-                @SuppressWarnings("unchecked") final var pluginCast = (T) plugin;
-                return pluginCast;
-            }
-        }
-        return null;
-    }
-
-    /**
      * De-Registers the plugin by class
      *
      * @param pluginClass
+     * @param <T>
+     * @return plugin instance that is being de-registered, otherwise {@link IllegalArgumentException} will be thrown
+     * @thows IllegalArgumentException in case the plugin class could not be found
      */
-    public void unregisterPlugin(final @Nonnull Class<? extends Plugin> pluginClass) {
-        Preconditions.checkArgument(getPlugin(pluginClass) != null,
+    @Nonnull
+    public <T extends Plugin> T unregisterPlugin(final @Nonnull Class<T> pluginClass) {
+        final var plugin = getPlugin(pluginClass);
+        Preconditions.checkArgument(plugin != null,
                 "No plugin is registered for class: {}", pluginClass);
 
         // plugin class is registered, remove it from extension and/or observer plugin lists
         UNREGISTER_PLUGIN_FUNCTION.accept(allPlugins, pluginClass);
         UNREGISTER_PLUGIN_FUNCTION.accept(extensionPlugins, pluginClass);
         UNREGISTER_PLUGIN_FUNCTION.accept(observerPlugins, pluginClass);
+
+        return plugin;
     }
 
     /**
@@ -276,7 +279,7 @@ public final class PluginManager implements AutoCloseable {
                     try {
                         consumer.accept(plugin, obj);
                     } catch (final Exception ex) {
-                        log.debug("Exception during notifyPlugins(T, List<Plugin>, BiConsumer)", ex);
+                        log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): obj={}, plugin={}", obj, plugin, ex);
                     }
                 }, this.pluginExecutor);
             }

@@ -37,6 +37,7 @@ public final class Preconditions {
      * @param obj the object reference to check for nullity
      * @throws NullPointerException if {@code obj} is {@code null}
      */
+    @Nonnull
     public static <T> T checkNonNull(final @Nullable T obj) {
         return Objects.requireNonNull(obj);
     }
@@ -48,14 +49,25 @@ public final class Preconditions {
      * Example:
      * <pre>
      *     checkNotNull(obj, "The object is null");
+     *     checkNotNull(obj, "The object is null for body: {}", body);
      * </pre>
      *
-     * @param obj          the object reference to check for nullity
-     * @param errorMessage a customized error message
+     * @param obj  the object reference to check for nullity
+     * @param arg  an object reference that should be printed in default error message,
+     *             or the error message itself
+     * @param args arguments for customized error message
      * @throws NullPointerException if {@code obj} is {@code null}
      */
-    public static <T> T checkNonNull(final @Nullable T obj, final @Nonnull String errorMessage) {
-        return Objects.requireNonNull(obj, errorMessage);
+    @Nonnull
+    public static <T> T checkNonNull(final @Nullable T obj, final @Nonnull Object arg, final @Nullable Object... args) {
+        if (obj == null) {
+            if (arg instanceof String) {
+                throw new NullPointerException(toErrorMessage((String) arg, args));
+            } else {
+                throw new NullPointerException(toErrorMessage("Null for: {}. More Arguments: {}", arg, Arrays.toString(args)));
+            }
+        }
+        return obj;
     }
 
     /**
@@ -81,17 +93,17 @@ public final class Preconditions {
      * </pre>
      *
      * @param expression a boolean expression
-     * @param obj        an object reference that should be printed in default error message,
+     * @param arg        an object reference that should be printed in default error message,
      *                   or the error message itself
      * @param args       arguments for customized error message
      * @throws IllegalArgumentException if expression is {@code false}
      */
-    public static void checkArgument(boolean expression, final @Nonnull Object obj, final @Nullable Object... args) {
+    public static void checkArgument(boolean expression, final @Nonnull Object arg, final @Nullable Object... args) {
         if (!expression) {
-            if (obj instanceof String) {
-                throw new IllegalArgumentException(toErrorMessage((String) obj, args));
+            if (arg instanceof String) {
+                throw new IllegalArgumentException(toErrorMessage((String) arg, args));
             } else {
-                throw new IllegalArgumentException(toErrorMessage("Illegal Argument for: {}. More Arguments: {}", obj, Arrays.toString(args)));
+                throw new IllegalArgumentException(toErrorMessage("Illegal Argument for: {}. More Arguments: {}", arg, Arrays.toString(args)));
             }
         }
     }

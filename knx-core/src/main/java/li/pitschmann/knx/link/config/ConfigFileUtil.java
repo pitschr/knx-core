@@ -114,11 +114,12 @@ final class ConfigFileUtil {
 
         for (final var line : filteredLines) {
             try {
-                @SuppressWarnings("unchecked") final var pluginClass = (Class<Plugin>) Class.forName(line);
+                @SuppressWarnings("unchecked")
+                final var pluginClass = (Class<Plugin>)Class.forName(line);
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
-            } catch (final Exception notFoundException) {
-                throw new KnxConfigurationException("Could not load plugin: " + line);
+            } catch (final Exception ex) {
+                throw new KnxConfigurationException("Could not load plugin: " + line, ex);
             }
         }
         return plugins;
