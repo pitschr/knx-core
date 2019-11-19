@@ -125,6 +125,10 @@ public final class InternalKnxClient implements AutoCloseable {
             }
 
             this.state = State.STARTED;
+
+            // inform plugins about client start with small delay to
+            // allow some breathe between initialization and start
+            Sleeper.milliseconds(100);
             pluginManager.notifyClientStart();
         } catch (final Exception ex) {
             log.error("Exception caught on 'start()' method.", ex);
