@@ -56,7 +56,6 @@ public final class BooleanConfigValueTest {
         assertThat(configValue.isValid(Boolean.FALSE)).isTrue();
 
         assertThat(configValue.getPredicate()).isNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     private static class DummyPlugin implements Plugin {

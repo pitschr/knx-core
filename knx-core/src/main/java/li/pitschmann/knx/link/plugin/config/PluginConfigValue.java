@@ -33,10 +33,14 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
                 // leave it empty -> we will overwrite the key anyway!
                 "",
                 // rest remain same like ConfigValue
-                classType, converter, defaultSupplier, predicate, true);
+                classType, converter, defaultSupplier, predicate);
         key = String.format(KEY_PATTERN, findPluginClass().getSimpleName(), configName).toLowerCase();
     }
 
+    /**
+     * Returns the {@link Class} of Plugin where this
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private static Class<?> findPluginClass() {
         try {

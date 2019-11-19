@@ -314,8 +314,8 @@ public final class ConfigBuilder {
             final var oldValue = this.settings.remove(key);
             log.debug("Customized setting removed for key '{}'. Old Value: {}", key.getKey(), oldValue);
         } else {
-            Preconditions.checkArgument(key.isSettable(),
-                    "This key is protected and cannot be used for setting: {}", key.getKey());
+            Preconditions.checkArgument(!(key instanceof InternalConfigValue),
+                    "Internal Config Value cannot be used here: {}", key.getKey());
             Preconditions.checkArgument(key.isValid(value),
                     "The value seems not be applicable for config '{}': {}", key.getKey(), value);
             this.settings.put(key, value);

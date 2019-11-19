@@ -98,7 +98,7 @@ public class KnxMainMonitoring extends AbstractKnxMain {
             rootLogger.setLevel(Level.OFF);
             currentLogger.setLevel(Level.OFF);
         }
-        log.debug("Log all?: {}", logAll);
+        log.debug("Log enabled?: {}", logAll);
 
         // Get Monitor Time in Seconds
         final var monitorTime = getParameterValue(args, "-t,--time", Long::parseLong, 300L);
@@ -119,8 +119,6 @@ public class KnxMainMonitoring extends AbstractKnxMain {
                 .setting(ConfigConstants.Description.PORT, 40001) //
                 .setting(ConfigConstants.Control.PORT, 40002) //
                 .setting(ConfigConstants.Data.PORT, 40003) //
-                .setting(FileAuditPlugin.PATH, Paths.get("knx-audit.log"))
-                .setting(FileStatisticPlugin.PATH, Paths.get("knx-statistic.log"))
                 .setting(FileStatisticPlugin.FORMAT, FileStatisticFormat.TEXT)
                 .build();
 

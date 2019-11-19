@@ -45,7 +45,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
     /**
      * File path
      */
-    public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("."), null);
+    public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("knx-statistic.log"), null);
     /**
      * File format (e.g. JSON, TEXT)
      */

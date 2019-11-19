@@ -47,7 +47,6 @@ public final class PathConfigValueTest {
         assertThat(configValue.isValid(null)).isFalse();
         assertThat(configValue.isValid(Paths.get("my-file"))).isTrue();
         assertThat(configValue.getPredicate()).isNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     @Test
@@ -64,7 +63,6 @@ public final class PathConfigValueTest {
         assertThat(configValue.isValid(Paths.get("my-file2"))).isFalse();
         assertThat(configValue.isValid(Paths.get("my-file2.txt"))).isTrue();
         assertThat(configValue.getPredicate()).isNotNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     private static class DummyPlugin implements Plugin {
