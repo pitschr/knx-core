@@ -21,18 +21,13 @@ package li.pitschmann.knx.link.exceptions;
 import javax.annotation.Nullable;
 
 /**
- * Exception to be thrown in case something is wrong with the configuration
- * like providing a wrong IP address or an unsupported setting.
+ * Exception to be thrown in case something is wrong with the plugin.
  *
  * @author PITSCHR
  */
-public final class KnxConfigurationException extends KnxException {
+public final class KnxPluginException extends KnxException {
 
-    public KnxConfigurationException(final @Nullable String message) {
-        super(message);
-    }
-
-    public KnxConfigurationException(final @Nullable String message, final @Nullable Throwable cause) {
+    public KnxPluginException(final @Nullable String message, final @Nullable Throwable cause) {
         super(message, cause);
     }
 

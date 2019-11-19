@@ -53,14 +53,11 @@ public final class Stopwatch {
     private static TimeUnit chooseUnit(final long nanos) {
         if (HOURS.convert(nanos, NANOSECONDS) > 0) {
             return HOURS;
-        }
-        else if (MINUTES.convert(nanos, NANOSECONDS) > 0) {
+        } else if (MINUTES.convert(nanos, NANOSECONDS) > 0) {
             return MINUTES;
-        }
-        else if (SECONDS.convert(nanos, NANOSECONDS) > 0) {
+        } else if (SECONDS.convert(nanos, NANOSECONDS) > 0) {
             return SECONDS;
-        }
-        else if (MILLISECONDS.convert(nanos, NANOSECONDS) > 0) {
+        } else if (MILLISECONDS.convert(nanos, NANOSECONDS) > 0) {
             return MILLISECONDS;
         } else {
             return NANOSECONDS;

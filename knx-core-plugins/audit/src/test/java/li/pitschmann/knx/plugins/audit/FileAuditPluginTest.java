@@ -277,7 +277,7 @@ public class FileAuditPluginTest {
         );
     }
 
-    private KnxClient mockKnxClient(final Path path, FileAuditFormat format) {
+    private KnxClient mockKnxClient(final Path path, final FileAuditFormat format) {
         final var knxClientMock = mock(KnxClient.class);
         final var configMock = mock(Config.class);
         when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);

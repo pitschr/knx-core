@@ -46,6 +46,7 @@
     <modules>
         <module>api</module>
         <module>audit</module>
+        <module>statistic</module>
     </modules>
 
 </project>

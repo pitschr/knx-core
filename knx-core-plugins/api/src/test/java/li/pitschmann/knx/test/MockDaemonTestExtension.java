@@ -18,7 +18,9 @@
 
 package li.pitschmann.knx.test;
 
+import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
+import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
@@ -35,7 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -86,24 +90,17 @@ public final class MockDaemonTestExtension
             log.debug("KNX Mock Server started (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
             // -------------------------------------
-            // 2) Config
-            // -------------------------------------
-            stopwatch.reset();
-            final var config = mockServer.newConfigBuilder().plugin(MockHttpDaemonPlugin.class).build();
-            final var mockHttpDaemon = (MockHttpDaemonPlugin) config.getPlugins().stream().filter(MockHttpDaemonPlugin.class::isInstance).findFirst().get();
-            mockDaemons.put(context, mockHttpDaemon);
-            log.debug("KNX Mock Daemon created (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-
-            // -------------------------------------
-            // 3) start KNX client
+            // 2) start KNX client
             //    (with mock http daemon as plugin)
             // -------------------------------------
             stopwatch.reset();
             final ExecutorService executorService = Executors.newSingleThreadExecutor(true);
             executorService.execute(
                     () -> {
+                        final var config = mockServer.newConfigBuilder().plugin(MockHttpDaemonPlugin.class).build();
                         try (final var client = DefaultKnxClient.createStarted(config)) {
                             knxClients.put(context, client);
+                            mockDaemons.put(context, getMockHttpDaemonPlugin(client));
                             while (client.isRunning() && Sleeper.seconds(1)) {
                                 // do nothing ...
                                 log.debug("ping ...");
@@ -116,7 +113,7 @@ public final class MockDaemonTestExtension
             executorService.shutdown();
 
             // wait mock http daemon is ready (it will be started by KNX client as plugin)
-            if (!Sleeper.milliseconds(100, mockHttpDaemon::isReady, 30000)) {
+            if (!Sleeper.milliseconds(100, () -> isMockDaemonReady(context), 30000)) {
                 throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms).");
             }
 
@@ -126,6 +123,36 @@ public final class MockDaemonTestExtension
         }
 
         log.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
+    }
+
+    /**
+     * Returns the {@link MockHttpDaemonPlugin} which is inside the KNX client
+     * and not accessible outside
+     *
+     * @param baseKnxClient
+     * @return an existing instance of {@link MockHttpDaemonPlugin}
+     */
+    @Nonnull
+    private MockHttpDaemonPlugin getMockHttpDaemonPlugin(final @Nonnull BaseKnxClient baseKnxClient) {
+        try {
+            final var internalClientField = BaseKnxClient.class.getDeclaredField("internalClient");
+            internalClientField.setAccessible(true);
+            final var internalClient = (InternalKnxClient)internalClientField.get(baseKnxClient);
+            return Objects.requireNonNull(internalClient.getPluginManager().getPlugin(MockHttpDaemonPlugin.class));
+        } catch (final ReflectiveOperationException ex) {
+            throw new AssertionError(ex);
+        }
+    }
+
+    /**
+     * Returns {@code true} when mock daemon is ready, otherwise {@code false}
+     *
+     * @param context
+     * @return {@code true} if ready, otherwise {@code false}
+     */
+    private boolean isMockDaemonReady(final ExtensionContext context) {
+        final var mockDaemon = mockDaemons.get(context);
+        return mockDaemon != null && mockDaemon.isReady();
     }
 
     /**

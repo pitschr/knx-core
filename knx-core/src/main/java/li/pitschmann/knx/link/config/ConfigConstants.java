@@ -22,7 +22,6 @@ import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -39,10 +38,6 @@ import java.util.concurrent.TimeUnit;
  * @author PITSCHR
  */
 public final class ConfigConstants {
-    private ConfigConstants() {
-        throw new AssertionError("Do not touch me!");
-    }
-
     /**
      * Standard KNX/IP Port Number
      */
@@ -89,11 +84,14 @@ public final class ConfigConstants {
             Files::isReadable,
             true
     );
-
     /**
      * Immutable map of lower-cased {@link String} keys and {@link ConfigValue} values
      */
     private static final Map<String, ConfigValue<Object>> CONFIG_CONSTANTS = Map.copyOf(ConfigFileUtil.getConfigValues(ConfigConstants.class));
+
+    private ConfigConstants() {
+        throw new AssertionError("Do not touch me!");
+    }
 
     /**
      * Returns an immutable list of constant {@link ConfigValue}

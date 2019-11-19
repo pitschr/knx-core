@@ -18,14 +18,17 @@
 
 package li.pitschmann.knx.link.plugin;
 
+import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.exceptions.KnxException;
+import li.pitschmann.knx.link.exceptions.KnxPluginException;
+import li.pitschmann.knx.test.data.TestConstructorExceptionPlugin;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
+import li.pitschmann.knx.test.data.TestMethodExceptionPlugin;
 import li.pitschmann.knx.test.data.TestObserverPlugin;
 import li.pitschmann.knx.test.data.TestPlugin;
 import li.pitschmann.utils.Sleeper;
@@ -35,14 +38,11 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -64,33 +64,27 @@ public final class PluginManagerTest {
     @DisplayName("Test initial initialization of plugins through configuration instance")
     public void testOnInitialization() {
         // 1) register two plugins (via config)
-        final var configSpy = spy(ConfigBuilder
-                .tunneling()
-                .plugin(TestObserverPlugin.class)
-                .plugin(TestExtensionPlugin.class)
-                .build());
-
-        final var observerPluginMock = mock(ObserverPlugin.class);
-        final var extensionPluginMock = mock(ExtensionPlugin.class);
-        when(configSpy.getPlugins()).thenReturn(List.of(observerPluginMock, extensionPluginMock));
+        final var configMock = newConfigMock();
+        @SuppressWarnings("unchecked") final var uncheckedList = (List<Class<Plugin>>) (List<?>) List.of(TestObserverPlugin.class, TestExtensionPlugin.class);
+        when(configMock.getPlugins()).thenReturn(uncheckedList);
 
         // 2) initialization
-        final var knxClientMock = newKnxClientMock(configSpy);
-        final var pluginManager = new PluginManager(configSpy);
+        final var knxClientMock = newKnxClientMock(configMock);
+        final var pluginManager = new PluginManager(configMock);
         pluginManager.notifyInitialization(knxClientMock);
-        Sleeper.milliseconds(50); // wait bit, as plugin executor is notifying the plugins
+        Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
         // 3) verify
-        verify(observerPluginMock).onInitialization(any(KnxClient.class));
-        verify(extensionPluginMock).onInitialization(any(KnxClient.class));
+        final var observerPlugin = Objects.requireNonNull(pluginManager.getPlugin(TestObserverPlugin.class));
+        assertThat(observerPlugin.getInitInvocations()).isOne();
+
+        final var extensionPlugin = Objects.requireNonNull(pluginManager.getPlugin(TestExtensionPlugin.class));
+        assertThat(extensionPlugin.getInitInvocations()).isOne();
     }
 
     @Test
     @DisplayName("Test lazy initialization of plugins")
     public void testLazyOnInitialization() {
-        final var observerPluginMock = mock(ObserverPlugin.class);
-        final var extensionPluginMock = mock(ExtensionPlugin.class);
-
         final var configMock = newConfigMock();
         final var pluginManager = new PluginManager(configMock);
         final var knxClientMock = newKnxClientMock(configMock);
@@ -99,18 +93,21 @@ public final class PluginManagerTest {
         pluginManager.notifyInitialization(knxClientMock);
         Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
-        // 2 verify (init method never called)
-        verify(observerPluginMock, never()).onInitialization(any(KnxClient.class));
-        verify(extensionPluginMock, never()).onInitialization(any(KnxClient.class));
+        // 2 verify
+        assertThat(pluginManager.getPlugin(TestObserverPlugin.class)).isNull();
+        assertThat(pluginManager.getPlugin(TestExtensionPlugin.class)).isNull();
 
         // 3) register two plugins
-        pluginManager.registerPlugin(observerPluginMock);
-        pluginManager.registerPlugin(extensionPluginMock);
+        pluginManager.addPlugin(TestObserverPlugin.class);
+        pluginManager.addPlugin(TestExtensionPlugin.class);
         Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
         // 4) verify (init method should be called)
-        verify(observerPluginMock).onInitialization(any(KnxClient.class));
-        verify(extensionPluginMock).onInitialization(any(KnxClient.class));
+        final var observerPlugin = Objects.requireNonNull(pluginManager.getPlugin(TestObserverPlugin.class));
+        assertThat(observerPlugin.getInitInvocations()).isOne();
+
+        final var extensionPlugin = Objects.requireNonNull(pluginManager.getPlugin(TestExtensionPlugin.class));
+        assertThat(extensionPlugin.getInitInvocations()).isOne();
     }
 
     @Test
@@ -139,7 +136,7 @@ public final class PluginManagerTest {
         // wrong JAR file path
         final var pathToJAR = Paths.get("file-with-wrong.extension");
         final var className = "my.plugin.MyTestPlugin";
-        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className))
+        assertThatThrownBy(() -> pluginManager.addPlugin(pathToJAR, className))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("File doesn't end with '.jar' extension: file-with-wrong.extension");
     }
@@ -153,7 +150,7 @@ public final class PluginManagerTest {
         // wrong JAR file path
         final var pathToJAR = Paths.get("non-existent-file.jar");
         final var className = "my.plugin.MyTestPlugin";
-        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className))
+        assertThatThrownBy(() -> pluginManager.addPlugin(pathToJAR, className))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("File doesn't exists or is not readable: non-existent-file.jar");
     }
@@ -166,15 +163,11 @@ public final class PluginManagerTest {
         // wrong JAR file path
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
         final var className = "my.test.HelloWorldPluginV1_THATDOESNOTEXISTS";
-        assertThatThrownBy(() -> pluginManager.registerPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> pluginManager.addPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
 
         // wrong class type
         final var plugin2 = pluginManager.getPlugin(Plugin.class);
         assertThat(plugin2).isNull();
-
-        // wrong class name
-        final var plugin3 = pluginManager.getPlugin("unknown.class.name");
-        assertThat(plugin3).isNull();
     }
 
     @Test
@@ -185,7 +178,7 @@ public final class PluginManagerTest {
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
         final var className = "my.test.HelloWorldPluginV1";
 
-        final var plugin = pluginManager.registerPlugin(pathToJAR, className);
+        final var plugin = pluginManager.addPlugin(pathToJAR, className);
         assertThat(plugin).isInstanceOf(Plugin.class);
         assertThat(plugin.getClass().getName()).isEqualTo(className);
 
@@ -193,13 +186,9 @@ public final class PluginManagerTest {
         final var plugin2 = pluginManager.getPlugin(plugin.getClass());
         assertThat(plugin2).isSameAs(plugin);
 
-        // correct class name
-        final var plugin3 = pluginManager.getPlugin(className);
-        assertThat(plugin3).isSameAs(plugin);
-
         // de-register the old plugin and re-register the plugin (new plugin should be born)
         pluginManager.unregisterPlugin(plugin.getClass());
-        final var newPlugin = pluginManager.registerPlugin(pathToJAR, className);
+        final var newPlugin = pluginManager.addPlugin(pathToJAR, className);
         assertThat(newPlugin).isInstanceOf(Plugin.class);
         assertThat(newPlugin.getClass().getName()).isEqualTo(className);
         assertThat(newPlugin).isNotSameAs(plugin);
@@ -209,25 +198,49 @@ public final class PluginManagerTest {
     @DisplayName("OK: Register and register of plugin")
     public void testRegisterAndDeregister() {
         final var pluginManager = new PluginManager(newConfigMock());
-        final var testPlugin = new TestPlugin();
-        final var testPluginClass = testPlugin.getClass();
-        final var testPluginClassName = testPluginClass.getName();
 
         // 1) check if plugin doesn't exists
-        assertThat(pluginManager.getPlugin(testPluginClass)).isNull();
-        assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isNull();
+        assertThat(pluginManager.getPlugin(TestPlugin.class)).isNull();
 
         // 2) add plugin and check if plugin exists
-        pluginManager.registerPlugin(testPlugin);
-        assertThat(pluginManager.getPlugin(testPluginClass)).isSameAs(testPlugin);
-        assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isSameAs(testPlugin);
+        final var testPlugin = pluginManager.addPlugin(TestPlugin.class);
+        assertThat(pluginManager.getPlugin(TestPlugin.class)).isSameAs(testPlugin);
 
         // 3) unregister
-        pluginManager.unregisterPlugin(testPluginClass);
+        pluginManager.unregisterPlugin(TestPlugin.class);
 
         // 4) check if plugin doesn't exists anymore again
-        assertThat(pluginManager.getPlugin(testPluginClass)).isNull();
-        assertThat(pluginManager.<Plugin>getPlugin(testPluginClassName)).isNull();
+        assertThat(pluginManager.getPlugin(TestPlugin.class)).isNull();
+    }
+
+    @Test
+    @DisplayName("ERROR: Exception in Plugin Constructor")
+    public void testExceptionInPluginConstructor() {
+        final var pluginManager = new PluginManager(newConfigMock());
+
+        assertThatThrownBy(() -> pluginManager.addPlugin(TestConstructorExceptionPlugin.class))
+                .isInstanceOf(KnxPluginException.class)
+                .hasMessage("Could not load plugin: " + TestConstructorExceptionPlugin.class.getName());
+    }
+
+    @Test
+    @DisplayName("ERROR: Exception in Plugin onInit() method")
+    public void testExceptionInPluginMethod() {
+        final var configMock = newConfigMock();
+        final var knxClientMock = newKnxClientMock(configMock);
+        final var pluginManager = new PluginManager(newConfigMock());
+        pluginManager.notifyInitialization(knxClientMock);
+
+        // we should be able to create a plugin
+        final var plugin = pluginManager.addPlugin(TestMethodExceptionPlugin.class);
+        assertThat(plugin).isNotNull();
+
+        // calling those methods should not be a problem too!
+        pluginManager.notifyClientStart();
+        pluginManager.notifyIncomingBody(mock(Body.class));
+        pluginManager.notifyOutgoingBody(mock(Body.class));
+        pluginManager.notifyError(mock(Throwable.class));
+        pluginManager.notifyClientShutdown();
     }
 
     private KnxClient newKnxClientMock(final Config config) {

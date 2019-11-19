@@ -31,9 +31,6 @@ import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +43,7 @@ public final class Config {
     private final boolean routingEnabled;
     private final InetAddress remoteControlAddress;
     private final int remoteControlPort;
-    private final List<Plugin> plugins;
+    private final List<Class<Plugin>> plugins;
     private final Map<ConfigValue<?>, Object> settings;
     private final XmlProject xmlProject;
 
@@ -63,19 +60,10 @@ public final class Config {
         this.remoteControlPort = remoteControlPort;
 
         // plugins
-        final var plugins = new ArrayList<Plugin>(pluginClasses.size());
-        for (final var pluginClass : pluginClasses) {
-            try {
-                final var plugin = pluginClass.getDeclaredConstructor().newInstance();
-                plugins.add(plugin);
-            } catch (final ReflectiveOperationException ex) {
-                throw new KnxConfigurationException("Could not instantiate plugin: " + pluginClass);
-            }
-        }
-        this.plugins = List.copyOf(plugins);
+        this.plugins = List.copyOf(pluginClasses);
 
         // defensive copy of custom settings
-        this.settings = Collections.unmodifiableMap(new HashMap<>(settings));
+        this.settings = Map.copyOf(settings);
 
         // try to parse the project file
         final var projectPath = getProjectPath();
@@ -139,10 +127,10 @@ public final class Config {
     /**
      * Returns list of all plug-in classes
      *
-     * @return unmodifiable list of all {@link Plugin}
+     * @return unmodifiable list of all {@link Plugin} classes
      */
     @Nonnull
-    public List<Plugin> getPlugins() {
+    public List<Class<Plugin>> getPlugins() {
         return this.plugins;
     }
 

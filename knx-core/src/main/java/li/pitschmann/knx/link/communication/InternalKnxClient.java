@@ -492,18 +492,17 @@ public final class InternalKnxClient implements AutoCloseable {
         es.shutdown();
 
         // send description request
-        final var request = DescriptionRequestBody.useDefault();
-        log.debug("Request for description: {}", request);
+        final var requestBody = DescriptionRequestBody.useDefault();
+        log.debug("Request for description: {}", requestBody);
 
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
         try (communicator) {
-            final var response = communicator.<DescriptionResponseBody>send(request, config.getTimeoutDescriptionRequest()).get();
-            // check status
-            Preconditions.checkState(response != null, response);
-            return response;
+            final var responseBody = communicator.<DescriptionResponseBody>send(requestBody, config.getTimeoutDescriptionRequest()).get();
+            Preconditions.checkNonNull(responseBody, "No description response received for request: {}", requestBody);
+            return responseBody;
         } catch (final Exception ex) {
             log.error("Exception during fetch description from KNX Net/IP device", ex);
-            throw new KnxDescriptionNotReceivedException(request);
+            throw new KnxDescriptionNotReceivedException(requestBody);
         } finally {
             Closeables.shutdownQuietly(es);
         }
@@ -536,8 +535,7 @@ public final class InternalKnxClient implements AutoCloseable {
         SearchResponseBody responseBody = null;
         try (communicator) {
             responseBody = communicator.<SearchResponseBody>send(requestBody, config.getTimeoutDiscoveryRequest()).get();
-            // check status
-            Preconditions.checkState(responseBody != null, responseBody);
+            Preconditions.checkNonNull(responseBody, "No search response received for request: {}", requestBody);
             return responseBody;
         } catch (final Exception ex) {
             log.error("Exception during fetch discovery frames from KNX Net/IP device", ex);
@@ -565,7 +563,9 @@ public final class InternalKnxClient implements AutoCloseable {
         try {
             responseBody = this.<ConnectResponseBody>send(requestBody, config.getTimeoutConnectRequest()).get();
             // check status if we got response with NO_ERROR status
-            Preconditions.checkState(responseBody != null && responseBody.getStatus() == Status.E_NO_ERROR, responseBody);
+            Preconditions.checkNonNull(responseBody, "No connect response received for request: {}", requestBody);
+            Preconditions.checkState(responseBody.getStatus() == Status.E_NO_ERROR,
+                    "Connect Response with error state received: {}", responseBody);
             return responseBody.getChannelId();
         } catch (final Exception ex) {
             log.error("Exception during fetch channel id from KNX Net/IP device", ex);
