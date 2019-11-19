@@ -33,7 +33,6 @@ import java.util.function.Supplier;
  * <li>{@code key} ... fully qualified name of key, will be lower-cased</li>
  * <li>{@code classType} ... for type of class, also used for casting</li>
  * <li>{@code defaultSupplier} ... supplier for default value</li>
- * <li>{@code settable} ... flag if the value of config key can be set
  * </ul>
  *
  * @param <T>
@@ -44,21 +43,18 @@ public class ConfigValue<T> {
     private final Supplier<T> defaultSupplier;
     private final Function<String, T> converter;
     private final Predicate<T> predicate;
-    private final boolean settable;
 
     protected ConfigValue(
             final @Nonnull String key,
             final @Nonnull Class<T> classType,
             final @Nonnull Function<String, T> converter,
             final @Nonnull Supplier<T> defaultSupplier,
-            final @Nullable Predicate<T> predicate,
-            final boolean settable) {
+            final @Nullable Predicate<T> predicate) {
         this.key = Objects.requireNonNull(key).toLowerCase();
         this.classType = Objects.requireNonNull(classType);
         this.converter = Objects.requireNonNull(converter);
         this.defaultSupplier = Objects.requireNonNull(defaultSupplier);
         this.predicate = predicate;
-        this.settable = settable;
     }
 
     /**
@@ -91,11 +87,6 @@ public class ConfigValue<T> {
         return this.predicate;
     }
 
-    public boolean isSettable() {
-        return settable;
-    }
-
-
     /**
      * Returns {@code true} if the given value is valid/applicable for the config.
      *
@@ -126,7 +117,6 @@ public class ConfigValue<T> {
     public String toString() {
         return Strings.toStringHelper(this)
                 .add("key", this.getKey())
-                .add("settable", this.isSettable())
                 .add("classType", this.getClassType())
                 .add("converter", this.getConverter())
                 .add("defaultValue", this.getDefaultValue())

@@ -38,14 +38,13 @@ public final class ConfigValueTest {
         final Function<String, Integer> converter = Integer::parseInt;
         final Supplier<Integer> defaultValue = () -> 13;
         final Predicate<Integer> predicate = (value) -> value > 3 && value < 10;
-        final var ConfigValue = new ConfigValue<>("aAa", Integer.class, converter, defaultValue, predicate, false);
+        final var ConfigValue = new ConfigValue<>("aAa", Integer.class, converter, defaultValue, predicate);
 
         assertThat(ConfigValue.getKey()).isEqualTo("aaa"); // lower cased!
         assertThat(ConfigValue.getClassType()).isEqualTo(Integer.class);
         assertThat(ConfigValue.getConverter()).isSameAs(converter);
         assertThat(ConfigValue.getDefaultValue()).isEqualTo(13);
         assertThat(ConfigValue.getPredicate()).isEqualTo(predicate);
-        assertThat(ConfigValue.isSettable()).isFalse();
 
         assertThat(ConfigValue.isValid(null)).isFalse();
         assertThat(ConfigValue.isValid(0)).isFalse();
@@ -56,7 +55,7 @@ public final class ConfigValueTest {
         assertThat(ConfigValue.convert("-1")).isEqualTo(-1);
 
         assertThat(ConfigValue).hasToString(
-                String.format("ConfigValue{key=aaa, settable=false, classType=%s, converter=%s, defaultValue=13, predicate=%s}", Integer.class, converter, predicate)
+                String.format("ConfigValue{key=aaa, classType=%s, converter=%s, defaultValue=13, predicate=%s}", Integer.class, converter, predicate)
         );
     }
 
@@ -65,14 +64,13 @@ public final class ConfigValueTest {
     public void testConfigValueWithoutPredicate() {
         final Function<String, Boolean> converter = (value) -> "yes".equalsIgnoreCase(value);
         final Supplier<Boolean> defaultValue = () -> Boolean.FALSE;
-        final var ConfigValue = new ConfigValue<>("BBB", Boolean.class, converter, defaultValue, null, true);
+        final var ConfigValue = new ConfigValue<>("BBB", Boolean.class, converter, defaultValue, null);
 
         assertThat(ConfigValue.getKey()).isEqualTo("bbb");
         assertThat(ConfigValue.getClassType()).isEqualTo(Boolean.class);
         assertThat(ConfigValue.getConverter()).isSameAs(converter);
         assertThat(ConfigValue.getDefaultValue()).isFalse();
         assertThat(ConfigValue.getPredicate()).isNull();
-        assertThat(ConfigValue.isSettable()).isTrue();
 
         assertThat(ConfigValue.isValid(null)).isFalse();
         assertThat(ConfigValue.isValid(true)).isTrue();
@@ -81,7 +79,7 @@ public final class ConfigValueTest {
         assertThat(ConfigValue.convert("no")).isFalse();
 
         assertThat(ConfigValue).hasToString(
-                String.format("ConfigValue{key=bbb, settable=true, classType=%s, converter=%s, defaultValue=false, predicate=null}", Boolean.class, converter)
+                String.format("ConfigValue{key=bbb, classType=%s, converter=%s, defaultValue=false, predicate=null}", Boolean.class, converter)
         );
     }
 

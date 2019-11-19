@@ -54,8 +54,7 @@ public final class ConfigConstants {
             Boolean.class,
             Boolean::valueOf,
             () -> Boolean.FALSE,
-            null,
-            true
+            null
     );
     /**
      * Path to Project file
@@ -81,8 +80,7 @@ public final class ConfigConstants {
                             + dir.toFile().getAbsolutePath(), e);
                 }
             },
-            Files::isReadable,
-            true
+            Files::isReadable
     );
     /**
      * Immutable map of lower-cased {@link String} keys and {@link ConfigValue} values
@@ -112,8 +110,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(10),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Search() {
@@ -129,8 +126,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(10),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Description Channel Port
@@ -140,8 +136,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> 0,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Timeout for Description Channel Socket
@@ -151,8 +146,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(3),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Description() {
@@ -168,8 +162,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(10),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Connect() {
@@ -185,8 +178,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(5),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * KNX client shall wait for 1 seconds after sending a DISCONNECT_RESPONSE frame to KNX Net/IP device.
@@ -196,8 +188,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(1),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Disconnect() {
@@ -213,8 +204,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(10),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Number of connection state request attempts before KNX connection will be disconnected.
@@ -224,8 +214,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(60),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         /**
@@ -238,8 +227,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(120),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private ConnectionState() {
@@ -255,8 +243,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> 0,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Timeout for Control Channel Socket
@@ -266,8 +253,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(3),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Control() {
@@ -283,8 +269,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> 0,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
@@ -295,8 +280,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(1),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Timeout for Data Channel Socket
@@ -306,8 +290,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(3),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Data() {
@@ -332,29 +315,30 @@ public final class ConfigConstants {
         }
     }
 
-
     public static final class Endpoint {
         /**
          * Endpoint Address (of KNX/Net IP device)
+         * <p/>
+         * <strong>This setting is reserved for internal purpose only!</strong>
          */
-        public static final ConfigValue<InetAddress> ADDRESS = new ConfigValue<>(
+        static final InternalConfigValue<InetAddress> ADDRESS = new InternalConfigValue<>(
                 "client.endpoint.address",
                 InetAddress.class,
                 Networker::getByAddress,
-                () -> Networker.getAddressUnbound(),
-                Objects::nonNull,
-                false
+                Networker::getAddressUnbound,
+                Objects::nonNull
         );
         /**
          * Endpoint Port (of KNX/Net IP device)
+         * <p/>
+         * <strong>This setting is reserved for internal purpose only!</strong>
          */
-        public static final ConfigValue<Integer> PORT = new ConfigValue<>(
+        static final InternalConfigValue<Integer> PORT = new InternalConfigValue<>(
                 "client.endpoint.port",
                 Integer.class,
                 Integer::valueOf,
                 () -> KNX_PORT,
-                Objects::nonNull,
-                false
+                Objects::nonNull
         );
 
         private Endpoint() {
@@ -370,8 +354,7 @@ public final class ConfigConstants {
                 InetAddress.class,
                 Networker::getByAddress,
                 () -> MULTICAST_ADDRESS,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Multicast Port
@@ -381,8 +364,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> KNX_PORT,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Default Time-To-Live (TTL) for multicast communication
@@ -392,8 +374,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> 4,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Timeout for Multicast Channel Socket
@@ -403,8 +384,7 @@ public final class ConfigConstants {
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(3),
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Multicast() {
@@ -420,8 +400,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> 10,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
         /**
          * Default size for Plugin Executor Pool Size
@@ -431,8 +410,7 @@ public final class ConfigConstants {
                 Integer.class,
                 Integer::valueOf,
                 () -> 10,
-                Objects::nonNull,
-                true
+                Objects::nonNull
         );
 
         private Executor() {

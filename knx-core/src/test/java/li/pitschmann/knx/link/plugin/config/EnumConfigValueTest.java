@@ -45,7 +45,6 @@ public final class EnumConfigValueTest {
         assertThat(configValue.isValid(null)).isFalse();
         assertThat(configValue.isValid(DummyEnum.TWO)).isTrue();
         assertThat(configValue.getPredicate()).isNotNull(); // built-in
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     private enum DummyEnum {

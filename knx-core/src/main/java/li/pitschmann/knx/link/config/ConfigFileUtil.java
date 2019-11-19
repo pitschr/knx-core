@@ -82,15 +82,10 @@ final class ConfigFileUtil {
             // add settings
             for (final var setting : allSettings.entrySet()) {
                 final var configValue = allRegisteredConfigValues.get(setting.getKey());
-                // consider only which are known and settable
                 if (configValue != null) {
-                    if (configValue.isSettable()) {
-                        final var settingValue = configValue.convert(setting.getValue());
-                        configBuilder.setting(configValue, settingValue);
-                        log.debug("Config '{}' loaded with value: {}", configValue.getKey(), settingValue);
-                    } else {
-                        log.warn("Config '{}' is not settable. Ignored!", configValue.getKey());
-                    }
+                    final var settingValue = configValue.convert(setting.getValue());
+                    configBuilder.setting(configValue, settingValue);
+                    log.debug("Config '{}' loaded with value: {}", configValue.getKey(), settingValue);
                 } else {
                     log.debug("Config '{}' is not registered. Ignored!", setting.getKey());
                 }

@@ -45,7 +45,6 @@ public final class LongConfigValueTest {
         assertThat(configValue.isValid(null)).isFalse();
         assertThat(configValue.isValid(45678901234L)).isTrue();
         assertThat(configValue.getPredicate()).isNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     @Test
@@ -62,7 +61,6 @@ public final class LongConfigValueTest {
         assertThat(configValue.isValid(45678901234L)).isFalse();
         assertThat(configValue.isValid(22251617052L)).isTrue();
         assertThat(configValue.getPredicate()).isNotNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     private static class DummyPlugin implements Plugin {

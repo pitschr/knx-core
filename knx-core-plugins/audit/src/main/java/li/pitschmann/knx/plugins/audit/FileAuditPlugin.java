@@ -53,7 +53,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     /**
      * File path
      */
-    public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("."), null);
+    public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("knx-audit.log"), null);
     /**
      * File format (e.g. JSON, CSV)
      */

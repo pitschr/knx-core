@@ -45,7 +45,6 @@ public final class StringConfigValueTest {
         assertThat(configValue.isValid(null)).isFalse();
         assertThat(configValue.isValid("Abc")).isTrue();
         assertThat(configValue.getPredicate()).isNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     @Test
@@ -62,7 +61,6 @@ public final class StringConfigValueTest {
         assertThat(configValue.isValid("Abc")).isFalse();
         assertThat(configValue.isValid("Abcd")).isTrue();
         assertThat(configValue.getPredicate()).isNotNull();
-        assertThat(configValue.isSettable()).isTrue();
     }
 
     private static class DummyPlugin implements Plugin {
