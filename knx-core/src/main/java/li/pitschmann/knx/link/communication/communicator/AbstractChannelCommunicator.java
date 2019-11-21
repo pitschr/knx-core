@@ -88,7 +88,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         log.info("Queue Executor created: {}", this.queueExecutor);
 
         // creates executor for communication
-        final var poolSize = this.client.getConfig().getCommunicationExecutorPoolSize();
+        final var poolSize = this.client.getConfig(ConfigConstants.Communication.EXECUTOR_POOL_SIZE);
         this.communicationExecutor = Executors.newFixedThreadPool(poolSize, true);
         log.info("Communication Executor created with size of {}: {}", poolSize, this.communicationExecutor);
     }

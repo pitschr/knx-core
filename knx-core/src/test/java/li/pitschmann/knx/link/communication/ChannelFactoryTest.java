@@ -19,6 +19,8 @@
 package li.pitschmann.knx.link.communication;
 
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.utils.Networker;
@@ -31,6 +33,8 @@ import java.nio.channels.DatagramChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,11 +62,13 @@ public class ChannelFactoryTest {
     @DisplayName("Test creating a new channel for: description")
     public void testNewDescriptionChannel() throws SocketException {
         final var configMock = mock(Config.class);
-        when(configMock.getSocketTimeoutDescriptionChannel()).thenReturn(1000L);
+        when(configMock.getValue(eq(ConfigConstants.Description.PORT))).thenReturn(0);
+        when(configMock.getValue(eq(ConfigConstants.Description.SOCKET_TIMEOUT))).thenReturn(1000L);
 
         final var client = mock(InternalKnxClient.class);
-        when(client.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
         when(client.getConfig()).thenReturn(configMock);
+        when(client.getConfig(any())).thenCallRealMethod();
+        when(client.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
 
         final var channel = ChannelFactory.newDescriptionChannel(client);
         assertThat(channel).isNotNull();
@@ -83,10 +89,12 @@ public class ChannelFactoryTest {
     @DisplayName("Test creating a new channel for: control")
     public void testNewControlChannel() throws SocketException {
         final var configMock = mock(Config.class);
-        when(configMock.getSocketTimeoutControlChannel()).thenReturn(2000L);
+        when(configMock.getValue(eq(ConfigConstants.Control.PORT))).thenReturn(0);
+        when(configMock.getValue(eq(ConfigConstants.Control.SOCKET_TIMEOUT))).thenReturn(2000L);
 
         final var client = mock(InternalKnxClient.class);
         when(client.getConfig()).thenReturn(configMock);
+        when(client.getConfig(any())).thenCallRealMethod();
         when(client.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(2, 3, 4, 5), 5432));
 
         final var channel = ChannelFactory.newControlChannel(client);
@@ -108,10 +116,12 @@ public class ChannelFactoryTest {
     @DisplayName("Test creating a new channel for: data")
     public void testNewDataChannel() throws SocketException {
         final var configMock = mock(Config.class);
-        when(configMock.getSocketTimeoutDataChannel()).thenReturn(3000L);
+        when(configMock.getValue(eq(ConfigConstants.Data.PORT))).thenReturn(0);
+        when(configMock.getValue(eq(ConfigConstants.Data.SOCKET_TIMEOUT))).thenReturn(3000L);
 
         final var client = mock(InternalKnxClient.class);
         when(client.getConfig()).thenReturn(configMock);
+        when(client.getConfig(any())).thenCallRealMethod();
         when(client.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(3, 4, 5, 6), 6543));
 
         final var channel = ChannelFactory.newDataChannel(client);
@@ -131,13 +141,15 @@ public class ChannelFactoryTest {
     @DisplayName("Test creating a new channel with invalid data")
     public void testFailure() {
         final var configMock = mock(Config.class);
-        when(configMock.getSocketTimeoutDataChannel()).thenReturn(4000L);
+        when(configMock.getValue(eq(ConfigConstants.Data.PORT))).thenReturn(0);
+        when(configMock.getValue(eq(ConfigConstants.Data.SOCKET_TIMEOUT))).thenReturn(4000L);
 
         final var socketAddressMock = mock(InetSocketAddress.class);
         when(socketAddressMock.isUnresolved()).thenReturn(true);
 
         final var client = mock(InternalKnxClient.class);
         when(client.getConfig()).thenReturn(configMock);
+        when(client.getConfig(any())).thenCallRealMethod();
         when(client.getRemoteEndpoint()).thenReturn(socketAddressMock);
 
         assertThatThrownBy(() -> ChannelFactory.newDataChannel(client)).isInstanceOf(KnxCommunicationException.class);

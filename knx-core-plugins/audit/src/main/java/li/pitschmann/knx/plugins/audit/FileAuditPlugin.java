@@ -66,10 +66,10 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     private RotatingFileOutputStream fos;
 
     @Override
-    public void onInitialization(final @Nullable KnxClient client) {
+    public void onInitialization(final @Nonnull KnxClient client) {
         // configurations
-        path = client.getConfig().getSetting(FileAuditPlugin.PATH);
-        format = client.getConfig().getSetting(FileAuditPlugin.FORMAT);
+        path = client.getConfig(FileAuditPlugin.PATH);
+        format = client.getConfig(FileAuditPlugin.FORMAT);
 
         final var baseFile = path.toString();
 

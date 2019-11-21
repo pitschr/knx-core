@@ -28,6 +28,7 @@ import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
@@ -41,6 +42,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -185,8 +187,8 @@ public class KnxClientTest {
      */
     private Config createConfigMock() {
         final var configMock = mock(Config.class);
-        when(configMock.getCommunicationExecutorPoolSize()).thenReturn(1);
-        when(configMock.getPluginExecutorPoolSize()).thenReturn(1);
+        when(configMock.getValue(eq(ConfigConstants.Communication.EXECUTOR_POOL_SIZE))).thenReturn(1);
+        when(configMock.getValue(eq(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE))).thenReturn(1);
         return configMock;
     }
 }

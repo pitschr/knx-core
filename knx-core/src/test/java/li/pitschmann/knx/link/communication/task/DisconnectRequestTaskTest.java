@@ -24,11 +24,13 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -94,8 +96,9 @@ public class DisconnectRequestTaskTest {
         final var subscription = mock(Flow.Subscription.class);
 
         doReturn(eventData).when(eventPool).disconnectEvent();
-        when(config.getTimeoutDisconnectResponse()).thenReturn(1000L);
+        when(config.getValue(ConfigConstants.Disconnect.RESPONSE_TIMEOUT)).thenReturn(1000L);
         when(internalClient.getConfig()).thenReturn(config);
+        when(internalClient.getConfig(any())).thenCallRealMethod();
         when(internalClient.getEventPool()).thenReturn(eventPool);
 
         final var task = new DisconnectRequestTask(internalClient);

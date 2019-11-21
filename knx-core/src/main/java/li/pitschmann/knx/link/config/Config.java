@@ -78,16 +78,14 @@ public final class Config {
     }
 
     /**
-     * Returns the setting for given {@code configValue}. If key is not known, then a
-     * {@link KnxConfigurationException} will be thrown.
+     * Returns the actual value for given {@code configValue}
      *
      * @param configValue the key to be used to find the value
      * @param <T>
-     * @return the value of setting (key)
-     * @throws KnxConfigurationException if value of setting could not be found
+     * @return the value of {@link ConfigValue}
      */
     @Nonnull
-    public <T> T getSetting(final @Nonnull ConfigValue<T> configValue) {
+    public <T> T getValue(final @Nonnull ConfigValue<T> configValue) {
         final var value = this.settings.get(Objects.requireNonNull(configValue));
         if (value == null) {
             return configValue.getDefaultValue();
@@ -134,133 +132,8 @@ public final class Config {
         return this.plugins;
     }
 
-    //
-    // client.plugin
-    //
-
-    public int getPluginExecutorPoolSize() {
-        return getSetting(ConfigConstants.Executor.PLUGIN_POOL_SIZE);
-    }
-
-    //
-    // client.communication
-    //
-
-    public int getCommunicationExecutorPoolSize() {
-        return getSetting(ConfigConstants.Executor.COMMUNICATION_POOL_SIZE);
-    }
-
     public boolean isNatEnabled() {
-        return getSetting(ConfigConstants.NAT);
-    }
-
-    //
-    // client.communication.control
-    //
-
-    public int getControlChannelPort() {
-        return getSetting(ConfigConstants.Control.PORT);
-    }
-
-    public long getSocketTimeoutControlChannel() {
-        return getSetting(ConfigConstants.Control.SOCKET_TIMEOUT);
-    }
-
-    //
-    // client.communication.data
-    //
-
-    public int getDataChannelPort() {
-        return getSetting(ConfigConstants.Data.PORT);
-    }
-
-    public long getTimeoutDataRequest() {
-        return getSetting(ConfigConstants.Data.DATA_REQUEST_TIMEOUT);
-    }
-
-    public long getSocketTimeoutDataChannel() {
-        return getSetting(ConfigConstants.Data.SOCKET_TIMEOUT);
-    }
-
-    //
-    // client.communication.discovery
-    //
-
-    public long getTimeoutDiscoveryRequest() {
-        return getSetting(ConfigConstants.Search.REQUEST_TIMEOUT);
-    }
-
-    //
-    // client.communication.multicast
-    //
-
-    @Nonnull
-    public InetAddress getMulticastChannelAddress() {
-        return getSetting(ConfigConstants.Multicast.ADDRESS);
-    }
-
-    public int getMulticastChannelPort() {
-        return getSetting(ConfigConstants.Multicast.PORT);
-    }
-
-    public long getSocketTimeoutMulticastChannel() {
-        return getSetting(ConfigConstants.Multicast.SOCKET_TIMEOUT);
-    }
-
-    public int getMulticastTTL() {
-        return getSetting(ConfigConstants.Multicast.TIME_TO_LIVE);
-    }
-
-    //
-    // client.communication.description
-    //
-
-    public int getDescriptionChannelPort() {
-        return getSetting(ConfigConstants.Description.PORT);
-    }
-
-    public long getTimeoutDescriptionRequest() {
-        return getSetting(ConfigConstants.Description.REQUEST_TIMEOUT);
-    }
-
-    public long getSocketTimeoutDescriptionChannel() {
-        return getSetting(ConfigConstants.Description.SOCKET_TIMEOUT);
-    }
-
-    //
-    // client.communication.disconnect
-    //
-
-    public long getTimeoutDisconnectRequest() {
-        return getSetting(ConfigConstants.Disconnect.REQUEST_TIMEOUT);
-    }
-
-    public long getTimeoutDisconnectResponse() {
-        return getSetting(ConfigConstants.Disconnect.RESPONSE_TIMEOUT);
-    }
-
-    //
-    // client.communication.connect
-    //
-
-    public long getTimeoutConnectRequest() {
-        return getSetting(ConfigConstants.Connect.REQUEST_TIMEOUT);
-    }
-
-    //
-    // client.communication.connectionState
-    //
-
-    public long getTimeoutConnectionStateRequest() {
-        return getSetting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT);
-    }
-
-    public long getTimeoutHeartbeatConnectionState() {
-        return getSetting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT);
-    }
-
-    public long getIntervalConnectionState() {
-        return getSetting(ConfigConstants.ConnectionState.CHECK_INTERVAL);
+        return getValue(ConfigConstants.NAT);
     }
 
     /**
@@ -270,7 +143,7 @@ public final class Config {
      */
     @Nonnull
     public Path getProjectPath() {
-        return getSetting(ConfigConstants.PROJECT_PATH);
+        return getValue(ConfigConstants.PROJECT_PATH);
     }
 
     /**

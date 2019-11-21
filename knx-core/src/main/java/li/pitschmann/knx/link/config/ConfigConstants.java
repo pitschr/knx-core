@@ -391,29 +391,45 @@ public final class ConfigConstants {
         }
     }
 
-    public static final class Executor {
+    public static final class Communication {
         /**
          * Default size for Communicator Executor Pool Size
          */
-        public static final ConfigValue<Integer> COMMUNICATION_POOL_SIZE = new ConfigValue<>(
+        public static final ConfigValue<Integer> EXECUTOR_POOL_SIZE = new ConfigValue<>(
                 "client.communication.executorPoolSize",
                 Integer.class,
                 Integer::valueOf,
                 () -> 10,
                 Objects::nonNull
         );
+
+        private Communication() {}
+    }
+
+    public static final class Plugin {
         /**
          * Default size for Plugin Executor Pool Size
          */
-        public static final ConfigValue<Integer> PLUGIN_POOL_SIZE = new ConfigValue<>(
+        public static final ConfigValue<Integer> EXECUTOR_POOL_SIZE = new ConfigValue<>(
                 "client.plugin.executorPoolSize",
                 Integer.class,
                 Integer::valueOf,
                 () -> 10,
                 Objects::nonNull
         );
+        /**
+         * Timeout in milliseconds until when the Plugin should be initialized
+         * before accepted by PluginManager
+         */
+        public static final ConfigValue<Long> INITIALIZATION_TIMEOUT = new ConfigValue<>(
+                "client.plugin.initializationTimeout",
+                Long.class,
+                Long::valueOf,
+                () -> TimeUnit.SECONDS.toMillis(10),
+                Objects::nonNull
+        );
 
-        private Executor() {
+        private Plugin() {
         }
     }
 }

@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.plugins.statistic;
 
-import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
@@ -33,7 +32,6 @@ import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +44,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -194,10 +193,14 @@ public class FileStatisticPluginTest {
         final var knxClientMock = mock(KnxClient.class);
         final var configMock = mock(Config.class);
         final var emptyStatistic = mock(KnxStatistic.class);
-        when(configMock.getSetting(eq(FileStatisticPlugin.PATH))).thenReturn(path);
-        when(configMock.getSetting(eq(FileStatisticPlugin.FORMAT))).thenReturn(format);
-        when(configMock.getSetting(eq(FileStatisticPlugin.INTERVAL))).thenReturn(intervalMs);
+
         when(knxClientMock.getConfig()).thenReturn(configMock);
+        when(knxClientMock.getConfig(any())).thenCallRealMethod();
+
+        when(configMock.getValue(eq(FileStatisticPlugin.PATH))).thenReturn(path);
+        when(configMock.getValue(eq(FileStatisticPlugin.FORMAT))).thenReturn(format);
+        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL))).thenReturn(intervalMs);
+
         when(knxClientMock.getStatistic()).thenReturn(emptyStatistic);
         return knxClientMock;
     }
