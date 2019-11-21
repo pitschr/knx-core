@@ -19,10 +19,12 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
+import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -86,15 +88,10 @@ public class ConnectionStateResponseTaskTest {
      * @return returns a newly instance of {@link ConnectionStateResponseTask}
      */
     private ConnectionStateResponseTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(InternalKnxEventPool.class);
-        final var eventData = mock(KnxSingleEvent.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        doReturn(eventData).when(eventPool).connectionStateEvent();
-        when(internalClient.getEventPool()).thenReturn(eventPool);
-
-        final var task = new ConnectionStateResponseTask(internalClient);
+        final var task = new ConnectionStateResponseTask(internalClientMock);
         task.onSubscribe(subscription);
         return task;
     }

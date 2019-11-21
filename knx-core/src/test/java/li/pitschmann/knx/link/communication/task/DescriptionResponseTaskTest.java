@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.body.DescriptionResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -86,15 +87,10 @@ public class DescriptionResponseTaskTest {
      * @return returns a newly instance of {@link DescriptionResponseTask}
      */
     private DescriptionResponseTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(InternalKnxEventPool.class);
-        final var eventData = mock(KnxSingleEvent.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        doReturn(eventData).when(eventPool).descriptionEvent();
-        when(internalClient.getEventPool()).thenReturn(eventPool);
-
-        final var task = new DescriptionResponseTask(internalClient);
+        final var task = new DescriptionResponseTask(internalClientMock);
         task.onSubscribe(subscription);
         return task;
     }

@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -86,15 +87,10 @@ public class SearchResponseTaskTest {
      * @return returns a newly instance of {@link SearchResponseTask}
      */
     private SearchResponseTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(InternalKnxEventPool.class);
-        final var eventData = mock(KnxMultiEvent.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        doReturn(eventData).when(eventPool).searchEvent();
-        when(internalClient.getEventPool()).thenReturn(eventPool);
-
-        final var task = new SearchResponseTask(internalClient);
+        final var task = new SearchResponseTask(internalClientMock);
         task.onSubscribe(subscription);
         return task;
     }

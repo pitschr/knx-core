@@ -27,6 +27,7 @@ import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.InternalKnxStatusPool;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -130,13 +131,10 @@ public class TunnelingRequestTaskTest {
      * @return returns a newly instance of {@link TunnelingRequestTask}
      */
     private TunnelingRequestTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var statusPool = mock(InternalKnxStatusPool.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        when(internalClient.getStatusPool()).thenReturn(statusPool);
-
-        final var task = new TunnelingRequestTask(internalClient);
+        final var task = new TunnelingRequestTask(internalClientMock);
         task.onSubscribe(subscription);
         return task;
     }

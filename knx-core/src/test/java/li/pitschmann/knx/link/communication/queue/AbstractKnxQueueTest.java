@@ -23,6 +23,7 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.test.KnxBody;
+import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
@@ -201,10 +202,10 @@ public class AbstractKnxQueueTest {
     @Test
     @DisplayName("Check #getInternalClient()")
     public void testInternalClient() {
-        final var internalClient = mock(InternalKnxClient.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
 
-        final var queue = new TestKnxQueue(internalClient);
-        assertThat(queue.getInternalClient()).isSameAs(internalClient);
+        final var queue = new TestKnxQueue(internalClientMock);
+        assertThat(queue.getInternalClient()).isSameAs(internalClientMock);
     }
 
     /**

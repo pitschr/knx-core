@@ -42,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -154,14 +155,12 @@ public class CommunicatorFactoryTest {
      * @return knx client
      */
     private InternalKnxClient mockInternalKnxClient() {
-        final var knxClient = mock(InternalKnxClient.class);
-        final var config = mock(Config.class);
-        final var inetAddress = Networker.getByAddress(224, 0, 1, 0);
-        when(knxClient.getConfig()).thenReturn(config);
-        when(knxClient.getConfig(any())).thenCallRealMethod();
-        when(config.getValue(eq(ConfigConstants.Multicast.ADDRESS))).thenReturn(inetAddress);
-        when(config.getValue(any())).thenAnswer(i -> ((ConfigValue<?>)i.getArgument(0)).getDefaultValue());
-        return knxClient;
+        return TestHelpers.mockInternalKnxClient(
+                configMock -> {
+                    when(configMock.getValue(eq(ConfigConstants.Multicast.PORT))).thenReturn(0);
+                    when(configMock.getValue(eq(ConfigConstants.Multicast.ADDRESS))).thenReturn(Networker.getByAddress(224, 0, 1, 0));
+                }
+        );
     }
 
     /**
