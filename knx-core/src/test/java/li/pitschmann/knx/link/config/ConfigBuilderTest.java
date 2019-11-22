@@ -300,23 +300,23 @@ public class ConfigBuilderTest {
         final var configBuilder = ConfigBuilder.tunneling();
 
         // add settings
-        configBuilder.setting(ConfigConstants.Executor.PLUGIN_POOL_SIZE, 7);
+        configBuilder.setting(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE, 7);
         configBuilder.setting(ConfigConstants.NAT, true);
         configBuilder.setting(ConfigConstants.Multicast.ADDRESS, Networker.getByAddress("224.0.0.1"));
         configBuilder.setting(ConfigConstants.Multicast.TIME_TO_LIVE, null);
 
         final var config = configBuilder.build();
-        assertThat(config.getMulticastChannelAddress()).isEqualTo(Networker.getByAddress(224, 0, 0, 1));
-        assertThat(config.getMulticastTTL()).isEqualTo(4); // fallback to default value
+        assertThat(config.getValue(ConfigConstants.Multicast.ADDRESS)).isEqualTo(Networker.getByAddress(224, 0, 0, 1));
+        assertThat(config.getValue(ConfigConstants.Multicast.TIME_TO_LIVE)).isEqualTo(4); // fallback to default value
 
         // overwriting setting should be allowed
-        configBuilder.setting(ConfigConstants.Executor.PLUGIN_POOL_SIZE, 4);
+        configBuilder.setting(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE, 4);
         configBuilder.setting(ConfigConstants.NAT, null); // reset to default value
         final var configNew = configBuilder.build();
 
         // old and new value should be still present
-        assertThat(config.getPluginExecutorPoolSize()).isEqualTo(7);
-        assertThat(configNew.getPluginExecutorPoolSize()).isEqualTo(4);
+        assertThat(config.getValue(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE)).isEqualTo(7);
+        assertThat(configNew.getValue(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE)).isEqualTo(4);
 
         assertThat(config.isNatEnabled()).isTrue();
         assertThat(configNew.isNatEnabled()).isFalse();

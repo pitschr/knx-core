@@ -20,19 +20,15 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
-import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.InternalKnxEventPool;
-import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link ConnectResponseTask}
@@ -91,15 +87,10 @@ public class ConnectResponseTaskTest {
      * @return returns a newly instance of {@link ConnectResponseTask}
      */
     private ConnectResponseTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(InternalKnxEventPool.class);
-        final var eventData = mock(KnxSingleEvent.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        doReturn(eventData).when(eventPool).connectEvent();
-        when(internalClient.getEventPool()).thenReturn(eventPool);
-
-        final var task = new ConnectResponseTask(internalClient);
+        final var task = new ConnectResponseTask(internalClientMock);
         task.onSubscribe(subscription);
 
         return task;

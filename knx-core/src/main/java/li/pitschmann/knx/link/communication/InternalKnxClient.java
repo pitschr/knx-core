@@ -37,6 +37,8 @@ import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.CommunicatorFactory;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
@@ -301,7 +303,7 @@ public final class InternalKnxClient implements AutoCloseable {
                 // create body
                 final var requestBody = DisconnectRequestBody.of(this.channelId, this.controlHPAI);
                 try {
-                    final var responseBody = this.send(requestBody, config.getTimeoutDisconnectRequest()).get();
+                    final var responseBody = this.send(requestBody, getConfig(ConfigConstants.Disconnect.REQUEST_TIMEOUT)).get();
                     if (responseBody != null) {
                         log.debug("Disconnect Response Body retrieved: {}", responseBody);
                     } else {
@@ -310,6 +312,7 @@ public final class InternalKnxClient implements AutoCloseable {
                 } catch (KnxBodyNotReceivedException | InterruptedException | ExecutionException ex) {
                     log.debug("No Disconnect Response Body retrieved. Continue with disconnect.");
                     isOk = false;
+                    Thread.currentThread().interrupt();
                 }
             }
         } finally {
@@ -347,6 +350,11 @@ public final class InternalKnxClient implements AutoCloseable {
     @Nonnull
     public Config getConfig() {
         return this.config;
+    }
+
+    @Nonnull
+    public <T> T getConfig(final @Nonnull ConfigValue<T> configValue) {
+        return getConfig().getValue(configValue);
     }
 
     @Nonnull
@@ -501,7 +509,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
         try (communicator) {
-            final var responseBody = communicator.<DescriptionResponseBody>send(requestBody, config.getTimeoutDescriptionRequest()).get();
+            final var responseBody = communicator.<DescriptionResponseBody>send(requestBody, getConfig(ConfigConstants.Description.REQUEST_TIMEOUT)).get();
             Preconditions.checkNonNull(responseBody, "No description response received for request: {}", requestBody);
             return responseBody;
         } catch (final Exception ex) {
@@ -538,7 +546,7 @@ public final class InternalKnxClient implements AutoCloseable {
         // It opens a new channel for discovery communication and processing. Afterwards it will be shutdown.
         SearchResponseBody responseBody = null;
         try (communicator) {
-            responseBody = communicator.<SearchResponseBody>send(requestBody, config.getTimeoutDiscoveryRequest()).get();
+            responseBody = communicator.<SearchResponseBody>send(requestBody, getConfig(ConfigConstants.Search.REQUEST_TIMEOUT)).get();
             Preconditions.checkNonNull(responseBody, "No search response received for request: {}", requestBody);
             return responseBody;
         } catch (final Exception ex) {
@@ -565,7 +573,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
         ConnectResponseBody responseBody = null;
         try {
-            responseBody = this.<ConnectResponseBody>send(requestBody, config.getTimeoutConnectRequest()).get();
+            responseBody = this.<ConnectResponseBody>send(requestBody, getConfig(ConfigConstants.Connect.REQUEST_TIMEOUT)).get();
             // check status if we got response with NO_ERROR status
             Preconditions.checkNonNull(responseBody, "No connect response received for request: {}", requestBody);
             Preconditions.checkState(responseBody.getStatus() == Status.E_NO_ERROR,

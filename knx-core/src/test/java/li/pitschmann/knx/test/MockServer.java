@@ -480,8 +480,8 @@ public final class MockServer implements Runnable, Closeable {
                 .setting(ConfigConstants.Multicast.ADDRESS, this.getMulticastAddress())
                 .setting(ConfigConstants.Multicast.PORT, 0) // use random local port for multicast testing
                 .setting(ConfigConstants.Multicast.TIME_TO_LIVE, 0) // consider local only (no pass by any router)
-                .setting(ConfigConstants.Executor.PLUGIN_POOL_SIZE, 3) // 3 instead of 10
-                .setting(ConfigConstants.Executor.COMMUNICATION_POOL_SIZE, 3) // 3 instead of 10
+                .setting(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE, 3) // 3 instead of 10
+                .setting(ConfigConstants.Communication.EXECUTOR_POOL_SIZE, 3) // 3 instead of 10
                 .setting(ConfigConstants.Search.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
                 .setting(ConfigConstants.Description.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
                 .setting(ConfigConstants.Connect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s

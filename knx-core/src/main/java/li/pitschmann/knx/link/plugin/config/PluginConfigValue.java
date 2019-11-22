@@ -39,9 +39,9 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
 
     /**
      * Returns the {@link Class} of Plugin where this
+     *
      * @return
      */
-    @SuppressWarnings("unchecked")
     private static Class<?> findPluginClass() {
         try {
             for (final var stackTraceElement : Thread.currentThread().getStackTrace()) {

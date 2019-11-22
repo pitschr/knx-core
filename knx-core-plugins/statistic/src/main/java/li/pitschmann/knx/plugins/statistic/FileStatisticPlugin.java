@@ -67,9 +67,9 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
     @Override
     public void onInitialization(final @Nonnull KnxClient client) {
         // configurations
-        path = client.getConfig().getSetting(FileStatisticPlugin.PATH);
-        format = client.getConfig().getSetting(FileStatisticPlugin.FORMAT);
-        final var intervalMs = client.getConfig().getSetting(FileStatisticPlugin.INTERVAL);
+        path = client.getConfig(FileStatisticPlugin.PATH);
+        format = client.getConfig(FileStatisticPlugin.FORMAT);
+        final var intervalMs = client.getConfig(FileStatisticPlugin.INTERVAL);
 
         final var baseFile = path.toString();
 

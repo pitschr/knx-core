@@ -20,18 +20,13 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
-import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.InternalKnxEventPool;
-import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
-import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link DisconnectRequestTask}
@@ -87,18 +82,10 @@ public class DisconnectRequestTaskTest {
      * @return returns a newly instance of {@link DisconnectRequestTask}
      */
     private DisconnectRequestTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var config = mock(Config.class);
-        final var eventPool = mock(InternalKnxEventPool.class);
-        final var eventData = mock(KnxSingleEvent.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        doReturn(eventData).when(eventPool).disconnectEvent();
-        when(config.getTimeoutDisconnectResponse()).thenReturn(1000L);
-        when(internalClient.getConfig()).thenReturn(config);
-        when(internalClient.getEventPool()).thenReturn(eventPool);
-
-        final var task = new DisconnectRequestTask(internalClient);
+        final var task = new DisconnectRequestTask(internalClientMock);
         task.onSubscribe(subscription);
         return task;
     }

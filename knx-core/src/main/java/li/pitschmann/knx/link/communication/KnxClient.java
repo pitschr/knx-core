@@ -25,6 +25,7 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
 import javax.annotation.Nonnull;
@@ -49,6 +50,17 @@ public interface KnxClient extends AutoCloseable {
      * @return an immutable {@link Config}
      */
     Config getConfig();
+
+    /**
+     * Handy method to get the value of given {@link ConfigValue} via {@link #getConfig()}
+     *
+     * @param configValue
+     * @param <T>
+     * @return the config value
+     */
+    default <T> T getConfig(final @Nonnull ConfigValue<T> configValue) {
+        return getConfig().getValue(configValue);
+    }
 
     /**
      * Returns a copied {@link KnxStatistic} snapshot about the KNX communication

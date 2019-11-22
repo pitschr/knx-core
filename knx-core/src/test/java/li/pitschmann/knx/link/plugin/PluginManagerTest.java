@@ -23,20 +23,19 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
-import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxPluginException;
+import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.knx.test.data.TestConstructorExceptionPlugin;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
 import li.pitschmann.knx.test.data.TestMethodExceptionPlugin;
 import li.pitschmann.knx.test.data.TestObserverPlugin;
 import li.pitschmann.knx.test.data.TestPlugin;
-import li.pitschmann.utils.Sleeper;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,7 +53,7 @@ public final class PluginManagerTest {
     @DisplayName("Instantiation of PluginManager")
     public void testInstantiation() {
         // create plugin manager and close afterwards (no exception expected)
-        new PluginManager(newConfigMock()).close();
+        new PluginManager(TestHelpers.mockConfig()).close();
 
         // invalid cases
         assertThatThrownBy(() -> new PluginManager(null)).isInstanceOf(NullPointerException.class);
@@ -63,16 +62,11 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test initial initialization of plugins through configuration instance")
     public void testOnInitialization() {
-        // 1) register two plugins (via config)
-        final var configMock = newConfigMock();
-        @SuppressWarnings("unchecked") final var uncheckedList = (List<Class<Plugin>>) (List<?>) List.of(TestObserverPlugin.class, TestExtensionPlugin.class);
-        when(configMock.getPlugins()).thenReturn(uncheckedList);
+        final var knxClientMock = newKnxClientMockWithPlugins(TestObserverPlugin.class, TestExtensionPlugin.class);
 
-        // 2) initialization
-        final var knxClientMock = newKnxClientMock(configMock);
-        final var pluginManager = new PluginManager(configMock);
+        // 2) initialization (two plugins registered)
+        final var pluginManager = new PluginManager(knxClientMock.getConfig());
         pluginManager.notifyInitialization(knxClientMock);
-        Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
         // 3) verify
         final var observerPlugin = Objects.requireNonNull(pluginManager.getPlugin(TestObserverPlugin.class));
@@ -85,13 +79,8 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test lazy initialization of plugins")
     public void testLazyOnInitialization() {
-        final var configMock = newConfigMock();
-        final var pluginManager = new PluginManager(configMock);
-        final var knxClientMock = newKnxClientMock(configMock);
-
         // 1) initialization (no plugin registered yet)
-        pluginManager.notifyInitialization(knxClientMock);
-        Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
+        final var pluginManager = newPluginManager();
 
         // 2 verify
         assertThat(pluginManager.getPlugin(TestObserverPlugin.class)).isNull();
@@ -100,7 +89,6 @@ public final class PluginManagerTest {
         // 3) register two plugins
         pluginManager.addPlugin(TestObserverPlugin.class);
         pluginManager.addPlugin(TestExtensionPlugin.class);
-        Sleeper.milliseconds(500); // wait bit, as plugin executor is notifying the plugins
 
         // 4) verify (init method should be called)
         final var observerPlugin = Objects.requireNonNull(pluginManager.getPlugin(TestObserverPlugin.class));
@@ -113,13 +101,13 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test notification methods AFTER close")
     public void testNotificationAfterClose() {
-        final var configMock = newConfigMock();
-        final var pluginManager = new PluginManager(configMock);
+        final var knxClientMock = newKnxClientMockWithPlugins(TestObserverPlugin.class, TestExtensionPlugin.class);
+        final var pluginManager = new PluginManager(knxClientMock.getConfig());
 
         pluginManager.close();
 
         // should not be a problem - is silently ignored (log warn lines printed)
-        pluginManager.notifyInitialization(newKnxClientMock(configMock));
+        pluginManager.notifyInitialization(knxClientMock);
         pluginManager.notifyClientStart();
         pluginManager.notifyClientShutdown();
         pluginManager.notifyIncomingBody(mock(ResponseBody.class));
@@ -128,10 +116,9 @@ public final class PluginManagerTest {
     }
 
     @Test
-    @DisplayName("Error: Test registration by a path that doesn't end with *.jar extension")
+    @DisplayName("ERROR: Test registration by a path that doesn't end with *.jar extension")
     public void testWithoutJarExtension() {
-        final var configMock = newConfigMock();
-        final var pluginManager = new PluginManager(configMock);
+        final var pluginManager = newPluginManager();
 
         // wrong JAR file path
         final var pathToJAR = Paths.get("file-with-wrong.extension");
@@ -142,10 +129,9 @@ public final class PluginManagerTest {
     }
 
     @Test
-    @DisplayName("Error: Test registration by a wrong JAR path")
+    @DisplayName("ERROR: Test registration by a wrong JAR path")
     public void testNonexistentJarPath() {
-        final var configMock = newConfigMock();
-        final var pluginManager = new PluginManager(configMock);
+        final var pluginManager = newPluginManager();
 
         // wrong JAR file path
         final var pathToJAR = Paths.get("non-existent-file.jar");
@@ -156,9 +142,9 @@ public final class PluginManagerTest {
     }
 
     @Test
-    @DisplayName("Error: Test registration by a non-existent plugin")
+    @DisplayName("ERROR: Test registration by a non-existent plugin")
     public void testNonexistentPlugin() {
-        final var pluginManager = new PluginManager(newConfigMock());
+        final var pluginManager = newPluginManager();
 
         // wrong JAR file path
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
@@ -171,9 +157,9 @@ public final class PluginManagerTest {
     }
 
     @Test
-    @DisplayName("OK: Test registration of plugin by JAR file")
+    @DisplayName("Test registration of plugin by JAR file")
     public void testJARPlugin() {
-        final var pluginManager = new PluginManager(newConfigMock());
+        final var pluginManager = newPluginManager();
 
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
         final var className = "my.test.HelloWorldPluginV1";
@@ -195,9 +181,9 @@ public final class PluginManagerTest {
     }
 
     @Test
-    @DisplayName("OK: Register and register of plugin")
+    @DisplayName("Register and register of plugin")
     public void testRegisterAndDeregister() {
-        final var pluginManager = new PluginManager(newConfigMock());
+        final var pluginManager = newPluginManager();
 
         // 1) check if plugin doesn't exists
         assertThat(pluginManager.getPlugin(TestPlugin.class)).isNull();
@@ -216,7 +202,7 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("ERROR: Exception in Plugin Constructor")
     public void testExceptionInPluginConstructor() {
-        final var pluginManager = new PluginManager(newConfigMock());
+        final var pluginManager = newPluginManager();
 
         assertThatThrownBy(() -> pluginManager.addPlugin(TestConstructorExceptionPlugin.class))
                 .isInstanceOf(KnxPluginException.class)
@@ -226,10 +212,7 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("ERROR: Exception in Plugin onInit() method")
     public void testExceptionInPluginMethod() {
-        final var configMock = newConfigMock();
-        final var knxClientMock = newKnxClientMock(configMock);
-        final var pluginManager = new PluginManager(newConfigMock());
-        pluginManager.notifyInitialization(knxClientMock);
+        final var pluginManager = newPluginManager();
 
         // we should be able to create a plugin
         final var plugin = pluginManager.addPlugin(TestMethodExceptionPlugin.class);
@@ -241,19 +224,41 @@ public final class PluginManagerTest {
         pluginManager.notifyOutgoingBody(mock(Body.class));
         pluginManager.notifyError(mock(Throwable.class));
         pluginManager.notifyClientShutdown();
+        pluginManager.close();
     }
 
-    private KnxClient newKnxClientMock(final Config config) {
-        final var knxClientMock = mock(BaseKnxClient.class);
-        when(knxClientMock.getConfig()).thenReturn(config);
-        when(knxClientMock.isRunning()).thenReturn(true);
+    /**
+     * Creates default plugin manager with mocked client and config
+     */
+    private PluginManager newPluginManager() {
+        final var knxClientMock = TestHelpers.mockKnxClient(
+                config -> {},
+                client -> when(client.isRunning()).thenReturn(true),
+                BaseKnxClient.class);
+        final var configMock = knxClientMock.getConfig();
+
+        final var pluginManager = new PluginManager(configMock);
+        pluginManager.notifyInitialization(knxClientMock);
+        return pluginManager;
+    }
+
+    /**
+     * Creates {@link KnxClient} with customized config that is pre-configured with {@code plugins}
+     *
+     * @param plugins
+     * @return
+     */
+    @SafeVarargs
+    private KnxClient newKnxClientMockWithPlugins(Class<? extends Plugin>... plugins) {
+        @SuppressWarnings("unchecked")
+        final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
+
+        final var mockConfig = TestHelpers.mockConfig(
+                config -> when(config.getPlugins()).thenReturn(castedList)
+        );
+
+        final var knxClientMock = TestHelpers.mockKnxClient(/*dummy*/ x -> {}, y -> {}, BaseKnxClient.class);
+        when(knxClientMock.getConfig()).thenReturn(mockConfig);
         return knxClientMock;
-    }
-
-    private Config newConfigMock() {
-        final var configMock = mock(Config.class);
-        when(configMock.getPluginExecutorPoolSize()).thenReturn(4);
-        when(configMock.getPlugins()).thenReturn(Lists.emptyList());
-        return configMock;
     }
 }

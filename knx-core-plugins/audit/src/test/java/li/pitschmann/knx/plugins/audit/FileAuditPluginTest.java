@@ -21,6 +21,7 @@ package li.pitschmann.knx.plugins.audit;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.header.ServiceType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -280,9 +282,11 @@ public class FileAuditPluginTest {
     private KnxClient mockKnxClient(final Path path, final FileAuditFormat format) {
         final var knxClientMock = mock(KnxClient.class);
         final var configMock = mock(Config.class);
-        when(configMock.getSetting(eq(FileAuditPlugin.PATH))).thenReturn(path);
-        when(configMock.getSetting(eq(FileAuditPlugin.FORMAT))).thenReturn(format);
         when(knxClientMock.getConfig()).thenReturn(configMock);
+        when(knxClientMock.getConfig(any())).thenCallRealMethod();
+
+        when(configMock.getValue(eq(FileAuditPlugin.PATH))).thenReturn(path);
+        when(configMock.getValue(eq(FileAuditPlugin.FORMAT))).thenReturn(format);
         return knxClientMock;
     }
 

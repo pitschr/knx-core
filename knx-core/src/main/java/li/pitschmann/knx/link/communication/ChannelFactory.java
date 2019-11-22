@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +57,9 @@ public final class ChannelFactory {
      * @throws KnxCommunicationException in case the channel could not be created
      */
     public static DatagramChannel newMulticastChannel(final @Nonnull InternalKnxClient client) {
-        final var config = client.getConfig();
-        final var localPort = config.getMulticastChannelPort();
-        final var socketTimeout = config.getSocketTimeoutMulticastChannel();
-        final var timeToLive = config.getMulticastTTL();
+        final var localPort = client.getConfig(ConfigConstants.Multicast.PORT);
+        final var socketTimeout = client.getConfig(ConfigConstants.Multicast.SOCKET_TIMEOUT);
+        final var timeToLive = client.getConfig(ConfigConstants.Multicast.TIME_TO_LIVE);
         log.debug("Create new multicast channel (local port: {}, socket timeout: {} ms, Time-To-Live (TTL): {})",
                 localPort, socketTimeout, timeToLive);
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, timeToLive);
@@ -76,10 +76,9 @@ public final class ChannelFactory {
      */
     @Nonnull
     public static SelectableChannel newDescriptionChannel(final @Nonnull InternalKnxClient client) {
-        final var config = client.getConfig();
-        final var localPort = config.getDescriptionChannelPort();
+        final var localPort = client.getConfig(ConfigConstants.Description.PORT);
         final var socketAddress = client.getRemoteEndpoint();
-        final var socketTimeout = config.getSocketTimeoutDescriptionChannel();
+        final var socketTimeout = client.getConfig(ConfigConstants.Description.SOCKET_TIMEOUT);
         log.debug("Create new description channel for local: {} (local port: {}, socket timeout: {} ms)",
                 socketAddress, localPort, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress, null);
@@ -95,10 +94,9 @@ public final class ChannelFactory {
      */
     @Nonnull
     public static SelectableChannel newControlChannel(final @Nonnull InternalKnxClient client) {
-        final var config = client.getConfig();
-        final var localPort = config.getControlChannelPort();
+        final var localPort = client.getConfig(ConfigConstants.Control.PORT);
         final var socketAddress = client.getRemoteEndpoint();
-        final var socketTimeout = config.getSocketTimeoutControlChannel();
+        final var socketTimeout = client.getConfig(ConfigConstants.Control.SOCKET_TIMEOUT);
         log.debug("Create new control channel for local: {} (local port: {}, socket timeout: {} ms)",
                 socketAddress, localPort, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress, null);
@@ -114,10 +112,9 @@ public final class ChannelFactory {
      */
     @Nonnull
     public static SelectableChannel newDataChannel(final @Nonnull InternalKnxClient client) {
-        final var config = client.getConfig();
-        final var localPort = config.getDataChannelPort();
+        final var localPort = client.getConfig(ConfigConstants.Data.PORT);
         final var socketAddress = client.getRemoteEndpoint();
-        final var socketTimeout = config.getSocketTimeoutDataChannel();
+        final var socketTimeout = client.getConfig(ConfigConstants.Data.SOCKET_TIMEOUT);
         log.debug("Create new data channel for local: {} (local port: {}, socket timeout: {} ms)",
                 socketAddress, localPort, socketTimeout);
         return newDatagramChannel(localPort, socketTimeout, socketAddress, null);

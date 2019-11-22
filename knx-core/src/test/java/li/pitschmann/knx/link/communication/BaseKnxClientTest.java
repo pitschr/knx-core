@@ -31,6 +31,7 @@ import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
+import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
 import li.pitschmann.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
@@ -109,13 +110,11 @@ public class BaseKnxClientTest {
 
         final var config = ConfigBuilder.tunneling().build();
         final var baseKnxClient = spy(new BaseKnxClient(config));
-        final var internalKnxClientMock = mock(InternalKnxClient.class);
+        final var internalKnxClientMock = TestHelpers.mockInternalKnxClient();
         final var completableFutureMock = (CompletableFuture<ResponseBody>) mock(CompletableFuture.class);
 
         when(baseKnxClient.isRunning()).thenReturn(true);
         when(baseKnxClient.getInternalClient()).thenReturn(internalKnxClientMock);
-        when(internalKnxClientMock.getConfig()).thenReturn(config);
-        when(internalKnxClientMock.getChannelId()).thenReturn(0);
         when(internalKnxClientMock.send(any(RequestBody.class), anyLong())).thenReturn(completableFutureMock);
 
         // throwing ExecutionException

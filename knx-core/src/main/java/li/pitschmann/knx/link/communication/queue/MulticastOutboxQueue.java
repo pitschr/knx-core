@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.communication.queue;
 
 import li.pitschmann.knx.link.communication.InternalKnxClient;
+import li.pitschmann.knx.link.config.ConfigConstants;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChan
         final var config = client.getConfig();
 
         // use config setting, otherwise fall back to default setting
-        final var remoteAddress = config.isRoutingEnabled() ? config.getRemoteControlAddress() : config.getMulticastChannelAddress();
+        final var remoteAddress = config.isRoutingEnabled() ? config.getRemoteControlAddress() : config.getValue(ConfigConstants.Multicast.ADDRESS);
         final var remotePort = config.getRemoteControlPort();
 
         multicastSocketAddress = new InetSocketAddress(remoteAddress, remotePort);

@@ -21,6 +21,7 @@ package li.pitschmann.knx.link.plugin;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
+import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.exceptions.KnxPluginException;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
@@ -62,14 +64,14 @@ public final class PluginManager implements AutoCloseable {
                     }
                 }
             };
-    private final List<ObserverPlugin> observerPlugins = new LinkedList<>();
-    private final List<ExtensionPlugin> extensionPlugins = new LinkedList<>();
-    private final List<Plugin> allPlugins = new LinkedList<>();
+    private final List<ObserverPlugin> observerPlugins = Collections.synchronizedList(new LinkedList<>());
+    private final List<ExtensionPlugin> extensionPlugins = Collections.synchronizedList(new LinkedList<>());
+    private final List<Plugin> allPlugins = Collections.synchronizedList(new LinkedList<>());
     private final ExecutorService pluginExecutor;
     private KnxClient client;
 
     public PluginManager(final @Nonnull Config config) {
-        final var pluginExecutorPoolSize = config.getPluginExecutorPoolSize();
+        final var pluginExecutorPoolSize = config.getValue(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE);
         pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
         log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
     }
@@ -81,11 +83,10 @@ public final class PluginManager implements AutoCloseable {
      */
     public void notifyInitialization(final @Nonnull KnxClient client) {
         this.client = Objects.requireNonNull(client);
-        this.client.getConfig().getPlugins().forEach(this::registerPluginInternal);
+        this.client.getConfig().getPlugins().parallelStream().forEach(this::registerPluginInternal);
         log.info("All Plugins: {}", allPlugins);
         log.info("Observer Plugins: {}", observerPlugins);
         log.info("Extension Plugins: {}", extensionPlugins);
-        notifyPlugins(client, allPlugins, Plugin::onInitialization);
     }
 
     /**
@@ -174,12 +175,11 @@ public final class PluginManager implements AutoCloseable {
     @Nonnull
     public <T extends Plugin> T addPlugin(final @Nonnull Class<T> pluginClass) {
         final var plugin = registerPluginInternal(pluginClass);
-        notifyPlugins(client, Collections.singletonList(plugin), Plugin::onInitialization);
 
         // for extension plugins, we have a special case:
         // if the KNX Client is already started -> kick in the onStart immediately!
         if (plugin instanceof ExtensionPlugin && client.isRunning()) {
-            notifyPlugins(null, Collections.singletonList((ExtensionPlugin) plugin), (p, x) -> p.onStart());
+            notifyPluginInternal(null, ExtensionPlugin.class.cast(plugin), (p, x) -> p.onStart());
         }
 
         return plugin;
@@ -187,6 +187,8 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Creates and registers the plugin based on {@code pluginClass}
+     * <p/>
+     * It will give plugin 10 seconds time for create. Otherwise, the plugin won't be registered.
      *
      * @param pluginClass
      * @param <T>
@@ -197,11 +199,19 @@ public final class PluginManager implements AutoCloseable {
         Preconditions.checkArgument(getPlugin(pluginClass) == null,
                 "There is already a plugin registered for class: {}", pluginClass);
 
+        final var sw = Stopwatch.createStarted();
         final T plugin;
         try {
-            final var sw = Stopwatch.createStarted();
             plugin = pluginClass.getDeclaredConstructor().newInstance();
-            log.info("Plugin '{}' created in {} ms", plugin, sw.elapsed(TimeUnit.MILLISECONDS));
+            log.debug("Creation completed for plugin: {}", plugin);
+
+            // now perform onInitialization method and give a specific time to start
+            final var future = notifyPluginInternal(client, plugin, Plugin::onInitialization);
+            if (future != null) {
+                final var timeoutInMs = this.client.getConfig(ConfigConstants.Plugin.INITIALIZATION_TIMEOUT);
+                future.get(timeoutInMs, TimeUnit.MILLISECONDS);
+                log.debug("Initialization completed for plugin: {}", plugin);
+            }
         } catch (final Throwable t) {
             throw new KnxPluginException("Could not load plugin: " + pluginClass.getName(), t);
         }
@@ -209,12 +219,14 @@ public final class PluginManager implements AutoCloseable {
         allPlugins.add(plugin);
         if (plugin instanceof ExtensionPlugin) {
             extensionPlugins.add((ExtensionPlugin) plugin);
-            log.trace("Register plugin as Extension Plugin: {}", plugin);
+            log.debug("Register plugin as Extension Plugin: {}", plugin);
         }
         if (plugin instanceof ObserverPlugin) {
             observerPlugins.add((ObserverPlugin) plugin);
-            log.trace("Register plugin as Observer Plugin: {}", plugin);
+            log.debug("Register plugin as Observer Plugin: {}", plugin);
         }
+
+        log.info("Plugin created, initialized and registered in {} ms: {}", sw.elapsed(TimeUnit.MILLISECONDS), plugin);
 
         return plugin;
     }
@@ -260,29 +272,49 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Notifies the registered plug-ins about {@code <O>}.
+     * Notifies the list of plug-ins about {@code <O>}.
      *
      * @param obj      object to be sent to plug-ins (for non-arg method the object may be {@code null})
      * @param plugins  list of plug-ins to be notified
      * @param consumer consumer defining which method should be called
+     * @param <O>
+     * @param <P>
      */
     private <O, P extends Plugin> void notifyPlugins(final @Nullable O obj,
                                                      final @Nonnull List<P> plugins,
                                                      final @Nonnull BiConsumer<P, O> consumer) {
+        for (final P plugin : plugins) {
+            notifyPluginInternal(obj, plugin, consumer);
+        }
+    }
+
+    /**
+     * Notifies the plugin about {@code <O>}
+     *
+     * @param obj      object to be sent to plug-ins (for non-arg method the object may be {@code null})
+     * @param plugin   plug-ins to be notified
+     * @param consumer consumer defining which method should be called
+     * @param <O>
+     * @param <P>
+     * @return future for further check
+     */
+    @Nullable
+    private <O, P extends Plugin> Future<Void> notifyPluginInternal(final @Nullable O obj,
+                                                                    final @Nonnull P plugin,
+                                                                    final @Nonnull BiConsumer<P, O> consumer) {
         if (this.pluginExecutor.isShutdown()) {
-            log.warn("Could not send to plug-ins because plugin executor is shutdown already: {}",
-                    obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
+            log.warn("Could not send to plug-in '{}' because plugin executor is shutdown already: {}",
+                    plugin, obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
+            return null;
         } else {
-            for (final P plugin : plugins) {
-                CompletableFuture.runAsync(() -> {
-                    log.trace("Send to plugin: {}", plugin);
-                    try {
-                        consumer.accept(plugin, obj);
-                    } catch (final Exception ex) {
-                        log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): obj={}, plugin={}", obj, plugin, ex);
-                    }
-                }, this.pluginExecutor);
-            }
+            return CompletableFuture.runAsync(() -> {
+                log.trace("Send to plugin: {}", plugin);
+                try {
+                    consumer.accept(plugin, obj);
+                } catch (final Exception ex) {
+                    log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): obj={}, plugin={}", obj, plugin, ex);
+                }
+            }, this.pluginExecutor);
         }
     }
 

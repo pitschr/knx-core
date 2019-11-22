@@ -20,15 +20,13 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
-import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.InternalKnxEventPool;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
+import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -93,22 +91,16 @@ public class TunnelingAckTaskTest {
      * @return returns a newly instance of {@link TunnelingAckTask}
      */
     private TunnelingAckTask createTask() {
-        final var internalClient = mock(InternalKnxClient.class);
-        final var eventPool = mock(InternalKnxEventPool.class);
+        final var internalClientMock = TestHelpers.mockInternalKnxClient();
         final var subscription = mock(Flow.Subscription.class);
 
-        // 0 = (normal) not acknowledged
-        final var eventData = mock(KnxSingleEvent.class);
-        doReturn(eventData).when(eventPool).get(any(TunnelingAckBody.class));
-
         // 1 = already acknowledged
+        final var eventPool = internalClientMock.getEventPool();
         final var eventDataAcknowledgedAlready = mock(KnxSingleEvent.class);
         when(eventDataAcknowledgedAlready.hasResponse()).thenReturn(true);
         doReturn(eventDataAcknowledgedAlready).when(eventPool).get((TunnelingAckBody) argThat(t -> ((TunnelingAckBody) t).getSequence() == 1));
 
-        when(internalClient.getEventPool()).thenReturn(eventPool);
-
-        final var task = new TunnelingAckTask(internalClient);
+        final var task = new TunnelingAckTask(internalClientMock);
         task.onSubscribe(subscription);
         return task;
     }

@@ -34,7 +34,7 @@ public class ConfigFileUtilTest {
         final var config = configBuilder.build();
         assertThat(config.isNatEnabled()).isFalse();
         assertThat(config.getRemoteControlAddress()).isEqualTo(ConfigConstants.Endpoint.ADDRESS.getDefaultValue());
-        assertThat(config.getMulticastTTL()).isEqualTo(ConfigConstants.Multicast.TIME_TO_LIVE.getDefaultValue());
+        assertThat(config.getValue(ConfigConstants.Multicast.TIME_TO_LIVE)).isEqualTo(ConfigConstants.Multicast.TIME_TO_LIVE.getDefaultValue());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ConfigFileUtilTest {
         final var config = configBuilder.build();
         assertThat(config.isNatEnabled()).isFalse();
         assertThat(config.getRemoteControlAddress()).isEqualTo(ConfigConstants.Endpoint.ADDRESS.getDefaultValue());
-        assertThat(config.getMulticastTTL()).isEqualTo(ConfigConstants.Multicast.TIME_TO_LIVE.getDefaultValue());
+        assertThat(config.getValue(ConfigConstants.Multicast.TIME_TO_LIVE)).isEqualTo(ConfigConstants.Multicast.TIME_TO_LIVE.getDefaultValue());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ConfigFileUtilTest {
         final var config = configBuilder.build();
         assertThat(config.isNatEnabled()).isTrue();
         assertThat(config.getRemoteControlAddress().getAddress()).containsExactly(123, 45, 67, 89);
-        assertThat(config.getMulticastTTL()).isEqualTo(255);
+        assertThat(config.getValue(ConfigConstants.Multicast.TIME_TO_LIVE)).isEqualTo(255);
         assertThat(config.getPlugins()).isEmpty();
 //        assertThat(config.<String>getSetting("my.special.config.setting")).isEqualTo("foobar");
     }
@@ -85,7 +85,7 @@ public class ConfigFileUtilTest {
         final var config = configBuilder.build();
         assertThat(config.isNatEnabled()).isTrue();
         assertThat(config.getRemoteControlAddress().getAddress()).containsExactly(43, 123, 32, 213);
-        assertThat(config.getMulticastTTL()).isEqualTo(127);
+        assertThat(config.getValue(ConfigConstants.Multicast.TIME_TO_LIVE)).isEqualTo(127);
 
         final var plugins = config.getPlugins();
         assertThat(plugins).hasSize(3);

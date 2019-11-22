@@ -88,7 +88,7 @@ public class DefaultHttpDaemonPlugin implements ExtensionPlugin {
      * @param pippo
      */
     protected void startPippo(final Pippo pippo) {
-        pippo.start(client.getConfig().getSetting(PORT));
+        pippo.start(client.getConfig(PORT));
     }
 
     /**
