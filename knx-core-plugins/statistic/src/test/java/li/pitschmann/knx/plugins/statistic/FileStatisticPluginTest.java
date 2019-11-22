@@ -133,6 +133,50 @@ public class FileStatisticPluginTest {
     }
 
     @Test
+    @DisplayName("CSV: Test File Statistic")
+    public void statisticCsv() throws IOException {
+        final var path = Paths.get("target/test-FileStatisticPluginTest-statisticCsv-" + UUID.randomUUID() + ".log");
+        final var plugin = new FileStatisticPlugin();
+        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.CSV, TimeUnit.MINUTES.toMillis(1));
+
+        // start
+        plugin.onInitialization(knxClientMock);
+        plugin.onStart();
+
+        // wait 1 second
+        Sleeper.seconds(1);
+
+        // shutdown
+        final var statisticAtShutdown = createKnxStatisticMock();
+        when(knxClientMock.getStatistic()).thenReturn(statisticAtShutdown);
+        plugin.onShutdown();
+
+        // we should have two statistics (one at start up and one at shutdown)
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(2);
+        assertThat(lines.get(0)).isEqualTo(
+                // @formatter:off
+                "0,0," +                      // inbound total
+                "0,0," +                      // inbound total
+                "0,0.00," +                   // error total
+                "0,0,0,0,0,0,0,0," +          // inbound description, connect, connectionState, disconnect
+                "0,0,0,0," +                  // inbound tunneling, indication
+                "0,0,0,0,0,0,0,0," +          // outbound description, connect, connectionState, disconnect
+                "0,0,0,0"                     // outbound tunneling, indication
+                // @formatter:on
+        );
+//        assertThat(lines.get(1)).isEqualTo(
+//                // @formatter:off
+//                "0,0,0,0,0,0," +              // totals of inbound, outbound and error
+//                "0,0,0,0,0,0,0,0," +          // inbound description, connect, connectionState, disconnect
+//                "0,0,0,0," +                  // inbound tunneling, indication
+//                "0,0,0,0,0,0,0,0," +          // outbound description, connect, connectionState, disconnect
+//                "0,0,0,0"                     // outbound tunneling, indication
+//                // @formatter:on
+//        );
+    }
+
+    @Test
     @DisplayName("TEXT: Test File Statistic")
     public void statisticText() throws IOException {
         final var path = Paths.get("target/test-FileStatisticPluginTest-statisticText-" + UUID.randomUUID() + ".log");
