@@ -157,7 +157,7 @@ public class FileStatisticPluginTest {
         assertThat(lines.get(0)).isEqualTo(
                 // @formatter:off
                 "0,0," +                      // inbound total
-                "0,0," +                      // inbound total
+                "0,0," +                      // outbound total
                 "0,0.00," +                   // error total
                 "0,0,0,0,0,0,0,0," +          // inbound description, connect, connectionState, disconnect
                 "0,0,0,0," +                  // inbound tunneling, indication
@@ -165,15 +165,17 @@ public class FileStatisticPluginTest {
                 "0,0,0,0"                     // outbound tunneling, indication
                 // @formatter:on
         );
-//        assertThat(lines.get(1)).isEqualTo(
-//                // @formatter:off
-//                "0,0,0,0,0,0," +              // totals of inbound, outbound and error
-//                "0,0,0,0,0,0,0,0," +          // inbound description, connect, connectionState, disconnect
-//                "0,0,0,0," +                  // inbound tunneling, indication
-//                "0,0,0,0,0,0,0,0," +          // outbound description, connect, connectionState, disconnect
-//                "0,0,0,0"                     // outbound tunneling, indication
-//                // @formatter:on
-//        );
+        assertThat(lines.get(1)).isEqualTo(
+                // @formatter:off
+                "10,11," +                     // inbound total
+                "12,13," +                     // outbound total
+                "14,1.50," +                   // error total
+                "0,21,0,31,0,41,70,71," +      // inbound description, connect, connectionState, disconnect
+                "50,51,0,60," +                // inbound tunneling, indication
+                "22,0,32,0,42,0,72,73," +      // outbound description, connect, connectionState, disconnect
+                "52,53,61,0"                   // outbound tunneling, indication
+                // @formatter:on
+        );
     }
 
     @Test
