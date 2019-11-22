@@ -403,7 +403,8 @@ public final class ConfigConstants {
                 Objects::nonNull
         );
 
-        private Communication() {}
+        private Communication() {
+        }
     }
 
     public static final class Plugin {

@@ -27,11 +27,10 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
 import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
-import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
+import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
 import li.pitschmann.knx.test.data.TestObserverPlugin;
 import org.junit.jupiter.api.DisplayName;
@@ -42,9 +41,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link InternalKnxClient}
@@ -148,7 +145,7 @@ public class KnxClientTest {
     @Test
     @DisplayName("Internal Client: Test erroneous plug-in")
     public void testErroneousPlugIn() {
-        final var client = new InternalKnxClient(createConfigMock());
+        final var client = new InternalKnxClient(TestHelpers.mockConfig());
 
         try (client) {
             // should not be an issue
@@ -168,7 +165,7 @@ public class KnxClientTest {
     @Test
     @DisplayName("Error: Send body without any channel information")
     public void testBodyWithoutChannel() {
-        final var client = new InternalKnxClient(createConfigMock());
+        final var client = new InternalKnxClient(TestHelpers.mockConfig());
         final var requestBody = mock(RequestBody.class);
 
         // verify if it is returning Illegal Argument Exception
@@ -178,17 +175,5 @@ public class KnxClientTest {
         assertThatThrownBy(() -> client.send(requestBody, 0))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("No channel relation defined for body.");
-    }
-
-    /**
-     * Creates a {@link Config} for testing
-     *
-     * @return a mocked instance of {@link Config}
-     */
-    private Config createConfigMock() {
-        final var configMock = mock(Config.class);
-        when(configMock.getValue(eq(ConfigConstants.Communication.EXECUTOR_POOL_SIZE))).thenReturn(1);
-        when(configMock.getValue(eq(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE))).thenReturn(1);
-        return configMock;
     }
 }

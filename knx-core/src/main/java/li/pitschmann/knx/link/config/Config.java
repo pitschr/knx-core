@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.link.config;
 
-import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.knx.parser.XmlProject;

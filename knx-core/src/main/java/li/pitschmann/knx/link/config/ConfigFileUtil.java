@@ -110,7 +110,7 @@ final class ConfigFileUtil {
         for (final var line : filteredLines) {
             try {
                 @SuppressWarnings("unchecked")
-                final var pluginClass = (Class<Plugin>)Class.forName(line);
+                final var pluginClass = (Class<Plugin>) Class.forName(line);
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
             } catch (final Exception ex) {

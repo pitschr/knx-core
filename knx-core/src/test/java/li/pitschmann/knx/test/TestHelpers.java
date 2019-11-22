@@ -40,15 +40,11 @@ import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.ConfigValue;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.concurrent.Flow;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,90 +67,133 @@ public final class TestHelpers {
         }).hasCauseInstanceOf(AssertionError.class);
     }
 
+    /**
+     * Returns prepared {@link Config} without special customization.
+     *
+     * @return
+     */
     @Nonnull
     public static Config mockConfig() {
-        return mockConfig(x -> {});
+        return mockConfig(x -> {
+        });
     }
 
+    /**
+     * Returns prepared {@link Config} with ability to customize it.
+     *
+     * @param configMockConsumer
+     * @return
+     */
     @Nonnull
     public static Config mockConfig(final @Nonnull Consumer<Config> configMockConsumer) {
         @SuppressWarnings("unchecked")
-        final var configValueClass = (Class<ConfigValue<?>>)(Object)ConfigValue.class;
+        final var configValueClass = (Class<ConfigValue<?>>) (Object) ConfigValue.class;
 
         // create config mock
         final var configMock = mock(Config.class);
-        when(configMock.getValue(any(configValueClass))).thenAnswer(i -> ((ConfigValue<?>)i.getArgument(0)).getDefaultValue());
+        when(configMock.getValue(any(configValueClass))).thenAnswer(i -> ((ConfigValue<?>) i.getArgument(0)).getDefaultValue());
         configMockConsumer.accept(configMock);
         return configMock;
     }
 
-    public static <T extends KnxClient> T mockKnxClient(final @Nonnull Class<T> clazz) {
-        return mockKnxClient(mockConfig(), clazz);
-    }
-
-    public static <T extends KnxClient> T mockKnxClient(final @Nonnull Config config,  final @Nonnull Class<T> clazz) {
-        return mockKnxClient(config, x -> {}, clazz);
-    }
-
-    public static <T extends KnxClient> T mockKnxClient(final @Nonnull Config config, final @Nonnull Consumer<T> knxClientMockSupplier, final @Nonnull Class<T> clazz) {
+    /**
+     * Returns prepared {@link KnxClient} implementation with ability
+     * to customize {@link Config}
+     *
+     * @param configMockConsumer
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T extends KnxClient> T mockKnxClient(final @Nonnull Consumer<Config> configMockConsumer,
+                                                        final @Nonnull Consumer<T> knxClientMockSupplier,
+                                                        final @Nonnull Class<T> clazz) {
         final var knxClientMock = mock(Objects.requireNonNull(clazz));
-        when(knxClientMock.getConfig()).thenReturn(Objects.requireNonNull(config));
-        when(knxClientMock.getConfig(any())).thenCallRealMethod();
-        knxClientMockSupplier.accept(knxClientMock);
-        return knxClientMock;
-    }
-
-    @Nonnull
-    public static InternalKnxClient mockInternalKnxClient() {
-        return mockInternalKnxClient(x -> {});
-    }
-
-    @Nonnull
-    public static InternalKnxClient mockInternalKnxClient(final @Nonnull Consumer<Config> configMockConsumer) {
-        return mockInternalKnxClient(configMockConsumer, x -> {});
-    }
-
-    @Nonnull
-    public static InternalKnxClient mockInternalKnxClient(final @Nonnull Consumer<Config> configMockConsumer, final @Nonnull Consumer<InternalKnxClient> knxClientMockSupplier) {
-        final var knxClientMock = mock(InternalKnxClient.class);
         final var configMock = mockConfig(configMockConsumer);
+        final var statusPoolMock = mockInternalStatusPool();
 
         when(knxClientMock.getConfig()).thenReturn(configMock);
         when(knxClientMock.getConfig(any())).thenCallRealMethod();
+        when(knxClientMock.getStatusPool()).thenReturn(statusPoolMock);
+        knxClientMockSupplier.accept(knxClientMock);
 
-        // Status Pool
-        final var statusPool = mock(InternalKnxStatusPool.class);
-        when(knxClientMock.getStatusPool()).thenReturn(statusPool);
+        return knxClientMock;
+    }
 
-        // Events + Event Pool
-        final var eventPool = mock(InternalKnxEventPool.class);
-        when(knxClientMock.getEventPool()).thenReturn(eventPool);
+    /**
+     * Returns prepared {@link InternalKnxClient} with no customization.
+     * @return
+     */
+    @Nonnull
+    public static InternalKnxClient mockInternalKnxClient() {
+        return mockInternalKnxClient(config -> {}, client -> {});
+    }
 
-        @SuppressWarnings("unchecked")
-        final var connectionStateEvent = (KnxSingleEvent< ConnectionStateRequestBody, ConnectionStateResponseBody>)mock(KnxSingleEvent.class);
-        when(eventPool.connectionStateEvent()).thenReturn(connectionStateEvent);
+    /**
+     * Returns prepared {@link InternalKnxClient} with ability to customize
+     * the {@link Config} and {@link InternalKnxClient}.
+     *
+     * @param configMockConsumer
+     * @param knxClientMockSupplier
+     * @return
+     */
+    @Nonnull
+    public static InternalKnxClient mockInternalKnxClient(final @Nonnull Consumer<Config> configMockConsumer,
+                                                          final @Nonnull Consumer<InternalKnxClient> knxClientMockSupplier) {
+        final var knxClientMock = mock(InternalKnxClient.class);
+        final var configMock = mockConfig(configMockConsumer);
+        final var statusPoolMock = mockInternalStatusPool();
+        final var eventPoolMock = mockInternalEventPool();
 
-        @SuppressWarnings("unchecked")
-        final var connectEvent = (KnxSingleEvent<ConnectRequestBody, ConnectResponseBody>)mock(KnxSingleEvent.class);
-        when(eventPool.connectEvent()).thenReturn(connectEvent);
-
-        @SuppressWarnings("unchecked")
-        final var descriptionEvent = (KnxSingleEvent<DescriptionRequestBody, DescriptionResponseBody>)mock(KnxSingleEvent.class);
-        when(eventPool.descriptionEvent()).thenReturn(descriptionEvent);
-
-        @SuppressWarnings("unchecked")
-        final var disconnectEvent = (KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody>)mock(KnxSingleEvent.class);
-        when(eventPool.disconnectEvent()).thenReturn(disconnectEvent);
-
-        @SuppressWarnings("unchecked")
-        final var searchEvent = (KnxMultiEvent<SearchRequestBody, SearchResponseBody>)mock(KnxMultiEvent.class);
-        when(eventPool.searchEvent()).thenReturn(searchEvent);
-
-        @SuppressWarnings("unchecked")
-        final var eventData = (KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody>)mock(KnxSingleEvent.class);
-        when(eventPool.get(any(TunnelingAckBody.class))).thenReturn(eventData);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+        when(knxClientMock.getConfig(any())).thenCallRealMethod();
+        when(knxClientMock.getStatusPool()).thenReturn(statusPoolMock);
+        when(knxClientMock.getEventPool()).thenReturn(eventPoolMock);
 
         knxClientMockSupplier.accept(knxClientMock);
         return knxClientMock;
+    }
+
+    /**
+     * Returns prepared {@link InternalKnxStatusPool}
+     * @return
+     */
+    private static InternalKnxStatusPool mockInternalStatusPool() {
+        return mock(InternalKnxStatusPool.class);
+    }
+
+    /**
+     * Returns prepared {@link InternalKnxEventPool}
+     * @return
+     */
+    private static InternalKnxEventPool mockInternalEventPool() {
+        // Events + Event Pool
+        final var eventPool = mock(InternalKnxEventPool.class);
+
+        @SuppressWarnings("unchecked")
+        final var connectionStateEvent = (KnxSingleEvent<ConnectionStateRequestBody, ConnectionStateResponseBody>) mock(KnxSingleEvent.class);
+        when(eventPool.connectionStateEvent()).thenReturn(connectionStateEvent);
+
+        @SuppressWarnings("unchecked")
+        final var connectEvent = (KnxSingleEvent<ConnectRequestBody, ConnectResponseBody>) mock(KnxSingleEvent.class);
+        when(eventPool.connectEvent()).thenReturn(connectEvent);
+
+        @SuppressWarnings("unchecked")
+        final var descriptionEvent = (KnxSingleEvent<DescriptionRequestBody, DescriptionResponseBody>) mock(KnxSingleEvent.class);
+        when(eventPool.descriptionEvent()).thenReturn(descriptionEvent);
+
+        @SuppressWarnings("unchecked")
+        final var disconnectEvent = (KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody>) mock(KnxSingleEvent.class);
+        when(eventPool.disconnectEvent()).thenReturn(disconnectEvent);
+
+        @SuppressWarnings("unchecked")
+        final var searchEvent = (KnxMultiEvent<SearchRequestBody, SearchResponseBody>) mock(KnxMultiEvent.class);
+        when(eventPool.searchEvent()).thenReturn(searchEvent);
+
+        @SuppressWarnings("unchecked")
+        final var eventData = (KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody>) mock(KnxSingleEvent.class);
+        when(eventPool.get(any(TunnelingAckBody.class))).thenReturn(eventData);
+
+        return eventPool;
     }
 }

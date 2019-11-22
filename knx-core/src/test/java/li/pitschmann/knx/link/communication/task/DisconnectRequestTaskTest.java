@@ -20,21 +20,13 @@ package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.body.DisconnectRequestBody;
-import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.InternalKnxEventPool;
-import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
-import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.config.ConfigConstants;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link DisconnectRequestTask}

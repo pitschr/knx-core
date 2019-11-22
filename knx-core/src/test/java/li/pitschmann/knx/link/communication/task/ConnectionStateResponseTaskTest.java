@@ -19,20 +19,14 @@
 package li.pitschmann.knx.link.communication.task;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.link.body.ConnectionStateResponseBody;
-import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.InternalKnxEventPool;
-import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Flow;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link ConnectionStateResponseTask}

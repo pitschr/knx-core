@@ -23,11 +23,9 @@ import li.pitschmann.knx.link.body.RequestBody;
 import li.pitschmann.knx.link.body.ResponseBody;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.KnxClient;
-import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.config.ConfigConstants;
-import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxPluginException;
+import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.knx.test.data.TestConstructorExceptionPlugin;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
 import li.pitschmann.knx.test.data.TestMethodExceptionPlugin;
@@ -43,8 +41,6 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +53,7 @@ public final class PluginManagerTest {
     @DisplayName("Instantiation of PluginManager")
     public void testInstantiation() {
         // create plugin manager and close afterwards (no exception expected)
-        new PluginManager(newConfigMock()).close();
+        new PluginManager(TestHelpers.mockConfig()).close();
 
         // invalid cases
         assertThatThrownBy(() -> new PluginManager(null)).isInstanceOf(NullPointerException.class);
@@ -66,11 +62,10 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test initial initialization of plugins through configuration instance")
     public void testOnInitialization() {
-        final var configMock = newConfigMock(TestObserverPlugin.class, TestExtensionPlugin.class);
-        final var knxClientMock = newKnxClientMock(configMock);
+        final var knxClientMock = newKnxClientMockWithPlugins(TestObserverPlugin.class, TestExtensionPlugin.class);
 
         // 2) initialization (two plugins registered)
-        final var pluginManager = new PluginManager(configMock);
+        final var pluginManager = new PluginManager(knxClientMock.getConfig());
         pluginManager.notifyInitialization(knxClientMock);
 
         // 3) verify
@@ -106,13 +101,13 @@ public final class PluginManagerTest {
     @Test
     @DisplayName("Test notification methods AFTER close")
     public void testNotificationAfterClose() {
-        final var configMock = newConfigMock(TestObserverPlugin.class, TestExtensionPlugin.class);
-        final var pluginManager = new PluginManager(configMock);
+        final var knxClientMock = newKnxClientMockWithPlugins(TestObserverPlugin.class, TestExtensionPlugin.class);
+        final var pluginManager = new PluginManager(knxClientMock.getConfig());
 
         pluginManager.close();
 
         // should not be a problem - is silently ignored (log warn lines printed)
-        pluginManager.notifyInitialization(newKnxClientMock(configMock));
+        pluginManager.notifyInitialization(knxClientMock);
         pluginManager.notifyClientStart();
         pluginManager.notifyClientShutdown();
         pluginManager.notifyIncomingBody(mock(ResponseBody.class));
@@ -236,29 +231,34 @@ public final class PluginManagerTest {
      * Creates default plugin manager with mocked client and config
      */
     private PluginManager newPluginManager() {
-        final var configMock = newConfigMock();
-        final var knxClientMock = newKnxClientMock(configMock);
+        final var knxClientMock = TestHelpers.mockKnxClient(
+                config -> {},
+                client -> when(client.isRunning()).thenReturn(true),
+                BaseKnxClient.class);
+        final var configMock = knxClientMock.getConfig();
+
         final var pluginManager = new PluginManager(configMock);
         pluginManager.notifyInitialization(knxClientMock);
         return pluginManager;
     }
 
-    private KnxClient newKnxClientMock(final Config config) {
-        final var knxClientMock = mock(BaseKnxClient.class);
-        when(knxClientMock.getConfig()).thenReturn(config);
-        when(knxClientMock.getConfig(any())).thenCallRealMethod();
-        when(knxClientMock.isRunning()).thenReturn(true);
-        return knxClientMock;
-    }
-
+    /**
+     * Creates {@link KnxClient} with customized config that is pre-configured with {@code plugins}
+     *
+     * @param plugins
+     * @return
+     */
     @SafeVarargs
-    private Config newConfigMock(Class<? extends Plugin>... plugins) {
+    private KnxClient newKnxClientMockWithPlugins(Class<? extends Plugin>... plugins) {
         @SuppressWarnings("unchecked")
-        final var castedList = (List<Class<Plugin>>)(Object)Arrays.asList(plugins);
+        final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
 
-        final var configMock = mock(Config.class);
-        when(configMock.getValue(any())).thenAnswer(i -> ((ConfigValue<?>)i.getArgument(0)).getDefaultValue());
-        when(configMock.getPlugins()).thenReturn(castedList);
-        return configMock;
+        final var mockConfig = TestHelpers.mockConfig(
+                config -> when(config.getPlugins()).thenReturn(castedList)
+        );
+
+        final var knxClientMock = TestHelpers.mockKnxClient(/*dummy*/ x -> {}, y -> {}, BaseKnxClient.class);
+        when(knxClientMock.getConfig()).thenReturn(mockConfig);
+        return knxClientMock;
     }
 }

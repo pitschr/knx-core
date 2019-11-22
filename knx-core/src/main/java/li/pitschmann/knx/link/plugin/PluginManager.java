@@ -281,8 +281,8 @@ public final class PluginManager implements AutoCloseable {
      * @param <P>
      */
     private <O, P extends Plugin> void notifyPlugins(final @Nullable O obj,
-                                                                final @Nonnull List<P> plugins,
-                                                                final @Nonnull BiConsumer<P, O> consumer) {
+                                                     final @Nonnull List<P> plugins,
+                                                     final @Nonnull BiConsumer<P, O> consumer) {
         for (final P plugin : plugins) {
             notifyPluginInternal(obj, plugin, consumer);
         }
@@ -300,21 +300,21 @@ public final class PluginManager implements AutoCloseable {
      */
     @Nullable
     private <O, P extends Plugin> Future<Void> notifyPluginInternal(final @Nullable O obj,
-                                                                   final @Nonnull P plugin,
-                                                                   final @Nonnull BiConsumer<P, O> consumer) {
+                                                                    final @Nonnull P plugin,
+                                                                    final @Nonnull BiConsumer<P, O> consumer) {
         if (this.pluginExecutor.isShutdown()) {
             log.warn("Could not send to plug-in '{}' because plugin executor is shutdown already: {}",
                     plugin, obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
             return null;
         } else {
             return CompletableFuture.runAsync(() -> {
-                    log.trace("Send to plugin: {}", plugin);
-                    try {
-                        consumer.accept(plugin, obj);
-                    } catch (final Exception ex) {
-                        log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): obj={}, plugin={}", obj, plugin, ex);
-                    }
-                }, this.pluginExecutor);
+                log.trace("Send to plugin: {}", plugin);
+                try {
+                    consumer.accept(plugin, obj);
+                } catch (final Exception ex) {
+                    log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): obj={}, plugin={}", obj, plugin, ex);
+                }
+            }, this.pluginExecutor);
         }
     }
 

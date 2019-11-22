@@ -25,8 +25,6 @@ import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
-import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.knx.link.communication.InternalKnxStatusPool;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

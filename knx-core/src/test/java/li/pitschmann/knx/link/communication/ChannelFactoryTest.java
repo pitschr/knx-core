@@ -18,9 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.ConfigConstants;
-import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.utils.Networker;
@@ -33,7 +31,6 @@ import java.nio.channels.DatagramChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
