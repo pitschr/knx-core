@@ -74,7 +74,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     public Body read(final SelectionKey key) throws IOException {
         final var byteBuffer = ByteBuffer.allocate(0xFF);
         final var address = this.channel.receive(byteBuffer);
-        final var body = BodyFactory.valueOf(byteBuffer.array());
+        final var body = BodyFactory.of(byteBuffer.array());
 
         // store the last address, if not available - simply cancel this method
         if (address != null) {

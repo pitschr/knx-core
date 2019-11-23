@@ -50,9 +50,9 @@ public final class BodyFactory {
      * @throws KnxUnknownBodyException in case the body is not known
      */
     @Nonnull
-    public static <T extends Body> T valueOf(final @Nonnull byte[] headerAndBodyBytes) {
+    public static <T extends Body> T of(final @Nonnull byte[] headerAndBodyBytes) {
         final var header = Header.of(headerAndBodyBytes);
-        return valueOf(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
+        return of(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
     }
 
     /**
@@ -66,8 +66,8 @@ public final class BodyFactory {
      * @throws KnxUnknownBodyException in case the body is not known
      */
     @Nonnull
-    public static <T extends Body> T valueOf(final @Nonnull Header header, final @Nonnull byte[] bodyBytes) {
-        return valueOf(header.getServiceType(), bodyBytes);
+    public static <T extends Body> T of(final @Nonnull Header header, final @Nonnull byte[] bodyBytes) {
+        return of(header.getServiceType(), bodyBytes);
     }
 
     /**
@@ -82,7 +82,7 @@ public final class BodyFactory {
      */
     @SuppressWarnings("unchecked")
     @Nonnull
-    public static <T extends Body> T valueOf(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bodyBytes) {
+    public static <T extends Body> T of(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bodyBytes) {
         Preconditions.checkNonNull(serviceType);
         Preconditions.checkNonNull(bodyBytes);
 

@@ -75,6 +75,6 @@ public final class KnxBody {
     }
 
     private static <T extends Body> T toBody(final String hexString) {
-        return BodyFactory.valueOf(Bytes.toByteArray(hexString));
+        return BodyFactory.of(Bytes.toByteArray(hexString));
     }
 }

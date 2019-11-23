@@ -44,10 +44,10 @@ public class BodyFactoryTest {
     }
 
     /**
-     * Tests {@link BodyFactory#valueOf(byte[])} with supported bodies
+     * Tests {@link BodyFactory#of(byte[])} with supported bodies
      */
     @Test
-    public void valueOfWithBytes() {
+    public void testWithBytes() {
         byte[] tunReqBytes = new byte[]{ //
                 // Header
                 Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
@@ -162,32 +162,32 @@ public class BodyFactoryTest {
                 0x02, 0x01, 0x04, 0x01};
 
         // bodies
-        assertThat(BodyFactory.valueOf(tunReqBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
-        assertThat(BodyFactory.valueOf(tunAckBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
+        assertThat(BodyFactory.of(tunReqBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
+        assertThat(BodyFactory.of(tunAckBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
 
-        assertThat(BodyFactory.valueOf(routIndBytes).getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);
+        assertThat(BodyFactory.of(routIndBytes).getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);
 
-        assertThat(BodyFactory.valueOf(conStateReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
-        assertThat(BodyFactory.valueOf(conStateResBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
+        assertThat(BodyFactory.of(conStateReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
+        assertThat(BodyFactory.of(conStateResBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
 
-        assertThat(BodyFactory.valueOf(disconnectReqBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
-        assertThat(BodyFactory.valueOf(disconnectResBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
+        assertThat(BodyFactory.of(disconnectReqBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
+        assertThat(BodyFactory.of(disconnectResBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
 
-        assertThat(BodyFactory.valueOf(descriptionReqBytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
-        assertThat(BodyFactory.valueOf(descriptionResBytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
+        assertThat(BodyFactory.of(descriptionReqBytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
+        assertThat(BodyFactory.of(descriptionResBytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
 
-        assertThat(BodyFactory.valueOf(connectReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
-        assertThat(BodyFactory.valueOf(connectResBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
+        assertThat(BodyFactory.of(connectReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
+        assertThat(BodyFactory.of(connectResBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
 
-        assertThat(BodyFactory.valueOf(searchReqBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
-        assertThat(BodyFactory.valueOf(searchResBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
+        assertThat(BodyFactory.of(searchReqBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
+        assertThat(BodyFactory.of(searchResBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
     }
 
     /**
-     * Tests {@link BodyFactory#valueOf(byte[])} with unsupported bodies
+     * Tests {@link BodyFactory#of(byte[])} with unsupported bodies
      */
     @Test
-    public void valueOfWithUnsupportedBytes() {
+    public void testWithUnsupportedBytes() {
         byte[] unsupportedBytes = new byte[]{ //
                 // Header
                 Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
@@ -196,6 +196,6 @@ public class BodyFactoryTest {
         };
 
         // unknown body
-        assertThatThrownBy(() -> BodyFactory.valueOf(unsupportedBytes).getServiceType()).isInstanceOf(KnxUnknownBodyException.class);
+        assertThatThrownBy(() -> BodyFactory.of(unsupportedBytes).getServiceType()).isInstanceOf(KnxUnknownBodyException.class);
     }
 }
