@@ -64,14 +64,14 @@ final class ConfigFileUtil {
             final var allSettings = asSettingMap(lines);
 
             // first try to find: "endpoint address" and "endpoint port"
-            final var endpointAddress = Objects.requireNonNullElse(allSettings.get(ConfigConstants.Endpoint.ADDRESS.getKey()), "");
-            final var endpointPort = Objects.requireNonNullElse(allSettings.get(ConfigConstants.Endpoint.PORT.getKey()), "");
+            final var endpointAddress = Objects.requireNonNullElse(allSettings.get(CoreConfigs.Endpoint.ADDRESS.getKey()), "");
+            final var endpointPort = Objects.requireNonNullElse(allSettings.get(CoreConfigs.Endpoint.PORT.getKey()), "");
 
             final var configBuilder = ConfigBuilder.create(endpointAddress + ":" + endpointPort);
 
             // all registered config values
             final var allRegisteredConfigValues = Maps.<String, ConfigValue<Object>>newHashMap(allPlugins.size() * 32);
-            allRegisteredConfigValues.putAll(ConfigConstants.getConfigValues());
+            allRegisteredConfigValues.putAll(CoreConfigs.getConfigValues());
 
             // add plugins
             for (final var plugin : allPlugins) {

@@ -37,7 +37,7 @@ import li.pitschmann.knx.link.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.link.communication.communicator.AbstractChannelCommunicator;
 import li.pitschmann.knx.link.communication.communicator.CommunicatorFactory;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.config.ConfigValue;
 import li.pitschmann.knx.link.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.link.exceptions.KnxChannelIdNotReceivedException;
@@ -303,7 +303,7 @@ public final class InternalKnxClient implements AutoCloseable {
                 // create body
                 final var requestBody = DisconnectRequestBody.of(this.channelId, this.controlHPAI);
                 try {
-                    final var responseBody = this.send(requestBody, getConfig(ConfigConstants.Disconnect.REQUEST_TIMEOUT)).get();
+                    final var responseBody = this.send(requestBody, getConfig(CoreConfigs.Disconnect.REQUEST_TIMEOUT)).get();
                     if (responseBody != null) {
                         log.debug("Disconnect Response Body retrieved: {}", responseBody);
                     } else {
@@ -509,7 +509,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
         // It opens a new channel for description communication and processing. Afterwards it will be shutdown.
         try (communicator) {
-            final var responseBody = communicator.<DescriptionResponseBody>send(requestBody, getConfig(ConfigConstants.Description.REQUEST_TIMEOUT)).get();
+            final var responseBody = communicator.<DescriptionResponseBody>send(requestBody, getConfig(CoreConfigs.Description.REQUEST_TIMEOUT)).get();
             Preconditions.checkNonNull(responseBody, "No description response received for request: {}", requestBody);
             return responseBody;
         } catch (final Exception ex) {
@@ -546,7 +546,7 @@ public final class InternalKnxClient implements AutoCloseable {
         // It opens a new channel for discovery communication and processing. Afterwards it will be shutdown.
         SearchResponseBody responseBody = null;
         try (communicator) {
-            responseBody = communicator.<SearchResponseBody>send(requestBody, getConfig(ConfigConstants.Search.REQUEST_TIMEOUT)).get();
+            responseBody = communicator.<SearchResponseBody>send(requestBody, getConfig(CoreConfigs.Search.REQUEST_TIMEOUT)).get();
             Preconditions.checkNonNull(responseBody, "No search response received for request: {}", requestBody);
             return responseBody;
         } catch (final Exception ex) {
@@ -573,7 +573,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
         ConnectResponseBody responseBody = null;
         try {
-            responseBody = this.<ConnectResponseBody>send(requestBody, getConfig(ConfigConstants.Connect.REQUEST_TIMEOUT)).get();
+            responseBody = this.<ConnectResponseBody>send(requestBody, getConfig(CoreConfigs.Connect.REQUEST_TIMEOUT)).get();
             // check status if we got response with NO_ERROR status
             Preconditions.checkNonNull(responseBody, "No connect response received for request: {}", requestBody);
             Preconditions.checkState(responseBody.getStatus() == Status.E_NO_ERROR,

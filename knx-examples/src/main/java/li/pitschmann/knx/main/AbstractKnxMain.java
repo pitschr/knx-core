@@ -19,7 +19,7 @@
 package li.pitschmann.knx.main;
 
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public abstract class AbstractKnxMain {
             Preconditions.checkState(!routingEnabled, "You cannot use tunneling and routing at same time!");
             // specific endpoint defined
             // decision of routing/tunneling will be done based on ip address
-            return ConfigBuilder.create(ipAddress).setting(ConfigConstants.NAT, natEnabled);
+            return ConfigBuilder.create(ipAddress).setting(CoreConfigs.NAT, natEnabled);
         } else if (routingEnabled) {
             Preconditions.checkState(!natEnabled, "NAT is available for tunneling only!");
             // routing

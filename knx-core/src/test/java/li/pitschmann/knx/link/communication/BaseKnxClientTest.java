@@ -24,7 +24,7 @@ import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.datapoint.DPT1;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
@@ -154,7 +154,7 @@ public class BaseKnxClientTest {
     @MockServerTest
     @DisplayName("OK: Test read and write requests (incl. async) over NAT")
     public void testReadAndWriteRequestsOverNAT(final MockServer mockServer) {
-        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting(ConfigConstants.NAT, true).build());
+        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting(CoreConfigs.NAT, true).build());
     }
 
     /**

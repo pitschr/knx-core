@@ -19,6 +19,7 @@
 package li.pitschmann.knx.link.communication;
 
 import li.pitschmann.knx.link.body.address.KnxAddress;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
 
@@ -50,7 +51,7 @@ public interface KnxStatusPool {
 
     /**
      * Returns the current status for given {@link KnxAddress} immediately if it exists and is up-to-date already.
-     * It will use a specific timeout default timeout taken from {@link li.pitschmann.knx.link.config.ConfigConstants.Event#STATUS_LOOKUP_TIMEOUT}.
+     * It will use a specific timeout default timeout taken from {@link CoreConfigs.Event#STATUS_LOOKUP_TIMEOUT}.
      *
      * @param address {@link KnxAddress} for which the status should be returned
      * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists or dirty within given default time

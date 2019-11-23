@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.CEMI;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
@@ -127,7 +127,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     @Nullable
     @Override
     public KnxStatusData getStatusFor(@Nonnull KnxAddress address, boolean mustUpToDate) {
-        return getStatusForInternal(address, ConfigConstants.Event.STATUS_LOOKUP_TIMEOUT, TimeUnit.MILLISECONDS, true);
+        return getStatusForInternal(address, CoreConfigs.Event.STATUS_LOOKUP_TIMEOUT, TimeUnit.MILLISECONDS, true);
     }
 
     /**

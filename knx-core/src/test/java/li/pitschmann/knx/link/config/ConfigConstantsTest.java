@@ -11,6 +11,6 @@ public class ConfigConstantsTest {
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(ConfigConstants.class);
+        TestHelpers.assertThatNotInstantiable(CoreConfigs.class);
     }
 }

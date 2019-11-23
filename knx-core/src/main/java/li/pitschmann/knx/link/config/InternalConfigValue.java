@@ -14,8 +14,8 @@ import java.util.function.Supplier;
  * <p/>
  * Used for:
  * <ul>
- * <li>{@link ConfigConstants.Endpoint#ADDRESS}</li>
- * <li>{@link ConfigConstants.Endpoint#PORT}</li>
+ * <li>{@link CoreConfigs.Endpoint#ADDRESS}</li>
+ * <li>{@link CoreConfigs.Endpoint#PORT}</li>
  * </ul>
  *
  * @param <T>

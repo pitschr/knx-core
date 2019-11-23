@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.body.ConnectRequestBody;
 import li.pitschmann.knx.link.body.ConnectResponseBody;
 import li.pitschmann.knx.link.body.ConnectionStateRequestBody;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,14 +80,14 @@ public final class ConnectionStateMonitor implements Runnable {
                 final var offsetLastResponse = Duration.between(lastResponseTime, now).toMillis();
 
                 // duration between last response and now is bigger than heartbeat -> disconnect
-                if (offsetLastResponse > this.client.getConfig(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT)) {
+                if (offsetLastResponse > this.client.getConfig(CoreConfigs.ConnectionState.HEARTBEAT_TIMEOUT)) {
                     log.error("Could not get connection state response since {} ms. Disconnection will be initiated. Last heartbeat was received at {}.",
                             offsetLastResponse, DateTimeFormatter.ISO_INSTANT.format(lastResponseTime));
                     this.client.close();
                     break;
                 }
                 // is last request offset bigger than connection state request timeout?
-                else if (offsetLastRequest > this.client.getConfig(ConfigConstants.ConnectionState.REQUEST_TIMEOUT)) {
+                else if (offsetLastRequest > this.client.getConfig(CoreConfigs.ConnectionState.REQUEST_TIMEOUT)) {
                     log.warn("Connection State Request to be sent again, last heartbeat was received at {}: {} ms.",
                             DateTimeFormatter.ISO_INSTANT.format(lastResponseTime), offsetLastResponse);
                     // re-send request
@@ -104,7 +104,7 @@ public final class ConnectionStateMonitor implements Runnable {
                 }
             } else {
                 // request time < response time -> we already got response
-                final var sleepTimeInMillis = this.client.getConfig(ConfigConstants.ConnectionState.CHECK_INTERVAL) - Duration.between(lastRequestTime, lastResponseTime).toMillis();
+                final var sleepTimeInMillis = this.client.getConfig(CoreConfigs.ConnectionState.CHECK_INTERVAL) - Duration.between(lastRequestTime, lastResponseTime).toMillis();
                 log.debug("Next connection state check will be done in {} ms.", sleepTimeInMillis);
                 if (Sleeper.milliseconds(sleepTimeInMillis)) {
                     this.sendConnectionStateRequest();

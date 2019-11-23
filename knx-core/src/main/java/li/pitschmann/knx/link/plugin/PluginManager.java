@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.plugin;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.exceptions.KnxPluginException;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
@@ -71,7 +71,7 @@ public final class PluginManager implements AutoCloseable {
     private KnxClient client;
 
     public PluginManager(final @Nonnull Config config) {
-        final var pluginExecutorPoolSize = config.getValue(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE);
+        final var pluginExecutorPoolSize = config.getValue(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE);
         pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
         log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
     }
@@ -208,7 +208,7 @@ public final class PluginManager implements AutoCloseable {
             // now perform onInitialization method and give a specific time to start
             final var future = notifyPluginInternal(client, plugin, Plugin::onInitialization);
             if (future != null) {
-                final var timeoutInMs = this.client.getConfig(ConfigConstants.Plugin.INITIALIZATION_TIMEOUT);
+                final var timeoutInMs = this.client.getConfig(CoreConfigs.Plugin.INITIALIZATION_TIMEOUT);
                 future.get(timeoutInMs, TimeUnit.MILLISECONDS);
                 log.debug("Initialization completed for plugin: {}", plugin);
             }

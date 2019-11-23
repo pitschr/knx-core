@@ -28,7 +28,7 @@ import li.pitschmann.knx.link.communication.queue.AbstractInboxQueue;
 import li.pitschmann.knx.link.communication.queue.AbstractOutboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultInboxQueue;
 import li.pitschmann.knx.link.communication.queue.DefaultOutboxQueue;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.utils.Closeables;
 import li.pitschmann.utils.Executors;
 import li.pitschmann.utils.Sleeper;
@@ -88,7 +88,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         log.info("Queue Executor created: {}", this.queueExecutor);
 
         // creates executor for communication
-        final var poolSize = this.client.getConfig(ConfigConstants.Communication.EXECUTOR_POOL_SIZE);
+        final var poolSize = this.client.getConfig(CoreConfigs.Communication.EXECUTOR_POOL_SIZE);
         this.communicationExecutor = Executors.newFixedThreadPool(poolSize, true);
         log.info("Communication Executor created with size of {}: {}", poolSize, this.communicationExecutor);
     }
@@ -251,8 +251,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
         // send packet
         var attempts = 1;
-        final var totalAttempts = ConfigConstants.Event.TOTAL_ATTEMPTS;
-        final var checkInterval = ConfigConstants.Event.CHECK_INTERVAL;
+        final var totalAttempts = CoreConfigs.Event.TOTAL_ATTEMPTS;
+        final var checkInterval = CoreConfigs.Event.CHECK_INTERVAL;
         T responseBody = null;
 
         do {
