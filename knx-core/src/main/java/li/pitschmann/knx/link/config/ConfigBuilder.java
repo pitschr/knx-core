@@ -129,7 +129,7 @@ public final class ConfigBuilder {
      * If the given address is a multicast, then routing mode will be used.
      * Otherwise the communication is using the tunneling mode.
      * <p/>
-     * Default Port: {@link ConfigConstants#KNX_PORT}<br/>
+     * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
      *
      * @param address a specified address of KNX Net/IP device
      * @return a new instance of {@link ConfigBuilder}
@@ -165,14 +165,14 @@ public final class ConfigBuilder {
     /**
      * Creates a Builder for customized configuration using <strong>ROUTING</strong> mode.
      * <p/>
-     * Default Address: {@link ConfigConstants#MULTICAST_ADDRESS}<br/>
-     * Default Port: {@link ConfigConstants#KNX_PORT}<br/>
+     * Default Address: {@link CoreConfigs#MULTICAST_ADDRESS}<br/>
+     * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
      *
      * @return new builder for routing mode with standard settings according to the KNX specification
      */
     @Nonnull
     public static ConfigBuilder routing() {
-        return routing(ConfigConstants.MULTICAST_ADDRESS);
+        return routing(CoreConfigs.MULTICAST_ADDRESS);
     }
 
     /**
@@ -180,14 +180,14 @@ public final class ConfigBuilder {
      * customized multicast {@code address} and default KNX port.
      * address
      * <p/>
-     * Default Port: {@link ConfigConstants#KNX_PORT}<br/>
+     * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
      *
      * @param address a specified multicast address of KNX Net/IP device
      * @return new builder for routing mode with customized multicast address
      */
     @Nonnull
     public static ConfigBuilder routing(final @Nonnull InetAddress address) {
-        return routing(address, ConfigConstants.KNX_PORT);
+        return routing(address, CoreConfigs.KNX_PORT);
     }
 
     /**
@@ -210,8 +210,8 @@ public final class ConfigBuilder {
      * Creates a Builder for customized configuration using <strong>TUNNELING</strong> mode.
      * <p/>
      * Default Address: {@link Networker#getAddressUnbound()} (=will use discovery service)<br/>
-     * Default Port: {@link ConfigConstants#KNX_PORT}<br/>
-     * Default NAT Flag: {@link ConfigConstants.Executor#NAT}<br/>
+     * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
+     * Default NAT Flag: {@link CoreConfigs.Executor#NAT}<br/>
      *
      * @return new builder for tunneling mode with standard settings according to the KNX specification
      */
@@ -225,14 +225,14 @@ public final class ConfigBuilder {
      * Use {@code natEnabled} flag if the Network Address Translation feature should be activated.
      * <p/>
      * Default Address: {@link Networker#getAddressUnbound()} (=will use discovery service)<br/>
-     * Default Port: {@link ConfigConstants#KNX_PORT}<br/>
+     * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
      *
      * @param natEnabled {@code true} if NAT should be enabled
      * @return new builder for tunneling mode with standard settings according to the KNX specification
      */
     @Nonnull
     public static ConfigBuilder tunneling(final boolean natEnabled) {
-        return tunneling(Networker.getAddressUnbound(), ConfigConstants.KNX_PORT, natEnabled);
+        return tunneling(Networker.getAddressUnbound(), CoreConfigs.KNX_PORT, natEnabled);
     }
 
     /**
@@ -240,22 +240,22 @@ public final class ConfigBuilder {
      * customized {@code address} and default KNX port.
      * address
      * <p/>
-     * Default Port: {@link ConfigConstants#KNX_PORT}<br/>
-     * Default NAT Flag: {@link ConfigConstants.Executor#NAT}<br/>
+     * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
+     * Default NAT Flag: {@link CoreConfigs.Executor#NAT}<br/>
      *
      * @param address a specified address of KNX Net/IP device
      * @return new builder for tunneling mode with customized address
      */
     @Nonnull
     public static ConfigBuilder tunneling(final @Nonnull InetAddress address) {
-        return tunneling(address, ConfigConstants.KNX_PORT);
+        return tunneling(address, CoreConfigs.KNX_PORT);
     }
 
     /**
      * Creates a Builder for customized configuration using <strong>TUNNELING</strong> mode with
      * customized {@code address} and customized KNX port.
      * <p/>
-     * Default NAT Flag: {@link ConfigConstants.Executor#NAT}<br/>
+     * Default NAT Flag: {@link CoreConfigs.Executor#NAT}<br/>
      *
      * @param address a specified address of KNX Net/IP device
      * @param port    a specific port of KNX Net/IP device
@@ -263,7 +263,7 @@ public final class ConfigBuilder {
      */
     @Nonnull
     public static ConfigBuilder tunneling(final @Nonnull InetAddress address, final int port) {
-        return tunneling(address, port, ConfigConstants.NAT.getDefaultValue());
+        return tunneling(address, port, CoreConfigs.NAT.getDefaultValue());
     }
 
     /**
@@ -280,7 +280,7 @@ public final class ConfigBuilder {
     public static ConfigBuilder tunneling(final @Nonnull InetAddress address, final int port, final boolean natEnabled) {
         Preconditions.checkArgument(address.isAnyLocalAddress() || !address.isMulticastAddress(),
                 "Given address is not suitable for tunneling: {}", address.getHostAddress());
-        return new ConfigBuilder(false, address, port).setting(ConfigConstants.NAT, natEnabled);
+        return new ConfigBuilder(false, address, port).setting(CoreConfigs.NAT, natEnabled);
     }
 
     /**

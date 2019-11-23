@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.communication;
 
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.utils.Networker;
@@ -60,8 +60,8 @@ public class ChannelFactoryTest {
     public void testNewDescriptionChannel() throws SocketException {
         final var client = TestHelpers.mockInternalKnxClient(
                 configMock -> {
-                    when(configMock.getValue(eq(ConfigConstants.Description.PORT))).thenReturn(0);
-                    when(configMock.getValue(eq(ConfigConstants.Description.SOCKET_TIMEOUT))).thenReturn(1000L);
+                    when(configMock.getValue(eq(CoreConfigs.Description.PORT))).thenReturn(0);
+                    when(configMock.getValue(eq(CoreConfigs.Description.SOCKET_TIMEOUT))).thenReturn(1000L);
                 },
                 clientMock -> {
                     when(clientMock.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(1, 2, 3, 4), 4321));
@@ -88,8 +88,8 @@ public class ChannelFactoryTest {
     public void testNewControlChannel() throws SocketException {
         final var client = TestHelpers.mockInternalKnxClient(
                 configMock -> {
-                    when(configMock.getValue(eq(ConfigConstants.Description.PORT))).thenReturn(0);
-                    when(configMock.getValue(eq(ConfigConstants.Control.SOCKET_TIMEOUT))).thenReturn(2000L);
+                    when(configMock.getValue(eq(CoreConfigs.Description.PORT))).thenReturn(0);
+                    when(configMock.getValue(eq(CoreConfigs.Control.SOCKET_TIMEOUT))).thenReturn(2000L);
                 },
                 clientMock -> {
                     when(clientMock.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(2, 3, 4, 5), 5432));
@@ -116,8 +116,8 @@ public class ChannelFactoryTest {
     public void testNewDataChannel() throws SocketException {
         final var client = TestHelpers.mockInternalKnxClient(
                 configMock -> {
-                    when(configMock.getValue(eq(ConfigConstants.Description.PORT))).thenReturn(0);
-                    when(configMock.getValue(eq(ConfigConstants.Data.SOCKET_TIMEOUT))).thenReturn(3000L);
+                    when(configMock.getValue(eq(CoreConfigs.Description.PORT))).thenReturn(0);
+                    when(configMock.getValue(eq(CoreConfigs.Data.SOCKET_TIMEOUT))).thenReturn(3000L);
                 },
                 clientMock -> {
                     when(clientMock.getRemoteEndpoint()).thenReturn(new InetSocketAddress(Networker.getByAddress(3, 4, 5, 6), 6543));
@@ -142,8 +142,8 @@ public class ChannelFactoryTest {
     public void testFailure() {
         final var client = TestHelpers.mockInternalKnxClient(
                 configMock -> {
-                    when(configMock.getValue(eq(ConfigConstants.Description.PORT))).thenReturn(0);
-                    when(configMock.getValue(eq(ConfigConstants.Data.SOCKET_TIMEOUT))).thenReturn(4000L);
+                    when(configMock.getValue(eq(CoreConfigs.Description.PORT))).thenReturn(0);
+                    when(configMock.getValue(eq(CoreConfigs.Data.SOCKET_TIMEOUT))).thenReturn(4000L);
                 },
                 clientMock -> {
                     final var socketAddressMock = mock(InetSocketAddress.class);

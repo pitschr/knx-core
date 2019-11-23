@@ -20,7 +20,7 @@ package li.pitschmann.utils;
 
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.body.hpai.HostProtocol;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
@@ -223,14 +223,14 @@ public class NetworkerTest {
 
         // test success
         when(channel.join(any(InetAddress.class), any(NetworkInterface.class))).thenReturn(membershipKey);
-        final var membershipKeys = Networker.joinChannels(channel, ConfigConstants.MULTICAST_ADDRESS);
+        final var membershipKeys = Networker.joinChannels(channel, CoreConfigs.MULTICAST_ADDRESS);
         assertThat(membershipKeys).hasSize(Networker.getNetworkInterfaces().size()); // should have same size
         assertThat(membershipKeys.get(0)).isSameAs(membershipKey);
         assertThatThrownBy(() -> membershipKeys.add(membershipKey)).isInstanceOf(UnsupportedOperationException.class); // should be immutable
 
         // test failure
         when(channel.join(any(InetAddress.class), any(NetworkInterface.class))).thenThrow(new IOException("Test I/O Exception"));
-        assertThatThrownBy(() -> Networker.joinChannels(channel, ConfigConstants.MULTICAST_ADDRESS)).isInstanceOf(KnxCommunicationException.class);
+        assertThatThrownBy(() -> Networker.joinChannels(channel, CoreConfigs.MULTICAST_ADDRESS)).isInstanceOf(KnxCommunicationException.class);
     }
 
     /**

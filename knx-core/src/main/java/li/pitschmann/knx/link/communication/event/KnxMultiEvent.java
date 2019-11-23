@@ -30,15 +30,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Mutable KNX event data containing <strong>one request</strong>
+ * and <strong>multiple response</strong>.
+ *
+ * @param <REQUEST>
+ * @param <RESPONSE>
+ * @author PITSCHR
+ */
 public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> implements KnxEvent<REQUEST, RESPONSE> {
     private RequestEvent<REQUEST> requestEvent;
     private List<ResponseEvent<RESPONSE>> responseEvents = new LinkedList<>();
 
     @Nullable
+    @Override
     public REQUEST getRequest() {
         return requestEvent == null ? null : requestEvent.getRequest();
     }
 
+    @Override
     public void setRequest(final @Nonnull REQUEST request) {
         final var newRequestEvent = new RequestEvent<REQUEST>();
         newRequestEvent.setRequest(request);
@@ -67,10 +77,12 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
         return responseEvent == null ? null : responseEvent.getResponse();
     }
 
+    @Override
     public boolean hasRequest() {
         return requestEvent != null;
     }
 
+    @Override
     public boolean hasResponse() {
         return !responseEvents.isEmpty();
     }

@@ -86,7 +86,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
             buff.rewind();
         }
 
-        final var body = BodyFactory.valueOf(receivedBytes);
+        final var body = BodyFactory.of(receivedBytes);
 
         // verify the channel id
         if (this.getInternalClient().verifyChannelId(body)) {

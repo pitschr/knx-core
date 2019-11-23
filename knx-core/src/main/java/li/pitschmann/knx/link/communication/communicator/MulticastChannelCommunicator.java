@@ -24,7 +24,7 @@ import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.queue.MulticastInboxQueue;
 import li.pitschmann.knx.link.communication.queue.MulticastOutboxQueue;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.utils.Networker;
 
 import javax.annotation.Nonnull;
@@ -53,7 +53,7 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
 
         // join channels, the membership keys will be used for laving the joined
         // multicast groups -> see cleanUp() method.
-        this.membershipKeys = Networker.joinChannels(channel, client.getConfig(ConfigConstants.Multicast.ADDRESS));
+        this.membershipKeys = Networker.joinChannels(channel, client.getConfig(CoreConfigs.Multicast.ADDRESS));
 
         return channel;
     }

@@ -45,12 +45,12 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.create((String) null).build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         final var config1 = ConfigBuilder.create("").build();
         assertThat(config1.isRoutingEnabled()).isFalse();
         assertThat(config1.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
-        assertThat(config1.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config1.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
     }
 
     @Test
@@ -60,13 +60,13 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.create(":").build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         // creates a new one without port -> default KNX port will be used
         final var config1 = ConfigBuilder.create("127.0.1.1").build();
         assertThat(config1.isRoutingEnabled()).isFalse();
         assertThat(config1.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 1));
-        assertThat(config1.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config1.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         // tunneling (with address and port)
         final var config2 = ConfigBuilder.create("127.0.1.2:4710").build();
@@ -78,7 +78,7 @@ public class ConfigBuilderTest {
         final var config3 = ConfigBuilder.create("127.0.1.3:").build();
         assertThat(config3.isRoutingEnabled()).isFalse();
         assertThat(config3.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 1, 3));
-        assertThat(config3.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config3.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         // tunneling (no address, with port)
         final var config4 = ConfigBuilder.create(":4711").build();
@@ -90,7 +90,7 @@ public class ConfigBuilderTest {
         final var config5 = ConfigBuilder.create("224.0.1.4").build();
         assertThat(config5.isRoutingEnabled()).isTrue();
         assertThat(config5.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(224, 0, 1, 4));
-        assertThat(config5.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config5.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         // routing (with port)
         final var config6 = ConfigBuilder.create("224.0.1.5:4712").build();
@@ -106,12 +106,12 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.create(Networker.getByAddress(127, 0, 2, 1)).build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 2, 1));
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         final var config1 = ConfigBuilder.create(Networker.getByAddress(224, 0, 2, 2)).build();
         assertThat(config1.isRoutingEnabled()).isTrue();
         assertThat(config1.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(224, 0, 2, 2));
-        assertThat(config1.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config1.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         // invalid cases
         assertThatThrownBy(() -> ConfigBuilder.create((InetAddress) null)).isInstanceOf(NullPointerException.class);
@@ -145,8 +145,8 @@ public class ConfigBuilderTest {
     public void testRoutingNoArg() {
         final var config0 = ConfigBuilder.routing().build();
         assertThat(config0.isRoutingEnabled()).isTrue();
-        assertThat(config0.getRemoteControlAddress()).isEqualTo(ConfigConstants.MULTICAST_ADDRESS);
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlAddress()).isEqualTo(CoreConfigs.MULTICAST_ADDRESS);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.routing(Networker.getByAddress(224, 0, 4, 1)).build();
         assertThat(config0.isRoutingEnabled()).isTrue();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(224, 0, 4, 1));
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
 
         // invalid cases
         assertThatThrownBy(() -> ConfigBuilder.routing(null))
@@ -190,7 +190,7 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.tunneling().build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
         assertThat(config0.isNatEnabled()).isFalse();
     }
 
@@ -201,7 +201,7 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.tunneling(Networker.getByAddress(127, 0, 6, 1)).build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getByAddress(127, 0, 6, 1));
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
         assertThat(config0.isNatEnabled()).isFalse();
 
         // invalid cases
@@ -236,7 +236,7 @@ public class ConfigBuilderTest {
         final var config0 = ConfigBuilder.tunneling(true).build();
         assertThat(config0.isRoutingEnabled()).isFalse();
         assertThat(config0.getRemoteControlAddress()).isEqualTo(Networker.getAddressUnbound());
-        assertThat(config0.getRemoteControlPort()).isEqualTo(ConfigConstants.KNX_PORT);
+        assertThat(config0.getRemoteControlPort()).isEqualTo(CoreConfigs.KNX_PORT);
         assertThat(config0.isNatEnabled()).isTrue();
     }
 
@@ -300,23 +300,23 @@ public class ConfigBuilderTest {
         final var configBuilder = ConfigBuilder.tunneling();
 
         // add settings
-        configBuilder.setting(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE, 7);
-        configBuilder.setting(ConfigConstants.NAT, true);
-        configBuilder.setting(ConfigConstants.Multicast.ADDRESS, Networker.getByAddress("224.0.0.1"));
-        configBuilder.setting(ConfigConstants.Multicast.TIME_TO_LIVE, null);
+        configBuilder.setting(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE, 7);
+        configBuilder.setting(CoreConfigs.NAT, true);
+        configBuilder.setting(CoreConfigs.Multicast.ADDRESS, Networker.getByAddress("224.0.0.1"));
+        configBuilder.setting(CoreConfigs.Multicast.TIME_TO_LIVE, null);
 
         final var config = configBuilder.build();
-        assertThat(config.getValue(ConfigConstants.Multicast.ADDRESS)).isEqualTo(Networker.getByAddress(224, 0, 0, 1));
-        assertThat(config.getValue(ConfigConstants.Multicast.TIME_TO_LIVE)).isEqualTo(4); // fallback to default value
+        assertThat(config.getValue(CoreConfigs.Multicast.ADDRESS)).isEqualTo(Networker.getByAddress(224, 0, 0, 1));
+        assertThat(config.getValue(CoreConfigs.Multicast.TIME_TO_LIVE)).isEqualTo(4); // fallback to default value
 
         // overwriting setting should be allowed
-        configBuilder.setting(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE, 4);
-        configBuilder.setting(ConfigConstants.NAT, null); // reset to default value
+        configBuilder.setting(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE, 4);
+        configBuilder.setting(CoreConfigs.NAT, null); // reset to default value
         final var configNew = configBuilder.build();
 
         // old and new value should be still present
-        assertThat(config.getValue(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE)).isEqualTo(7);
-        assertThat(configNew.getValue(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE)).isEqualTo(4);
+        assertThat(config.getValue(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE)).isEqualTo(7);
+        assertThat(configNew.getValue(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE)).isEqualTo(4);
 
         assertThat(config.isNatEnabled()).isTrue();
         assertThat(configNew.isNatEnabled()).isFalse();
@@ -325,8 +325,8 @@ public class ConfigBuilderTest {
         assertThatThrownBy(() -> configBuilder.setting(null, null)).isInstanceOf(NullPointerException.class);
 
         // protected cases
-        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.ADDRESS, Networker.getAddressUnbound())).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.Endpoint.PORT, 4711)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting(CoreConfigs.Endpoint.ADDRESS, Networker.getAddressUnbound())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> configBuilder.setting(CoreConfigs.Endpoint.PORT, 4711)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -337,7 +337,7 @@ public class ConfigBuilderTest {
         // 1) verify if it is "enabled" as we set above
         assertThat(configBuilder.build().isNatEnabled()).isTrue();
         // 2) re-set the value of NAT (should be "false" as default value)
-        configBuilder.setting(ConfigConstants.NAT, null);
+        configBuilder.setting(CoreConfigs.NAT, null);
         // 3) verify if it is "disabled"
         assertThat(configBuilder.build().isNatEnabled()).isFalse();
     }
@@ -349,12 +349,12 @@ public class ConfigBuilderTest {
 
         // test with invalid path
         final var invalidPath = Paths.get("path/to/file/doesn't exists.xml");
-        assertThatThrownBy(() -> configBuilder.setting(ConfigConstants.PROJECT_PATH, invalidPath))
+        assertThatThrownBy(() -> configBuilder.setting(CoreConfigs.PROJECT_PATH, invalidPath))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("The value seems not be applicable for config");
 
         // test with valid path
         final var validPath = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
-        assertThat(configBuilder.setting(ConfigConstants.PROJECT_PATH, validPath).build()).isNotNull();
+        assertThat(configBuilder.setting(CoreConfigs.PROJECT_PATH, validPath).build()).isNotNull();
     }
 }

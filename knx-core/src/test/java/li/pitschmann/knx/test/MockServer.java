@@ -26,7 +26,7 @@ import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.communication.BaseKnxClient;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.utils.Closeables;
@@ -477,19 +477,19 @@ public final class MockServer implements Runnable, Closeable {
 
         // provide a different configuration (e.g. timeouts are too long for tests)
         return configBuilder
-                .setting(ConfigConstants.Multicast.ADDRESS, this.getMulticastAddress())
-                .setting(ConfigConstants.Multicast.PORT, 0) // use random local port for multicast testing
-                .setting(ConfigConstants.Multicast.TIME_TO_LIVE, 0) // consider local only (no pass by any router)
-                .setting(ConfigConstants.Plugin.EXECUTOR_POOL_SIZE, 3) // 3 instead of 10
-                .setting(ConfigConstants.Communication.EXECUTOR_POOL_SIZE, 3) // 3 instead of 10
-                .setting(ConfigConstants.Search.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
-                .setting(ConfigConstants.Description.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
-                .setting(ConfigConstants.Connect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
-                .setting(ConfigConstants.Disconnect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
-                .setting(ConfigConstants.ConnectionState.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
-                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 6000L) // 6s instead of 60s
-                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 12000L) // 12s instead of 120s
-                .setting(ConfigConstants.PROJECT_PATH, Paths.get(mockServerAnnotation.projectPath()))
+                .setting(CoreConfigs.Multicast.ADDRESS, this.getMulticastAddress())
+                .setting(CoreConfigs.Multicast.PORT, 0) // use random local port for multicast testing
+                .setting(CoreConfigs.Multicast.TIME_TO_LIVE, 0) // consider local only (no pass by any router)
+                .setting(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE, 3) // 3 instead of 10
+                .setting(CoreConfigs.Communication.EXECUTOR_POOL_SIZE, 3) // 3 instead of 10
+                .setting(CoreConfigs.Search.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(CoreConfigs.Description.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(CoreConfigs.Connect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(CoreConfigs.Disconnect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(CoreConfigs.ConnectionState.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
+                .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, 6000L) // 6s instead of 60s
+                .setting(CoreConfigs.ConnectionState.HEARTBEAT_TIMEOUT, 12000L) // 12s instead of 120s
+                .setting(CoreConfigs.PROJECT_PATH, Paths.get(mockServerAnnotation.projectPath()))
                 ;
     }
 

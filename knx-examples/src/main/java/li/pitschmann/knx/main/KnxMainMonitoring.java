@@ -21,7 +21,7 @@ package li.pitschmann.knx.main;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
-import li.pitschmann.knx.link.config.ConfigConstants;
+import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.knx.plugins.audit.FileAuditPlugin;
 import li.pitschmann.knx.plugins.statistic.FileStatisticFormat;
@@ -110,15 +110,15 @@ public class KnxMainMonitoring extends AbstractKnxMain {
 
         // Create Config
         final var config = parseConfigBuilder(args) //
-                .setting(ConfigConstants.PROJECT_PATH, projectPath)
+                .setting(CoreConfigs.PROJECT_PATH, projectPath)
                 .plugin(FileAuditPlugin.class)
                 .plugin(TTYMonitorPlugin.class)
                 .plugin(FileStatisticPlugin.class)
-                .setting(ConfigConstants.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
-                .setting(ConfigConstants.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
-                .setting(ConfigConstants.Description.PORT, 40001) //
-                .setting(ConfigConstants.Control.PORT, 40002) //
-                .setting(ConfigConstants.Data.PORT, 40003) //
+                .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
+                .setting(CoreConfigs.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
+                .setting(CoreConfigs.Description.PORT, 40001) //
+                .setting(CoreConfigs.Control.PORT, 40002) //
+                .setting(CoreConfigs.Data.PORT, 40003) //
                 .setting(FileStatisticPlugin.FORMAT, FileStatisticFormat.TEXT)
                 .build();
 

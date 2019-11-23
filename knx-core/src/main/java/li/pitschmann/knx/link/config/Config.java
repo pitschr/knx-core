@@ -132,7 +132,7 @@ public final class Config {
     }
 
     public boolean isNatEnabled() {
-        return getValue(ConfigConstants.NAT);
+        return getValue(CoreConfigs.NAT);
     }
 
     /**
@@ -142,7 +142,7 @@ public final class Config {
      */
     @Nonnull
     public Path getProjectPath() {
-        return getValue(ConfigConstants.PROJECT_PATH);
+        return getValue(CoreConfigs.PROJECT_PATH);
     }
 
     /**

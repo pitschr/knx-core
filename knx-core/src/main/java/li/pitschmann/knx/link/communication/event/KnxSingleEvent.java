@@ -27,7 +27,8 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 
 /**
- * Mutable KNX event data containing <strong>one request</strong> and <strong>one response</strong>.
+ * Mutable KNX event data containing <strong>one request</strong>
+ * and <strong>one response</strong>.
  *
  * @param <REQUEST>  instance of {@link RequestBody}
  * @param <RESPONSE> instance of {@link ResponseBody}
@@ -38,10 +39,12 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
     private ResponseEvent<RESPONSE> responseEvent;
 
     @Nullable
+    @Override
     public REQUEST getRequest() {
         return requestEvent == null ? null : requestEvent.getRequest();
     }
 
+    @Override
     public void setRequest(final @Nonnull REQUEST request) {
         final var newRequestEvent = new RequestEvent<REQUEST>();
         newRequestEvent.setRequest(request);
@@ -49,20 +52,24 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
     }
 
     @Nullable
+    @Override
     public RESPONSE getResponse() {
         return responseEvent == null ? null : responseEvent.getResponse();
     }
 
+    @Override
     public void setResponse(final @Nonnull RESPONSE response) {
         final var newEvent = new ResponseEvent<RESPONSE>();
         newEvent.setResponse(response);
         this.responseEvent = newEvent;
     }
 
+    @Override
     public boolean hasRequest() {
         return requestEvent != null;
     }
 
+    @Override
     public boolean hasResponse() {
         return responseEvent != null;
     }
