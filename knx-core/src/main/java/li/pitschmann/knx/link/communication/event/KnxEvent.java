@@ -24,26 +24,66 @@ import li.pitschmann.knx.link.body.ResponseBody;
 import java.time.Instant;
 
 /**
- * Mutable KNX event data containing <strong>one request</strong> and <strong>one response</strong>.
+ * Interface for mutable KNX event data container
  *
  * @param <REQUEST>  instance of {@link RequestBody}
  * @param <RESPONSE> instance of {@link ResponseBody}
  * @author PITSCHR
  */
 public interface KnxEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> {
+    /**
+     * Returns the KNX request event
+     * 
+     * @return request
+     */
     REQUEST getRequest();
 
+    /**
+     * Sets the KNX request event
+     * 
+     * @param request
+     */
     void setRequest(REQUEST request);
 
+    /**
+     * Returns the {@link Instant} time of KNX request event
+     * 
+     * @return instant time for request
+     */
     Instant getRequestTime();
 
+    /**
+     * Returns the KNX response event
+     * 
+     * @return response
+     */
     RESPONSE getResponse();
 
+    /**
+     * Sets the KNX response event
+     * 
+     * @param response
+     */
     void setResponse(RESPONSE response);
 
+    /**
+     * Returns the {@link Instant} time of KNX response event
+     * 
+     * @return instant time for response
+     */
     Instant getResponseTime();
 
+    /**
+     * Returns if KNX request event is present
+     * 
+     * @return {@code true} if present, otherwise {@code false}
+     */
     boolean hasRequest();
 
+    /**
+     * Returns if KNX response event is present
+     *
+     * @return {@code true} if present, otherwise {@code false}
+     */  
     boolean hasResponse();
 }

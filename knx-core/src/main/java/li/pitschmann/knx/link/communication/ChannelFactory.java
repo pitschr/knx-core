@@ -152,24 +152,4 @@ public final class ChannelFactory {
             throw new KnxCommunicationException("Exception occurred during creating datagram channel", e);
         }
     }
-
-//    /**
-//     * Creates a TCP channel for communication
-//     * @param socketAddress
-//     * @param socketTimeout
-//     * @return {@link SocketChannel}
-//     */
-//    private static SocketChannel newSocketChannel(final InetSocketAddress socketAddress, long socketTimeout) {
-//        try {
-//            final var channel = SocketChannel.open();
-//            channel.configureBlocking(false);
-//            final var socket = channel.socket();
-//            socket.bind(new InetSocketAddress(0));
-//            socket.setSoTimeout((int) socketTimeout);
-//            socket.connect(socketAddress);
-//            return channel;
-//        } catch (final IOException e) {
-//            throw new KnxCommunicationException("Exception occurred during creating socket channel", e);
-//        }
-//    }
 }

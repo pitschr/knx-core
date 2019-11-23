@@ -67,7 +67,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     }
 
     @Override
-    public long getNumberOfBodyReceived(Class<? extends Body> bodyClass) {
+    public long getNumberOfBodyReceived(final @Nonnull Class<? extends Body> bodyClass) {
         final var al = this.numberOfBodyReceivedMap.get(bodyClass);
         return al == null ? 0L : al.longValue();
     }
@@ -78,7 +78,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     }
 
     @Override
-    public long getNumberOfBodySent(Class<? extends Body> bodyClass) {
+    public long getNumberOfBodySent(final @Nonnull Class<? extends Body> bodyClass) {
         final var al = this.numberOfBodySentMap.get(bodyClass);
         return al == null ? 0L : al.longValue();
     }
@@ -192,7 +192,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
         }
 
         @Override
-        public long getNumberOfBodySent(Class<? extends Body> bodyClass) {
+        public long getNumberOfBodySent(final @Nonnull Class<? extends Body> bodyClass) {
             return this.numberOfBodySentMap.getOrDefault(bodyClass, 0L);
         }
 

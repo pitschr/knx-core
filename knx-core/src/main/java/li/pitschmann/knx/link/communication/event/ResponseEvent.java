@@ -35,7 +35,6 @@ public class ResponseEvent<T extends ResponseBody> {
     private Instant responseTime;
     private T response;
 
-
     /**
      * Returns the time when last response was set.
      *
