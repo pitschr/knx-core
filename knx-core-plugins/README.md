@@ -42,17 +42,17 @@ some out-of-the-box concrete config value implementations:
 
 | Type     | Class     |
 | ---------| --------- |
-| Boolean  | [BooleanConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/BooleanConfigValue.java) |
-| Double   | [DoubleConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/DoubleConfigValue.java) |
-| Enum<E>  | [EnumConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/EnumConfigValue.java) |
-| Integer  | [IntegerConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/IntegerConfigValue.java) |
-| Long     | [LongConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/LongConfigValue.java) |
-| Path     | [PathConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/PathConfigValue.java) |
-| String   | [StringConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/StringConfigValue.java) |
+| Boolean  | [BooleanConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/BooleanConfigValue.java) |
+| Double   | [DoubleConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/DoubleConfigValue.java) |
+| Enum<E>  | [EnumConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/EnumConfigValue.java) |
+| Integer  | [IntegerConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/IntegerConfigValue.java) |
+| Long     | [LongConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/LongConfigValue.java) |
+| Path     | [PathConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/PathConfigValue.java) |
+| String   | [StringConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/StringConfigValue.java) |
 
 In case you need a special configuration type, you have two options: 
 * Use the `PluginConfigValue` directly
-* Write your own implementation by extending the [PluginConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/PluginConfigValue.java)
+* Write your own implementation by extending the [PluginConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/PluginConfigValue.java)
 
 ## Example: Simple Monitor
 
@@ -64,7 +64,7 @@ As an user we want to print out all signals and all packets (incoming and outgoi
 to console. After 60 seconds the client should be shut down.
 
 ```bash
-Initialized by client: li.pitschmann.knx.link.communication.DefaultKnxClient@4c841c4
+Initialized by client: li.pitschmann.knx.core.communication.DefaultKnxClient@4c841c4
 Outgoing: Search Request (0x08 01 00 00 00 00 0E 57)
 Incoming: Search Response (0x08 01 C0 A8 01 1D 0E 57 36 01 02 00 00 00 00 00 00 00 00 00 ...)
 Outgoing: Description Request (0x08 01 00 00 00 00 00 00)

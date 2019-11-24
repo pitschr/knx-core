@@ -252,7 +252,7 @@
 
             <!--
             Creates a JAR file with all dependencies (one fat JAR)
-            The main class will be: li.pitschmann.knx.main.KnxMainMonitoring
+            The main class will be: li.pitschmann.knx.examples.tty.Main
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -267,7 +267,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>li.pitschmann.knx.main.KnxMainMonitoring</mainClass>
+                                    <mainClass>li.pitschmann.knx.examples.tty.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

@@ -93,7 +93,7 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 
 ### KNX Monitoring
 
-**Class:** [`li.pitschmann.knx.main.KnxMainMonitoring`](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainMonitoring.java)
+**Class:** [`li.pitschmann.knx.examples.tty.Main`](knx-examples/src/main/java/li/pitschmann/knx/examples/tty/Main.java)
 
 **Arguments:**
 * `-t`, `--time` the time in seconds how long the monitoring should run (default: _"infinity"_)
@@ -107,20 +107,20 @@ gracefully and the application will exit.
 
 ```shell
 # Tunneling (auto-discovery)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring -t 3600
+java -cp <file>.jar li.pitschmann.knx.examples.tty.Main -t 3600
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --nat -t 3600
+java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --nat -t 3600
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 -t 3600
+java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --ip 192.168.1.16 -t 3600
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --ip 192.168.1.16 --nat -t 3600
+java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --ip 192.168.1.16 --nat -t 3600
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainMonitoring --routing -t 3600
+java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --routing -t 3600
 ```
 
 ### Send a WRITE request frame to KNX
 
-**Class:** [``li.pitschmann.knx.main.KnxMainWrite``](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainWrite.java)
+**Class:** [``li.pitschmann.knx.examples.write.Main``](knx-examples/src/main/java/li/pitschmann/knx/examples/write/Main.java)
 
 **Arguments:**
 * `-ga`, `--groupAddress` the KNX group address which has a _write_ flag
@@ -134,15 +134,15 @@ Perform a DPT1 - Switch (`1.001`) _write request_ action on KNX group address `1
 
 ```shell
 # Tunneling (auto-discovery)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite -ga 1/2/50 -dpt 1.001 -v on off
+java -cp <file>.jar li.pitschmann.knx.examples.write.Main -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --nat -ga 1/2/50 -dpt 1.001 -v on off
+java -cp <file>.jar li.pitschmann.knx.examples.write.Main --nat -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -v on off
+java -cp <file>.jar li.pitschmann.knx.examples.write.Main --ip 192.168.1.16 -ga 1/2/50 -dpt 1.001 -v on off
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --ip 192.168.1.16 --nat -ga 1/2/50 -dpt 1.001 -v on off
+java -cp <file>.jar li.pitschmann.knx.examples.write.Main --ip 192.168.1.16 --nat -ga 1/2/50 -dpt 1.001 -v on off
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainWrite --routing -ga 1/2/50 -dpt 1.001 -v on off
+java -cp <file>.jar li.pitschmann.knx.examples.write.Main --routing -ga 1/2/50 -dpt 1.001 -v on off
 ```
 
 For sequence of commands you may use e.g. `(-v|--value) on off on off` to switch on/off the lamp twice
@@ -150,7 +150,7 @@ times.
  
 ### Send a READ request frame to KNX
 
-**Class:** [`li.pitschmann.knx.main.KnxMainRead`](knx-examples/src/main/java/li/pitschmann/knx/main/KnxMainRead.java)
+**Class:** [`li.pitschmann.knx.examples.read.Main`](knx-examples/src/main/java/li/pitschmann/knx/examples/read/Main.java)
 
 **Arguments:**
 * `-ga`, `--groupAddress` the KNX group address which has a _read_ flag
@@ -163,15 +163,15 @@ between read requests is hardcoded with one second.
 
 ```shell
 # Tunneling (auto-discovery)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.examples.read.Main -ga 1/2/113 -n 10
 # Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --nat -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.examples.read.Main --nat -ga 1/2/113 -n 10
 # Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --ip 192.168.1.16 -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.examples.read.Main --ip 192.168.1.16 -ga 1/2/113 -n 10
 # Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --ip 192.168.1.16 --nat -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.examples.read.Main --ip 192.168.1.16 --nat -ga 1/2/113 -n 10
 # Routing
-java -cp <file>.jar li.pitschmann.knx.main.KnxMainRead --routing -ga 1/2/113 -n 10
+java -cp <file>.jar li.pitschmann.knx.examples.read.Main --routing -ga 1/2/113 -n 10
 ```
 
 ## Programming
@@ -197,8 +197,8 @@ Let's start with an easy sample: You want to switch `on` a lamp. The KNX actuato
 on group address `1/2/110` which is configured for switching on/off a lamp. 
 
 ```java
-public final class ExampleLampOn {
-    public static void main(final String[] args) {
+public final class LampOnExample {
+   public static void main(final String[] args) {
         // this is the group address where the KNX actuator listens to switch on/off a lamp
         final var groupAddress = GroupAddress.of(1, 2, 110);
 
@@ -206,7 +206,7 @@ public final class ExampleLampOn {
         try (final var client = DefaultKnxClient.createStarted()) {
             // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
             client.writeRequest(groupAddress, DPT1.SWITCH.toValue(true));  // or DPT1.SWITCH.toValue((byte)0x01)
-                                                                           // or DPT1.SWITCH.toValue("on")
+            // or DPT1.SWITCH.toValue("on")
         }
 
         // auto-closed and disconnected by KNX client
@@ -226,7 +226,7 @@ the group address `1/2/110` is responsible for switching on/off the lamp (=write
 `1/2/113` is used for status feedback of the lamp (=read). 
 
 ```java
-public final class ExampleLampInverse {
+public final class LampInverseExample {
     public static void main(final String[] args) {
         // this is the group address where the KNX actuator returns the status of lamp
         final var readGroupAddress = GroupAddress.of(1, 2, 113);
