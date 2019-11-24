@@ -1,4 +1,4 @@
-package example.monitor_plugin;
+package examples.monitor_plugin;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;

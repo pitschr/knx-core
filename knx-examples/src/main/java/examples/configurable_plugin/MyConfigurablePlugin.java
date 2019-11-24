@@ -1,4 +1,4 @@
-package example.configurable_plugin;
+package examples.configurable_plugin;
 
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.plugin.Plugin;
