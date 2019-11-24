@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.config.IntegerConfigValue;
 import li.pitschmann.knx.parser.KnxprojParser;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.core.HttpConstants;

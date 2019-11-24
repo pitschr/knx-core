@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.body.RoutingIndicationBody;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

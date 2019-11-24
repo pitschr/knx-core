@@ -20,8 +20,8 @@ package li.pitschmann.knx.link.body.address;
 
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

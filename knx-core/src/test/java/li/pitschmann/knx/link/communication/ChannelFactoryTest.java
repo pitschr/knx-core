@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.test.TestHelpers;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

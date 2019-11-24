@@ -2,7 +2,7 @@ package examples.monitor_plugin;
 
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 
 /**
  * Demo Application for simple monitor plugin

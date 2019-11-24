@@ -20,7 +20,7 @@ package li.pitschmann.knx.link.body.dib;
 
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

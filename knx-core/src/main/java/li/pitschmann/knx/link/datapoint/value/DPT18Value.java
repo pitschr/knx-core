@@ -19,9 +19,9 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT18;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Preconditions;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Preconditions;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

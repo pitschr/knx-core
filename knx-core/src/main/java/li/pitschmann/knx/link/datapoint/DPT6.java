@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.datapoint;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.link.datapoint.value.DPT6Value;
 import li.pitschmann.knx.link.datapoint.value.DPT6Value.StatusMode.Mode;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 
 /**
  * Data Point Type 6 for 'Relative Signed Value' (8 Bits)

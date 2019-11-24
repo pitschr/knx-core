@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.config;
 
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

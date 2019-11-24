@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.datapoint;
 import li.pitschmann.knx.link.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.link.datapoint.value.DPT19Value;
 import li.pitschmann.knx.link.datapoint.value.DPT19Value.Flags;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 
 import javax.annotation.Nullable;
 import java.time.DayOfWeek;

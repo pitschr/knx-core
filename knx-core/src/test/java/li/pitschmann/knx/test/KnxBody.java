@@ -33,7 +33,7 @@ import li.pitschmann.knx.link.body.SearchRequestBody;
 import li.pitschmann.knx.link.body.SearchResponseBody;
 import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 
 /**
  * Some KNX bodies and hex-strings for testing purposes only

@@ -20,8 +20,8 @@ package li.pitschmann.knx.link.body.cemi;
 
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 

@@ -20,8 +20,8 @@ package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT16;
 import li.pitschmann.knx.link.exceptions.KnxException;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.CharacterCodingException;

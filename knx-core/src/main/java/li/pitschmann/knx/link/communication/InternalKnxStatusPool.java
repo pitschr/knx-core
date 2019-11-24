@@ -27,10 +27,10 @@ import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
-import li.pitschmann.utils.Maps;
-import li.pitschmann.utils.Preconditions;
-import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Maps;
+import li.pitschmann.knx.utils.Preconditions;
+import li.pitschmann.knx.utils.Sleeper;
+import li.pitschmann.knx.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

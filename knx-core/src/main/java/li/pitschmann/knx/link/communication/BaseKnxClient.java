@@ -32,7 +32,7 @@ import li.pitschmann.knx.link.body.cemi.MessageCode;
 import li.pitschmann.knx.link.config.Config;
 import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.datapoint.value.DataPointValue;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

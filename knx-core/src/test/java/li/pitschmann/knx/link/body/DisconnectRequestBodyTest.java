@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

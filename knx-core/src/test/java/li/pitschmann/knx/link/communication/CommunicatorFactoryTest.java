@@ -30,7 +30,7 @@ import li.pitschmann.knx.link.communication.task.TunnelingAckTask;
 import li.pitschmann.knx.link.communication.task.TunnelingRequestTask;
 import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.test.TestHelpers;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -155,7 +155,8 @@ public class CommunicatorFactoryTest {
                     when(configMock.getValue(eq(CoreConfigs.Multicast.PORT))).thenReturn(0);
                     when(configMock.getValue(eq(CoreConfigs.Multicast.ADDRESS))).thenReturn(Networker.getByAddress(224, 0, 1, 0));
                 },
-                clientMock -> {}
+                clientMock -> {
+                }
         );
     }
 

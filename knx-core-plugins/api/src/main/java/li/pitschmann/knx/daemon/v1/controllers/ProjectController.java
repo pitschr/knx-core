@@ -4,7 +4,7 @@ import li.pitschmann.knx.daemon.v1.json.ProjectStructureRequest;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupAddressStyle;
 import li.pitschmann.knx.parser.XmlGroupRange;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;

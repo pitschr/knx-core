@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.test;
 
-import li.pitschmann.utils.Closeables;
-import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.Stopwatch;
+import li.pitschmann.knx.utils.Closeables;
+import li.pitschmann.knx.utils.Sleeper;
+import li.pitschmann.knx.utils.Stopwatch;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

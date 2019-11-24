@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.utils;
+package li.pitschmann.knx.utils;
 
 import li.pitschmann.knx.test.TestHelpers;
-import li.pitschmann.utils.Bytes.FillDirection;
+import li.pitschmann.knx.utils.Bytes.FillDirection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +56,7 @@ public class BytesTest {
     }
 
     /**
-     * Test {@link Bytes#fillByteArray(byte[], byte[], li.pitschmann.utils.Bytes.FillDirection)}
+     * Test {@link Bytes#fillByteArray(byte[], byte[], li.pitschmann.knx.utils.Bytes.FillDirection)}
      */
     @Test
     public void fillByteArray() {

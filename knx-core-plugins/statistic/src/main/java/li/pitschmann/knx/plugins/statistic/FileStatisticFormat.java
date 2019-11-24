@@ -1,11 +1,6 @@
 package li.pitschmann.knx.plugins.statistic;
 
-import li.pitschmann.utils.Json;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.function.Function;
 
 /**
  * Format for {@link FileStatisticPlugin}

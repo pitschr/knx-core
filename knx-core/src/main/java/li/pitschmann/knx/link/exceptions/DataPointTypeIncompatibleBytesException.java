@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.exceptions;
 
 import li.pitschmann.knx.link.datapoint.DataPointType;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

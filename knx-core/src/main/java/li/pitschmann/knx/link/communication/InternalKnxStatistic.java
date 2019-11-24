@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.communication;
 
 import li.pitschmann.knx.link.body.Body;
-import li.pitschmann.utils.Maps;
+import li.pitschmann.knx.utils.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

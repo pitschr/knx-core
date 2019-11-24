@@ -31,7 +31,7 @@ import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlGroupRange;
 import li.pitschmann.knx.parser.XmlProject;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Strings;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;

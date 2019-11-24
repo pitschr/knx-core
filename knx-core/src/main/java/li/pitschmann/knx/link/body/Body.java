@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.body;
 import li.pitschmann.knx.link.MultiRawDataAware;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 
 import javax.annotation.Nonnull;
 

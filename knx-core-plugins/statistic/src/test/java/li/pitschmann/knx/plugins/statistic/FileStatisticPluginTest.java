@@ -32,7 +32,7 @@ import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.communication.KnxStatistic;
 import li.pitschmann.knx.link.config.Config;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

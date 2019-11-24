@@ -21,7 +21,7 @@ package li.pitschmann.knx.parser;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

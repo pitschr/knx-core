@@ -22,7 +22,7 @@ import li.pitschmann.knx.link.datapoint.value.DPT19Value;
 import li.pitschmann.knx.link.datapoint.value.DPT19Value.Flags;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

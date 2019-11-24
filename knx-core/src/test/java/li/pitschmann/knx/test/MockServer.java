@@ -29,11 +29,11 @@ import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.knx.link.config.CoreConfigs;
 import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.parser.KnxprojParser;
-import li.pitschmann.utils.Closeables;
-import li.pitschmann.utils.Executors;
-import li.pitschmann.utils.Networker;
-import li.pitschmann.utils.Preconditions;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Closeables;
+import li.pitschmann.knx.utils.Executors;
+import li.pitschmann.knx.utils.Networker;
+import li.pitschmann.knx.utils.Preconditions;
+import li.pitschmann.knx.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

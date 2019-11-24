@@ -20,7 +20,7 @@ package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT19;
 import li.pitschmann.knx.link.datapoint.value.DPT19Value.Flags;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;

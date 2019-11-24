@@ -20,8 +20,8 @@ package li.pitschmann.knx.link.body.cemi;
 
 import li.pitschmann.knx.link.KnxBytesEnum;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

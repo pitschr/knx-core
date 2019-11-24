@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.KnxAddress;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 
 import java.lang.reflect.Type;
 

@@ -19,8 +19,8 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT21;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Preconditions;
 
 import javax.annotation.Nonnull;
 

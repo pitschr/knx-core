@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.body.dib;
 
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

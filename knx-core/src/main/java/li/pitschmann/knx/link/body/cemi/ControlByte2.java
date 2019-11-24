@@ -23,8 +23,8 @@ import li.pitschmann.knx.link.body.address.AddressType;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 

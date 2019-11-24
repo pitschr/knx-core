@@ -20,9 +20,9 @@ package li.pitschmann.knx.link.body.dib;
 
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Bytes.FillDirection;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes.FillDirection;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

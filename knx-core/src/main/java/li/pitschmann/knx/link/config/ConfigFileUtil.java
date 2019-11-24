@@ -20,8 +20,8 @@ package li.pitschmann.knx.link.config;
 
 import li.pitschmann.knx.link.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.link.plugin.Plugin;
-import li.pitschmann.utils.Maps;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Maps;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

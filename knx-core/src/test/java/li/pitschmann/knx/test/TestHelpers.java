@@ -122,11 +122,16 @@ public final class TestHelpers {
 
     /**
      * Returns prepared {@link InternalKnxClient} with no customization.
+     *
      * @return
      */
     @Nonnull
     public static InternalKnxClient mockInternalKnxClient() {
-        return mockInternalKnxClient(config -> {}, client -> {});
+        return mockInternalKnxClient(
+                config -> {
+                },
+                client -> {
+                });
     }
 
     /**
@@ -156,6 +161,7 @@ public final class TestHelpers {
 
     /**
      * Returns prepared {@link InternalKnxStatusPool}
+     *
      * @return
      */
     private static InternalKnxStatusPool mockInternalStatusPool() {
@@ -164,6 +170,7 @@ public final class TestHelpers {
 
     /**
      * Returns prepared {@link InternalKnxEventPool}
+     *
      * @return
      */
     private static InternalKnxEventPool mockInternalEventPool() {

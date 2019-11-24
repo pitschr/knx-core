@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import li.pitschmann.knx.link.datapoint.DataPointType;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 
 import java.lang.reflect.Type;
 

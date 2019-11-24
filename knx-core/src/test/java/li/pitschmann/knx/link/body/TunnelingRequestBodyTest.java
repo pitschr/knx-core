@@ -34,8 +34,8 @@ import li.pitschmann.knx.link.datapoint.DPT7;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Bytes.FillDirection;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes.FillDirection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

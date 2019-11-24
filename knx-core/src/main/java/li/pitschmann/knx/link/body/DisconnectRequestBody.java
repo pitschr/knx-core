@@ -24,9 +24,9 @@ import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

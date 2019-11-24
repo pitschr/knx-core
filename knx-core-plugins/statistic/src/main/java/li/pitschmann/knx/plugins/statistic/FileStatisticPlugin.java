@@ -19,9 +19,9 @@ import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.config.EnumConfigValue;
 import li.pitschmann.knx.link.plugin.config.LongConfigValue;
 import li.pitschmann.knx.link.plugin.config.PathConfigValue;
-import li.pitschmann.utils.Closeables;
-import li.pitschmann.utils.Executors;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Closeables;
+import li.pitschmann.knx.utils.Executors;
+import li.pitschmann.knx.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

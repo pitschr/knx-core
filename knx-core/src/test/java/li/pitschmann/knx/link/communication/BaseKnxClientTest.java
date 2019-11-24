@@ -33,7 +33,7 @@ import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
 import li.pitschmann.knx.test.TestHelpers;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

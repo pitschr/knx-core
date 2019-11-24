@@ -21,8 +21,8 @@ package li.pitschmann.knx.link.body.dib;
 import li.pitschmann.knx.link.body.address.IndividualAddress;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

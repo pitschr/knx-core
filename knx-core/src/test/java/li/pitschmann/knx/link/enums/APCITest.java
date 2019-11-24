@@ -20,7 +20,7 @@ package li.pitschmann.knx.link.enums;
 
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

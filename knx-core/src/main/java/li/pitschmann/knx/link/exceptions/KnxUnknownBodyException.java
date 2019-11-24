@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link.exceptions;
 
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 
 import javax.annotation.Nullable;
 

@@ -20,8 +20,8 @@ package li.pitschmann.knx.main;
 
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Sleeper;
 
 /**
  * Demo class how to send a read request to a KNX group address.

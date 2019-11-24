@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.datapoint.value.DPT6Value.StatusMode;
 import li.pitschmann.knx.link.datapoint.value.DPT6Value.StatusMode.Mode;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

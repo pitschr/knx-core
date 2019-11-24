@@ -21,8 +21,8 @@ package li.pitschmann.knx.link.communication.queue;
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.header.Header;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

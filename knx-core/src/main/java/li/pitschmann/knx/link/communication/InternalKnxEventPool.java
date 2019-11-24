@@ -35,7 +35,7 @@ import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.event.KnxEvent;
 import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
 import li.pitschmann.knx.link.communication.event.KnxSingleEvent;
-import li.pitschmann.utils.Maps;
+import li.pitschmann.knx.utils.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

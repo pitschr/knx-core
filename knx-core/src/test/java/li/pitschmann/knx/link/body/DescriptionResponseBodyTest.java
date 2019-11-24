@@ -27,8 +27,8 @@ import li.pitschmann.knx.link.body.dib.SupportedDeviceFamiliesDIB;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Bytes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

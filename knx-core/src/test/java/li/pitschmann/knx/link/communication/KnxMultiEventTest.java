@@ -22,7 +22,7 @@ import li.pitschmann.knx.link.body.TunnelingAckBody;
 import li.pitschmann.knx.link.body.TunnelingRequestBody;
 import li.pitschmann.knx.link.communication.event.KnxMultiEvent;
 import li.pitschmann.knx.test.KnxBody;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

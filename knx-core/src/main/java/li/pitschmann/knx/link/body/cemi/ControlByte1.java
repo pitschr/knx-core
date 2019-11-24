@@ -20,7 +20,7 @@ package li.pitschmann.knx.link.body.cemi;
 
 import li.pitschmann.knx.link.AbstractSingleRawData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 

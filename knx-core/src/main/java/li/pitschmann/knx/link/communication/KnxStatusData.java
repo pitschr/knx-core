@@ -21,8 +21,8 @@ package li.pitschmann.knx.link.communication;
 import li.pitschmann.knx.link.body.address.KnxAddress;
 import li.pitschmann.knx.link.body.cemi.APCI;
 import li.pitschmann.knx.link.body.cemi.CEMI;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

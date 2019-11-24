@@ -22,8 +22,8 @@ import li.pitschmann.knx.link.datapoint.value.DPT16Value;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleSyntaxException;
 import li.pitschmann.knx.link.exceptions.KnxException;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Bytes.FillDirection;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes.FillDirection;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

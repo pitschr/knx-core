@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.test;
 
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

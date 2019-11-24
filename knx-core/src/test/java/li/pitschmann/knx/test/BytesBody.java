@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.exceptions.KnxException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 

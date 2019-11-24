@@ -26,7 +26,7 @@ import li.pitschmann.knx.test.action.WaitDelayMockAction;
 import li.pitschmann.knx.test.action.WaitServiceTypeMockAction;
 import li.pitschmann.knx.test.strategy.impl.DefaultDisconnectStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultTunnelingStrategy;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

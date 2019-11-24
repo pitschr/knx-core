@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.body.hpai.HostProtocol;
 import li.pitschmann.knx.link.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 import org.junit.jupiter.api.Test;
 
 import java.net.DatagramSocket;

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.test.action;
 
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 
 /**
  * A request mock action defining that KNX Mock Server should wait for {@code N} milliseconds (delay)

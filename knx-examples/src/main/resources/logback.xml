@@ -27,7 +27,7 @@
     -->
     <logger name="li.pitschmann.knx.main" level="DEBUG"/>
     <!--
-    <log name="li.pitschmann.utils" level="WARN" />
+    <log name="li.pitschmann.knx.utils" level="WARN" />
     <log name="li.pitschmann.knx.link" level="TRACE" />
     <log name="li.pitschmann.knx.link.KnxMain" level="DEBUG" />
     <log name="li.pitschmann.knx.link.communication.task" level="TRACE" />

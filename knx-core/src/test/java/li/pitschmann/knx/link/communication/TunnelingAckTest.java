@@ -28,7 +28,7 @@ import li.pitschmann.knx.link.header.ServiceType;
 import li.pitschmann.knx.test.KnxBody;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.MockServerTest;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -33,49 +33,49 @@ import java.time.Instant;
 public interface KnxEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> {
     /**
      * Returns the KNX request event
-     * 
+     *
      * @return request
      */
     REQUEST getRequest();
 
     /**
      * Sets the KNX request event
-     * 
+     *
      * @param request
      */
     void setRequest(REQUEST request);
 
     /**
      * Returns the {@link Instant} time of KNX request event
-     * 
+     *
      * @return instant time for request
      */
     Instant getRequestTime();
 
     /**
      * Returns the KNX response event
-     * 
+     *
      * @return response
      */
     RESPONSE getResponse();
 
     /**
      * Sets the KNX response event
-     * 
+     *
      * @param response
      */
     void setResponse(RESPONSE response);
 
     /**
      * Returns the {@link Instant} time of KNX response event
-     * 
+     *
      * @return instant time for response
      */
     Instant getResponseTime();
 
     /**
      * Returns if KNX request event is present
-     * 
+     *
      * @return {@code true} if present, otherwise {@code false}
      */
     boolean hasRequest();
@@ -84,6 +84,6 @@ public interface KnxEvent<REQUEST extends RequestBody, RESPONSE extends Response
      * Returns if KNX response event is present
      *
      * @return {@code true} if present, otherwise {@code false}
-     */  
+     */
     boolean hasResponse();
 }

@@ -2,7 +2,7 @@ package li.pitschmann.knx.daemon.v1.controllers;
 
 import li.pitschmann.knx.daemon.v1.json.WriteRequest;
 import li.pitschmann.knx.daemon.v1.json.WriteResponse;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;

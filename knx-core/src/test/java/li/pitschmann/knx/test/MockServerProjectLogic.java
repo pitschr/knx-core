@@ -33,7 +33,7 @@ import li.pitschmann.knx.link.body.cemi.TPCI;
 import li.pitschmann.knx.link.communication.KnxStatusData;
 import li.pitschmann.knx.parser.XmlProject;
 import li.pitschmann.knx.test.strategy.impl.DefaultTunnelingStrategy;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

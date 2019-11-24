@@ -23,9 +23,9 @@ import li.pitschmann.knx.link.datapoint.DPT23;
 import li.pitschmann.knx.link.datapoint.DPTEnum;
 import li.pitschmann.knx.link.datapoint.DataPointTypeEnum;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Preconditions;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Preconditions;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

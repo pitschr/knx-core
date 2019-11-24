@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Strings;
 
 /**
  * XML DTO holding KNX Group Address data which were taken from '*.knxproj' file

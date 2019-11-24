@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.utils;
+package li.pitschmann.knx.utils;
 
 import li.pitschmann.knx.link.body.hpai.HPAI;
 import li.pitschmann.knx.link.exceptions.KnxCommunicationException;

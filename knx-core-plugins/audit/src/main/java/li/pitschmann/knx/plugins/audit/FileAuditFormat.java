@@ -1,6 +1,6 @@
 package li.pitschmann.knx.plugins.audit;
 
-import li.pitschmann.utils.Json;
+import li.pitschmann.knx.utils.Json;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

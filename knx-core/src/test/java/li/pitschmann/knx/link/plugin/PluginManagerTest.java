@@ -232,7 +232,8 @@ public final class PluginManagerTest {
      */
     private PluginManager newPluginManager() {
         final var knxClientMock = TestHelpers.mockKnxClient(
-                config -> {},
+                config -> {
+                },
                 client -> when(client.isRunning()).thenReturn(true),
                 BaseKnxClient.class);
         final var configMock = knxClientMock.getConfig();
@@ -250,14 +251,18 @@ public final class PluginManagerTest {
      */
     @SafeVarargs
     private KnxClient newKnxClientMockWithPlugins(Class<? extends Plugin>... plugins) {
-        @SuppressWarnings("unchecked")
-        final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
+        @SuppressWarnings("unchecked") final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
 
         final var mockConfig = TestHelpers.mockConfig(
                 config -> when(config.getPlugins()).thenReturn(castedList)
         );
 
-        final var knxClientMock = TestHelpers.mockKnxClient(/*dummy*/ x -> {}, y -> {}, BaseKnxClient.class);
+        final var knxClientMock = TestHelpers.mockKnxClient(/*dummy*/
+                x -> {
+                },
+                y -> {
+                },
+                BaseKnxClient.class);
         when(knxClientMock.getConfig()).thenReturn(mockConfig);
         return knxClientMock;
     }

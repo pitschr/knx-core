@@ -20,9 +20,9 @@ import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.parser.XmlGroupAddress;
 import li.pitschmann.knx.parser.XmlProject;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Sleeper;
+import li.pitschmann.knx.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DataPointType;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 
 /**
  * Interface for Data Point Value implementations

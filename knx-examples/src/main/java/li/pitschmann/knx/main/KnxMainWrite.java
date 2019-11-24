@@ -21,7 +21,7 @@ package li.pitschmann.knx.main;
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.datapoint.DataPointTypeRegistry;
-import li.pitschmann.utils.Sleeper;
+import li.pitschmann.knx.utils.Sleeper;
 
 import java.util.Arrays;
 

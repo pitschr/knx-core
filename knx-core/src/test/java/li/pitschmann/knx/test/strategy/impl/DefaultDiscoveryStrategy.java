@@ -27,7 +27,7 @@ import li.pitschmann.knx.test.MockRequest;
 import li.pitschmann.knx.test.MockResponse;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.strategy.DiscoveryStrategy;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 
 /**
  * Default implementation for {@link DiscoveryStrategy}

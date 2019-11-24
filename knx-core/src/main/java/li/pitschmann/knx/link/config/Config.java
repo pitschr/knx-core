@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.config;
 import li.pitschmann.knx.link.plugin.Plugin;
 import li.pitschmann.knx.parser.KnxprojParser;
 import li.pitschmann.knx.parser.XmlProject;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

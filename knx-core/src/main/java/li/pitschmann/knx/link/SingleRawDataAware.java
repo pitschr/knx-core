@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.link;
 
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 
 /**
  * Raw Data Aware interface. Classes which implements this interface are aware of the raw data in single byte format.

@@ -22,7 +22,7 @@ import li.pitschmann.knx.link.datapoint.DPT3;
 import li.pitschmann.knx.link.datapoint.value.DPT3Value.StepInterval;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

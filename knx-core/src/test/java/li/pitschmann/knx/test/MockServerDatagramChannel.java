@@ -28,8 +28,8 @@ import li.pitschmann.knx.link.body.DescriptionRequestBody;
 import li.pitschmann.knx.link.body.MulticastChannelRelated;
 import li.pitschmann.knx.link.communication.ChannelFactory;
 import li.pitschmann.knx.link.header.Header;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Closeables;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

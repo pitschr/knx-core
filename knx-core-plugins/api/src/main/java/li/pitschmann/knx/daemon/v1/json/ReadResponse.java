@@ -2,8 +2,8 @@ package li.pitschmann.knx.daemon.v1.json;
 
 import li.pitschmann.knx.link.body.address.GroupAddress;
 import li.pitschmann.knx.link.datapoint.DataPointType;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Strings;
 
 /**
  * JSON read response

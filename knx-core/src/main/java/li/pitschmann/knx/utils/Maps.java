@@ -1,4 +1,4 @@
-package li.pitschmann.utils;
+package li.pitschmann.knx.utils;
 
 import java.util.HashMap;
 

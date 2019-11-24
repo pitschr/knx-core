@@ -21,9 +21,9 @@ package li.pitschmann.knx.link.body.dib;
 import li.pitschmann.knx.link.AbstractMultiRawData;
 import li.pitschmann.knx.link.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.link.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.utils.ByteFormatter;
-import li.pitschmann.utils.Bytes;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.ByteFormatter;
+import li.pitschmann.knx.utils.Bytes;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 

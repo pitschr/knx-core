@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.body;
 import li.pitschmann.knx.link.exceptions.KnxUnknownBodyException;
 import li.pitschmann.knx.link.header.Header;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

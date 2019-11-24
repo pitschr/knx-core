@@ -25,8 +25,8 @@ import li.pitschmann.knx.link.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.link.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxException;
-import li.pitschmann.utils.Maps;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Maps;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

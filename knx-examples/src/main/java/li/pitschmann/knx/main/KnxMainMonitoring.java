@@ -26,8 +26,8 @@ import li.pitschmann.knx.link.plugin.monitor.TTYMonitorPlugin;
 import li.pitschmann.knx.plugins.audit.FileAuditPlugin;
 import li.pitschmann.knx.plugins.statistic.FileStatisticFormat;
 import li.pitschmann.knx.plugins.statistic.FileStatisticPlugin;
-import li.pitschmann.utils.Sleeper;
-import li.pitschmann.utils.Stopwatch;
+import li.pitschmann.knx.utils.Sleeper;
+import li.pitschmann.knx.utils.Stopwatch;
 
 import java.nio.file.Paths;
 import java.util.Objects;

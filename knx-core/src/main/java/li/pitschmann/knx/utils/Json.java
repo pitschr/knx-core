@@ -1,4 +1,4 @@
-package li.pitschmann.utils;
+package li.pitschmann.knx.utils;
 
 import javax.annotation.Nullable;
 

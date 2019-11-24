@@ -21,7 +21,7 @@ package li.pitschmann.knx.link.datapoint;
 import li.pitschmann.knx.link.datapoint.value.DPT15Value;
 import li.pitschmann.knx.link.datapoint.value.DPT15Value.Flags;
 import li.pitschmann.knx.link.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

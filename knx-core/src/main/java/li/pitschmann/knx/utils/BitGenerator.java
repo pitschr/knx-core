@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.utils;
+package li.pitschmann.knx.utils;
 
 import javax.annotation.Nonnull;
 

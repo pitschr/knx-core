@@ -25,7 +25,7 @@ import li.pitschmann.knx.link.communication.InternalKnxClient;
 import li.pitschmann.knx.link.communication.queue.MulticastInboxQueue;
 import li.pitschmann.knx.link.communication.queue.MulticastOutboxQueue;
 import li.pitschmann.knx.link.config.CoreConfigs;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

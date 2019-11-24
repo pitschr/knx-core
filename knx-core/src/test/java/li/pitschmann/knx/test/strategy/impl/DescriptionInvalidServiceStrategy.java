@@ -22,7 +22,7 @@ import li.pitschmann.knx.test.MockRequest;
 import li.pitschmann.knx.test.MockResponse;
 import li.pitschmann.knx.test.MockServer;
 import li.pitschmann.knx.test.strategy.DescriptionStrategy;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 
 /**
  * Unsupported Device Families (0xFF) for {@link DescriptionStrategy}

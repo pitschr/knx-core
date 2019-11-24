@@ -23,7 +23,7 @@ import li.pitschmann.knx.link.plugin.ObserverPlugin;
 import li.pitschmann.knx.test.data.TestExtensionPlugin;
 import li.pitschmann.knx.test.data.TestObserverPlugin;
 import li.pitschmann.knx.test.data.TestPlugin;
-import li.pitschmann.utils.Networker;
+import li.pitschmann.knx.utils.Networker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

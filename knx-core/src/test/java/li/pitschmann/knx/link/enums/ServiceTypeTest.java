@@ -22,7 +22,7 @@ import li.pitschmann.knx.link.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.link.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.link.exceptions.KnxServiceTypeHasNoResponseIdentifier;
 import li.pitschmann.knx.link.header.ServiceType;
-import li.pitschmann.utils.Bytes;
+import li.pitschmann.knx.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

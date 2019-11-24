@@ -3,7 +3,7 @@ package li.pitschmann.knx.daemon.v1.controllers;
 import com.google.inject.Inject;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.parser.XmlProject;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.parser;
 
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Strings;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;

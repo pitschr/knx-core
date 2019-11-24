@@ -19,10 +19,10 @@
 package li.pitschmann.knx.link.config;
 
 import li.pitschmann.knx.link.plugin.Plugin;
-import li.pitschmann.utils.Maps;
-import li.pitschmann.utils.Networker;
-import li.pitschmann.utils.Preconditions;
-import li.pitschmann.utils.Strings;
+import li.pitschmann.knx.utils.Maps;
+import li.pitschmann.knx.utils.Networker;
+import li.pitschmann.knx.utils.Preconditions;
+import li.pitschmann.knx.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -27,7 +27,7 @@ import li.pitschmann.knx.test.action.MockAction;
 import li.pitschmann.knx.test.strategy.IgnoreStrategy;
 import li.pitschmann.knx.test.strategy.ResponseStrategy;
 import li.pitschmann.knx.test.strategy.impl.DefaultDisconnectStrategy;
-import li.pitschmann.utils.Preconditions;
+import li.pitschmann.knx.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

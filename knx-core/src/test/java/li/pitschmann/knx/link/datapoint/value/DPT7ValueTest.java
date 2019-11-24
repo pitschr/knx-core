@@ -19,7 +19,7 @@
 package li.pitschmann.knx.link.datapoint.value;
 
 import li.pitschmann.knx.link.datapoint.DPT7;
-import li.pitschmann.utils.ByteFormatter;
+import li.pitschmann.knx.utils.ByteFormatter;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
