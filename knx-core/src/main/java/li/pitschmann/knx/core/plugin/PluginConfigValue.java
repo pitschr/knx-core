@@ -15,10 +15,9 @@ import java.util.function.Supplier;
  */
 public class PluginConfigValue<T> extends ConfigValue<T> {
     /**
-     * Key is the qualified name of
+     * Key is the name of {@code "plugin.config.<pluginName>.<configName>"}
+     * (in lower-case, to be done in parent class)
      */
-    // key = fully qualified name of "plugin.config.<pluginName>.<configName>"
-    // (in lower-case, to be done in parent class)
     private final static String KEY_PATTERN = "plugin.config.%s.%s";
     private final String key;
 
