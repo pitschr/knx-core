@@ -1,9 +1,11 @@
-package example.myplugin2;
+package example.configurable_plugin;
 
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigBuilder;
-import li.pitschmann.utils.Sleeper;
 
+/**
+ * Demo Application for configurable plugin
+ */
 public class MainClass {
 
     public static void main(final String[] args) {
@@ -13,17 +15,15 @@ public class MainClass {
                 // register the plugin
                 .plugin(MyConfigurablePlugin.class)
                 // define config for plugin
-                .setting(MyConfigurablePlugin.STRING, "Hello World!")
                 .setting(MyConfigurablePlugin.ENUM, MyConfigurablePlugin.MyEnum.TWO)
+                .setting(MyConfigurablePlugin.ANIMAL, "cat")
+                .setting(MyConfigurablePlugin.LOUD, "meow!")
                 .build();
 
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            // wait 60 seconds
-            Sleeper.seconds(60);
-            // then
-            System.out.println("Time is up!");
+            // NO-OP
         }
 
         // auto-closed and disconnected by KNX client

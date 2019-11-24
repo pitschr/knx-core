@@ -1,9 +1,12 @@
-package example.myplugin;
+package example.monitor_plugin;
 
 import li.pitschmann.knx.link.communication.DefaultKnxClient;
 import li.pitschmann.knx.link.config.ConfigBuilder;
 import li.pitschmann.utils.Sleeper;
 
+/**
+ * Demo Application for simple monitor plugin
+ */
 public class MainClass {
 
     public static void main(final String[] args) {

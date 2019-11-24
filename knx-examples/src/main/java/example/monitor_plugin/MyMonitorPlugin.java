@@ -1,10 +1,13 @@
-package example.myplugin;
+package example.monitor_plugin;
 
 import li.pitschmann.knx.link.body.Body;
 import li.pitschmann.knx.link.communication.KnxClient;
 import li.pitschmann.knx.link.plugin.ExtensionPlugin;
 import li.pitschmann.knx.link.plugin.ObserverPlugin;
 
+/**
+ * Demo implementation for monitor plugin
+ */
 public class MyMonitorPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override

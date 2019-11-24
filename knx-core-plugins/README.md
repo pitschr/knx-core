@@ -8,9 +8,9 @@ integration to 3rd-party applications (e.g. Grafana, Kafka, ...)
 
 ## Available Plugins
 
-* [API](knx-core-plugins/api) extends KNX Client with RESTful API which allows integration with third-party applications.
-* [FileAuditPlugin](knx-core-plugins/audit) audits all events (packets and signals) to a file. Supports JSON and CSV formats.
-* [FileStatisticPlugin](knx-core-plugins/statistic) writes statistic in a pre-defined interval to a file. Supports JSON, CSV and TEXT formats.
+* [API](api) extends KNX Client with RESTful API which allows integration with third-party applications.
+* [FileAuditPlugin](audit) audits all events (packets and signals) to a file. Supports JSON and CSV formats.
+* [FileStatisticPlugin](statistic) writes statistic in a pre-defined interval to a file. Supports JSON, CSV and TEXT formats.
 
 ## Plugin Development
 
@@ -34,6 +34,25 @@ methods:
 onStart()             // when connection with KNX Net/IP device is established
 onShutdown()          // when connection with KNX Net/IP device is stopped
 ```
+
+## Plugin Configuration
+
+The plugin can be also customizable using `PluginConfigValue` class, there are  
+some out-of-the-box concrete config value implementations:
+
+| Type     | Class     |
+| ---------| --------- |
+| Boolean  | [BooleanConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/BooleanConfigValue.java) |
+| Double   | [DoubleConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/DoubleConfigValue.java) |
+| Enum<E>  | [EnumConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/EnumConfigValue.java) |
+| Integer  | [IntegerConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/IntegerConfigValue.java) |
+| Long     | [LongConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/LongConfigValue.java) |
+| Path     | [PathConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/PathConfigValue.java) |
+| String   | [StringConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/StringConfigValue.java) |
+
+In case you need a special configuration type, you have two options: 
+* Use the `PluginConfigValue` directly
+* Write your own implementation by extending the [PluginConfigValue](/knx-core/src/main/java/li/pitschmann/knx/link/plugin/config/PluginConfigValue.java)
 
 ## Example: Simple Monitor
 
@@ -143,10 +162,6 @@ Given example shows how to implement a plugin that accepts configuration.
 ```java
 public class MyConfigurablePlugin implements Plugin {
     /**
-     * Config with string, defaults back to "{@code default value}" value. String value may not be null.
-     */
-    public static final StringConfigValue STRING = new StringConfigValue("string", () -> "default value", Objects::nonNull);
-    /**
      * Config with integer, defaults back to {@code 0}. No predication.
      */
     public static final IntegerConfigValue INTEGER = new IntegerConfigValue("int", () -> 0, null);
@@ -158,19 +173,35 @@ public class MyConfigurablePlugin implements Plugin {
      * Config with enumeration, defaults back to {@link MyEnum#ZERO}.
      */
     public static final EnumConfigValue<MyEnum> ENUM = new EnumConfigValue<>("enum", MyEnum.class, () -> MyEnum.ZERO);
+    /**
+     * Config for special purposes, defaults back to "dog".
+     */
+    public static final PluginConfigValue<String> ANIMAL = new PluginConfigValue<>("animal", String.class, String::valueOf, () -> "dog", Objects::nonNull);
+    /**
+     * Config for special purposes extended by an inner class, defaults back to "woof!"
+     * @param client
+     */
+    public static final AnimalLoud LOUD = new AnimalLoud();
+
 
     @Override
     public void onInitialization(final KnxClient client) {
-        System.out.println("String: " + client.getConfig(STRING));
         System.out.println("Integer: " + client.getConfig(INTEGER));
         System.out.println("Long: " + client.getConfig(LONG));
         System.out.println("Enum: " + client.getConfig(ENUM));
+        System.out.println("Animal: " + client.getConfig(ANIMAL));
+        System.out.println("Animal Loud: " + client.getConfig(LOUD));
     }
 
     public enum MyEnum {
         ZERO, ONE, TWO, THREE
     }
 
+    public static class AnimalLoud extends PluginConfigValue<String> {
+        public AnimalLoud() {
+            super("animal-loud", String.class, String::valueOf, () -> "woof!", null);
+        }
+    }
 }
 ````
 
@@ -184,17 +215,15 @@ public class MainClass {
                 // register the plugin
                 .plugin(MyConfigurablePlugin.class)
                 // define config for plugin
-                .setting(MyConfigurablePlugin.STRING, "Hello World!")
                 .setting(MyConfigurablePlugin.ENUM, MyConfigurablePlugin.MyEnum.TWO)
+                .setting(MyConfigurablePlugin.ANIMAL, "cat")
+                .setting(MyConfigurablePlugin.LOUD, "meow!")
                 .build();
 
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            // wait 60 seconds
-            Sleeper.seconds(60);
-            // then
-            System.out.println("Time is up!");
+            // NO-OP
         }
 
         // auto-closed and disconnected by KNX client
@@ -204,7 +233,9 @@ public class MainClass {
 ```
 
 For plugin the pattern of configuration key and value is hardcoded with 
-`plugin.config.<nameOfPlugin>.<nameOfConfig>=<valueOfConfig>`
+```
+plugin.config.<nameOfPlugin>.<nameOfConfig>=<valueOfConfig>
+```
 
 The `<nameOfPlugin>` is the simple name of Java class and the `<nameOfConfig>` 
 is the hardcoded name you define in 1st argument of `*ConfigValue`. 
@@ -213,6 +244,16 @@ The `<valueOfConfig>` must be parsable according to the Java type.
 Based on `MyConfigurablePlugin` example above, the config file would look like:
 
 ```
-plugin.config.MyConfigurablePlugin.string=Hello World!
 plugin.config.MyConfigurablePlugin.enum=TWO
+plugin.config.MyConfigurablePlugin.animal=cat
+plugin.config.MyConfigurablePlugin.animal-loud=meow!
+```
+
+Console Output from plugin:
+```
+Integer: 0
+Long: 4711
+Enum: TWO
+Animal: cat
+Animal Loud: meow!
 ```
