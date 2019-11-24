@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.plugin.api.v1;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
-import li.pitschmann.knx.core.plugin.config.IntegerConfigValue;
+import li.pitschmann.knx.core.plugin.IntegerConfigValue;
 import li.pitschmann.knx.core.parser.KnxprojParser;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;

@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.config;
 
-import li.pitschmann.knx.core.plugin.Plugin;
 import li.pitschmann.knx.core.parser.KnxprojParser;
 import li.pitschmann.knx.core.parser.XmlProject;
+import li.pitschmann.knx.core.plugin.Plugin;
 import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

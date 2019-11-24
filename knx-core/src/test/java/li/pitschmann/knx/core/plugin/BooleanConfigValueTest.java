@@ -16,10 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.config;
+package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.plugin.Plugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,31 +27,38 @@ import javax.annotation.Nonnull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test class for {@link EnumConfigValue}
+ * Test class for {@link BooleanConfigValue}
  */
-public final class EnumConfigValueTest {
+public final class BooleanConfigValueTest {
 
     @Test
-    @DisplayName("OK: Test Enum Config Value")
+    @DisplayName("OK: Test Boolean Config Value")
     public void testConfigValue() {
         final var plugin = new DummyPlugin();
 
         final var configValue = plugin.TEST;
-        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.enum-key"); // lower-cased!
-        assertThat(configValue.getClassType()).isSameAs(DummyEnum.class);
-        assertThat(configValue.getDefaultValue()).isEqualTo(DummyEnum.ONE);
-        assertThat(configValue.convert("ONE")).isEqualTo(DummyEnum.ONE);
-        assertThat(configValue.isValid(null)).isFalse();
-        assertThat(configValue.isValid(DummyEnum.TWO)).isTrue();
-        assertThat(configValue.getPredicate()).isNotNull(); // built-in
-    }
+        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.bool-key"); // lower-cased!
+        assertThat(configValue.getClassType()).isSameAs(Boolean.class);
+        assertThat(configValue.getDefaultValue()).isEqualTo(Boolean.FALSE);
 
-    private enum DummyEnum {
-        ZERO, ONE, TWO, THREE
+        assertThat(configValue.convert("true")).isTrue();
+        assertThat(configValue.convert("True")).isTrue();
+        assertThat(configValue.convert("TRUE")).isTrue();
+        assertThat(configValue.convert("false")).isFalse();
+        assertThat(configValue.convert("False")).isFalse();
+        assertThat(configValue.convert("FALSE")).isFalse();
+
+        assertThat(configValue.isValid(null)).isFalse();
+        assertThat(configValue.isValid(true)).isTrue();
+        assertThat(configValue.isValid(Boolean.TRUE)).isTrue();
+        assertThat(configValue.isValid(false)).isTrue();
+        assertThat(configValue.isValid(Boolean.FALSE)).isTrue();
+
+        assertThat(configValue.getPredicate()).isNull();
     }
 
     private static class DummyPlugin implements Plugin {
-        final EnumConfigValue<DummyEnum> TEST = new EnumConfigValue<>("enum-key", DummyEnum.class, () -> DummyEnum.ONE);
+        final BooleanConfigValue TEST = new BooleanConfigValue("bool-key", () -> Boolean.FALSE);
 
         @Override
         public void onInitialization(@Nonnull KnxClient client) {

@@ -1,4 +1,4 @@
-package li.pitschmann.knx.core.plugin.config;
+package li.pitschmann.knx.core.plugin;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

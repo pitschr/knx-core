@@ -1,7 +1,6 @@
-package li.pitschmann.knx.core.plugin.config;
+package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.config.ConfigValue;
-import li.pitschmann.knx.core.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

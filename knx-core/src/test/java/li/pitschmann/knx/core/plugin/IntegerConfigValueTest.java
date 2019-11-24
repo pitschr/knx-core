@@ -16,58 +16,55 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.config;
+package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.plugin.Plugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test class for {@link PathConfigValue}
+ * Test class for {@link IntegerConfigValue}
  */
-public final class PathConfigValueTest {
+public final class IntegerConfigValueTest {
 
     @Test
-    @DisplayName("OK: Test Path Config Value without predicate")
+    @DisplayName("OK: Test Integer Config Value without predicate")
     public void testWithoutPredicate() {
         final var plugin = new DummyPlugin();
 
         final var configValue = plugin.TEST;
-        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.path-key"); // lower-cased!
-        assertThat(configValue.getClassType()).isSameAs(Path.class);
-        assertThat(configValue.getDefaultValue()).isEqualTo(Paths.get("path-value"));
-        assertThat(configValue.convert("my-file")).isEqualTo(Paths.get("my-file"));
+        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.int-key"); // lower-cased!
+        assertThat(configValue.getClassType()).isSameAs(Integer.class);
+        assertThat(configValue.getDefaultValue()).isEqualTo(13);
+        assertThat(configValue.convert("4711")).isEqualTo(4711);
         assertThat(configValue.isValid(null)).isFalse();
-        assertThat(configValue.isValid(Paths.get("my-file"))).isTrue();
+        assertThat(configValue.isValid(9)).isTrue();
         assertThat(configValue.getPredicate()).isNull();
     }
 
     @Test
-    @DisplayName("OK: Test Path Config Value with predicate")
+    @DisplayName("OK: Test Integer Config Value with predicate")
     public void testWithPredicate() {
         final var plugin = new DummyPlugin();
 
         final var configValue = plugin.TEST_2;
-        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.path-key2"); // lower-cased!
-        assertThat(configValue.getClassType()).isSameAs(Path.class);
-        assertThat(configValue.getDefaultValue()).isEqualTo(Paths.get("path-value2"));
-        assertThat(configValue.convert("my-file2")).isEqualTo(Paths.get("my-file2"));
+        assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.int-key2"); // lower-cased!
+        assertThat(configValue.getClassType()).isSameAs(Integer.class);
+        assertThat(configValue.getDefaultValue()).isEqualTo(17);
+        assertThat(configValue.convert("4711")).isEqualTo(4711);
         assertThat(configValue.isValid(null)).isFalse();
-        assertThat(configValue.isValid(Paths.get("my-file2"))).isFalse();
-        assertThat(configValue.isValid(Paths.get("my-file2.txt"))).isTrue();
+        assertThat(configValue.isValid(9)).isFalse();
+        assertThat(configValue.isValid(10)).isTrue();
         assertThat(configValue.getPredicate()).isNotNull();
     }
 
     private static class DummyPlugin implements Plugin {
-        final PathConfigValue TEST = new PathConfigValue("path-key", () -> Paths.get("path-value"), null);
-        final PathConfigValue TEST_2 = new PathConfigValue("path-key2", () -> Paths.get("path-value2"), path -> path.toString().endsWith(".txt"));
+        final IntegerConfigValue TEST = new IntegerConfigValue("int-key", () -> 13, null);
+        final IntegerConfigValue TEST_2 = new IntegerConfigValue("int-key2", () -> 17, (x) -> x % 2 == 0);
 
         @Override
         public void onInitialization(@Nonnull KnxClient client) {

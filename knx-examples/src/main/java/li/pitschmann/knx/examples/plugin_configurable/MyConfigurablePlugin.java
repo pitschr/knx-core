@@ -2,10 +2,10 @@ package li.pitschmann.knx.examples.plugin_configurable;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.Plugin;
-import li.pitschmann.knx.core.plugin.config.EnumConfigValue;
-import li.pitschmann.knx.core.plugin.config.IntegerConfigValue;
-import li.pitschmann.knx.core.plugin.config.LongConfigValue;
-import li.pitschmann.knx.core.plugin.config.PluginConfigValue;
+import li.pitschmann.knx.core.plugin.EnumConfigValue;
+import li.pitschmann.knx.core.plugin.IntegerConfigValue;
+import li.pitschmann.knx.core.plugin.LongConfigValue;
+import li.pitschmann.knx.core.plugin.PluginConfigValue;
 
 import java.util.Objects;
 

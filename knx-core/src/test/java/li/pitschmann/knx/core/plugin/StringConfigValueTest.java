@@ -16,10 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.config;
+package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.plugin.Plugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
