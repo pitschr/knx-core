@@ -255,62 +255,6 @@ public final class ExampleLampInverse {
 }
 ```
 
-#### Example: Plugin
-
-This sample is demonstrating how we can implement and register the plugin in direct way.
-Here we want to print out the incoming and outgoing packets in format and this sample
-is a good one to get a better understanding which packets are sent for KNX communication.
-
-By writing own plugin we have thousand of possibilities, some examples are: Auditing, 
-Advanced Statistics, Logic, API, Integration to third-party applications (Grafana, Kafka, ...)
-
-```java
-public final class ExamplePlugin {
-    public static void main(final String[] args) {
-        // we want to monitor the KNX traffic for 60 seconds
-        final var endTimeMillis = System.currentTimeMillis() + 60000;
-
-        final var config = ConfigBuilder
-                .tunneling()            // communication mode: tunneling
-                .plugin(MyPlugin.class) // register my plugin
-                .build();               // create immutable config
-
-        // create KNX client and connect to KNX Net/IP device using auto-discovery
-        try (final var client = DefaultKnxClient.createStarted(config)) {
-            // loop until the time ends
-            while (System.currentTimeMillis() < endTimeMillis) {
-                System.out.println("Ping ...");
-                Sleeper.seconds(3);
-            }
-        }
-
-        // auto-closed and disconnected by KNX client
-    }
-
-    public static class MyPlugin implements ObserverPlugin {
-
-        @Override
-        public void onIncomingBody(@Nonnull Body item) {
-            System.out.println("Incoming: " + item.getServiceType().getFriendlyName() + " (" + item.getRawDataAsHexString() + ")");
-        }
-
-        @Override
-        public void onOutgoingBody(@Nonnull Body item) {
-            System.out.println("Outgoing: " + item.getServiceType().getFriendlyName() + " (" + item.getRawDataAsHexString() + ")");
-        }
-
-        @Override
-        public void onError(@Nonnull Throwable throwable) {
-            System.out.println("On Error: " + throwable.getMessage());
-        }
-
-        @Override
-        public void onInitialization(KnxClient client) {
-            System.out.println("Initialized by client: " + client);
-        }
-    }
-}
-```
 
 #### Example: Work with Data Point Type
 
