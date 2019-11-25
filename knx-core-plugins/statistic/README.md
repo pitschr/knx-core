@@ -48,9 +48,9 @@ Defines the path of statistic file. Will be daily rolled and appended with date 
 Defines which file format should be used for statistic output.
 
 **Type:** `EnumConfigValue` \
-**Default Value:** `JSON` \
+**Default Value:** `FileStatisticFormat.JSON` \
 **Config in Code:** `FileStatisticPlugin.FORMAT` \
-**Config in File:** `plugin.config.FileStatisticPlugin.format` \
+**Config in File:** `plugin.config.FileStatisticPlugin.format`
 
 | File Format | Config Value |
 | --- | --- |
@@ -60,11 +60,11 @@ Defines which file format should be used for statistic output.
 
 ### Interval
 
-Defines the interval how frequent the statistic should be logged 
-to the statistic file. To avoid a high CPU utilization the 
-interval must be 10000 milliseconds (=10 sec) or higher.
+Defines the interval in milliseconds how frequent the statistic should be 
+logged to the file. To avoid a high CPU utilization the interval must be
+10'000 milliseconds (=10 sec) or higher.
 
 **Type:** `LongConfigValue` \
-**Default Value:** `60000` milliseconds (=1 minute) \
+**Default Value:** `300'000` milliseconds (=5 minutes) \
 **Config in Code:** `FileStatisticPlugin.INTERVAL` \
 **Config in File:** `plugin.config.FileStatisticPlugin.intervalMs`

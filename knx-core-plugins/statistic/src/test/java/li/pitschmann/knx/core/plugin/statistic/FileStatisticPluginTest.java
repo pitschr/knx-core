@@ -245,7 +245,7 @@ public class FileStatisticPluginTest {
 
         when(configMock.getValue(eq(FileStatisticPlugin.PATH))).thenReturn(path);
         when(configMock.getValue(eq(FileStatisticPlugin.FORMAT))).thenReturn(format);
-        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL))).thenReturn(intervalMs);
+        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL_MS))).thenReturn(intervalMs);
 
         when(knxClientMock.getStatistic()).thenReturn(emptyStatistic);
         return knxClientMock;

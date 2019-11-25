@@ -51,9 +51,9 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
      */
     public static final EnumConfigValue<FileStatisticFormat> FORMAT = new EnumConfigValue<>("format", FileStatisticFormat.class, () -> FileStatisticFormat.JSON);
     /**
-     * Interval in milliseconds. Default 60000ms (1 min). Minimum 10000ms (10 sec).
+     * Interval in milliseconds. Default 5 minutes (300000ms) Minimum 10 sec (10000ms).
      */
-    public static final LongConfigValue INTERVAL = new LongConfigValue("intervalMs", () -> 60000L, x -> x >= 10000);
+    public static final LongConfigValue INTERVAL_MS = new LongConfigValue("intervalMs", () -> 5 * 60 * 1000L, x -> x >= 10000);
 
     private static final Logger log = LoggerFactory.getLogger(FileStatisticPlugin.class);
     private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
@@ -69,7 +69,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
         // configurations
         path = client.getConfig(FileStatisticPlugin.PATH);
         format = client.getConfig(FileStatisticPlugin.FORMAT);
-        final var intervalMs = client.getConfig(FileStatisticPlugin.INTERVAL);
+        final var intervalMs = client.getConfig(FileStatisticPlugin.INTERVAL_MS);
 
         final var baseFile = path.toString();
 
