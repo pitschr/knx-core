@@ -47,6 +47,8 @@ public final class Sleeper {
             // ignore
             isNotInterrupted = false;
             Thread.currentThread().interrupt();
+            System.out.println("Interrupt signal received:");
+            ie.printStackTrace();
         }
         return isNotInterrupted;
     }
