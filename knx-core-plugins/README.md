@@ -42,17 +42,17 @@ some out-of-the-box concrete config value implementations:
 
 | Type     | Class     |
 | ---------| --------- |
-| Boolean  | [BooleanConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/BooleanConfigValue.java) |
-| Double   | [DoubleConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/DoubleConfigValue.java) |
-| Enum<E>  | [EnumConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/EnumConfigValue.java) |
-| Integer  | [IntegerConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/IntegerConfigValue.java) |
-| Long     | [LongConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/LongConfigValue.java) |
-| Path     | [PathConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/PathConfigValue.java) |
-| String   | [StringConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/StringConfigValue.java) |
+| Boolean  | [BooleanConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/BooleanConfigValue.java) |
+| Double   | [DoubleConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/DoubleConfigValue.java) |
+| Enum<E>  | [EnumConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/EnumConfigValue.java) |
+| Integer  | [IntegerConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/IntegerConfigValue.java) |
+| Long     | [LongConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/LongConfigValue.java) |
+| Path     | [PathConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/PathConfigValue.java) |
+| String   | [StringConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/StringConfigValue.java) |
 
 In case you need a special configuration type, you have two options: 
 * Use the `PluginConfigValue` directly
-* Write your own implementation by extending the [PluginConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/config/PluginConfigValue.java)
+* Write your own implementation by extending the [PluginConfigValue](/knx-core/src/main/java/li/pitschmann/knx/core/plugin/PluginConfigValue.java)
 
 ## Example: Simple Monitor
 
