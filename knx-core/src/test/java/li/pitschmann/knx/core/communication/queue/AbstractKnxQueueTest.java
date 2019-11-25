@@ -121,7 +121,7 @@ public class AbstractKnxQueueTest {
     /**
      * Tests an queue when {@link InterruptedException} was thrown
      */
-    //@Test
+    @Test
     @DisplayName("Test interrupted queue")
     public void testInterruption() throws Exception {
         final var selectionKeyMock = mock(SelectionKey.class);
