@@ -46,7 +46,7 @@ public final class Sleeper {
         } catch (final InterruptedException ie) {
             // ignore
             isNotInterrupted = false;
-            // Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();
         }
         return isNotInterrupted;
     }
