@@ -25,19 +25,7 @@
     <!--
     Log Levels: ALL < TRACE < DEBUG < INFO < WARN < ERROR < OFF
     -->
-    <logger name="li.pitschmann.knx.main" level="DEBUG"/>
-    <!--
-    <log name="li.pitschmann.utils" level="WARN" />
-    <log name="li.pitschmann.knx.link" level="TRACE" />
-    <log name="li.pitschmann.knx.link.KnxMain" level="DEBUG" />
-    <log name="li.pitschmann.knx.link.communication.task" level="TRACE" />
-    <log name="li.pitschmann.knx.link.datapoint.DPT20" level="DEBUG" />
-
-    <log name="li.pitschmann.knx.main" level="DEBUG" />
-    <log name="li.pitschmann.knx.link.communication.Communicator" level="DEBUG" />
-    <log name="li.pitschmann.knx.link.datapoint.DataPointTypeRegistry" level="ALL" />
-      -->
-
+    <logger name="li.pitschmann.knx.examples" level="DEBUG"/>
     <root level="${root-level:-ALL}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
