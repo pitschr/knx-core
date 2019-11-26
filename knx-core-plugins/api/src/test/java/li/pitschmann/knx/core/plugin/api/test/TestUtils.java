@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.test;
+package li.pitschmann.knx.core.plugin.api.test;
 
 import com.google.gson.JsonParser;
-import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
+import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.test;
+package li.pitschmann.knx.core.plugin.api.test;
 
-import li.pitschmann.knx.core.plugin.api.v1.ApiPlugin;
+import li.pitschmann.knx.core.plugin.api.ApiPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.core.Pippo;

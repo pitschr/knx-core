@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1;
+package li.pitschmann.knx.core.plugin.api;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;

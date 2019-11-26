@@ -16,19 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1;
+package li.pitschmann.knx.core.plugin.api;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
-import li.pitschmann.knx.core.plugin.api.v1.controllers.ProjectController;
-import li.pitschmann.knx.core.plugin.api.v1.controllers.ReadRequestController;
-import li.pitschmann.knx.core.plugin.api.v1.controllers.StatisticController;
-import li.pitschmann.knx.core.plugin.api.v1.controllers.StatusController;
-import li.pitschmann.knx.core.plugin.api.v1.controllers.WriteRequestController;
-import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.parser.XmlProject;
+import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.guice.GuiceControllerFactory;
 
@@ -71,11 +66,12 @@ public class ApiApplication extends ControllerApplication {
 
         // adds controller for endpoints
         addControllers(
-                ReadRequestController.class, //
-                WriteRequestController.class, //
-                StatusController.class, //
-                StatisticController.class, //
-                ProjectController.class
+                // V1 Controllers
+                li.pitschmann.knx.core.plugin.api.v1.controllers.ReadRequestController.class, //
+                li.pitschmann.knx.core.plugin.api.v1.controllers.WriteRequestController.class, //
+                li.pitschmann.knx.core.plugin.api.v1.controllers.StatusController.class, //
+                li.pitschmann.knx.core.plugin.api.v1.controllers.StatisticController.class, //
+                li.pitschmann.knx.core.plugin.api.v1.controllers.ProjectController.class
         );
     }
 }

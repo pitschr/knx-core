@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
+import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT2;
-import li.pitschmann.knx.core.plugin.api.v1.test.MockApiTest;
-import li.pitschmann.knx.core.plugin.api.v1.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
 import li.pitschmann.knx.core.test.MockServerTest;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

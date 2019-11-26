@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.gson;
+package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.JsonPrimitive;
 import li.pitschmann.knx.core.datapoint.DPT16;
