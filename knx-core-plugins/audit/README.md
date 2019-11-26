@@ -8,9 +8,9 @@ JSON:
 ```
 {"time":1574758245.851271000,"type":"init"}
 {"time":1574758245.851271000,"type":"start"}
-{"time":1574758245.851271000,"type":"incoming","header":{"totalLength":9,"raw":"0x06 10 02 05 ...}
-{"time":1574758245.575705200,"type":"outgoing","header":{"totalLength":8,"raw":"0x06 10 04 21 ...
-{"time":1574758245.425384900,"type":"error","message":"I'm a \"RuntimeException\"!","stacktrace":["org.class.Foo.add(Foo.java:123)", ...]}
+{"time":1574761224.357372400,"type":"incoming","header":{"totalLength":9,"raw":"0x06 10 02 05 00 09"},"body":{"service":{"code":"0x02 05","text":"CONNECT_REQUEST"},"raw":"0x11 22 33"}}
+{"time":1574761224.948031001,"type":"outgoing","header":{"totalLength":8,"raw":"0x06 10 04 21 00 08"},"body":{"service":{"code":"0x04 21","text":"TUNNELING_ACK"},"raw":"0x22 33"}}
+{"time":1574761223.947779200,"type":"error","message":"I'm a \"Runtime\tException\"!","stacktrace":["org.class.Foo.add(Foo.java:123)","org.class.Bar.addAll(Bar.java:456)"]}
 {"time":1574758245.854273300,"type":"shutdown"}
 ```
 

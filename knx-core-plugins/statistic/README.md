@@ -5,7 +5,7 @@ The format of statistic file can be either in: JSON, TSV (tab-separated) and pla
 
 JSON:
 ```
-{"inbound":{"total":{"packets":10,"bytes":11},"description":{"request":0,"response":21},"connect":{"request":0,"response":31}, ... 
+{"inbound":{"total":{"packets":10,"bytes":11},"description":{"request":0,"response":21},"connect":{"request":0,"response":31},"connectionState":{"request":0,"response":41},"tunneling":{"request":50,"acknowledge":51},"indication":{"request":0,"response":60},"disconnect":{"request":70,"response":71}},"outbound":{"total":{"packets":12,"bytes":13},"description":{"request":22,"response":0},"connect":{"request":32,"response":0},"connectionState":{"request":42,"response":0},"tunneling":{"request":52,"acknowledge":53},"indication":{"request":61,"response":0},"disconnect":{"request":72,"response":73}},"error":{"total":{"packets":14,"rate":1.50}}}
 ```
 
 TSV (tab-separated):
