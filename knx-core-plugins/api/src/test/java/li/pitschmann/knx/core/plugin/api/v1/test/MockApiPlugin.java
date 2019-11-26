@@ -29,7 +29,7 @@ import java.net.BindException;
 import java.net.ServerSocket;
 
 /**
- * Creates a new instance of Mock API to start up the web server daemon
+ * Creates a new instance of Mock API to start up the web server
  * <p/>
  * This will also start the KNX Mock Server in background to simulate a
  * communication with the KNX Net/IP device

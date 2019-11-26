@@ -16,5 +16,5 @@ Defines the port that should be used by Pippo micro web server.
 
 **Type:** `IntegerConfigValue` \
 **Default Value:** `8338` (default value from Pippo) \
-**Config in Code:** `HttpDaemonPlugin.PORT`  \
-**Config in File:** `plugin.config.HttpDaemonPlugin.port`
+**Config in Code:** `ApiPlugin.PORT`  \
+**Config in File:** `plugin.config.ApiPlugin.port`

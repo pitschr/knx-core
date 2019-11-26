@@ -35,17 +35,17 @@ public class StatisticControllerTest {
     /**
      * Test /statistic endpoint
      *
-     * @param daemon
+     * @param mockPlugin
      * @throws Exception
      */
     @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /statistic endpoint")
-    public void testStatistic(final MockApiPlugin daemon) throws Exception {
+    public void testStatistic(final MockApiPlugin mockPlugin) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
         // send write request
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/statistic").GET().build();
+        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/statistic").GET().build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
 
         // @formatter:off

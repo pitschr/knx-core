@@ -25,7 +25,7 @@ public final class StatusController extends AbstractController {
     private static final StatusResponse EMPTY_RESPONSE = new StatusResponse();
 
     /**
-     * Endpoint for all statuses
+     * Endpoint to get all KNX status
      *
      * @return
      */

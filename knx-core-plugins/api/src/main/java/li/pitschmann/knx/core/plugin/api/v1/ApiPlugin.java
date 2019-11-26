@@ -35,7 +35,7 @@ import java.net.http.HttpRequest;
 import java.util.Objects;
 
 /**
- * Plugin for RESTful API (HTTP Daemon)
+ * Plugin for RESTful API (web server)
  */
 public class ApiPlugin implements ExtensionPlugin {
     /**
@@ -60,16 +60,16 @@ public class ApiPlugin implements ExtensionPlugin {
     @Override
     public void onStart() {
         final var xmlProject = KnxprojParser.parse(Objects.requireNonNull(client.getConfig().getProjectPath()));
-        final var httpDaemonApplication = new HttpDaemonApplication();
-        httpDaemonApplication.setXmlProject(xmlProject);
-        httpDaemonApplication.setKnxClient(client);
-        httpDaemonApplication.getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
+        final var app = new ApiApplication();
+        app.setXmlProject(xmlProject);
+        app.setKnxClient(client);
+        app.getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
 
-        pippo = new Pippo(httpDaemonApplication);
+        pippo = new Pippo(app);
         startPippo(pippo);
         // set port and state
         port = pippo.getServer().getPort();
-        log.debug("Http Daemon Server started at port {}: {}", port, client);
+        log.debug("API Plugin and Web Server started at port {}: {}", port, client);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ApiPlugin implements ExtensionPlugin {
             pippo.stop();
             pippo = null;
         }
-        log.debug("Http Daemon Server stopped.");
+        log.debug("API Plugin and Web Server stopped.");
     }
 
     /**
@@ -92,17 +92,17 @@ public class ApiPlugin implements ExtensionPlugin {
     }
 
     /**
-     * Returns the port for KNX Daemon
+     * Returns the port for web server that serves the endpoints
      *
      * @return actual port
      */
     public final int getPort() {
-        Preconditions.checkState(isReady(), "Http Daemon Server is not ready yet!");
+        Preconditions.checkState(isReady(), "API Web Server is not ready yet!");
         return port;
     }
 
     /**
-     * Returns if the KNX Daemon is ready
+     * Returns if the web server is ready
      *
      * @return {@code true} if server is ready, otherwise {@code false}
      */
@@ -111,13 +111,13 @@ public class ApiPlugin implements ExtensionPlugin {
     }
 
     /**
-     * Creates a new {@link HttpRequest.Builder} for requests to KNX Daemon.
+     * Creates a new {@link HttpRequest.Builder} for requests to API
      * <p/>
      * As we are using communicating via JSON only, the headers
      * {@link HttpConstants.Header#ACCEPT} and {@link HttpConstants.Header#CONTENT_TYPE}
      * are pre-defined with {@link HttpConstants.ContentType#APPLICATION_JSON}.
      *
-     * @param path the path to be requested to KNX Daemon
+     * @param path the path to be requested to API
      * @return Builder for HttpRequest
      */
     public final HttpRequest.Builder newRequestBuilder(final String path) {

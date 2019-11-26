@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1;
 
-import li.pitschmann.knx.core.plugin.api.v1.gson.DaemonGsonEngine;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
@@ -43,7 +43,7 @@ public class ApiPluginTest {
      */
     @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /read and /write endpoints for group address 0/0/10")
-    public void testReadAndWrite(final MockApiPlugin daemon) throws Exception {
+    public void testReadAndWrite(final MockApiPlugin mockApi) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
@@ -58,10 +58,10 @@ public class ApiPluginTest {
         writeRequest.setGroupAddress(groupAddress);
         writeRequest.setDataPointType(DPT1.SWITCH);
         writeRequest.setValues("true");
-        final var writeHttpRequest = daemon.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(writeRequest))).build();
+        final var writeHttpRequest = mockApi.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(writeRequest))).build();
 
         // send read request #1
-        final var readHttpRequest = daemon.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var readHttpRequest = mockApi.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
         final var responseBody = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
         assertThat(responseBody).isEqualTo("{}");
 
@@ -72,7 +72,7 @@ public class ApiPluginTest {
         // send read request #2
         // - group address: "1-bit (false)" which has been initialized with "false" contains now "true"
         // - it contains the expand 'name' and 'description' which means that we request for group address name and description as well
-        final var readHttpRequestAfterWrite = daemon.newRequestBuilder("/api/v1/read?expand=name,description,dpt,raw").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var readHttpRequestAfterWrite = mockApi.newRequestBuilder("/api/v1/read?expand=name,description,dpt,raw").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
         final var responseBodyAfterWrite = httpClient.send(readHttpRequestAfterWrite, HttpResponse.BodyHandlers.ofString()).body();
         assertThat(responseBodyAfterWrite).isEqualTo("{" + //
                 "\"name\":\"Sub Group - DPT 1 (0x00)\"," + //

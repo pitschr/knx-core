@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * KNX Test Annotation to launch KNX Daemon (and the KNX Mock Server indirectly)
+ * Mock API Test annotation to launch the web server (and the KNX Mock Server indirectly)
  * <p/>
  * This will call the JUnit {@link MockApiExtension} class.
  *
@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
 @ExtendWith(MockApiExtension.class)
 public @interface MockApiTest {
     /**
-     * Returns Mock Server Annotation
+     * Returns Mock Server annotation
      *
      * @return MockServerTest annotation
      */

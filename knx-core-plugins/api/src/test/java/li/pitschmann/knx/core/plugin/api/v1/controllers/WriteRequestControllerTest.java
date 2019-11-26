@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.v1.gson.DaemonGsonEngine;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
@@ -48,12 +48,12 @@ public class WriteRequestControllerTest {
     /**
      * Test /write endpoint for group address 0/0/22
      *
-     * @param daemon
+     * @param mockPlugin
      * @throws Exception
      */
     @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Write Request for group address 0/0/22")
-    public void testWrite(final MockApiPlugin daemon) throws Exception {
+    public void testWrite(final MockApiPlugin mockPlugin) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
@@ -64,7 +64,7 @@ public class WriteRequestControllerTest {
         writeRequest.setValues("control", "false");
 
         // send write request
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(writeRequest))).build();
+        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(writeRequest))).build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
         assertThat(responseBody).isEqualTo("{}");
     }

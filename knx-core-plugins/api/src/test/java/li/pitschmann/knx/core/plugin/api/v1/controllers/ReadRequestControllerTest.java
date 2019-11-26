@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.v1.gson.DaemonGsonEngine;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadResponse;
 import li.pitschmann.knx.core.body.address.GroupAddress;
@@ -54,7 +54,7 @@ public class ReadRequestControllerTest {
      */
     @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Read Request for group addresses using KNX mock server")
-    public void testRead(final MockApiPlugin daemon) throws Exception {
+    public void testRead(final MockApiPlugin mockPlugin) throws Exception {
         final var groupAddress = GroupAddress.of(0, 3, 18);
 
         // create read request
@@ -62,12 +62,12 @@ public class ReadRequestControllerTest {
         request.setGroupAddress(groupAddress);
 
         // do a call with all parameters
-        final var httpRequest = daemon.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(DaemonGsonEngine.INSTANCE.toString(request))).build();
+        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(request))).build();
         final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
 
         // verify ReadResponse
-        final var readResponse = DaemonGsonEngine.INSTANCE.fromString(httpResponse.body(), ReadResponse.class);
+        final var readResponse = ApiGsonEngine.INSTANCE.fromString(httpResponse.body(), ReadResponse.class);
         assertThat(readResponse.getGroupAddress()).isEqualTo(groupAddress);
         assertThat(readResponse.getName()).isEqualTo("Sub Group - DPT 12 (0x80 02 70 FF)");
         assertThat(readResponse.getDescription()).isEqualTo("4-bytes, unsigned (2147643647)");

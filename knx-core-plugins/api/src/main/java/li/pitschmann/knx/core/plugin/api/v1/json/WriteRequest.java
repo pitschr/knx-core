@@ -4,7 +4,7 @@ import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 
 /**
- * JSON for HTTP Write Request to KNX Daemon
+ * JSON for HTTP Write Request
  */
 public final class WriteRequest {
     private GroupAddress groupAddress;
