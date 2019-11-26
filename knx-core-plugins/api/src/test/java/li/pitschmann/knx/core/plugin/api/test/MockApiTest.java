@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.test;
+package li.pitschmann.knx.core.plugin.api.test;
 
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.Test;

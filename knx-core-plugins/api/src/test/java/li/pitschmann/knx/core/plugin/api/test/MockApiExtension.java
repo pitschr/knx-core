@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.test;
+package li.pitschmann.knx.core.plugin.api.test;
 
 import li.pitschmann.knx.core.communication.BaseKnxClient;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
@@ -137,7 +137,7 @@ public final class MockApiExtension
         try {
             final var internalClientField = BaseKnxClient.class.getDeclaredField("internalClient");
             internalClientField.setAccessible(true);
-            final var internalClient = (InternalKnxClient)internalClientField.get(baseKnxClient);
+            final var internalClient = (InternalKnxClient) internalClientField.get(baseKnxClient);
             return Objects.requireNonNull(internalClient.getPluginManager().getPlugin(MockApiPlugin.class));
         } catch (final ReflectiveOperationException ex) {
             throw new AssertionError(ex);

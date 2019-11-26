@@ -1,4 +1,4 @@
-package li.pitschmann.knx.core.plugin.api.v1.gson;
+package li.pitschmann.knx.core.plugin.api.gson;
 
 import li.pitschmann.knx.core.body.address.AddressType;
 import li.pitschmann.knx.core.body.address.GroupAddress;

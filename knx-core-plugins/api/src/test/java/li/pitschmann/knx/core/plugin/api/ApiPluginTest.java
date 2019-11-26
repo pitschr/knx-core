@@ -16,15 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1;
+package li.pitschmann.knx.core.plugin.api;
 
-import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
-import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
-import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
-import li.pitschmann.knx.core.plugin.api.v1.test.MockApiTest;
-import li.pitschmann.knx.core.plugin.api.v1.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
+import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
+import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 

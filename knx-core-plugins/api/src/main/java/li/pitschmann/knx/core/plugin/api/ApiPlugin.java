@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1;
+package li.pitschmann.knx.core.plugin.api;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
+import li.pitschmann.knx.core.parser.KnxprojParser;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.IntegerConfigValue;
-import li.pitschmann.knx.core.parser.KnxprojParser;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

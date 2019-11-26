@@ -1,12 +1,12 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.v1.json.Status;
-import li.pitschmann.knx.core.plugin.api.v1.json.StatusRequest;
-import li.pitschmann.knx.core.plugin.api.v1.json.StatusResponse;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
+import li.pitschmann.knx.core.plugin.api.v1.json.Status;
+import li.pitschmann.knx.core.plugin.api.v1.json.StatusRequest;
+import li.pitschmann.knx.core.plugin.api.v1.json.StatusResponse;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.POST;

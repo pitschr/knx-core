@@ -18,14 +18,14 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.v1.json.Status;
-import li.pitschmann.knx.core.plugin.api.v1.json.StatusRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.body.address.IndividualAddress;
 import li.pitschmann.knx.core.body.address.KnxAddress;
 import li.pitschmann.knx.core.body.cemi.APCI;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
+import li.pitschmann.knx.core.plugin.api.v1.json.Status;
+import li.pitschmann.knx.core.plugin.api.v1.json.StatusRequest;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -35,8 +35,8 @@ import ro.pippo.core.HttpConstants;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 
-import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.asJson;
-import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.readJsonFile;
+import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

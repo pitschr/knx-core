@@ -1,4 +1,4 @@
-package li.pitschmann.knx.core.plugin.api.v1.gson;
+package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
