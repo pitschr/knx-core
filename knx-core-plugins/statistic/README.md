@@ -1,19 +1,19 @@
 # KNX Core Plugin: Statistic
 
 Used to log the statistic of KNX traffic in a pre-defined interval (default: 60 seconds).
+The format of statistic file can be either in: JSON, TSV (tab-separated) and plain text.
 
-JSON file format:
+JSON:
 ```
-{"inbound":{"total":{"packets":10,"bytes":11},"description":{"request":0,"response":21},"connect":{"request":0,"response":31}, ... 
-```
-
-CSV file format:
-```
-"Inbound Total Packets","Inbound Total Bytes","Outbound Total Packets","Outbound Total Bytes", ... 
-10,11,12,13,14,1.50,0,21,0,31,0,41,70, ...
+{"inbound":{"total":{"packets":10,"bytes":11},"description":{"request":0,"response":21},"connect":{"request":0,"response":31},"connectionState":{"request":0,"response":41},"tunneling":{"request":50,"acknowledge":51},"indication":{"request":0,"response":60},"disconnect":{"request":70,"response":71}},"outbound":{"total":{"packets":12,"bytes":13},"description":{"request":22,"response":0},"connect":{"request":32,"response":0},"connectionState":{"request":42,"response":0},"tunneling":{"request":52,"acknowledge":53},"indication":{"request":61,"response":0},"disconnect":{"request":72,"response":73}},"error":{"total":{"packets":14,"rate":1.50}}}
 ```
 
-Text file format:
+TSV (tab-separated):
+```
+10	11	12	13	14	1.50	0	21	0	31	0	41	70	71	50	51	0	60	22	0	32	0	42	0	72	73	52	53	61	0
+```
+
+Plain text:
 ```
 10 packets received (11 bytes)
 	[Description     ] Request: 0, Response: 21
@@ -55,8 +55,8 @@ Defines which file format should be used for statistic output.
 | File Format | Config Value |
 | --- | --- |
 | JSON | `FileStatisticFormat.JSON` |
-| Comma Separated | `FileStatisticFormat.CSV` |
-| Text | `FileStatisticFormat.TEXT` |
+| TSV (tab-separated) | `FileStatisticFormat.TSV` |
+| Plain Text | `FileStatisticFormat.TEXT` |
 
 ### Interval
 

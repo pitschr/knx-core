@@ -173,7 +173,7 @@ public class FileAuditPluginTest {
                     "\"time\":\\d+\\.\\d+," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"error\"," +
-                    "\"message\":\"I'm a \\\"Runtime;Exception\\\"!\"," +
+                    "\"message\":\"I'm a \\\"Runtime\\tException\\\"!\"," +
                     "\"stacktrace\":[" +
                         "\"org.class.Foo.add(Foo.java:123)\"," +
                         "\"org.class.Bar.addAll(Bar.java:456)\"" +
@@ -185,9 +185,9 @@ public class FileAuditPluginTest {
     }
 
     @Test
-    @DisplayName("CSV: Test File Audit Signal and Incoming")
-    public void auditIncomingBodyCsv() throws IOException {
-        final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBodyCsv-" + UUID.randomUUID() + ".log");
+    @DisplayName("TSV: Test File Audit Signal and Incoming")
+    public void auditIncomingBodyTsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBodyTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
 
         final var body = mock(Body.class);
@@ -195,7 +195,7 @@ public class FileAuditPluginTest {
         when(body.getRawData()).thenReturn(new byte[]{0x33, 0x44, 0x55});
         when(body.getRawDataAsHexString()).thenCallRealMethod();
 
-        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.CSV));
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.TSV));
         plugin.onStart();
         plugin.onIncomingBody(body);
         plugin.onShutdown();
@@ -204,28 +204,28 @@ public class FileAuditPluginTest {
         assertThat(lines).hasSize(4);
 
         // init
-        assertThat(lines.get(0)).containsPattern("\\d+\\.\\d+;\"init\"");
+        assertThat(lines.get(0)).containsPattern("\\d+\\.\\d+\tinit");
         // start
-        assertThat(lines.get(1)).containsPattern("\\d+\\.\\d+;\"start\"");
+        assertThat(lines.get(1)).containsPattern("\\d+\\.\\d+\tstart");
         // incoming
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
-                "\\d+\\.\\d+;" +
+                "\\d+\\.\\d+\t" +
                         "\\Q" +  // start pattern quote
-                        "\"incoming\";" +
-                        "9;\"0x06 10 02 05 00 09\";" + // header
-                        "\"0x02 05\";\"CONNECT_REQUEST\";\"0x33 44 55\"" + // body
+                        "incoming\t" +
+                        "9\t0x06 10 02 05 00 09\t" + // header
+                        "0x02 05\tCONNECT_REQUEST\t0x33 44 55" + // body
                         "\\E" // end pattern quote
                 // @formatter:on
         );
         // shutdown
-        assertThat(lines.get(3)).containsPattern("\\d+\\.\\d+;\"shutdown\"");
+        assertThat(lines.get(3)).containsPattern("\\d+\\.\\d+\tshutdown");
     }
 
     @Test
-    @DisplayName("CSV: Test File Audit Outgoing")
-    public void auditOutgoingBodyCsv() throws IOException {
-        final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBodyCsv-" + UUID.randomUUID() + ".log");
+    @DisplayName("TSV: Test File Audit Outgoing")
+    public void auditOutgoingBodyTsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBodyTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
 
         final var body = mock(Body.class);
@@ -233,7 +233,7 @@ public class FileAuditPluginTest {
         when(body.getRawData()).thenReturn(new byte[]{0x44, 0x55});
         when(body.getRawDataAsHexString()).thenCallRealMethod();
 
-        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.CSV));
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.TSV));
         plugin.onStart();
         plugin.onOutgoingBody(body);
         plugin.onShutdown();
@@ -242,24 +242,24 @@ public class FileAuditPluginTest {
         assertThat(lines).hasSize(4);
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
-                "\\d+\\.\\d+;" +
+                "\\d+\\.\\d+\t" +
                         "\\Q" +  // start pattern quote
-                        "\"outgoing\";" +
-                        "8;\"0x06 10 04 21 00 08\";" + // header
-                        "\"0x04 21\";\"TUNNELING_ACK\";\"0x44 55\"" + // body
+                        "outgoing\t" +
+                        "8\t0x06 10 04 21 00 08\t" + // header
+                        "0x04 21\tTUNNELING_ACK\t0x44 55" + // body
                         "\\E" // end pattern quote
                 // @formatter:on
         );
     }
 
     @Test
-    @DisplayName("CSV: Test File Audit Error")
-    public void auditOnErrorCsv() throws IOException {
-        final var path = Paths.get("target/test-FileAuditPluginTest-auditOnErrorCsv-" + UUID.randomUUID() + ".log");
+    @DisplayName("TSV: Test File Audit Error")
+    public void auditOnErrorTsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditOnErrorTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
         final var exceptionMock = mockException();
 
-        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.CSV));
+        plugin.onInitialization(mockKnxClient(path, FileAuditFormat.TSV));
         plugin.onStart();
         plugin.onError(exceptionMock);
         plugin.onShutdown();
@@ -268,11 +268,11 @@ public class FileAuditPluginTest {
         assertThat(lines).hasSize(4);
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
-                "\\d+\\.\\d+;" +
+                "\\d+\\.\\d+\t" +
                         "\\Q" +  // start pattern quote
-                        "\"error\";;;;;;" +
-                        "\"I'm a \"\"Runtime\\;Exception\"\"!\";" +
-                        "\"[org.class.Foo.add(Foo.java:123), org.class.Bar.addAll(Bar.java:456)]\"" +
+                        "error\t\t\t\t\t\t" +
+                        "I'm a \"RuntimeException\"!\t" +  // \t removed, because it is not allowed in tab-separated format
+                        "[org.class.Foo.add(Foo.java:123), org.class.Bar.addAll(Bar.java:456)]" +
                         "\\E" // end pattern quote
                 // @formatter:on
         );
@@ -291,7 +291,7 @@ public class FileAuditPluginTest {
 
     private Exception mockException() {
         final var exception = mock(RuntimeException.class);
-        when(exception.getMessage()).thenReturn("I'm a \"Runtime;Exception\"!");
+        when(exception.getMessage()).thenReturn("I'm a \"Runtime\tException\"!");
         when(exception.getStackTrace()).thenReturn(
                 new StackTraceElement[]{
                         new StackTraceElement(

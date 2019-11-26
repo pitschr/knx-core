@@ -9,8 +9,8 @@ integration to 3rd-party applications (e.g. Grafana, Kafka, ...)
 ## Available Plugins
 
 * [API](api) extends KNX Client with RESTful API which allows integration with third-party applications.
-* [FileAuditPlugin](audit) audits all events (packets and signals) to a file. Supports JSON and CSV formats.
-* [FileStatisticPlugin](statistic) writes statistic in a pre-defined interval to a file. Supports JSON, CSV and TEXT formats.
+* [FileAuditPlugin](audit) audits all events (packets and signals) to a file. Supports JSON and TSV formats.
+* [FileStatisticPlugin](statistic) writes statistic in a pre-defined interval to a file. Supports JSON, TSV and TEXT formats.
 
 ## Plugin Development
 

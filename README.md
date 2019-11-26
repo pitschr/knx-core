@@ -273,3 +273,7 @@ This can be also more simplified using direct string representation:
 ```
 DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45");
 ```
+
+#### Plugin Development
+
+For plugin there is a [dedicated page](knx-core-plugins) available.
