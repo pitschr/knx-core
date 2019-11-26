@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.test.MockDaemonTest;
-import li.pitschmann.knx.core.plugin.api.test.MockHttpDaemonPlugin;
+import li.pitschmann.knx.core.plugin.api.v1.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.v1.test.MockApiPlugin;
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 
@@ -38,9 +38,9 @@ public class StatisticControllerTest {
      * @param daemon
      * @throws Exception
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("Test /statistic endpoint")
-    public void testStatistic(final MockHttpDaemonPlugin daemon) throws Exception {
+    public void testStatistic(final MockApiPlugin daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 

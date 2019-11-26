@@ -23,9 +23,10 @@ import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT2;
-import li.pitschmann.knx.core.plugin.api.test.MockDaemonTest;
-import li.pitschmann.knx.core.plugin.api.test.MockHttpDaemonPlugin;
+import li.pitschmann.knx.core.plugin.api.v1.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.v1.test.MockApiPlugin;
 import li.pitschmann.knx.core.test.MockServerTest;
+import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
@@ -34,8 +35,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.randomGroupAddress;
+import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.asJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,9 +51,9 @@ public class WriteRequestControllerTest {
      * @param daemon
      * @throws Exception
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Write Request for group address 0/0/22")
-    public void testWrite(final MockHttpDaemonPlugin daemon) throws Exception {
+    public void testWrite(final MockApiPlugin daemon) throws Exception {
         // get http client for requests
         final var httpClient = HttpClient.newHttpClient();
 
@@ -125,7 +125,7 @@ public class WriteRequestControllerTest {
     @DisplayName("Error: Write Request without found ack body due a thrown exception from KNX client")
     public void testWriteException(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
-        final var groupAddress = randomGroupAddress();
+        final var groupAddress = TestHelpers.randomGroupAddress();
 
         //
         // Mocking
@@ -170,7 +170,7 @@ public class WriteRequestControllerTest {
         //
 
         final var request = new WriteRequest();
-        request.setGroupAddress(randomGroupAddress());
+        request.setGroupAddress(TestHelpers.randomGroupAddress());
 
         final var response = writeRequestController.writeRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);

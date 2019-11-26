@@ -35,11 +35,11 @@ import java.net.http.HttpRequest;
 import java.util.Objects;
 
 /**
- * Abstract HTTP Daemon
+ * Plugin for RESTful API (HTTP Daemon)
  */
-public class HttpDaemonPlugin implements ExtensionPlugin {
+public class ApiPlugin implements ExtensionPlugin {
     /**
-     * Default port for HTTP Daemon (same as Pippo)
+     * Default port for Pippo Micro Web Server (re-using the default port value)
      */
     public static final IntegerConfigValue PORT = new IntegerConfigValue(
             "port",

@@ -23,9 +23,10 @@ import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadResponse;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT12;
-import li.pitschmann.knx.core.plugin.api.test.MockDaemonTest;
-import li.pitschmann.knx.core.plugin.api.test.MockHttpDaemonPlugin;
+import li.pitschmann.knx.core.plugin.api.v1.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.v1.test.MockApiPlugin;
 import li.pitschmann.knx.core.test.MockServerTest;
+import li.pitschmann.knx.core.test.TestHelpers;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -35,9 +36,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.randomGroupAddress;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
+import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,9 +52,9 @@ public class ReadRequestControllerTest {
     /**
      * Tests the /read endpoint for group addresses using KNX mock server
      */
-    @MockDaemonTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
     @DisplayName("OK: Read Request for group addresses using KNX mock server")
-    public void testRead(final MockHttpDaemonPlugin daemon) throws Exception {
+    public void testRead(final MockApiPlugin daemon) throws Exception {
         final var groupAddress = GroupAddress.of(0, 3, 18);
 
         // create read request
@@ -96,7 +96,7 @@ public class ReadRequestControllerTest {
     @DisplayName("Error: Read Request without found ack body due a thrown exception from KNX client")
     public void testReadException(final Controller controller) {
         final var readRequestController = (ReadRequestController) controller;
-        final var groupAddress = randomGroupAddress();
+        final var groupAddress = TestHelpers.randomGroupAddress();
 
         //
         // Mocking
@@ -133,7 +133,7 @@ public class ReadRequestControllerTest {
     @DisplayName("Error: Read Request without available KNX status data from KNX Client (internal timeout)")
     public void testReadInternalTimeout(final Controller controller) {
         final var readRequestController = (ReadRequestController) controller;
-        final var groupAddress = randomGroupAddress();
+        final var groupAddress = TestHelpers.randomGroupAddress();
 
         //
         // Verification
@@ -162,7 +162,7 @@ public class ReadRequestControllerTest {
     @DisplayName("Error: Read Request for an unknown group address")
     public void testReadUnknownGroupAddress(final Controller controller) {
         final var readRequestController = (ReadRequestController) controller;
-        final var groupAddress = randomGroupAddress();
+        final var groupAddress = TestHelpers.randomGroupAddress();
 
         //
         // Mocking

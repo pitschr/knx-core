@@ -26,6 +26,7 @@ import li.pitschmann.knx.core.body.address.KnxAddress;
 import li.pitschmann.knx.core.body.cemi.APCI;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
+import li.pitschmann.knx.core.test.TestHelpers;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -34,9 +35,8 @@ import ro.pippo.core.HttpConstants;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.randomGroupAddress;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
+import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.v1.test.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -243,7 +243,7 @@ public class StatusControllerTest {
     @DisplayName("Error: Status Request an unknown group address")
     public void testWriteUnknownGroupAddress(final Controller controller) {
         final var statusController = (StatusController) controller;
-        final var groupAddress = randomGroupAddress();
+        final var groupAddress = TestHelpers.randomGroupAddress();
 
         //
         // Mocking
