@@ -43,7 +43,7 @@ import java.time.Instant;
 /**
  * Audit Plug-in that logs every signal arriving KNX client to a file
  * <p/>
- * JSON (default) and CSV formats are supported.
+ * JSON (default) and TSV formats are supported.
  *
  * @author PITSCHR
  */
@@ -53,7 +53,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     public static final PathConfigValue PATH = new PathConfigValue("path", () -> Paths.get("knx-audit.log"), null);
     /**
-     * File format (e.g. JSON, CSV)
+     * File format (e.g. JSON, TSV)
      */
     public static final EnumConfigValue<FileAuditFormat> FORMAT = new EnumConfigValue<>("format", FileAuditFormat.class, () -> FileAuditFormat.JSON);
     private static final Logger log = LoggerFactory.getLogger(FileAuditPlugin.class);

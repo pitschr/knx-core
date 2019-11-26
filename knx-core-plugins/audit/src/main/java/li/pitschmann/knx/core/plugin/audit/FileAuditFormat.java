@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * Format for {@link FileAuditPlugin}
  * <p/>
- * JSON and CSV are supported.
+ * JSON and TSV are supported.
  */
 public enum FileAuditFormat {
     // @formatter:off
@@ -50,31 +50,31 @@ public enum FileAuditFormat {
             Json::toJson
     ),
     /**
-     * Audit format should be in CSV text format
+     * Audit format should be in TSV text format
      */
-    CSV(
-            // Signal Template (TEXT Format)
-            "%1$s.%2$s;" + // time(sec) + time(ns)
-                "\"%3$s\"",              // type
-            // Body Template (TEXT Format)
-            "%1$s.%2$s;"+   // time(sec) + time(ns)
-                    "\"%3$s\";"+             // type
-                    "%4$s;" +                // header.totalLength
-                    "\"%5$s\";" +            // header.raw
-                    "\"%6$s\";" +            // body.service.code
-                    "\"%7$s\";" +            // body.service.text
-                    "\"%8$s\"",              // body.raw
-            // Error Template (TEXT Format)
-            "%1$s.%2$s;" + // time(sec) + time(ns)
-                "\"%3$s\""+                  // type
-                ";;;;;;" +                   // reserved for (body)
-                "\"%4$s\";" +                // message
-                "\"%5$s\"",                  // stacktrace
-            // Escaper for CSV message
+    TSV(
+            // Signal Template (TSV Format)
+            "%1$s.%2$s\t" +
+                "%3$s",                        // type
+            // Body Template (TSV Format)
+            "%1$s.%2$s\t"+
+                    "%3$s\t"+                  // type
+                    "%4$s\t" +                 // header.totalLength
+                    "%5$s\t" +                 // header.raw
+                    "%6$s\t" +                 // body.service.code
+                    "%7$s\t" +                 // body.service.text
+                    "%8$s",                    // body.raw
+            // Error Template (TSV Format)
+            "%1$s.%2$s\t" +
+                "%3$s"+                        // type
+                "\t\t\t\t\t\t" +               // reserved for (body)
+                "%4$s\t" +                     // message
+                "%5$s",                        // stacktrace
+            // Escaper for TSV message
                 (obj) -> {
                     return ((obj instanceof Object[]) ? Arrays.toString((Object[])obj) : String.valueOf(obj))
-                            .replace("\"", "\"\"")
-                            .replace(";", "\\;");
+                            // remove all \t
+                            .replace("\t", "");
                 }
     );
     // @formatter:on

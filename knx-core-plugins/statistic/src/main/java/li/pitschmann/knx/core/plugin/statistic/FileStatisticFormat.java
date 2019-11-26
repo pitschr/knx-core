@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * Format for {@link FileStatisticPlugin}
  * <p/>
- * JSON and TEXT are supported.
+ * JSON, TSV and TEXT are supported.
  */
 public enum FileStatisticFormat {
     // @formatter:off
@@ -38,16 +38,16 @@ public enum FileStatisticFormat {
             "}"
     ),
     /**
-     * Statistic format should be in CSV format.
+     * Statistic format should be in TSV format.
      */
-    CSV("" +
-            "%1$s,%2$s," +                               // inbound total
-            "%3$s,%4$s," +                               // outbound total
-            "%5$s,%6$.2f," +                             // error total
-            "0,%7$s,0,%9$s,0,%11$s,%17$s,%19$s," +       // inbound description, connect, connectionState, disconnect
-            "%13$s,%15$s,0,%21$s," +                     // inbound tunneling, indication
-            "%8$s,0,%10$s,0,%12$s,0,%18$s,%20$s," +      // outbound description, connect, connectionState, disconnect
-            "%14$s,%16$s,%22$s,0"                        // outbound tunneling, indication
+    TSV("" +
+            "%1$s\t%2$s\t" +                                     // inbound total
+            "%3$s\t%4$s\t" +                                     // outbound total
+            "%5$s\t%6$.2f\t" +                                   // error total
+            "0\t%7$s\t0\t%9$s\t0\t%11$s\t%17$s\t%19$s\t" +       // inbound description, connect, connectionState, disconnect
+            "%13$s\t%15$s\t0\t%21$s\t" +                         // inbound tunneling, indication
+            "%8$s\t0\t%10$s\t0\t%12$s\t0\t%18$s\t%20$s\t" +      // outbound description, connect, connectionState, disconnect
+            "%14$s\t%16$s\t%22$s\t0"                             // outbound tunneling, indication
     ),
     /**
      * Statistic format should be in TEXT format

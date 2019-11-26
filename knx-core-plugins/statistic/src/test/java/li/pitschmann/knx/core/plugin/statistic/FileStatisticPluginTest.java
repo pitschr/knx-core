@@ -133,11 +133,11 @@ public class FileStatisticPluginTest {
     }
 
     @Test
-    @DisplayName("CSV: Test File Statistic")
-    public void statisticCsv() throws IOException {
-        final var path = Paths.get("target/test-FileStatisticPluginTest-statisticCsv-" + UUID.randomUUID() + ".log");
+    @DisplayName("TSV: Test File Statistic")
+    public void statisticTsv() throws IOException {
+        final var path = Paths.get("target/test-FileStatisticPluginTest-statisticTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileStatisticPlugin();
-        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.CSV, TimeUnit.MINUTES.toMillis(1));
+        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.TSV, TimeUnit.MINUTES.toMillis(1));
 
         // start
         plugin.onInitialization(knxClientMock);
@@ -156,24 +156,24 @@ public class FileStatisticPluginTest {
         assertThat(lines).hasSize(2);
         assertThat(lines.get(0)).isEqualTo(
                 // @formatter:off
-                "0,0," +                      // inbound total
-                "0,0," +                      // outbound total
-                "0,0.00," +                   // error total
-                "0,0,0,0,0,0,0,0," +          // inbound description, connect, connectionState, disconnect
-                "0,0,0,0," +                  // inbound tunneling, indication
-                "0,0,0,0,0,0,0,0," +          // outbound description, connect, connectionState, disconnect
-                "0,0,0,0"                     // outbound tunneling, indication
+                "0\t0\t" +                            // inbound total
+                "0\t0\t" +                            // outbound total
+                "0\t0.00\t" +                         // error total
+                "0\t0\t0\t0\t0\t0\t0\t0\t" +          // inbound description, connect, connectionState, disconnect
+                "0\t0\t0\t0\t" +                      // inbound tunneling, indication
+                "0\t0\t0\t0\t0\t0\t0\t0\t" +          // outbound description, connect, connectionState, disconnect
+                "0\t0\t0\t0"                          // outbound tunneling, indication
                 // @formatter:on
         );
         assertThat(lines.get(1)).isEqualTo(
                 // @formatter:off
-                "10,11," +                     // inbound total
-                "12,13," +                     // outbound total
-                "14,1.50," +                   // error total
-                "0,21,0,31,0,41,70,71," +      // inbound description, connect, connectionState, disconnect
-                "50,51,0,60," +                // inbound tunneling, indication
-                "22,0,32,0,42,0,72,73," +      // outbound description, connect, connectionState, disconnect
-                "52,53,61,0"                   // outbound tunneling, indication
+                "10\t11\t" +                           // inbound total
+                "12\t13\t" +                           // outbound total
+                "14\t1.50\t" +                         // error total
+                "0\t21\t0\t31\t0\t41\t70\t71\t" +      // inbound description, connect, connectionState, disconnect
+                "50\t51\t0\t60\t" +                    // inbound tunneling, indication
+                "22\t0\t32\t0\t42\t0\t72\t73\t" +      // outbound description, connect, connectionState, disconnect
+                "52\t53\t61\t0"                        // outbound tunneling, indication
                 // @formatter:on
         );
     }
