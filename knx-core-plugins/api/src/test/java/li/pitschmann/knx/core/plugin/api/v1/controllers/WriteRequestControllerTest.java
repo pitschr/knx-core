@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
-import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT2;
-import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.test.MockServerTest;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;

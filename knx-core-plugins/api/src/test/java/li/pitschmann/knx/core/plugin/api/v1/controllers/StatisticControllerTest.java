@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
 import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 

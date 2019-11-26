@@ -1,9 +1,9 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.v1.json.ProjectStructureRequest;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
 import li.pitschmann.knx.core.parser.XmlGroupAddressStyle;
 import li.pitschmann.knx.core.parser.XmlGroupRange;
+import li.pitschmann.knx.core.plugin.api.v1.json.ProjectStructureRequest;
 import li.pitschmann.knx.core.utils.Preconditions;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;

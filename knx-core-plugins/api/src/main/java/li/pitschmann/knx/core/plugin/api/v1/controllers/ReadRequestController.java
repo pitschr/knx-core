@@ -1,8 +1,8 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadResponse;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.POST;
 import ro.pippo.controller.Produces;

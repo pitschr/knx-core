@@ -137,7 +137,7 @@ public final class MockApiExtension
         try {
             final var internalClientField = BaseKnxClient.class.getDeclaredField("internalClient");
             internalClientField.setAccessible(true);
-            final var internalClient = (InternalKnxClient)internalClientField.get(baseKnxClient);
+            final var internalClient = (InternalKnxClient) internalClientField.get(baseKnxClient);
             return Objects.requireNonNull(internalClient.getPluginManager().getPlugin(MockApiPlugin.class));
         } catch (final ReflectiveOperationException ex) {
             throw new AssertionError(ex);
