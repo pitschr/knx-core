@@ -15,7 +15,7 @@ public final class WriteRequestController extends AbstractController {
     private static final WriteResponse EMPTY_RESPONSE = new WriteResponse();
 
     /**
-     * Endpoint for write request to be forwarded to KNX Net/IP device by KNX Daemon.
+     * Endpoint for write request to be forwarded to KNX Net/IP device
      * <p/>
      * As soon we get an acknowledge frame from KNX, our write request action is done!
      *

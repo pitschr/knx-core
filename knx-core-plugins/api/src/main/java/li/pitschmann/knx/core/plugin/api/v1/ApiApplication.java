@@ -26,18 +26,18 @@ import li.pitschmann.knx.core.plugin.api.v1.controllers.ReadRequestController;
 import li.pitschmann.knx.core.plugin.api.v1.controllers.StatisticController;
 import li.pitschmann.knx.core.plugin.api.v1.controllers.StatusController;
 import li.pitschmann.knx.core.plugin.api.v1.controllers.WriteRequestController;
-import li.pitschmann.knx.core.plugin.api.v1.gson.DaemonGsonEngine;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.parser.XmlProject;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.guice.GuiceControllerFactory;
 
 /**
- * HTTP Application for KNX Http Daemon
+ * API Application for web server to serve KNX requests over HTTP
  * <p>
  * This loads the pippo relevant configuration, controllers, etc.
  */
-public class HttpDaemonApplication extends ControllerApplication {
+public class ApiApplication extends ControllerApplication {
     private KnxClient knxClient;
     private XmlProject xmlProject;
 
@@ -67,7 +67,7 @@ public class HttpDaemonApplication extends ControllerApplication {
         setControllerFactory(new GuiceControllerFactory(injector));
 
         // sets the customized Gson engine
-        getContentTypeEngines().setContentTypeEngine(DaemonGsonEngine.INSTANCE);
+        getContentTypeEngines().setContentTypeEngine(ApiGsonEngine.INSTANCE);
 
         // adds controller for endpoints
         addControllers(

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api.v1.test;
 
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.Test;
@@ -28,19 +28,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * KNX Test Annotation to launch KNX Daemon (and the KNX Mock Server indirectly)
+ * Mock API Test annotation to launch the web server (and the KNX Mock Server indirectly)
  * <p/>
- * This will call the JUnit {@link MockDaemonTestExtension} class.
+ * This will call the JUnit {@link MockApiExtension} class.
  *
  * @author PITSCHR
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Test
-@ExtendWith(MockDaemonTestExtension.class)
-public @interface MockDaemonTest {
+@ExtendWith(MockApiExtension.class)
+public @interface MockApiTest {
     /**
-     * Returns Mock Server Annotation
+     * Returns Mock Server annotation
      *
      * @return MockServerTest annotation
      */

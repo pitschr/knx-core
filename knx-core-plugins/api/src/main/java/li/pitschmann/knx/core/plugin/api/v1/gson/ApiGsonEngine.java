@@ -14,13 +14,13 @@ import ro.pippo.gson.GsonEngine;
 import java.time.Instant;
 
 /**
- * A customized {@link GsonEngine} with that adds needs for KNX Daemon
+ * A customized {@link GsonEngine} with that adds needs for web server
  */
-public final class DaemonGsonEngine extends GsonEngine {
-    public static final DaemonGsonEngine INSTANCE = new DaemonGsonEngine();
+public final class ApiGsonEngine extends GsonEngine {
+    public static final ApiGsonEngine INSTANCE = new ApiGsonEngine();
     private final Gson gson;
 
-    private DaemonGsonEngine() {
+    private ApiGsonEngine() {
         gson = new GsonBuilder()
                 // serializers
                 .registerTypeAdapter(Instant.class, InstantJsonSerializer.INSTANCE)

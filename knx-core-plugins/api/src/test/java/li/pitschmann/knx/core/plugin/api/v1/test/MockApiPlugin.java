@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api.v1.test;
 
-import li.pitschmann.knx.core.plugin.api.v1.HttpDaemonPlugin;
+import li.pitschmann.knx.core.plugin.api.v1.ApiPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.core.Pippo;
@@ -29,13 +29,13 @@ import java.net.BindException;
 import java.net.ServerSocket;
 
 /**
- * Creates a new instance of KNX Mock Daemon
+ * Creates a new instance of Mock API to start up the web server
  * <p/>
- * This will also start the KNX Mock Server in background which will be used
- * for communication with the KNX Net/IP device
+ * This will also start the KNX Mock Server in background to simulate a
+ * communication with the KNX Net/IP device
  */
-public final class MockHttpDaemonPlugin extends HttpDaemonPlugin {
-    private static final Logger log = LoggerFactory.getLogger(MockHttpDaemonPlugin.class);
+public final class MockApiPlugin extends ApiPlugin {
+    private static final Logger log = LoggerFactory.getLogger(MockApiPlugin.class);
 
     @Override
     protected void startPippo(Pippo pippo) {

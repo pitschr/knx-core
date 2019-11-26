@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api.v1.test;
 
 import com.google.gson.JsonParser;
-import li.pitschmann.knx.core.plugin.api.v1.gson.DaemonGsonEngine;
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -50,18 +48,7 @@ public final class TestUtils {
      * @return json
      */
     public static final String asJson(final @Nonnull Object response) {
-        return DaemonGsonEngine.INSTANCE.toString(response);
-    }
-
-    /**
-     * Randomize a {@link GroupAddress}. The group address should not matter in the unit testing.
-     *
-     * @return
-     */
-    public static GroupAddress randomGroupAddress() {
-        // a range between between 1 and 65535
-        int randomInt = new Random().nextInt(65534) + 1;
-        return GroupAddress.of(randomInt);
+        return ApiGsonEngine.INSTANCE.toString(response);
     }
 
     /**

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api.v1.test;
 
 import li.pitschmann.knx.core.communication.BaseKnxClient;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
@@ -47,22 +47,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Extension to start/stop the {@link MockHttpDaemonPlugin} (and {@link MockServer} indirectly).
+ * Extension to start/stop the {@link MockApiPlugin} (and {@link MockServer} indirectly).
  * <p/>
- * It will be invoked using {@link MockDaemonTest} annotation.
+ * It will be invoked using {@link MockApiTest} annotation.
  *
  * @author PITSCHR
  */
-public final class MockDaemonTestExtension
+public final class MockApiExtension
         implements ParameterResolver, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-    private static final Logger log = LoggerFactory.getLogger(MockDaemonTestExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(MockApiExtension.class);
     private static final Map<ExtensionContext, MockServer> mockServers = new ConcurrentHashMap<>();
-    private static final Map<ExtensionContext, MockHttpDaemonPlugin> mockDaemons = new ConcurrentHashMap<>();
+    private static final Map<ExtensionContext, MockApiPlugin> mockApiPlugins = new ConcurrentHashMap<>();
     private static final Map<ExtensionContext, KnxClient> knxClients = new ConcurrentHashMap<>();
     private static final AtomicInteger junitTestNr = new AtomicInteger();
 
     /**
-     * Initializes the {@link MockHttpDaemonPlugin} and start
+     * Initializes the {@link MockApiPlugin} and start
      *
      * @param context
      */
@@ -76,7 +76,7 @@ public final class MockDaemonTestExtension
         // create and start
         if (!mockServers.containsKey(context)) {
             final var stopwatch = Stopwatch.createStarted();
-            final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockDaemonTest.class).get();
+            final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), MockApiTest.class).get();
             // -------------------------------------
             // 1) start mock server
             // -------------------------------------
@@ -91,17 +91,16 @@ public final class MockDaemonTestExtension
             log.debug("KNX Mock Server started (elapsed: {} ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
             // -------------------------------------
-            // 2) start KNX client
-            //    (with mock http daemon as plugin)
+            // 2) start KNX client + Mock API Plugin
             // -------------------------------------
             stopwatch.reset();
             final ExecutorService executorService = Executors.newSingleThreadExecutor(true);
             executorService.execute(
                     () -> {
-                        final var config = mockServer.newConfigBuilder().plugin(MockHttpDaemonPlugin.class).build();
+                        final var config = mockServer.newConfigBuilder().plugin(MockApiPlugin.class).build();
                         try (final var client = DefaultKnxClient.createStarted(config)) {
                             knxClients.put(context, client);
-                            mockDaemons.put(context, getMockHttpDaemonPlugin(client));
+                            mockApiPlugins.put(context, getMockApiPlugin(client));
                             while (client.isRunning() && Sleeper.seconds(1)) {
                                 // do nothing ...
                                 log.debug("ping ...");
@@ -113,47 +112,47 @@ public final class MockDaemonTestExtension
             );
             executorService.shutdown();
 
-            // wait mock http daemon is ready (it will be started by KNX client as plugin)
-            if (!Sleeper.milliseconds(100, () -> isMockDaemonReady(context), 30000)) {
-                throw new RuntimeException("Could not start KNX Mock Server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms).");
+            // wait until it is ready
+            if (!Sleeper.milliseconds(100, () -> isMockApiPluginReady(context), 30000)) {
+                throw new RuntimeException("Could not start mock API plugin and/or web server (elapsed: " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms).");
             }
 
-            log.debug("KNX Client started (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            log.debug("Mock API plugin and web server started (elapsed: {}ms)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         } else {
-            throw new IllegalStateException("KNX Mock Server already running.");
+            throw new IllegalStateException("Mock API plugin and web server already running.");
         }
 
         log.debug("Method 'beforeTestExecution' completed for test method '{}'.", context.getRequiredTestMethod());
     }
 
     /**
-     * Returns the {@link MockHttpDaemonPlugin} which is inside the KNX client
+     * Returns the {@link MockApiPlugin} which is inside the KNX client
      * and not accessible outside
      *
      * @param baseKnxClient
-     * @return an existing instance of {@link MockHttpDaemonPlugin}
+     * @return an existing instance of {@link MockApiPlugin}
      */
     @Nonnull
-    private MockHttpDaemonPlugin getMockHttpDaemonPlugin(final @Nonnull BaseKnxClient baseKnxClient) {
+    private MockApiPlugin getMockApiPlugin(final @Nonnull BaseKnxClient baseKnxClient) {
         try {
             final var internalClientField = BaseKnxClient.class.getDeclaredField("internalClient");
             internalClientField.setAccessible(true);
             final var internalClient = (InternalKnxClient)internalClientField.get(baseKnxClient);
-            return Objects.requireNonNull(internalClient.getPluginManager().getPlugin(MockHttpDaemonPlugin.class));
+            return Objects.requireNonNull(internalClient.getPluginManager().getPlugin(MockApiPlugin.class));
         } catch (final ReflectiveOperationException ex) {
             throw new AssertionError(ex);
         }
     }
 
     /**
-     * Returns {@code true} when mock API is ready, otherwise {@code false}
+     * Returns {@code true} when mock API plugin is ready, otherwise {@code false}
      *
      * @param context
      * @return {@code true} if ready, otherwise {@code false}
      */
-    private boolean isMockDaemonReady(final ExtensionContext context) {
-        final var mockDaemon = mockDaemons.get(context);
-        return mockDaemon != null && mockDaemon.isReady();
+    private boolean isMockApiPluginReady(final ExtensionContext context) {
+        final var mockPlugin = mockApiPlugins.get(context);
+        return mockPlugin != null && mockPlugin.isReady();
     }
 
     /**
@@ -176,12 +175,12 @@ public final class MockDaemonTestExtension
     }
 
     @Override
-    public MockHttpDaemonPlugin resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return mockDaemons.get(context);
+    public MockApiPlugin resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+        return mockApiPlugins.get(context);
     }
 
     @Override
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return paramContext.getParameter().getType().equals(MockHttpDaemonPlugin.class);
+        return paramContext.getParameter().getType().equals(MockApiPlugin.class);
     }
 }
