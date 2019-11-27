@@ -179,7 +179,7 @@ public class ReadRequestControllerTest {
         request.setGroupAddress(groupAddress);
 
         final var response = readRequestController.readRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
         Assertions.assertThat(response.getGroupAddress()).isNull();
         Assertions.assertThat(response.getName()).isNull();
         Assertions.assertThat(response.getDescription()).isNull();
