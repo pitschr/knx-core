@@ -30,17 +30,16 @@ public final class WriteRequestController extends AbstractController {
 
         final var groupAddress = writeRequest.getGroupAddress();
 
-        // check if GA is known
-        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
-        if (xmlGroupAddress == null) {
-            log.warn("Could not find group address in XML project: {}", groupAddress);
+        // check if GA is provided
+        if (groupAddress == null) {
+            log.warn("Could not find group address in request.");
             getResponse().badRequest();
             return EMPTY_RESPONSE;
         }
 
         // found - group address is known, resolve the raw data for write request to KNX Net/IP device
         byte[] rawToWrite = writeRequest.getRaw();
-        if (rawToWrite == null) {
+        if (rawToWrite == null || rawToWrite.length == 0) {
             final var dpt = writeRequest.getDataPointType();
             final var dptValues = writeRequest.getValues();
             if (dpt == null || dptValues == null || dptValues.length == 0) {
@@ -53,7 +52,9 @@ public final class WriteRequestController extends AbstractController {
                 rawToWrite = dpt.toValue(dptValues).toByteArray();
             }
         }
-        log.debug("Write request to group address '{}' with bytes: {}", groupAddress, ByteFormatter.formatHexAsString(rawToWrite));
+        if (log.isDebugEnabled()) {
+            log.debug("Write request to group address '{}' with bytes: {}", groupAddress, ByteFormatter.formatHexAsString(rawToWrite));
+        }
 
         // send write request
         if (getKnxClient().writeRequest(groupAddress, rawToWrite)) {

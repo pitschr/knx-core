@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'KNX Core Plugin: API'
+  description: ''
+servers:
+  - url: http://localhost:8338/api
+paths:
+  /v1/read:
+    post:
+      description: |
+        Sends a READ response to KNX Client for a specified KNX group address (in POST body).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                # Group Address (Byte Array)
+                - type: object
+                  properties:
+                    groupAddress:
+                      $ref: '#/components/schemas/TwoByteArray'
+                  required:
+                    - groupAddress
+                # Group Address (Integer)
+                - type: object
+                  properties:
+                    groupAddress:
+                      type: integer
+                      minimum: 0
+                      maximum: 65535
+                      example: 123
+                  required:
+                    - groupAddress
+                # Group Address (String)
+                - type: object
+                  properties:
+                    groupAddress:
+                      type: string
+                      example: '1/2/100'
+                  required:
+                    - groupAddress
+            examples:
+              Group Address:
+                value: {"groupAddress":{"type":1, raw:[15, 19]}}
+              Group Address (byte array):
+                value: {"groupAddress":[15, 19]}
+              Group Address Free-Level (integer):
+                value: {"groupAddress":1234}
+              Group Address Free-Level (string):
+                value: {"groupAddress":"1234"}
+              Group Address Two-Level:
+                value: {"groupAddress":"1/330"}
+              Group Address Three-Level:
+                value: {"groupAddress":"1/2/100"}
+      responses:
+        200:
+          description: Read request accepted and got response from KNX Net/IP device.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  # Full Response (Group Address is present in KNX Project File)
+                  - type: object
+                    description: test
+                    properties:
+                      groupAddress:
+                        $ref: '#/components/schemas/GroupAddress'
+                      name:
+                        type: string
+                        example: "Temperature (1st Floor, Bedroom)"
+                      description:
+                        type: string
+                        example: "The temperature in Bedroom"
+                      dataPointType:
+                        type: string
+                        example: "9.001"
+                      value:
+                        type: string
+                        example: '23.45'
+                      unit:
+                        type: string
+                        example: '°C'
+                      raw:
+                        type: array
+                        items:
+                          type: integer
+                        example: [15, 4, 66]
+                  # Partial Response
+                  - type: object
+                    description: "test"
+                    properties:
+                      groupAddress:
+                        $ref: '#/components/schemas/GroupAddress'
+                      raw:
+                        type: array
+                        items:
+                          type: integer
+                        example: [15, 4, 66]
+
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"groupAddress":{"type":1,"format":{"free_level":"786","two_level":"0/786","three_level":"0/3/18"},"raw":[3,18]},"name":"Sub Group - DPT 12 (0x80 02 70 FF)","description":"4-bytes, unsigned (2147643647)","dataPointType":"12.001","value":"2147643647","unit":"pulses","raw":[-128,2,112,-1]}
+                Partial Response:
+                  value: {"groupAddress":{"type":1,"format":{"free_level":"786","two_level":"0/786","three_level":"0/3/18"},"raw":[3,18]},"raw":[-128,2,112,-1]}
+        400:
+          description: 'Bad Request. At least one field has not been provided (correctly).'
+        404:
+          description: 'No response got given KNX Group Address (one cause might be a missing READ flag on KNX Group Address)'
+        500:
+          description: 'Internal Error.'
+
+
+  /v1/write:
+    post:
+      description: 'Sends a WRITE response to KNX Client'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                # Group Address and Raw Data
+                - type: object
+                  properties:
+                    groupAddress:
+                      $ref: '#/components/schemas/GroupAddress'
+                    raw:
+                      type: array
+                      items:
+                        type: integer
+                      example: [15, 4, 66]
+                  required:
+                    - groupAddress
+                    - raw
+
+                # Group Address, DataPointType and Values
+                - type: object
+                  properties:
+                    groupAddress:
+                      $ref: '#/components/schemas/GroupAddress'
+                    dataPointType:
+                      type: string
+                      example: '1.001'
+                    values:
+                      type: string
+                      example: 'on'
+                  required:
+                    - groupAddress
+                    - dataPointType
+                    - values
+
+            examples:
+              Group Address (Integer) and Raw Data:
+                value: {"groupAddress":5401, raw: [0]}
+              Group Address (String) and Raw Data:
+                value: {"groupAddress":"1/2/100", raw: [0]}
+              Group Address (Byte Array) and Raw Data:
+                value: {"groupAddress": [15, 19], raw: [0]}
+              Group Address (Integer), DataPointType and Values:
+                value: {"groupAddress":5401, "dataPointType": "1.001", "values": ["on"]}
+              Group Address (String), DataPointType and Values:
+                value: {"groupAddress":"1/2/100", "dataPointType": "1.001", "values": ["on"]}
+              Group Address (Byte Array), DataPointType and Values:
+                value: {"groupAddress":[15, 19], "dataPointType": "1.001", "values": ["on"]}
+      responses:
+        202:
+          description: 'Write request accepted by KNX Net/IP device, but success is not guaranteed (e.g. one case might be that group address has no WRITE flag set). Body is empty.'
+          content:
+            application/json:
+              example: {}
+        400:
+          description: 'Bad Request. At least one field has not been provided (correctly).'
+        500:
+          description: 'Internal Error.'
+
+
+components:
+  schemas:
+
+    # Group Address may be identified by several areas
+    GroupAddress:
+      type: object
+      properties:
+        type:
+          type: integer
+          example: 1
+        format:
+          type: object
+          properties:
+            free_level:
+              type: string
+              example: '5401'
+            two_level:
+              type: string
+              example: '1/330'
+            three_level:
+              type: string
+              example: '1/2/100'
+        raw:
+          $ref: '#/components/schemas/TwoByteArray'
+
+    TwoByteArray:
+      type: array
+      items:
+        type: integer
+        minimum: 0
+        maximum: 255
+      minItems: 2
+      maxItems: 2
+      example: [15,19]

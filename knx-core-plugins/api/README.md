@@ -4,9 +4,9 @@ This plugin offers third-integration to other systems using RESTful API and
 will start up a [Pippo micro web server](https://github.com/pippo-java/pippo) 
 in background to serve the JSON requests.
 
-## Available Endpoints
+## Endpoints
 
-// TODO
+See on [SwaggerHub](https://app.swaggerhub.com/apis/pitschr/knx-core-plugin-api/1.0.0) to find all endpoints.
 
 ## Configuration
 

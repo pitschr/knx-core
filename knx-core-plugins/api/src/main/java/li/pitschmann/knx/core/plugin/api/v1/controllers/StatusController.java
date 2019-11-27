@@ -98,7 +98,7 @@ public final class StatusController extends AbstractController {
     }
 
     /**
-     * Fill the given {@link StatusResponse} with data that is requested by {@code expand} parameter
+     * Fill the given {@link StatusResponse} with data that is requested by {@code $expand} parameter
      *
      * @param response
      * @param groupAddress
@@ -118,39 +118,19 @@ public final class StatusController extends AbstractController {
         }
 
         // status and group address is always displayed
-        if (containsExpand("status")) {
-            response.setStatus(isOK ? Status.OK : Status.ERROR);
-        }
-        if (containsExpand("groupAddress")) {
-            response.setGroupAddress(groupAddress);
-        }
+        response.setStatus(isOK ? Status.OK : Status.ERROR);
+        response.setGroupAddress(groupAddress);
 
         // other are displayed only when data are available
         if (isOK) {
-            if (containsExpand("dpt")) {
-                response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
-            }
-            if (containsExpand("name")) {
-                response.setName(xmlGroupAddress.getName());
-            }
-            if (containsExpand("description")) {
-                response.setDescription(xmlGroupAddress.getDescription());
-            }
-            if (containsExpand("timestamp")) {
-                response.setTimestamp(knxStatusData.getTimestamp());
-            }
-            if (containsExpand("source")) {
-                response.setSourceAddress(knxStatusData.getSourceAddress());
-            }
-            if (containsExpand("apci")) {
-                response.setApci(knxStatusData.getApci());
-            }
-            if (containsExpand("raw")) {
-                response.setRaw(knxStatusData.getApciData());
-            }
-            if (containsExpand("dirty")) {
-                response.setDirty(knxStatusData.isDirty());
-            }
+            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
+            response.setName(xmlGroupAddress.getName());
+            response.setDescription(xmlGroupAddress.getDescription());
+            response.setTimestamp(knxStatusData.getTimestamp());
+            response.setSourceAddress(knxStatusData.getSourceAddress());
+            response.setApci(knxStatusData.getApci());
+            response.setRaw(knxStatusData.getApciData());
+            response.setDirty(knxStatusData.isDirty());
         }
 
     }

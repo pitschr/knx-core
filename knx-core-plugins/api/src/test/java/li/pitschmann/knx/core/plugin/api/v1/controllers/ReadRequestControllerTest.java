@@ -62,7 +62,7 @@ public class ReadRequestControllerTest {
         request.setGroupAddress(groupAddress);
 
         // do a call with all parameters
-        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(request))).build();
+        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(request))).build();
         final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
 
