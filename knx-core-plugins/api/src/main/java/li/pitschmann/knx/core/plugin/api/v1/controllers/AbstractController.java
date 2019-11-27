@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
  */
 @Path("/api/v1")
 abstract class AbstractController extends Controller {
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
-    private static final String PARAMETER_EXPAND = "expand";
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
@@ -39,41 +37,6 @@ abstract class AbstractController extends Controller {
     public final KnxClient getKnxClient() {
         return knxClient;
     }
-
-    /**
-     * Returns an array of expand parameters which are comma-separated
-     *
-     * @return array of expand parameters
-     */
-    protected final String[] getExpandParameters() {
-        final var expandParameter = getRequest().getParameter(PARAMETER_EXPAND);
-        if (expandParameter == null || expandParameter.isNull()) {
-            return EMPTY_STRING_ARRAY;
-        } else {
-            return expandParameter.toString().split(",");
-        }
-    }
-
-    /**
-     * Checks if the given {@code name} expand parameter is in request.
-     * Consider case-sensitivity.
-     * <p/>
-     * Special rule: if expand parameter contains '*' (star) then all parameters are subject to be considered
-     * and therefore the method will always return {@code true} in this case.
-     *
-     * @param name
-     * @return {@code true} if searched expand parameter exists, otherwise {@code false}
-     */
-    protected final boolean containsExpand(final @Nonnull String name) {
-        Preconditions.checkNonNull(name);
-        for (final var expandParameter : getExpandParameters()) {
-            if ("*".equals(expandParameter) || name.equals(expandParameter)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     /**
      * Returns a range of {@code T} elements from list.

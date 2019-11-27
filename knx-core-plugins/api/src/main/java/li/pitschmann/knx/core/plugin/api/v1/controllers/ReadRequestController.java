@@ -33,10 +33,9 @@ public final class ReadRequestController extends AbstractController {
 
         final var groupAddress = readRequest.getGroupAddress();
 
-        // check if GA is known
-        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
-        if (xmlGroupAddress == null) {
-            log.warn("Could not find group address in XML project: {}", groupAddress);
+        // check if GA is provided
+        if (groupAddress == null) {
+            log.warn("Could not find group address in request.");
             getResponse().badRequest();
             return EMPTY_RESPONSE;
         }
@@ -59,29 +58,21 @@ public final class ReadRequestController extends AbstractController {
         // everything OK
         log.debug("Status data found for group address: {}", groupAddress);
         final var response = new ReadResponse();
-        final var dpt = DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
 
         // we add group address, dpt, name and description only if requested
-        if (containsExpand("groupAddress")) {
-            response.setGroupAddress(groupAddress);
-        }
-        if (containsExpand("dpt")) {
-            response.setDataPointType(dpt);
-        }
-        if (containsExpand("name")) {
+        response.setGroupAddress(groupAddress);
+        response.setRaw(knxStatusData.getApciData());
+
+        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+        if (xmlGroupAddress != null) {
+            final var dpt = DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
             response.setName(xmlGroupAddress.getName());
-        }
-        if (containsExpand("description")) {
             response.setDescription(xmlGroupAddress.getDescription());
-        }
-        if (containsExpand("value")) {
+            response.setDataPointType(dpt);
             response.setValue(dpt.toValue(knxStatusData.getApciData()).toText());
-        }
-        if (containsExpand("unit")) {
             response.setUnit(dpt.getUnit());
-        }
-        if (containsExpand("raw")) {
-            response.setRaw(knxStatusData.getApciData());
+        } else {
+            log.warn("Could not find group address in XML project: {}", groupAddress);
         }
 
         getResponse().ok();

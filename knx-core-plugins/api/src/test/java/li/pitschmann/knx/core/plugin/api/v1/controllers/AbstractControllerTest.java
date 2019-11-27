@@ -137,40 +137,6 @@ public class AbstractControllerTest {
     }
 
     /**
-     * Test the 'limit' parameter for {@link AbstractController#limitAndGetAsList(Collection)} method
-     */
-    @ControllerTest(value = TestController.class)
-    @DisplayName("Test the 'expand' parameter")
-    public void testContainsExpand(final Controller controller) {
-        var testController = (TestController) controller;
-        when(testController.containsExpand(anyString())).thenCallRealMethod();
-
-        //
-        // Verification
-        //
-
-        // non-existing 'expand' parameter
-        when(controller.getRequest().getParameter("expand")).thenReturn(null);
-        final var missingParameter = testController.containsExpand("fooBar");
-        assertThat(missingParameter).isFalse();
-
-        when(controller.getRequest().getParameter("expand")).thenReturn(new ParameterValue());
-        final var missingParameter2 = testController.containsExpand("fooBar");
-        assertThat(missingParameter2).isFalse();
-
-        // expand parameter '*' (wildcard)
-        when(controller.getRequest().getParameter("expand")).thenReturn(new ParameterValue("*"));
-        final var allParameters = testController.containsExpand("fooBar");
-        assertThat(allParameters).isTrue();
-
-        // expand parameter 'a,b' (two parameters)
-        when(controller.getRequest().getParameter("expand")).thenReturn(new ParameterValue("a,b"));
-        assertThat(testController.containsExpand("a")).isTrue();
-        assertThat(testController.containsExpand("b")).isTrue();
-        assertThat(testController.containsExpand("c")).isFalse();
-    }
-
-    /**
      * Dummy Controller for testing purposes only
      */
     public static class TestController extends AbstractController {

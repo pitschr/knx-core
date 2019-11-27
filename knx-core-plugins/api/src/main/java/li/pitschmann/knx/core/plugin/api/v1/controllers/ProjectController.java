@@ -31,21 +31,11 @@ public final class ProjectController extends AbstractController {
 
         // get project data
         final var response = new ProjectStructureRequest();
-        if (containsExpand("id")) {
-            response.setId(xmlProject.getId());
-        }
-        if (containsExpand("name")) {
-            response.setName(xmlProject.getName());
-        }
-        if (containsExpand("groupAddressStyle")) {
-            response.setGroupAddressStyle(xmlProject.getGroupAddressStyle().getCode());
-        }
-        if (containsExpand("numberOfGroupRanges")) {
-            response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
-        }
-        if (containsExpand("numberOfGroupAddresses")) {
-            response.setNumberOfGroupAddresses(xmlProject.getGroupAddresses().size());
-        }
+        response.setId(xmlProject.getId());
+        response.setName(xmlProject.getName());
+        response.setGroupAddressStyle(xmlProject.getGroupAddressStyle().getCode());
+        response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
+        response.setNumberOfGroupAddresses(xmlProject.getGroupAddresses().size());
 
         getResponse().ok();
         return response;

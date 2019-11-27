@@ -62,7 +62,7 @@ public class ReadRequestControllerTest {
         request.setGroupAddress(groupAddress);
 
         // do a call with all parameters
-        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/read?expand=*").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(request))).build();
+        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(request))).build();
         final var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
 
@@ -179,7 +179,7 @@ public class ReadRequestControllerTest {
         request.setGroupAddress(groupAddress);
 
         final var response = readRequestController.readRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
         Assertions.assertThat(response.getGroupAddress()).isNull();
         Assertions.assertThat(response.getName()).isNull();
         Assertions.assertThat(response.getDescription()).isNull();

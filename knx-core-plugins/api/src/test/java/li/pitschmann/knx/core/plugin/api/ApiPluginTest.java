@@ -27,11 +27,13 @@ import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
+import ro.pippo.core.HttpConstants;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -58,27 +60,31 @@ public class ApiPluginTest {
         writeRequest.setGroupAddress(groupAddress);
         writeRequest.setDataPointType(DPT1.SWITCH);
         writeRequest.setValues("true");
-        final var writeHttpRequest = mockApi.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(writeRequest))).build();
+        final var writeHttpRequest = mockApi.newRequestBuilder("/api/v1/write")
+                .POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(writeRequest))).build();
+
+        // Start HTTP communication
+        // ----------------------------
 
         // send read request #1
-        final var readHttpRequest = mockApi.newRequestBuilder("/api/v1/read").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
-        final var responseBody = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody).isEqualTo("{}");
+        final var readHttpRequest = mockApi.newRequestBuilder("/api/v1/read")
+                .POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var readHttpResponse = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(readHttpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(readHttpResponse.body()).isEqualTo(readJsonFile("/json/ApiPluginTest-testReadAndWrite-read.json"));
 
         // write 0x01
-        final var writeBody = httpClient.send(writeHttpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(writeBody).isEqualTo("{}");
+        final var writeHttpResponse = httpClient.send(writeHttpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(writeHttpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
+        assertThat(writeHttpResponse.body()).isEqualTo("{}");
 
         // send read request #2
         // - group address: "1-bit (false)" which has been initialized with "false" contains now "true"
-        // - it contains the expand 'name' and 'description' which means that we request for group address name and description as well
-        final var readHttpRequestAfterWrite = mockApi.newRequestBuilder("/api/v1/read?expand=name,description,dpt,raw").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
-        final var responseBodyAfterWrite = httpClient.send(readHttpRequestAfterWrite, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBodyAfterWrite).isEqualTo("{" + //
-                "\"name\":\"Sub Group - DPT 1 (0x00)\"," + //
-                "\"description\":\"1-bit (false)\"," + //
-                "\"dataPointType\":\"1.001\"," + //
-                "\"raw\":[1]" + //
-                "}");
+        // - it contains the '$expand' parameters which means that we request for specific data only
+        final var readHttpRequestAfterWrite = mockApi.newRequestBuilder("/api/v1/read")
+                .POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
+        final var readHttpResponseAfterWrite = httpClient.send(readHttpRequestAfterWrite, HttpResponse.BodyHandlers.ofString());
+        assertThat(readHttpResponseAfterWrite.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(readHttpResponseAfterWrite.body()).isEqualTo(readJsonFile("/json/ApiPluginTest-testReadAndWrite-read2.json"));
     }
 }

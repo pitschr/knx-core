@@ -124,9 +124,7 @@ public final class ControllerTestExtension
             // be injected by Pippo Framework
             final var routeContextInternal = getDefaultRouteContext();
             final var spyObject = spy(obj);
-
             when(spyObject.getRouteContext()).thenReturn(routeContextInternal);
-            doReturn(true).when(spyObject).containsExpand(anyString());
 
             return spyObject;
         } catch (final Exception e) {
