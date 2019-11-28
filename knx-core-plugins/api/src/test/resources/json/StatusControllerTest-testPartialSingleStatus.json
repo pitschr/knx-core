@@ -1,15 +1,15 @@
 {
   "status": "OK",
   "timestamp": {
-    "seconds": 9876,
+    "seconds": 19876,
     "nanos": 543000000
   },
   "sourceAddress": {
     "type": 0,
-    "format": "15.14.13",
+    "format": "15.14.12",
     "raw": [
       -2,
-      13
+      12
     ]
   },
   "apci": "GROUP_VALUE_READ",
@@ -17,21 +17,17 @@
   "groupAddress": {
     "type": 1,
     "format": {
-      "free_level": "16206",
-      "two_level": "7/1870",
-      "three_level": "7/7/78"
+      "free_level": "18255",
+      "two_level": "8/1871",
+      "three_level": "8/7/79"
     },
     "raw": [
-      63,
-      78
+      71,
+      79
     ]
   },
-  "name": "DPT1.Switch Name",
-  "description": "DPT1.Switch Description",
-  "dataPointType": "1.001",
   "raw": [
-    119,
-    67,
-    33
+    56,
+    85
   ]
 }
