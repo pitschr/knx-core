@@ -6,7 +6,8 @@ in background to serve the JSON requests.
 
 ## Endpoints
 
-See on [SwaggerHub](https://app.swaggerhub.com/apis/pitschr/knx-core-plugin-api/1.0.0) to find all endpoints.
+See [OpenAPI document @ swagger.io](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/pitschr/knx-link/master/knx-core-plugins/api/knx-core-plugin-api.openapi.yaml) 
+to find all endpoints with some examples.
 
 ## Configuration
 

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
+import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,41 +49,6 @@ public class StatisticControllerTest {
         final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/statistic").GET().build();
         final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
 
-        // @formatter:off
-        assertThat(responseBody).isEqualTo(
-                "{" +
-                    "\"inbound\":{" +
-                        "\"total\":{" +
-                            "\"packets\":3," +
-                            "\"bytes\":224" +
-                        "}," +
-                        "\"search\":{\"request\":0,\"response\":0}," +
-                        "\"description\":{\"request\":0,\"response\":1}," +
-                        "\"connect\":{\"request\":0,\"response\":1}," +
-                        "\"connection_state\":{\"request\":0,\"response\":1}," +
-                        "\"disconnect\":{\"request\":0,\"response\":0}," +
-                        "\"tunneling\":{\"request\":0,\"response\":0}" +
-                    "}," +
-                    "\"outbound\":{" +
-                        "\"total\":{" +
-                            "\"packets\":3," +
-                            "\"bytes\":182" +
-                        "}," +
-                        "\"search\":{\"request\":0,\"response\":0}," +
-                        "\"description\":{\"request\":1,\"response\":0}," +
-                        "\"connect\":{\"request\":1,\"response\":0}," +
-                        "\"connection_state\":{\"request\":1,\"response\":0}," +
-                        "\"disconnect\":{\"request\":0,\"response\":0}," +
-                        "\"tunneling\":{\"request\":0,\"response\":0}" +
-                    "}," +
-                    "\"error\":{" +
-                        "\"total\":{" +
-                            "\"packets\":0," +
-                            "\"rate\":0.0" +
-                        "}" +
-                    "}" +
-                "}"
-        );
-        // @formatter:on
+        assertThat(responseBody).isEqualTo(readJsonFile("/json/StatisticControllerTest-testStatistic.json"));
     }
 }

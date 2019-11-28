@@ -93,11 +93,8 @@ public class WriteRequestControllerTest {
         assertThatJson(responseJson).isEqualTo("{}");
     }
 
-    /**
-     * An erroneous Write Request without DPT and raw data.
-     */
     @ControllerTest(WriteRequestController.class)
-    @DisplayName("Error: Write Request endpoint without DPT and raw data")
+    @DisplayName("ERROR: Write Request endpoint without DPT and raw data")
     public void testWriteMissingDptAndRawData(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
         final var groupAddress = GroupAddress.of(4, 7, 28);
@@ -116,13 +113,8 @@ public class WriteRequestControllerTest {
         assertThatJson(responseJson).isEqualTo("{}");
     }
 
-    /**
-     * Write Request for an existing group address in XML project file,
-     * but no ack body could be found (or retrieved yet) due a thrown
-     * exception.
-     */
     @ControllerTest(WriteRequestController.class)
-    @DisplayName("Error: Write Request without found ack body due a thrown exception from KNX client")
+    @DisplayName("ERROR: Write Request without ack body from KNX client")
     public void testWriteException(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
         final var groupAddress = TestHelpers.randomGroupAddress();
@@ -150,11 +142,8 @@ public class WriteRequestControllerTest {
         assertThatJson(responseJson).isEqualTo("{}");
     }
 
-    /**
-     * Tests the write endpoint for an unknown group address
-     */
     @ControllerTest(WriteRequestController.class)
-    @DisplayName("Error: Write Request for an unknown group address")
+    @DisplayName("ERROR: Write Request for an unknown group address")
     public void testWriteUnknownGroupAddress(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
 
@@ -173,6 +162,22 @@ public class WriteRequestControllerTest {
         request.setGroupAddress(TestHelpers.randomGroupAddress());
 
         final var response = writeRequestController.writeRequest(request);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo("{}");
+    }
+
+    @ControllerTest(WriteRequestController.class)
+    @DisplayName("ERROR: Write Request without group address")
+    public void testReadNoGroupAddress(final Controller controller) {
+        final var writeRequestController = (WriteRequestController) controller;
+
+        //
+        // Verification
+        //
+
+        final var response = writeRequestController.writeRequest(new WriteRequest());
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
 
         final var responseJson = asJson(response);

@@ -10,8 +10,10 @@ import li.pitschmann.knx.core.plugin.api.v1.json.StatusResponse;
 import ro.pippo.controller.Consumes;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.POST;
+import ro.pippo.controller.Path;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Body;
+import ro.pippo.controller.extractor.Param;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,31 +60,14 @@ public final class StatusController extends AbstractController {
         return responses;
     }
 
-
-    /**
-     * Endpoint for status request to check the status pool of KNX client
-     *
-     * @param statusRequest
-     * @return a new instance of {@link StatusResponse}
-     */
-    @POST("/status")
-    @Consumes(Consumes.JSON)
+    @GET("/status/{ga: \\d+(\\/\\d+)?(\\/\\d+)?}")  // supports: 1, 1/2, 1/2/3
     @Produces(Produces.JSON)
-    public StatusResponse statusRequest(final @Body StatusRequest statusRequest) {
-        log.trace("Http Status Request received: {}", statusRequest);
-
-        final var groupAddress = statusRequest.getGroupAddress();
-
-        // check if GA is known
-        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
-        if (xmlGroupAddress == null) {
-            getResponse().badRequest();
-            return EMPTY_RESPONSE;
-        }
+    public StatusResponse statusOne(final @Param("ga") String groupAddressStr) {
+        log.trace("Http Status Request received for: {}", groupAddressStr);
 
         // check if there is status data available in status pool
+        final var groupAddress = GroupAddress.of(groupAddressStr);
         final var knxStatusData = getKnxClient().getStatusPool().getStatusFor(groupAddress);
-
         if (knxStatusData == null) {
             log.warn("Status data not found for group address: {}", groupAddress);
             getResponse().notFound();
@@ -92,6 +77,7 @@ public final class StatusController extends AbstractController {
         // group address is known in XML project and there is status data available
         // fill all relevant properties
         final var response = new StatusResponse();
+        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
         fill(response, groupAddress, xmlGroupAddress, knxStatusData);
         getResponse().ok();
         return response;
@@ -106,32 +92,26 @@ public final class StatusController extends AbstractController {
      * @param knxStatusData
      */
     private void fill(final @Nonnull StatusResponse response, final @Nonnull GroupAddress groupAddress, final @Nullable XmlGroupAddress xmlGroupAddress, final @Nullable KnxStatusData knxStatusData) {
-
-        boolean isOK = true;
-        if (xmlGroupAddress == null) {
-            log.warn("Could not find group address in XML project: {}", groupAddress);
-            isOK = false;
-        }
-        if (knxStatusData == null) {
-            log.warn("No status data found for group address: {}", groupAddress);
-            isOK = false;
-        }
-
-        // status and group address is always displayed
-        response.setStatus(isOK ? Status.OK : Status.ERROR);
-        response.setGroupAddress(groupAddress);
-
-        // other are displayed only when data are available
-        if (isOK) {
-            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
-            response.setName(xmlGroupAddress.getName());
-            response.setDescription(xmlGroupAddress.getDescription());
+        if (knxStatusData != null) {
             response.setTimestamp(knxStatusData.getTimestamp());
             response.setSourceAddress(knxStatusData.getSourceAddress());
             response.setApci(knxStatusData.getApci());
             response.setRaw(knxStatusData.getApciData());
             response.setDirty(knxStatusData.isDirty());
+        } else {
+            log.warn("No status data found for group address: {}", groupAddress);
         }
 
+        if (xmlGroupAddress != null) {
+            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
+            response.setName(xmlGroupAddress.getName());
+            response.setDescription(xmlGroupAddress.getDescription());
+        } else {
+            log.warn("Could not find group address in XML project: {}", groupAddress);
+        }
+
+        // status and group address is always displayed
+        response.setStatus(knxStatusData == null ? Status.ERROR : Status.OK);
+        response.setGroupAddress(groupAddress);
     }
 }

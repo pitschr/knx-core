@@ -25,9 +25,7 @@ import li.pitschmann.knx.core.body.cemi.APCI;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
 import li.pitschmann.knx.core.plugin.api.v1.json.Status;
-import li.pitschmann.knx.core.plugin.api.v1.json.StatusRequest;
 import li.pitschmann.knx.core.test.TestHelpers;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
@@ -148,22 +146,19 @@ public class StatusControllerTest {
 
         final var response = statusController.statusAll();
         assertThat(controller.getResponse().getStatus()).isEqualTo(207); // http code 207 = Multi Status
-        Assertions.assertThat(response).hasSize(4);
-        Assertions.assertThat(response.get(0).getSourceAddress()).isEqualTo(sourceGroupAddress);
-        Assertions.assertThat(response.get(1).getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
-        Assertions.assertThat(response.get(2).getDescription()).isEqualTo("DPT7.2-Octet Unsigned Description");
-        Assertions.assertThat(response.get(3).getStatus()).isEqualTo(Status.ERROR);
+        assertThat(response).hasSize(4);
+        assertThat(response.get(0).getSourceAddress()).isEqualTo(sourceGroupAddress);
+        assertThat(response.get(1).getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
+        assertThat(response.get(2).getDescription()).isEqualTo("DPT7.2-Octet Unsigned Description");
+        assertThat(response.get(3).getStatus()).isEqualTo(Status.ERROR);
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
     }
 
-    /**
-     * Tests the status endpoint for a known group address
-     */
     @ControllerTest(StatusController.class)
-    @DisplayName("OK: Status Request for a known group address")
-    public void testSingleStatus(final Controller controller) {
+    @DisplayName("OK: Status Request for a known group address and is registered in KNX Project File")
+    public void testFullSingleStatus(final Controller controller) {
         final var statusController = (StatusController) controller;
         final var groupAddress = GroupAddress.of(7, 7, 78);
         final var sourceAddress = IndividualAddress.of(15, 14, 13);
@@ -190,27 +185,57 @@ public class StatusControllerTest {
         // Verification
         //
 
-        final var request = new StatusRequest();
-        request.setGroupAddress(groupAddress);
-
-        final var response = statusController.statusRequest(request);
+        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
         assertThat(statusController.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        Assertions.assertThat(response.getStatus()).isEqualTo(Status.OK);
-        Assertions.assertThat(response.getTimestamp()).isNotNull();
-        Assertions.assertThat(response.getSourceAddress()).isEqualTo(sourceAddress);
-        Assertions.assertThat(response.getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
-        Assertions.assertThat(response.isDirty()).isFalse();
+        assertThat(response.getStatus()).isEqualTo(Status.OK);
+        assertThat(response.getTimestamp()).isNotNull();
+        assertThat(response.getSourceAddress()).isEqualTo(sourceAddress);
+        assertThat(response.getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
+        assertThat(response.isDirty()).isFalse();
 
         final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testSingleStatus.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testFullSingleStatus.json"));
     }
 
-    /**
-     * Tests the status endpoint for a known group address but status
-     * is not available in the status pool (yet)
-     */
     @ControllerTest(StatusController.class)
-    @DisplayName("ERROR: Status Request for a known group address but unknown to status pool")
+    @DisplayName("OK: Status Request for a known group address but not registered in XML Project File")
+    public void testPartialSingleStatus(final Controller controller) {
+        final var statusController = (StatusController) controller;
+        final var groupAddress = GroupAddress.of(8, 7, 79);
+        final var sourceAddress = IndividualAddress.of(15, 14, 12);
+
+        //
+        // Mocking
+        //
+
+        when(statusController.getXmlProject().getGroupAddress(groupAddress)).thenReturn(null);
+
+        // mock an existing KNX status data in status pool
+        final var knxStatusData = mock(KnxStatusData.class);
+        when(knxStatusData.getTimestamp()).thenReturn(Instant.ofEpochMilli(19876543));
+        when(knxStatusData.getSourceAddress()).thenReturn(sourceAddress);
+        when(knxStatusData.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData.getApciData()).thenReturn(new byte[]{0x38, 0x55});
+        when(statusController.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
+
+        //
+        // Verification
+        //
+
+        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
+        assertThat(statusController.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response.getStatus()).isEqualTo(Status.OK);
+        assertThat(response.getTimestamp()).isNotNull();
+        assertThat(response.getSourceAddress()).isEqualTo(sourceAddress);
+        assertThat(response.getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
+        assertThat(response.isDirty()).isFalse();
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testPartialSingleStatus.json"));
+    }
+
+    @ControllerTest(StatusController.class)
+    @DisplayName("ERROR: Status Request for a known group address but unknown to status pool yet")
     public void testSingleStatusNoStatus(final Controller controller) {
         final var statusController = (StatusController) controller;
         final var groupAddress = GroupAddress.of(7, 7, 88);
@@ -226,22 +251,16 @@ public class StatusControllerTest {
         // Verification
         //
 
-        final var request = new StatusRequest();
-        request.setGroupAddress(groupAddress);
-
-        final var response = statusController.statusRequest(request);
+        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
     }
 
-    /**
-     * Tests the status endpoint for an unknown group address
-     */
     @ControllerTest(StatusController.class)
-    @DisplayName("Error: Status Request an unknown group address")
-    public void testWriteUnknownGroupAddress(final Controller controller) {
+    @DisplayName("ERROR: Status Request an unknown group address")
+    public void testStatusUnknownGroupAddress(final Controller controller) {
         final var statusController = (StatusController) controller;
         final var groupAddress = TestHelpers.randomGroupAddress();
 
@@ -256,18 +275,36 @@ public class StatusControllerTest {
         // Verification
         //
 
-        final var request = new StatusRequest();
-        request.setGroupAddress(groupAddress);
-
-        final var response = statusController.statusRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
-        Assertions.assertThat(response.getStatus()).isNull();
-        Assertions.assertThat(response.getTimestamp()).isNull();
-        Assertions.assertThat(response.getSourceAddress()).isNull();
-        Assertions.assertThat(response.getApci()).isNull();
-        Assertions.assertThat(response.isDirty()).isNull();
+        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
+        assertThat(response.getStatus()).isNull();
+        assertThat(response.getTimestamp()).isNull();
+        assertThat(response.getSourceAddress()).isNull();
+        assertThat(response.getApci()).isNull();
+        assertThat(response.isDirty()).isNull();
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
     }
+//
+//    @ControllerTest(StatusController.class)
+//    @DisplayName("ERROR: Status Request with no group address")
+//    public void testStatusNoGroupAddress(final Controller controller) {
+//        final var statusController = (StatusController) controller;
+//
+//        //
+//        // Verification
+//        //
+//
+//        final var response = statusController.statusOne("");
+//        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+//        assertThat(response.getStatus()).isNull();
+//        assertThat(response.getTimestamp()).isNull();
+//        assertThat(response.getSourceAddress()).isNull();
+//        assertThat(response.getApci()).isNull();
+//        assertThat(response.isDirty()).isNull();
+//
+//        final var responseJson = asJson(response);
+//        assertThatJson(responseJson).isEqualTo("{}");
+//    }
 }

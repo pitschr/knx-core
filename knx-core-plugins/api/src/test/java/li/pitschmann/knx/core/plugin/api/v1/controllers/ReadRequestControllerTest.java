@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.datapoint.DPT12;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
@@ -41,6 +42,8 @@ import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -93,7 +96,7 @@ public class ReadRequestControllerTest {
      * exception.
      */
     @ControllerTest(ReadRequestController.class)
-    @DisplayName("Error: Read Request without found ack body due a thrown exception from KNX client")
+    @DisplayName("ERROR: Read Request without found ack body due a thrown exception from KNX client")
     public void testReadException(final Controller controller) {
         final var readRequestController = (ReadRequestController) controller;
         final var groupAddress = TestHelpers.randomGroupAddress();
@@ -114,12 +117,12 @@ public class ReadRequestControllerTest {
 
         final var response = readRequestController.readRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
-        Assertions.assertThat(response.getGroupAddress()).isNull();
-        Assertions.assertThat(response.getName()).isNull();
-        Assertions.assertThat(response.getDescription()).isNull();
-        Assertions.assertThat(response.getDataPointType()).isNull();
-        Assertions.assertThat(response.getValue()).isNull();
-        Assertions.assertThat(response.getRaw()).isNull();
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
+        assertThat(response.getRaw()).isNull();
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
@@ -130,7 +133,7 @@ public class ReadRequestControllerTest {
      * from KNX Net/IP device yet (and therefore no status data available in the status pool).
      */
     @ControllerTest(ReadRequestController.class)
-    @DisplayName("Error: Read Request without available KNX status data from KNX Client (internal timeout)")
+    @DisplayName("ERROR: Read Request without available KNX status data from KNX Client (internal timeout)")
     public void testReadInternalTimeout(final Controller controller) {
         final var readRequestController = (ReadRequestController) controller;
         final var groupAddress = TestHelpers.randomGroupAddress();
@@ -144,22 +147,19 @@ public class ReadRequestControllerTest {
 
         final var response = readRequestController.readRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-        Assertions.assertThat(response.getGroupAddress()).isNull();
-        Assertions.assertThat(response.getName()).isNull();
-        Assertions.assertThat(response.getDescription()).isNull();
-        Assertions.assertThat(response.getDataPointType()).isNull();
-        Assertions.assertThat(response.getValue()).isNull();
-        Assertions.assertThat(response.getRaw()).isNull();
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
+        assertThat(response.getRaw()).isNull();
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
     }
 
-    /**
-     * Tests the read endpoint for an unknown group address
-     */
     @ControllerTest(ReadRequestController.class)
-    @DisplayName("Error: Read Request for an unknown group address")
+    @DisplayName("ERROR: Read Request for an unknown group address")
     public void testReadUnknownGroupAddress(final Controller controller) {
         final var readRequestController = (ReadRequestController) controller;
         final var groupAddress = TestHelpers.randomGroupAddress();
@@ -180,14 +180,73 @@ public class ReadRequestControllerTest {
 
         final var response = readRequestController.readRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-        Assertions.assertThat(response.getGroupAddress()).isNull();
-        Assertions.assertThat(response.getName()).isNull();
-        Assertions.assertThat(response.getDescription()).isNull();
-        Assertions.assertThat(response.getDataPointType()).isNull();
-        Assertions.assertThat(response.getValue()).isNull();
-        Assertions.assertThat(response.getRaw()).isNull();
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
+        assertThat(response.getRaw()).isNull();
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
+    }
+
+    @ControllerTest(ReadRequestController.class)
+    @DisplayName("ERROR: Read Request without group address")
+    public void testReadNoGroupAddress(final Controller controller) {
+        final var readRequestController = (ReadRequestController) controller;
+
+        //
+        // Verification
+        //
+
+        final var response = readRequestController.readRequest(new ReadRequest());
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        assertThat(response.getGroupAddress()).isNull();
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
+        assertThat(response.getRaw()).isNull();
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo("{}");
+    }
+
+    @ControllerTest(ReadRequestController.class)
+    @DisplayName("ERROR: Read Request for an unknown group address in XML project")
+    public void testReadUnknownXmlGroupAddress(final Controller controller) {
+        final var readRequestController = (ReadRequestController) controller;
+        final var groupAddress = GroupAddress.of(0, 3, 18);
+
+        //
+        // Mocking
+        //
+
+        // mock an non-existing xml group address, but status available in status pool
+        final var knxStatusData = mock(KnxStatusData.class);
+        when(knxStatusData.getApciData()).thenReturn(new byte[]{(byte)0xE6, 0x74, 0x33});
+        when(readRequestController.getKnxClient().getStatusPool().getStatusFor(eq(groupAddress))).thenReturn(knxStatusData);
+        when(readRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+
+        //
+        // Verification
+        //
+
+        // create read request
+        final var request = new ReadRequest();
+        request.setGroupAddress(groupAddress);
+
+        final var response = readRequestController.readRequest(request);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response.getGroupAddress()).isEqualTo(groupAddress);
+        assertThat(response.getName()).isNull();
+        assertThat(response.getDescription()).isNull();
+        assertThat(response.getDataPointType()).isNull();
+        assertThat(response.getValue()).isNull();
+        assertThat(response.getRaw()).containsExactly(-26, 116, 51);
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ReadRequestControllerTest-testReadUnknownXmlGroupAddress.json"));
     }
 }

@@ -110,7 +110,6 @@ paths:
         500:
           description: 'Internal Error.'
 
-
   /v1/write:
     post:
       description: 'Sends a WRITE response to KNX Client'
@@ -173,6 +172,118 @@ paths:
         500:
           description: 'Internal Error.'
 
+  /v1/statistic:
+    get:
+      description: Returns the statistic from KNX client
+      responses:
+        200:
+          description: 'Returns statistic'
+          content:
+            application/json:
+              example: {"inbound":{"total":{"packets":3,"bytes":224},"search":{"request":0,"response":0},"description":{"request":0,"response":1},"connect":{"request":0,"response":1},"connection_state":{"request":0,"response":1},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"outbound":{"total":{"packets":3,"bytes":182},"search":{"request":0,"response":0},"description":{"request":1,"response":0},"connect":{"request":1,"response":0},"connection_state":{"request":1,"response":0},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"error":{"total":{"packets":0,"rate":0}}}
+
+  /v1/status:
+    get:
+      description: "Returns all status from all KNX group addresses"
+      responses:
+        207:
+          description: 'Multi-Status Response. Returns all status'
+          content:
+            application/json:
+              example: [{"status":"OK","timestamp":{"seconds":123,"nanos":456000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"258","two_level":"0/258","three_level":"0/1/2"},"raw":[1,2]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[1]},{"status":"OK","timestamp":{"seconds":234,"nanos":567000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_WRITE","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"2563","two_level":"1/515","three_level":"1/2/3"},"raw":[10,3]},"name":"DPT5.1-Octet Unsigned Name","description":"DPT5.1-Octet Unsigned Description","dataPointType":"5.010","raw":[35]},{"status":"OK","timestamp":{"seconds":345,"nanos":678000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_RESPONSE","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"4868","two_level":"2/772","three_level":"2/3/4"},"raw":[19,4]},"name":"DPT7.2-Octet Unsigned Name","description":"DPT7.2-Octet Unsigned Description","dataPointType":"7.001","raw":[86,126]},{"status":"ERROR","groupAddress":{"type":1,"format":{"free_level":"7173","two_level":"3/1029","three_level":"3/4/5"},"raw":[28,5]}}]
+
+  /v1/status/{freeLevel}:
+    parameters:
+      - in: path
+        name: freeLevel
+        required: true
+        description: Free-Level Group Address
+        schema:
+          type: integer
+        example: 2660
+    get:
+      description: 'Returns single status for a free-level group address'
+      responses:
+        200:
+          description: 'Status for given free-level group address found'
+          content:
+            application/json:
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"status":"OK","timestamp":{"seconds":9876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.13","raw":[-2,13]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"16206","two_level":"7/1870","three_level":"7/7/78"},"raw":[63,78]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[119,67,33]}
+                Partial Response:
+                  value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
+        404:
+          description: 'No status found for given group address'
+
+  /v1/status/{mainGroup}/{subGroup}:
+    parameters:
+      - in: path
+        name: mainGroup
+        required: true
+        description: Main Group for Two-Level Group Address
+        schema:
+          type: integer
+        example: 1
+      - in: path
+        name: subGroup
+        required: true
+        description: Sub Group for Two-Level Group Address
+        schema:
+          type: integer
+        example: 612
+    get:
+      description: 'Returns single status for a two-level group address'
+      responses:
+        200:
+          description: 'Status for given two-level group address found'
+          content:
+            application/json:
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"status":"OK","timestamp":{"seconds":9876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.13","raw":[-2,13]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"16206","two_level":"7/1870","three_level":"7/7/78"},"raw":[63,78]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[119,67,33]}
+                Partial Response:
+                  value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
+        404:
+          description: 'No status found for given group address'
+
+  /v1/status/{mainGroup}/{middleGroup}/{subGroup}:
+    parameters:
+      - in: path
+        name: mainGroup
+        required: true
+        description: Main Group for Three-Level Group Address
+        schema:
+          type: integer
+        example: 1
+      - in: path
+        name: middleGroup
+        required: true
+        description: Middle Group for Three-Level Group Address
+        schema:
+          type: integer
+        example: 2
+      - in: path
+        name: subGroup
+        required: true
+        description: Sub Group for Three-Level Group Address
+        schema:
+          type: integer
+        example: 100
+    get:
+      description: 'Returns single status for a three-level group address'
+      responses:
+        200:
+          description: 'Status for given three-level group address found'
+          content:
+            application/json:
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"status":"OK","timestamp":{"seconds":9876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.13","raw":[-2,13]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"16206","two_level":"7/1870","three_level":"7/7/78"},"raw":[63,78]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[119,67,33]}
+                Partial Response:
+                  value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
+        404:
+          description: 'No status found for given group address'
 
 components:
   schemas:
@@ -189,10 +300,10 @@ components:
           properties:
             free_level:
               type: string
-              example: '5401'
+              example: '2660'
             two_level:
               type: string
-              example: '1/330'
+              example: '1/612'
             three_level:
               type: string
               example: '1/2/100'

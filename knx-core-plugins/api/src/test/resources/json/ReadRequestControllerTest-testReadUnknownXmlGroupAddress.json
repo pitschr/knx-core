@@ -1,0 +1,19 @@
+{
+  "groupAddress": {
+    "type": 1,
+    "format": {
+      "free_level": "786",
+      "two_level": "0/786",
+      "three_level": "0/3/18"
+    },
+    "raw": [
+      3,
+      18
+    ]
+  },
+  "raw": [
+    -26,
+    116,
+    51
+  ]
+}
