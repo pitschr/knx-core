@@ -7,6 +7,7 @@ import com.google.gson.JsonSerializer;
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
+import li.pitschmann.knx.core.utils.Strings;
 
 import java.lang.reflect.Type;
 
@@ -32,9 +33,12 @@ public final class XmlGroupAddressJsonSerializer implements JsonSerializer<XmlGr
         final var groupAddressJson = GroupAddressJsonSerializer.INSTANCE.serialize(groupAddress, typeOfSrc, context);
         json.add("address", groupAddressJson);
 
-        final var dpt = DataPointTypeRegistry.getDataPointType(src.getDataPointType());
-        final var dptJson = DataPointTypeJsonSerializer.INSTANCE.serialize(dpt, typeOfSrc, context);
-        json.add("dataPointType", dptJson);
+        final var dataPointTypeStr = src.getDataPointType();
+        if (!Strings.isNullOrEmpty(dataPointTypeStr)) {
+            final var dpt = DataPointTypeRegistry.getDataPointType(dataPointTypeStr);
+            final var dptJson = DataPointTypeJsonSerializer.INSTANCE.serialize(dpt, typeOfSrc, context);
+            json.add("dataPointType", dptJson);
+        }
 
         return json;
     }

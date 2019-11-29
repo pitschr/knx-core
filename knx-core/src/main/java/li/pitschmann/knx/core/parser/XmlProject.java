@@ -243,7 +243,7 @@ public final class XmlProject {
      * @return collection of {@link XmlGroupRange}, or empty list if not found
      */
     @Nonnull
-    public List<XmlGroupRange> getMainGroups() {
+    public List<XmlGroupRange> getMainGroupRanges() {
         return groupRangeMap.isEmpty()
                 ? Collections.emptyList()
                 : groupRangeMap.values().stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toUnmodifiableList());
@@ -256,15 +256,15 @@ public final class XmlProject {
      * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
     @Nonnull
-    public XmlGroupRange getMainGroup(final int main) {
+    public XmlGroupRange getGroupRange(final int main) {
         Preconditions.checkArgument(!groupRangeMap.isEmpty(), "No main groups available");
 
         // find the group range with the proper range start (see GroupAddresses)
         // special rule for main group 0/-/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
-        int startRange = main == 0 ? 1 : Integer.valueOf(GroupAddress.of(main, 0).getAddress());
+        int startRange = main == 0 ? 1 : GroupAddress.of(main, 0).getAddressAsInt();
         log.debug("Looking for start range '{}' of group {}/-/- in: {}", startRange, main, groupRangeMap);
 
-        final var mainGroups = getMainGroups();
+        final var mainGroups = getMainGroupRanges();
         XmlGroupRange xmlGroupRange = null;
         for (final var groupRange : mainGroups) {
             if (groupRange.getRangeStart() == startRange) {
@@ -293,12 +293,12 @@ public final class XmlProject {
      * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
     @Nonnull
-    public XmlGroupRange getMiddleGroup(final int main, final int middle) {
-        final var mainGroup = getMainGroup(main);
+    public XmlGroupRange getGroupRange(final int main, final int middle) {
+        final var mainGroup = getGroupRange(main);
 
         // find the group range with the proper range start (see GroupAddresses)
         // special rule for main group 0/-/- and middle group 0/0/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
-        int startRange = main == 0 && middle == 0 ? 1 : Integer.valueOf(GroupAddress.of(main, middle, 0).getAddress());
+        int startRange = main == 0 && middle == 0 ? 1 : GroupAddress.of(main, middle, 0).getAddressAsInt();
         log.debug("Looking for start range '{}' of group {}/{}/- in: {}", startRange, main, middle, mainGroup);
 
         final var childGroups = mainGroup.getChildGroupRanges();

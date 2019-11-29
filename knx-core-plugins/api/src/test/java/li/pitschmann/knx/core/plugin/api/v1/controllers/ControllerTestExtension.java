@@ -93,7 +93,7 @@ public final class ControllerTestExtension
         final XmlProject xmlProject;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
             final var xmlProjectPath = Paths.get(annotation.projectPath());
-            xmlProject = KnxprojParser.parse(xmlProjectPath);
+            xmlProject = spy(KnxprojParser.parse(xmlProjectPath));
         } else {
             xmlProject = getDefaultXmlProject();
         }
@@ -197,16 +197,16 @@ public final class ControllerTestExtension
 
         // XML Group Ranges
         final var xmlMainGroupRangeMock = mock(XmlGroupRange.class);
-        when(xmlProject.getMainGroup(anyInt())).thenReturn(xmlMainGroupRangeMock);
+        when(xmlProject.getGroupRange(anyInt())).thenReturn(xmlMainGroupRangeMock);
 
         final var xmlMiddleGroupRangeMock = mock(XmlGroupRange.class);
-        when(xmlProject.getMiddleGroup(anyInt(), anyInt())).thenReturn(xmlMiddleGroupRangeMock);
+        when(xmlProject.getGroupRange(anyInt(), anyInt())).thenReturn(xmlMiddleGroupRangeMock);
 
         final var xmlMainGroupRangesMock = new ArrayList<XmlGroupRange>();
         for (var i = 0; i < 3; i++) {
             xmlMainGroupRangesMock.add(mock(XmlGroupRange.class));
         }
-        when(xmlProject.getMainGroups()).thenReturn(xmlMainGroupRangesMock);
+        when(xmlProject.getMainGroupRanges()).thenReturn(xmlMainGroupRangesMock);
 
         final var xmlGroupRangesMock = new ArrayList<XmlGroupRange>();
         xmlGroupRangesMock.addAll(xmlMainGroupRangesMock);

@@ -68,7 +68,7 @@ public class KnxprojParserTest {
         // ---------------------
         // Range Group Check
         // ---------------------
-        final var xmlGroupRanges = project.getMainGroups();
+        final var xmlGroupRanges = project.getMainGroupRanges();
         assertThat(xmlGroupRanges).hasSize(3);
 
         // Main Group: 0

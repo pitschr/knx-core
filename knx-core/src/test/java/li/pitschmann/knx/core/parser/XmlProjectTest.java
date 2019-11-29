@@ -103,15 +103,15 @@ public class XmlProjectTest {
         assertThat(xmlProject.getGroupAddress(GroupAddress.of(1, 2, 3))).isNull();
 
         // all main groups
-        assertThat(xmlProject.getMainGroups()).isEmpty();
+        assertThat(xmlProject.getMainGroupRanges()).isEmpty();
 
         // main group
-        assertThatThrownBy(() -> xmlProject.getMainGroup(0))
+        assertThatThrownBy(() -> xmlProject.getGroupRange(0))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("No main groups available");
 
         // middle group
-        assertThatThrownBy(() -> xmlProject.getMiddleGroup(0, 0))
+        assertThatThrownBy(() -> xmlProject.getGroupRange(0, 0))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("No main groups available");      // indirectly called by getMainGroup(int)
     }
@@ -167,7 +167,7 @@ public class XmlProjectTest {
     public void testAllMainGroups() {
         final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
 
-        final var mainRanges = xmlProject.getMainGroups();
+        final var mainRanges = xmlProject.getMainGroupRanges();
         assertThat(mainRanges).hasSize(3);
         assertThat(mainRanges.get(0).getName()).isEqualTo("Main Group - DPT");
         assertThat(mainRanges.get(1).getName()).isEqualTo("Main Group - Flags");
@@ -180,17 +180,17 @@ public class XmlProjectTest {
         final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
 
         // existing main groups
-        assertThat(xmlProject.getMainGroup(0).getName()).isEqualTo("Main Group - DPT");
-        assertThat(xmlProject.getMainGroup(1).getName()).isEqualTo("Main Group - Flags");
-        assertThat(xmlProject.getMainGroup(2).getName()).isEqualTo("Main Group - Text / Encoding");
+        assertThat(xmlProject.getGroupRange(0).getName()).isEqualTo("Main Group - DPT");
+        assertThat(xmlProject.getGroupRange(1).getName()).isEqualTo("Main Group - Flags");
+        assertThat(xmlProject.getGroupRange(2).getName()).isEqualTo("Main Group - Text / Encoding");
 
         // non-exiting main groups
-        assertThatThrownBy(() -> xmlProject.getMainGroup(7)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> xmlProject.getMainGroup(11)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(7)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(11)).isInstanceOf(IllegalArgumentException.class);
 
         // invalid main groups (because group number is outside of KNX specification)
-        assertThatThrownBy(() -> xmlProject.getMainGroup(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> xmlProject.getMainGroup(100)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(100)).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
     @Test
@@ -199,18 +199,18 @@ public class XmlProjectTest {
         final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
 
         // existing main groups
-        assertThat(xmlProject.getMiddleGroup(0, 0).getName()).isEqualTo("Middle Group - DPT (1-byte)");
-        assertThat(xmlProject.getMiddleGroup(0, 5).getName()).isEqualTo("Middle Group - DPT (8-bytes)");
-        assertThat(xmlProject.getMiddleGroup(1, 3).getName()).isEqualTo("Middle Group - Filtering");
-        assertThat(xmlProject.getMiddleGroup(2, 0).getName()).isEqualTo("Middle Group - Characters");
-        assertThat(xmlProject.getMiddleGroup(2, 1).getName()).isEqualTo("Middle Group - Comments");
+        assertThat(xmlProject.getGroupRange(0, 0).getName()).isEqualTo("Middle Group - DPT (1-byte)");
+        assertThat(xmlProject.getGroupRange(0, 5).getName()).isEqualTo("Middle Group - DPT (8-bytes)");
+        assertThat(xmlProject.getGroupRange(1, 3).getName()).isEqualTo("Middle Group - Filtering");
+        assertThat(xmlProject.getGroupRange(2, 0).getName()).isEqualTo("Middle Group - Characters");
+        assertThat(xmlProject.getGroupRange(2, 1).getName()).isEqualTo("Middle Group - Comments");
 
         // non-exiting main groups
-        assertThatThrownBy(() -> xmlProject.getMiddleGroup(2, 7)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> xmlProject.getMiddleGroup(11, 0)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(2, 7)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(11, 0)).isInstanceOf(IllegalArgumentException.class);
 
         // invalid main groups (because group number is outside of KNX specification)
-        assertThatThrownBy(() -> xmlProject.getMiddleGroup(0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> xmlProject.getMiddleGroup(0, 100)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(0, 100)).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 }
