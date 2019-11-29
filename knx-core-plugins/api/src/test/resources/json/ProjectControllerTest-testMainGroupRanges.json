@@ -1,6 +1,6 @@
 [
   {
-    "id": "P-0501-0_GR-47",
+    "id": "P-0503-0_GR-47",
     "name": "Main Group - DPT",
     "level": 0,
     "range": {
@@ -9,7 +9,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-67",
+    "id": "P-0503-0_GR-67",
     "name": "Main Group - Flags",
     "level": 0,
     "range": {
@@ -18,7 +18,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-69",
+    "id": "P-0503-0_GR-69",
     "name": "Main Group - Text / Encoding",
     "level": 0,
     "range": {

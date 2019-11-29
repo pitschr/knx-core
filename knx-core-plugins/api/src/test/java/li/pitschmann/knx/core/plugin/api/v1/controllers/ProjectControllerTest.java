@@ -35,7 +35,8 @@ import static org.mockito.Mockito.when;
  * Test class for {@link ProjectController}
  */
 public class ProjectControllerTest {
-    private static final String FILE_KNXPROJ_THREE_LEVEL = "src/test/resources/Project (3-Level, v14).knxproj";
+    private static final String FILE_KNXPROJ_THREE_LEVEL = "src/test/resources/Project (3-Level, v20).knxproj";
+    private static final String FILE_KNXPROJ_TWO_LEVEL = "src/test/resources/Project (2-Level, v20).knxproj";
 
     /**
      * Tests the project structure endpoint that contains project structure metadata
@@ -53,7 +54,7 @@ public class ProjectControllerTest {
 
         final var response = projectController.projectStructure();
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(response.getId()).isEqualTo("P-0501");
+        assertThat(response.getId()).isEqualTo("P-0503");
         assertThat(response.getName()).isEqualTo("Project (3-Level)");
         assertThat(response.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(response.getNumberOfGroupAddresses()).isEqualTo(189);
@@ -64,7 +65,7 @@ public class ProjectControllerTest {
     }
 
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
-    @DisplayName("OK [Three-Level]: Get all main group rangess from XML project")
+    @DisplayName("OK [Three-Level]: Get all main group ranges from XML project")
     public void testMainGroupRanges(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
@@ -145,9 +146,54 @@ public class ProjectControllerTest {
         assertThatJson(asJson(response)).isEqualTo("[]");
     }
 
+    @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_TWO_LEVEL)
+    @DisplayName("OK [Two-Level]: Get ALL group addresses of group range (0/*) from XML project")
+    public void testTwoLevelGroupAddressesByRange(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Mocking
+        //
+
+        final var xmlProject = projectController.getXmlProject();
+        when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.TWO_LEVEL);
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getGroupAddresses(0);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response).hasSize(146);
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testTwoLevelGroupAddressesByRange.json"));
+    }
+
+    @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_TWO_LEVEL)
+    @DisplayName("ERROR [Two-Level]: Get ALL group addresses of group range (0/*) from XML project - invalid for free-level")
+    public void testTwoLevelGroupAddressesByRangeError(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Mocking
+        //
+
+        final var xmlProject = projectController.getXmlProject();
+        when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getGroupAddresses(0);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.FORBIDDEN);
+        assertThatJson(asJson(response)).isEqualTo("[]");
+    }
+
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
     @DisplayName("OK [Three-Level]: Get ALL group addresses of group range (0/0/*) from XML project")
-    public void testGroupAddressesByRange(final Controller controller) {
+    public void testThreeLevelGroupAddressesByRange(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
         //
@@ -159,12 +205,12 @@ public class ProjectControllerTest {
         assertThat(response).hasSize(46);
 
         final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddressesByRange.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testThreeLevelGroupAddressesByRange.json"));
     }
 
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
     @DisplayName("OK [Three-Level]: Get 3rd-8th group addresses of range group (0/0/*) from XML project")
-    public void testGroupAddressesWithLimit(final Controller controller) {
+    public void testThreeLevelGroupAddressesWithLimit(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
         //
@@ -189,12 +235,12 @@ public class ProjectControllerTest {
         // 0/0/23 .. and more skipped (or not available)
 
         final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddressesWithLimit.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testThreeLevelGroupAddressesWithLimit.json"));
     }
 
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
-    @DisplayName("ERROR [Free-Level]: Get ALL group addresses of range group (0/0/*) from XML project")
-    public void testGroupAddressesFromRangeGroupForFreeLevel(final Controller controller) {
+    @DisplayName("ERROR [Free-Level]: Get ALL group addresses of range group (0/0/*) from XML project - invalid for free-level")
+    public void testThreeLevelGroupAddressesByRangeError(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
         //

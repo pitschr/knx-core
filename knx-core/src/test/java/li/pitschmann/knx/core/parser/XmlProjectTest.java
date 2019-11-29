@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
  * Tests {@link XmlProject} that contains data from '*.knxproj' file
  */
 public class XmlProjectTest {
-    private static final Path KNX_PROJECT_V14 = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
+    private static final Path KNX_PROJECT = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
 
     @Test
     @DisplayName("Tests XmlProject#toString()")
@@ -69,6 +69,7 @@ public class XmlProjectTest {
         xmlProject.setGroupAddressStyle(XmlGroupAddressStyle.THREE_LEVEL);
         xmlProject.setId("PROJECT_ID");
         xmlProject.setName("PROJECT_NAME");
+        xmlProject.setVersion(4711);
         xmlProject.setGroupRanges(groupRanges);
         xmlProject.setGroupAddresses(xmlGroupAddresses);
 
@@ -78,6 +79,7 @@ public class XmlProjectTest {
                         "{" + //
                         "id=PROJECT_ID, " + //
                         "name=PROJECT_NAME, " + //
+                        "version=4711, " + //
                         "groupAddressStyle=%s, " + //
                         "groupAddressMap={xga1-id=xga1, xga2-id=xga2, xga3-id=xga3}, " + //
                         "groupRangeMap={xgg1-id=xgg1, xgg2-id=xgg2}" + //
@@ -91,6 +93,7 @@ public class XmlProjectTest {
 
         assertThat(xmlProject.getId()).isNull();
         assertThat(xmlProject.getName()).isNull();
+        assertThat(xmlProject.getVersion()).isZero();
         assertThat(xmlProject.getGroupAddressStyle()).isNull();
 
         // range groups
@@ -119,10 +122,11 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Test common methods on non-empty project")
     public void testExistingProject() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
 
-        assertThat(xmlProject.getId()).isEqualTo("P-0501");
+        assertThat(xmlProject.getId()).isEqualTo("P-0503");
         assertThat(xmlProject.getName()).isEqualTo("Project (3-Level)");
+        assertThat(xmlProject.getVersion()).isEqualTo(20);
         assertThat(xmlProject.getGroupAddressStyle()).isSameAs(XmlGroupAddressStyle.THREE_LEVEL);
 
         assertThat(xmlProject.getGroupRanges()).isNotEmpty();
@@ -132,11 +136,11 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all range groups and by id")
     public void testRangeGroups() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
 
         // existing range group
-        assertThat(xmlProject.getGroupRangeById("P-0501-0_GR-67").getName()).isEqualTo("Main Group - Flags");
-        assertThat(xmlProject.getGroupRangeById("P-0501-0_GR-50").getName()).isEqualTo("Middle Group - DPT (3-bytes)");
+        assertThat(xmlProject.getGroupRangeById("P-0503-0_GR-67").getName()).isEqualTo("Main Group - Flags");
+        assertThat(xmlProject.getGroupRangeById("P-0503-0_GR-50").getName()).isEqualTo("Middle Group - DPT (3-bytes)");
 
         // non-exiting range group
         assertThat(xmlProject.getGroupRangeById(null)).isNull();
@@ -146,11 +150,11 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all group addresses and by id")
     public void testGroupAddresses() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
 
         // exiting group addresses
-        assertThat(xmlProject.getGroupAddressById("P-0501-0_GA-117").getName()).isEqualTo("Sub Group - DPT 1 (0x00)");
-        assertThat(xmlProject.getGroupAddressById("P-0501-0_GA-252").getName()).isEqualTo("Sub Group - DPT 7 (0x38 E3)");
+        assertThat(xmlProject.getGroupAddressById("P-0503-0_GA-117").getName()).isEqualTo("Sub Group - DPT 1 (0x00)");
+        assertThat(xmlProject.getGroupAddressById("P-0503-0_GA-252").getName()).isEqualTo("Sub Group - DPT 7 (0x38 E3)");
         assertThat(xmlProject.getGroupAddress(275).getName()).isEqualTo("Sub Group - DPT 7 (0xFF FF)");
         assertThat(xmlProject.getGroupAddress(537).getName()).isEqualTo("Sub Group - DPT 11 (0x13 06 1E)");
         assertThat(xmlProject.getGroupAddress(GroupAddress.of(1, 0, 110)).getName()).isEqualTo("Sub Group - Flags (2 GAs, No Flags)");
@@ -165,7 +169,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all main groups")
     public void testAllMainGroups() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
 
         final var mainRanges = xmlProject.getMainGroupRanges();
         assertThat(mainRanges).hasSize(3);
@@ -177,7 +181,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get selected main group")
     public void testMainGroup() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
 
         // existing main groups
         assertThat(xmlProject.getGroupRange(0).getName()).isEqualTo("Main Group - DPT");
@@ -196,7 +200,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get selected middle group")
     public void testMiddleGroup() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
 
         // existing main groups
         assertThat(xmlProject.getGroupRange(0, 0).getName()).isEqualTo("Middle Group - DPT (1-byte)");

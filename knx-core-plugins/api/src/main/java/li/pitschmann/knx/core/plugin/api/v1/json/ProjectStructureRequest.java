@@ -6,6 +6,7 @@ package li.pitschmann.knx.core.plugin.api.v1.json;
 public final class ProjectStructureRequest {
     private String id;
     private String name;
+    private int version;
     private String groupAddressStyle;
     private int numberOfGroupAddresses;
     private int numberOfGroupRanges;
@@ -24,6 +25,14 @@ public final class ProjectStructureRequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getGroupAddressStyle() {

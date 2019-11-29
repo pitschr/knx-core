@@ -92,13 +92,17 @@ public final class KnxprojParser {
         final XmlProject project;
         try (final var zipFile = new ZipFile(path.toFile())) {
             // get KNX project information
-            project = getKnxProjectInformation(zipFile);
+            // reads the 'project.xml' file from 'P-<digit>' folder
+            final var projectOverviewBytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/project\\.xml$");
+            project = getKnxProjectInformation(projectOverviewBytes);
 
             // get KNX group ranges and addresses
-            final var groupRanges = parseGroupRanges(zipFile);
+            // reads the '0.xml' file from 'P-<digit>' folder
+            final var projectDataBytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
+            final var groupRanges = parseGroupRanges(projectDataBytes);
             project.setGroupRanges(groupRanges);
 
-            final var groupAddresses = parseGroupAddresses(zipFile);
+            final var groupAddresses = parseGroupAddresses(projectDataBytes);
             project.setGroupAddresses(groupAddresses);
 
             // links the KNX group ranges with KNX group addresses
@@ -115,16 +119,13 @@ public final class KnxprojParser {
     /**
      * Returns {@link XmlProject} based on project information from '*.knxproj' file
      *
-     * @param zipFile zip file to be parsed
-     * @return KNX project information
+     * @param bytes byte array
+     * @return KNX project
      * @throws IOException  I/O exception when reading ZIP stream
      * @throws VTDException exception from VTD-XML
      */
     @Nonnull
-    private static XmlProject getKnxProjectInformation(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
-        // reads the 'project.xml' file from 'P-<digit>' folder
-        final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/project\\.xml$");
-
+    private static XmlProject getKnxProjectInformation(final @Nonnull byte[] bytes) throws IOException, VTDException {
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
         vtdGen.setDoc(bytes);
@@ -132,6 +133,13 @@ public final class KnxprojParser {
         final var vtdNav = vtdGen.getNav();
 
         final var project = new XmlProject();
+
+        // go to KNX xmlns
+        final var xmlNS = readAttributeValue(vtdNav, "xmlns", () -> new KnxprojParserException("Attribute <KNX @xmlns /> not found."));
+        log.debug("XML Project Namespace: {}", xmlNS);
+        final var version = Integer.parseInt(xmlNS.substring(xmlNS.lastIndexOf("/")+1));
+        project.setVersion(version);
+
         // go to <Project /> element and read @Id
         vtdNav.toElement(VTDNav.FIRST_CHILD);
         project.setId(readAttributeValue(vtdNav, "Id",
@@ -153,16 +161,13 @@ public final class KnxprojParser {
      * Returns a list of {@link XmlGroupRange} based on project information from '*.knxproj' file in the same order
      * which is written in the '*.knxproj' file.
      *
-     * @param zipFile zip file to be parsed
-     * @return list of KNX Group Ranges
+     * @param bytes byte array
+     * @return list of {@link XmlGroupRange}
      * @throws IOException
      * @throws VTDException
      */
     @Nonnull
-    private static List<XmlGroupRange> parseGroupRanges(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
-        // reads the '0.xml' file from 'P-<digit>' folder
-        final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
-
+    private static List<XmlGroupRange> parseGroupRanges(final @Nonnull byte[] bytes) throws IOException, VTDException {
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
         vtdGen.setDoc(bytes);
@@ -219,20 +224,16 @@ public final class KnxprojParser {
         return groupRanges;
     }
 
-
     /**
-     * Returns a map of {@link XmlGroupAddress} based on project information from '*.knxproj' file
+     * Returns a list of {@link XmlGroupAddress} based on project information from '*.knxproj' file
      *
-     * @param zipFile to be parsed
-     * @return map of KNX Group Addresses (id of group address is the key)
+     * @param bytes byte arrays
+     * @return list of {@link XmlGroupAddress}
      * @throws IOException  I/O exception when reading ZIP stream
      * @throws VTDException exception from VTD-XML
      */
     @Nonnull
-    private static List<XmlGroupAddress> parseGroupAddresses(final @Nonnull ZipFile zipFile) throws IOException, VTDException {
-        // reads the '0.xml' file from 'P-<digit>' folder
-        final var bytes = findAndReadToBytes(zipFile, "^P-[\\dA-F]+/0\\.xml$");
-
+    private static List<XmlGroupAddress> parseGroupAddresses(final @Nonnull byte[] bytes) throws IOException, VTDException {
         // create parser (without namespace, we don't need it for *.knxproj file)
         final var vtdGen = new VTDGen();
         vtdGen.setDoc(bytes);
@@ -261,9 +262,6 @@ public final class KnxprojParser {
             // obtain optional @Description and @DatapointType
             groupAddress.setDescription(readAttributeValue(vtdNav, "Description"));
             groupAddress.setDataPointType(readAttributeValue(vtdNav, "DatapointType"));
-
-            // get flags (via ComObjectInstanceRef)
-            readFlags(vtdNav.cloneNav(), groupAddress);
 
             // move to parent element and verify if it is 'GroupRange'
             Preconditions.checkState(
@@ -317,27 +315,6 @@ public final class KnxprojParser {
         for (final var entry : tmp.entrySet()) {
             xmlProject.getGroupRangeById(entry.getKey()).setGroupAddresses(entry.getValue());
         }
-    }
-
-    /**
-     * Reads the flag for given {@link XmlGroupAddress}
-     *
-     * @param vtdNav       VTD navigator (must be cloned)
-     * @param groupAddress look up for flags that is connected to this group address
-     * @throws VTDException exception from VTD-XML
-     */
-    private static final void readFlags(final @Nonnull VTDNav vtdNav,
-                                        final @Nonnull XmlGroupAddress groupAddress) throws VTDException {
-        final var vtdAutoPilot = new AutoPilot(vtdNav);
-        // select xpath and evaluate
-        vtdAutoPilot.selectXPath("//ComObjectInstanceRef[Connectors/Send[@GroupAddressRefId='" + groupAddress.getId() + "']]");
-        vtdAutoPilot.evalXPath();
-        // flags
-        groupAddress.setCommunicationFlag(readAttributeValue(vtdNav, "CommunicationFlag"));
-        groupAddress.setReadFlag(readAttributeValue(vtdNav, "ReadFlag"));
-        groupAddress.setWriteFlag(readAttributeValue(vtdNav, "WriteFlag"));
-        groupAddress.setTransmitFlag(readAttributeValue(vtdNav, "TransmitFlag"));
-        groupAddress.setUpdateFlag(readAttributeValue(vtdNav, "UpdateFlag"));
     }
 
     /**

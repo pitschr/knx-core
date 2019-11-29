@@ -1,6 +1,6 @@
 [
   {
-    "id": "P-0501-0_GR-48",
+    "id": "P-0503-0_GR-48",
     "name": "Middle Group - DPT (1-byte)",
     "level": 1,
     "range": {
@@ -9,7 +9,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-49",
+    "id": "P-0503-0_GR-49",
     "name": "Middle Group - DPT (2-bytes)",
     "level": 1,
     "range": {
@@ -18,7 +18,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-50",
+    "id": "P-0503-0_GR-50",
     "name": "Middle Group - DPT (3-bytes)",
     "level": 1,
     "range": {
@@ -27,7 +27,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-51",
+    "id": "P-0503-0_GR-51",
     "name": "Middle Group - DPT (4-bytes)",
     "level": 1,
     "range": {
@@ -36,7 +36,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-52",
+    "id": "P-0503-0_GR-52",
     "name": "Middle Group - DPT (14-bytes)",
     "level": 1,
     "range": {
@@ -45,7 +45,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-53",
+    "id": "P-0503-0_GR-53",
     "name": "Middle Group - DPT (6-bytes)",
     "level": 1,
     "range": {
@@ -54,7 +54,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-54",
+    "id": "P-0503-0_GR-54",
     "name": "Middle Group - DPT (8-bytes)",
     "level": 1,
     "range": {
@@ -63,7 +63,7 @@
     }
   },
   {
-    "id": "P-0501-0_GR-55",
+    "id": "P-0503-0_GR-55",
     "name": "Middle Group - DPT (10-bytes)",
     "level": 1,
     "range": {

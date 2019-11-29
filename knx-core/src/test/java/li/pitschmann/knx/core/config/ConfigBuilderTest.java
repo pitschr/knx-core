@@ -28,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Test for {@link ConfigBuilder}
  */
 public class ConfigBuilderTest {
+    private static final Path KNX_PROJECT = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
 
     @Test
     @DisplayName("Creates a new config with null or empty String")
@@ -354,7 +356,6 @@ public class ConfigBuilderTest {
                 .hasMessageStartingWith("The value seems not be applicable for config");
 
         // test with valid path
-        final var validPath = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
-        assertThat(configBuilder.setting(CoreConfigs.PROJECT_PATH, validPath).build()).isNotNull();
+        assertThat(configBuilder.setting(CoreConfigs.PROJECT_PATH, KNX_PROJECT).build()).isNotNull();
     }
 }
