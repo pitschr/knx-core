@@ -180,7 +180,7 @@ paths:
           description: 'Success'
           content:
             application/json:
-              example: {"id":"P-0501","name":"Project (3-Level)","groupAddressStyle":"ThreeLevel","numberOfGroupAddresses":189,"numberOfGroupRanges":18}
+              example: {"id":"P-0501","name":"Project (3-Level)","version":20,"groupAddressStyle":"ThreeLevel","numberOfGroupAddresses":189,"numberOfGroupRanges":18}
 
   /v1/project/ranges:
     get:
