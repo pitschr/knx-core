@@ -42,33 +42,38 @@ public final class ProjectController extends AbstractController {
     }
 
     /**
-     * Returns the main  group for a two-level project ({@code main}/{@code sub})
+     * Returns the all group main ranges for a two-level project ({@code main}/{@code sub})
      * or a three-level project ({@code main}/{@code middle}/{@code sub})
      * <p/>
      * Not supported for: free-level projects
      *
      * @return list of {@link XmlGroupRange} on root level
      */
-    @GET("/project/groups")
+    @GET("/project/ranges")
     @Produces(Produces.JSON)
-    public List<XmlGroupRange> mainGroups() {
-        log.trace("Request for all main group in project");
+    public List<XmlGroupRange> getGroupRanges() {
+        log.trace("Request for all main group ranges in project");
 
         final var xmlProject = getXmlProject();
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
-        Preconditions.checkArgument(
-                groupAddressStyle == XmlGroupAddressStyle.THREE_LEVEL ||
-                        groupAddressStyle == XmlGroupAddressStyle.TWO_LEVEL);
 
-        final var mainGroups = xmlProject.getMainGroups();
-        log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroups);
+        if (groupAddressStyle == XmlGroupAddressStyle.THREE_LEVEL ||
+                        groupAddressStyle == XmlGroupAddressStyle.TWO_LEVEL) {
+            // two-level or three-level
+            final var mainRanges = xmlProject.getMainGroupRanges();
+            log.debug("All main group ranges found: {}", mainRanges);
 
-        getResponse().ok();
-        return limitAndGetAsList(mainGroups);
+            getResponse().ok();
+            return limitAndGetAsList(mainRanges);
+        } else {
+            // not supported for free-level
+            getResponse().forbidden();
+            return List.of();
+        }
     }
 
     /**
-     * Returns the middle groups for a three-level project ({@code main}/{@code middle}/{@code sub})
+     * Returns the middle group ranges for a three-level project ({@code main}/{@code middle}/{@code sub})
      * <ul>
      * <li>Main: 0 .. 31</li>
      * </ul>
@@ -76,20 +81,41 @@ public final class ProjectController extends AbstractController {
      *
      * @return list of {@link XmlGroupRange} for given {@code main} range
      */
-    @GET("/project/groups/{main: \\d+}")
+    @GET("/project/ranges/{main: \\d+}")
     @Produces(Produces.JSON)
-    public List<XmlGroupRange> getGroups(@Param int main) {
-        log.trace("Request for main group in project: {}", main);
-        checkArgumentMainGroup(main);
+    public List<XmlGroupRange> getGroupRanges(@Param int main) {
+        log.trace("Request for middle group ranges of main group range: {}", main);
+        checkArgumentMainGroupRange(main);
 
         final var xmlProject = getXmlProject();
-        Preconditions.checkArgument(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL);
+        if (xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL) {
+            // only three-level
+            final var mainRange = xmlProject.getGroupRange(main);
+            log.debug("Main group range '{}' found: {}", main, mainRange);
 
-        final var mainGroup = xmlProject.getMainGroup(main);
-        log.debug("Request for get '{}' found: {}", getRequest().getPath(), mainGroup);
+            getResponse().ok();
+            return limitAndGetAsList(mainRange.getChildGroupRanges());
+        } else {
+            // not supported for free-level and two-level
+            getResponse().forbidden();
+            return List.of();
+        }
+    }
+
+    /**
+     * Returns all group addresses
+     * <p/>
+     * Supported for all projects: free-level, two-level and three-level
+     *
+     * @return list of {@link XmlGroupAddress} for given project
+     */
+    @GET("/project/addresses")
+    @Produces(Produces.JSON)
+    public List<XmlGroupAddress> getGroupAddresses() {
+        log.trace("Request all group addresses");
 
         getResponse().ok();
-        return limitAndGetAsList(mainGroup.getChildGroupRanges());
+        return limitAndGetAsList(getXmlProject().getGroupAddresses());
     }
 
     /**
@@ -103,18 +129,22 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/addresses/{main: \\d+}")
     @Produces(Produces.JSON)
-    public List<XmlGroupAddress> getAddresses(@Param int main) {
-        log.trace("Request for middle group of main group '{}' in project: {}", main);
-        checkArgumentMainGroup(main);
+    public List<XmlGroupAddress> getGroupAddresses(@Param int main) {
+        log.trace("Request addresses for main group range: {}", main);
+        checkArgumentMainGroupRange(main);
 
         final var xmlProject = getXmlProject();
-        Preconditions.checkArgument(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.TWO_LEVEL);
+        if (xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.TWO_LEVEL) {
+            final var middleGroup = xmlProject.getGroupRange(main);
+            log.debug("Middle Group Range for main group range '{}' found: {}", main, middleGroup);
 
-        final var middleGroup = xmlProject.getMainGroup(main);
-        log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
+            getResponse().ok();
+            return limitAndGetAsList(middleGroup.getGroupAddresses());
+        } else {
+            getResponse().forbidden();
+            return List.of();
+        }
 
-        getResponse().ok();
-        return limitAndGetAsList(middleGroup.getGroupAddresses());
     }
 
     /**
@@ -129,27 +159,31 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project/addresses/{main: \\d+}/{middle: \\d+}")
     @Produces(Produces.JSON)
-    public List<XmlGroupAddress> getAddresses(@Param int main, @Param int middle) {
-        log.trace("Request for middle group of main group '{}' in project: {}", main);
-        checkArgumentMainGroup(main);
-        checkArgumentMiddleGroup(middle);
+    public List<XmlGroupAddress> getGroupAddresses(@Param int main, @Param int middle) {
+        log.trace("Request addresses for middle group: {}/{}", main, middle);
+        checkArgumentMainGroupRange(main);
+        checkArgumentMiddleGroupRange(middle);
 
         final var xmlProject = getXmlProject();
-        Preconditions.checkArgument(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL);
+        if(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL) {
+            final var middleGroup = xmlProject.getGroupRange(main, middle);
+            log.debug("Middle Group Range for main group range '{}/{}' found: {}", main, middle, middleGroup);
 
-        final var middleGroup = xmlProject.getMiddleGroup(main, middle);
-        log.debug("Request for get '{}' found: {}", getRequest().getPath(), middleGroup);
+            getResponse().ok();
+            return limitAndGetAsList(middleGroup.getGroupAddresses());
+        } else {
+            getResponse().forbidden();
+            return List.of();
+        }
 
-        getResponse().ok();
-        return limitAndGetAsList(middleGroup.getGroupAddresses());
     }
 
-    private void checkArgumentMainGroup(final int main) {
+    private void checkArgumentMainGroupRange(final int main) {
         Preconditions.checkArgument(main >= 0 && main <= 31,
                 "Invalid number of main group provided, should be within range [0-31]: {}", main);
     }
 
-    private void checkArgumentMiddleGroup(final int middle) {
+    private void checkArgumentMiddleGroupRange(final int middle) {
         Preconditions.checkArgument(middle >= 0 && middle <= 7,
                 "Invalid number of middle group provided, should be within range [0-7]: {}", middle);
     }

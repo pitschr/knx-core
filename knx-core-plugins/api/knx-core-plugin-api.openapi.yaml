@@ -110,7 +110,6 @@ paths:
         500:
           description: 'Internal Error.'
 
-
   /v1/write:
     post:
       description: 'Sends a WRITE response to KNX Client'
@@ -164,7 +163,7 @@ paths:
                 value: {"groupAddress":[15, 19], "dataPointType": "1.001", "values": ["on"]}
       responses:
         202:
-          description: 'Write request accepted by KNX Net/IP device, but success is not guaranteed (e.g. one case might be that group address has no WRITE flag set). Body is empty.'
+          description: 'Success. Write request accepted by KNX Net/IP device, but success is not guaranteed (e.g. one case might be that group address has no WRITE flag set). Body is empty.'
           content:
             application/json:
               example: {}
@@ -173,6 +172,232 @@ paths:
         500:
           description: 'Internal Error.'
 
+  /v1/project:
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns project overview. Use this endpoint to get the information if the project structure is free-level, two-level or three-level.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: {"id":"P-0501","name":"Project (3-Level)","groupAddressStyle":"ThreeLevel","numberOfGroupAddresses":189,"numberOfGroupRanges":18}
+
+  /v1/project/ranges:
+    get:
+      description: '<strong>Valid for projects with two-level and three-level structure</strong><p/>Returns the main group ranges.'
+      parameters:
+        - in: query
+          name: 'start'
+          description: 'Start position'
+          schema:
+            type: integer
+          example: '0'
+        - in: query
+          name: 'limit'
+          description: 'Limit of group ranges'
+          schema:
+            type: integer
+          example: '10'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: [{"id":"P-0501-0_GR-47","name":"Main Group - DPT","level":0,"range":{"start":1,"end":2047}},{"id":"P-0501-0_GR-67","name":"Main Group - Flags","level":0,"range":{"start":2048,"end":4095}},{"id":"P-0501-0_GR-69","name":"Main Group - Text / Encoding","level":0,"range":{"start":4096,"end":6143}}]
+        403:
+          description: 'Forbidden. When calling this endpoint and your project is not two-level or three-level.'
+
+  /v1/project/ranges/{main}:
+    parameters:
+      - in: path
+        name: main
+        required: true
+        description: Main Group Range for Three-Level Group Address
+        schema:
+          type: integer
+        example: 1
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
+
+    get:
+      description: '<strong>Valid for projects with three-level structure only</strong><p/>Returns middle group ranges.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: [{"id":"P-0501-0_GR-48","name":"Middle Group - DPT (1-byte)","level":1,"range":{"start":1,"end":255}},{"id":"P-0501-0_GR-49","name":"Middle Group - DPT (2-bytes)","level":1,"range":{"start":256,"end":511}},{"id":"P-0501-0_GR-50","name":"Middle Group - DPT (3-bytes)","level":1,"range":{"start":512,"end":767}},{"id":"P-0501-0_GR-51","name":"Middle Group - DPT (4-bytes)","level":1,"range":{"start":768,"end":1023}},{"id":"P-0501-0_GR-52","name":"Middle Group - DPT (14-bytes)","level":1,"range":{"start":1792,"end":2047}},{"id":"P-0501-0_GR-53","name":"Middle Group - DPT (6-bytes)","level":1,"range":{"start":1024,"end":1279}},{"id":"P-0501-0_GR-54","name":"Middle Group - DPT (8-bytes)","level":1,"range":{"start":1280,"end":1535}},{"id":"P-0501-0_GR-55","name":"Middle Group - DPT (10-bytes)","level":1,"range":{"start":1536,"end":1791}}]
+        403:
+          description: 'Forbidden. When calling this endpoint and your project is not three-level.'
+
+  /v1/project/addresses:
+    parameters:
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns all group addresses information from KNX project file.<p/><u>Note:</u> In big projects it may cause performance issue because the response might be large and therefore it is highly recommended to use <code>start</code> and <code>limit</code> to get a subset of information.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: [{"id":"P-0501-0_GA-211","name":"Sub Group - DPT 1 (0x01)","description":"1-bit (true)","address":{"type":1,"format":{"free_level":"11","two_level":"0/11","three_level":"0/0/11"},"raw":[0,11]},"dataPointType":"1.001"},{"id":"P-0501-0_GA-118","name":"Sub Group - DPT 2 (0x00)","description":"1-bit, controlled (no control, false)","address":{"type":1,"format":{"free_level":"20","two_level":"0/20","three_level":"0/0/20"},"raw":[0,20]},"dataPointType":"2.001"},{"id":"P-0501-0_GA-212","name":"Sub Group - DPT 2 (0x01)","description":"1-bit, controlled (no control, true)","address":{"type":1,"format":{"free_level":"21","two_level":"0/21","three_level":"0/0/21"},"raw":[0,21]},"dataPointType":"2.001"},{"id":"P-0501-0_GA-213","name":"Sub Group - DPT 2 (0x02)","description":"1-bit, controlled (control, false)","address":{"type":1,"format":{"free_level":"22","two_level":"0/22","three_level":"0/0/22"},"raw":[0,22]},"dataPointType":"2.001"}]
+
+  /v1/project/addresses/{main}:
+    parameters:
+      - in: path
+        name: main
+        required: true
+        description: Main Group Range for Two-Level Group Address
+        schema:
+          type: integer
+        example: 1
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
+    get:
+      description: '<strong>Valid for projects with two-level structure only</strong><p/>Returns all group addresses which are below the <code>main</code> group range only; taken from KNX project file.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: [{"id":"P-0501-0_GA-211","name":"Sub Group - DPT 1 (0x01)","description":"1-bit (true)","address":{"type":1,"format":{"free_level":"11","two_level":"0/11","three_level":"0/0/11"},"raw":[0,11]},"dataPointType":"1.001"},{"id":"P-0501-0_GA-118","name":"Sub Group - DPT 2 (0x00)","description":"1-bit, controlled (no control, false)","address":{"type":1,"format":{"free_level":"20","two_level":"0/20","three_level":"0/0/20"},"raw":[0,20]},"dataPointType":"2.001"},{"id":"P-0501-0_GA-212","name":"Sub Group - DPT 2 (0x01)","description":"1-bit, controlled (no control, true)","address":{"type":1,"format":{"free_level":"21","two_level":"0/21","three_level":"0/0/21"},"raw":[0,21]},"dataPointType":"2.001"},{"id":"P-0501-0_GA-213","name":"Sub Group - DPT 2 (0x02)","description":"1-bit, controlled (control, false)","address":{"type":1,"format":{"free_level":"22","two_level":"0/22","three_level":"0/0/22"},"raw":[0,22]},"dataPointType":"2.001"}]
+        403:
+          description: 'Forbidden. When calling this endpoint and your project is not two-level.'
+
+  /v1/project/addresses/{main}/{middle}:
+    parameters:
+      - in: path
+        name: main
+        required: true
+        description: Main Group Range for Three-Level Group Address
+        schema:
+          type: integer
+        example: 1
+      - in: path
+        name: middle
+        required: true
+        description: Middle Group Range for Three-Level Group Address
+        schema:
+          type: integer
+        example: 2
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
+    get:
+      description: '<strong>Valid for projects with three-level structure only</strong><p/>Returns all group addresses which are below the <code>{main}/{middle}</code> group range only; taken from KNX project file.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: [{"id":"P-0501-0_GA-211","name":"Sub Group - DPT 1 (0x01)","description":"1-bit (true)","address":{"type":1,"format":{"free_level":"11","two_level":"0/11","three_level":"0/0/11"},"raw":[0,11]},"dataPointType":"1.001"},{"id":"P-0501-0_GA-118","name":"Sub Group - DPT 2 (0x00)","description":"1-bit, controlled (no control, false)","address":{"type":1,"format":{"free_level":"20","two_level":"0/20","three_level":"0/0/20"},"raw":[0,20]},"dataPointType":"2.001"},{"id":"P-0501-0_GA-212","name":"Sub Group - DPT 2 (0x01)","description":"1-bit, controlled (no control, true)","address":{"type":1,"format":{"free_level":"21","two_level":"0/21","three_level":"0/0/21"},"raw":[0,21]},"dataPointType":"2.001"},{"id":"P-0501-0_GA-213","name":"Sub Group - DPT 2 (0x02)","description":"1-bit, controlled (control, false)","address":{"type":1,"format":{"free_level":"22","two_level":"0/22","three_level":"0/0/22"},"raw":[0,22]},"dataPointType":"2.001"}]
+        403:
+          description: 'Forbidden. When calling this endpoint and your project is not three-level.'
+
+
+
+  /v1/statistic:
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns the statistic from KNX client. The statistic contain information like how many packets have been sent / received.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              example: {"inbound":{"total":{"packets":3,"bytes":224},"search":{"request":0,"response":0},"description":{"request":0,"response":1},"connect":{"request":0,"response":1},"connection_state":{"request":0,"response":1},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"outbound":{"total":{"packets":3,"bytes":182},"search":{"request":0,"response":0},"description":{"request":1,"response":0},"connect":{"request":1,"response":0},"connection_state":{"request":1,"response":0},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"error":{"total":{"packets":0,"rate":0}}}
+
+  /v1/status:
+    parameters:
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns a list of group address status that is present in the KNX client.<p/><u>Note:</u> In big projects it may cause performance issue because the response might be large and therefore it is highly recommended to use <code>start</code> and <code>limit</code> to get a subset of information.'
+      responses:
+        207:
+          description: 'Success. Returns <strong>ALL status</strong> group addresess that are known to the KNX client. Multi-Status response.'
+          content:
+            application/json:
+              example: [{"status":"OK","timestamp":{"seconds":123,"nanos":456000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"258","two_level":"0/258","three_level":"0/1/2"},"raw":[1,2]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[1]},{"status":"OK","timestamp":{"seconds":234,"nanos":567000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_WRITE","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"2563","two_level":"1/515","three_level":"1/2/3"},"raw":[10,3]},"name":"DPT5.1-Octet Unsigned Name","description":"DPT5.1-Octet Unsigned Description","dataPointType":"5.010","raw":[35]},{"status":"OK","timestamp":{"seconds":345,"nanos":678000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_RESPONSE","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"4868","two_level":"2/772","three_level":"2/3/4"},"raw":[19,4]},"name":"DPT7.2-Octet Unsigned Name","description":"DPT7.2-Octet Unsigned Description","dataPointType":"7.001","raw":[86,126]},{"status":"ERROR","groupAddress":{"type":1,"format":{"free_level":"7173","two_level":"3/1029","three_level":"3/4/5"},"raw":[28,5]}}]
+
+  /v1/status/{groupAddress}:
+    parameters:
+      - in: path
+        name: groupAddress
+        required: true
+        description: Group Address
+        schema:
+          type: string
+        examples:
+          Group Address (Free-Level):
+            value: 2660
+          Group Address (Two-Level):
+            value: 1/612
+          Group Address (Three-Level):
+            value: 1/2/100
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns <strong>ONE status</strong> for given address. A nummercial group address - which is typically used for free-level project - can be also applied for two-level/three-level project structures.<p>Example:<br><code>2660 (= Free-Level: 2660, Two-Level: 1/612, Three-Level: 1/2/100)</code><p>Following URLs have same effect:<ul><li><code>/v1/status/2660</code></li><li><code>/v1/status/1/612</code></li><li><code>/v1/status/1/2/100</code></li></ul>This is because in KNX a group address is represented by two-bytes array.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"status":"OK","timestamp":{"seconds":9876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.13","raw":[-2,13]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"16206","two_level":"7/1870","three_level":"7/7/78"},"raw":[63,78]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[119,67,33]}
+                Partial Response:
+                  value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
+        404:
+          description: 'No status found for given group address'
 
 components:
   schemas:
@@ -189,10 +414,10 @@ components:
           properties:
             free_level:
               type: string
-              example: '5401'
+              example: '2660'
             two_level:
               type: string
-              example: '1/330'
+              example: '1/612'
             three_level:
               type: string
               example: '1/2/100'

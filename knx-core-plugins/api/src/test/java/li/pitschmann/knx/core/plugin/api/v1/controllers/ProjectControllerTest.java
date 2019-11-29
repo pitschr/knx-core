@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.parser.XmlGroupAddressStyle;
 import li.pitschmann.knx.core.parser.XmlGroupRange;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -62,19 +63,16 @@ public class ProjectControllerTest {
         assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testProjectStructure.json"));
     }
 
-    /**
-     * Tests endpoint to fetch main groups from XML project file
-     */
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
-    @DisplayName("OK [Three-Level]: Get main groups from XML project")
-    public void testMainGroups(final Controller controller) {
+    @DisplayName("OK [Three-Level]: Get all main group rangess from XML project")
+    public void testMainGroupRanges(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
         //
         // Verification
         //
 
-        final var response = projectController.mainGroups();
+        final var response = projectController.getGroupRanges();
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(response).hasSize(3);
         for (XmlGroupRange r : response) {
@@ -82,22 +80,40 @@ public class ProjectControllerTest {
         }
 
         final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroups.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMainGroupRanges.json"));
     }
 
-    /**
-     * Tests endpoint to fetch middle groups (of main group 0) from XML project file
-     */
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
-    @DisplayName("OK [Three-Level]: Get middle groups of main group '0' from XML project")
-    public void testMiddleGroups(final Controller controller) {
+    @DisplayName("ERROR [Free-Level]: Get main group ranges from XML project")
+    public void testMainGroupRangesForFreeLevel(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Mocking
+        //
+
+        final var xmlProject = projectController.getXmlProject();
+        when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getGroupRanges();
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.FORBIDDEN);
+        assertThatJson(asJson(response)).isEqualTo("[]");
+    }
+
+    @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
+    @DisplayName("OK [Three-Level]: Get middle group ranges of main group '0' from XML project")
+    public void testMiddleGroupRanges(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
         //
         // Verification
         //
 
-        final var response = projectController.getGroups(0);
+        final var response = projectController.getGroupRanges(0);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(response).hasSize(8);
         for (XmlGroupRange r : response) {
@@ -105,33 +121,47 @@ public class ProjectControllerTest {
         }
 
         final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMiddleGroups.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testMiddleGroupRanges.json"));
     }
 
-    /**
-     * Tests endpoint to fetch all group addresses of group 0/0/* (main group 0, middle group 0) from XML project file
-     */
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
-    @DisplayName("OK [Three-Level]: Get group addresses of range group (0/0/*) from XML project")
-    public void testGroupAddresses(final Controller controller) {
+    @DisplayName("ERROR [Free-Level]: Get middle group ranges of main group '0' from XML project - invalid for free-level")
+    public void testMiddleGroupRangesForFreeLevel(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Mocking
+        //
+
+        final var xmlProject = projectController.getXmlProject();
+        when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getGroupRanges(0);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.FORBIDDEN);
+        assertThatJson(asJson(response)).isEqualTo("[]");
+    }
+
+    @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
+    @DisplayName("OK [Three-Level]: Get ALL group addresses of group range (0/0/*) from XML project")
+    public void testGroupAddressesByRange(final Controller controller) {
         final var projectController = (ProjectController) controller;
 
         //
         // Verification
         //
 
-        final var response = projectController.getAddresses(0, 0);
+        final var response = projectController.getGroupAddresses(0, 0);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(response).hasSize(46);
 
         final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddresses.json"));
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddressesByRange.json"));
     }
 
-    /**
-     * Tests endpoint to fetch 3rd - 8th group addresses of group 0/0/* (main group 0, middle group 0)
-     * from XML project file
-     */
     @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
     @DisplayName("OK [Three-Level]: Get 3rd-8th group addresses of range group (0/0/*) from XML project")
     public void testGroupAddressesWithLimit(final Controller controller) {
@@ -147,7 +177,7 @@ public class ProjectControllerTest {
         // Verification
         //
 
-        final var response = projectController.getAddresses(0, 0);
+        final var response = projectController.getGroupAddresses(0, 0);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(response).hasSize(4);
         // 0/0/0 .. 0/0/9 not available
@@ -160,5 +190,43 @@ public class ProjectControllerTest {
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testGroupAddressesWithLimit.json"));
+    }
+
+    @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
+    @DisplayName("ERROR [Free-Level]: Get ALL group addresses of range group (0/0/*) from XML project")
+    public void testGroupAddressesFromRangeGroupForFreeLevel(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Mocking
+        //
+
+        final var xmlProject = projectController.getXmlProject();
+        when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getGroupAddresses(0, 0);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.FORBIDDEN);
+        assertThatJson(asJson(response)).isEqualTo("[]");
+    }
+
+    @ControllerTest(value = ProjectController.class, projectPath = FILE_KNXPROJ_THREE_LEVEL)
+    @DisplayName("OK [Three-Level]: Get ALL addresses from XML project")
+    public void testAllGroupAddresses(final Controller controller) {
+        final var projectController = (ProjectController) controller;
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.getGroupAddresses();
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
+        assertThat(response).hasSize(189);
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testAllGroupAddresses.json"));
     }
 }
