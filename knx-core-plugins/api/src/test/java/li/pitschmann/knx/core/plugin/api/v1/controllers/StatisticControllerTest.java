@@ -39,7 +39,7 @@ public class StatisticControllerTest {
      * @param mockPlugin
      * @throws Exception
      */
-    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v20).knxproj"))
     @DisplayName("Test /statistic endpoint")
     public void testStatistic(final MockApiPlugin mockPlugin) throws Exception {
         // get http client for requests

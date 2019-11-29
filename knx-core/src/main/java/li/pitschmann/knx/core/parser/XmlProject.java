@@ -69,6 +69,10 @@ public final class XmlProject {
      */
     private XmlGroupAddressStyle groupAddressStyle;
     /**
+     * Version of project
+     */
+    private int version;
+    /**
      * <strong>Unsorted Map</strong> of KNX Group Ranges taken from '*.knxproj' file. Key is by Id (e.g. P-06EF-0_GR-4)
      * <pre>{@code
      * <GroupRanges>
@@ -115,6 +119,14 @@ public final class XmlProject {
 
     public void setGroupAddressStyle(final XmlGroupAddressStyle groupAddressStyle) {
         this.groupAddressStyle = groupAddressStyle;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     /**
@@ -330,6 +342,7 @@ public final class XmlProject {
         return Strings.toStringHelper(this)
                 .add("id", this.id)
                 .add("name", this.name)
+                .add("version", this.version)
                 .add("groupAddressStyle", this.groupAddressStyle)
                 .add("groupAddressMap", this.groupAddressMap)
                 .add("groupRangeMap", this.groupRangeMap)

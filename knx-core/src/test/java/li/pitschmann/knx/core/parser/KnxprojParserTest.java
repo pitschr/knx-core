@@ -34,8 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Tests {@link KnxprojParser} class to parse KNX Project files
  */
 public class KnxprojParserTest {
-    private static final Path KNX_PROJECT_V14 = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
-    private static final Path KNX_PROJECT_FREELEVEL_V14 = Paths.get("src/test/resources/parser/Project (Free-Level, v14).knxproj");
+    private static final Path KNX_PROJECT_THREE_LEVEL_V20 = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
+    private static final Path KNX_PROJECT_THREE_LEVEL_V14 = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
+    private static final Path KNX_PROJECT_FREE_LEVEL = Paths.get("src/test/resources/parser/Project (Free-Level, v20).knxproj");
     private static final Path GOOD_EMPTY_PROJECT = Paths.get("src/test/resources/parser/Empty Project (No Group Addresses).knxproj");
     private static final Path CORRUPTED_FILE = Paths.get("src/test/resources/parser/Corrupted Project (Incomplete).knxproj");
     private static final Path CORRUPTED_NO_PROJECT_ID = Paths.get("src/test/resources/parser/Corrupted Project (No Project Id).knxproj");
@@ -48,15 +49,11 @@ public class KnxprojParserTest {
     private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_START = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeStart).knxproj");
     private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_END = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeEnd).knxproj");
     private static final Path CORRUPTED_NO_GROUPRANGE_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange Name).knxproj");
-    private static final Path CORRUPTED_NO_GROUPRANGE_GROUPADDRESS_ID = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange GroupAddress Id).knxproj");
 
-    /**
-     * Tests if {@link XmlProject} (3-Level) has been parsed correctly
-     */
     @Test
-    @DisplayName("(Good) Test KNX Project with 3-Level group addresses")
+    @DisplayName("(Good) Test KNX Project V14 with 3-Level group addresses")
     public void testThreeLevelProjectV14() {
-        final var project = KnxprojParser.parse(KNX_PROJECT_V14);
+        final var project = KnxprojParser.parse(KNX_PROJECT_THREE_LEVEL_V14);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0501");
@@ -94,7 +91,53 @@ public class KnxprojParserTest {
         assertThat(mainGroup2.getId()).isEqualTo("P-0501-0_GR-69");
         assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
         assertThat(mainGroup2.getGroupAddresses()).isEmpty();
-        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group addresses in knxproj file is not ordered)
+        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group range in knxproj file is not ordered)
+        assertThat(subGroup2_0.getChildGroupRanges()).isEmpty();
+        assertThat(subGroup2_0.getGroupAddresses()).hasSize(11);
+    }
+
+    @Test
+    @DisplayName("(Good) Test KNX Project V20 with 3-Level group addresses")
+    public void testThreeLevelProjectV20() {
+        final var project = KnxprojParser.parse(KNX_PROJECT_THREE_LEVEL_V20);
+
+        assertThat(project).isNotNull();
+        assertThat(project.getId()).isEqualTo("P-0503");
+        assertThat(project.getName()).isEqualTo("Project (3-Level)");
+        assertThat(project.getGroupAddressStyle()).isSameAs(XmlGroupAddressStyle.THREE_LEVEL);
+        assertThat(project.getGroupAddresses()).hasSize(189);
+        assertThat(project.getGroupRanges()).hasSize(18);
+
+        // ---------------------
+        // Range Group Check
+        // ---------------------
+        final var xmlGroupRanges = project.getMainGroupRanges();
+        assertThat(xmlGroupRanges).hasSize(3);
+
+        // Main Group: 0
+        final var mainGroup0 = xmlGroupRanges.get(0);
+        assertThat(mainGroup0.getId()).isEqualTo("P-0503-0_GR-47");
+        assertThat(mainGroup0.getChildGroupRanges()).hasSize(8);
+        assertThat(mainGroup0.getGroupAddresses()).isEmpty();
+        final var subGroup0_0 = mainGroup0.getChildGroupRanges().get(0);
+        assertThat(subGroup0_0.getChildGroupRanges()).isEmpty();
+        assertThat(subGroup0_0.getGroupAddresses()).hasSize(46);
+
+        // Main Group: 1
+        final var mainGroup1 = xmlGroupRanges.get(1);
+        assertThat(mainGroup1.getId()).isEqualTo("P-0503-0_GR-67");
+        assertThat(mainGroup1.getChildGroupRanges()).hasSize(5);
+        assertThat(mainGroup1.getGroupAddresses()).isEmpty();
+        final var subGroup1_2 = mainGroup1.getChildGroupRanges().get(2);
+        assertThat(subGroup1_2.getChildGroupRanges()).isEmpty();
+        assertThat(subGroup1_2.getGroupAddresses()).hasSize(3);
+
+        // Main Group: 2
+        final var mainGroup2 = xmlGroupRanges.get(2);
+        assertThat(mainGroup2.getId()).isEqualTo("P-0503-0_GR-69");
+        assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
+        assertThat(mainGroup2.getGroupAddresses()).isEmpty();
+        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group range in knxproj file is not ordered)
         assertThat(subGroup2_0.getChildGroupRanges()).isEmpty();
         assertThat(subGroup2_0.getGroupAddresses()).hasSize(11);
     }
@@ -104,17 +147,17 @@ public class KnxprojParserTest {
      */
     @Test
     @DisplayName("(Good) Test KNX Project with Free-Level group addresses")
-    public void testFreeLevelProjectV14() {
-        final var project = KnxprojParser.parse(KNX_PROJECT_FREELEVEL_V14);
+    public void testFreeLevelProject() {
+        final var project = KnxprojParser.parse(KNX_PROJECT_FREE_LEVEL);
 
         assertThat(project).isNotNull();
-        assertThat(project.getId()).isEqualTo("P-06EF");
+        assertThat(project.getId()).isEqualTo("P-0502");
         assertThat(project.getName()).isEqualTo("Project (Free-Level)");
         assertThat(project.getGroupAddressStyle()).isSameAs(XmlGroupAddressStyle.FREE_LEVEL);
-        assertThat(project.getGroupAddresses()).hasSize(7);
-        assertThat(project.getGroupRanges()).hasSize(2);
-        assertThat(project.getGroupRangeById("P-06EF-0_GR-3").getGroupAddresses()).hasSize(3);
-        assertThat(project.getGroupRangeById("P-06EF-0_GR-4").getGroupAddresses()).hasSize(4);
+        assertThat(project.getGroupAddresses()).hasSize(189);
+        assertThat(project.getGroupRanges()).hasSize(18);
+        assertThat(project.getGroupRangeById("P-0502-0_GR-78").getGroupAddresses()).hasSize(46);
+        assertThat(project.getGroupRangeById("P-0502-0_GR-79").getGroupAddresses()).hasSize(30);
     }
 
     /**
@@ -123,49 +166,19 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("Test group address datapoint types")
     public void testDataPoints() {
-        final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_V14).getGroupAddresses();
+        final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
 
         // assert DPT-x group address
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1 (0x00)", "DPT-1");
-        assertGroupAddress(groupAddresses, "P-0501-0_GA-128", GroupAddress.of(0, 3, 10), "Sub Group - DPT 12 (0x00 00 00 00)", "DPT-12");
+        assertGroupAddress(groupAddresses, "P-0503-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1 (0x00)", "DPT-1");
+        assertGroupAddress(groupAddresses, "P-0503-0_GA-128", GroupAddress.of(0, 3, 10), "Sub Group - DPT 12 (0x00 00 00 00)", "DPT-12");
 
 //        // assert DPST-x-y group address TODO: Define DPST in XML Project File too
-//        assertGroupAddress(groupAddresses, "P-0501-0_GA-133", GroupAddress.of(1, 0, 10), "Sub Group - DPST 1.001 ", "DPST-1-1");
-//        assertGroupAddress(groupAddresses, "P-0501-0_GA-143", GroupAddress.of(1, 2, 20), "Sub Group - DPST 11.001", "DPST-11-1");
+//        assertGroupAddress(groupAddresses, "P-0503-0_GA-133", GroupAddress.of(1, 0, 10), "Sub Group - DPST 1.001 ", "DPST-1-1");
+//        assertGroupAddress(groupAddresses, "P-0503-0_GA-143", GroupAddress.of(1, 2, 20), "Sub Group - DPST 11.001", "DPST-11-1");
 //
 //        // assert group address without DPT TODO: Define No DPT in XML Project File too
-//        assertGroupAddress(groupAddresses, "P-0501-0_GA-149", GroupAddress.of(2, 0, 0), "Sub Group - No DPT 1-byte", null);
-//        assertGroupAddress(groupAddresses, "P-0501-0_GA-188", GroupAddress.of(2, 3, 0), "Sub Group - No DPT 4-bytes", null);
-    }
-
-    /**
-     * Tests if flags of {@link XmlGroupAddress} have been parsed correctly
-     */
-    @Test
-    @DisplayName("Test group address flags")
-    public void testGroupAddressFlags() {
-        final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_V14).getGroupAddresses();
-
-        // No Flags
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-150", false, false, false, false, false);
-        // Communication only
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-151", true, false, false, false, false);
-        // Read only
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-152", false, true, false, false, false);
-        // Write only
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-153", false, false, true, false, false);
-        // Transmit only
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-154", false, false, false, true, false);
-        // Update only
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-155", false, false, false, false, true);
-        // Communication + Read
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-156", true, true, false, false, false);
-        // Communication + Write
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-157", true, false, true, false, false);
-        // Communication + Read + Write
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-158", true, true, true, false, false);
-        // All flags
-        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-159", true, true, true, true, true);
+//        assertGroupAddress(groupAddresses, "P-0503-0_GA-149", GroupAddress.of(2, 0, 0), "Sub Group - No DPT 1-byte", null);
+//        assertGroupAddress(groupAddresses, "P-0503-0_GA-188", GroupAddress.of(2, 3, 0), "Sub Group - No DPT 4-bytes", null);
     }
 
     @Test
@@ -276,12 +289,4 @@ public class KnxprojParserTest {
         assertThat(groupAddress.getDataPointType()).isEqualTo(datapointType);
     }
 
-    private void assertGroupAddressFlags(final Collection<XmlGroupAddress> groupAddresses, final String id, final boolean communication, final boolean read, final boolean write, final boolean transmit, final boolean update) {
-        final var groupAddress = groupAddresses.stream().filter(xga -> id.equals(xga.getId())).findFirst().get();
-        assertThat(groupAddress.getCommunicationFlag()).isEqualTo(communication ? "Enabled" : null);
-        assertThat(groupAddress.getReadFlag()).isEqualTo(read ? "Enabled" : null);
-        assertThat(groupAddress.getWriteFlag()).isEqualTo(write ? "Enabled" : null);
-        assertThat(groupAddress.getTransmitFlag()).isEqualTo(transmit ? "Enabled" : null);
-        assertThat(groupAddress.getUpdateFlag()).isEqualTo(update ? "Enabled" : null);
-    }
 }

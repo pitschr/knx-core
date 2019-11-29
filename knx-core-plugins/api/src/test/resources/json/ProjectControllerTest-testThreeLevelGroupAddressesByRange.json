@@ -1,6 +1,6 @@
 [
   {
-    "id": "P-0501-0_GA-117",
+    "id": "P-0503-0_GA-117",
     "name": "Sub Group - DPT 1 (0x00)",
     "description": "1-bit (false)",
     "address": {
@@ -18,7 +18,7 @@
     "dataPointType": "1.001"
   },
   {
-    "id": "P-0501-0_GA-211",
+    "id": "P-0503-0_GA-211",
     "name": "Sub Group - DPT 1 (0x01)",
     "description": "1-bit (true)",
     "address": {
@@ -36,7 +36,7 @@
     "dataPointType": "1.001"
   },
   {
-    "id": "P-0501-0_GA-118",
+    "id": "P-0503-0_GA-118",
     "name": "Sub Group - DPT 2 (0x00)",
     "description": "1-bit, controlled (no control, false)",
     "address": {
@@ -54,7 +54,7 @@
     "dataPointType": "2.001"
   },
   {
-    "id": "P-0501-0_GA-212",
+    "id": "P-0503-0_GA-212",
     "name": "Sub Group - DPT 2 (0x01)",
     "description": "1-bit, controlled (no control, true)",
     "address": {
@@ -72,7 +72,7 @@
     "dataPointType": "2.001"
   },
   {
-    "id": "P-0501-0_GA-213",
+    "id": "P-0503-0_GA-213",
     "name": "Sub Group - DPT 2 (0x02)",
     "description": "1-bit, controlled (control, false)",
     "address": {
@@ -90,7 +90,7 @@
     "dataPointType": "2.001"
   },
   {
-    "id": "P-0501-0_GA-214",
+    "id": "P-0503-0_GA-214",
     "name": "Sub Group - DPT 2 (0x03)",
     "description": "1-bit, controlled (control, true)",
     "address": {
@@ -108,7 +108,7 @@
     "dataPointType": "2.001"
   },
   {
-    "id": "P-0501-0_GA-119",
+    "id": "P-0503-0_GA-119",
     "name": "Sub Group - DPT 3 (0x00)",
     "description": "3-bit, controlled (decrease, 0)",
     "address": {
@@ -126,7 +126,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-215",
+    "id": "P-0503-0_GA-215",
     "name": "Sub Group - DPT 3 (0x01)",
     "description": "3-bit, controlled (decrease, 1)",
     "address": {
@@ -144,7 +144,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-216",
+    "id": "P-0503-0_GA-216",
     "name": "Sub Group - DPT 3 (0x02)",
     "description": "3-bit, controlled (decrease, 2)",
     "address": {
@@ -162,7 +162,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-217",
+    "id": "P-0503-0_GA-217",
     "name": "Sub Group - DPT 3 (0x04)",
     "description": "3-bit, controlled (decrease, 4)",
     "address": {
@@ -180,7 +180,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-218",
+    "id": "P-0503-0_GA-218",
     "name": "Sub Group - DPT 3 (0x06)",
     "description": "3-bit, controlled (decrease, 6)",
     "address": {
@@ -198,7 +198,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-219",
+    "id": "P-0503-0_GA-219",
     "name": "Sub Group - DPT 3 (0x08)",
     "description": "3-bit, controlled (increase, 0)",
     "address": {
@@ -216,7 +216,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-220",
+    "id": "P-0503-0_GA-220",
     "name": "Sub Group - DPT 3 (0x09)",
     "description": "3-bit, controlled (increase, 1)",
     "address": {
@@ -234,7 +234,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-221",
+    "id": "P-0503-0_GA-221",
     "name": "Sub Group - DPT 3 (0x0B)",
     "description": "3-bit, controlled (increase, 3)",
     "address": {
@@ -252,7 +252,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-222",
+    "id": "P-0503-0_GA-222",
     "name": "Sub Group - DPT 3 (0x0D)",
     "description": "3-bit, controlled (increase, 5)",
     "address": {
@@ -270,7 +270,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-223",
+    "id": "P-0503-0_GA-223",
     "name": "Sub Group - DPT 3 (0x0F)",
     "description": "3-bit, controlled (increase, 7)",
     "address": {
@@ -288,7 +288,7 @@
     "dataPointType": "3.007"
   },
   {
-    "id": "P-0501-0_GA-120",
+    "id": "P-0503-0_GA-120",
     "name": "Sub Group - DPT 4 (0x30)",
     "description": "1-byte, character (0)",
     "address": {
@@ -306,7 +306,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-224",
+    "id": "P-0503-0_GA-224",
     "name": "Sub Group - DPT 4 (0x39)",
     "description": "1-byte, character (9)",
     "address": {
@@ -324,7 +324,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-225",
+    "id": "P-0503-0_GA-225",
     "name": "Sub Group - DPT 4 (0x41)",
     "description": "1-byte, character (A)",
     "address": {
@@ -342,7 +342,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-226",
+    "id": "P-0503-0_GA-226",
     "name": "Sub Group - DPT 4 (0x61)",
     "description": "1-byte, character (a)",
     "address": {
@@ -360,7 +360,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-227",
+    "id": "P-0503-0_GA-227",
     "name": "Sub Group - DPT 4 (0xC4)",
     "description": "1-byte, character (Ä)",
     "address": {
@@ -378,7 +378,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-228",
+    "id": "P-0503-0_GA-228",
     "name": "Sub Group - DPT 4 (0xE4)",
     "description": "1-byte, character (ä)",
     "address": {
@@ -396,7 +396,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-229",
+    "id": "P-0503-0_GA-229",
     "name": "Sub Group - DPT 4 (0xE1)",
     "description": "1-byte, character (á)",
     "address": {
@@ -414,7 +414,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-230",
+    "id": "P-0503-0_GA-230",
     "name": "Sub Group - DPT 4 (0xE0)",
     "description": "1-byte, character (à)",
     "address": {
@@ -432,7 +432,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-231",
+    "id": "P-0503-0_GA-231",
     "name": "Sub Group - DPT 4 (0x24)",
     "description": "1-byte, character ($)",
     "address": {
@@ -450,7 +450,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-232",
+    "id": "P-0503-0_GA-232",
     "name": "Sub Group - DPT 4 (0x25)",
     "description": "1-byte, character (%)",
     "address": {
@@ -468,7 +468,7 @@
     "dataPointType": "4.001"
   },
   {
-    "id": "P-0501-0_GA-121",
+    "id": "P-0503-0_GA-121",
     "name": "Sub Group - DPT 5 (0x00)",
     "description": "1-byte, unsigned (0)",
     "address": {
@@ -486,7 +486,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-233",
+    "id": "P-0503-0_GA-233",
     "name": "Sub Group - DPT 5 (0x1C)",
     "description": "1-byte, unsigned (28)",
     "address": {
@@ -504,7 +504,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-234",
+    "id": "P-0503-0_GA-234",
     "name": "Sub Group - DPT 5 (0x39)",
     "description": "1-byte, unsigned (57)",
     "address": {
@@ -522,7 +522,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-235",
+    "id": "P-0503-0_GA-235",
     "name": "Sub Group - DPT 5 (0x55)",
     "description": "1-byte, unsigned (85)",
     "address": {
@@ -540,7 +540,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-236",
+    "id": "P-0503-0_GA-236",
     "name": "Sub Group - DPT 5 (0x71)",
     "description": "1-byte, unsigned (113)",
     "address": {
@@ -558,7 +558,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-237",
+    "id": "P-0503-0_GA-237",
     "name": "Sub Group - DPT 5 (0x8E)",
     "description": "1-byte, unsigned (142)",
     "address": {
@@ -576,7 +576,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-238",
+    "id": "P-0503-0_GA-238",
     "name": "Sub Group - DPT 5 (0xAA)",
     "description": "1-byte, unsigned (170)",
     "address": {
@@ -594,7 +594,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-239",
+    "id": "P-0503-0_GA-239",
     "name": "Sub Group - DPT 5 (0xC6)",
     "description": "1-byte, unsigned (198)",
     "address": {
@@ -612,7 +612,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-240",
+    "id": "P-0503-0_GA-240",
     "name": "Sub Group - DPT 5 (0xE3)",
     "description": "1-byte, unsigned (227)",
     "address": {
@@ -630,7 +630,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-241",
+    "id": "P-0503-0_GA-241",
     "name": "Sub Group - DPT 5 (0x59)",
     "description": "1-byte, unsigned (255)",
     "address": {
@@ -648,7 +648,7 @@
     "dataPointType": "5.001"
   },
   {
-    "id": "P-0501-0_GA-122",
+    "id": "P-0503-0_GA-122",
     "name": "Sub Group - DPT 6 (0x00)",
     "description": "1-byte, signed (0)",
     "address": {
@@ -666,7 +666,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-242",
+    "id": "P-0503-0_GA-242",
     "name": "Sub Group - DPT 6 (0xFF)",
     "description": "1-byte, signed (-128)",
     "address": {
@@ -684,7 +684,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-243",
+    "id": "P-0503-0_GA-243",
     "name": "Sub Group - DPT 6 (0xA0)",
     "description": "1-byte, signed (-96)",
     "address": {
@@ -702,7 +702,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-244",
+    "id": "P-0503-0_GA-244",
     "name": "Sub Group - DPT 6 (0xC0)",
     "description": "1-byte, signed (-64)",
     "address": {
@@ -720,7 +720,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-245",
+    "id": "P-0503-0_GA-245",
     "name": "Sub Group - DPT 6 (0xE0)",
     "description": "1-byte, signed (-32)",
     "address": {
@@ -738,7 +738,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-246",
+    "id": "P-0503-0_GA-246",
     "name": "Sub Group - DPT 6 (0x01)",
     "description": "1-byte, signed (1)",
     "address": {
@@ -756,7 +756,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-247",
+    "id": "P-0503-0_GA-247",
     "name": "Sub Group - DPT 6 (0x20)",
     "description": "1-byte, signed (32)",
     "address": {
@@ -774,7 +774,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-248",
+    "id": "P-0503-0_GA-248",
     "name": "Sub Group - DPT 6 (0x40)",
     "description": "1-byte, signed (64)",
     "address": {
@@ -792,7 +792,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-249",
+    "id": "P-0503-0_GA-249",
     "name": "Sub Group - DPT 6 (0x60)",
     "description": "1-byte, signed (96)",
     "address": {
@@ -810,7 +810,7 @@
     "dataPointType": "6.001"
   },
   {
-    "id": "P-0501-0_GA-250",
+    "id": "P-0503-0_GA-250",
     "name": "Sub Group - DPT 6 (0x7F)",
     "description": "1-byte, signed (127)",
     "address": {

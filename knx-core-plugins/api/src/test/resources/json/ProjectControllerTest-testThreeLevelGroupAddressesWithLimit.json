@@ -1,6 +1,6 @@
 [
   {
-    "id": "P-0501-0_GA-211",
+    "id": "P-0503-0_GA-211",
     "name": "Sub Group - DPT 1 (0x01)",
     "description": "1-bit (true)",
     "address": {
@@ -18,7 +18,7 @@
     "dataPointType": "1.001"
   },
   {
-    "id": "P-0501-0_GA-118",
+    "id": "P-0503-0_GA-118",
     "name": "Sub Group - DPT 2 (0x00)",
     "description": "1-bit, controlled (no control, false)",
     "address": {
@@ -36,7 +36,7 @@
     "dataPointType": "2.001"
   },
   {
-    "id": "P-0501-0_GA-212",
+    "id": "P-0503-0_GA-212",
     "name": "Sub Group - DPT 2 (0x01)",
     "description": "1-bit, controlled (no control, true)",
     "address": {
@@ -54,7 +54,7 @@
     "dataPointType": "2.001"
   },
   {
-    "id": "P-0501-0_GA-213",
+    "id": "P-0503-0_GA-213",
     "name": "Sub Group - DPT 2 (0x02)",
     "description": "1-bit, controlled (control, false)",
     "address": {

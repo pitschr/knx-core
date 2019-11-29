@@ -34,6 +34,7 @@ public final class ProjectController extends AbstractController {
         response.setId(xmlProject.getId());
         response.setName(xmlProject.getName());
         response.setGroupAddressStyle(xmlProject.getGroupAddressStyle().getCode());
+        response.setVersion(xmlProject.getVersion());
         response.setNumberOfGroupRanges(xmlProject.getGroupRanges().size());
         response.setNumberOfGroupAddresses(xmlProject.getGroupAddresses().size());
 

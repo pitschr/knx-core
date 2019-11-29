@@ -35,8 +35,8 @@ import static org.mockito.Mockito.when;
  * Test class for {@link ProjectController}
  */
 public class ProjectControllerTest {
-    private static final String FILE_KNXPROJ_THREE_LEVEL = "src/test/resources/Project (3-Level, v14).knxproj";
-    private static final String FILE_KNXPROJ_TWO_LEVEL = "src/test/resources/Project (2-Level, v14).knxproj";
+    private static final String FILE_KNXPROJ_THREE_LEVEL = "src/test/resources/Project (3-Level, v20).knxproj";
+    private static final String FILE_KNXPROJ_TWO_LEVEL = "src/test/resources/Project (2-Level, v20).knxproj";
 
     /**
      * Tests the project structure endpoint that contains project structure metadata
@@ -54,7 +54,7 @@ public class ProjectControllerTest {
 
         final var response = projectController.projectStructure();
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(response.getId()).isEqualTo("P-0501");
+        assertThat(response.getId()).isEqualTo("P-0503");
         assertThat(response.getName()).isEqualTo("Project (3-Level)");
         assertThat(response.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(response.getNumberOfGroupAddresses()).isEqualTo(189);
@@ -164,7 +164,7 @@ public class ProjectControllerTest {
 
         final var response = projectController.getGroupAddresses(0);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(response).hasSize(-1); // TODO: FIXME + UPDATE JSON FILE!!!!
+        assertThat(response).hasSize(146);
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo(readJsonFile("/json/ProjectControllerTest-testTwoLevelGroupAddressesByRange.json"));

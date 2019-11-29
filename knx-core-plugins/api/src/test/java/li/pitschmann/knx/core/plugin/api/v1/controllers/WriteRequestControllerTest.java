@@ -51,7 +51,7 @@ public class WriteRequestControllerTest {
      * @param mockPlugin
      * @throws Exception
      */
-    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v20).knxproj"))
     @DisplayName("OK: Write Request for group address 0/0/22")
     public void testWrite(final MockApiPlugin mockPlugin) throws Exception {
         // get http client for requests

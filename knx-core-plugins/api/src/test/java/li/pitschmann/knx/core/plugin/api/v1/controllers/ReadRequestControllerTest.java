@@ -55,7 +55,7 @@ public class ReadRequestControllerTest {
     /**
      * Tests the /read endpoint for group addresses using KNX mock server
      */
-    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v20).knxproj"))
     @DisplayName("OK: Read Request for group addresses using KNX mock server")
     public void testRead(final MockApiPlugin mockPlugin) throws Exception {
         final var groupAddress = GroupAddress.of(0, 3, 18);

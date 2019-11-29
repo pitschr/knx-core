@@ -43,7 +43,7 @@ public class ApiPluginTest {
     /**
      * Tests the combination of /read and /write requests
      */
-    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v14).knxproj"))
+    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v20).knxproj"))
     @DisplayName("Test /read and /write endpoints for group address 0/0/10")
     public void testReadAndWrite(final MockApiPlugin mockApi) throws Exception {
         // get http client for requests

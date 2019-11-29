@@ -1,6 +1,7 @@
 {
-  "id": "P-0501",
+  "id": "P-0503",
   "name": "Project (3-Level)",
+  "version": 20,
   "groupAddressStyle": "ThreeLevel",
   "numberOfGroupAddresses": 189,
   "numberOfGroupRanges": 18
