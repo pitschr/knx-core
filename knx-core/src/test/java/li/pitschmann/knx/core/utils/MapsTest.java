@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import sun.misc.Unsafe;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -36,10 +37,26 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MapsTest {
 
     @Test
-    @DisplayName("Test if new hash map is returned with correct capacity")
+    @DisplayName("Test if new HashMap is returned with correct capacity")
     public void testNewHashMap() throws ReflectiveOperationException {
         final var map = Maps.newHashMap(1000);
         assertThat(map).isInstanceOf(HashMap.class);
+        assertCapacity(map, 2048);
+
+        assertCapacity(Maps.newHashMap(1), 2);
+        assertCapacity(Maps.newHashMap(2), 4);
+        assertCapacity(Maps.newHashMap(3), 8);
+        assertCapacity(Maps.newHashMap(4), 8);
+        assertCapacity(Maps.newHashMap(200), 512);
+        assertCapacity(Maps.newHashMap(1000), 2048);
+        assertCapacity(Maps.newHashMap(Integer.MAX_VALUE), 1 << (Integer.SIZE - 2));
+    }
+
+    @Test
+    @DisplayName("Test if new LinkedHashMap is returned with correct capacity")
+    public void testNewLinkedHashMap() throws ReflectiveOperationException {
+        final var map = Maps.newLinkedHashMap(1000);
+        assertThat(map).isInstanceOf(LinkedHashMap.class);
         assertCapacity(map, 2048);
 
         assertCapacity(Maps.newHashMap(1), 2);

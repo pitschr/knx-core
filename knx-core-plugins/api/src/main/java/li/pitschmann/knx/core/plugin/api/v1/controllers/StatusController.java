@@ -57,7 +57,8 @@ public final class StatusController extends AbstractController {
         // set final http status code "Multi Status"
         getResponse().status(207);
 
-        return responses;
+        // TODO: this may be improved because we are filling first, and then return a sub-list only so it might be a big waste of resource
+        return limitAndGetAsList(responses);
     }
 
     @GET("/status/{ga: \\d+(\\/\\d+)?(\\/\\d+)?}")  // supports: 1, 1/2, 1/2/3

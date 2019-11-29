@@ -1,6 +1,8 @@
 package li.pitschmann.knx.core.utils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 /**
  * Utility class for Maps
@@ -24,6 +26,20 @@ public final class Maps {
      */
     public static <K, V> HashMap<K, V> newHashMap(final int expectedSize) {
         return new HashMap<>(capacity(expectedSize));
+    }
+
+    /**
+     * Creates a new {@link LinkedHashMap} with expected size.
+     * <p/>
+     * Similar to Guava's Maps#newLinkedHashMapWithExpectedSize(int)
+     *
+     * @param expectedSize
+     * @param <K>
+     * @param <V>
+     * @return new {@link LinkedHashMap} initialized with expected size
+     */
+    public static <K, V> LinkedHashMap<K, V> newLinkedHashMap(final int expectedSize) {
+        return new LinkedHashMap<>(capacity(expectedSize));
     }
 
     /**

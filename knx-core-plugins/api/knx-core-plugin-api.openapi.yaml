@@ -174,7 +174,7 @@ paths:
 
   /v1/project:
     get:
-      description: 'Returns project overview'
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns project overview. Use this endpoint to get the information if the project structure is free-level, two-level or three-level.'
       responses:
         200:
           description: 'Success'
@@ -184,7 +184,7 @@ paths:
 
   /v1/project/ranges:
     get:
-      description: 'Returns the main-group range for a two-level / three-level project'
+      description: '<strong>Valid for projects with two-level and three-level structure</strong><p/>Returns the main group ranges.'
       parameters:
         - in: query
           name: 'start'
@@ -230,7 +230,7 @@ paths:
         example: '10'
 
     get:
-      description: 'Returns the middle-groups for a three-level project'
+      description: '<strong>Valid for projects with three-level structure only</strong><p/>Returns middle group ranges.'
       responses:
         200:
           description: 'Success'
@@ -241,8 +241,21 @@ paths:
           description: 'Forbidden. When calling this endpoint and your project is not three-level.'
 
   /v1/project/addresses:
+    parameters:
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
     get:
-      description: 'Get all Group Addresess of KNX project. Applicable for free-level, two-level and three-level.'
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns all group addresses information from KNX project file.<p/><u>Note:</u> In big projects it may cause performance issue because the response might be large and therefore it is highly recommended to use <code>start</code> and <code>limit</code> to get a subset of information.'
       responses:
         200:
           description: 'Success'
@@ -259,8 +272,20 @@ paths:
         schema:
           type: integer
         example: 1
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
     get:
-      description: '<strong>Only for Two-Level project</strong><p/>Get all Group Addresess that are below the main group range.'
+      description: '<strong>Valid for projects with two-level structure only</strong><p/>Returns all group addresses which are below the <code>main</code> group range only; taken from KNX project file.'
       responses:
         200:
           description: 'Success'
@@ -286,8 +311,20 @@ paths:
         schema:
           type: integer
         example: 2
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
     get:
-      description: '<strong>Only for Three-Level project</strong><p/>Get all Group Addresess that are below the main group range.'
+      description: '<strong>Valid for projects with three-level structure only</strong><p/>Returns all group addresses which are below the <code>{main}/{middle}</code> group range only; taken from KNX project file.'
       responses:
         200:
           description: 'Success'
@@ -301,7 +338,7 @@ paths:
 
   /v1/statistic:
     get:
-      description: 'Returns the statistic from KNX client'
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns the statistic from KNX client. The statistic contain information like how many packets have been sent / received.'
       responses:
         200:
           description: 'Success'
@@ -310,8 +347,21 @@ paths:
               example: {"inbound":{"total":{"packets":3,"bytes":224},"search":{"request":0,"response":0},"description":{"request":0,"response":1},"connect":{"request":0,"response":1},"connection_state":{"request":0,"response":1},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"outbound":{"total":{"packets":3,"bytes":182},"search":{"request":0,"response":0},"description":{"request":1,"response":0},"connect":{"request":1,"response":0},"connection_state":{"request":1,"response":0},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"error":{"total":{"packets":0,"rate":0}}}
 
   /v1/status:
+    parameters:
+      - in: query
+        name: 'start'
+        description: 'Start position'
+        schema:
+          type: integer
+        example: '0'
+      - in: query
+        name: 'limit'
+        description: 'Limit of group ranges'
+        schema:
+          type: integer
+        example: '10'
     get:
-      description: "Returns status from all KNX group addresses"
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns a list of group address status that is present in the KNX client.<p/><u>Note:</u> In big projects it may cause performance issue because the response might be large and therefore it is highly recommended to use <code>start</code> and <code>limit</code> to get a subset of information.'
       responses:
         207:
           description: 'Success. Returns <strong>ALL status</strong> group addresess that are known to the KNX client. Multi-Status response.'
@@ -335,7 +385,7 @@ paths:
           Group Address (Three-Level):
             value: 1/2/100
     get:
-      description: 'Returns <strong>ONE status</strong> for given address.<p>A nummercial group address - which is typically used for free-level project - can be also applied for two-level/three-level project structures.<p>Example:<br><code>2660 (= Free-Level: 2660, Two-Level: 1/612, Three-Level: 1/2/100)</code><p>Following URLs have same effect:<ul><li><code>/v1/status/2660</code></li><li><code>/v1/status/1/612</code></li><li><code>/v1/status/1/2/100</code></li></ul>'
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns <strong>ONE status</strong> for given address. A nummercial group address - which is typically used for free-level project - can be also applied for two-level/three-level project structures.<p>Example:<br><code>2660 (= Free-Level: 2660, Two-Level: 1/612, Three-Level: 1/2/100)</code><p>Following URLs have same effect:<ul><li><code>/v1/status/2660</code></li><li><code>/v1/status/1/612</code></li><li><code>/v1/status/1/2/100</code></li></ul>This is because in KNX a group address is represented by two-bytes array.'
       responses:
         200:
           description: 'Success'
