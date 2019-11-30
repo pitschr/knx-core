@@ -89,6 +89,7 @@ public enum XmlGroupAddressStyle {
      *
      * @return code
      */
+    @Nonnull
     public String getCode() {
         return this.code;
     }
@@ -110,6 +111,7 @@ public enum XmlGroupAddressStyle {
         return this.resolver.apply(Objects.requireNonNull(groupAddress));
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

@@ -38,6 +38,11 @@ public class XmlGroupAddressTest {
         xmlGroupAddress.setAddress("ADDRESS");
         xmlGroupAddress.setDescription("DESCRIPTION");
         xmlGroupAddress.setDataPointType("DPT");
+        xmlGroupAddress.setCommunicationFlag("C");
+        xmlGroupAddress.setReadFlag("R");
+        xmlGroupAddress.setWriteFlag("W");
+        xmlGroupAddress.setTransmitFlag("T");
+        xmlGroupAddress.setUpdateFlag("U");
 
         // check if setter/getter are working
         assertThat(xmlGroupAddress.getId()).isEqualTo("ID");
@@ -46,7 +51,11 @@ public class XmlGroupAddressTest {
         assertThat(xmlGroupAddress.getAddress()).isEqualTo("ADDRESS");
         assertThat(xmlGroupAddress.getDescription()).isEqualTo("DESCRIPTION");
         assertThat(xmlGroupAddress.getDataPointType()).isEqualTo("DPT");
-
+        assertThat(xmlGroupAddress.getCommunicationFlag()).isEqualTo("C");
+        assertThat(xmlGroupAddress.getReadFlag()).isEqualTo("R");
+        assertThat(xmlGroupAddress.getWriteFlag()).isEqualTo("W");
+        assertThat(xmlGroupAddress.getTransmitFlag()).isEqualTo("T");
+        assertThat(xmlGroupAddress.getUpdateFlag()).isEqualTo("U");
 
         // @formatter:off
         // test toString()
@@ -57,7 +66,12 @@ public class XmlGroupAddressTest {
                     "address=ADDRESS, " +
                     "name=NAME, " +
                     "description=DESCRIPTION, " +
-                    "dataPointType=DPT" +
+                    "dataPointType=DPT, " +
+                    "communicationFlag=C, " +
+                    "readFlag=R, " +
+                    "writeFlag=W, " +
+                    "transmitFlag=T, " +
+                    "updateFlag=U" +
                 "}");
         // @formatter:on
     }

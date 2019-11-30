@@ -71,7 +71,7 @@ public final class XmlProject {
      */
     private int version;
     /**
-     * <strong>Unsorted Map</strong> of KNX Group Ranges taken from '*.knxproj' file. Key is by Id (e.g. P-06EF-0_GR-4)
+     * Map of KNX Group Ranges taken from '*.knxproj' file. Key is by Id (e.g. P-06EF-0_GR-4)
      * <pre>{@code
      * <GroupRanges>
      *   <GroupRange Id="..." />
@@ -85,24 +85,21 @@ public final class XmlProject {
      */
     private List<XmlGroupRange> groupRanges = List.of();
     /**
-     * <strong>Unsorted Map</strong> of KNX Group Addresses by Key {@code Id} (e.g. P-06EF-0_GA-3), taken from '*.knxproj' file.
+     * Immutable list of {@link XmlGroupAddress}, sorted by {@link XmlGroupAddress#getAddress()}
+     */
+    private List<XmlGroupAddress> groupAddresses = List.of();
+    /**
+     * Map of KNX Group Addresses by Key {@code Id} (e.g. P-06EF-0_GA-3), taken from '*.knxproj' file.
      * <p/>
      * {@code <GroupAddresses Id="..." />}
      */
     private Map<String, XmlGroupAddress> groupAddressMap = Map.of();
     /**
-     * <strong>Sorted Map</strong> of KNX Group Addresses by {@code Address} (e.g. 1025), taken from '*.knxproj' file.
-     * The key of map is the address as an integer and sorted by the key.
+     * Map of KNX Group Addresses by {@code Address} (e.g. 1025), taken from '*.knxproj' file.
      * <p/>
      * {@code <GroupAddresses Address="..." />}
-     * <p/>
-     * The group address in KNX is unique.
      */
     private Map<Integer, XmlGroupAddress> groupAddressIntMap = Map.of();
-    /**
-     * Immutable list of {@link XmlGroupAddress}, sorted by {@link XmlGroupAddress#getAddress()}
-     */
-    private List<XmlGroupAddress> groupAddresses = List.of();
 
     public String getId() {
         return id;
@@ -257,7 +254,7 @@ public final class XmlProject {
      * @return An instance of {@link XmlGroupRange}, or {@code null} if not found
      */
     @Nullable
-    public XmlGroupRange getGroupRangeById(final String id) {
+    public XmlGroupRange getGroupRangeById(final @Nonnull String id) {
         return groupRangeMap.get(id);
     }
 
@@ -268,7 +265,7 @@ public final class XmlProject {
      * @return An instance of {@link XmlGroupAddress}, or {@code null} if not found
      */
     @Nullable
-    public XmlGroupAddress getGroupAddressById(final String id) {
+    public XmlGroupAddress getGroupAddressById(final @Nonnull String id) {
         return groupAddressMap.get(id);
     }
 
