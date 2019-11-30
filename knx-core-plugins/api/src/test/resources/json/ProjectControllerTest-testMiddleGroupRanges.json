@@ -36,15 +36,6 @@
     }
   },
   {
-    "id": "P-0503-0_GR-52",
-    "name": "Middle Group - DPT (14-bytes)",
-    "level": 1,
-    "range": {
-      "start": 1792,
-      "end": 2047
-    }
-  },
-  {
     "id": "P-0503-0_GR-53",
     "name": "Middle Group - DPT (6-bytes)",
     "level": 1,
@@ -69,6 +60,15 @@
     "range": {
       "start": 1536,
       "end": 1791
+    }
+  },
+  {
+    "id": "P-0503-0_GR-52",
+    "name": "Middle Group - DPT (14-bytes)",
+    "level": 1,
+    "range": {
+      "start": 1792,
+      "end": 2047
     }
   }
 ]

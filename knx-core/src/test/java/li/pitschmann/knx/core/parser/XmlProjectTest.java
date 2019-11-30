@@ -81,8 +81,8 @@ public class XmlProjectTest {
                         "name=PROJECT_NAME, " + //
                         "version=4711, " + //
                         "groupAddressStyle=%s, " + //
-                        "groupAddressMap={xga1-id=xga1, xga2-id=xga2, xga3-id=xga3}, " + //
-                        "groupRangeMap={xgg1-id=xgg1, xgg2-id=xgg2}" + //
+                        "groupRanges=[xgg1, xgg2], " + //
+                        "groupAddresses=[xga1, xga2, xga3]" + //
                         "}", XmlGroupAddressStyle.THREE_LEVEL));
     }
 

@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -80,13 +78,18 @@ public final class XmlProject {
      * </GroupRanges>
      * }</pre>
      */
-    private Map<String, XmlGroupRange> groupRangeMap = Collections.emptyMap();
+    private Map<String, XmlGroupRange> groupRangeMap = Map.of();
+    /**
+     * Immutable list of {@link XmlGroupRange}, sorted by {@link XmlGroupRange#getRangeStart()}
+     * and {@link XmlGroupRange#getLevel()}
+     */
+    private List<XmlGroupRange> groupRanges = List.of();
     /**
      * <strong>Unsorted Map</strong> of KNX Group Addresses by Key {@code Id} (e.g. P-06EF-0_GA-3), taken from '*.knxproj' file.
      * <p/>
      * {@code <GroupAddresses Id="..." />}
      */
-    private Map<String, XmlGroupAddress> groupAddressMap = Collections.emptyMap();
+    private Map<String, XmlGroupAddress> groupAddressMap = Map.of();
     /**
      * <strong>Sorted Map</strong> of KNX Group Addresses by {@code Address} (e.g. 1025), taken from '*.knxproj' file.
      * The key of map is the address as an integer and sorted by the key.
@@ -95,7 +98,11 @@ public final class XmlProject {
      * <p/>
      * The group address in KNX is unique.
      */
-    private Map<Integer, XmlGroupAddress> groupAddressMapSortedByGA = Collections.emptyMap();
+    private Map<Integer, XmlGroupAddress> groupAddressIntMap = Map.of();
+    /**
+     * Immutable list of {@link XmlGroupAddress}, sorted by {@link XmlGroupAddress#getAddress()}
+     */
+    private List<XmlGroupAddress> groupAddresses = List.of();
 
     public String getId() {
         return id;
@@ -130,41 +137,56 @@ public final class XmlProject {
     }
 
     /**
-     * Returns an unmodifiable list of {@link XmlGroupRange}
+     * Returns an immutable list of {@link XmlGroupRange}
      *
-     * @return unmodifiable list of {@link XmlGroupRange}
+     * @return immutable list of {@link XmlGroupRange}
      */
     @Nonnull
     public List<XmlGroupRange> getGroupRanges() {
-        return List.copyOf(this.groupRangeMap.values());
+        return groupRanges;
     }
 
     /**
      * Sets the group ranges by given collection of {@link XmlGroupRange}.
      * Internally it will be converted into a map for faster lookup by id.
+     * <p>
+     * The group ranges will be sorted by {@link XmlGroupRange#getRangeStart()}.
+     * if both are same, then it will be compared against {@link XmlGroupRange#getLevel()}.
      *
      * @param groupRanges
      */
     public void setGroupRanges(final @Nonnull Collection<XmlGroupRange> groupRanges) {
-        this.groupRangeMap = groupRanges.stream()
+        // immutable list of KNX Group Ranges sorted by range start, and then level
+        this.groupRanges = groupRanges.stream()
+                .sorted(
+                        (o1, o2) -> {
+                            if (o1.getRangeStart() == o2.getRangeStart()) {
+                                // range start is same, sort by level then
+                                return Integer.compare(o1.getLevel(), o2.getLevel());
+                            } else {
+                                return Integer.compare(o1.getRangeStart(), o2.getRangeStart());
+                            }
+                        }
+                ).collect(Collectors.toUnmodifiableList());
+
+
+        this.groupRangeMap = this.groupRanges.stream()
                 .collect(
                         Collectors.toMap(
                                 XmlGroupRange::getId, // key is the XML GroupRange ID
-                                Function.identity(), // element itself
-                                (x, y) -> x,
-                                LinkedHashMap::new // keep the order
+                                Function.identity() // element itself
                         )
                 );
     }
 
     /**
-     * Returns an unmodifiable list of {@link XmlGroupAddress}
+     * Returns an immutable list of {@link XmlGroupAddress}
      *
-     * @return unmodifiable list of {@link XmlGroupAddress}
+     * @return immutable list of {@link XmlGroupAddress}
      */
     @Nonnull
     public List<XmlGroupAddress> getGroupAddresses() {
-        return List.copyOf(this.groupAddressMapSortedByGA.values());
+        return groupAddresses;
     }
 
     /**
@@ -177,11 +199,17 @@ public final class XmlProject {
      * Using those two maps we can find the group address quickly by id from XML Project file
      * or by the KNX group address.
      *
-     * @param groupAddressMap
+     * @param groupAddresses
      */
-    public void setGroupAddresses(final @Nonnull Collection<XmlGroupAddress> groupAddressMap) {
+    public void setGroupAddresses(final @Nonnull Collection<XmlGroupAddress> groupAddresses) {
+        // immutable list of KNX Group Address sorted by Group Address as Integer
+        this.groupAddresses = groupAddresses.stream()
+                .sorted(
+                        Comparator.comparingInt(x -> Integer.parseInt(x.getAddress()))
+                ).collect(Collectors.toUnmodifiableList());
+
         // 1st map whereas key is the XML GroupAddress Id
-        this.groupAddressMap = groupAddressMap.stream()
+        this.groupAddressMap = this.groupAddresses.stream()
                 .collect(
                         Collectors.toMap(
                                 XmlGroupAddress::getId, // key is the XML GroupAddress ID
@@ -189,17 +217,12 @@ public final class XmlProject {
                         )
                 );
 
-        // 2nd map whereas key is the KNX GroupAddress in Integer format and is sorted by the integer group address
-        this.groupAddressMapSortedByGA = groupAddressMap.stream()
-                .sorted(
-                        Comparator.comparingInt(x -> Integer.parseInt(x.getAddress())) // sort by KNX group address
-                )
+        // 2nd map whereas key is the KNX GroupAddress in Integer format
+        this.groupAddressIntMap = this.groupAddresses.stream()
                 .collect(
                         Collectors.toMap(
                                 x -> Integer.parseInt(x.getAddress()), // key is the KNX group address (as an integer)
-                                Function.identity(), // element itself
-                                (x, y) -> x,
-                                LinkedHashMap::new // keep the order
+                                Function.identity() // element itself
                         )
                 );
     }
@@ -224,7 +247,7 @@ public final class XmlProject {
      */
     @Nullable
     public XmlGroupAddress getGroupAddress(final int address) {
-        return this.groupAddressMapSortedByGA.get(address);
+        return this.groupAddressIntMap.get(address);
     }
 
     /**
@@ -250,15 +273,15 @@ public final class XmlProject {
     }
 
     /**
-     * Returns collection of {@link XmlGroupRange} for all main groups
+     * Returns immutable list of {@link XmlGroupRange} for all main groups
      *
-     * @return collection of {@link XmlGroupRange}, or empty list if not found
+     * @return immutable list of {@link XmlGroupRange}, or empty list if not found
      */
     @Nonnull
     public List<XmlGroupRange> getMainGroupRanges() {
-        return groupRangeMap.isEmpty()
-                ? Collections.emptyList()
-                : groupRangeMap.values().stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toUnmodifiableList());
+        return groupRanges.isEmpty()
+                ? List.of()
+                : groupRanges.stream().filter(xgr -> xgr.getLevel() == 0).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -269,12 +292,12 @@ public final class XmlProject {
      */
     @Nonnull
     public XmlGroupRange getGroupRange(final int main) {
-        Preconditions.checkArgument(!groupRangeMap.isEmpty(), "No main groups available");
+        Preconditions.checkArgument(!groupRanges.isEmpty(), "No main groups available");
 
         // find the group range with the proper range start (see GroupAddresses)
         // special rule for main group 0/-/- it is not allowed to have 0/0/0 and the first group address is 0/0/1
         int startRange = main == 0 ? 1 : GroupAddress.of(main, 0).getAddressAsInt();
-        log.debug("Looking for start range '{}' of group {}/-/- in: {}", startRange, main, groupRangeMap);
+        log.debug("Looking for start range '{}' of group {}/-/- in: {}", startRange, main, groupRanges);
 
         final var mainGroups = getMainGroupRanges();
         XmlGroupRange xmlGroupRange = null;
@@ -317,7 +340,6 @@ public final class XmlProject {
         XmlGroupRange xmlGroupRange = null;
         for (final var groupRange : childGroups) {
             if (groupRange.getRangeStart() == startRange) {
-                // found
                 xmlGroupRange = groupRange;
                 break;
             }
@@ -325,12 +347,12 @@ public final class XmlProject {
 
         // not found?
         if (xmlGroupRange == null) {
-            log.warn("Main group '{}' not found in: {}", main, childGroups);
+            log.warn("Middle group '{}' not found in: {}", main, childGroups);
             throw new IllegalArgumentException("Could not find main group '" + main + "'!");
         }
         // otherwise found
         else {
-            log.debug("Main group '{}' found: {}", main, xmlGroupRange);
+            log.debug("Middle group '{}' found: {}", main, xmlGroupRange);
             return xmlGroupRange;
         }
     }
@@ -344,8 +366,8 @@ public final class XmlProject {
                 .add("name", this.name)
                 .add("version", this.version)
                 .add("groupAddressStyle", this.groupAddressStyle)
-                .add("groupAddressMap", this.groupAddressMap)
-                .add("groupRangeMap", this.groupRangeMap)
+                .add("groupRanges", this.groupRanges)
+                .add("groupAddresses", this.groupAddresses)
                 .toString();
         // @formatter:on
     }

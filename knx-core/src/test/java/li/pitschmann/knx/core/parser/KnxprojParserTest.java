@@ -91,7 +91,7 @@ public class KnxprojParserTest {
         assertThat(mainGroup2.getId()).isEqualTo("P-0501-0_GR-69");
         assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
         assertThat(mainGroup2.getGroupAddresses()).isEmpty();
-        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group range in knxproj file is not ordered)
+        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(0);
         assertThat(subGroup2_0.getChildGroupRanges()).isEmpty();
         assertThat(subGroup2_0.getGroupAddresses()).hasSize(11);
     }
@@ -137,7 +137,7 @@ public class KnxprojParserTest {
         assertThat(mainGroup2.getId()).isEqualTo("P-0503-0_GR-69");
         assertThat(mainGroup2.getChildGroupRanges()).hasSize(2);
         assertThat(mainGroup2.getGroupAddresses()).isEmpty();
-        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(1); // on second index (group range in knxproj file is not ordered)
+        final var subGroup2_0 = mainGroup2.getChildGroupRanges().get(0);
         assertThat(subGroup2_0.getChildGroupRanges()).isEmpty();
         assertThat(subGroup2_0.getGroupAddresses()).hasSize(11);
     }
