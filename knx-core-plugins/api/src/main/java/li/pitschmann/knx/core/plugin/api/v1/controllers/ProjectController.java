@@ -1,8 +1,8 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.parser.XmlGroupAddress;
-import li.pitschmann.knx.core.parser.XmlGroupAddressStyle;
-import li.pitschmann.knx.core.parser.XmlGroupRange;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
+import li.pitschmann.knx.core.knxproj.XmlGroupRange;
 import li.pitschmann.knx.core.plugin.api.v1.json.ProjectStructureRequest;
 import li.pitschmann.knx.core.utils.Preconditions;
 import ro.pippo.controller.GET;
@@ -59,7 +59,7 @@ public final class ProjectController extends AbstractController {
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
 
         if (groupAddressStyle == XmlGroupAddressStyle.THREE_LEVEL ||
-                        groupAddressStyle == XmlGroupAddressStyle.TWO_LEVEL) {
+                groupAddressStyle == XmlGroupAddressStyle.TWO_LEVEL) {
             // two-level or three-level
             final var mainRanges = xmlProject.getMainGroupRanges();
             log.debug("All main group ranges found: {}", mainRanges);
@@ -166,7 +166,7 @@ public final class ProjectController extends AbstractController {
         checkArgumentMiddleGroupRange(middle);
 
         final var xmlProject = getXmlProject();
-        if(xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL) {
+        if (xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL) {
             final var middleGroup = xmlProject.getGroupRange(main, middle);
             log.debug("Middle Group Range for main group range '{}/{}' found: {}", main, middle, middleGroup);
 

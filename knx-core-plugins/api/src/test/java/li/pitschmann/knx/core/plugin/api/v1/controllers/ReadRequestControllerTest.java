@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadResponse;
 import li.pitschmann.knx.core.test.MockServerTest;
 import li.pitschmann.knx.core.test.TestHelpers;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
@@ -225,7 +224,7 @@ public class ReadRequestControllerTest {
 
         // mock an non-existing xml group address, but status available in status pool
         final var knxStatusData = mock(KnxStatusData.class);
-        when(knxStatusData.getApciData()).thenReturn(new byte[]{(byte)0xE6, 0x74, 0x33});
+        when(knxStatusData.getApciData()).thenReturn(new byte[]{(byte) 0xE6, 0x74, 0x33});
         when(readRequestController.getKnxClient().getStatusPool().getStatusFor(eq(groupAddress))).thenReturn(knxStatusData);
         when(readRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 

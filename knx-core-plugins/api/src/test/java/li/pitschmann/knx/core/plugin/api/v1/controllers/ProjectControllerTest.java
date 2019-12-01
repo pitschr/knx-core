@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.parser.XmlGroupAddressStyle;
-import li.pitschmann.knx.core.parser.XmlGroupRange;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
+import li.pitschmann.knx.core.knxproj.XmlGroupRange;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;

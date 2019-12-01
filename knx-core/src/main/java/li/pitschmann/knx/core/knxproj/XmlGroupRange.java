@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.utils.Strings;
 

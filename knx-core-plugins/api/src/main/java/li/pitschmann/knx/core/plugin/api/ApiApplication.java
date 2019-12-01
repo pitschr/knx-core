@@ -22,7 +22,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.parser.XmlProject;
+import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.guice.GuiceControllerFactory;

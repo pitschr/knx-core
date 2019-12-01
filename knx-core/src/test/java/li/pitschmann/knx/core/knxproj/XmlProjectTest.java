@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
  * Tests {@link XmlProject} that contains data from '*.knxproj' file
  */
 public class XmlProjectTest {
-    private static final Path KNX_PROJECT = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
+    private static final Path KNX_PROJECT = Paths.get("src/test/resources/knxproj/Project (3-Level, v20).knxproj");
 
     @Test
     @DisplayName("Tests XmlProject#toString()")
@@ -122,7 +122,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Test common methods on non-empty project")
     public void testExistingProject() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.parse(KNX_PROJECT);
 
         assertThat(xmlProject.getId()).isEqualTo("P-0503");
         assertThat(xmlProject.getName()).isEqualTo("Project (3-Level)");
@@ -136,7 +136,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all range groups and by id")
     public void testRangeGroups() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.parse(KNX_PROJECT);
 
         // existing range group
         assertThat(xmlProject.getGroupRangeById("P-0503-0_GR-67").getName()).isEqualTo("Main Group - Flags");
@@ -150,7 +150,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all group addresses and by id")
     public void testGroupAddresses() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.parse(KNX_PROJECT);
 
         // exiting group addresses
         assertThat(xmlProject.getGroupAddressById("P-0503-0_GA-117").getName()).isEqualTo("Sub Group - DPT 1 (0x00)");
@@ -169,7 +169,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all main groups")
     public void testAllMainGroups() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.parse(KNX_PROJECT);
 
         final var mainRanges = xmlProject.getMainGroupRanges();
         assertThat(mainRanges).hasSize(3);
@@ -181,7 +181,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get selected main group")
     public void testMainGroup() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.parse(KNX_PROJECT);
 
         // existing main groups
         assertThat(xmlProject.getGroupRange(0).getName()).isEqualTo("Main Group - DPT");
@@ -200,7 +200,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get selected middle group")
     public void testMiddleGroup() {
-        final var xmlProject = KnxprojParser.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.parse(KNX_PROJECT);
 
         // existing main groups
         assertThat(xmlProject.getGroupRange(0, 0).getName()).isEqualTo("Middle Group - DPT (1-byte)");

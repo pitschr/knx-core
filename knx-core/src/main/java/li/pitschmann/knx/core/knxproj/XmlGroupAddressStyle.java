@@ -16,10 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
@@ -81,7 +82,7 @@ public enum XmlGroupAddressStyle {
     @Nonnull
     public static XmlGroupAddressStyle parse(final @Nullable String id) {
         return Arrays.stream(values()).filter(x -> x.code.equals(id)).findFirst()
-                .orElseThrow(() -> new KnxprojParserException("No group address style found for: " + id));
+                .orElseThrow(() -> new KnxProjectParserException("No group address style found for: " + id));
     }
 
     /**
@@ -89,6 +90,7 @@ public enum XmlGroupAddressStyle {
      *
      * @return code
      */
+    @Nonnull
     public String getCode() {
         return this.code;
     }
@@ -110,6 +112,7 @@ public enum XmlGroupAddressStyle {
         return this.resolver.apply(Objects.requireNonNull(groupAddress));
     }
 
+    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

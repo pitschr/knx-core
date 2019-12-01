@@ -31,7 +31,7 @@ import li.pitschmann.knx.core.body.cemi.ControlByte2;
 import li.pitschmann.knx.core.body.cemi.MessageCode;
 import li.pitschmann.knx.core.body.cemi.TPCI;
 import li.pitschmann.knx.core.communication.KnxStatusData;
-import li.pitschmann.knx.core.parser.XmlProject;
+import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.test.strategy.impl.DefaultTunnelingStrategy;
 import li.pitschmann.knx.core.utils.Bytes;
 import org.slf4j.Logger;

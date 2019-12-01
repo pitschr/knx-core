@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.plugin.api;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.parser.KnxprojParser;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.IntegerConfigValue;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -59,7 +58,7 @@ public class ApiPlugin implements ExtensionPlugin {
 
     @Override
     public void onStart() {
-        final var xmlProject = KnxprojParser.parse(Objects.requireNonNull(client.getConfig().getProjectPath()));
+        final var xmlProject = client.getConfig().getProject();
         final var app = new ApiApplication();
         app.setXmlProject(xmlProject);
         app.setKnxClient(client);

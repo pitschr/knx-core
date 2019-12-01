@@ -2,7 +2,6 @@ package li.pitschmann.knx.core.utils;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 /**
  * Utility class for Maps
