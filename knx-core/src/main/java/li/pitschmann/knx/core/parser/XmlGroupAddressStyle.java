@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.parser;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
@@ -81,7 +82,7 @@ public enum XmlGroupAddressStyle {
     @Nonnull
     public static XmlGroupAddressStyle parse(final @Nullable String id) {
         return Arrays.stream(values()).filter(x -> x.code.equals(id)).findFirst()
-                .orElseThrow(() -> new KnxprojParserException("No group address style found for: " + id));
+                .orElseThrow(() -> new KnxProjectParserException("No group address style found for: " + id));
     }
 
     /**

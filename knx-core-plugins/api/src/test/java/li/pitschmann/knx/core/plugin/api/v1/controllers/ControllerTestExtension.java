@@ -27,7 +27,7 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 import li.pitschmann.knx.core.communication.KnxStatusPool;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
-import li.pitschmann.knx.core.parser.KnxprojParser;
+import li.pitschmann.knx.core.parser.KnxProjectParser;
 import li.pitschmann.knx.core.parser.XmlGroupAddress;
 import li.pitschmann.knx.core.parser.XmlGroupRange;
 import li.pitschmann.knx.core.parser.XmlProject;
@@ -93,7 +93,7 @@ public final class ControllerTestExtension
         final XmlProject xmlProject;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
             final var xmlProjectPath = Paths.get(annotation.projectPath());
-            xmlProject = spy(KnxprojParser.parse(xmlProjectPath));
+            xmlProject = spy(KnxProjectParser.parse(xmlProjectPath));
         } else {
             xmlProject = getDefaultXmlProject();
         }

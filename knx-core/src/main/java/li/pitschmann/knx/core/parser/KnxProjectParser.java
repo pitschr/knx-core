@@ -24,6 +24,7 @@ import com.ximpleware.ParseException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
+import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Stopwatch;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.zip.ZipFile;
 
@@ -67,11 +69,11 @@ import java.util.zip.ZipFile;
  *
  * @author pitschr
  */
-public final class KnxprojParser {
-    private static final Logger log = LoggerFactory.getLogger(KnxprojParser.class);
+public final class KnxProjectParser {
+    private static final Logger log = LoggerFactory.getLogger(KnxProjectParser.class);
     private static final String FILE_EXTENSION = ".knxproj";
 
-    private KnxprojParser() {
+    private KnxProjectParser() {
         throw new AssertionError("Don't touch me!");
     }
 
@@ -107,18 +109,14 @@ public final class KnxprojParser {
             final var groupAddresses = parseGroupAddresses(projectData);
             project.setGroupAddresses(groupAddresses);
 
+            // links the KNX group addresses with the KNX group address meta data / flags
+            updateGroupAddressWithMetadatas(project, projectData);
+
             // links the KNX group ranges with KNX group addresses
             linkGroupRanges(project);
             linkGroupAddresses(project);
-
-            // get KNX group address meta datas (implementation differs and is based on project version)
-            if (project.getVersion() >= 20) {
-                updateGroupAddressWithMetadatas(project, projectData);
-            } else {
-                log.warn("Your project has version: {}. Metadata is not implemented for this version yet.", project.getVersion());
-            }
         } catch (final IOException | VTDException ex) {
-            throw new KnxprojParserException("Something went wrong during parsing the zip file: " + path);
+            throw new KnxProjectParserException("Something went wrong during parsing the zip file: " + path);
         }
         log.info("KNX Project '{}' parse took {} ms:\n{}", path, sw.elapsed(TimeUnit.MILLISECONDS), project);
 
@@ -139,7 +137,7 @@ public final class KnxprojParser {
 
         // find KNX Project version <KNX /> element and http://knx.org/xml/project/20 --> Version: 20
         final var xmlNamespace = readAttributeValue(vtdNav, "xmlns",
-                () -> new KnxprojParserException("Attribute <KNX @xmlns /> not found."));
+                () -> new KnxProjectParserException("Attribute <KNX @xmlns /> not found."));
         log.debug("XML Project Namespace: {}", xmlNamespace);
         final var version = Integer.parseInt(xmlNamespace.substring(xmlNamespace.lastIndexOf("/")+1));
         project.setVersion(version);
@@ -147,15 +145,15 @@ public final class KnxprojParser {
         // go to <Project /> element and read @Id
         vtdNav.toElement(VTDNav.FIRST_CHILD);
         project.setId(readAttributeValue(vtdNav, "Id",
-                () -> new KnxprojParserException("Attribute <Project @Id /> not found.")));
+                () -> new KnxProjectParserException("Attribute <Project @Id /> not found.")));
 
         // go to <ProjectInformation /> element and read @Name and @GroupAddressStyle
         vtdNav.toElement(VTDNav.FIRST_CHILD);
         project.setName(readAttributeValue(vtdNav, "Name",
-                () -> new KnxprojParserException("Attribute <ProjectInformation @Name /> not found.")));
+                () -> new KnxProjectParserException("Attribute <ProjectInformation @Name /> not found.")));
 
         final var groupAddressStyleStr = readAttributeValue(vtdNav, "GroupAddressStyle",
-                () -> new KnxprojParserException("Attribute <ProjectInformation @GroupAddressStyle /> not found."));
+                () -> new KnxProjectParserException("Attribute <ProjectInformation @GroupAddressStyle /> not found."));
         project.setGroupAddressStyle(XmlGroupAddressStyle.parse(groupAddressStyleStr));
 
         return project;
@@ -187,16 +185,16 @@ public final class KnxprojParser {
 
             // obtain required @Id, @RangeStart, @RangeEnd and @Name
             groupRange.setId(readAttributeValue(vtdNav, "Id",
-                    () -> new KnxprojParserException("Attribute <GroupRange @Id /> not found.")));
+                    () -> new KnxProjectParserException("Attribute <GroupRange @Id /> not found.")));
 
             groupRange.setRangeStart(Integer.parseInt(readAttributeValue(vtdNav, "RangeStart",
-                    () -> new KnxprojParserException("Attribute <GroupRange @RangeStart /> not found for: " + groupRange.getId()))));
+                    () -> new KnxProjectParserException("Attribute <GroupRange @RangeStart /> not found for: " + groupRange.getId()))));
 
             groupRange.setRangeEnd(Integer.parseInt(readAttributeValue(vtdNav, "RangeEnd",
-                    () -> new KnxprojParserException("Attribute <GroupRange @RangeEnd /> not found for: " + groupRange.getId()))));
+                    () -> new KnxProjectParserException("Attribute <GroupRange @RangeEnd /> not found for: " + groupRange.getId()))));
 
             groupRange.setName(readAttributeValue(vtdNav, "Name",
-                    () -> new KnxprojParserException("Attribute <GroupRange @Name /> not found for: " + groupRange.getId())));
+                    () -> new KnxProjectParserException("Attribute <GroupRange @Name /> not found for: " + groupRange.getId())));
 
             groupRange.setLevel(vtdNav.getCurrentDepth() - rootGroupRangesDepth);
 
@@ -245,13 +243,13 @@ public final class KnxprojParser {
 
             // obtain required @Id, @Address, @Name
             groupAddress.setId(readAttributeValue(vtdNav, "Id",
-                    () -> new KnxprojParserException("Attribute <GroupAddress @Id /> not found.")));
+                    () -> new KnxProjectParserException("Attribute <GroupAddress @Id /> not found.")));
 
             groupAddress.setAddress(readAttributeValue(vtdNav, "Address",
-                    () -> new KnxprojParserException("Attribute <GroupAddress @Address /> not found for: " + groupAddress.getId())));
+                    () -> new KnxProjectParserException("Attribute <GroupAddress @Address /> not found for: " + groupAddress.getId())));
 
             groupAddress.setName(readAttributeValue(vtdNav, "Name",
-                    () -> new KnxprojParserException("Attribute <GroupAddress @Name /> not found for: " + groupAddress.getId())));
+                    () -> new KnxProjectParserException("Attribute <GroupAddress @Name /> not found for: " + groupAddress.getId())));
 
             // obtain optional @Description and @DatapointType
             groupAddress.setDescription(readAttributeValue(vtdNav, "Description"));
@@ -320,41 +318,79 @@ public final class KnxprojParser {
      * @param originalVTDNav original VTDNav instance
      * @throws VTDException exception from VTD-XML
      */
-    @Nonnull
     private static void updateGroupAddressWithMetadatas(final @Nonnull XmlProject xmlProject,
                                                         final @Nonnull VTDNav originalVTDNav) throws VTDException {
         final var vtdNav = originalVTDNav.duplicateNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
 
-        // find all <ComObjectInstanceRef /> elements which have 'Links' attribute present
-        vtdAutoPilot.selectXPath("/KNX/Project/Installations/Installation/Topology//ComObjectInstanceRef[@Links]");
+        // bi-consumer to set the flags to KNX group address instance
+        final BiConsumer<String, VTDNav> xmlGroupAddressConsumer = (gaId, nav) -> {
+            final var xmlGroupAddress = xmlProject.getGroupAddressById(gaId);
+            if (xmlGroupAddress != null) {
+                xmlGroupAddress.setCommunicationFlag(readAttributeValue(nav, "CommunicationFlag"));
+                xmlGroupAddress.setReadFlag(readAttributeValue(nav, "ReadFlag"));
+                xmlGroupAddress.setWriteFlag(readAttributeValue(nav, "WriteFlag"));
+                xmlGroupAddress.setTransmitFlag(readAttributeValue(nav, "TransmitFlag"));
+                xmlGroupAddress.setUpdateFlag(readAttributeValue(nav, "UpdateFlag"));
+            }
+        };
 
-        // iterate through all group addresses
-        while (vtdAutoPilot.evalXPath() != -1) {
 
-            // get links
-            final var links = readAttributeValue(vtdNav, "Links",
-                    () -> new KnxprojParserException("Attribute <ComObjectInstanceRef @Links /> not found."));
+        if (xmlProject.getVersion() >= 20) {
+            //
+            // for project version 20 and newer (XML 2.0 and above)
+            //
 
-            // create meta data for each link (link is separated by space character)
-            final var linkTokens = new StringTokenizer(links, " ");
-            while (linkTokens.hasMoreTokens()) {
-                // link is a shortened e.g. "GA-277" belongs to "P-0503-0_GA-277"
-                // (pattern: <projectId>-0_<groupAddressId>)
-                final var link = linkTokens.nextToken();
-                final var groupAddressId = xmlProject.getId() + "-0_" + link;
-                final var xmlGroupAddress = xmlProject.getGroupAddressById(groupAddressId);
+            // find all <ComObjectInstanceRef /> elements which have 'Links' attribute present
+            vtdAutoPilot.selectXPath("/KNX/Project/Installations/Installation/Topology//ComObjectInstanceRef[@Links]");
 
-                // update group address with flags
-                if (xmlGroupAddress != null) {
-                    xmlGroupAddress.setCommunicationFlag(readAttributeValue(vtdNav, "CommunicationFlag"));
-                    xmlGroupAddress.setReadFlag(readAttributeValue(vtdNav, "ReadFlag"));
-                    xmlGroupAddress.setWriteFlag(readAttributeValue(vtdNav, "WriteFlag"));
-                    xmlGroupAddress.setTransmitFlag(readAttributeValue(vtdNav, "TransmitFlag"));
-                    xmlGroupAddress.setUpdateFlag(readAttributeValue(vtdNav, "UpdateFlag"));
+            // iterate through all group addresses
+            while (vtdAutoPilot.evalXPath() != -1) {
+                // get links
+                final var links = readAttributeValue(vtdNav, "Links",
+                        () -> new KnxProjectParserException("Attribute <ComObjectInstanceRef @Links /> not found."));
+
+                // create meta data for each link (link is separated by space character)
+                final var linkTokens = new StringTokenizer(links, " ");
+                while (linkTokens.hasMoreTokens()) {
+                    // link is a shortened e.g. "GA-277" belongs to "P-0503-0_GA-277"
+                    // (pattern: <projectId>-0_<groupAddressId>)
+                    final var link = linkTokens.nextToken();
+                    final var groupAddressId = xmlProject.getId() + "-0_" + link;
+
+                    xmlGroupAddressConsumer.accept(groupAddressId, vtdNav);
                 }
             }
+        } else {
+            //
+            // for older project versions (XML 1.4 and below)
+            //
+
+            // find all <ComObjectInstanceRef /> elements which have 'GroupAddressRefId' attribute present
+            vtdAutoPilot.selectXPath("/KNX/Project/Installations/Installation/Topology//ComObjectInstanceRef[Connectors/Send[@GroupAddressRefId]]");
+
+            // iterate through all group addresses
+            while (vtdAutoPilot.evalXPath() != -1) {
+                final var xmlGroupAddressRefIds = new LinkedList<String>();
+
+                // get group address ref id (this is 2 levels deeper: ./Connectors/Send)
+                final var tmpIndex = vtdNav.getCurrentIndex();
+                vtdNav.toElement(VTDNav.FIRST_CHILD, "Connectors");
+                vtdNav.toElement(VTDNav.FIRST_CHILD, "Send");
+                do {
+                    final var groupAddressId = readAttributeValue(vtdNav, "GroupAddressRefId",
+                            () -> new KnxProjectParserException("Attribute <ComObjectInstanceRef @GroupAddressRefId /> not found."));
+                    xmlGroupAddressRefIds.add(groupAddressId);
+                } while (vtdNav.toElement(VTDNav.NEXT_SIBLING));
+
+                // back to the previous position
+                vtdNav.recoverNode(tmpIndex);
+
+                // apply for all xml group addresses
+                xmlGroupAddressRefIds.forEach(id -> xmlGroupAddressConsumer.accept(id, vtdNav));
+            }
         }
+
     }
 
     /**
@@ -363,13 +399,12 @@ public final class KnxprojParser {
      * @param vtdNav    current instance of {@link VTDNav}
      * @param attribute attribute name to look up
      * @param throwable exception to thrown in case the attribute doesn't exists
-     * @return value of attribute, otherwise {@link KnxprojParserException}
-     * @throws NavException navigation exception by VTD-XML
+     * @return value of attribute, otherwise {@link KnxProjectParserException}
      */
     @Nonnull
     private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
                                              final @Nonnull String attribute,
-                                             final @Nonnull Supplier<KnxprojParserException> throwable) throws NavException {
+                                             final @Nonnull Supplier<KnxProjectParserException> throwable) {
         final var value = readAttributeValue(vtdNav, attribute);
         if (value == null) {
             throw throwable.get();
@@ -383,11 +418,10 @@ public final class KnxprojParser {
      * @param vtdNav    current instance of {@link VTDNav}
      * @param attribute attribute name to look up
      * @return value of attribute, otherwise {@code null}
-     * @throws NavException navigation exception by VTD-XML
      */
     @Nullable
     private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
-                                             final @Nonnull String attribute) throws NavException {
+                                             final @Nonnull String attribute) {
         return readAttributeValue(vtdNav, attribute, (String) null);
     }
 
@@ -397,14 +431,18 @@ public final class KnxprojParser {
      * @param vtdNav    current instance of {@link VTDNav}
      * @param attribute attribute name to look up
      * @return value of attribute, otherwise {@code defaultValue}
-     * @throws NavException navigation exception by VTD-XML
      */
     @Nullable
     private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
                                              final @Nonnull String attribute,
-                                             final @Nullable String defaultValue) throws NavException {
-        final var index = vtdNav.getAttrVal(Objects.requireNonNull(attribute));
-        return index > 0 ? vtdNav.toString(index) : defaultValue;
+                                             final @Nullable String defaultValue) {
+        try {
+            final var index = vtdNav.getAttrVal(Objects.requireNonNull(attribute));
+            return index > 0 ? vtdNav.toString(index) : defaultValue;
+        } catch (final NavException navEx) {
+            // should never happen
+            throw new AssertionError(navEx);
+        }
     }
 
     /**
@@ -425,7 +463,7 @@ public final class KnxprojParser {
         // find file that matches filePathRegEx in ZIP file
         final var zipEntry = zipFile.stream().filter(f -> f.getName().matches(filePathRegEx))
                 .findFirst()
-                .orElseThrow(() -> new KnxprojParserException("File '" + filePathRegEx + "' not found in ZIP file"));
+                .orElseThrow(() -> new KnxProjectParserException("File '" + filePathRegEx + "' not found in ZIP file"));
         log.debug("File in ZIP File found: {}", zipEntry.getName());
 
         byte[] bytes;

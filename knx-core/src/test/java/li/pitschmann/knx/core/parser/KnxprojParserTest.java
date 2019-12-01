@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.parser;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Tests {@link KnxprojParser} class to parse KNX Project files
+ * Tests {@link KnxProjectParser} class to parse KNX Project files
  */
 public class KnxprojParserTest {
     private static final Path KNX_PROJECT_THREE_LEVEL_V20 = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
@@ -53,7 +54,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX Project V14 with 3-Level group addresses")
     public void testThreeLevelProjectV14() {
-        final var project = KnxprojParser.parse(KNX_PROJECT_THREE_LEVEL_V14);
+        final var project = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V14);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0501");
@@ -99,7 +100,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX Project V20 with 3-Level group addresses")
     public void testThreeLevelProjectV20() {
-        final var project = KnxprojParser.parse(KNX_PROJECT_THREE_LEVEL_V20);
+        final var project = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V20);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0503");
@@ -148,7 +149,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX Project with Free-Level group addresses")
     public void testFreeLevelProject() {
-        final var project = KnxprojParser.parse(KNX_PROJECT_FREE_LEVEL);
+        final var project = KnxProjectParser.parse(KNX_PROJECT_FREE_LEVEL);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0502");
@@ -166,7 +167,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("Test group address datapoint types")
     public void testDataPoints() {
-        final var groupAddresses = KnxprojParser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
+        final var groupAddresses = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
 
         // assert DPT-x group address
         assertGroupAddress(groupAddresses, "P-0503-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1 (0x00)", "DPT-1");
@@ -184,7 +185,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX project without any group addresses")
     public void testEmptyProject() {
-        final var project = KnxprojParser.parse(GOOD_EMPTY_PROJECT);
+        final var project = KnxProjectParser.parse(GOOD_EMPTY_PROJECT);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0700");
@@ -214,50 +215,50 @@ public class KnxprojParserTest {
         /*
          * Corrupted Project (general)
          */
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_PROJECT_ID))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_PROJECT_ID))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <Project @Id /> not found.");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_PROJECTINFORMATION_NAME))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_PROJECTINFORMATION_NAME))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <ProjectInformation @Name /> not found.");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <ProjectInformation @GroupAddressStyle /> not found.");
 
         /*
          * Group Range Negative Tests
          */
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_ID))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_ID))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @Id /> not found.");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_START))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_START))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @RangeStart /> not found for: P-0700-0_GR-1");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_END))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_END))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @RangeEnd /> not found for: P-0700-0_GR-1");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPRANGE_NAME))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_NAME))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @Name /> not found for: P-0700-0_GR-1");
 
         /*
          * Group Address Negative Tests
          */
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_ID))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPADDRESS_ID))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupAddress @Id /> not found.");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_NAME))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPADDRESS_NAME))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupAddress @Name /> not found for: P-0700-0_GA-1");
 
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_NO_GROUPADDRESS_ADDRESS))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPADDRESS_ADDRESS))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupAddress @Address /> not found for: P-0700-0_GA-1");
     }
 
@@ -267,18 +268,72 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Corrupted) Test KNX project with incomplete content")
     public void testCorruptedProjectIncomplete() {
-        assertThatThrownBy(() -> KnxprojParser.parse(CORRUPTED_FILE))
-                .isInstanceOf(KnxprojParserException.class)
+        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_FILE))
+                .isInstanceOf(KnxProjectParserException.class)
                 .hasMessageStartingWith("Something went wrong during parsing the zip file:");
     }
 
+    @Test
+    @DisplayName("(Project V14) Test group address flags")
+    public void testGroupAddressFlags_V14() {
+        final var groupAddresses = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V14).getGroupAddresses();
+
+        // No Flags
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-150", false, false, false, false, false);
+        // Communication only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-151", true, false, false, false, false);
+        // Read only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-152", false, true, false, false, false);
+        // Write only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-153", false, false, true, false, false);
+        // Transmit only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-154", false, false, false, true, false);
+        // Update only
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-155", false, false, false, false, true);
+        // Communication + Read
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-156", true, true, false, false, false);
+        // Communication + Write
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-157", true, false, true, false, false);
+        // Communication + Read + Write
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-158", true, true, true, false, false);
+        // All flags
+        assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-159", true, true, true, true, true);
+    }
+
+    @Test
+    @DisplayName("(Project V20) Test group address flags")
+    public void testGroupAddressFlags_V20() {
+        final var groupAddresses = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
+
+        // No Flags
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-150", false, false, false, false, false);
+        // Communication only
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-151", true, false, false, false, false);
+        // Read only
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-152", false, true, false, false, false);
+        // Write only
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-153", false, false, true, false, false);
+        // Transmit only
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-154", false, false, false, true, false);
+        // Update only
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-155", false, false, false, false, true);
+        // Communication + Read
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-156", true, true, false, false, false);
+        // Communication + Write
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-157", true, false, true, false, false);
+        // Communication + Read + Write
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-158", true, true, true, false, false);
+        // All flags
+        assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-159", true, true, true, true, true);
+    }
+
     /**
-     * Test constructor of {@link KnxprojParser}
+     * Test constructor of {@link KnxProjectParser}
      */
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(KnxprojParser.class);
+        TestHelpers.assertThatNotInstantiable(KnxProjectParser.class);
     }
 
     private void assertGroupAddress(final Collection<XmlGroupAddress> groupAddresses, final String id, final GroupAddress address, final String name, final String datapointType) {
@@ -289,4 +344,12 @@ public class KnxprojParserTest {
         assertThat(groupAddress.getDataPointType()).isEqualTo(datapointType);
     }
 
+    private void assertGroupAddressFlags(final Collection<XmlGroupAddress> groupAddresses, final String id, final boolean communication, final boolean read, final boolean write, final boolean transmit, final boolean update) {
+        final var groupAddress = groupAddresses.stream().filter(xga -> id.equals(xga.getId())).findFirst().get();
+        assertThat(groupAddress.getCommunicationFlag()).isEqualTo(communication ? "Enabled" : null);
+        assertThat(groupAddress.getReadFlag()).isEqualTo(read ? "Enabled" : null);
+        assertThat(groupAddress.getWriteFlag()).isEqualTo(write ? "Enabled" : null);
+        assertThat(groupAddress.getTransmitFlag()).isEqualTo(transmit ? "Enabled" : null);
+        assertThat(groupAddress.getUpdateFlag()).isEqualTo(update ? "Enabled" : null);
+    }
 }

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.parser;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -55,8 +56,8 @@ public class XmlGroupAddressStyleTest {
         assertThat(XmlGroupAddressStyle.parse("ThreeLevel")).isSameAs(XmlGroupAddressStyle.THREE_LEVEL);
 
         // invalid cases
-        assertThatThrownBy(() -> XmlGroupAddressStyle.parse(null)).isInstanceOf(KnxprojParserException.class);
-        assertThatThrownBy(() -> XmlGroupAddressStyle.parse("foo")).isInstanceOf(KnxprojParserException.class);
+        assertThatThrownBy(() -> XmlGroupAddressStyle.parse(null)).isInstanceOf(KnxProjectParserException.class);
+        assertThatThrownBy(() -> XmlGroupAddressStyle.parse("foo")).isInstanceOf(KnxProjectParserException.class);
     }
 
     @Test

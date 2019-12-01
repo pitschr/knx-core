@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.config;
 
-import li.pitschmann.knx.core.parser.KnxprojParser;
+import li.pitschmann.knx.core.parser.KnxProjectParser;
 import li.pitschmann.knx.core.parser.XmlProject;
 import li.pitschmann.knx.core.plugin.Plugin;
 import li.pitschmann.knx.core.utils.Networker;
@@ -68,7 +68,7 @@ public final class Config {
         final var projectPath = getProjectPath();
         XmlProject tmpXmlProject;
         try {
-            tmpXmlProject = Files.isReadable(projectPath) ? KnxprojParser.parse(projectPath) : null;
+            tmpXmlProject = Files.isReadable(projectPath) ? KnxProjectParser.parse(projectPath) : null;
         } catch (final Throwable t) {
             log.warn("Could not parse KNX Project file: {}. Omitted!", projectPath, t);
             tmpXmlProject = null;

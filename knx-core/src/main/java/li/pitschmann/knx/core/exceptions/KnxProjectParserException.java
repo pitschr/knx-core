@@ -16,20 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.exceptions;
 
 import javax.annotation.Nullable;
 
 /**
  * Exception about any issue during parsing of '*.knxproj' file
  */
-public final class KnxprojParserException extends RuntimeException {
-    /**
-     * Constructs a new KNX Project Parse Exception with exception message
-     *
-     * @param message exception message
-     */
-    public KnxprojParserException(final @Nullable String message) {
+public final class KnxProjectParserException extends RuntimeException {
+
+    public KnxProjectParserException(final @Nullable String message) {
         super(message);
     }
+
 }
