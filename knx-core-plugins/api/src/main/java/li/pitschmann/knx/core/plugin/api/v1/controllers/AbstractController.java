@@ -2,14 +2,13 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import com.google.inject.Inject;
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.parser.XmlProject;
+import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.Path;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

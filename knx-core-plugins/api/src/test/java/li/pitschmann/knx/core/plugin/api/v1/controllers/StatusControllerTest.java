@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.body.address.IndividualAddress;
 import li.pitschmann.knx.core.body.address.KnxAddress;
 import li.pitschmann.knx.core.body.cemi.APCI;
 import li.pitschmann.knx.core.communication.KnxStatusData;
-import li.pitschmann.knx.core.parser.XmlGroupAddress;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.plugin.api.v1.json.Status;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;

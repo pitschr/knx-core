@@ -7,8 +7,8 @@ import li.pitschmann.knx.core.body.address.IndividualAddress;
 import li.pitschmann.knx.core.body.address.KnxAddress;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 import li.pitschmann.knx.core.datapoint.DataPointType;
-import li.pitschmann.knx.core.parser.XmlGroupAddress;
-import li.pitschmann.knx.core.parser.XmlGroupRange;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
+import li.pitschmann.knx.core.knxproj.XmlGroupRange;
 import ro.pippo.gson.GsonEngine;
 
 import java.time.Instant;

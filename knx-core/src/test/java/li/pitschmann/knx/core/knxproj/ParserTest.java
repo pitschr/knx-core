@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
@@ -32,29 +32,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Tests {@link KnxProjectParser} class to parse KNX Project files
+ * Tests {@link Parser} class to parse KNX Project files
  */
-public class KnxprojParserTest {
-    private static final Path KNX_PROJECT_THREE_LEVEL_V20 = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
-    private static final Path KNX_PROJECT_THREE_LEVEL_V14 = Paths.get("src/test/resources/parser/Project (3-Level, v14).knxproj");
-    private static final Path KNX_PROJECT_FREE_LEVEL = Paths.get("src/test/resources/parser/Project (Free-Level, v20).knxproj");
-    private static final Path GOOD_EMPTY_PROJECT = Paths.get("src/test/resources/parser/Empty Project (No Group Addresses).knxproj");
-    private static final Path CORRUPTED_FILE = Paths.get("src/test/resources/parser/Corrupted Project (Incomplete).knxproj");
-    private static final Path CORRUPTED_NO_PROJECT_ID = Paths.get("src/test/resources/parser/Corrupted Project (No Project Id).knxproj");
-    private static final Path CORRUPTED_NO_PROJECTINFORMATION_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No ProjectInformation Name).knxproj");
-    private static final Path CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE = Paths.get("src/test/resources/parser/Corrupted Project (No ProjectInformation GroupAddressStyle).knxproj");
-    private static final Path CORRUPTED_NO_GROUPADDRESS_ID = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Id).knxproj");
-    private static final Path CORRUPTED_NO_GROUPADDRESS_ADDRESS = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Address).knxproj");
-    private static final Path CORRUPTED_NO_GROUPADDRESS_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupAddress Name).knxproj");
-    private static final Path CORRUPTED_NO_GROUPRANGE_ID = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange Id).knxproj");
-    private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_START = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeStart).knxproj");
-    private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_END = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange RangeEnd).knxproj");
-    private static final Path CORRUPTED_NO_GROUPRANGE_NAME = Paths.get("src/test/resources/parser/Corrupted Project (No GroupRange Name).knxproj");
+public class ParserTest {
+    private static final Path KNX_PROJECT_THREE_LEVEL_V20 = Paths.get("src/test/resources/knxproj/Project (3-Level, v20).knxproj");
+    private static final Path KNX_PROJECT_THREE_LEVEL_V14 = Paths.get("src/test/resources/knxproj/Project (3-Level, v14).knxproj");
+    private static final Path KNX_PROJECT_FREE_LEVEL = Paths.get("src/test/resources/knxproj/Project (Free-Level, v20).knxproj");
+    private static final Path GOOD_EMPTY_PROJECT = Paths.get("src/test/resources/knxproj/Empty Project (No Group Addresses).knxproj");
+    private static final Path CORRUPTED_FILE = Paths.get("src/test/resources/knxproj/Corrupted Project (Incomplete).knxproj");
+    private static final Path CORRUPTED_NO_PROJECT_ID = Paths.get("src/test/resources/knxproj/Corrupted Project (No Project Id).knxproj");
+    private static final Path CORRUPTED_NO_PROJECTINFORMATION_NAME = Paths.get("src/test/resources/knxproj/Corrupted Project (No ProjectInformation Name).knxproj");
+    private static final Path CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE = Paths.get("src/test/resources/knxproj/Corrupted Project (No ProjectInformation GroupAddressStyle).knxproj");
+    private static final Path CORRUPTED_NO_GROUPADDRESS_ID = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupAddress Id).knxproj");
+    private static final Path CORRUPTED_NO_GROUPADDRESS_ADDRESS = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupAddress Address).knxproj");
+    private static final Path CORRUPTED_NO_GROUPADDRESS_NAME = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupAddress Name).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_ID = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupRange Id).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_START = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupRange RangeStart).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_RANGE_END = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupRange RangeEnd).knxproj");
+    private static final Path CORRUPTED_NO_GROUPRANGE_NAME = Paths.get("src/test/resources/knxproj/Corrupted Project (No GroupRange Name).knxproj");
 
     @Test
     @DisplayName("(Good) Test KNX Project V14 with 3-Level group addresses")
     public void testThreeLevelProjectV14() {
-        final var project = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V14);
+        final var project = Parser.parse(KNX_PROJECT_THREE_LEVEL_V14);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0501");
@@ -100,7 +100,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX Project V20 with 3-Level group addresses")
     public void testThreeLevelProjectV20() {
-        final var project = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V20);
+        final var project = Parser.parse(KNX_PROJECT_THREE_LEVEL_V20);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0503");
@@ -149,7 +149,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX Project with Free-Level group addresses")
     public void testFreeLevelProject() {
-        final var project = KnxProjectParser.parse(KNX_PROJECT_FREE_LEVEL);
+        final var project = Parser.parse(KNX_PROJECT_FREE_LEVEL);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0502");
@@ -167,7 +167,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("Test group address datapoint types")
     public void testDataPoints() {
-        final var groupAddresses = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
+        final var groupAddresses = Parser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
 
         // assert DPT-x group address
         assertGroupAddress(groupAddresses, "P-0503-0_GA-117", GroupAddress.of(0, 0, 10), "Sub Group - DPT 1 (0x00)", "DPT-1");
@@ -185,7 +185,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Good) Test KNX project without any group addresses")
     public void testEmptyProject() {
-        final var project = KnxProjectParser.parse(GOOD_EMPTY_PROJECT);
+        final var project = Parser.parse(GOOD_EMPTY_PROJECT);
 
         assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo("P-0700");
@@ -215,49 +215,49 @@ public class KnxprojParserTest {
         /*
          * Corrupted Project (general)
          */
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_PROJECT_ID))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_PROJECT_ID))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <Project @Id /> not found.");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_PROJECTINFORMATION_NAME))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_PROJECTINFORMATION_NAME))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <ProjectInformation @Name /> not found.");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_PROJECTINFORMATION_GROUPADDRESS_STYLE))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <ProjectInformation @GroupAddressStyle /> not found.");
 
         /*
          * Group Range Negative Tests
          */
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_ID))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPRANGE_ID))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @Id /> not found.");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_START))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_START))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @RangeStart /> not found for: P-0700-0_GR-1");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_END))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPRANGE_RANGE_END))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @RangeEnd /> not found for: P-0700-0_GR-1");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPRANGE_NAME))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPRANGE_NAME))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupRange @Name /> not found for: P-0700-0_GR-1");
 
         /*
          * Group Address Negative Tests
          */
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPADDRESS_ID))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPADDRESS_ID))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupAddress @Id /> not found.");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPADDRESS_NAME))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPADDRESS_NAME))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupAddress @Name /> not found for: P-0700-0_GA-1");
 
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_NO_GROUPADDRESS_ADDRESS))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_NO_GROUPADDRESS_ADDRESS))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessage("Attribute <GroupAddress @Address /> not found for: P-0700-0_GA-1");
     }
@@ -268,7 +268,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Corrupted) Test KNX project with incomplete content")
     public void testCorruptedProjectIncomplete() {
-        assertThatThrownBy(() -> KnxProjectParser.parse(CORRUPTED_FILE))
+        assertThatThrownBy(() -> Parser.parse(CORRUPTED_FILE))
                 .isInstanceOf(KnxProjectParserException.class)
                 .hasMessageStartingWith("Something went wrong during parsing the zip file:");
     }
@@ -276,7 +276,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Project V14) Test group address flags")
     public void testGroupAddressFlags_V14() {
-        final var groupAddresses = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V14).getGroupAddresses();
+        final var groupAddresses = Parser.parse(KNX_PROJECT_THREE_LEVEL_V14).getGroupAddresses();
 
         // No Flags
         assertGroupAddressFlags(groupAddresses, "P-0501-0_GA-150", false, false, false, false, false);
@@ -303,7 +303,7 @@ public class KnxprojParserTest {
     @Test
     @DisplayName("(Project V20) Test group address flags")
     public void testGroupAddressFlags_V20() {
-        final var groupAddresses = KnxProjectParser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
+        final var groupAddresses = Parser.parse(KNX_PROJECT_THREE_LEVEL_V20).getGroupAddresses();
 
         // No Flags
         assertGroupAddressFlags(groupAddresses, "P-0503-0_GA-150", false, false, false, false, false);
@@ -328,12 +328,12 @@ public class KnxprojParserTest {
     }
 
     /**
-     * Test constructor of {@link KnxProjectParser}
+     * Test constructor of {@link Parser}
      */
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(KnxProjectParser.class);
+        TestHelpers.assertThatNotInstantiable(Parser.class);
     }
 
     private void assertGroupAddress(final Collection<XmlGroupAddress> groupAddresses, final String id, final GroupAddress address, final String name, final String datapointType) {

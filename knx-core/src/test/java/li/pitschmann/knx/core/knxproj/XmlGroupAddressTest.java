@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

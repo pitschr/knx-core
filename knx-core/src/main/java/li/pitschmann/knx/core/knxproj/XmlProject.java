@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -100,6 +101,17 @@ public final class XmlProject {
      * {@code <GroupAddresses Address="..." />}
      */
     private Map<Integer, XmlGroupAddress> groupAddressIntMap = Map.of();
+
+    /**
+     * Parses the given {@link Path} and return a {@link XmlProject} instance
+     *
+     * @param path
+     * @return a new instance of {@link XmlProject}
+     */
+    @Nonnull
+    public static XmlProject parse(final @Nonnull Path path) {
+        return Parser.parse(path);
+    }
 
     public String getId() {
         return id;

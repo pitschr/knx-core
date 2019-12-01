@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.parser;
+package li.pitschmann.knx.core.knxproj;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
@@ -61,19 +61,19 @@ import java.util.zip.ZipFile;
  * Here we are not parsing the full project - we will obtain only relevant
  * data from *.knxproj file which might be helpful for us like
  * <ul>
- * <li>Group Addresses</li>
- * <li>Name</li>
- * <li>Datapoint Type</li>
- * <li>Flags</li>
+ * <li>Project Overview (Name, Description, ...)</li>
+ * <li>Group Ranges (Name, Description, Level, ...)</li>
+ * <li>Group Addresses (Name, Description, Datapoint Type, ...)</li>
+ * <li>Group Address Metadata (Flags, ...)</li>
  * </ul>
  *
  * @author pitschr
  */
-public final class KnxProjectParser {
-    private static final Logger log = LoggerFactory.getLogger(KnxProjectParser.class);
+final class Parser {
+    private static final Logger log = LoggerFactory.getLogger(Parser.class);
     private static final String FILE_EXTENSION = ".knxproj";
 
-    private KnxProjectParser() {
+    private Parser() {
         throw new AssertionError("Don't touch me!");
     }
 
@@ -84,7 +84,7 @@ public final class KnxProjectParser {
      * @return KNX project
      */
     @Nonnull
-    public static XmlProject parse(final @Nonnull Path path) {
+    static XmlProject parse(final @Nonnull Path path) {
         Preconditions.checkArgument(Files.isReadable(path),
                 "File '{}' doesn't exists or is not readable.", path);
         Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION),
@@ -139,7 +139,7 @@ public final class KnxProjectParser {
         final var xmlNamespace = readAttributeValue(vtdNav, "xmlns",
                 () -> new KnxProjectParserException("Attribute <KNX @xmlns /> not found."));
         log.debug("XML Project Namespace: {}", xmlNamespace);
-        final var version = Integer.parseInt(xmlNamespace.substring(xmlNamespace.lastIndexOf("/")+1));
+        final var version = Integer.parseInt(xmlNamespace.substring(xmlNamespace.lastIndexOf("/") + 1));
         project.setVersion(version);
 
         // go to <Project /> element and read @Id

@@ -27,10 +27,9 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 import li.pitschmann.knx.core.communication.KnxStatusPool;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
-import li.pitschmann.knx.core.parser.KnxProjectParser;
-import li.pitschmann.knx.core.parser.XmlGroupAddress;
-import li.pitschmann.knx.core.parser.XmlGroupRange;
-import li.pitschmann.knx.core.parser.XmlProject;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
+import li.pitschmann.knx.core.knxproj.XmlGroupRange;
+import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.utils.Strings;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -57,7 +56,6 @@ import java.util.function.Consumer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -93,7 +91,7 @@ public final class ControllerTestExtension
         final XmlProject xmlProject;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
             final var xmlProjectPath = Paths.get(annotation.projectPath());
-            xmlProject = spy(KnxProjectParser.parse(xmlProjectPath));
+            xmlProject = spy(XmlProject.parse(xmlProjectPath));
         } else {
             xmlProject = getDefaultXmlProject();
         }

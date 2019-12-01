@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Test for {@link ConfigBuilder}
  */
 public class ConfigBuilderTest {
-    private static final Path KNX_PROJECT = Paths.get("src/test/resources/parser/Project (3-Level, v20).knxproj");
+    private static final Path KNX_PROJECT = Paths.get("src/test/resources/knxproj/Project (3-Level, v20).knxproj");
 
     @Test
     @DisplayName("Creates a new config with null or empty String")

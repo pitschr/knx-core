@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import li.pitschmann.knx.core.parser.XmlGroupRange;
+import li.pitschmann.knx.core.knxproj.XmlGroupRange;
 
 import java.lang.reflect.Type;
 

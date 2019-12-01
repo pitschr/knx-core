@@ -28,7 +28,7 @@ import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.parser.KnxProjectParser;
+import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Networker;
@@ -137,7 +137,7 @@ public final class MockServer implements Runnable, Closeable {
         if (!mockServerAnnotation.projectPath().isEmpty()) {
             final var xmlProjectPath = Paths.get(mockServerAnnotation.projectPath());
             Preconditions.checkArgument(Files.exists(xmlProjectPath), "Project file doesn't exists at: {}", xmlProjectPath);
-            final var projectLogic = new MockServerProjectLogic(this, KnxProjectParser.parse(xmlProjectPath));
+            final var projectLogic = new MockServerProjectLogic(this, XmlProject.parse(xmlProjectPath));
             publisher.subscribe(Executors.wrapSubscriberWithMDC(projectLogic));
         }
 
