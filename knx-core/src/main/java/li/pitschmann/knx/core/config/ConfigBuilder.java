@@ -211,7 +211,7 @@ public final class ConfigBuilder {
      * <p/>
      * Default Address: {@link Networker#getAddressUnbound()} (=will use discovery service)<br/>
      * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
-     * Default NAT Flag: {@link CoreConfigs.Executor#NAT}<br/>
+     * Default NAT Flag: {@link CoreConfigs#NAT}<br/>
      *
      * @return new builder for tunneling mode with standard settings according to the KNX specification
      */
@@ -241,7 +241,7 @@ public final class ConfigBuilder {
      * address
      * <p/>
      * Default Port: {@link CoreConfigs#KNX_PORT}<br/>
-     * Default NAT Flag: {@link CoreConfigs.Executor#NAT}<br/>
+     * Default NAT Flag: {@link CoreConfigs#NAT}<br/>
      *
      * @param address a specified address of KNX Net/IP device
      * @return new builder for tunneling mode with customized address
@@ -255,7 +255,7 @@ public final class ConfigBuilder {
      * Creates a Builder for customized configuration using <strong>TUNNELING</strong> mode with
      * customized {@code address} and customized KNX port.
      * <p/>
-     * Default NAT Flag: {@link CoreConfigs.Executor#NAT}<br/>
+     * Default NAT Flag: {@link CoreConfigs#NAT}<br/>
      *
      * @param address a specified address of KNX Net/IP device
      * @param port    a specific port of KNX Net/IP device

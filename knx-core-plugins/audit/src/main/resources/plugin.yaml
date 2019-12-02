@@ -1,0 +1,25 @@
+class: "li.pitschmann.knx.core.plugin.audit.FileAuditPlugin"
+
+name:
+  en: "KNX Audit Plugin"
+  de: "KNX Audit Plugin"
+
+description:
+  en: "Auditing KNX events (inbound, outbound and error) and writes to a file"
+  de: "Zeichnet die KNX Ereignisse (Eingang, Ausgang und Fehler) auf und schreibt diese in eine Datei"
+
+configs:
+- path:
+    name:
+      en: "Path"
+      de: "Pfad"
+    description:
+      en: "Recommended: Absolute Path"
+      de: "Empfohlen: Absoluter Pfad"
+- format:
+    name:
+      en: "Format"
+      de: "Format"
+    description:
+      en: "File Format (e.g. JSON)"
+      de: "Dateiformat (e.g. JSON)"
