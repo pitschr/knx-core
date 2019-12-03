@@ -1,5 +1,6 @@
-package li.pitschmann.knx.core.config;
+package li.pitschmann.knx.examples.load_from_configfile;
 
+import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.core.test.TestHelpers;
 import li.pitschmann.knx.core.test.data.TestExtensionPlugin;
@@ -56,7 +57,6 @@ public class ConfigFileUtilTest {
         assertThat(config.getRemoteControlAddress().getAddress()).containsExactly(123, 45, 67, 89);
         assertThat(config.getValue(CoreConfigs.Multicast.TIME_TO_LIVE)).isEqualTo(255);
         assertThat(config.getPlugins()).isEmpty();
-//        assertThat(config.<String>getSetting("my.special.config.setting")).isEqualTo("foobar");
     }
 
     @Test

@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
-import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -67,16 +66,6 @@ public final class ConfigBuilder {
         this.routingEnabled = routingEnabled;
         this.remoteControlAddress = address;
         this.remoteControlPort = port;
-    }
-
-    /**
-     * Creates a Builder from specified {@code filePath}.
-     *
-     * @param filePath
-     * @return a new instance of {@link ConfigBuilder}
-     */
-    public static ConfigBuilder create(final @Nonnull Path filePath) {
-        return ConfigFileUtil.loadFile(filePath);
     }
 
     /**
