@@ -153,8 +153,31 @@ public class FileStatisticPluginTest {
 
         // we should have two statistics (one at start up and one at shutdown)
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(2);
+        assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).isEqualTo(
+                // @formatter:off
+                // total
+                "Inbound Packets\tInbound Bytes\t" +
+                "Outbound Packets\tOutbound Bytes\t" +
+                "Error Packets\tError Rate (%)\t" +
+                // Inbound
+                "Inbound Description Requests\tInbound Description Responses\t" +
+                "Inbound Connect Requests\tInbound Connect Responses\t" +
+                "Inbound Connection State Requests\tInbound Connection State Responses\t" +
+                "Inbound Disconnect Requests\tInbound Disconnect Responses\t" +
+                "Inbound Tunneling Requests\tInbound Tunneling Acknowledges\t" +
+                "Inbound Indication Requests\tInbound Indication Responses\t" +
+                // outbound
+                "Outbound Description Requests\tOutbound Description Responses\t" +
+                "Outbound Connect Requests\tOutbound Connect Responses\t" +
+                "Outbound Connection State Requests\tOutbound Connection State Responses\t" +
+                "Outbound Disconnect Requests\tOutbound Disconnect Responses\t" +
+                "Outbound Tunneling Requests\tOutbound Tunneling Acknowledges\t" +
+                "Outbound Indication Requests\tOutbound Indication Responses"
+                // @formatter:on
+
+        );
+        assertThat(lines.get(1)).isEqualTo(
                 // @formatter:off
                 "0\t0\t" +                            // inbound total
                 "0\t0\t" +                            // outbound total
@@ -165,7 +188,7 @@ public class FileStatisticPluginTest {
                 "0\t0\t0\t0"                          // outbound tunneling, indication
                 // @formatter:on
         );
-        assertThat(lines.get(1)).isEqualTo(
+        assertThat(lines.get(2)).isEqualTo(
                 // @formatter:off
                 "10\t11\t" +                           // inbound total
                 "12\t13\t" +                           // outbound total
@@ -200,7 +223,7 @@ public class FileStatisticPluginTest {
         // we should have two statistics (one at start up and one at shutdown)
         final var lines = Files.readAllLines(path);
         assertThat(lines).hasSize(2 * 16); // 1 statistic output = 16 lines for TEXT
-        var i =0;
+        var i = 0;
         assertThat(lines.get(i++)).isEqualTo("0 packets received (0 bytes)");
         assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 0");
         assertThat(lines.get(i++)).isEqualTo("\t[Connect         ] Request: 0, Response: 0");

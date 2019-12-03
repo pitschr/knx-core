@@ -30,6 +30,7 @@ import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.PathConfigValue;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Closeables;
+import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,11 +85,16 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 .file(baseFile)
                 .filePattern(rolloverFile)
                 .policy(DailyRotationPolicy.getInstance())
-                .append(true)
-                .build();
+                .append(false);
+
+        // append header rotation callback if present
+        final var header = format.getHeader();
+        if (!Strings.isNullOrEmpty(header)) {
+            config.callback(new HeaderRotationCallback(header));
+        }
 
         // start rollover stream
-        fos = new RotatingFileOutputStream(config);
+        fos = new RotatingFileOutputStream(config.build());
 
         auditSignal(AuditType.INIT);
     }

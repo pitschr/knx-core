@@ -15,13 +15,14 @@ import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.EnumConfigValue;
+import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.LongConfigValue;
 import li.pitschmann.knx.core.plugin.PathConfigValue;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Sleeper;
+import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,11 +87,16 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
                 .file(baseFile)
                 .filePattern(rolloverFile)
                 .policy(DailyRotationPolicy.getInstance())
-                .append(true)
-                .build();
+                .append(false);
+
+        // append header rotation callback if present
+        final var header = format.getHeader();
+        if (!Strings.isNullOrEmpty(header)) {
+            config.callback(new HeaderRotationCallback(header));
+        }
 
         // start rollover stream
-        fos = new RotatingFileOutputStream(config);
+        fos = new RotatingFileOutputStream(config.build());
 
         this.client = Objects.requireNonNull(client);
         executor.execute(new FileStatisticIntervalWriter(intervalMs));

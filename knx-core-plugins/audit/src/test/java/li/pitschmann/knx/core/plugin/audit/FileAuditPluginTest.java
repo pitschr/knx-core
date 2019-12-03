@@ -201,14 +201,24 @@ public class FileAuditPluginTest {
         plugin.onShutdown();
 
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(4);
+        assertThat(lines).hasSize(5);
 
+        // header
+        assertThat(lines.get(0)).isEqualTo(
+                // @formatter:off
+            "Time\t" +
+            "Type\t" +
+            "Header Total Length\tHeader Raw\t" +
+            "Body Service Code\tBody Service Text\tBody Raw\t" +
+            "Error Message\tError Stack Trace"
+            // @formatter:on
+        );
         // init
-        assertThat(lines.get(0)).containsPattern("\\d+\\.\\d+\tinit");
+        assertThat(lines.get(1)).containsPattern("\\d+\\.\\d+\tinit");
         // start
-        assertThat(lines.get(1)).containsPattern("\\d+\\.\\d+\tstart");
+        assertThat(lines.get(2)).containsPattern("\\d+\\.\\d+\tstart");
         // incoming
-        assertThat(lines.get(2)).containsPattern(
+        assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
                 "\\d+\\.\\d+\t" +
                         "\\Q" +  // start pattern quote
@@ -219,7 +229,7 @@ public class FileAuditPluginTest {
                 // @formatter:on
         );
         // shutdown
-        assertThat(lines.get(3)).containsPattern("\\d+\\.\\d+\tshutdown");
+        assertThat(lines.get(4)).containsPattern("\\d+\\.\\d+\tshutdown");
     }
 
     @Test
@@ -239,8 +249,8 @@ public class FileAuditPluginTest {
         plugin.onShutdown();
 
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(4);
-        assertThat(lines.get(2)).containsPattern(
+        assertThat(lines).hasSize(5);
+        assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
                 "\\d+\\.\\d+\t" +
                         "\\Q" +  // start pattern quote
@@ -265,8 +275,8 @@ public class FileAuditPluginTest {
         plugin.onShutdown();
 
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(4);
-        assertThat(lines.get(2)).containsPattern(
+        assertThat(lines).hasSize(5);
+        assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
                 "\\d+\\.\\d+\t" +
                         "\\Q" +  // start pattern quote
@@ -310,4 +320,5 @@ public class FileAuditPluginTest {
         );
         return exception;
     }
+
 }

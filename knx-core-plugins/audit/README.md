@@ -16,6 +16,7 @@ JSON:
 
 TSV (tab-separated):
 ```
+Time	Type	Header Total Length	Header Raw	Body Service Code	Body Service Text	Body Raw	Error Message	Error Stack Trace
 1574760615.827808800	init
 1574760615.828812000	start
 1574760615.828812000	incoming	9	0x06 10 02 05 00 09	0x02 05	CONNECT_REQUEST	0x33 44 55
