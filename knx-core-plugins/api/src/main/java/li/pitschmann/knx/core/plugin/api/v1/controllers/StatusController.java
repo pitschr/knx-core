@@ -10,7 +10,7 @@ import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,10 @@ public final class StatusController extends AbstractController {
      * @param xmlGroupAddress
      * @param knxStatusData
      */
-    private void fill(final @Nonnull StatusResponse response, final @Nonnull GroupAddress groupAddress, final @Nullable XmlGroupAddress xmlGroupAddress, final @Nullable KnxStatusData knxStatusData) {
+    private void fill(final StatusResponse response,
+                      final GroupAddress groupAddress,
+                      final @Nullable XmlGroupAddress xmlGroupAddress,
+                      final @Nullable KnxStatusData knxStatusData) {
         if (knxStatusData != null) {
             response.setTimestamp(knxStatusData.getTimestamp());
             response.setSourceAddress(knxStatusData.getSourceAddress());

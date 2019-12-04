@@ -21,7 +21,6 @@ import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 import java.util.function.Function;
 
@@ -94,9 +93,9 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
      * @return json pair of request and response
      */
     private JsonObject getRequestResponsePair(
-            final @Nonnull Function<Class<? extends Body>, Long> function,
-            final @Nonnull Class<? extends RequestBody> requestBodyClass,
-            final @Nonnull Class<? extends ResponseBody> responseBodyClass) {
+            final Function<Class<? extends Body>, Long> function,
+            final Class<? extends RequestBody> requestBodyClass,
+            final Class<? extends ResponseBody> responseBodyClass) {
 
         final var pair = new JsonObject();
         pair.addProperty("request", function.apply(requestBodyClass));

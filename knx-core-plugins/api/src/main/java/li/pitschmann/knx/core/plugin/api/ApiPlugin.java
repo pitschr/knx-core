@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.plugin.api;
 
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.IntegerConfigValue;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -126,7 +125,7 @@ public class ApiPlugin implements ExtensionPlugin {
                     .header(HttpConstants.Header.ACCEPT, HttpConstants.ContentType.APPLICATION_JSON)
                     .header(HttpConstants.Header.CONTENT_TYPE, HttpConstants.ContentType.APPLICATION_JSON);
         } catch (URISyntaxException e) {
-            throw new KnxIllegalArgumentException("Invalid path provided: " + path);
+            throw new IllegalArgumentException("Invalid path provided: " + path);
         }
     }
 }

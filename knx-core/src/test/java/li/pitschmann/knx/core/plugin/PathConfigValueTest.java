@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -69,7 +69,7 @@ public final class PathConfigValueTest {
         final PathConfigValue TEST_2 = new PathConfigValue("path-key2", () -> Paths.get("path-value2"), path -> path.toString().endsWith(".txt"));
 
         @Override
-        public void onInitialization(@Nonnull KnxClient client) {
+        public void onInitialization(final KnxClient client) {
             // NO-OP
         }
     }

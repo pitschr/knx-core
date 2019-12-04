@@ -1,7 +1,5 @@
 package li.pitschmann.knx.core.plugin.statistic;
 
-import javax.annotation.Nonnull;
-
 /**
  * Format for {@link FileStatisticPlugin}
  * <p/>
@@ -106,17 +104,15 @@ public enum FileStatisticFormat {
     private final String header;
     private final String template;
 
-    FileStatisticFormat(final @Nonnull String header, final @Nonnull String template) {
+    FileStatisticFormat(final String header, final String template) {
         this.header = header;
         this.template = template;
     }
 
-    @Nonnull
     public String getHeader() {
         return header;
     }
 
-    @Nonnull
     public String getTemplate() {
         return template;
     }

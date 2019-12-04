@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -67,7 +67,7 @@ public final class IntegerConfigValueTest {
         final IntegerConfigValue TEST_2 = new IntegerConfigValue("int-key2", () -> 17, (x) -> x % 2 == 0);
 
         @Override
-        public void onInitialization(@Nonnull KnxClient client) {
+        public void onInitialization(final KnxClient client) {
             // NO-OP
         }
     }

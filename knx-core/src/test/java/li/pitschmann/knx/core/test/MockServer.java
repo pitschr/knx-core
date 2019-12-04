@@ -37,7 +37,6 @@ import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.net.InetAddress;
 import java.nio.channels.MembershipKey;
@@ -102,7 +101,7 @@ public final class MockServer implements Runnable, Closeable {
      * @param mockServerAnnotation
      * @return started KNX Mock Server
      */
-    public static MockServer createStarted(final @Nonnull MockServerTest mockServerAnnotation) {
+    public static MockServer createStarted(final MockServerTest mockServerAnnotation) {
         return new MockServer(Objects.requireNonNull(mockServerAnnotation));
     }
 
@@ -238,7 +237,7 @@ public final class MockServer implements Runnable, Closeable {
      *
      * @return multicast address
      */
-    @Nonnull
+
     public InetAddress getMulticastAddress() {
         return Objects.requireNonNull(this.multicastAddress);
     }
@@ -498,7 +497,7 @@ public final class MockServer implements Runnable, Closeable {
      *
      * @param body
      */
-    public void addToOutbox(final @Nonnull Body body) {
+    public void addToOutbox(final Body body) {
         this.outbox.add(body);
     }
 

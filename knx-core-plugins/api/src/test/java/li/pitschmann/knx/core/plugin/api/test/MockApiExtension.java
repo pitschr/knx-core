@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -132,8 +131,7 @@ public final class MockApiExtension
      * @param baseKnxClient
      * @return an existing instance of {@link MockApiPlugin}
      */
-    @Nonnull
-    private MockApiPlugin getMockApiPlugin(final @Nonnull BaseKnxClient baseKnxClient) {
+    private MockApiPlugin getMockApiPlugin(final BaseKnxClient baseKnxClient) {
         try {
             final var internalClientField = BaseKnxClient.class.getDeclaredField("internalClient");
             internalClientField.setAccessible(true);

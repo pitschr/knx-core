@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -66,7 +65,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
     private RotatingFileOutputStream fos;
 
     @Override
-    public void onInitialization(final @Nonnull KnxClient client) {
+    public void onInitialization(final KnxClient client) {
         // configurations
         path = client.getConfig(FileStatisticPlugin.PATH);
         format = client.getConfig(FileStatisticPlugin.FORMAT);

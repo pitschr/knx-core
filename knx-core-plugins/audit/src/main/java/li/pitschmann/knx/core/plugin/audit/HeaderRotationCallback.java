@@ -6,7 +6,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,7 +28,7 @@ final class HeaderRotationCallback implements RotationCallback {
      *
      * @param headerLine the header for TSV file that should be applied for each rotation file
      */
-    HeaderRotationCallback(final @Nonnull String headerLine) {
+    HeaderRotationCallback(final String headerLine) {
         this.headerLineAsBytes = Bytes.concat(
                 headerLine.getBytes(StandardCharsets.UTF_8),
                 System.lineSeparator().getBytes(StandardCharsets.UTF_8)

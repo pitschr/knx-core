@@ -49,10 +49,6 @@
             <groupId>com.ximpleware</groupId>
             <artifactId>vtd-xml</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

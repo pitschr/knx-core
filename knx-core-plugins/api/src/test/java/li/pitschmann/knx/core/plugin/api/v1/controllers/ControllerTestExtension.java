@@ -46,7 +46,6 @@ import ro.pippo.core.Response;
 import ro.pippo.core.route.DefaultRouter;
 import ro.pippo.core.route.RouteContext;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
@@ -86,7 +85,7 @@ public final class ControllerTestExtension
      * @param <T>
      * @return new instance of {@link AbstractController}
      */
-    protected final <T extends AbstractController> T newController(final @Nonnull ControllerTest annotation) {
+    protected final <T extends AbstractController> T newController(final ControllerTest annotation) {
         // Load XML Project
         final XmlProject xmlProject;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {

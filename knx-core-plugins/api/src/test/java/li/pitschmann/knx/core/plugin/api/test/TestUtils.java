@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -47,7 +46,7 @@ public final class TestUtils {
      * @param response
      * @return json
      */
-    public static final String asJson(final @Nonnull Object response) {
+    public static final String asJson(final Object response) {
         return ApiGsonEngine.INSTANCE.toString(response);
     }
 

@@ -2,7 +2,6 @@ package li.pitschmann.knx.core.plugin.audit;
 
 import li.pitschmann.knx.core.utils.Json;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
@@ -94,7 +93,11 @@ public enum FileAuditFormat {
     private final String errorTemplate;
     private final Function<Object, String> escaper;
 
-    FileAuditFormat(final @Nonnull String header, final @Nonnull String signalTemplate, final @Nonnull String bodyTemplate, final String errorTemplate, final @Nonnull Function<Object, String> escaper) {
+    FileAuditFormat(final String header,
+                    final String signalTemplate,
+                    final String bodyTemplate,
+                    final String errorTemplate,
+                    final Function<Object, String> escaper) {
         this.header = header;
         this.signalTemplate = signalTemplate;
         this.bodyTemplate = bodyTemplate;
@@ -102,27 +105,22 @@ public enum FileAuditFormat {
         this.escaper = escaper;
     }
 
-    @Nonnull
     public String getHeader() {
         return header;
     }
 
-    @Nonnull
     public String getSignalTemplate() {
         return signalTemplate;
     }
 
-    @Nonnull
     public String getBodyTemplate() {
         return bodyTemplate;
     }
 
-    @Nonnull
     public String getErrorTemplate() {
         return errorTemplate;
     }
 
-    @Nonnull
     public String escape(final @Nullable Object str) {
         return str == null ? "" : escaper.apply(str);
     }
