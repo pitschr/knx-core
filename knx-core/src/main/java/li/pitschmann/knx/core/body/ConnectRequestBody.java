@@ -26,7 +26,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 
 /**
@@ -66,7 +66,7 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     private final HPAI dataEndpoint;
     private final ConnectionRequestInformation connectionRequestInformation;
 
-    private ConnectRequestBody(final @Nonnull byte[] bytes) {
+    private ConnectRequestBody(final byte[] bytes) {
         super(bytes);
 
         this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 0, 8));
@@ -80,8 +80,8 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
      * @param bytes complete byte array for {@link ConnectRequestBody}
      * @return a  new immutable {@link ConnectRequestBody}
      */
-    @Nonnull
-    public static ConnectRequestBody of(final @Nonnull byte[] bytes) {
+
+    public static ConnectRequestBody of(final byte[] bytes) {
         return new ConnectRequestBody(bytes);
     }
 
@@ -93,8 +93,8 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
      * @param cri
      * @return a  new immutable {@link ConnectRequestBody}
      */
-    @Nonnull
-    public static ConnectRequestBody of(final @Nonnull HPAI controlEndpoint, final @Nonnull HPAI dataEndpoint, final @Nonnull ConnectionRequestInformation cri) {
+
+    public static ConnectRequestBody of(final HPAI controlEndpoint, final HPAI dataEndpoint, final ConnectionRequestInformation cri) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -118,7 +118,7 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -126,28 +126,28 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
         }
     }
 
-    @Nonnull
+
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECT_REQUEST;
     }
 
-    @Nonnull
+
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
-    @Nonnull
+
     public HPAI getDataEndpoint() {
         return this.dataEndpoint;
     }
 
-    @Nonnull
+
     public ConnectionRequestInformation getConnectionRequestInformation() {
         return this.connectionRequestInformation;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

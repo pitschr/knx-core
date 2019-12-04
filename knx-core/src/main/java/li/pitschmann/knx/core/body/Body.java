@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.header.Header;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Bytes;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * Marker interface for Body
@@ -37,7 +37,7 @@ public interface Body extends MultiRawDataAware {
      *
      * @return {@link ServiceType}
      */
-    @Nonnull
+
     ServiceType getServiceType();
 
     /**
@@ -46,7 +46,7 @@ public interface Body extends MultiRawDataAware {
      * @param withHeader if {@code true} then returned byte array will also contain the KNX header array
      * @return byte array
      */
-    @Nonnull
+
     default byte[] getRawData(final boolean withHeader) {
         if (withHeader) {
             return Bytes.concat(Header.of(this).getRawData(), getRawData());

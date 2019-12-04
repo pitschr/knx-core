@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum AddressType implements KnxByteEnum {
@@ -51,7 +50,7 @@ public enum AddressType implements KnxByteEnum {
      * @return existing {@link AddressType}, or {@link KnxEnumNotFoundException} if no {@link AddressType}
      * for given {@code code} exists
      */
-    @Nonnull
+
     public static AddressType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(AddressType.class, code));
@@ -62,13 +61,13 @@ public enum AddressType implements KnxByteEnum {
         return this.code;
     }
 
-    @Nonnull
+
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

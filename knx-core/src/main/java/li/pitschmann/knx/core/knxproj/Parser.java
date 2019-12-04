@@ -30,7 +30,7 @@ import li.pitschmann.knx.core.utils.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,8 +83,7 @@ final class Parser {
      * @param path location of *.knxproj file
      * @return KNX project
      */
-    @Nonnull
-    static XmlProject parse(final @Nonnull Path path) {
+    static XmlProject parse(final Path path) {
         Preconditions.checkArgument(Files.isReadable(path),
                 "File '{}' doesn't exists or is not readable.", path);
         Preconditions.checkArgument(path.toString().toLowerCase().endsWith(FILE_EXTENSION),
@@ -130,8 +129,7 @@ final class Parser {
      * @return KNX project
      * @throws VTDException exception from VTD-XML
      */
-    @Nonnull
-    private static XmlProject getKnxProjectInformation(final @Nonnull VTDNav originalVTDNav) throws VTDException {
+    private static XmlProject getKnxProjectInformation(final VTDNav originalVTDNav) throws VTDException {
         final var vtdNav = originalVTDNav.duplicateNav();
         final var project = new XmlProject();
 
@@ -167,8 +165,7 @@ final class Parser {
      * @return list of {@link XmlGroupRange}
      * @throws VTDException exception from VTD-XML
      */
-    @Nonnull
-    private static List<XmlGroupRange> parseGroupRanges(final @Nonnull VTDNav originalVTDNav) throws VTDException {
+    private static List<XmlGroupRange> parseGroupRanges(final VTDNav originalVTDNav) throws VTDException {
         final var vtdNav = originalVTDNav.duplicateNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
         final var groupRanges = new LinkedList<XmlGroupRange>();
@@ -228,8 +225,7 @@ final class Parser {
      * @return list of {@link XmlGroupAddress}
      * @throws VTDException exception from VTD-XML
      */
-    @Nonnull
-    private static List<XmlGroupAddress> parseGroupAddresses(final @Nonnull VTDNav originalVTDNav) throws VTDException {
+    private static List<XmlGroupAddress> parseGroupAddresses(final VTDNav originalVTDNav) throws VTDException {
         final var vtdNav = originalVTDNav.duplicateNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
         final var groupAddresses = new LinkedList<XmlGroupAddress>();
@@ -275,7 +271,7 @@ final class Parser {
      *
      * @param xmlProject
      */
-    private static void linkGroupRanges(final @Nonnull XmlProject xmlProject) {
+    private static void linkGroupRanges(final XmlProject xmlProject) {
         // create temporary map of parent group range (key) and list of child group ranges (values)
         final var tmp = new LinkedHashMap<String, List<XmlGroupRange>>();
         for (final var xmlGroupRange : xmlProject.getGroupRanges()) {
@@ -296,7 +292,7 @@ final class Parser {
      *
      * @param xmlProject
      */
-    private static void linkGroupAddresses(final @Nonnull XmlProject xmlProject) {
+    private static void linkGroupAddresses(final XmlProject xmlProject) {
         // create temporary map of group range (key) and child group addresses (values)
         final var tmp = new LinkedHashMap<String, List<XmlGroupAddress>>();
         for (final var xmlGroupAddress : xmlProject.getGroupAddresses()) {
@@ -318,8 +314,8 @@ final class Parser {
      * @param originalVTDNav original VTDNav instance
      * @throws VTDException exception from VTD-XML
      */
-    private static void updateGroupAddressWithMetadatas(final @Nonnull XmlProject xmlProject,
-                                                        final @Nonnull VTDNav originalVTDNav) throws VTDException {
+    private static void updateGroupAddressWithMetadatas(final XmlProject xmlProject,
+                                                        final VTDNav originalVTDNav) throws VTDException {
         final var vtdNav = originalVTDNav.duplicateNav();
         final var vtdAutoPilot = new AutoPilot(vtdNav);
 
@@ -401,10 +397,9 @@ final class Parser {
      * @param throwable exception to thrown in case the attribute doesn't exists
      * @return value of attribute, otherwise {@link KnxProjectParserException}
      */
-    @Nonnull
-    private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
-                                             final @Nonnull String attribute,
-                                             final @Nonnull Supplier<KnxProjectParserException> throwable) {
+    private static String readAttributeValue(final VTDNav vtdNav,
+                                             final String attribute,
+                                             final Supplier<KnxProjectParserException> throwable) {
         final var value = readAttributeValue(vtdNav, attribute);
         if (value == null) {
             throw throwable.get();
@@ -420,8 +415,8 @@ final class Parser {
      * @return value of attribute, otherwise {@code null}
      */
     @Nullable
-    private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
-                                             final @Nonnull String attribute) {
+    private static String readAttributeValue(final VTDNav vtdNav,
+                                             final String attribute) {
         return readAttributeValue(vtdNav, attribute, (String) null);
     }
 
@@ -433,8 +428,8 @@ final class Parser {
      * @return value of attribute, otherwise {@code defaultValue}
      */
     @Nullable
-    private static String readAttributeValue(final @Nonnull VTDNav vtdNav,
-                                             final @Nonnull String attribute,
+    private static String readAttributeValue(final VTDNav vtdNav,
+                                             final String attribute,
                                              final @Nullable String defaultValue) {
         try {
             final var index = vtdNav.getAttrVal(Objects.requireNonNull(attribute));
@@ -455,9 +450,8 @@ final class Parser {
      * @throws IOException
      * @throws ParseException
      */
-    @Nonnull
-    private static VTDNav toVTDNav(final @Nonnull ZipFile zipFile,
-                                   final @Nonnull String filePathRegEx) throws IOException, ParseException {
+    private static VTDNav toVTDNav(final ZipFile zipFile,
+                                   final String filePathRegEx) throws IOException, ParseException {
         Preconditions.checkNonNull(zipFile);
         Preconditions.checkNonNull(filePathRegEx);
         // find file that matches filePathRegEx in ZIP file
@@ -486,7 +480,7 @@ final class Parser {
 //     * @return string representation of current element incl. attributes and values
 //     * @throws VTDException
 //     */
-//    private static String getVTDNavDebugString(final @Nonnull VTDNav vtdNav) throws VTDException {
+//    private static String getVTDNavDebugString(final VTDNav vtdNav) throws VTDException {
 //        final var sb = new StringBuilder();
 //        sb.append(vtdNav.toString(vtdNav.getCurrentIndex())).append('{');
 //        int attrCount = vtdNav.getAttrCount();

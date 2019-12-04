@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
@@ -61,7 +60,7 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
      * @param sceneNumber
      * @return byte array
      */
-    @Nonnull
+
     public static byte[] toByteArray(final int sceneNumber) {
         return new byte[]{(byte) sceneNumber};
     }
@@ -70,19 +69,19 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
         return this.sceneNumber;
     }
 
-    @Nonnull
+
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.sceneNumber);
     }
 
-    @Nonnull
+
     @Override
     public String toText() {
         return "scene " + getSceneNumber();
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

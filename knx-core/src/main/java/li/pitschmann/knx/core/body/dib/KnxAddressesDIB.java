@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +70,7 @@ public final class KnxAddressesDIB extends AbstractDIB {
     private final IndividualAddress knxAddress;
     private final List<IndividualAddress> additionalAddresses;
 
-    private KnxAddressesDIB(final @Nonnull byte[] rawData) {
+    private KnxAddressesDIB(final byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -93,13 +93,13 @@ public final class KnxAddressesDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link KnxAddressesDIB}
      * @return a new immutable {@link KnxAddressesDIB}
      */
-    @Nonnull
-    public static KnxAddressesDIB of(final @Nonnull byte[] bytes) {
+
+    public static KnxAddressesDIB of(final byte[] bytes) {
         return new KnxAddressesDIB(bytes);
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
         } else if (rawData.length % 2 != 0) {
@@ -108,17 +108,17 @@ public final class KnxAddressesDIB extends AbstractDIB {
         }
     }
 
-    @Nonnull
+
     public IndividualAddress getKnxAddress() {
         return this.knxAddress;
     }
 
-    @Nonnull
+
     public List<IndividualAddress> getAdditionalAddresses() {
         return this.additionalAddresses;
     }
 
-    @Nonnull
+
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

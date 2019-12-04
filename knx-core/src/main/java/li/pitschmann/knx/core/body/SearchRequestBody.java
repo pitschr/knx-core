@@ -25,7 +25,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * Body for Search Request
@@ -49,7 +49,7 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
     private static final SearchRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI discoveryEndpoint;
 
-    private SearchRequestBody(final @Nonnull byte[] bytes) {
+    private SearchRequestBody(final byte[] bytes) {
         super(bytes);
 
         this.discoveryEndpoint = HPAI.of(bytes);
@@ -61,8 +61,8 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * @param bytes complete byte array for {@link SearchRequestBody}
      * @return a new immutable {@link SearchRequestBody}
      */
-    @Nonnull
-    public static SearchRequestBody of(final @Nonnull byte[] bytes) {
+
+    public static SearchRequestBody of(final byte[] bytes) {
         return new SearchRequestBody(bytes);
     }
 
@@ -73,7 +73,7 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      *
      * @return a new immutable {@link SearchRequestBody}
      */
-    @Nonnull
+
     public static SearchRequestBody useDefault() {
         return DEFAULT;
     }
@@ -84,8 +84,8 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * @param discoveryEndpoint
      * @return a new immutable {@link SearchRequestBody}
      */
-    @Nonnull
-    public static SearchRequestBody of(final @Nonnull HPAI discoveryEndpoint) {
+
+    public static SearchRequestBody of(final HPAI discoveryEndpoint) {
         // validate
         if (discoveryEndpoint == null) {
             throw new KnxNullPointerException("discoveryEndpoint");
@@ -94,7 +94,7 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != 8) {
@@ -103,18 +103,18 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
         }
     }
 
-    @Nonnull
+
     @Override
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_REQUEST;
     }
 
-    @Nonnull
+
     public HPAI getDiscoveryEndpoint() {
         return this.discoveryEndpoint;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

@@ -35,7 +35,7 @@ import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;
@@ -69,7 +69,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     private final AbstractInboxQueue<? extends ByteChannel> inboxQueue;
     private final AbstractOutboxQueue<? extends ByteChannel> outboxQueue;
 
-    protected AbstractChannelCommunicator(final @Nonnull InternalKnxClient client) {
+    protected AbstractChannelCommunicator(final InternalKnxClient client) {
         this.client = Objects.requireNonNull(client);
 
         this.channel = Objects.requireNonNull(newChannel(this.client));
@@ -100,8 +100,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param client
      * @return A new channel
      */
-    @Nonnull
-    protected abstract SelectableChannel newChannel(final @Nonnull InternalKnxClient client);
+
+    protected abstract SelectableChannel newChannel(final InternalKnxClient client);
 
     /**
      * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
@@ -110,9 +110,9 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param channel
      * @return new instance of {@link AbstractInboxQueue}
      */
-    @Nonnull
-    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final @Nonnull InternalKnxClient client,
-                                                                         final @Nonnull SelectableChannel channel) {
+
+    protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final InternalKnxClient client,
+                                                                         final SelectableChannel channel) {
         return new DefaultInboxQueue(client, channel);
     }
 
@@ -123,13 +123,13 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param channel
      * @return new instance of {@link AbstractOutboxQueue}
      */
-    @Nonnull
-    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final @Nonnull InternalKnxClient client,
-                                                                           final @Nonnull SelectableChannel channel) {
+
+    protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final InternalKnxClient client,
+                                                                           final SelectableChannel channel) {
         return new DefaultOutboxQueue(client, channel);
     }
 
-    @Nonnull
+
     public SelectableChannel getChannel() {
         return channel;
     }
@@ -176,14 +176,14 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param body
      * @return {@code true} if compatible, otherwise {@code false}
      */
-    public abstract boolean isCompatible(final @Nonnull Body body);
+    public abstract boolean isCompatible(final Body body);
 
     /**
      * Send {@link Body} to the outbox queue
      *
      * @param body
      */
-    public final void send(final @Nonnull Body body) {
+    public final void send(final Body body) {
         this.outboxQueue.send(Objects.requireNonNull(body));
         log.debug("Body added to outbox queue: {}", body);
     }
@@ -197,8 +197,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
-    @Nonnull
-    public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody,
+
+    public final <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody,
                                                                     final long msTimeout) {
         return send(requestBody, null, msTimeout);
     }
@@ -214,8 +214,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
-    @Nonnull
-    public final <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody,
+
+    public final <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody,
                                                                     final @Nullable Predicate<T> predicate,
                                                                     final long msTimeout) {
         return CompletableFuture
@@ -237,7 +237,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received (timeout) or no response that meets the preconditions was received
      */
     @Nullable
-    private final <T extends ResponseBody> T sendAndWaitInternal(final @Nonnull RequestBody requestBody,
+    private final <T extends ResponseBody> T sendAndWaitInternal(final RequestBody requestBody,
                                                                  final @Nullable Predicate<T> predicate,
                                                                  final long msTimeout) {
         final var eventPool = this.client.getEventPool();

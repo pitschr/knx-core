@@ -31,11 +31,12 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -72,7 +73,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     private final KnxAddressesDIB knxAddresses;
     private final ManufacturerDataDIB manufacturerData;
 
-    private DescriptionResponseBody(final @Nonnull byte[] bytes) {
+    private DescriptionResponseBody(final byte[] bytes) {
         super(bytes);
 
         // mandatory
@@ -99,8 +100,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param bytes complete byte array for {@link DescriptionResponseBody}
      * @return a new immutable {@link DescriptionResponseBody}
      */
-    @Nonnull
-    public static DescriptionResponseBody of(final @Nonnull byte[] bytes) {
+
+    public static DescriptionResponseBody of(final byte[] bytes) {
         return new DescriptionResponseBody(bytes);
     }
 
@@ -111,9 +112,9 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param supportedDeviceFamilies
      * @return a new immutable {@link DescriptionResponseBody}
      */
-    @Nonnull
-    public static DescriptionResponseBody of(final @Nonnull DeviceHardwareInformationDIB deviceHardwareInformation,
-                                             final @Nonnull SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
+
+    public static DescriptionResponseBody of(final DeviceHardwareInformationDIB deviceHardwareInformation,
+                                             final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
         // validate
         if (deviceHardwareInformation == null) {
             throw new KnxNullPointerException("deviceHardwareInformation");
@@ -137,7 +138,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else {
@@ -161,7 +162,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param rawData
      * @return positive number if found, otherwise {@code -1}.
      */
-    private int indexOfDIB(final @Nonnull DescriptionType descriptionType, final @Nonnull byte[] rawData) {
+    private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
         var index = -1;
         for (var i = 0; i < rawData.length; ) {
             final var dibLength = Bytes.toUnsignedInt(rawData[i]);
@@ -191,7 +192,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param rawData
      * @return byte array if found, otherwise {@code null}
      */
-    private byte[] getArrayPartByDIB(final @Nonnull DescriptionType descriptionType, final @Nonnull byte[] rawData) {
+    private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {
+        Preconditions.checkNonNull(descriptionType);
         final var index = this.indexOfDIB(descriptionType, rawData);
 
         if (index < 0) {
@@ -212,18 +214,18 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
         }
     }
 
-    @Nonnull
+
     @Override
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_RESPONSE;
     }
 
-    @Nonnull
+
     public DeviceHardwareInformationDIB getDeviceInformation() {
         return this.deviceHardwareInformation;
     }
 
-    @Nonnull
+
     public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
         return this.supportedDeviceFamilies;
     }
@@ -248,7 +250,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
         return this.manufacturerData;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

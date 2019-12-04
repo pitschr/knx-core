@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -64,7 +64,7 @@ public enum XmlGroupAddressStyle {
      * @param code
      * @param resolver
      */
-    XmlGroupAddressStyle(final @Nonnull String code, final @Nonnull String friendlyName, final @Nonnull Function<GroupAddress, String> resolver) {
+    XmlGroupAddressStyle(final String code, final String friendlyName, final Function<GroupAddress, String> resolver) {
         this.code = code;
         this.friendlyName = friendlyName;
         this.resolver = resolver;
@@ -79,7 +79,6 @@ public enum XmlGroupAddressStyle {
      * @return instance of {@link ServiceType} otherwise {@link KnxEnumNotFoundException}
      * if the given {@code code} is not registered one
      */
-    @Nonnull
     public static XmlGroupAddressStyle parse(final @Nullable String id) {
         return Arrays.stream(values()).filter(x -> x.code.equals(id)).findFirst()
                 .orElseThrow(() -> new KnxProjectParserException("No group address style found for: " + id));
@@ -90,12 +89,15 @@ public enum XmlGroupAddressStyle {
      *
      * @return code
      */
-    @Nonnull
     public String getCode() {
         return this.code;
     }
 
-    @Nonnull
+    /**
+     * Returns the friendly name of group address style
+     *
+     * @return human-friendly name
+     */
     public String getFriendlyName() {
         return this.friendlyName;
     }
@@ -107,12 +109,10 @@ public enum XmlGroupAddressStyle {
      * @param groupAddress group address to be converted
      * @return string representation of {@link GroupAddress}
      */
-    @Nonnull
-    public String toString(final @Nonnull GroupAddress groupAddress) {
+    public String toString(final GroupAddress groupAddress) {
         return this.resolver.apply(Objects.requireNonNull(groupAddress));
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

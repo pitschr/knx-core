@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.plugin;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -12,9 +12,9 @@ import java.util.function.Supplier;
  */
 public final class EnumConfigValue<E extends Enum<E>> extends PluginConfigValue<E> {
 
-    public EnumConfigValue(final @Nonnull String configName,
-                           final @Nonnull Class<E> enumClass,
-                           final @Nonnull Supplier<E> defaultSupplier) {
+    public EnumConfigValue(final String configName,
+                           final Class<E> enumClass,
+                           final Supplier<E> defaultSupplier) {
         super(configName, enumClass, createConverter(enumClass), defaultSupplier, Objects::nonNull);
     }
 

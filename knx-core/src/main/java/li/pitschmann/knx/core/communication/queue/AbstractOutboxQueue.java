@@ -26,7 +26,7 @@ import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -49,7 +49,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
      * @param client  internal KNX client for internal actions like informing plug-ins
      * @param channel channel of communication
      */
-    public AbstractOutboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+    public AbstractOutboxQueue(final InternalKnxClient client, final SelectableChannel channel) {
         super(client, channel);
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
     }
 
     @Override
-    protected boolean valid(final @Nonnull SelectionKey key) {
+    protected boolean valid(final SelectionKey key) {
         return key.isValid() && key.isWritable();
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
      * @throws InterruptedException if interrupted while waiting
      * @throws IOException          exception while writing to {@link ByteChannel}
      */
-    protected void action(final @Nonnull SelectionKey key) throws InterruptedException, IOException {
+    protected void action(final SelectionKey key) throws InterruptedException, IOException {
         log.trace("Method 'action(SelectionKey)' called.");
 
         // get body from queue
@@ -116,7 +116,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
      * @param body body to be sent
      * @return {@code true} (as specified by {@link Collection#add})
      */
-    public boolean send(final @Nonnull Body body) {
+    public boolean send(final Body body) {
         return add(body);
     }
 

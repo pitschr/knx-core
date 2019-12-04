@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.config;
 
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
@@ -45,10 +44,10 @@ public class ConfigValue<T> {
     private final Predicate<T> predicate;
 
     protected ConfigValue(
-            final @Nonnull String key,
-            final @Nonnull Class<T> classType,
-            final @Nonnull Function<String, T> converter,
-            final @Nonnull Supplier<T> defaultSupplier,
+            final String key,
+            final Class<T> classType,
+            final Function<String, T> converter,
+            final Supplier<T> defaultSupplier,
             final @Nullable Predicate<T> predicate) {
         this.key = Objects.requireNonNull(key).toLowerCase();
         this.classType = Objects.requireNonNull(classType);
@@ -62,22 +61,22 @@ public class ConfigValue<T> {
      *
      * @return
      */
-    @Nonnull
+
     public String getKey() {
         return key;
     }
 
-    @Nonnull
+
     public Class<T> getClassType() {
         return classType;
     }
 
-    @Nonnull
+
     public T getDefaultValue() {
         return defaultSupplier.get();
     }
 
-    @Nonnull
+
     public Function<String, T> getConverter() {
         return this.converter;
     }
@@ -98,8 +97,8 @@ public class ConfigValue<T> {
         if (value == null) {
             return false;
         }
-        final var predicate = getPredicate();
-        return predicate == null || predicate.test(value);
+        final var tmpPredicate = getPredicate();
+        return tmpPredicate == null || tmpPredicate.test(value);
     }
 
     /**
@@ -108,8 +107,8 @@ public class ConfigValue<T> {
      * @param value
      * @return value with an instance type of {@code <T>}
      */
-    @Nonnull
-    public T convert(final @Nonnull String value) {
+
+    public T convert(final String value) {
         return this.converter.apply(value);
     }
 

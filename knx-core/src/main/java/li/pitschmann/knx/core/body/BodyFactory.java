@@ -25,7 +25,7 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 
 /**
@@ -49,8 +49,8 @@ public final class BodyFactory {
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
-    @Nonnull
-    public static <T extends Body> T of(final @Nonnull byte[] headerAndBodyBytes) {
+
+    public static <T extends Body> T of(final byte[] headerAndBodyBytes) {
         final var header = Header.of(headerAndBodyBytes);
         return of(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
     }
@@ -65,8 +65,8 @@ public final class BodyFactory {
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
-    @Nonnull
-    public static <T extends Body> T of(final @Nonnull Header header, final @Nonnull byte[] bodyBytes) {
+
+    public static <T extends Body> T of(final Header header, final byte[] bodyBytes) {
         return of(header.getServiceType(), bodyBytes);
     }
 
@@ -81,8 +81,8 @@ public final class BodyFactory {
      * @throws KnxUnknownBodyException in case the body is not known
      */
     @SuppressWarnings("unchecked")
-    @Nonnull
-    public static <T extends Body> T of(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bodyBytes) {
+
+    public static <T extends Body> T of(final ServiceType serviceType, final byte[] bodyBytes) {
         Preconditions.checkNonNull(serviceType);
         Preconditions.checkNonNull(bodyBytes);
 

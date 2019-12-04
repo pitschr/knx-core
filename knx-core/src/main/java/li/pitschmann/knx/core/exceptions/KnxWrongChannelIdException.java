@@ -20,7 +20,7 @@ package li.pitschmann.knx.core.exceptions;
 
 import li.pitschmann.knx.core.ChannelIdAware;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * Exception in case we received a packet which doesn't belong to our channel id. This exception can be used for
@@ -35,7 +35,7 @@ public final class KnxWrongChannelIdException extends KnxCommunicationException 
      * @param channelIdAware
      * @param expectedChannelId
      */
-    public KnxWrongChannelIdException(final @Nonnull ChannelIdAware channelIdAware, final int expectedChannelId) {
+    public KnxWrongChannelIdException(final ChannelIdAware channelIdAware, final int expectedChannelId) {
         super(String.format("Wrong channel id '%s' received, expected channel id is '%s': %s", channelIdAware.getChannelId(), expectedChannelId, channelIdAware));
     }
 }

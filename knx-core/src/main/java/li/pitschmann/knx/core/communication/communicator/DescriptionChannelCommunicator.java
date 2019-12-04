@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.body.DescriptionResponseBody;
 import li.pitschmann.knx.core.communication.ChannelFactory;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.nio.channels.SelectableChannel;
 
@@ -33,13 +33,13 @@ import java.nio.channels.SelectableChannel;
  * @author PITSCHR
  */
 public final class DescriptionChannelCommunicator extends AbstractChannelCommunicator {
-    DescriptionChannelCommunicator(final @Nonnull InternalKnxClient client) {
+    DescriptionChannelCommunicator(final InternalKnxClient client) {
         super(client);
     }
 
-    @Nonnull
+
     @Override
-    protected SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
+    protected SelectableChannel newChannel(final InternalKnxClient client) {
         return ChannelFactory.newDescriptionChannel(client);
     }
 

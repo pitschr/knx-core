@@ -29,7 +29,7 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;
@@ -44,7 +44,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     private static final Logger log = LoggerFactory.getLogger(TunnelingRequestTask.class);
     private final InternalKnxClient client;
 
-    public TunnelingRequestTask(final @Nonnull InternalKnxClient client) {
+    public TunnelingRequestTask(final InternalKnxClient client) {
         this.client = Objects.requireNonNull(client);
     }
 
@@ -105,7 +105,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(final @Nonnull Subscription subscription) {
+    public void onSubscribe(final Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 }

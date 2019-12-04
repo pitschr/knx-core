@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -209,7 +208,6 @@ public enum ServiceType implements KnxBytesEnum {
      * @return instance of {@link ServiceType} otherwise {@link KnxEnumNotFoundException}
      * if given {@code code} is not known
      */
-    @Nonnull
     public static ServiceType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ServiceType.class, code));
@@ -230,13 +228,11 @@ public enum ServiceType implements KnxBytesEnum {
         return new byte[]{(byte) (this.code >>> 8), (byte) this.code};
     }
 
-    @Nonnull
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
-    @Nonnull
     public ServiceTypeFamily getFamily() {
         return this.family;
     }
@@ -256,7 +252,6 @@ public enum ServiceType implements KnxBytesEnum {
      * @return the response {@link ServiceType}, else {@link KnxServiceTypeHasNoResponseIdentifier}
      * @throws KnxServiceTypeHasNoResponseIdentifier when no response identifier is defined.
      */
-    @Nonnull
     public ServiceType getResponseIdentifier() {
         if (!this.hasResponseIdentifier()) {
             throw new KnxServiceTypeHasNoResponseIdentifier(this);
@@ -264,7 +259,6 @@ public enum ServiceType implements KnxBytesEnum {
         return this.responseIdentifier;
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

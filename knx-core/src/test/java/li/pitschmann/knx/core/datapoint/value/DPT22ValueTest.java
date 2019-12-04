@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.datapoint.value;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.ChannelActivation16;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.Media;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.StatusDHWController;
-import li.pitschmann.knx.core.datapoint.value.DPT22Value.StatusRoomHeatinCoolingController;
+import li.pitschmann.knx.core.datapoint.value.DPT22Value.StatusRoomHeatingCoolingController;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public final class DPT22ValueTest {
     }
 
     /**
-     * Test {@link StatusRoomHeatinCoolingController}
+     * Test {@link StatusRoomHeatingCoolingController}
      */
     @Test
     public void testStatusRoomHeatinCoolingController() {
@@ -95,9 +95,9 @@ public final class DPT22ValueTest {
     }
 
     private void assertStatusRoomHeatinCoolingController(final byte[] bytes, final boolean[] bool) {
-        final var dptValue = new StatusRoomHeatinCoolingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5],
+        final var dptValue = new StatusRoomHeatingCoolingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5],
                 bool[6], bool[7], bool[8], bool[9], bool[10], bool[11], bool[12], bool[13], bool[14]);
-        assertThat(new StatusRoomHeatinCoolingController(bytes)).isEqualTo(dptValue);
+        assertThat(new StatusRoomHeatingCoolingController(bytes)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
         assertThat(dptValue.isStatusEcoHeating()).isEqualTo(bool[1]);

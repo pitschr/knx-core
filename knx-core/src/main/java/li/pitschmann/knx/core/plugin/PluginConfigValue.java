@@ -2,7 +2,7 @@ package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.config.ConfigValue;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -22,10 +22,10 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
     private final String key;
 
     public PluginConfigValue(
-            final @Nonnull String configName,
-            final @Nonnull Class<T> classType,
-            final @Nonnull Function<String, T> converter,
-            final @Nonnull Supplier<T> defaultSupplier,
+            final String configName,
+            final Class<T> classType,
+            final Function<String, T> converter,
+            final Supplier<T> defaultSupplier,
             final @Nullable Predicate<T> predicate) {
         super(
                 // leave it empty -> we will overwrite the key anyway!
@@ -60,7 +60,6 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
      *
      * @return
      */
-    @Nonnull
     @Override
     public String getKey() {
         return key;

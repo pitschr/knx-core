@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
@@ -47,7 +46,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
     private final int rawUnsignedValue;
     private final byte[] byteArray;
 
-    public DPT7Value(final @Nonnull DPT7 dpt, final @Nonnull byte[] bytes) {
+    public DPT7Value(final DPT7 dpt, final byte[] bytes) {
         super(dpt);
         Preconditions.checkArgument(bytes.length == 2);
         // unsigned value
@@ -55,7 +54,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
         this.byteArray = bytes;
     }
 
-    public DPT7Value(final @Nonnull DPT7 dpt, final int value) {
+    public DPT7Value(final DPT7 dpt, final int value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.rawUnsignedValue = value;
@@ -68,7 +67,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
      * @param value
      * @return byte array
      */
-    @Nonnull
+
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) (value >>> 8), (byte) value};
     }
@@ -86,19 +85,19 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
         return this.rawUnsignedValue;
     }
 
-    @Nonnull
+
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-    @Nonnull
+
     @Override
     public String toText() {
         return getValueAsText(getUnsignedValue());
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

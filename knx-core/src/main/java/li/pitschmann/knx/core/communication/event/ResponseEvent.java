@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.communication.event;
 import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.time.Instant;
 import java.util.Objects;
 
@@ -36,11 +36,21 @@ public class ResponseEvent<T extends ResponseBody> {
     private T response;
 
     /**
+     * Creates a new response event (package-protected)
+     * to be called by {@link KnxSingleEvent} or {@link KnxMultiEvent}
+     *
+     * @param response
+     */
+    ResponseEvent(final T response) {
+        this.responseTime = Instant.now();
+        this.response = response;
+    }
+
+    /**
      * Returns the time when last response was set.
      *
      * @return An {@link Instant}
      */
-    @Nonnull
     public Instant getResponseTime() {
         return this.responseTime;
     }
@@ -50,22 +60,10 @@ public class ResponseEvent<T extends ResponseBody> {
      *
      * @return The response body which was set last time
      */
-    @Nonnull
     public T getResponse() {
         return this.response;
     }
 
-    /**
-     * Sets the response and update the response time to now
-     *
-     * @param response the response body
-     */
-    public void setResponse(final @Nonnull T response) {
-        this.responseTime = Instant.now();
-        this.response = Objects.requireNonNull(response);
-    }
-
-    @Nonnull
     @Override
     public String toString() {
         return Strings.toStringHelper(this) //

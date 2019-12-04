@@ -26,8 +26,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
-
 public final class ControlByte2 extends AbstractSingleRawData {
     private static final int DEFAULT_HOP_COUNT = 6;
     private static final int DEFAULT_FRAME_FORMAT = 0;
@@ -57,7 +55,6 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * @param b byte
      * @return a new immutable {@link ControlByte2}
      */
-    @Nonnull
     public static ControlByte2 of(final byte b) {
         return new ControlByte2(b);
     }
@@ -74,8 +71,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * @param knxAddress to distinguish which address type from destination address should be used.
      * @return a new immutable {@link ControlByte1} with default hop count and frame format
      */
-    @Nonnull
-    public static ControlByte2 of(final @Nonnull KnxAddress knxAddress) {
+    public static ControlByte2 of(final KnxAddress knxAddress) {
         // validate
         if (knxAddress == null) {
             throw new KnxNullPointerException("knxAddress");
@@ -91,8 +87,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * @param frameFormat
      * @return a new immutable {@link ControlByte2}
      */
-    @Nonnull
-    public static ControlByte2 of(final @Nonnull AddressType addressType, final int hopCount, final int frameFormat) {
+    public static ControlByte2 of(final AddressType addressType, final int hopCount, final int frameFormat) {
         // validate
         if (addressType == null) {
             throw new KnxNullPointerException("addressType");
@@ -124,7 +119,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
         // nothing to be validated
     }
 
-    @Nonnull
+
     public AddressType getAddressType() {
         return this.addressType;
     }
@@ -137,7 +132,7 @@ public final class ControlByte2 extends AbstractSingleRawData {
         return this.extendedFrameFormat;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

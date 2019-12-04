@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.plugin;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  */
 public final class PathConfigValue extends PluginConfigValue<Path> {
 
-    public PathConfigValue(final @Nonnull String configName, final @Nonnull Supplier<Path> defaultSupplier, final @Nullable Predicate<Path> predicate) {
+    public PathConfigValue(final String configName, final Supplier<Path> defaultSupplier, final @Nullable Predicate<Path> predicate) {
         super(configName, Path.class, Paths::get, defaultSupplier, predicate);
     }
 

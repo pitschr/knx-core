@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -93,7 +92,7 @@ public final class DataPointTypeRegistry {
      *
      * @param dataPointTypeClass
      */
-    public static void registerDataPointType(final @Nonnull Class<?> dataPointTypeClass) {
+    public static void registerDataPointType(final Class<?> dataPointTypeClass) {
         log.debug("Register Data Point Type Class: {}", dataPointTypeClass);
 
         // find data point types by enumeration classes (e.g. DPT20, DPT23, ...)
@@ -111,7 +110,7 @@ public final class DataPointTypeRegistry {
      *
      * @param clazz Class must be an enumeration class and it must implements the {@link DataPointTypeEnum} interface
      */
-    private static <T extends Enum<T> & DataPointTypeEnum<T>> void registerDataPointTypeEnums(final @Nonnull Class<?> clazz) {
+    private static <T extends Enum<T> & DataPointTypeEnum<T>> void registerDataPointTypeEnums(final Class<?> clazz) {
         // we can cast safely here
         @SuppressWarnings("unchecked") final var enumInnerClass = (Class<T>) clazz;
 
@@ -119,7 +118,7 @@ public final class DataPointTypeRegistry {
         // inner class is enum class and has data point type annotation
         log.debug("Inner Class: {} [id={}, description={}]", enumInnerClass, classAnnotation.id(), classAnnotation.description());
         Preconditions.checkArgument(!dataPointTypeMap.containsKey(classAnnotation.id()),
-                String.format("Data point type key '{}' is already registered. Please check your DPT implementation!", classAnnotation.id()));
+                String.format("Data point type key '%s' is already registered. Please check your DPT implementation!", classAnnotation.id()));
         final var dptEnum = new DPTEnum<T>(classAnnotation.id(), classAnnotation.description());
 
         // iterate for all enum constant fields which have the desired annotation
@@ -152,7 +151,7 @@ public final class DataPointTypeRegistry {
      *
      * @param clazz
      */
-    private static void registerDataPointTypes(final @Nonnull Class<?> clazz) {
+    private static void registerDataPointTypes(final Class<?> clazz) {
         var first = true;
         // iterate for all public/static/final fields
         for (final var field : Stream
@@ -194,8 +193,8 @@ public final class DataPointTypeRegistry {
      * @param e
      * @return {@link DPTEnumValue}
      */
-    @Nonnull
-    public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final @Nonnull Enum<T> e) {
+
+    public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
         @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
         if (dpt == null) {
             throw new KnxEnumNotFoundException("Could not find enum data point type for: " + e);
@@ -209,8 +208,8 @@ public final class DataPointTypeRegistry {
      * @param id
      * @return {@link DataPointType}
      */
-    @Nonnull
-    public static <T extends DataPointType> T getDataPointType(final @Nonnull String id) {
+
+    public static <T extends DataPointType> T getDataPointType(final String id) {
         @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);

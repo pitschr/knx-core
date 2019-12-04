@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.communication.queue;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.config.CoreConfigs;
 
-import javax.annotation.Nonnull;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -43,7 +43,7 @@ public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChan
      * @param client  internal KNX client for internal actions like informing plug-ins
      * @param channel channel of communication
      */
-    public MulticastOutboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+    public MulticastOutboxQueue(final InternalKnxClient client, final SelectableChannel channel) {
         super(client, channel);
 
         final var config = client.getConfig();
@@ -57,7 +57,7 @@ public final class MulticastOutboxQueue extends AbstractOutboxQueue<DatagramChan
     }
 
     @Override
-    protected void send(final @Nonnull DatagramChannel channel, final @Nonnull ByteBuffer bb) throws IOException {
+    protected void send(final DatagramChannel channel, final ByteBuffer bb) throws IOException {
         channel.send(bb, multicastSocketAddress);
     }
 }

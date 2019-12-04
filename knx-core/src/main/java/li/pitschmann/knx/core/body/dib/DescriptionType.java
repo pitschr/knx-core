@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 
 /**
@@ -72,7 +72,7 @@ public enum DescriptionType implements KnxByteEnum {
      * @return existing {@link DescriptionType}, or {@link KnxEnumNotFoundException} if no {@link DescriptionType}
      * for given {@code code} exists
      */
-    @Nonnull
+
     public static DescriptionType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(DescriptionType.class, code));
@@ -83,13 +83,13 @@ public enum DescriptionType implements KnxByteEnum {
         return this.code;
     }
 
-    @Nonnull
+
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

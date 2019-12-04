@@ -20,7 +20,7 @@ package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -102,12 +102,11 @@ public final class XmlGroupRange {
      *
      * @return immutable list
      */
-    @Nonnull
     public List<XmlGroupRange> getChildGroupRanges() {
         return List.copyOf(childGroupRanges);
     }
 
-    public void setChildGroupRanges(final @Nonnull List<XmlGroupRange> childGroupRanges) {
+    public void setChildGroupRanges(final List<XmlGroupRange> childGroupRanges) {
         this.childGroupRanges = Objects.requireNonNull(childGroupRanges);
     }
 
@@ -116,16 +115,14 @@ public final class XmlGroupRange {
      *
      * @return immutable list
      */
-    @Nonnull
     public List<XmlGroupAddress> getGroupAddresses() {
         return List.copyOf(groupAddresses);
     }
 
-    public void setGroupAddresses(final @Nonnull List<XmlGroupAddress> groupAddresses) {
+    public void setGroupAddresses(final List<XmlGroupAddress> groupAddresses) {
         this.groupAddresses = Objects.requireNonNull(groupAddresses);
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

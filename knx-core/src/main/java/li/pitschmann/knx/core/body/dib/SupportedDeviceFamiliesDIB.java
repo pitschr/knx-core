@@ -26,7 +26,7 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +78,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
     private static final int STRUCTURE_MAX_LENGTH = 0xFE;
     private final List<ServiceTypeFamilyVersion> serviceFamilies;
 
-    private SupportedDeviceFamiliesDIB(final @Nonnull byte[] rawData) {
+    private SupportedDeviceFamiliesDIB(final byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -99,13 +99,13 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link SupportedDeviceFamiliesDIB}
      * @return a new immutable {@link SupportedDeviceFamiliesDIB}
      */
-    @Nonnull
-    public static SupportedDeviceFamiliesDIB of(final @Nonnull byte[] bytes) {
+
+    public static SupportedDeviceFamiliesDIB of(final byte[] bytes) {
         return new SupportedDeviceFamiliesDIB(bytes);
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
@@ -116,7 +116,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         }
     }
 
-    @Nonnull
+
     public List<ServiceTypeFamilyVersion> getServiceFamilies() {
         return this.serviceFamilies;
     }
@@ -127,7 +127,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
      * @param serviceTypeFamily
      * @return {@code true} if the service type family exists, otherwise {@code false}
      */
-    public boolean hasServiceTypeFamily(final @Nonnull ServiceTypeFamily serviceTypeFamily) {
+    public boolean hasServiceTypeFamily(final ServiceTypeFamily serviceTypeFamily) {
         for (final var family : this.serviceFamilies) {
             if (serviceTypeFamily == family.getFamily()) {
                 return true;
@@ -136,7 +136,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         return false;
     }
 
-    @Nonnull
+
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

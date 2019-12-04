@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.AbstractDataPointType;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,31 +34,31 @@ import java.util.Objects;
 abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implements DataPointValue<T> {
     private final T dpt;
 
-    public AbstractDataPointValue(final @Nonnull T dpt) {
+    public AbstractDataPointValue(final T dpt) {
         this.dpt = Objects.requireNonNull(dpt);
     }
 
-    @Nonnull
+
     protected static String getValueAsText(final double value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
-    @Nonnull
+
     protected static String getValueAsText(final float value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
-    @Nonnull
+
     protected static String getValueAsText(final int value) {
         return Integer.toString(value);
     }
 
-    @Nonnull
+
     protected static String getValueAsText(final long value) {
         return Long.toString(value);
     }
 
-    @Nonnull
+
     protected static String getValueAsText(final @Nullable Object value) {
         return String.valueOf(value);
     }
@@ -69,7 +68,7 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
      *
      * @return
      */
-    @Nonnull
+
     @Override
     public T getDPT() {
         return this.dpt;

@@ -23,8 +23,6 @@ import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException
 import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
 import li.pitschmann.knx.core.utils.Preconditions;
 
-import javax.annotation.Nonnull;
-
 /**
  * Data Point Types according to KNX Specification
  *
@@ -101,7 +99,6 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    @Nonnull
     default V toValue(final byte b, final byte... moreBytes) {
         if (moreBytes.length == 0) {
             return toValue(new byte[]{b});
@@ -135,8 +132,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    @Nonnull
-    default V toValue(final @Nonnull String arg, final String... moreArgs) {
+    default V toValue(final String arg, final String... moreArgs) {
         Preconditions.checkNonNull(arg);
         if (moreArgs.length == 0) {
             return toValue(new String[]{arg});
@@ -156,8 +152,8 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @param moreArgs
      * @return byte array
      */
-    @Nonnull
-    default byte[] toByteArray(final @Nonnull String arg, final String... moreArgs) {
+
+    default byte[] toByteArray(final String arg, final String... moreArgs) {
         return toValue(arg, moreArgs).toByteArray();
     }
 }

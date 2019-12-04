@@ -22,8 +22,6 @@ import li.pitschmann.knx.core.AbstractSingleRawData;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
-
 public final class ControlByte1 extends AbstractSingleRawData {
     private static final ControlByte1 DEFAULT = of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
     private final boolean standardFrame;
@@ -71,7 +69,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * @param b byte
      * @return a new immutable {@link ControlByte1}
      */
-    @Nonnull
+
     public static ControlByte1 of(final byte b) {
         return new ControlByte1(b);
     }
@@ -90,7 +88,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
      *
      * @return re-usable immutable default {@link ControlByte1}
      */
-    @Nonnull
+
     public static ControlByte1 useDefault() {
         return DEFAULT;
     }
@@ -106,9 +104,13 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * @param confirmationFlag
      * @return a new immutable {@link ControlByte1}
      */
-    @Nonnull
-    public static ControlByte1 of(final boolean standardFrame, final boolean isRepeatEnabled, final @Nonnull BroadcastType broadcastType,
-                                  final @Nonnull Priority priority, final boolean acknowledgeRequested, final boolean confirmationFlag) {
+
+    public static ControlByte1 of(final boolean standardFrame,
+                                  final boolean isRepeatEnabled,
+                                  final BroadcastType broadcastType,
+                                  final Priority priority,
+                                  final boolean acknowledgeRequested,
+                                  final boolean confirmationFlag) {
         // validate
         if (broadcastType == null) {
             throw new KnxNullPointerException("broadcastType");
@@ -157,12 +159,12 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.repeatEnabled;
     }
 
-    @Nonnull
+
     public BroadcastType getBroadcastType() {
         return this.broadcastType;
     }
 
-    @Nonnull
+
     public Priority getPriority() {
         return this.priority;
     }
@@ -175,7 +177,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.confirmationFlag;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

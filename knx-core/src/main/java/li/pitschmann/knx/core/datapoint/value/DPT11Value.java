@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -65,14 +64,14 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
     private final LocalDate date;
     private final byte[] byteArray;
 
-    public DPT11Value(final @Nonnull byte[] bytes) {
+    public DPT11Value(final byte[] bytes) {
         super(DPT11.DATE);
         Preconditions.checkArgument(bytes.length == 3);
         this.date = toLocalDate(bytes);
         this.byteArray = bytes;
     }
 
-    public DPT11Value(final @Nonnull LocalDate date) {
+    public DPT11Value(final LocalDate date) {
         super(DPT11.DATE);
         Preconditions.checkNonNull(date);
         Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: {}", date.getYear());
@@ -86,8 +85,8 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      * @param bytes
      * @return {@link LocalDate}
      */
-    @Nonnull
-    private static LocalDate toLocalDate(final @Nonnull byte[] bytes) {
+
+    private static LocalDate toLocalDate(final byte[] bytes) {
         // day
         final var day = Bytes.toUnsignedInt(bytes[0]);
 
@@ -111,8 +110,8 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      * @param date
      * @return byte array
      */
-    @Nonnull
-    public static byte[] toByteArray(final @Nonnull LocalDate date) {
+
+    public static byte[] toByteArray(final LocalDate date) {
         Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
 
         // byte 0: day
@@ -131,24 +130,24 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         return bytes;
     }
 
-    @Nonnull
+
     public LocalDate getDate() {
         return this.date;
     }
 
-    @Nonnull
+
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-    @Nonnull
+
     @Override
     public String toText() {
         return getDate().format(DateTimeFormatter.ISO_DATE);
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

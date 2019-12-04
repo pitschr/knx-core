@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -64,7 +63,7 @@ public enum TPCI implements KnxByteEnum {
      * @return existing {@link TPCI}, or {@link KnxEnumNotFoundException} if no {@link TPCI}
      * for given {@code code} exists
      */
-    @Nonnull
+
     public static TPCI valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst().orElseThrow(() -> new KnxEnumNotFoundException(TPCI.class, code));
     }
@@ -74,13 +73,13 @@ public enum TPCI implements KnxByteEnum {
         return this.code;
     }
 
-    @Nonnull
+
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

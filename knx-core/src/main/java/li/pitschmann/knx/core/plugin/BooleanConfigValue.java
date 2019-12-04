@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.plugin;
 
-import javax.annotation.Nonnull;
+
 import java.util.function.Supplier;
 
 /**
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  */
 public final class BooleanConfigValue extends PluginConfigValue<Boolean> {
 
-    public BooleanConfigValue(final @Nonnull String configName, final @Nonnull Supplier<Boolean> defaultSupplier) {
+    public BooleanConfigValue(final String configName, final Supplier<Boolean> defaultSupplier) {
         super(configName, Boolean.class, Boolean::valueOf, defaultSupplier, null);
     }
 

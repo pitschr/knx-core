@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -69,7 +68,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
     private final byte[] accessIdentificationData;
     private final Flags flags;
 
-    public DPT15Value(final @Nonnull byte[] bytes) {
+    public DPT15Value(final byte[] bytes) {
         super(DPT15.ACCESS_DATA);
         Preconditions.checkArgument(bytes.length == 4);
         // access identification data (byte 0 + byte 1 + byte 2)
@@ -79,7 +78,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         this.flags = new Flags(bytes[3]);
     }
 
-    public DPT15Value(final @Nonnull byte[] accessIdentificationData, final @Nonnull Flags flags) {
+    public DPT15Value(final byte[] accessIdentificationData, final Flags flags) {
         super(DPT15.ACCESS_DATA);
         Preconditions.checkArgument(accessIdentificationData.length == 3);
         // access identification data
@@ -95,8 +94,8 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @param accessIdentificationData
      * @return 3 byte array / 24 bits array
      */
-    @Nonnull
-    private static byte[] getAccessIdentificationData(final @Nonnull byte[] accessIdentificationData) {
+
+    private static byte[] getAccessIdentificationData(final byte[] accessIdentificationData) {
         Preconditions.checkArgument(accessIdentificationData.length <= 3, "Access Identification Data must be 3 bytes or less.");
         byte[] newData = new byte[3];
         System.arraycopy(accessIdentificationData, 0, newData, newData.length - accessIdentificationData.length, accessIdentificationData.length);
@@ -110,7 +109,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @param flags
      * @return byte array
      */
-    @Nonnull
+
     public static byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
         // ensure that access identification data is 24bits
         byte[] accessIdentificationDataEnsured = getAccessIdentificationData(accessIdentificationData);
@@ -122,7 +121,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
                 flags.getAsByte()};
     }
 
-    @Nonnull
+
     public byte[] getAccessIdentificationData() {
         return this.accessIdentificationData.clone();
     }
@@ -132,18 +131,18 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      *
      * @return flags
      */
-    @Nonnull
+
     public Flags getFlags() {
         return this.flags;
     }
 
-    @Nonnull
+
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.accessIdentificationData, this.flags);
     }
 
-    @Nonnull
+
     @Override
     public String toText() {
         final var sb = new StringBuilder(30);
@@ -154,7 +153,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         return sb.toString();
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off
@@ -167,7 +166,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         // @formatter:on
     }
 
-    @Nonnull
+
     @Override
     public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
@@ -223,7 +222,10 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
          * @param index
          * @return new instance of {@link Flags}
          */
-        public Flags(final boolean error, final boolean permissionAccepted, final boolean readDirectionRightToLeft, final boolean encryptionEnabled,
+        public Flags(final boolean error,
+                     final boolean permissionAccepted,
+                     final boolean readDirectionRightToLeft,
+                     final boolean encryptionEnabled,
                      final int index) {
             this.error = error;
             this.permissionAccepted = permissionAccepted;
@@ -275,12 +277,12 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
             return b;
         }
 
-        @Nonnull
+
         public String toText() {
             return ByteFormatter.formatHex(getAsByte());
         }
 
-        @Nonnull
+
         @Override
         public String toString() {
             // @formatter:off

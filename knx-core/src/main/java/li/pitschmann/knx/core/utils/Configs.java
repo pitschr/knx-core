@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +49,7 @@ public final class Configs {
      * @param clazz the class to be scanned
      * @return immutable map of config key and {@link ConfigValue}
      */
-    public static List<ConfigValue<Object>> getConfigValues(final @Nonnull Class<?> clazz) {
+    public static List<ConfigValue<Object>> getConfigValues(final Class<?> clazz) {
         final var list = new LinkedList<ConfigValue<Object>>();
 
         // get config value fields from current class
@@ -91,7 +91,7 @@ public final class Configs {
      * @param clazz the class to be scanned
      * @return immutable map
      */
-    public static Map<String, ConfigValue<Object>> getConfigMapValues(final @Nonnull Class<?> clazz) {
+    public static Map<String, ConfigValue<Object>> getConfigMapValues(final Class<?> clazz) {
         return getConfigValues(clazz).stream().collect(Collectors.toUnmodifiableMap(
                 ConfigValue::getKey, // fully qualified config key
                 Function.identity()  // element itself

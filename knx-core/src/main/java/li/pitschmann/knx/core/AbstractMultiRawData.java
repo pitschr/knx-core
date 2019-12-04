@@ -20,7 +20,6 @@ package li.pitschmann.knx.core;
 
 import li.pitschmann.knx.core.exceptions.KnxException;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
@@ -32,12 +31,11 @@ import java.util.Arrays;
 public abstract class AbstractMultiRawData implements MultiRawDataAware {
     private final byte[] rawData;
 
-    protected AbstractMultiRawData(final @Nonnull byte[] rawData) {
+    protected AbstractMultiRawData(final byte[] rawData) {
         this.validate(rawData);
         this.rawData = rawData.clone();
     }
 
-    @Nonnull
     @Override
     public byte[] getRawData() {
         return this.rawData.clone();
@@ -58,7 +56,7 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
         return Arrays.hashCode(this.getRawData());
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         return this.toString(true);

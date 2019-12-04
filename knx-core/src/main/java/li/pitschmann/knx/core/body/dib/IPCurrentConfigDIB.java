@@ -20,7 +20,7 @@ package li.pitschmann.knx.core.body.dib;
 
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * IP Current Config DIB to specify DIB for type {@link DescriptionType#IP_CURRENT_CONFIG}
@@ -74,7 +74,7 @@ public final class IPCurrentConfigDIB extends AbstractDIB {
      */
     private static final int STRUCTURE_LENGTH = 20;
 
-    private IPCurrentConfigDIB(final @Nonnull byte[] rawData) {
+    private IPCurrentConfigDIB(final byte[] rawData) {
         super(rawData);
     }
 
@@ -84,13 +84,13 @@ public final class IPCurrentConfigDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link IPCurrentConfigDIB}
      * @return a new immutable {@link IPCurrentConfigDIB}
      */
-    @Nonnull
-    public static IPCurrentConfigDIB of(final @Nonnull byte[] bytes) {
+
+    public static IPCurrentConfigDIB of(final byte[] bytes) {
         return new IPCurrentConfigDIB(bytes);
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData.length != STRUCTURE_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
         }

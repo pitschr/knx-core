@@ -32,7 +32,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
@@ -70,7 +69,7 @@ public final class CEMI extends AbstractMultiRawData {
     private final APCI apci;
     private final byte[] apciData;
 
-    private CEMI(final @Nonnull byte[] cemiRawData) {
+    private CEMI(final byte[] cemiRawData) {
         super(cemiRawData);
 
         this.messageCode = MessageCode.valueOf(Bytes.toUnsignedInt(cemiRawData[0]));
@@ -82,7 +81,7 @@ public final class CEMI extends AbstractMultiRawData {
         // Total: min. 1 byte
         // ------------------------------------------
         final var addInfoIndex = 1;
-        if (Bytes.toUnsignedInt(cemiRawData[addInfoIndex + 0]) > 0) {
+        if (Bytes.toUnsignedInt(cemiRawData[addInfoIndex]) > 0) {
             throw new UnsupportedOperationException("Additional Info Length is not supported yet! CEMI Raw: " + this.getRawDataAsHexString());
         }
         this.additionalInfo = AdditionalInfo.empty();
@@ -94,7 +93,7 @@ public final class CEMI extends AbstractMultiRawData {
         // Total: 2 bytes
         // ------------------------------------------
         final var controlIndex = addInfoIndex + this.additionalInfo.getTotalLength();
-        this.controlByte1 = ControlByte1.of(cemiRawData[controlIndex + 0]);
+        this.controlByte1 = ControlByte1.of(cemiRawData[controlIndex]);
         this.controlByte2 = ControlByte2.of(cemiRawData[controlIndex + 1]);
 
         // ------------------------------------------
@@ -104,7 +103,7 @@ public final class CEMI extends AbstractMultiRawData {
         // Total: 4 bytes
         // ------------------------------------------
         final var addrIndex = controlIndex + 2;
-        this.sourceAddress = IndividualAddress.of(new byte[]{cemiRawData[addrIndex + 0], cemiRawData[addrIndex + 1]});
+        this.sourceAddress = IndividualAddress.of(new byte[]{cemiRawData[addrIndex], cemiRawData[addrIndex + 1]});
         // destination address is either individual or group (depends on address type on control 2 bit)
         final var destinationAddressBytes = new byte[]{cemiRawData[addrIndex + 2], cemiRawData[addrIndex + 3]};
         if (this.controlByte2.getAddressType() == AddressType.INDIVIDUAL) {
@@ -166,8 +165,8 @@ public final class CEMI extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link CEMI}
      * @return a new immutable {@link CEMI}
      */
-    @Nonnull
-    public static CEMI of(final @Nonnull byte[] bytes) {
+
+    public static CEMI of(final byte[] bytes) {
         return new CEMI(bytes);
     }
 
@@ -183,8 +182,8 @@ public final class CEMI extends AbstractMultiRawData {
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode,} {@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI} taken from {@link DataPointValue}.
      */
-    @Nonnull
-    public static CEMI useDefault(final @Nonnull MessageCode messageCode, final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nonnull DataPointValue<?> dataPointValue) {
+
+    public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final DataPointValue<?> dataPointValue) {
         return useDefault(messageCode, destinationAddress, apci, dataPointValue.toByteArray());
     }
 
@@ -207,8 +206,8 @@ public final class CEMI extends AbstractMultiRawData {
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode, }{@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI}.
      */
-    @Nonnull
-    public static CEMI useDefault(final @Nonnull MessageCode messageCode, final @Nonnull KnxAddress destinationAddress, final @Nonnull APCI apci, final @Nullable byte[] apciData) {
+
+    public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final byte[] apciData) {
         // no validation required here
 
         // default settings
@@ -239,17 +238,17 @@ public final class CEMI extends AbstractMultiRawData {
      * @param dataPointValue
      * @return a new immutable {@link CEMI}
      */
-    @Nonnull
-    public static CEMI of(final @Nonnull MessageCode messageCode,
-                          final @Nonnull AdditionalInfo additionalInfo,
-                          final @Nonnull ControlByte1 controlByte1,
-                          final @Nonnull ControlByte2 controlByte2,
-                          final @Nonnull IndividualAddress sourceAddress,
-                          final @Nonnull KnxAddress destinationAddress,
-                          final @Nonnull TPCI tpci,
+
+    public static CEMI of(final MessageCode messageCode,
+                          final AdditionalInfo additionalInfo,
+                          final ControlByte1 controlByte1,
+                          final ControlByte2 controlByte2,
+                          final IndividualAddress sourceAddress,
+                          final KnxAddress destinationAddress,
+                          final TPCI tpci,
                           final int tpciPacketNumber,
-                          final @Nonnull APCI apci,
-                          final @Nonnull DataPointValue<?> dataPointValue) {
+                          final APCI apci,
+                          final DataPointValue<?> dataPointValue) {
         return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, tpciPacketNumber, apci,
                 dataPointValue.toByteArray());
     }
@@ -269,17 +268,17 @@ public final class CEMI extends AbstractMultiRawData {
      * @param apciData
      * @return a new immutable {@link CEMI}
      */
-    @Nonnull
-    public static CEMI of(final @Nonnull MessageCode messageCode,
-                          final @Nonnull AdditionalInfo additionalInfo,
-                          final @Nonnull ControlByte1 controlByte1,
-                          final @Nonnull ControlByte2 controlByte2,
-                          final @Nonnull IndividualAddress sourceAddress,
-                          final @Nonnull KnxAddress destinationAddress,
-                          final @Nonnull TPCI tpci,
+
+    public static CEMI of(final MessageCode messageCode,
+                          final AdditionalInfo additionalInfo,
+                          final ControlByte1 controlByte1,
+                          final ControlByte2 controlByte2,
+                          final IndividualAddress sourceAddress,
+                          final KnxAddress destinationAddress,
+                          final TPCI tpci,
                           final int tpciPacketNumber,
-                          final @Nonnull APCI apci,
-                          final @Nullable byte[] apciData) {
+                          final APCI apci,
+                          final byte[] apciData) {
         // validate
         if (messageCode == null) {
             throw new KnxNullPointerException("messageCode");
@@ -297,16 +296,18 @@ public final class CEMI extends AbstractMultiRawData {
             throw new KnxNullPointerException("tpci");
         } else if (apci == null) {
             throw new KnxNullPointerException("apci");
-        } else if (apciData != null && apciData.length > 14) {
+        } else if (apciData == null) {
+            throw new KnxNullPointerException("apciData");
+        } else if (apciData.length > 14) {
             throw new KnxNumberOutOfRangeException("apciData", 0, 14, apciData.length);
         } else if (tpciPacketNumber < 0 || tpciPacketNumber > 0xFF) {
             throw new KnxNumberOutOfRangeException("tpciPacketNumber", 0, 0xFF, tpciPacketNumber);
         } else if ((tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) && tpciPacketNumber != 0) {
             throw new KnxIllegalArgumentException("TPCI packet number should not be set when TCPI is unnumbered", tpci, tpciPacketNumber);
-        } else if (apci == APCI.GROUP_VALUE_READ && apciData != null && apciData.length > 0) {
+        } else if (apci == APCI.GROUP_VALUE_READ && apciData.length > 0) {
             throw new KnxIllegalArgumentException("APCI data should not be set when APCI#READ is used.", apci,
                     ByteFormatter.formatHexAsString(apciData));
-        } else if ((apci == APCI.GROUP_VALUE_WRITE || apci == APCI.GROUP_VALUE_RESPONSE) && (apciData == null || apciData.length == 0)) {
+        } else if ((apci == APCI.GROUP_VALUE_WRITE || apci == APCI.GROUP_VALUE_RESPONSE) && apciData.length == 0) {
             throw new KnxIllegalArgumentException("APCI data should be set when APCI write or response is used.", apci,
                     ByteFormatter.formatHexAsString(apciData));
         } else if ((destinationAddress instanceof GroupAddress && controlByte2.getAddressType() != AddressType.GROUP)
@@ -389,7 +390,7 @@ public final class CEMI extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] cemiRawData) {
+    protected void validate(final byte[] cemiRawData) {
         if (cemiRawData == null) {
             throw new KnxNullPointerException("cemiRawData");
         } else if (cemiRawData.length < 11) {
@@ -402,32 +403,32 @@ public final class CEMI extends AbstractMultiRawData {
         }
     }
 
-    @Nonnull
+
     public MessageCode getMessageCode() {
         return this.messageCode;
     }
 
-    @Nonnull
+
     public AdditionalInfo getAdditionalInfo() {
         return this.additionalInfo;
     }
 
-    @Nonnull
+
     public ControlByte1 getControlByte1() {
         return this.controlByte1;
     }
 
-    @Nonnull
+
     public ControlByte2 getControlByte2() {
         return this.controlByte2;
     }
 
-    @Nonnull
+
     public IndividualAddress getSourceAddress() {
         return this.sourceAddress;
     }
 
-    @Nonnull
+
     public KnxAddress getDestinationAddress() {
         return this.destinationAddress;
     }
@@ -436,7 +437,7 @@ public final class CEMI extends AbstractMultiRawData {
         return this.npduLength;
     }
 
-    @Nonnull
+
     public TPCI getTpci() {
         return this.tpci;
     }
@@ -445,17 +446,17 @@ public final class CEMI extends AbstractMultiRawData {
         return this.tpciPacketNumber;
     }
 
-    @Nonnull
+
     public APCI getApci() {
         return this.apci;
     }
 
-    @Nonnull
+
     public byte[] getApciData() {
         return this.apciData;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

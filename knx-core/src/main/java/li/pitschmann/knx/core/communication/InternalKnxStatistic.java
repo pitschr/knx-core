@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.utils.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -67,7 +67,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     }
 
     @Override
-    public long getNumberOfBodyReceived(final @Nonnull Class<? extends Body> bodyClass) {
+    public long getNumberOfBodyReceived(final Class<? extends Body> bodyClass) {
         final var al = this.numberOfBodyReceivedMap.get(bodyClass);
         return al == null ? 0L : al.longValue();
     }
@@ -78,7 +78,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     }
 
     @Override
-    public long getNumberOfBodySent(final @Nonnull Class<? extends Body> bodyClass) {
+    public long getNumberOfBodySent(final Class<? extends Body> bodyClass) {
         final var al = this.numberOfBodySentMap.get(bodyClass);
         return al == null ? 0L : al.longValue();
     }
@@ -103,7 +103,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
      *
      * @param body
      */
-    public void onIncomingBody(final @Nonnull Body body) {
+    public void onIncomingBody(final Body body) {
         this.numberOfBodyReceived.incrementAndGet();
         this.numberOfBodyReceivedMap.computeIfAbsent(body.getClass(), s -> new AtomicLong()).incrementAndGet();
         this.numberOfBytesReceived.addAndGet(body.getRawData().length + KNX_PACKET_SIZE);
@@ -114,7 +114,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
      *
      * @param body
      */
-    public void onOutgoingBody(final @Nonnull Body body) {
+    public void onOutgoingBody(final Body body) {
         this.numberOfBodySent.incrementAndGet();
         this.numberOfBodySentMap.computeIfAbsent(body.getClass(), s -> new AtomicLong()).incrementAndGet();
         this.numberOfBytesSent.addAndGet(body.getRawData().length + KNX_PACKET_SIZE);
@@ -125,7 +125,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
      *
      * @param throwable - not used yet in this class
      */
-    public void onError(final @Nonnull Throwable throwable) {
+    public void onError(final Throwable throwable) {
         this.numberOfErrors.incrementAndGet();
     }
 
@@ -134,7 +134,6 @@ public final class InternalKnxStatistic implements KnxStatistic {
      *
      * @return an unmodifiable instance of {@link KnxStatistic}
      */
-    @Nonnull
     public KnxStatistic asUnmodifiable() {
         return new UnmodifiableKnxStatistic(this);
     }
@@ -154,7 +153,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
         private final long numberOfErrors;
         private final double errorRate;
 
-        private UnmodifiableKnxStatistic(final @Nonnull InternalKnxStatistic statistic) {
+        private UnmodifiableKnxStatistic(final InternalKnxStatistic statistic) {
             this.numberOfBodyReceivedMap = deepCopy(statistic.numberOfBodyReceivedMap);
             this.numberOfBodySentMap = deepCopy(statistic.numberOfBodySentMap);
             this.numberOfBytesReceived = statistic.getNumberOfBytesReceived();
@@ -171,8 +170,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
          * @param map map to be deeply copied
          * @return unmodifiable deep copied map whereas the value is a {@link Long} (and not an {@link AtomicLong})
          */
-        @Nonnull
-        private static Map<Class<? extends Body>, Long> deepCopy(final @Nonnull Map<Class<? extends Body>, AtomicLong> map) {
+        private static Map<Class<? extends Body>, Long> deepCopy(final Map<Class<? extends Body>, AtomicLong> map) {
             return new HashMap<>(map).entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().longValue()));
         }
 
@@ -182,7 +180,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
         }
 
         @Override
-        public long getNumberOfBodyReceived(final @Nonnull Class<? extends Body> bodyClass) {
+        public long getNumberOfBodyReceived(final Class<? extends Body> bodyClass) {
             return this.numberOfBodyReceivedMap.getOrDefault(bodyClass, 0L);
         }
 
@@ -192,7 +190,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
         }
 
         @Override
-        public long getNumberOfBodySent(final @Nonnull Class<? extends Body> bodyClass) {
+        public long getNumberOfBodySent(final Class<? extends Body> bodyClass) {
             return this.numberOfBodySentMap.getOrDefault(bodyClass, 0L);
         }
 

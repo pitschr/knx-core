@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.KnxByteEnum;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 
 /**
@@ -100,7 +100,7 @@ public enum Status implements KnxByteEnum {
      * @return existing {@link Status}, or {@link #E_UNDEFINED_STATUS} if no {@link Status}
      * for given {@code code} exists
      */
-    @Nonnull
+
     public static Status valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElse(E_UNDEFINED_STATUS);
@@ -111,13 +111,13 @@ public enum Status implements KnxByteEnum {
         return this.code;
     }
 
-    @Nonnull
+
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

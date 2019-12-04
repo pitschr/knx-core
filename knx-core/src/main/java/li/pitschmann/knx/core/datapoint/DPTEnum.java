@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.utils.Maps;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -51,7 +50,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      * @param id
      * @param description
      */
-    public DPTEnum(final @Nonnull String id, final @Nonnull String description) {
+    public DPTEnum(final String id, final String description) {
         super(id, description);
     }
 
@@ -60,7 +59,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      *
      * @param enumValue
      */
-    final void addValue(final @Nonnull DPTEnumValue<T> enumValue) {
+    final void addValue(final DPTEnumValue<T> enumValue) {
         Preconditions.checkArgument(!this.values.containsKey(enumValue.getOrdinal()),
                 "Data point field with value '{}' already registered. Please check your DPT implementation!", enumValue);
         this.values.put(enumValue.getOrdinal(), enumValue);
@@ -73,7 +72,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      * @return data point enumeration value
      * @throws KnxEnumNotFoundException if enumeration with given value could not be found
      */
-    @Nonnull
+
     public final DPTEnumValue<T> toValue(final int value) {
         final var dptEnumValue = this.values.get(value);
         if (dptEnumValue == null) {
@@ -83,15 +82,15 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
         return dptEnumValue;
     }
 
-    @Nonnull
+
     @Override
-    protected boolean isCompatible(final @Nonnull byte[] bytes) {
+    protected boolean isCompatible(final byte[] bytes) {
         return bytes.length == 1;
     }
 
-    @Nonnull
+
     @Override
-    protected DPTEnumValue<T> parse(final @Nonnull byte[] bytes) {
+    protected DPTEnumValue<T> parse(final byte[] bytes) {
         return this.toValue(Bytes.toUnsignedInt(bytes[0]));
     }
 
@@ -100,9 +99,9 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
         return args.length == 1 && !Strings.isNullOrEmpty(args[0]);
     }
 
-    @Nonnull
+
     @Override
-    protected DPTEnumValue<T> parse(final @Nonnull String[] args) {
+    protected DPTEnumValue<T> parse(final String[] args) {
         // first try to parse it as digits only
         var digitsOnly = true;
         for (final var c : args[0].toCharArray()) {
@@ -114,7 +113,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
 
         if (digitsOnly) {
             // digits only
-            return this.toValue(Integer.valueOf(args[0]));
+            return this.toValue(Integer.parseInt(args[0]));
         } else {
             // not digits only -> try with value name
             for (final var value : this.values.values()) {

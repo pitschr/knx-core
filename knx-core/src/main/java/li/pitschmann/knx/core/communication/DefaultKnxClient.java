@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.communication;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -36,7 +36,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      *
      * @param config
      */
-    private DefaultKnxClient(final @Nonnull Config config) {
+    private DefaultKnxClient(final Config config) {
         super(config);
     }
 
@@ -47,7 +47,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      *
      * @return
      */
-    @Nonnull
+
     public static DefaultKnxClient createStarted() {
         return createStarted("");
     }
@@ -58,7 +58,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @param address
      * @return
      */
-    @Nonnull
+
     public static DefaultKnxClient createStarted(final @Nullable String address) {
         return createStarted(ConfigBuilder.create(address).build());
     }
@@ -69,8 +69,8 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @param config
      * @return
      */
-    @Nonnull
-    public static DefaultKnxClient createStarted(final @Nonnull Config config) {
+
+    public static DefaultKnxClient createStarted(final Config config) {
         final var client = new DefaultKnxClient(config);
         // start communication
         client.getInternalClient().start();

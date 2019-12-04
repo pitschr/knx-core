@@ -30,7 +30,7 @@ import li.pitschmann.knx.core.utils.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -70,7 +70,7 @@ public final class PluginManager implements AutoCloseable {
     private final ExecutorService pluginExecutor;
     private KnxClient client;
 
-    public PluginManager(final @Nonnull Config config) {
+    public PluginManager(final Config config) {
         final var pluginExecutorPoolSize = config.getValue(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE);
         pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
         log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
@@ -81,7 +81,7 @@ public final class PluginManager implements AutoCloseable {
      * <p/>
      * <strong>For internal use only!</strong>
      */
-    public void notifyInitialization(final @Nonnull KnxClient client) {
+    public void notifyInitialization(final KnxClient client) {
         this.client = Objects.requireNonNull(client);
         this.client.getConfig().getPlugins().parallelStream().forEach(this::registerPluginInternal);
         log.info("All Plugins: {}", allPlugins);
@@ -94,7 +94,7 @@ public final class PluginManager implements AutoCloseable {
      *
      * @param body any KNX body
      */
-    public void notifyIncomingBody(final @Nonnull Body body) {
+    public void notifyIncomingBody(final Body body) {
         notifyPlugins(Objects.requireNonNull(body), observerPlugins, ObserverPlugin::onIncomingBody);
     }
 
@@ -103,7 +103,7 @@ public final class PluginManager implements AutoCloseable {
      *
      * @param body any KNX body
      */
-    public void notifyOutgoingBody(final @Nonnull Body body) {
+    public void notifyOutgoingBody(final Body body) {
         notifyPlugins(Objects.requireNonNull(body), observerPlugins, ObserverPlugin::onOutgoingBody);
     }
 
@@ -112,7 +112,7 @@ public final class PluginManager implements AutoCloseable {
      *
      * @param throwable an instance of {@link Throwable} to be sent to plug-ins
      */
-    public void notifyError(final @Nonnull Throwable throwable) {
+    public void notifyError(final Throwable throwable) {
         notifyPlugins(Objects.requireNonNull(throwable), observerPlugins, ObserverPlugin::onError);
     }
 
@@ -144,8 +144,7 @@ public final class PluginManager implements AutoCloseable {
      * @param className fully qualified class name
      * @return a new {@link Plugin} loaded from given URL and fully qualified class name
      */
-    @Nonnull
-    public Plugin addPlugin(final @Nonnull Path filePath, final @Nonnull String className) {
+    public Plugin addPlugin(final Path filePath, final String className) {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
                 "File doesn't end with '.jar' extension: {}", filePath);
         Preconditions.checkNonNull(className);
@@ -172,8 +171,7 @@ public final class PluginManager implements AutoCloseable {
      * @param pluginClass
      * @return new instance of {@link Plugin}
      */
-    @Nonnull
-    public <T extends Plugin> T addPlugin(final @Nonnull Class<T> pluginClass) {
+    public <T extends Plugin> T addPlugin(final Class<T> pluginClass) {
         final var plugin = registerPluginInternal(pluginClass);
 
         // for extension plugins, we have a special case:
@@ -194,8 +192,7 @@ public final class PluginManager implements AutoCloseable {
      * @param <T>
      * @return new instance of plugin
      */
-    @Nonnull
-    private <T extends Plugin> T registerPluginInternal(final @Nonnull Class<T> pluginClass) {
+    private <T extends Plugin> T registerPluginInternal(final Class<T> pluginClass) {
         Preconditions.checkArgument(getPlugin(pluginClass) == null,
                 "There is already a plugin registered for class: {}", pluginClass);
 
@@ -239,7 +236,7 @@ public final class PluginManager implements AutoCloseable {
      * @return An existing instance of {@link Plugin} if found, otherwise {@code null}
      */
     @Nullable
-    public <T extends Plugin> T getPlugin(final @Nonnull Class<T> pluginClass) {
+    public <T extends Plugin> T getPlugin(final Class<T> pluginClass) {
         Preconditions.checkNonNull(pluginClass);
         for (final var plugin : allPlugins) {
             if (pluginClass.equals(plugin.getClass())) {
@@ -257,8 +254,7 @@ public final class PluginManager implements AutoCloseable {
      * @return plugin instance that is being de-registered, otherwise {@link IllegalArgumentException} will be thrown
      * @thows IllegalArgumentException in case the plugin class could not be found
      */
-    @Nonnull
-    public <T extends Plugin> T unregisterPlugin(final @Nonnull Class<T> pluginClass) {
+    public <T extends Plugin> T unregisterPlugin(final Class<T> pluginClass) {
         final var plugin = getPlugin(pluginClass);
         Preconditions.checkArgument(plugin != null,
                 "No plugin is registered for class: {}", pluginClass);
@@ -281,8 +277,8 @@ public final class PluginManager implements AutoCloseable {
      * @param <P>
      */
     private <O, P extends Plugin> void notifyPlugins(final @Nullable O obj,
-                                                     final @Nonnull List<P> plugins,
-                                                     final @Nonnull BiConsumer<P, O> consumer) {
+                                                     final List<P> plugins,
+                                                     final BiConsumer<P, O> consumer) {
         for (final P plugin : plugins) {
             notifyPluginInternal(obj, plugin, consumer);
         }
@@ -300,8 +296,8 @@ public final class PluginManager implements AutoCloseable {
      */
     @Nullable
     private <O, P extends Plugin> Future<Void> notifyPluginInternal(final @Nullable O obj,
-                                                                    final @Nonnull P plugin,
-                                                                    final @Nonnull BiConsumer<P, O> consumer) {
+                                                                    final P plugin,
+                                                                    final BiConsumer<P, O> consumer) {
         if (this.pluginExecutor.isShutdown()) {
             log.warn("Could not send to plug-in '{}' because plugin executor is shutdown already: {}",
                     plugin, obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);

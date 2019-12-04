@@ -27,7 +27,7 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * Body for Connection State Response
@@ -55,7 +55,7 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
     private final int channelId;
     private final Status status;
 
-    private ConnectionStateResponseBody(final @Nonnull byte[] bytes) {
+    private ConnectionStateResponseBody(final byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
@@ -68,8 +68,8 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
      * @param bytes complete byte array for {@link ConnectionStateResponseBody}
      * @return a new immutable {@link ConnectionStateResponseBody}
      */
-    @Nonnull
-    public static ConnectionStateResponseBody of(final @Nonnull byte[] bytes) {
+
+    public static ConnectionStateResponseBody of(final byte[] bytes) {
         return new ConnectionStateResponseBody(bytes);
     }
 
@@ -80,8 +80,8 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
      * @param status
      * @return a  new immutable {@link ConnectionStateResponseBody}
      */
-    @Nonnull
-    public static ConnectionStateResponseBody of(final int channelId, final @Nonnull Status status) {
+
+    public static ConnectionStateResponseBody of(final int channelId, final Status status) {
         // validate
         if (status == null) {
             throw new KnxNullPointerException("status");
@@ -98,7 +98,7 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -108,7 +108,7 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
         }
     }
 
-    @Nonnull
+
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECTION_STATE_RESPONSE;
@@ -119,12 +119,12 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
         return this.channelId;
     }
 
-    @Nonnull
+
     public Status getStatus() {
         return this.status;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

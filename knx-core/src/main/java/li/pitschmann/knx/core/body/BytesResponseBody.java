@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 /**
@@ -59,7 +59,7 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
     private static final int STRUCTURE_LENGTH = 250;
     private final ServiceType serviceType;
 
-    private BytesResponseBody(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bytes) {
+    private BytesResponseBody(final ServiceType serviceType, final byte[] bytes) {
         super(bytes);
         this.serviceType = Objects.requireNonNull(serviceType);
     }
@@ -71,8 +71,8 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
      * @param bytes       complete byte array for {@link ConnectionStateRequestBody}
      * @return a new immutable {@link BytesResponseBody}
      */
-    @Nonnull
-    public static BytesResponseBody of(final @Nonnull ServiceType serviceType, final @Nonnull byte[] bytes) {
+
+    public static BytesResponseBody of(final ServiceType serviceType, final byte[] bytes) {
         if (serviceType == null) {
             throw new KnxNullPointerException("serviceType");
         } else if (bytes == null) {
@@ -81,20 +81,20 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
         return new BytesResponseBody(serviceType, bytes);
     }
 
-    @Nonnull
+
     @Override
     public ServiceType getServiceType() {
         return serviceType;
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData.length > STRUCTURE_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", 0, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
 
-    @Nonnull
+
     @Override
     public String toString(boolean inclRawData) {
         final var h = Strings.toStringHelper(this)

@@ -28,7 +28,7 @@ import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
-import javax.annotation.Nonnull;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -58,7 +58,7 @@ public interface KnxClient extends AutoCloseable {
      * @param <T>
      * @return the config value
      */
-    default <T> T getConfig(final @Nonnull ConfigValue<T> configValue) {
+    default <T> T getConfig(final ConfigValue<T> configValue) {
         return getConfig().getValue(configValue);
     }
 
@@ -67,7 +67,7 @@ public interface KnxClient extends AutoCloseable {
      *
      * @return an immutable {@link KnxStatistic}
      */
-    @Nonnull
+
     KnxStatistic getStatistic();
 
     /**
@@ -75,7 +75,7 @@ public interface KnxClient extends AutoCloseable {
      *
      * @return an immutable {@link KnxStatusPool}
      */
-    @Nonnull
+
     KnxStatusPool getStatusPool();
 
     /**
@@ -93,7 +93,7 @@ public interface KnxClient extends AutoCloseable {
      *
      * @param body body to be sent
      */
-    void send(final @Nonnull Body body);
+    void send(final Body body);
 
     /**
      * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
@@ -104,8 +104,8 @@ public interface KnxClient extends AutoCloseable {
      * @return a {@link CompletableFuture} representing pending completion of the task containing either
      * an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
-    @Nonnull
-    <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, final long msTimeout);
+
+    <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout);
 
     /**
      * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} <strong>asynchronously</strong>.
@@ -114,7 +114,7 @@ public interface KnxClient extends AutoCloseable {
      * @param dataPointValue
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue);
+    boolean writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue);
 
     /**
      * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
@@ -123,7 +123,7 @@ public interface KnxClient extends AutoCloseable {
      * @param apciData
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull byte[] apciData);
+    boolean writeRequest(final GroupAddress address, final byte[] apciData);
 
     /**
      * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>
@@ -131,5 +131,5 @@ public interface KnxClient extends AutoCloseable {
      * @param address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean readRequest(final @Nonnull GroupAddress address);
+    boolean readRequest(final GroupAddress address);
 }

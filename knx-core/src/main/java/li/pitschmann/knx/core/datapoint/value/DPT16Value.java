@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -71,11 +70,11 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     private final String characters;
     private final byte[] byteArray;
 
-    public DPT16Value(final @Nonnull DPT16 dpt, final @Nullable byte[] bytes) {
+    public DPT16Value(final DPT16 dpt, final byte[] bytes) {
         super(dpt);
 
         // characters
-        if (bytes == null || bytes.length == 0) {
+        if (bytes.length == 0) {
             this.characters = "";
             this.byteArray = new byte[14];
         } else if (bytes.length > 14) {
@@ -97,9 +96,9 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         }
     }
 
-    public DPT16Value(final @Nonnull DPT16 dpt, final @Nullable String characters) {
+    public DPT16Value(final DPT16 dpt, final String characters) {
         super(dpt);
-        Preconditions.checkArgument(characters == null || characters.length() <= 14,
+        Preconditions.checkArgument(characters.length() <= 14,
                 "The length of characters is too long (expected up to 14 characters): {}", characters);
         this.characters = Objects.toString(characters, "");
         this.byteArray = toByteArray(characters, dpt.getCharset());
@@ -112,8 +111,8 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
      * @param charset    used to encode the characters
      * @return byte array
      */
-    @Nonnull
-    public static byte[] toByteArray(final @Nullable String characters, final @Nonnull Charset charset) {
+
+    public static byte[] toByteArray(final String characters, final Charset charset) {
         if (Strings.isNullOrEmpty(characters)) {
             return new byte[14];
         } else if (characters.length() > 14) {
@@ -130,12 +129,12 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         }
     }
 
-    @Nonnull
+
     public String getCharacters() {
         return this.characters;
     }
 
-    @Nonnull
+
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
@@ -146,13 +145,13 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
      *
      * @return characters
      */
-    @Nonnull
+
     @Override
     public String toText() {
         return getCharacters();
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

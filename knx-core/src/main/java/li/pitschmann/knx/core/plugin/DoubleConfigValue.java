@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.plugin;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  */
 public final class DoubleConfigValue extends PluginConfigValue<Double> {
 
-    public DoubleConfigValue(final @Nonnull String configName, final @Nonnull Supplier<Double> defaultSupplier, final @Nullable Predicate<Double> predicate) {
+    public DoubleConfigValue(final String configName, final Supplier<Double> defaultSupplier, final @Nullable Predicate<Double> predicate) {
         super(configName, Double.class, Double::valueOf, defaultSupplier, predicate);
     }
 

@@ -27,7 +27,7 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.channels.Channel;
@@ -71,7 +71,7 @@ public final class HPAI extends AbstractMultiRawData {
     private final InetAddress address;
     private final int port;
 
-    private HPAI(final @Nonnull byte[] hpaiRawData) {
+    private HPAI(final byte[] hpaiRawData) {
         super(hpaiRawData);
 
         this.length = Bytes.toUnsignedInt(hpaiRawData[0]);
@@ -87,8 +87,8 @@ public final class HPAI extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link HPAI}
      * @return a new immutable {@link HPAI}
      */
-    @Nonnull
-    public static HPAI of(final @Nonnull byte[] bytes) {
+
+    public static HPAI of(final byte[] bytes) {
         return new HPAI(bytes);
     }
 
@@ -98,7 +98,7 @@ public final class HPAI extends AbstractMultiRawData {
      *
      * @return re-usable immutable default {@link HPAI}
      */
-    @Nonnull
+
     public static HPAI useDefault() {
         return DEFAULT;
     }
@@ -109,8 +109,8 @@ public final class HPAI extends AbstractMultiRawData {
      * @param channel
      * @return a new immutable {@link HPAI}
      */
-    @Nonnull
-    public static HPAI of(final @Nonnull Channel channel) {
+
+    public static HPAI of(final Channel channel) {
         // validate
         if (channel == null) {
             throw new KnxNullPointerException("channel");
@@ -137,8 +137,8 @@ public final class HPAI extends AbstractMultiRawData {
      * @param port
      * @return a new immutable {@link HPAI}
      */
-    @Nonnull
-    public static HPAI of(final @Nonnull HostProtocol protocol, final @Nonnull InetAddress address, final int port) {
+
+    public static HPAI of(final HostProtocol protocol, final InetAddress address, final int port) {
         // validate
         if (protocol == null) {
             throw new KnxNullPointerException("protocol");
@@ -159,7 +159,7 @@ public final class HPAI extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] hpaiRawData) {
+    protected void validate(final byte[] hpaiRawData) {
         if (hpaiRawData == null) {
             throw new KnxNullPointerException("hpaiRawData");
         } else if (hpaiRawData.length != KNXNET_HPAI_LENGTH) {
@@ -171,12 +171,12 @@ public final class HPAI extends AbstractMultiRawData {
         return this.length;
     }
 
-    @Nonnull
+
     public HostProtocol getProtocol() {
         return this.protocol;
     }
 
-    @Nonnull
+
     public InetAddress getAddress() {
         return this.address;
     }
@@ -185,7 +185,7 @@ public final class HPAI extends AbstractMultiRawData {
         return this.port;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

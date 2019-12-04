@@ -17,7 +17,6 @@
  */
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,7 +36,6 @@ public final class Preconditions {
      * @param obj the object reference to check for nullity
      * @throws NullPointerException if {@code obj} is {@code null}
      */
-    @Nonnull
     public static <T> T checkNonNull(final @Nullable T obj) {
         return Objects.requireNonNull(obj);
     }
@@ -58,8 +56,7 @@ public final class Preconditions {
      * @param args arguments for customized error message
      * @throws NullPointerException if {@code obj} is {@code null}
      */
-    @Nonnull
-    public static <T> T checkNonNull(final @Nullable T obj, final @Nonnull Object arg, final @Nullable Object... args) {
+    public static <T> T checkNonNull(final @Nullable T obj, final Object arg, final @Nullable Object... args) {
         if (obj == null) {
             if (arg instanceof String) {
                 throw new NullPointerException(toErrorMessage((String) arg, args));
@@ -98,7 +95,7 @@ public final class Preconditions {
      * @param args       arguments for customized error message
      * @throws IllegalArgumentException if expression is {@code false}
      */
-    public static void checkArgument(boolean expression, final @Nonnull Object arg, final @Nullable Object... args) {
+    public static void checkArgument(boolean expression, final @Nullable Object arg, final @Nullable Object... args) {
         if (!expression) {
             if (arg instanceof String) {
                 throw new IllegalArgumentException(toErrorMessage((String) arg, args));
@@ -162,10 +159,10 @@ public final class Preconditions {
      * @param args         arguments
      * @return formatted error message
      */
-    public static String toErrorMessage(final @Nonnull String errorMessage, final @Nullable Object... args) {
+    public static String toErrorMessage(final String errorMessage, final @Nullable Object... args) {
         if (errorMessage.contains("{}") || errorMessage.contains("%")) {
             return String.format(errorMessage.replaceAll("\\{\\}", "%s"), toErrorMessageArguments(args));
-        } else if (args.length > 0) {
+        } else if (args!=null && args.length > 0) {
             return String.format("%s (Arguments: %s)", errorMessage, Arrays.toString(toErrorMessageArguments(args)));
         } else {
             return errorMessage;
@@ -178,7 +175,7 @@ public final class Preconditions {
      * @param args array of arguments
      * @return array of formatted arguments
      */
-    private static Object[] toErrorMessageArguments(final @Nonnull Object[] args) {
+    private static Object[] toErrorMessageArguments(final @Nullable Object[] args) {
         if (args == null) {
             return new Object[]{toErrorMessageArgument(null)};
         }

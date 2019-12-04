@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
@@ -36,18 +35,18 @@ import java.util.Objects;
 abstract class AbstractDataPointFlag<T extends AbstractDataPointType<?>> extends AbstractDataPointValue<T> {
     private final byte b;
 
-    protected AbstractDataPointFlag(final @Nonnull T dpt, final byte b) {
+    protected AbstractDataPointFlag(final T dpt, final byte b) {
         super(dpt);
         this.b = b;
     }
 
-    @Nonnull
+
     @Override
     public byte[] toByteArray() {
         return new byte[]{this.b};
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

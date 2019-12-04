@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -32,27 +31,27 @@ public abstract class AbstractRangeDataPointType<V extends DataPointValue<?>, R 
     private final R lowerValue;
     private final R upperValue;
 
-    public AbstractRangeDataPointType(final @Nonnull String id,
-                                      final @Nonnull String description,
-                                      final @Nonnull R lowerValue,
-                                      final @Nonnull R upperValue,
+    public AbstractRangeDataPointType(final String id,
+                                      final String description,
+                                      final R lowerValue,
+                                      final R upperValue,
                                       final @Nullable String unit) {
         super(id, description, unit);
         this.lowerValue = lowerValue;
         this.upperValue = upperValue;
     }
 
-    @Nonnull
+
     public R getLowerValue() {
         return this.lowerValue;
     }
 
-    @Nonnull
+
     public R getUpperValue() {
         return this.upperValue;
     }
 
-    public final boolean isRangeClosed(final @Nonnull R value) {
+    public final boolean isRangeClosed(final R value) {
         final var isWithinRange = value.compareTo(this.lowerValue) >= 0 && value.compareTo(this.upperValue) <= 0;
         if (!isWithinRange) {
             log.warn("Value '{}' is not within [{}, {}] for DPT '{}'", value, this.lowerValue, this.upperValue, this.getClass().getSimpleName());

@@ -145,7 +145,7 @@ public final class CEMITest {
 
         // create
         final var cemiByCreate = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
         final var cemiByCreateEmptyArray = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress,
                 destinationAddress, TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
         final var cemiByCreateRawData = CEMI.of(cemiByCreate.getRawData());
@@ -547,7 +547,7 @@ public final class CEMITest {
         final var destinationAddress = GroupAddress.of(1, 2, 150);
 
         final var cemi = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
 
         // with raw data
         assertThat(cemi).hasToString(String.format(

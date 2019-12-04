@@ -71,7 +71,7 @@ public class DPT22Test implements DPTTest {
 
         // Room Heating / Cooling Controller Status (0100 1001 1011 0011 = 0x49 0xB3)
         DPT22.StatusRoomHeatinCoolingController statusRoomHeatingCoolingControllerDPT = DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER;
-        DPT22Value.StatusRoomHeatinCoolingController statusRoomHeatingCoolingControllerDPV = statusRoomHeatingCoolingControllerDPT.toValue(true, true,
+        DPT22Value.StatusRoomHeatingCoolingController statusRoomHeatingCoolingControllerDPV = statusRoomHeatingCoolingControllerDPT.toValue(true, true,
                 false, false, true, true, false, true, true, false, false, true, false, false, true);
         assertThat(statusRoomHeatingCoolingControllerDPT.toValue((byte) 0x49, (byte) 0xB3)).isEqualTo(statusRoomHeatingCoolingControllerDPV);
         assertThat(statusRoomHeatingCoolingControllerDPT.toValue(true, true, false, false, true, true, false, true, true, false, false, true, false,

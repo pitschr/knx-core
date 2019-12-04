@@ -28,7 +28,7 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 
 /**
@@ -61,7 +61,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
     private final int channelId;
     private final HPAI controlEndpoint;
 
-    private ConnectionStateRequestBody(final @Nonnull byte[] bytes) {
+    private ConnectionStateRequestBody(final byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
@@ -75,8 +75,8 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * @param bytes complete byte array for {@link ConnectionStateRequestBody}
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
-    @Nonnull
-    public static ConnectionStateRequestBody of(final @Nonnull byte[] bytes) {
+
+    public static ConnectionStateRequestBody of(final byte[] bytes) {
         return new ConnectionStateRequestBody(bytes);
     }
 
@@ -87,8 +87,8 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * @param controlEndpoint
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
-    @Nonnull
-    public static ConnectionStateRequestBody of(final int channelId, final @Nonnull HPAI controlEndpoint) {
+
+    public static ConnectionStateRequestBody of(final int channelId, final HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -108,7 +108,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -116,7 +116,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         }
     }
 
-    @Nonnull
+
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECTION_STATE_REQUEST;
@@ -127,12 +127,12 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         return this.channelId;
     }
 
-    @Nonnull
+
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
-    @Nonnull
+
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

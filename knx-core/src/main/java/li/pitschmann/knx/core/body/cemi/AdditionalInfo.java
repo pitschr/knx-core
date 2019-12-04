@@ -23,8 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
-
 /**
  * Additional info container for CEMI
  *
@@ -35,7 +33,7 @@ public final class AdditionalInfo extends AbstractMultiRawData {
     private final int length;
     private final int totalLength;
 
-    private AdditionalInfo(final @Nonnull byte[] addInfoRawData) {
+    private AdditionalInfo(final byte[] addInfoRawData) {
         super(addInfoRawData);
 
         this.length = Bytes.toUnsignedInt(addInfoRawData[0]);
@@ -48,8 +46,8 @@ public final class AdditionalInfo extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link AdditionalInfo}
      * @return a new immutable {@link AdditionalInfo}
      */
-    @Nonnull
-    public static AdditionalInfo of(final @Nonnull byte[] bytes) {
+
+    public static AdditionalInfo of(final byte[] bytes) {
         return new AdditionalInfo(bytes);
     }
 
@@ -58,13 +56,13 @@ public final class AdditionalInfo extends AbstractMultiRawData {
      *
      * @return re-usable immutable empty {@link AdditionalInfo} instance
      */
-    @Nonnull
+
     public static AdditionalInfo empty() {
         return EMPTY;
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] addInfoRawData) {
+    protected void validate(final byte[] addInfoRawData) {
         if (addInfoRawData == null) {
             throw new KnxNullPointerException("addInfoRawData");
         }

@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -108,8 +108,8 @@ public final class XmlProject {
      * @param path
      * @return a new instance of {@link XmlProject}
      */
-    @Nonnull
-    public static XmlProject parse(final @Nonnull Path path) {
+
+    public static XmlProject parse(final Path path) {
         return Parser.parse(path);
     }
 
@@ -150,7 +150,7 @@ public final class XmlProject {
      *
      * @return immutable list of {@link XmlGroupRange}
      */
-    @Nonnull
+
     public List<XmlGroupRange> getGroupRanges() {
         return groupRanges;
     }
@@ -164,7 +164,7 @@ public final class XmlProject {
      *
      * @param groupRanges
      */
-    public void setGroupRanges(final @Nonnull Collection<XmlGroupRange> groupRanges) {
+    public void setGroupRanges(final Collection<XmlGroupRange> groupRanges) {
         // immutable list of KNX Group Ranges sorted by range start, and then level
         this.groupRanges = groupRanges.stream()
                 .sorted(
@@ -193,7 +193,6 @@ public final class XmlProject {
      *
      * @return immutable list of {@link XmlGroupAddress}
      */
-    @Nonnull
     public List<XmlGroupAddress> getGroupAddresses() {
         return groupAddresses;
     }
@@ -210,7 +209,7 @@ public final class XmlProject {
      *
      * @param groupAddresses
      */
-    public void setGroupAddresses(final @Nonnull Collection<XmlGroupAddress> groupAddresses) {
+    public void setGroupAddresses(final Collection<XmlGroupAddress> groupAddresses) {
         // immutable list of KNX Group Address sorted by Group Address as Integer
         this.groupAddresses = groupAddresses.stream()
                 .sorted(
@@ -243,7 +242,7 @@ public final class XmlProject {
      * @return the {@link XmlGroupAddress}, or {@code null} if not found
      */
     @Nullable
-    public XmlGroupAddress getGroupAddress(final @Nonnull GroupAddress groupAddress) {
+    public XmlGroupAddress getGroupAddress(final GroupAddress groupAddress) {
         return getGroupAddress(groupAddress.getAddressAsInt());
     }
 
@@ -266,7 +265,7 @@ public final class XmlProject {
      * @return An instance of {@link XmlGroupRange}, or {@code null} if not found
      */
     @Nullable
-    public XmlGroupRange getGroupRangeById(final @Nonnull String id) {
+    public XmlGroupRange getGroupRangeById(final String id) {
         return groupRangeMap.get(id);
     }
 
@@ -277,7 +276,7 @@ public final class XmlProject {
      * @return An instance of {@link XmlGroupAddress}, or {@code null} if not found
      */
     @Nullable
-    public XmlGroupAddress getGroupAddressById(final @Nonnull String id) {
+    public XmlGroupAddress getGroupAddressById(final String id) {
         return groupAddressMap.get(id);
     }
 
@@ -286,7 +285,6 @@ public final class XmlProject {
      *
      * @return immutable list of {@link XmlGroupRange}, or empty list if not found
      */
-    @Nonnull
     public List<XmlGroupRange> getMainGroupRanges() {
         return groupRanges.isEmpty()
                 ? List.of()
@@ -299,7 +297,6 @@ public final class XmlProject {
      * @param main
      * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
-    @Nonnull
     public XmlGroupRange getGroupRange(final int main) {
         Preconditions.checkArgument(!groupRanges.isEmpty(), "No main groups available");
 
@@ -336,7 +333,6 @@ public final class XmlProject {
      * @param middle
      * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
-    @Nonnull
     public XmlGroupRange getGroupRange(final int main, final int middle) {
         final var mainGroup = getGroupRange(main);
 
@@ -366,7 +362,6 @@ public final class XmlProject {
         }
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

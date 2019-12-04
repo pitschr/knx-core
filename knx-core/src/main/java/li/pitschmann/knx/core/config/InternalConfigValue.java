@@ -1,6 +1,5 @@
 package li.pitschmann.knx.core.config;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,10 +22,10 @@ import java.util.function.Supplier;
  */
 public final class InternalConfigValue<T> extends ConfigValue<T> {
     InternalConfigValue(
-            final @Nonnull String key,
-            final @Nonnull Class<T> classType,
-            final @Nonnull Function<String, T> converter,
-            final @Nonnull Supplier<T> defaultSupplier,
+            final String key,
+            final Class<T> classType,
+            final Function<String, T> converter,
+            final Supplier<T> defaultSupplier,
             final @Nullable Predicate<T> predicate) {
         super(key, classType, converter, defaultSupplier, predicate);
     }

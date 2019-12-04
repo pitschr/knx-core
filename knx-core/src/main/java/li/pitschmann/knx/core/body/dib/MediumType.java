@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 
 /**
@@ -64,7 +64,7 @@ public enum MediumType implements KnxByteEnum {
      * @return existing {@link MediumType}, or {@link KnxEnumNotFoundException} if no {@link MediumType}
      * for given {@code code} exists
      */
-    @Nonnull
+
     public static MediumType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(MediumType.class, code));
@@ -75,13 +75,13 @@ public enum MediumType implements KnxByteEnum {
         return this.code;
     }
 
-    @Nonnull
+
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
 
-    @Nonnull
+
     @Override
     public String toString() {
         // @formatter:off

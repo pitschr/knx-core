@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.core.utils.Configs;
 import li.pitschmann.knx.core.utils.Networker;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -97,7 +96,6 @@ public final class CoreConfigs {
      *
      * @return immutable list of {@link ConfigValue}
      */
-    @Nonnull
     public static Map<String, ConfigValue<Object>> getConfigValues() {
         return CONFIG_CONSTANTS;
     }

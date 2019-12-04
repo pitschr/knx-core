@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.communication.event;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+
 import java.time.Instant;
 import java.util.Objects;
 
@@ -36,11 +36,21 @@ public class RequestEvent<T extends RequestBody> {
     private T request;
 
     /**
+     * Creates a new request event (package-protected)
+     * to be called by {@link KnxSingleEvent} or {@link KnxMultiEvent}
+     *
+     * @param request
+     */
+    RequestEvent(final T request) {
+        this.requestTime = Instant.now();
+        this.request = request;
+    }
+
+    /**
      * Returns the time when last request was set.
      *
      * @return An {@link Instant}
      */
-    @Nonnull
     public Instant getRequestTime() {
         return this.requestTime;
     }
@@ -50,22 +60,10 @@ public class RequestEvent<T extends RequestBody> {
      *
      * @return The request body which was set last time
      */
-    @Nonnull
     public T getRequest() {
         return this.request;
     }
 
-    /**
-     * Sets the request and update the request time to now
-     *
-     * @param request the request body
-     */
-    public void setRequest(final @Nonnull T request) {
-        this.requestTime = Instant.now();
-        this.request = Objects.requireNonNull(request);
-    }
-
-    @Nonnull
     @Override
     public String toString() {
         return Strings.toStringHelper(this) //
