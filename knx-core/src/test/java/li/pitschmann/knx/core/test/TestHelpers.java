@@ -56,12 +56,12 @@ public final class TestHelpers {
     }
 
     /**
-     * Assert that the given {@link Class} is not instantiable and an {@link AssertionError} thrown is expected
+     * Assert that the given {@link Class} is not instantiable and
+     * an {@link AssertionError} thrown is expected
      *
      * @param classToTest
      */
     public static void assertThatNotInstantiable(final Class<?> classToTest) {
-        // DPT21Value should not be instantiable
         assertThatThrownBy(() -> {
             final var ctor = classToTest.getDeclaredConstructor();
             ctor.trySetAccessible();
@@ -74,7 +74,6 @@ public final class TestHelpers {
      *
      * @return
      */
-
     public static Config mockConfig() {
         return mockConfig(x -> {
         });
@@ -86,7 +85,6 @@ public final class TestHelpers {
      * @param configMockConsumer
      * @return
      */
-
     public static Config mockConfig(final Consumer<Config> configMockConsumer) {
         @SuppressWarnings("unchecked")
         final var configValueClass = (Class<ConfigValue<?>>) (Object) ConfigValue.class;
@@ -127,7 +125,6 @@ public final class TestHelpers {
      *
      * @return
      */
-
     public static InternalKnxClient mockInternalKnxClient() {
         return mockInternalKnxClient(
                 config -> {
@@ -144,7 +141,6 @@ public final class TestHelpers {
      * @param knxClientMockSupplier
      * @return
      */
-
     public static InternalKnxClient mockInternalKnxClient(final Consumer<Config> configMockConsumer,
                                                           final Consumer<InternalKnxClient> knxClientMockSupplier) {
         final var knxClientMock = mock(InternalKnxClient.class);

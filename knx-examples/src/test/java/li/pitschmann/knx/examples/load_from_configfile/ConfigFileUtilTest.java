@@ -2,10 +2,6 @@ package li.pitschmann.knx.examples.load_from_configfile;
 
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
-import li.pitschmann.knx.core.test.TestHelpers;
-import li.pitschmann.knx.core.test.data.TestExtensionPlugin;
-import li.pitschmann.knx.core.test.data.TestObserverPlugin;
-import li.pitschmann.knx.core.test.data.TestPlugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -113,6 +109,10 @@ public class ConfigFileUtilTest {
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(ConfigFileUtil.class);
+            assertThatThrownBy(() -> {
+                final var ctor = ConfigFileUtil.class.getDeclaredConstructor();
+                ctor.trySetAccessible();
+                ctor.newInstance();
+            }).hasCauseInstanceOf(AssertionError.class);
     }
 }
