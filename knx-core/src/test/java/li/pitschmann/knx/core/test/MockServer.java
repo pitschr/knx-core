@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Networker;
@@ -42,8 +41,6 @@ import java.net.InetAddress;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.MulticastChannel;
 import java.nio.channels.Selector;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -129,16 +126,7 @@ public final class MockServer implements Runnable, Closeable {
         executorService.shutdown();
 
         final var publisher = new SubmissionPublisher<Body>();
-        // Subscribe KNX Mock Server Logic (mandatory)
         publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerAnnotation)));
-
-        // Subscribe KNX Mock Server Project Logic if KNX project path is defined
-        if (!mockServerAnnotation.projectPath().isEmpty()) {
-            final var xmlProjectPath = Paths.get(mockServerAnnotation.projectPath());
-            Preconditions.checkArgument(Files.exists(xmlProjectPath), "Project file doesn't exists at: {}", xmlProjectPath);
-            final var projectLogic = new MockServerProjectLogic(this, XmlProject.parse(xmlProjectPath));
-            publisher.subscribe(Executors.wrapSubscriberWithMDC(projectLogic));
-        }
 
         try (final var selector = Selector.open();
              this.serverChannel) {
@@ -488,7 +476,6 @@ public final class MockServer implements Runnable, Closeable {
                 .setting(CoreConfigs.ConnectionState.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
                 .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, 6000L) // 6s instead of 60s
                 .setting(CoreConfigs.ConnectionState.HEARTBEAT_TIMEOUT, 12000L) // 12s instead of 120s
-                .setting(CoreConfigs.PROJECT_PATH, Paths.get(mockServerAnnotation.projectPath()))
                 ;
     }
 

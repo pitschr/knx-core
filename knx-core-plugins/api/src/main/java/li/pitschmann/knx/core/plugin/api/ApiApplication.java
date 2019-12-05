@@ -24,7 +24,10 @@ import com.google.inject.Provides;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
+import ro.pippo.controller.Controller;
 import ro.pippo.controller.ControllerApplication;
+import ro.pippo.controller.GET;
+import ro.pippo.controller.Produces;
 import ro.pippo.guice.GuiceControllerFactory;
 
 /**
@@ -66,6 +69,7 @@ public class ApiApplication extends ControllerApplication {
 
         // adds controller for endpoints
         addControllers(
+                HeartbeatController.class, //
                 // V1 Controllers
                 li.pitschmann.knx.core.plugin.api.v1.controllers.ReadRequestController.class, //
                 li.pitschmann.knx.core.plugin.api.v1.controllers.WriteRequestController.class, //
@@ -73,5 +77,27 @@ public class ApiApplication extends ControllerApplication {
                 li.pitschmann.knx.core.plugin.api.v1.controllers.StatisticController.class, //
                 li.pitschmann.knx.core.plugin.api.v1.controllers.ProjectController.class
         );
+    }
+
+    /**
+     * Heartbeat Controller
+     * <p>
+     * This one can be used by external application to see
+     * if this plugin and web server are available
+     */
+    public static final class HeartbeatController extends Controller {
+
+        /**
+         * Returns the healthCheck
+         *
+         * @return empty body
+         */
+        @GET("/api/ping")
+        @Produces(Produces.TEXT)
+        public String healthCheck() {
+            getResponse().noCache().text().ok();
+            return "OK";
+        }
+
     }
 }

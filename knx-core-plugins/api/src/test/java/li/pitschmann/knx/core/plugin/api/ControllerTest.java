@@ -16,10 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.controllers;
+package li.pitschmann.knx.core.plugin.api;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import ro.pippo.controller.Controller;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -41,11 +42,11 @@ import java.lang.annotation.Target;
 public @interface ControllerTest {
     /**
      * /**
-     * Class of {@link AbstractController} that should be called
+     * Class of {@link Controller} that should be called
      *
      * @return an instance of controller
      */
-    Class<? extends AbstractController> value();
+    Class<? extends Controller> value();
 
     /**
      * Returns the path of KNX project path (*.knxproj)

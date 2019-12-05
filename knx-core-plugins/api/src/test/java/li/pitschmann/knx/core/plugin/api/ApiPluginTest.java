@@ -18,27 +18,19 @@
 
 package li.pitschmann.knx.core.plugin.api;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.communication.KnxClient;
+import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.config.CoreConfigs;
-import li.pitschmann.knx.core.datapoint.DPT1;
-import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
-import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
-import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
-import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
-import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
-import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
 
+import java.io.IOException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -49,21 +41,41 @@ import static org.mockito.Mockito.when;
  * Test class for {@link ApiPlugin}
  */
 public class ApiPluginTest {
+
     @Test
-    @DisplayName("Test the API Plugin with default values")
-    public void testApiPluginDefault() {
+    @DisplayName("Test the API Plugin life-cycle (with health check)")
+    public void testApiPluginDefault() throws IOException, InterruptedException {
         final var mockApiPlugin = new MockApiPlugin();
 
-        final var knxClientMock = mock(KnxClient.class);
-        when(knxClientMock.getConfig(any(ConfigValue.class))).thenCallRealMethod();
-        when(knxClientMock.getConfig(eq(CoreConfigs.PROJECT_PATH))).thenReturn(Paths.get("src/test/resources/Project (3-Level, v20).knxproj"));
+        //
+        // Mocking
+        //
 
-        // simulate plugin
+        final var knxClientMock = mock(KnxClient.class);
+        final var configMock = mock(Config.class);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+
+        //
+        // Verification
+        //
         try {
             mockApiPlugin.onInitialization(knxClientMock);
             mockApiPlugin.onStart();
+
+            // verify if plugin could be started up
+            assertThat(mockApiPlugin.isReady()).isTrue();
+            assertThat(mockApiPlugin.getPort()).isNotZero();
+
+            // verify if health check works
+            final var httpRequest = mockApiPlugin.newRequestBuilder("/api/ping").build();
+            final var httpResponse = HttpClient.newHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
+            assertThat(httpResponse.body()).isEqualTo("OK");
+            assertThat(httpResponse.headers().firstValue("Content-Type").get()).isEqualTo("text/plain; charset=UTF-8");
         } finally {
             mockApiPlugin.onShutdown();
         }
+
+        assertThat(mockApiPlugin.isReady()).isFalse();
     }
 }

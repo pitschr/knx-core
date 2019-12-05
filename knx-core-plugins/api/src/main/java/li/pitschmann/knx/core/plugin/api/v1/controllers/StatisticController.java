@@ -24,6 +24,7 @@ public final class StatisticController extends AbstractController {
     public KnxStatistic getStatistic() {
         log.trace("Http Statistic Request received");
 
+        getResponse().ok();
         return getKnxClient().getStatistic();
     }
 }

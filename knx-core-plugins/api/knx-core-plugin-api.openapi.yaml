@@ -6,6 +6,16 @@ info:
 servers:
   - url: http://localhost:8338/api
 paths:
+  /ping:
+    get:
+      description: 'Check if the web service is accessible (ping/heartbeat). It is not about health check!'
+      responses:
+        200:
+          description: 'Success.'
+          content:
+            plain/text:
+              example: OK
+
   /v1/read:
     post:
       description: |
@@ -344,7 +354,7 @@ paths:
           description: 'Success'
           content:
             application/json:
-              example: {"inbound":{"total":{"packets":3,"bytes":224},"search":{"request":0,"response":0},"description":{"request":0,"response":1},"connect":{"request":0,"response":1},"connection_state":{"request":0,"response":1},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"outbound":{"total":{"packets":3,"bytes":182},"search":{"request":0,"response":0},"description":{"request":1,"response":0},"connect":{"request":1,"response":0},"connection_state":{"request":1,"response":0},"disconnect":{"request":0,"response":0},"tunneling":{"request":0,"response":0}},"error":{"total":{"packets":0,"rate":0}}}
+              example: {"inbound":{"total":{"packets":10,"bytes":11},"search":{"request":100,"response":101},"description":{"request":110,"response":111},"connect":{"request":120,"response":121},"connection_state":{"request":130,"response":131},"tunneling":{"request":150,"response":151},"indication":{"request":0,"response":161},"disconnect":{"request":140,"response":141}},"outbound":{"total":{"packets":12,"bytes":13},"search":{"request":200,"response":201},"description":{"request":210,"response":211},"connect":{"request":220,"response":221},"connection_state":{"request":230,"response":231},"tunneling":{"request":250,"response":251},"indication":{"request":260,"response":0},"disconnect":{"request":240,"response":241}},"error":{"total":{"packets":14,"rate":1.56}}}
 
   /v1/status:
     parameters:

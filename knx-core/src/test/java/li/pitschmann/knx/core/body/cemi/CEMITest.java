@@ -469,12 +469,14 @@ public final class CEMITest {
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[1])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, (byte[]) null)).isInstanceOf(KnxIllegalArgumentException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, (byte[]) null)).isInstanceOf(KnxNullPointerException.class);
+
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, (byte[]) null)).isInstanceOf(KnxIllegalArgumentException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, (byte[]) null)).isInstanceOf(KnxNullPointerException.class);
+
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 

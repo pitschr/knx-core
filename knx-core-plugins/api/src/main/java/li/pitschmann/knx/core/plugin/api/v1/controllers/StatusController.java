@@ -10,7 +10,6 @@ import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
 
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;

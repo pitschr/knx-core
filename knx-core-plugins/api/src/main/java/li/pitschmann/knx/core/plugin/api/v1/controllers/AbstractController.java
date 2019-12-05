@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.Path;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +29,7 @@ abstract class AbstractController extends Controller {
     @Inject
     private KnxClient knxClient;
 
-
+    @Nullable
     public final XmlProject getXmlProject() {
         return xmlProject;
     }

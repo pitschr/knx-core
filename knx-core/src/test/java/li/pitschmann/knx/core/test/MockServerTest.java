@@ -136,13 +136,6 @@ public @interface MockServerTest {
     String[] requests() default {};
 
     /**
-     * Returns the path of KNX project path (*.knxproj)
-     *
-     * @return path of project if defined, otherwise empty
-     */
-    String projectPath() default "";
-
-    /**
      * Uses the discovery service for mock server. If {@code true} then no IP Address / Port is
      * provided for client.
      *

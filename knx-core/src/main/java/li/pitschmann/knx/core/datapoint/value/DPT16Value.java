@@ -74,7 +74,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         super(dpt);
 
         // characters
-        if (bytes.length == 0) {
+        if (bytes == null || bytes.length == 0) {
             this.characters = "";
             this.byteArray = new byte[14];
         } else if (bytes.length > 14) {
@@ -98,7 +98,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
 
     public DPT16Value(final DPT16 dpt, final String characters) {
         super(dpt);
-        Preconditions.checkArgument(characters.length() <= 14,
+        Preconditions.checkArgument(characters == null || characters.length() <= 14,
                 "The length of characters is too long (expected up to 14 characters): {}", characters);
         this.characters = Objects.toString(characters, "");
         this.byteArray = toByteArray(characters, dpt.getCharset());
