@@ -57,15 +57,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- KNX Core dependencies for test only -->
-        <dependency>
-            <groupId>li.pitschmann</groupId>
-            <artifactId>knx-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
         <!-- HTTP server -->
         <dependency>
             <groupId>ro.pippo</groupId>

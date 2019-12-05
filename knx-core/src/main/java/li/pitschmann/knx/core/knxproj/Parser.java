@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.utils.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,6 +97,9 @@ final class Parser {
             // reads the 'project.xml' file from 'P-<digit>' folder
             final var projectOverview = toVTDNav(zipFile, "^P-[\\dA-F]+/project\\.xml$");
             project = getKnxProjectInformation(projectOverview);
+
+//            // Test
+//            testXml(toDocument(zipFile, "^P-[\\dA-F]+/0\\.xml$"), "/KNX/Project/Installations//GroupAddresses//GroupRange");
 
             // get KNX group ranges and addresses
             // reads the '0.xml' file from 'P-<digit>' folder
@@ -498,4 +500,48 @@ final class Parser {
 //        return sb.toString();
 //    }
 
+
+//
+//    private static Document toDocument(final ZipFile zipFile,
+//                                       final String filePathRegEx) {
+//        Preconditions.checkNonNull(zipFile);
+//        Preconditions.checkNonNull(filePathRegEx);
+//        // find file that matches filePathRegEx in ZIP file
+//        final var zipEntry = zipFile.stream().filter(f -> f.getName().matches(filePathRegEx))
+//                .findFirst()
+//                .orElseThrow(() -> new KnxProjectParserException("File '" + filePathRegEx + "' not found in ZIP file"));
+//        log.debug("File in ZIP File found: {}", zipEntry.getName());
+//
+//        byte[] bytes;
+//        try (final var in = zipFile.getInputStream(zipEntry)) {
+//            bytes = in.readAllBytes();
+//            if (log.isDebugEnabled()) {
+//                log.debug("Data stream from file '{}':\n{}", zipEntry.getName(), new String(bytes, StandardCharsets.UTF_8));
+//            }
+//
+//            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes));
+//        } catch (final IOException | ParserConfigurationException ex) {
+//            log.error("Could not read the file: '{}'", zipEntry.getName());
+//            throw new KnxProjectParserException(ex.getMessage()); // TODO
+//        }
+//
+//    }
+//
+//    private static void testXml(final Document document, final String expression) {
+//        try {
+//            final var xpath =  XPathFactory.newInstance().newXPath();
+//            final var obj = xpath.compile(expression).evaluate(document, XPathConstants.NODESET);
+//
+//            if (obj instanceof NodeList) {
+//                var nodeList = ((NodeList)obj);
+//                System.out.println("NODELIST: " + nodeList.getLength());
+//                for (int i=0; i<nodeList.getLength(); i++) {
+//                    final var node = nodeList.item(i);
+//                    System.out.println("NODELIST: " + node  + ", Level: " + node);
+//                }
+//            }
+//        } catch (Throwable t) {
+//            t.printStackTrace();
+//        }
+//    }
 }

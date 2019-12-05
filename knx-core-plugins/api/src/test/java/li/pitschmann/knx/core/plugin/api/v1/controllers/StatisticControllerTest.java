@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.MockApiPlugin;
 import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

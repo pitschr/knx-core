@@ -31,6 +31,7 @@
     <!-- Sub Modules -->
     <modules>
         <module>knx-core</module>
+        <!-- <module>knx-core-test</module> -->
         <module>knx-core-plugins</module>
         <module>knx-examples</module>
     </modules>
@@ -47,16 +48,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
-        <version.plugin.maven-compiler-plugin>3.8.0</version.plugin.maven-compiler-plugin>
         <version.maven-source-plugin>3.1.0</version.maven-source-plugin>
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
+        <version.plugin.maven-compiler-plugin>3.8.1</version.plugin.maven-compiler-plugin>
         <version.plugin.maven-surefire-plugin>2.22.1</version.plugin.maven-surefire-plugin>
-        <version.plugin.maven-assembly-plugin>3.1.0</version.plugin.maven-assembly-plugin>
+        <version.plugin.maven-assembly-plugin>3.2.0</version.plugin.maven-assembly-plugin>
+        <version.plugin.maven-jar-plugin>3.2.0</version.plugin.maven-jar-plugin>
         <!-- Utility -->
-        <version.vtd-xml>2.11</version.vtd-xml>
+        <version.vtd-xml>2.13.4</version.vtd-xml>
         <rotating-fos.version>0.9.0</rotating-fos.version>
         <!-- Logging -->
-        <version.slf4j>1.7.25</version.slf4j>
+        <version.slf4j>1.7.29</version.slf4j>
         <version.logback-classic>1.2.3</version.logback-classic>
         <!-- Test -->
         <version.junit-jupiter-engine>5.5.2</version.junit-jupiter-engine>
@@ -230,7 +232,7 @@
 
             <!--
             Create JAR containing test classes
-            -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -243,6 +245,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <!--
             Creates a JAR file with all dependencies (one fat JAR)

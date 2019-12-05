@@ -33,8 +33,8 @@ import ro.pippo.core.HttpConstants;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

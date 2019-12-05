@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
@@ -57,7 +56,7 @@ public abstract class AbstractKnxMain {
      * @param args
      * @return a new instance of {@link ConfigBuilder}
      */
-    protected ConfigBuilder parseConfigBuilder(final @Nonnull String[] args) {
+    protected ConfigBuilder parseConfigBuilder(final String[] args) {
         // Argument: Routing enabled?
         final var routingEnabled = existsParameter(args, "--routing");
         log.debug("Routing: {}", routingEnabled);
@@ -95,9 +94,9 @@ public abstract class AbstractKnxMain {
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
-    protected <T> T getParameterValue(final @Nonnull String[] args,
-                                      final @Nonnull String parameterNames,
-                                      final @Nonnull Function<String, T> function,
+    protected <T> T getParameterValue(final String[] args,
+                                      final String parameterNames,
+                                      final Function<String, T> function,
                                       final @Nullable T defaultValue) {
         for (final var parameterName : parameterNames.split(",")) {
             for (var i = 0; i < args.length; i++) {
@@ -126,8 +125,8 @@ public abstract class AbstractKnxMain {
      * @param parameterNames parameter names, may be comma-separated
      * @return {@code true} if parameter was found, otherwise {@code false}
      */
-    protected boolean existsParameter(final @Nonnull String[] args,
-                                      final @Nonnull String parameterNames) {
+    protected boolean existsParameter(final String[] args,
+                                      final String parameterNames) {
         for (final var parameterName : parameterNames.split(",")) {
             if (Arrays.stream(args).anyMatch(parameterName::equals)) {
                 return true;
@@ -146,9 +145,9 @@ public abstract class AbstractKnxMain {
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
-    protected <T> T[] getParameterValues(final @Nonnull String[] args,
-                                         final @Nonnull String parameterNames,
-                                         final @Nonnull IntFunction<T[]> function,
+    protected <T> T[] getParameterValues(final String[] args,
+                                         final String parameterNames,
+                                         final IntFunction<T[]> function,
                                          final @Nullable T[] defaultValues
     ) {
         for (final var parameterName : parameterNames.split(",")) {

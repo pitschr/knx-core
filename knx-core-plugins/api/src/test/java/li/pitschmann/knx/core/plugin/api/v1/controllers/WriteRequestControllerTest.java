@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT2;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
-import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
+import li.pitschmann.knx.core.plugin.api.MockApiPlugin;
 import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.test.MockServerTest;
@@ -35,7 +35,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api;
 
 import com.google.gson.JsonParser;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;

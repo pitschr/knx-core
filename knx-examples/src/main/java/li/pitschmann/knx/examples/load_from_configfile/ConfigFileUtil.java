@@ -21,7 +21,6 @@ package li.pitschmann.knx.examples.load_from_configfile;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.config.CoreConfigs;
-import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.core.plugin.Plugin;
 import li.pitschmann.knx.core.utils.Configs;
 import li.pitschmann.knx.core.utils.Maps;
@@ -29,7 +28,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +54,7 @@ final class ConfigFileUtil {
      * @param filePath
      * @return a new instance of {@link ConfigBuilder}
      */
-    static ConfigBuilder loadFile(final @Nonnull Path filePath) {
+    static ConfigBuilder loadFile(final Path filePath) {
         Preconditions.checkArgument(Files.isReadable(filePath),
                 "The file doesn't exists or is not readable: {}", filePath.toAbsolutePath());
 
@@ -94,7 +92,7 @@ final class ConfigFileUtil {
             }
             return configBuilder;
         } catch (final IOException e) {
-            throw new KnxConfigurationException("Cannot read or parse file: " + filePath, e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -105,7 +103,7 @@ final class ConfigFileUtil {
      * @param lines
      * @return list of {@link Plugin} classes
      */
-    private static List<Class<Plugin>> asPluginList(final @Nonnull List<String> lines) {
+    private static List<Class<Plugin>> asPluginList(final List<String> lines) {
         final var filteredLines = filterBySection(lines, "plugins");
         final var plugins = new ArrayList<Class<Plugin>>(filteredLines.size());
 
@@ -115,7 +113,7 @@ final class ConfigFileUtil {
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
             } catch (final Exception ex) {
-                throw new KnxConfigurationException("Could not load plugin: " + line, ex);
+                throw new RuntimeException("Could not load plugin: " + line, ex);
             }
         }
         return plugins;
@@ -128,15 +126,14 @@ final class ConfigFileUtil {
      * @param lines
      * @return map of settings, key is a lower-cased and trimmed {@link String}, value is trimmed {@link String}
      */
-    @Nonnull
-    private static Map<String, String> asSettingMap(final @Nonnull List<String> lines) {
+    private static Map<String, String> asSettingMap(final List<String> lines) {
         final var filteredLines = filterBySection(lines, "settings");
         final var settings = Maps.<String, String>newHashMap(filteredLines.size());
 
         for (final var line : filteredLines) {
             final var keyAndValue = line.split("=", 2);
             if (keyAndValue.length != 2) {
-                throw new KnxConfigurationException("It must be a key=value pair, but what I got is: " + line);
+                throw new AssertionError("It must be a key=value pair, but what I got is: " + line);
             }
             final var key = keyAndValue[0].trim().toLowerCase();
             final var value = keyAndValue[1].trim();
@@ -154,7 +151,7 @@ final class ConfigFileUtil {
      * @param sectionName
      * @return filtered list
      */
-    private static List<String> filterBySection(final @Nonnull List<String> lines, final @Nonnull String sectionName) {
+    private static List<String> filterBySection(final List<String> lines, final String sectionName) {
         final var filteredLines = new ArrayList<String>(lines.size());
         boolean sectionFound = false;
         for (final var line : lines) {
