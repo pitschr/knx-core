@@ -60,7 +60,7 @@ public class ConfigFileUtilTest {
     public void testImportNonExistentPlugin() {
         assertThatThrownBy(() -> ConfigFileUtil.loadFile(Paths.get("src/test/resources/config/wrongPlugins.config")))
                 .isInstanceOf(KnxConfigurationException.class)
-                .hasMessage("Could not load plugin: li.pitschmann.knx.core.test.data.TestPluginDOESNOTEXISTS");
+                .hasMessage("Could not load plugin: li.pitschmann.knx.examples.load_from_configfile.TestPluginDOESNOTEXISTS");
     }
 
     @Test

@@ -21,6 +21,7 @@ package li.pitschmann.knx.examples.load_from_configfile;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.config.CoreConfigs;
+import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.core.plugin.Plugin;
 import li.pitschmann.knx.core.utils.Configs;
 import li.pitschmann.knx.core.utils.Maps;
@@ -92,7 +93,7 @@ final class ConfigFileUtil {
             }
             return configBuilder;
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new KnxConfigurationException("Cannot read or parse file: " + filePath, e);
         }
     }
 
@@ -113,7 +114,7 @@ final class ConfigFileUtil {
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
             } catch (final Exception ex) {
-                throw new RuntimeException("Could not load plugin: " + line, ex);
+                throw new KnxConfigurationException("Could not load plugin: " + line, ex);
             }
         }
         return plugins;
@@ -133,7 +134,7 @@ final class ConfigFileUtil {
         for (final var line : filteredLines) {
             final var keyAndValue = line.split("=", 2);
             if (keyAndValue.length != 2) {
-                throw new AssertionError("It must be a key=value pair, but what I got is: " + line);
+                throw new KnxConfigurationException("It must be a key=value pair, but what I got is: " + line);
             }
             final var key = keyAndValue[0].trim().toLowerCase();
             final var value = keyAndValue[1].trim();
