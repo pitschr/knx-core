@@ -219,7 +219,6 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
             this.type = type;
         }
 
-
         @Override
         public String toString() {
             return this.type;

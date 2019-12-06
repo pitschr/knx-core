@@ -46,7 +46,6 @@ public final class ServiceTypeFamilyVersion {
         return this.version;
     }
 
-
     @Override
     public String toString() {
         // @formatter:off

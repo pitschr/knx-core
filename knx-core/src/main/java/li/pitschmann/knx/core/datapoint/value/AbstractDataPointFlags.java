@@ -41,12 +41,10 @@ abstract class AbstractDataPointFlags<T extends AbstractDataPointType<?>> extend
         this.bytes = Objects.requireNonNull(bytes);
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.bytes.clone();
     }
-
 
     @Override
     public String toString() {

@@ -164,7 +164,6 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_RESPONSE;
@@ -184,7 +183,6 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
         return this.supportedDeviceFamilies;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

@@ -133,7 +133,6 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         return this.characters;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
@@ -148,7 +147,6 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     public String toText() {
         return getCharacters();
     }
-
 
     @Override
     public String toString() {

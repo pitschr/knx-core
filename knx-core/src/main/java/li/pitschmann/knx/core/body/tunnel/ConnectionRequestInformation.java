@@ -136,7 +136,6 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
         return this.layerType;
     }
 
-
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

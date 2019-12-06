@@ -84,12 +84,10 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
         return this.sceneNumber;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.sceneNumber);
     }
-
 
     @Override
     public String toText() {
@@ -99,7 +97,6 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
             return "scene " + getSceneNumber();
         }
     }
-
 
     @Override
     public String toString() {

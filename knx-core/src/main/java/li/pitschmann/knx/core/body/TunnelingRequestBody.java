@@ -139,7 +139,6 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.TUNNELING_REQUEST;
@@ -162,7 +161,6 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     public CEMI getCEMI() {
         return this.cemi;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

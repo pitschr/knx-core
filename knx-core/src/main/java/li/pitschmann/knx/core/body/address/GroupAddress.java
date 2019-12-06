@@ -174,7 +174,6 @@ public final class GroupAddress extends KnxAddress {
         return of(bytes);
     }
 
-
     @Override
     public AddressType getAddressType() {
         return AddressType.GROUP;
@@ -230,7 +229,6 @@ public final class GroupAddress extends KnxAddress {
 
         return main + "/" + middle + "/" + sub;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

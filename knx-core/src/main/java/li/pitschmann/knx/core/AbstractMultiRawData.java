@@ -56,7 +56,6 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
         return Arrays.hashCode(this.getRawData());
     }
 
-
     @Override
     public String toString() {
         return this.toString(true);

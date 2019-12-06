@@ -185,18 +185,15 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         return this.floatingValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getFloatingValue());
     }
-
 
     @Override
     public String toString() {

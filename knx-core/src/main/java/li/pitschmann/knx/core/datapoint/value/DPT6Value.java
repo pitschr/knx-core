@@ -71,18 +71,15 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         return this.relativeSignedValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.relativeSignedValue);
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getRelativeSignedValue());
     }
-
 
     @Override
     public String toString() {
@@ -181,8 +178,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
             return Mode.of(this.b & 0x07);
         }
 
-
-        @Override
+    @Override
         public byte[] toByteArray() {
             return new byte[]{this.b};
         }

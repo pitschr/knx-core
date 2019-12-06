@@ -192,7 +192,6 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
         return this.deviceFriendlyName;
     }
 
-
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

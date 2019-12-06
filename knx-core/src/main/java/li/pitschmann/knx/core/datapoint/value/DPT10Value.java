@@ -158,12 +158,10 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         return this.time;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
-
 
     @Override
     public String toText() {
@@ -175,7 +173,6 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         sb.append(getTime().format(DateTimeFormatter.ISO_TIME));
         return sb.toString();
     }
-
 
     @Override
     public String toString() {

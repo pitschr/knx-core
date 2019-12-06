@@ -74,18 +74,15 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         return this.character;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.character);
     }
 
-
     @Override
     public String toText() {
         return String.format("char '%c'", getCharacter());
     }
-
 
     @Override
     public String toString() {

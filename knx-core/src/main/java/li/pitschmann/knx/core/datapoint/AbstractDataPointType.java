@@ -58,12 +58,10 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         this.unit = unit;
     }
 
-
     @Override
     public final String getId() {
         return this.id;
     }
-
 
     @Override
     public final String getDescription() {
@@ -73,7 +71,6 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
             return this.description + " (" + this.unit + ")";
         }
     }
-
 
     @Override
     public final String getUnit() {
@@ -275,7 +272,6 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         }
         return false; // not found
     }
-
 
     @Override
     public String toString() {

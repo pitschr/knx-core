@@ -80,7 +80,6 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
         return new BytesResponseBody(serviceType, bytes);
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return serviceType;
@@ -92,7 +91,6 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
             throw new KnxNumberOutOfRangeException("rawData", 0, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
-
 
     @Override
     public String toString(boolean inclRawData) {

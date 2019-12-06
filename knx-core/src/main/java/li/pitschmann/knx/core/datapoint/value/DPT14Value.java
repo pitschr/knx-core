@@ -93,18 +93,15 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
         return this.floatingValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getFloatingValue());
     }
-
 
     @Override
     public String toString() {

@@ -106,7 +106,6 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECTION_STATE_RESPONSE;
@@ -121,7 +120,6 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
     public Status getStatus() {
         return this.status;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

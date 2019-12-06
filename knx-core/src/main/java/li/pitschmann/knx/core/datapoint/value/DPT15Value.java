@@ -133,12 +133,10 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         return this.flags;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.accessIdentificationData, this.flags);
     }
-
 
     @Override
     public String toText() {
@@ -149,7 +147,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
                 .append(this.flags.toText());
         return sb.toString();
     }
-
 
     @Override
     public String toString() {
@@ -162,7 +159,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
                 .toString();
         // @formatter:on
     }
-
 
     @Override
     public boolean equals(final @Nullable Object obj) {
@@ -279,8 +275,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
             return ByteFormatter.formatHex(getAsByte());
         }
 
-
-        @Override
+    @Override
         public String toString() {
             // @formatter:off
             return Strings.toStringHelper(this)

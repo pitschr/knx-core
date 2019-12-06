@@ -218,12 +218,10 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         return this.flags;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
-
 
     @Override
     public String toText() {
@@ -239,7 +237,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                 .append(getFlags().toText());
         return sb.toString();
     }
-
 
     @Override
     public String toString() {
@@ -444,7 +441,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         public String toText() {
             return ByteFormatter.formatHexAsString(getAsBytes());
         }
-
 
         @Override
         public String toString() {

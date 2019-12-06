@@ -99,7 +99,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_REQUEST;
@@ -109,7 +108,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

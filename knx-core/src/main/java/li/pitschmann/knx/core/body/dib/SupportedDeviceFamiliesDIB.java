@@ -135,7 +135,6 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         return false;
     }
 
-
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

@@ -133,18 +133,15 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         return this.date;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getDate().format(DateTimeFormatter.ISO_DATE);
     }
-
 
     @Override
     public String toString() {

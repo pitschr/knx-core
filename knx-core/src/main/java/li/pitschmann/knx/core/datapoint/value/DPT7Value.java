@@ -84,18 +84,15 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
         return this.rawUnsignedValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getUnsignedValue());
     }
-
 
     @Override
     public String toString() {

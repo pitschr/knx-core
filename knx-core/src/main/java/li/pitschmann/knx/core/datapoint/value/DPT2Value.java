@@ -88,12 +88,10 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         return this.getDPT().getDPT1().getTextFor(this.booleanValue);
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.booleanValue);
     }
-
 
     @Override
     public String toText() {
@@ -103,7 +101,6 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
             return getBooleanText();
         }
     }
-
 
     @Override
     public String toString() {

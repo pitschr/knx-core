@@ -117,7 +117,6 @@ public final class KnxAddressesDIB extends AbstractDIB {
         return this.additionalAddresses;
     }
 
-
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

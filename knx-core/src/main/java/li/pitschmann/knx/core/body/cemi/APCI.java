@@ -117,7 +117,6 @@ public enum APCI implements KnxBytesEnum {
         return this.codeRangeStart;
     }
 
-
     @Override
     public byte[] getCodeAsBytes() {
         final var code = this.getCode();
@@ -133,12 +132,10 @@ public enum APCI implements KnxBytesEnum {
         return this.codeRangeStart != this.codeRangeEnd;
     }
 
-
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
-
 
     @Override
     public String toString() {

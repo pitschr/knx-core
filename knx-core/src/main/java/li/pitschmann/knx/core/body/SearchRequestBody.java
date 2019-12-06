@@ -100,7 +100,6 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_REQUEST;
@@ -110,7 +109,6 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
     public HPAI getDiscoveryEndpoint() {
         return this.discoveryEndpoint;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

@@ -132,7 +132,6 @@ public final class ControlByte2 extends AbstractSingleRawData {
         return this.extendedFrameFormat;
     }
 
-
     @Override
     public String toString() {
         // @formatter:off

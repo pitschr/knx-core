@@ -62,7 +62,6 @@ abstract class AbstractDIB extends AbstractMultiRawData {
         return this.descriptionType;
     }
 
-
     @Override
     public String toString(boolean inclRawData) {
         // @formatter:off

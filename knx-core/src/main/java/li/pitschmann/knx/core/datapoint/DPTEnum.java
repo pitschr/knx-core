@@ -81,12 +81,10 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
         return dptEnumValue;
     }
 
-
     @Override
     protected boolean isCompatible(final byte[] bytes) {
         return bytes.length == 1;
     }
-
 
     @Override
     protected DPTEnumValue<T> parse(final byte[] bytes) {
@@ -97,7 +95,6 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
     protected boolean isCompatible(String[] args) {
         return args.length == 1 && !Strings.isNullOrEmpty(args[0]);
     }
-
 
     @Override
     protected DPTEnumValue<T> parse(final String[] args) {

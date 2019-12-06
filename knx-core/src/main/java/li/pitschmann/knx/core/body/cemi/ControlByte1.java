@@ -174,7 +174,6 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.confirmationFlag;
     }
 
-
     @Override
     public String toString() {
         // @formatter:off

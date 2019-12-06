@@ -115,7 +115,6 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.TUNNELING_ACK;
@@ -138,7 +137,6 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     public Status getStatus() {
         return this.status;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

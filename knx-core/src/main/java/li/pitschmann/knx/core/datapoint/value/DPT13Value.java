@@ -91,18 +91,15 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
         return this.rawSignedValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getSignedValue());
     }
-
 
     @Override
     public String toString() {

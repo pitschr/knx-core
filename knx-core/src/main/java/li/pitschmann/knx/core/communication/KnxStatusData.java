@@ -123,7 +123,6 @@ public final class KnxStatusData {
         this.dirty = dirty;
     }
 
-
     @Override
     public String toString() {
         // @formatter:off

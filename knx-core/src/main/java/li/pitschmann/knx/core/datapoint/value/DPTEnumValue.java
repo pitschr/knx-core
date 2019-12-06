@@ -61,7 +61,6 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
         this.byteArray = new byte[]{(byte) (this.ordinal & 0xFF)};
     }
 
-
     @Override
     public DPTEnum<T> getDPT() {
         return this.dpt;
@@ -94,18 +93,15 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
         return this.description;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray;
     }
 
-
     @Override
     public String toText() {
         return getDescription();
     }
-
 
     @Override
     public String toString() {

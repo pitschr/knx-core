@@ -147,7 +147,6 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
         this.channel.send(byteBuffer, address);
     }
 
-
     @Override
     public void close() {
         Closeables.closeQuietly(this.channel);

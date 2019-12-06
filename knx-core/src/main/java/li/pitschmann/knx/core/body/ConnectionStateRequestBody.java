@@ -114,7 +114,6 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECTION_STATE_REQUEST;
@@ -129,7 +128,6 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

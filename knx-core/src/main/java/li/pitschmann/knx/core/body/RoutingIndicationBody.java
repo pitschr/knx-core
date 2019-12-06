@@ -92,7 +92,6 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.ROUTING_INDICATION;
@@ -102,7 +101,6 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     public CEMI getCEMI() {
         return this.cemi;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

@@ -92,7 +92,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         return of(bytes);
     }
 
-
     @Override
     protected void validate(final byte[] rawData) {
         if (rawData == null) {
@@ -101,7 +100,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
         }
     }
-
 
     @Override
     public ServiceType getServiceType() {
@@ -117,7 +115,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     public Status getStatus() {
         return this.status;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

@@ -212,7 +212,6 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_RESPONSE;
@@ -247,7 +246,6 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     public ManufacturerDataDIB getManufacturerData() {
         return this.manufacturerData;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

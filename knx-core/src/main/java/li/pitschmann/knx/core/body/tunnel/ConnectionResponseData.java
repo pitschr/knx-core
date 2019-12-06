@@ -123,7 +123,6 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
         return this.address;
     }
 
-
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

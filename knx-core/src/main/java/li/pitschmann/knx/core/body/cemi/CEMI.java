@@ -451,7 +451,6 @@ public final class CEMI extends AbstractMultiRawData {
         return this.apciData;
     }
 
-
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

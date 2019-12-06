@@ -122,18 +122,15 @@ public final class IndividualAddress extends KnxAddress {
         return of(bytes);
     }
 
-
     @Override
     public AddressType getAddressType() {
         return AddressType.INDIVIDUAL;
     }
 
-
     @Override
     public String getAddress() {
         return this.area + "." + this.line + "." + this.device;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

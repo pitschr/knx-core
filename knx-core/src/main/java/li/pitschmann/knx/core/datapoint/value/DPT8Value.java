@@ -83,18 +83,15 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
         return this.rawSignedValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getSignedValue());
     }
-
 
     @Override
     public String toString() {

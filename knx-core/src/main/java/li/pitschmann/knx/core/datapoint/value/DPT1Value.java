@@ -70,18 +70,15 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
         return this.getDPT().getTextFor(this.booleanValue);
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.booleanValue);
     }
 
-
     @Override
     public String toText() {
         return getBooleanText();
     }
-
 
     @Override
     public String toString() {

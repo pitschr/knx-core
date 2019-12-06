@@ -181,7 +181,6 @@ public final class HPAI extends AbstractMultiRawData {
         return this.port;
     }
 
-
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
@@ -207,7 +206,6 @@ public final class HPAI extends AbstractMultiRawData {
         }
         return false;
     }
-
 
     @Override
     public int hashCode() {

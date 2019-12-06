@@ -112,7 +112,6 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.DISCONNECT_REQUEST;
@@ -127,7 +126,6 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

@@ -45,7 +45,6 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
         super(client);
     }
 
-
     @Override
     protected final SelectableChannel newChannel(final InternalKnxClient client) {
         // creates new channel
@@ -64,13 +63,11 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
         log.debug("Membership of all multicast groups dropped.");
     }
 
-
     @Override
     protected final MulticastInboxQueue createInboxQueue(final InternalKnxClient client,
                                                          final SelectableChannel channel) {
         return new MulticastInboxQueue(client, channel);
     }
-
 
     @Override
     protected final MulticastOutboxQueue createOutboxQueue(final InternalKnxClient client,

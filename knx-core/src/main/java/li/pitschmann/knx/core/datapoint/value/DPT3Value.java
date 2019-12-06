@@ -108,12 +108,10 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         return StepInterval.ofCode(this.stepCode);
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.stepCode);
     }
-
 
     @Override
     public String toText() {
@@ -124,7 +122,6 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
             return stepIntervalText;
         }
     }
-
 
     @Override
     public String toString() {

@@ -68,12 +68,10 @@ public enum Priority implements KnxByteEnum {
         return this.code;
     }
 
-
     @Override
     public String getFriendlyName() {
         return this.friendlyName;
     }
-
 
     @Override
     public String toString() {

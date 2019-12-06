@@ -151,7 +151,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECT_RESPONSE;
@@ -193,7 +192,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
     public ConnectionResponseData getConnectionResponseData() {
         return this.connectionResponseData;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {

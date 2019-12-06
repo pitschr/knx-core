@@ -182,7 +182,6 @@ public final class DPT21Value {
             return this.isSet(0);
         }
 
-
         @Override
         public String toText() {
             return isForceRequest() ? "forced" : "not forced";
@@ -319,7 +318,6 @@ public final class DPT21Value {
         public boolean isFault() {
             return this.isSet(0);
         }
-
 
         @Override
         public String toText() {
@@ -485,7 +483,6 @@ public final class DPT21Value {
         public boolean isFailure() {
             return this.isSet(0);
         }
-
 
         @Override
         public String toText() {

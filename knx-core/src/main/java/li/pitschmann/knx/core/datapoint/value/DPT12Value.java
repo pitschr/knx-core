@@ -83,18 +83,15 @@ public final class DPT12Value extends AbstractDataPointValue<DPT12> {
         return this.unsignedValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getUnsignedValue());
     }
-
 
     @Override
     public String toString() {

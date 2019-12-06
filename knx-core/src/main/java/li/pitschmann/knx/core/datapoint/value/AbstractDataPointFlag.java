@@ -40,12 +40,10 @@ abstract class AbstractDataPointFlag<T extends AbstractDataPointType<?>> extends
         this.b = b;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return new byte[]{this.b};
     }
-
 
     @Override
     public String toString() {

@@ -80,18 +80,15 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
         return this.rawUnsignedValue;
     }
 
-
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.rawUnsignedValue);
     }
 
-
     @Override
     public String toText() {
         return getValueAsText(getUnsignedValue());
     }
-
 
     @Override
     public String toString() {

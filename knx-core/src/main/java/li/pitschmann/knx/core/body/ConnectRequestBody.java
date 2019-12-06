@@ -124,7 +124,6 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
         }
     }
 
-
     @Override
     public ServiceType getServiceType() {
         return ServiceType.CONNECT_REQUEST;
@@ -144,7 +143,6 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     public ConnectionRequestInformation getConnectionRequestInformation() {
         return this.connectionRequestInformation;
     }
-
 
     @Override
     public String toString(final boolean inclRawData) {
