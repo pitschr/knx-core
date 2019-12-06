@@ -522,7 +522,6 @@ public final class DPT21Value {
          *
          * @return human-friendly representation of active channels
          */
-
         @Override
         public String toText() {
             // return list of channels (e.g. "channel 1" if only channel is

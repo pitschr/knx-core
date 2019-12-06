@@ -68,7 +68,6 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
      *
      * @return
      */
-
     @Override
     public T getDPT() {
         return this.dpt;

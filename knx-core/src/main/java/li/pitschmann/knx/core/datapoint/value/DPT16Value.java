@@ -144,7 +144,6 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
      *
      * @return characters
      */
-
     @Override
     public String toText() {
         return getCharacters();

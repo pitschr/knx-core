@@ -185,7 +185,6 @@ public final class GroupAddress extends KnxAddress {
      *
      * @return group address in Free-level
      */
-
     @Override
     public String getAddress() {
         return String.valueOf(getAddressAsInt());
