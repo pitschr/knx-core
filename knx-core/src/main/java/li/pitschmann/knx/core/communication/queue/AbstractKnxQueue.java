@@ -128,7 +128,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      *
      * @return Current {@link InternalKnxClient}
      */
-
     protected final InternalKnxClient getInternalClient() {
         return client;
     }

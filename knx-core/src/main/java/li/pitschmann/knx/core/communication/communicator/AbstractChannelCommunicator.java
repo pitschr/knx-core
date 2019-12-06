@@ -100,7 +100,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param client
      * @return A new channel
      */
-
     protected abstract SelectableChannel newChannel(final InternalKnxClient client);
 
     /**
@@ -110,7 +109,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param channel
      * @return new instance of {@link AbstractInboxQueue}
      */
-
     protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final InternalKnxClient client,
                                                                          final SelectableChannel channel) {
         return new DefaultInboxQueue(client, channel);
@@ -123,7 +121,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @param channel
      * @return new instance of {@link AbstractOutboxQueue}
      */
-
     protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final InternalKnxClient client,
                                                                            final SelectableChannel channel) {
         return new DefaultOutboxQueue(client, channel);
