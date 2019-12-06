@@ -47,7 +47,6 @@
     <!-- Properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
         <version.maven-source-plugin>3.1.0</version.maven-source-plugin>
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
         <version.plugin.maven-compiler-plugin>3.8.1</version.plugin.maven-compiler-plugin>
@@ -229,52 +228,6 @@
                     <argLine>@{argLine} -Duser.timezone=UTC -Duser.language=en -Duser.country=US -Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
-
-            <!--
-            Create JAR containing test classes
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-
-            <!--
-            Creates a JAR file with all dependencies (one fat JAR)
-            The main class will be: li.pitschmann.knx.examples.tty.Main
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${version.plugin.maven-assembly-plugin}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>li.pitschmann.knx.examples.tty.Main</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -325,8 +278,7 @@
                         </executions>
                         <configuration>
                             <excludes>
-                                <exclude>li/pitschmann/knx/link/plugin/experimental/**</exclude>
-                                <exclude>li/pitschmann/knx/main/**</exclude>
+                                <exclude>li/pitschmann/knx/examples/**</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
