@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;

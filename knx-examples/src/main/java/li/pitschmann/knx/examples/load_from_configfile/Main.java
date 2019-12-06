@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.examples.load_from_configfile;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.examples.AbstractKnxMain;
 
 import java.net.URISyntaxException;

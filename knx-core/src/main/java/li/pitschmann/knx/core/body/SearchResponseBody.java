@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import java.util.Arrays;
 
 /**

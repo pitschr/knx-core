@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.body.dib;
 
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import java.util.Objects;
 
 /**

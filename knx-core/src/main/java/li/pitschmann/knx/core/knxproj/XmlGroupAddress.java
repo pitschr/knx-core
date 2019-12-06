@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.knxproj;
 import li.pitschmann.knx.core.utils.Strings;
 
 
-
 /**
  * XML DTO holding KNX Group Address data which were taken from '*.knxproj' file
  *

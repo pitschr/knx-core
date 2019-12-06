@@ -52,11 +52,9 @@ import ro.pippo.core.Response;
 import ro.pippo.core.route.DefaultRouter;
 import ro.pippo.core.route.RouteContext;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -139,8 +137,8 @@ public final class ControllerTestExtension
 
     /**
      * Returns a mocked {@link KnxClient}
-     * @param xmlProject the {@link XmlProject} that should be considered by {@link KnxClient}
      *
+     * @param xmlProject the {@link XmlProject} that should be considered by {@link KnxClient}
      * @return mocked {@link KnxClient}
      */
     @SuppressWarnings("unchecked")

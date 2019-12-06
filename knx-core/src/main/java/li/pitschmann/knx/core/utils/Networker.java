@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;

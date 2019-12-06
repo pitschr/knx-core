@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.plugin;
 import li.pitschmann.knx.core.body.Body;
 
 
-
 /**
  * Plug-in to be notified when incoming / outgoing {@link Body} or if there was a problem with communication of
  * {@link Body}
@@ -34,19 +33,19 @@ public interface ObserverPlugin extends Plugin {
      *
      * @param item
      */
-    void onIncomingBody( Body item);
+    void onIncomingBody(Body item);
 
     /**
      * Notifies the plug-in about outgoing successful {@link Body} message
      *
      * @param item
      */
-    void onOutgoingBody( Body item);
+    void onOutgoingBody(Body item);
 
     /**
      * Notifies the plug-in about a {@link Throwable}.
      *
      * @param throwable
      */
-    void onError( Throwable throwable);
+    void onError(Throwable throwable);
 }

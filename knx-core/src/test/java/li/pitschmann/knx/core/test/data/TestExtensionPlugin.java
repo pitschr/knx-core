@@ -3,7 +3,6 @@ package li.pitschmann.knx.core.test.data;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.body.cemi.CEMI;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.Arrays;

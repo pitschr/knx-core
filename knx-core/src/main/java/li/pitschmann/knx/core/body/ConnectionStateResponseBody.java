@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 
-
 /**
  * Body for Connection State Response
  * <p>

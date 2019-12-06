@@ -29,7 +29,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import java.util.Arrays;
 
 /**
@@ -99,7 +98,7 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * @param channelId
      * @param status
      * @param dataEndpoint (required only when {@link Status#E_NO_ERROR})
-     * @param crd (required only when {@link Status#E_NO_ERROR})
+     * @param crd          (required only when {@link Status#E_NO_ERROR})
      * @return a new immutable {@link ConnectResponseBody}
      */
     public static ConnectResponseBody of(final int channelId,

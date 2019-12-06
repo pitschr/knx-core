@@ -13,9 +13,6 @@ import li.pitschmann.knx.core.communication.task.RoutingIndicationTask;
 import li.pitschmann.knx.core.communication.task.SearchResponseTask;
 import li.pitschmann.knx.core.communication.task.TunnelingAckTask;
 import li.pitschmann.knx.core.communication.task.TunnelingRequestTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 import java.util.ArrayList;
 import java.util.Collections;

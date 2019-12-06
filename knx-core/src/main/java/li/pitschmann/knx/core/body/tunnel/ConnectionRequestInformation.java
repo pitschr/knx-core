@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 
-
 /**
  * Tunneling Connection Request Information (CRI)
  * <p>

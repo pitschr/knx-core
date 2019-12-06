@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.exceptions;
 import li.pitschmann.knx.core.header.ServiceType;
 
 
-
 /**
  * Exception in case no response identifier could be found for given {@link ServiceType}.
  *

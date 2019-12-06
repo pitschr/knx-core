@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;

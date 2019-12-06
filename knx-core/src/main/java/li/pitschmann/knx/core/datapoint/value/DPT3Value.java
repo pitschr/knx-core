@@ -222,7 +222,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
          * @param interval number of interval in range of [1 .. 64]
          * @return {@link StepInterval}
          */
-    public static StepInterval ofInterval(final int interval) {
+        public static StepInterval ofInterval(final int interval) {
             // validate
             if (interval < 0 || interval > 64) {
                 throw new KnxNumberOutOfRangeException("interval", 0, 64, interval);
@@ -269,7 +269,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
          * @param percent number of percent in range of [1f .. 100f]
          * @return {@link StepInterval}
          */
-    public static StepInterval ofPercent(final float percent) {
+        public static StepInterval ofPercent(final float percent) {
             // validate
             if (percent < 0f || percent > 100f) {
                 throw new KnxNumberOutOfRangeException("percent", 0f, 100f, percent);
@@ -321,7 +321,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
          *
          * @return human-friendy representation of Step Interval
          */
-    public String toText() {
+        public String toText() {
             return this.text;
         }
     }

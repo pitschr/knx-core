@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
-
 import javax.annotation.Nullable;
 import java.util.Map;
 

@@ -33,7 +33,6 @@ import li.pitschmann.knx.core.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;

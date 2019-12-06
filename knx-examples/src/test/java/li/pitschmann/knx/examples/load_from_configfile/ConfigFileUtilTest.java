@@ -109,10 +109,10 @@ public class ConfigFileUtilTest {
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-            assertThatThrownBy(() -> {
-                final var ctor = ConfigFileUtil.class.getDeclaredConstructor();
-                ctor.trySetAccessible();
-                ctor.newInstance();
-            }).hasCauseInstanceOf(AssertionError.class);
+        assertThatThrownBy(() -> {
+            final var ctor = ConfigFileUtil.class.getDeclaredConstructor();
+            ctor.trySetAccessible();
+            ctor.newInstance();
+        }).hasCauseInstanceOf(AssertionError.class);
     }
 }

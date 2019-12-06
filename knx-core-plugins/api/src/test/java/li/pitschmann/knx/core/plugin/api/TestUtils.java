@@ -78,7 +78,7 @@ public final class TestUtils {
 
     /**
      * Randomize a {@link GroupAddress}
-     *
+     * <p>
      * The group address should not matter in the unit testing when
      * not asserting itself.
      *

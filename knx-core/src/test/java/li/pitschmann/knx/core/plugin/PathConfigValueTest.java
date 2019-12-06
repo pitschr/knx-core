@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

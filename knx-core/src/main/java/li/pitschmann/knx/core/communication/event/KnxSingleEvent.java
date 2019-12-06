@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import javax.annotation.Nullable;
 import java.time.Instant;
 

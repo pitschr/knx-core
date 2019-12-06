@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.utils;
 
 import org.slf4j.MDC;
 
-
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;

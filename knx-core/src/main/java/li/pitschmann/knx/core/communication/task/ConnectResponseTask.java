@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.exceptions.KnxBodyNotReceivedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;

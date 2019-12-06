@@ -7,7 +7,6 @@ import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.Plugin;
 
 
-
 /**
  * Test {@link Plugin} implementation that is throwing
  * an {@link RuntimeException} in all methods.

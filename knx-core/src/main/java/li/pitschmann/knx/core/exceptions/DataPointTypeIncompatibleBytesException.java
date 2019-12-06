@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.exceptions;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 
-
 import javax.annotation.Nullable;
 
 /**

@@ -34,7 +34,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
@@ -126,7 +125,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Nullable
     @Override
-    public KnxStatusData getStatusFor( KnxAddress address, boolean mustUpToDate) {
+    public KnxStatusData getStatusFor(KnxAddress address, boolean mustUpToDate) {
         return getStatusForInternal(address, CoreConfigs.Event.STATUS_LOOKUP_TIMEOUT, TimeUnit.MILLISECONDS, true);
     }
 

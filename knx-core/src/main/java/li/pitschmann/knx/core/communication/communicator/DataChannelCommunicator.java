@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.body.DataChannelRelated;
 import li.pitschmann.knx.core.communication.ChannelFactory;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 
-
 import javax.annotation.Nullable;
 import java.nio.channels.SelectableChannel;
 

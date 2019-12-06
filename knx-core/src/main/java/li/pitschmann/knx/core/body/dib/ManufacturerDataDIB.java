@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.body.dib;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.Bytes;
 
-
 import java.util.Arrays;
 
 /**

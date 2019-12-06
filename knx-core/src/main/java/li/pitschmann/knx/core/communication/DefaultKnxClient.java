@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.communication;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 
-
 import javax.annotation.Nullable;
 
 /**

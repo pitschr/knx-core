@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.utils;
 
 
-
 /**
  * Test matrix for bits
  */

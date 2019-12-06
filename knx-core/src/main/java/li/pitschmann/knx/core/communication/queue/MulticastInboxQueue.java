@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.communication.queue;
 
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;

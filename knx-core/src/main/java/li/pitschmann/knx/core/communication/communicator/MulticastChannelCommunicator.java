@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.communication.queue.MulticastOutboxQueue;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.utils.Networker;
 
-
 import javax.annotation.Nullable;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.SelectableChannel;

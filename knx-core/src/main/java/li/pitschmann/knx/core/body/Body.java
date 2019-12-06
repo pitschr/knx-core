@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Bytes;
 
 
-
 /**
  * Marker interface for Body
  *

@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 
-
 /**
  * Abstract DIB for all DIB implementations
  *

@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;

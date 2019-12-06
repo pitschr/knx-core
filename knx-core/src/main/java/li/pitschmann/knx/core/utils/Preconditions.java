@@ -162,7 +162,7 @@ public final class Preconditions {
     public static String toErrorMessage(final String errorMessage, final @Nullable Object... args) {
         if (errorMessage.contains("{}") || errorMessage.contains("%")) {
             return String.format(errorMessage.replaceAll("\\{\\}", "%s"), toErrorMessageArguments(args));
-        } else if (args!=null && args.length > 0) {
+        } else if (args != null && args.length > 0) {
             return String.format("%s (Arguments: %s)", errorMessage, Arrays.toString(toErrorMessageArguments(args)));
         } else {
             return errorMessage;

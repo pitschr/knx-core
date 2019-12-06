@@ -128,6 +128,7 @@ public final class Config {
 
     /**
      * Returns if Network Address Translation (NAT) is enabled. Only used when tunneling.
+     *
      * @return {@code true} if enabled, otherwise {@code false}
      */
     public boolean isNatEnabled() {

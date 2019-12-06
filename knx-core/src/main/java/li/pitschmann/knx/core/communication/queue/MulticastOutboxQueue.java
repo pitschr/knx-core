@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.communication.queue;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.config.CoreConfigs;
 
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

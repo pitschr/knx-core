@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 

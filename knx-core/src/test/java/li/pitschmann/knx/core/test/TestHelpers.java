@@ -39,7 +39,6 @@ import li.pitschmann.knx.core.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 
-
 import java.util.Objects;
 import java.util.function.Consumer;
 

@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.exceptions;
 
 import li.pitschmann.knx.core.datapoint.DataPointType;
 
-
 import javax.annotation.Nullable;
 import java.util.Arrays;
 

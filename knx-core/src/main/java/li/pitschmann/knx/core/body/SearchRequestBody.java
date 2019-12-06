@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
 
-
 /**
  * Body for Search Request
  * <p/>

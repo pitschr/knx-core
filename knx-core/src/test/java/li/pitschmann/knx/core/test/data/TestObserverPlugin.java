@@ -4,7 +4,6 @@ import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.ObserverPlugin;
 
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxWrongChannelIdException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;

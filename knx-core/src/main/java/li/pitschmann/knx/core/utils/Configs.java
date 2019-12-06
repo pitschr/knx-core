@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,8 +60,7 @@ public final class Configs {
                     final var obj = field.get(null);
                     if (obj instanceof InternalConfigValue) {
                         log.debug("Field '{}' is ignored because it is an instance of InternalConfigValue", field.getName());
-                    }
-                    else if (obj instanceof ConfigValue) {
+                    } else if (obj instanceof ConfigValue) {
                         @SuppressWarnings("unchecked") final var configValue = (ConfigValue<Object>) obj;
                         list.add(configValue);
                         log.trace("Field '{}' added to list: {}", field.getName(), configValue);

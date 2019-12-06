@@ -21,9 +21,7 @@ package li.pitschmann.knx.core.communication.event;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import java.time.Instant;
-import java.util.Objects;
 
 /**
  * Mutable KNX event data for {@link RequestBody}

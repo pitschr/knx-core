@@ -275,7 +275,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
             return ByteFormatter.formatHex(getAsByte());
         }
 
-    @Override
+        @Override
         public String toString() {
             // @formatter:off
             return Strings.toStringHelper(this)

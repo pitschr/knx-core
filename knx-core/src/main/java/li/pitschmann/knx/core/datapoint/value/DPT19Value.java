@@ -429,7 +429,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          *
          * @return two-byte array
          */
-    public byte[] getAsBytes() {
+        public byte[] getAsBytes() {
             return new byte[]{this.getByte6(), this.getByte7()};
         }
 

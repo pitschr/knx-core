@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.exceptions;
 import li.pitschmann.knx.core.body.Body;
 
 
-
 /**
  * Exception when an expected body could not be received (during a given time frame). This exception is a subclass of
  * {@link KnxCommunicationException}.

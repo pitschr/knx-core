@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
