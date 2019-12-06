@@ -68,7 +68,6 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
      * @param bytes complete byte array for {@link ConnectionStateResponseBody}
      * @return a new immutable {@link ConnectionStateResponseBody}
      */
-
     public static ConnectionStateResponseBody of(final byte[] bytes) {
         return new ConnectionStateResponseBody(bytes);
     }
@@ -80,7 +79,6 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
      * @param status
      * @return a  new immutable {@link ConnectionStateResponseBody}
      */
-
     public static ConnectionStateResponseBody of(final int channelId, final Status status) {
         // validate
         if (status == null) {

@@ -84,7 +84,6 @@ public final class IPCurrentConfigDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link IPCurrentConfigDIB}
      * @return a new immutable {@link IPCurrentConfigDIB}
      */
-
     public static IPCurrentConfigDIB of(final byte[] bytes) {
         return new IPCurrentConfigDIB(bytes);
     }

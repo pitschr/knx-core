@@ -67,7 +67,6 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link ConnectionResponseData}
      * @return a new immutable {@link ConnectionResponseData}
      */
-
     public static ConnectionResponseData of(final byte[] bytes) {
         return new ConnectionResponseData(bytes);
     }
@@ -78,7 +77,6 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * @param address
      * @return a new immutable {@link ConnectionResponseData}
      */
-
     public static ConnectionResponseData of(final IndividualAddress address) {
         // validate
         if (address == null) {

@@ -27,7 +27,6 @@ public final class Stopwatch {
      *
      * @return started {@link Stopwatch}
      */
-
     public static Stopwatch createStarted() {
         return new Stopwatch().start();
     }
@@ -37,7 +36,6 @@ public final class Stopwatch {
      *
      * @return not started {@link Stopwatch}
      */
-
     public static Stopwatch createUnstarted() {
         return new Stopwatch();
     }

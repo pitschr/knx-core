@@ -49,7 +49,6 @@ public final class BodyFactory {
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
-
     public static <T extends Body> T of(final byte[] headerAndBodyBytes) {
         final var header = Header.of(headerAndBodyBytes);
         return of(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
@@ -65,7 +64,6 @@ public final class BodyFactory {
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
-
     public static <T extends Body> T of(final Header header, final byte[] bodyBytes) {
         return of(header.getServiceType(), bodyBytes);
     }

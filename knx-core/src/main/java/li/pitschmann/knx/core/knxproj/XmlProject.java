@@ -108,7 +108,6 @@ public final class XmlProject {
      * @param path
      * @return a new instance of {@link XmlProject}
      */
-
     public static XmlProject parse(final Path path) {
         return Parser.parse(path);
     }
@@ -150,7 +149,6 @@ public final class XmlProject {
      *
      * @return immutable list of {@link XmlGroupRange}
      */
-
     public List<XmlGroupRange> getGroupRanges() {
         return groupRanges;
     }

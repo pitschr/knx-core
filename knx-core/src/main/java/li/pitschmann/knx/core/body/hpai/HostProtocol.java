@@ -58,7 +58,6 @@ public enum HostProtocol implements KnxByteEnum {
      * @return existing {@link HostProtocol}, or {@link KnxEnumNotFoundException} if no {@link HostProtocol}
      * for given {@code code} exists
      */
-
     public static HostProtocol valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(HostProtocol.class, code));

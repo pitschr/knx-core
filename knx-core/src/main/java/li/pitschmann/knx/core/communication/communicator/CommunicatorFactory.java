@@ -41,7 +41,6 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-
     public static DescriptionChannelCommunicator newDescriptionChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new DescriptionChannelCommunicator(knxClient);
         getDescriptionChannelTasks(knxClient).forEach(communicator::subscribe);
@@ -53,7 +52,6 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-
     public static ControlChannelCommunicator newControlChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new ControlChannelCommunicator(knxClient);
         getControlChannelTasks(knxClient).forEach(communicator::subscribe);
@@ -65,7 +63,6 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-
     public static DataChannelCommunicator newDataChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new DataChannelCommunicator(knxClient);
         getDataChannelTasks(knxClient).forEach(communicator::subscribe);
@@ -78,7 +75,6 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-
     public static ControlAndDataChannelCommunicator newControlAndDataChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new ControlAndDataChannelCommunicator(knxClient);
         getDataChannelTasks(knxClient).forEach(communicator::subscribe);
@@ -91,7 +87,6 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-
     public static MulticastChannelCommunicator newDiscoveryChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new MulticastChannelCommunicator(knxClient);
         getDiscoveryChannelTasks(knxClient).forEach(communicator::subscribe);
@@ -103,7 +98,6 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-
     public static MulticastChannelCommunicator newRoutingChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new MulticastChannelCommunicator(knxClient);
         getRoutingChannelTasks(knxClient).forEach(communicator::subscribe);

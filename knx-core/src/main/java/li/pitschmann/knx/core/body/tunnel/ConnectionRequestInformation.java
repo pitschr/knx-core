@@ -68,7 +68,6 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link ConnectionRequestInformation}
      * @return a new immutable {@link ConnectionRequestInformation}
      */
-
     public static ConnectionRequestInformation of(final byte[] bytes) {
         return new ConnectionRequestInformation(bytes);
     }
@@ -79,7 +78,6 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      *
      * @return re-usable immutable default {@link ConnectionRequestInformation}
      */
-
     public static ConnectionRequestInformation useDefault() {
         return DEFAULT;
     }
@@ -91,7 +89,6 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      * @param layerType
      * @return a new immutable {@link ConnectionRequestInformation}
      */
-
     public static ConnectionRequestInformation of(final ConnectionType connectionType, final LayerType layerType) {
         // validate
         if (connectionType == null) {

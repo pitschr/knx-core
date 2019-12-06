@@ -100,7 +100,6 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param bytes complete byte array for {@link DescriptionResponseBody}
      * @return a new immutable {@link DescriptionResponseBody}
      */
-
     public static DescriptionResponseBody of(final byte[] bytes) {
         return new DescriptionResponseBody(bytes);
     }
@@ -112,7 +111,6 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param supportedDeviceFamilies
      * @return a new immutable {@link DescriptionResponseBody}
      */
-
     public static DescriptionResponseBody of(final DeviceHardwareInformationDIB deviceHardwareInformation,
                                              final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
         // validate

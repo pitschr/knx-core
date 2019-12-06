@@ -165,7 +165,6 @@ public final class CEMI extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link CEMI}
      * @return a new immutable {@link CEMI}
      */
-
     public static CEMI of(final byte[] bytes) {
         return new CEMI(bytes);
     }
@@ -182,7 +181,6 @@ public final class CEMI extends AbstractMultiRawData {
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode,} {@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI} taken from {@link DataPointValue}.
      */
-
     public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final DataPointValue<?> dataPointValue) {
         return useDefault(messageCode, destinationAddress, apci, dataPointValue.toByteArray());
     }
@@ -206,7 +204,6 @@ public final class CEMI extends AbstractMultiRawData {
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode, }{@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI}.
      */
-
     public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final byte[] apciData) {
         // no validation required here
 
@@ -238,7 +235,6 @@ public final class CEMI extends AbstractMultiRawData {
      * @param dataPointValue
      * @return a new immutable {@link CEMI}
      */
-
     public static CEMI of(final MessageCode messageCode,
                           final AdditionalInfo additionalInfo,
                           final ControlByte1 controlByte1,
@@ -268,7 +264,6 @@ public final class CEMI extends AbstractMultiRawData {
      * @param apciData
      * @return a new immutable {@link CEMI}
      */
-
     public static CEMI of(final MessageCode messageCode,
                           final AdditionalInfo additionalInfo,
                           final ControlByte1 controlByte1,

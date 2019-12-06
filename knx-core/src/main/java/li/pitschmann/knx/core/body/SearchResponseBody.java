@@ -100,7 +100,6 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
      * @param bytes complete byte array for {@link SearchResponseBody}
      * @return a new immutable {@link SearchResponseBody}
      */
-
     public static SearchResponseBody of(final byte[] bytes) {
         return new SearchResponseBody(bytes);
     }
@@ -113,7 +112,6 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
      * @param supportedDeviceFamilies
      * @return a new immutable {@link SearchResponseBody}
      */
-
     public static SearchResponseBody of(final HPAI controlEndpoint,
                                         final DeviceHardwareInformationDIB deviceHardwareInformation,
                                         final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {

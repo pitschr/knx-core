@@ -63,7 +63,6 @@ public enum TPCI implements KnxByteEnum {
      * @return existing {@link TPCI}, or {@link KnxEnumNotFoundException} if no {@link TPCI}
      * for given {@code code} exists
      */
-
     public static TPCI valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst().orElseThrow(() -> new KnxEnumNotFoundException(TPCI.class, code));
     }

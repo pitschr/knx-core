@@ -71,7 +71,6 @@ public final class BytesResponseBody extends AbstractMultiRawData implements Res
      * @param bytes       complete byte array for {@link ConnectionStateRequestBody}
      * @return a new immutable {@link BytesResponseBody}
      */
-
     public static BytesResponseBody of(final ServiceType serviceType, final byte[] bytes) {
         if (serviceType == null) {
             throw new KnxNullPointerException("serviceType");

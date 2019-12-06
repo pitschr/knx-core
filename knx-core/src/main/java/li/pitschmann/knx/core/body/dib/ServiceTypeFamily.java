@@ -70,7 +70,6 @@ public enum ServiceTypeFamily implements KnxByteEnum {
      * @return existing {@link ServiceTypeFamily}, or {@link KnxEnumNotFoundException} if no {@link ServiceTypeFamily}
      * for given {@code code} exists
      */
-
     public static ServiceTypeFamily valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ServiceTypeFamily.class, code));

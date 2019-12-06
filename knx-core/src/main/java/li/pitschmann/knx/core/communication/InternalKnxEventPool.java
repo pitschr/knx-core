@@ -76,7 +76,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxMultiEvent}
      */
-
     public KnxMultiEvent<SearchRequestBody, SearchResponseBody> searchEvent() {
         return this.searchEvent;
     }
@@ -86,7 +85,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-
     public KnxSingleEvent<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent() {
         return this.descriptionEvent;
     }
@@ -96,7 +94,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-
     public KnxSingleEvent<ConnectRequestBody, ConnectResponseBody> connectEvent() {
         return this.connectEvent;
     }
@@ -106,7 +103,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-
     public KnxSingleEvent<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent() {
         return this.connectionStateEvent;
     }
@@ -116,7 +112,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-
     public KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent() {
         return this.disconnectEvent;
     }

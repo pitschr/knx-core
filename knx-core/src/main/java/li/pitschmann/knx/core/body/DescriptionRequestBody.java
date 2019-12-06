@@ -60,7 +60,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      *
      * @return re-usable immutable {@link DescriptionRequestBody}
      */
-
     public static DescriptionRequestBody useDefault() {
         return DEFAULT;
     }
@@ -71,7 +70,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      * @param bytes complete byte array for {@link DescriptionRequestBody}
      * @return a new immutable {@link DescriptionRequestBody}
      */
-
     public static DescriptionRequestBody of(final byte[] bytes) {
         return new DescriptionRequestBody(bytes);
     }
@@ -82,7 +80,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      * @param controlEndpoint
      * @return a new immutable {@link DescriptionRequestBody}
      */
-
     public static DescriptionRequestBody of(final HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {

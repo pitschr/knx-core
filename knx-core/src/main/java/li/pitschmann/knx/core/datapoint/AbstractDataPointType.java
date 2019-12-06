@@ -87,7 +87,6 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-
     public final V toValue(final byte[] bytes) {
         if (bytes == null) {
             throw new KnxNullPointerException("bytes");
@@ -131,7 +130,6 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-
     public final V toValue(final String[] args) {
         Preconditions.checkNonNull(args, "No arguments provided for conversion to data point value object.");
 

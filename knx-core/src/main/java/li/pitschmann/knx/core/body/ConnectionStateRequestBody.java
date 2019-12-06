@@ -75,7 +75,6 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * @param bytes complete byte array for {@link ConnectionStateRequestBody}
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
-
     public static ConnectionStateRequestBody of(final byte[] bytes) {
         return new ConnectionStateRequestBody(bytes);
     }
@@ -87,7 +86,6 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * @param controlEndpoint
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
-
     public static ConnectionStateRequestBody of(final int channelId, final HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {

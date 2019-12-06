@@ -342,7 +342,6 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @return the current state
      */
-
     public State getState() {
         return state;
     }

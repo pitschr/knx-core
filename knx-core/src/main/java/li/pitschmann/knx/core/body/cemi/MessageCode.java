@@ -109,7 +109,6 @@ public enum MessageCode implements KnxByteEnum {
      * @return existing {@link MessageCode}, or {@link KnxEnumNotFoundException} if no {@link MessageCode}
      * for given {@code code} exists
      */
-
     public static MessageCode valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(MessageCode.class, code));

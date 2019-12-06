@@ -65,7 +65,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
      * @param bytes complete byte array for {@link DisconnectResponseBody}
      * @return a new immutable {@link DisconnectResponseBody}
      */
-
     public static DisconnectResponseBody of(final byte[] bytes) {
         return new DisconnectResponseBody(bytes);
     }

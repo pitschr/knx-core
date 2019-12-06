@@ -50,7 +50,6 @@ public enum BroadcastType implements KnxByteEnum {
      * @return existing {@link BroadcastType}, or {@link KnxEnumNotFoundException} if no {@link BroadcastType}
      * for given {@code code} exists
      */
-
     public static BroadcastType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(BroadcastType.class, code));

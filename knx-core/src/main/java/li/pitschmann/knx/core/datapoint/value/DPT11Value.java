@@ -109,7 +109,6 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      * @param date
      * @return byte array
      */
-
     public static byte[] toByteArray(final LocalDate date) {
         Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
 

@@ -66,7 +66,6 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
      * @param character
      * @return byte array
      */
-
     public static byte[] toByteArray(final char character) {
         return new byte[]{(byte) character};
     }

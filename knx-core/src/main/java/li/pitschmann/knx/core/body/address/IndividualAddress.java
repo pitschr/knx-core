@@ -54,7 +54,6 @@ public final class IndividualAddress extends KnxAddress {
      * @param bytes complete byte array for {@link IndividualAddress}
      * @return a new immutable {@link IndividualAddress}
      */
-
     public static IndividualAddress of(final byte[] bytes) {
         // no validation required, validation will be done in KnxAddress class
         return new IndividualAddress(bytes);
@@ -66,7 +65,6 @@ public final class IndividualAddress extends KnxAddress {
      *
      * @return re-usable immutable default {@link IndividualAddress} ({@code 0.0.0})
      */
-
     public static IndividualAddress useDefault() {
         return DEFAULT;
     }
@@ -83,7 +81,6 @@ public final class IndividualAddress extends KnxAddress {
      * @return An new instance of {@link IndividualAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
-
     public static IndividualAddress of(final String addressAsString) {
         final String[] individualAddressAreas = addressAsString.split("\\.");
         if (individualAddressAreas.length == 3) {
@@ -104,7 +101,6 @@ public final class IndividualAddress extends KnxAddress {
      * @param device [0..255]
      * @return a new immutable {@link IndividualAddress}
      */
-
     public static IndividualAddress of(final int area, final int line, final int device) {
         if (area < 0 || area > 0x0F) {
             throw new KnxNumberOutOfRangeException("area", 0, 0x0F, area);

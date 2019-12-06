@@ -107,7 +107,6 @@ public enum APCI implements KnxBytesEnum {
      * @return existing {@link APCI}, or {@link KnxEnumNotFoundException} if no {@link APCI}
      * for given {@code code} exists
      */
-
     public static APCI valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> code >= x.codeRangeStart && code <= x.codeRangeEnd).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(APCI.class, code));

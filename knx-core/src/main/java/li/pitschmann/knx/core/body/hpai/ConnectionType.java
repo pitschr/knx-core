@@ -69,7 +69,6 @@ public enum ConnectionType implements KnxByteEnum {
      * @return existing {@link ConnectionType}, or {@link KnxEnumNotFoundException} if no {@link ConnectionType}
      * for given {@code code} exists
      */
-
     public static ConnectionType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ConnectionType.class, code));

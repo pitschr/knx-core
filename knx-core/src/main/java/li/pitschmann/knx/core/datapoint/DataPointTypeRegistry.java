@@ -193,7 +193,6 @@ public final class DataPointTypeRegistry {
      * @param e
      * @return {@link DPTEnumValue}
      */
-
     public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
         @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
         if (dpt == null) {
@@ -208,7 +207,6 @@ public final class DataPointTypeRegistry {
      * @param id
      * @return {@link DataPointType}
      */
-
     public static <T extends DataPointType> T getDataPointType(final String id) {
         @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
         if (dpt == null) {

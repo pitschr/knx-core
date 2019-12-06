@@ -92,7 +92,6 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @param bytes complete byte array for {@link TunnelingRequestBody}
      * @return a new immutable {@link TunnelingRequestBody}
      */
-
     public static TunnelingRequestBody of(final byte[] bytes) {
         return new TunnelingRequestBody(bytes);
     }
@@ -105,7 +104,6 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @param cemi
      * @return a new immutable {@link TunnelingRequestBody}
      */
-
     public static TunnelingRequestBody of(final int channelId, final int sequence, final CEMI cemi) {
         // validate
         if (cemi == null) {

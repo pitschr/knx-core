@@ -78,7 +78,6 @@ public final class IPConfigDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link IPConfigDIB}
      * @return a new immutable {@link IPConfigDIB}
      */
-
     public static IPConfigDIB of(final byte[] bytes) {
         return new IPConfigDIB(bytes);
     }

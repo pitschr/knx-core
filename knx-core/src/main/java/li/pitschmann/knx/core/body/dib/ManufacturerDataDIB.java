@@ -92,7 +92,6 @@ public final class ManufacturerDataDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link ManufacturerDataDIB}
      * @return a new immutable {@link ManufacturerDataDIB}
      */
-
     public static ManufacturerDataDIB of(final byte[] bytes) {
         return new ManufacturerDataDIB(bytes);
     }

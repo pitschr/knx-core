@@ -72,7 +72,6 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
      *
      * @return enum field value instance
      */
-
     public T getEnum() {
         return this.enumField;
     }

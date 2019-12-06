@@ -61,7 +61,6 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * @param bytes complete byte array for {@link SearchRequestBody}
      * @return a new immutable {@link SearchRequestBody}
      */
-
     public static SearchRequestBody of(final byte[] bytes) {
         return new SearchRequestBody(bytes);
     }
@@ -73,7 +72,6 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      *
      * @return a new immutable {@link SearchRequestBody}
      */
-
     public static SearchRequestBody useDefault() {
         return DEFAULT;
     }
@@ -84,7 +82,6 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * @param discoveryEndpoint
      * @return a new immutable {@link SearchRequestBody}
      */
-
     public static SearchRequestBody of(final HPAI discoveryEndpoint) {
         // validate
         if (discoveryEndpoint == null) {

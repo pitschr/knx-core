@@ -99,7 +99,6 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link SupportedDeviceFamiliesDIB}
      * @return a new immutable {@link SupportedDeviceFamiliesDIB}
      */
-
     public static SupportedDeviceFamiliesDIB of(final byte[] bytes) {
         return new SupportedDeviceFamiliesDIB(bytes);
     }

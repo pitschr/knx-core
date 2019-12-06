@@ -71,7 +71,6 @@ public final class DPT12Value extends AbstractDataPointValue<DPT12> {
      * @param value
      * @return byte array
      */
-
     public static byte[] toByteArray(final long value) {
         return new byte[]{ //
                 (byte) (value >>> 24), //

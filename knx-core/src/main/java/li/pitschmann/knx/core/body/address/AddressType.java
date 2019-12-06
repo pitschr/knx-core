@@ -50,7 +50,6 @@ public enum AddressType implements KnxByteEnum {
      * @return existing {@link AddressType}, or {@link KnxEnumNotFoundException} if no {@link AddressType}
      * for given {@code code} exists
      */
-
     public static AddressType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(AddressType.class, code));

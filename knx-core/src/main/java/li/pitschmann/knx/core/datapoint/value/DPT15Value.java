@@ -108,7 +108,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @param flags
      * @return byte array
      */
-
     public static byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
         // ensure that access identification data is 24bits
         byte[] accessIdentificationDataEnsured = getAccessIdentificationData(accessIdentificationData);
@@ -130,7 +129,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      *
      * @return flags
      */
-
     public Flags getFlags() {
         return this.flags;
     }

@@ -111,7 +111,6 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
      * @param charset    used to encode the characters
      * @return byte array
      */
-
     public static byte[] toByteArray(final String characters, final Charset charset) {
         if (Strings.isNullOrEmpty(characters)) {
             return new byte[14];

@@ -80,7 +80,6 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
      * @param bytes complete byte array for {@link ConnectRequestBody}
      * @return a  new immutable {@link ConnectRequestBody}
      */
-
     public static ConnectRequestBody of(final byte[] bytes) {
         return new ConnectRequestBody(bytes);
     }
@@ -93,7 +92,6 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
      * @param cri
      * @return a  new immutable {@link ConnectRequestBody}
      */
-
     public static ConnectRequestBody of(final HPAI controlEndpoint, final HPAI dataEndpoint, final ConnectionRequestInformation cri) {
         // validate
         if (controlEndpoint == null) {

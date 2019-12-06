@@ -64,7 +64,6 @@ public enum MediumType implements KnxByteEnum {
      * @return existing {@link MediumType}, or {@link KnxEnumNotFoundException} if no {@link MediumType}
      * for given {@code code} exists
      */
-
     public static MediumType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(MediumType.class, code));

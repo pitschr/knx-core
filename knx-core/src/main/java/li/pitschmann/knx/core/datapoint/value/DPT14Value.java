@@ -80,7 +80,6 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
      * @param value
      * @return 4-byte array
      */
-
     public static byte[] toByteArray(final double value) {
         final var rawBits = Float.floatToIntBits(Double.valueOf(value).floatValue());
         return new byte[]{ //

@@ -70,7 +70,6 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
      * @param value
      * @return byte array
      */
-
     public static byte[] toByteArray(final int value) {
         return new byte[]{ //
                 (byte) (value >> 24), //

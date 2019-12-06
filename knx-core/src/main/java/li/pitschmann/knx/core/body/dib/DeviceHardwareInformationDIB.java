@@ -139,7 +139,6 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link DeviceHardwareInformationDIB}
      * @return a new immutable {@link DeviceHardwareInformationDIB}
      */
-
     public static DeviceHardwareInformationDIB of(final byte[] bytes) {
         return new DeviceHardwareInformationDIB(bytes);
     }

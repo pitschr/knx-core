@@ -69,7 +69,6 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
      * @param sceneNumber
      * @return byte array
      */
-
     public static byte[] toByteArray(final boolean controlled, final int sceneNumber) {
         final var controlledAsByte = controlled ? (byte) 0x80 : 0x00;
         final var sceneNumberAsByte = (byte) sceneNumber;

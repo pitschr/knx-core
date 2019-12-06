@@ -130,7 +130,6 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
      * @param time
      * @return byte array
      */
-
     public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
         // byte 0: day-of-week + hour
         final var hourAsByte = (byte) time.getHour();

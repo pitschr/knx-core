@@ -61,7 +61,6 @@ public class ConfigValue<T> {
      *
      * @return
      */
-
     public String getKey() {
         return key;
     }
@@ -107,7 +106,6 @@ public class ConfigValue<T> {
      * @param value
      * @return value with an instance type of {@code <T>}
      */
-
     public T convert(final String value) {
         return this.converter.apply(value);
     }

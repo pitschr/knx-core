@@ -67,7 +67,6 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
      * @param value
      * @return byte array
      */
-
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) (value >>> 8), (byte) value};
     }

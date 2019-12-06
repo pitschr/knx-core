@@ -93,7 +93,6 @@ public final class KnxAddressesDIB extends AbstractDIB {
      * @param bytes complete byte array for {@link KnxAddressesDIB}
      * @return a new immutable {@link KnxAddressesDIB}
      */
-
     public static KnxAddressesDIB of(final byte[] bytes) {
         return new KnxAddressesDIB(bytes);
     }

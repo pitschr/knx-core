@@ -47,7 +47,6 @@ public final class DefaultKnxClient extends BaseKnxClient {
      *
      * @return
      */
-
     public static DefaultKnxClient createStarted() {
         return createStarted("");
     }
@@ -58,7 +57,6 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @param address
      * @return
      */
-
     public static DefaultKnxClient createStarted(final @Nullable String address) {
         return createStarted(ConfigBuilder.create(address).build());
     }
@@ -69,7 +67,6 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * @param config
      * @return
      */
-
     public static DefaultKnxClient createStarted(final Config config) {
         final var client = new DefaultKnxClient(config);
         // start communication

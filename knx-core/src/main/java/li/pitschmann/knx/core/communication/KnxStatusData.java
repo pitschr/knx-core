@@ -71,7 +71,6 @@ public final class KnxStatusData {
      *
      * @return The {@link Instant} when this object has been created
      */
-
     public Instant getTimestamp() {
         return this.timestamp;
     }
@@ -81,7 +80,6 @@ public final class KnxStatusData {
      *
      * @return A {@link KnxAddress}
      */
-
     public KnxAddress getSourceAddress() {
         return this.sourceAddress;
     }
@@ -91,7 +89,6 @@ public final class KnxStatusData {
      *
      * @return An {@link APCI}
      */
-
     public APCI getApci() {
         return this.apci;
     }
@@ -101,7 +98,6 @@ public final class KnxStatusData {
      *
      * @return byte array with APCI data
      */
-
     public byte[] getApciData() {
         return this.apciData.clone(); // defensive copy
     }

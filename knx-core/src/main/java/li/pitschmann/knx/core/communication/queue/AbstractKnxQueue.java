@@ -112,7 +112,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return newly created selector with interest ops taken from {@link #interestOps()}
      * @throws IOException - if IO exception happened while performing the action method
      */
-
     public final Selector openSelector() throws IOException {
         final var selector = Selector.open();
 
@@ -184,7 +183,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return the {@link Body} from head of queue
      * @throws InterruptedException - if interrupted while waiting
      */
-
     public final Body next() throws InterruptedException {
         return Objects.requireNonNull(this.queue.take());
     }

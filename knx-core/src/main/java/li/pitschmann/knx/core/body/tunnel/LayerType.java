@@ -60,7 +60,6 @@ public enum LayerType implements KnxByteEnum {
      * @return existing {@link LayerType}, or {@link KnxEnumNotFoundException} if no {@link LayerType}
      * for given {@code code} exists
      */
-
     public static LayerType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(LayerType.class, code));

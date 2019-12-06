@@ -74,7 +74,6 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for description related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-
     public static SelectableChannel newDescriptionChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Description.PORT);
         final var socketAddress = client.getRemoteEndpoint();
@@ -92,7 +91,6 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for control-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-
     public static SelectableChannel newControlChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Control.PORT);
         final var socketAddress = client.getRemoteEndpoint();
@@ -110,7 +108,6 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for data-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-
     public static SelectableChannel newDataChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Data.PORT);
         final var socketAddress = client.getRemoteEndpoint();
@@ -128,7 +125,6 @@ public final class ChannelFactory {
      * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
      * @return a new instance of {@link DatagramChannel}
      */
-
     public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort,
                                                                         final long socketTimeout,
                                                                         final @Nullable SocketAddress socketAddress,

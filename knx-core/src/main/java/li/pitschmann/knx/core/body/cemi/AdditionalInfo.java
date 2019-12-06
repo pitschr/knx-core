@@ -46,7 +46,6 @@ public final class AdditionalInfo extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link AdditionalInfo}
      * @return a new immutable {@link AdditionalInfo}
      */
-
     public static AdditionalInfo of(final byte[] bytes) {
         return new AdditionalInfo(bytes);
     }
@@ -56,7 +55,6 @@ public final class AdditionalInfo extends AbstractMultiRawData {
      *
      * @return re-usable immutable empty {@link AdditionalInfo} instance
      */
-
     public static AdditionalInfo empty() {
         return EMPTY;
     }

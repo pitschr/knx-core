@@ -71,7 +71,6 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
      * @param bytes complete byte array for {@link DisconnectRequestBody}
      * @return a new immutable {@link DisconnectRequestBody}
      */
-
     public static DisconnectRequestBody of(final byte[] bytes) {
         return new DisconnectRequestBody(bytes);
     }
@@ -83,7 +82,6 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
      * @param controlEndpoint
      * @return a new immutable {@link DisconnectRequestBody}
      */
-
     public static DisconnectRequestBody of(final int channelId, final HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {

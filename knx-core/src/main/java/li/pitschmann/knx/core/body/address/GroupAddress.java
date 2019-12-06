@@ -51,7 +51,6 @@ public final class GroupAddress extends KnxAddress {
      * @param bytes complete byte array for {@link GroupAddress}
      * @return a new immutable {@link GroupAddress}
      */
-
     public static GroupAddress of(final byte[] bytes) {
         // no validation required, validation will be done in KnxAddress class
         return new GroupAddress(bytes);
@@ -71,7 +70,6 @@ public final class GroupAddress extends KnxAddress {
      * @return a new instance of {@link GroupAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
-
     public static GroupAddress of(final String addressAsString) {
         final String[] groupAddressAreas = addressAsString.split("/");
         if (groupAddressAreas.length == 3) {
@@ -99,7 +97,6 @@ public final class GroupAddress extends KnxAddress {
      * @param address
      * @return a new immutable {@link GroupAddress}
      */
-
     public static GroupAddress of(final int address) {
         if (address < 1 || address > 0xFFFF) {
             throw new KnxNumberOutOfRangeException("address", 1, 0xFFFF, address);
@@ -123,7 +120,6 @@ public final class GroupAddress extends KnxAddress {
      * @param sub
      * @return a new immutable {@link GroupAddress}
      */
-
     public static GroupAddress of(final int main, final int sub) {
         if (main < 0 || main > 0x1F) {
             throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
@@ -209,7 +205,6 @@ public final class GroupAddress extends KnxAddress {
      *
      * @return group address in 2-level
      */
-
     public String getAddressLevel2() {
         // byte 0: xxxx x...
         final var main = (address[0] & 0xF8) >>> 3;
@@ -226,7 +221,6 @@ public final class GroupAddress extends KnxAddress {
      *
      * @return group address in 3-level
      */
-
     public String getAddressLevel3() {
         // byte 0: xxxx x...
         final var main = (address[0] & 0xF8) >>> 3;

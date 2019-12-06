@@ -87,7 +87,6 @@ public final class HPAI extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link HPAI}
      * @return a new immutable {@link HPAI}
      */
-
     public static HPAI of(final byte[] bytes) {
         return new HPAI(bytes);
     }
@@ -98,7 +97,6 @@ public final class HPAI extends AbstractMultiRawData {
      *
      * @return re-usable immutable default {@link HPAI}
      */
-
     public static HPAI useDefault() {
         return DEFAULT;
     }
@@ -109,7 +107,6 @@ public final class HPAI extends AbstractMultiRawData {
      * @param channel
      * @return a new immutable {@link HPAI}
      */
-
     public static HPAI of(final Channel channel) {
         // validate
         if (channel == null) {
@@ -137,7 +134,6 @@ public final class HPAI extends AbstractMultiRawData {
      * @param port
      * @return a new immutable {@link HPAI}
      */
-
     public static HPAI of(final HostProtocol protocol, final InetAddress address, final int port) {
         // validate
         if (protocol == null) {

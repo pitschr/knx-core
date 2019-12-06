@@ -58,7 +58,6 @@ public enum Priority implements KnxByteEnum {
      * @return existing {@link Priority}, or {@link KnxEnumNotFoundException} if no {@link Priority}
      * for given {@code code} exists
      */
-
     public static Priority valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(Priority.class, code));

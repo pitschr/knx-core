@@ -122,7 +122,6 @@ public final class Config {
      *
      * @return unmodifiable list of all {@link Plugin} classes
      */
-
     public List<Class<Plugin>> getPlugins() {
         return this.plugins;
     }

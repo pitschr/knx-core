@@ -71,7 +71,6 @@ public final class BytesRequestBody extends AbstractMultiRawData implements Requ
      * @param bytes       complete byte array for {@link ConnectionStateRequestBody}
      * @return a new immutable {@link BytesRequestBody}
      */
-
     public static BytesRequestBody of(final ServiceType serviceType, final byte[] bytes) {
         if (serviceType == null) {
             throw new KnxNullPointerException("serviceType");

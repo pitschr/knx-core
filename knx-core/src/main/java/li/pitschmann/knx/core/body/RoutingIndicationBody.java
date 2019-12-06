@@ -64,7 +64,6 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      * @param bytes complete byte array for {@link RoutingIndicationBody}
      * @return a new immutable {@link RoutingIndicationBody}
      */
-
     public static RoutingIndicationBody of(final byte[] bytes) {
         return new RoutingIndicationBody(bytes);
     }
@@ -75,7 +74,6 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      * @param cemi
      * @return a new immutable {@link RoutingIndicationBody}
      */
-
     public static RoutingIndicationBody of(final CEMI cemi) {
         // validate
         if (cemi == null) {

@@ -63,7 +63,6 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
      * @param value
      * @return byte array
      */
-
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) value};
     }

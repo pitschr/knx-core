@@ -72,7 +72,6 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
      * @return data point enumeration value
      * @throws KnxEnumNotFoundException if enumeration with given value could not be found
      */
-
     public final DPTEnumValue<T> toValue(final int value) {
         final var dptEnumValue = this.values.get(value);
         if (dptEnumValue == null) {

@@ -89,7 +89,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * @param bytes complete byte array for {@link ConnectResponseBody}
      * @return a new immutable {@link ConnectResponseBody}
      */
-
     public static ConnectResponseBody of(final byte[] bytes) {
         return new ConnectResponseBody(bytes);
     }
@@ -103,7 +102,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * @param crd (required only when {@link Status#E_NO_ERROR})
      * @return a new immutable {@link ConnectResponseBody}
      */
-
     public static ConnectResponseBody of(final int channelId,
                                          final Status status,
                                          final HPAI dataEndpoint,
@@ -174,7 +172,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return
      */
-
     public Status getStatus() {
         return this.status;
     }
@@ -184,7 +181,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return {@link HPAI}, it may be null when there was an error (see: {@link #getStatus()})
      */
-
     public HPAI getDataEndpoint() {
         return this.dataEndpoint;
     }
@@ -194,7 +190,6 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return {@link ConnectionResponseData}, it may be null when there was an error (see: {@link #getStatus()})
      */
-
     public ConnectionResponseData getConnectionResponseData() {
         return this.connectionResponseData;
     }

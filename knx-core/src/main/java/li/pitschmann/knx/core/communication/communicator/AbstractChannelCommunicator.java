@@ -194,7 +194,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
-
     public final <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody,
                                                                     final long msTimeout) {
         return send(requestBody, null, msTimeout);
@@ -211,7 +210,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
-
     public final <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody,
                                                                     final @Nullable Predicate<T> predicate,
                                                                     final long msTimeout) {

@@ -69,7 +69,6 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * @param b byte
      * @return a new immutable {@link ControlByte1}
      */
-
     public static ControlByte1 of(final byte b) {
         return new ControlByte1(b);
     }
@@ -88,7 +87,6 @@ public final class ControlByte1 extends AbstractSingleRawData {
      *
      * @return re-usable immutable default {@link ControlByte1}
      */
-
     public static ControlByte1 useDefault() {
         return DEFAULT;
     }
@@ -104,7 +102,6 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * @param confirmationFlag
      * @return a new immutable {@link ControlByte1}
      */
-
     public static ControlByte1 of(final boolean standardFrame,
                                   final boolean isRepeatEnabled,
                                   final BroadcastType broadcastType,

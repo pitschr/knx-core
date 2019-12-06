@@ -72,7 +72,6 @@ public enum DescriptionType implements KnxByteEnum {
      * @return existing {@link DescriptionType}, or {@link KnxEnumNotFoundException} if no {@link DescriptionType}
      * for given {@code code} exists
      */
-
     public static DescriptionType valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(DescriptionType.class, code));

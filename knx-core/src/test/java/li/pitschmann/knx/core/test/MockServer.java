@@ -225,7 +225,6 @@ public final class MockServer implements Runnable, Closeable {
      *
      * @return multicast address
      */
-
     public InetAddress getMulticastAddress() {
         return Objects.requireNonNull(this.multicastAddress);
     }

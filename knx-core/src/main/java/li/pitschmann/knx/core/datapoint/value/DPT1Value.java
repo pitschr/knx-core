@@ -57,7 +57,6 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
      * @param booleanValue
      * @return byte array
      */
-
     public static byte[] toByteArray(final boolean booleanValue) {
         return new byte[]{booleanValue ? (byte) 0x01 : 0x00};
     }

@@ -121,7 +121,6 @@ public final class ConfigBuilder {
      * @param address a specified address of KNX Net/IP device
      * @return a new instance of {@link ConfigBuilder}
      */
-
     public static ConfigBuilder create(final InetAddress address) {
         if (address.isMulticastAddress()) {
             return routing(address);
@@ -140,7 +139,6 @@ public final class ConfigBuilder {
      * @param port    a specific port of KNX Net/IP device
      * @return a new instance of {@link ConfigBuilder}
      */
-
     public static ConfigBuilder create(final InetAddress address, final int port) {
         if (address.isMulticastAddress()) {
             return routing(address, port);
@@ -157,7 +155,6 @@ public final class ConfigBuilder {
      *
      * @return new builder for routing mode with standard settings according to the KNX specification
      */
-
     public static ConfigBuilder routing() {
         return routing(CoreConfigs.MULTICAST_ADDRESS);
     }
@@ -172,7 +169,6 @@ public final class ConfigBuilder {
      * @param address a specified multicast address of KNX Net/IP device
      * @return new builder for routing mode with customized multicast address
      */
-
     public static ConfigBuilder routing(final InetAddress address) {
         return routing(address, CoreConfigs.KNX_PORT);
     }
@@ -186,7 +182,6 @@ public final class ConfigBuilder {
      * @param port    a specific port of KNX Net/IP device
      * @return new builder for routing mode with customized multicast address and port
      */
-
     public static ConfigBuilder routing(final InetAddress address, final int port) {
         Preconditions.checkArgument(address.isMulticastAddress(),
                 "Given address is not suitable for routing: {}", address.getHostAddress());
@@ -202,7 +197,6 @@ public final class ConfigBuilder {
      *
      * @return new builder for tunneling mode with standard settings according to the KNX specification
      */
-
     public static ConfigBuilder tunneling() {
         return tunneling(Networker.getAddressUnbound());
     }
@@ -217,7 +211,6 @@ public final class ConfigBuilder {
      * @param natEnabled {@code true} if NAT should be enabled
      * @return new builder for tunneling mode with standard settings according to the KNX specification
      */
-
     public static ConfigBuilder tunneling(final boolean natEnabled) {
         return tunneling(Networker.getAddressUnbound(), CoreConfigs.KNX_PORT, natEnabled);
     }
@@ -233,7 +226,6 @@ public final class ConfigBuilder {
      * @param address a specified address of KNX Net/IP device
      * @return new builder for tunneling mode with customized address
      */
-
     public static ConfigBuilder tunneling(final InetAddress address) {
         return tunneling(address, CoreConfigs.KNX_PORT);
     }
@@ -248,7 +240,6 @@ public final class ConfigBuilder {
      * @param port    a specific port of KNX Net/IP device
      * @return new builder for tunneling mode with customized address
      */
-
     public static ConfigBuilder tunneling(final InetAddress address, final int port) {
         return tunneling(address, port, CoreConfigs.NAT.getDefaultValue());
     }
@@ -263,7 +254,6 @@ public final class ConfigBuilder {
      * @param natEnabled {@code true} if NAT should be enabled
      * @return new builder for tunneling mode with customized address
      */
-
     public static ConfigBuilder tunneling(final InetAddress address, final int port, final boolean natEnabled) {
         Preconditions.checkArgument(address.isAnyLocalAddress() || !address.isMulticastAddress(),
                 "Given address is not suitable for tunneling: {}", address.getHostAddress());
@@ -276,7 +266,6 @@ public final class ConfigBuilder {
      * @param pluginClass plugin class to be provided for registering the plugin
      * @return myself
      */
-
     public ConfigBuilder plugin(final Class<? extends Plugin> pluginClass) {
         Preconditions.checkNonNull(pluginClass);
         Preconditions.checkArgument(!this.pluginClasses.contains(pluginClass),
@@ -294,7 +283,6 @@ public final class ConfigBuilder {
      * @param value if {@code null}, then default value should be used
      * @return myself
      */
-
     public <T> ConfigBuilder setting(final ConfigValue<T> key, final @Nullable T value) {
         Preconditions.checkNonNull(key);
         if (value == null) {
@@ -316,7 +304,6 @@ public final class ConfigBuilder {
      *
      * @return a new instance of {@link Config}
      */
-
     public Config build() {
         return new Config(
                 routingEnabled,

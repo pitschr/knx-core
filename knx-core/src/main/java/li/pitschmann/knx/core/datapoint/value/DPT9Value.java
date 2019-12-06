@@ -71,7 +71,6 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @param bytes
      * @return double value
      */
-
     public static double toFloatingValue(final byte[] bytes) {
         final var exponent = getExponent(bytes);
         final var mantissa = getMantissa(bytes);
@@ -144,7 +143,6 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @param value
      * @return {@link DPT9} compatible byte array for double value
      */
-
     public static byte[] toByteArray(final double value) {
         // multiply with 100 because value is a digit with two decimal places
         var calcValue = value * 100d;

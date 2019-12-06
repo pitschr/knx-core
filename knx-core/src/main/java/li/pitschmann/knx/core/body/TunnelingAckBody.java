@@ -74,7 +74,6 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
      * @param bytes complete byte array for {@link TunnelingAckBody}
      * @return a new immutable {@link TunnelingAckBody}
      */
-
     public static TunnelingAckBody of(final byte[] bytes) {
         return new TunnelingAckBody(bytes);
     }
@@ -87,7 +86,6 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
      * @param status
      * @return a new immutable {@link TunnelingAckBody}
      */
-
     public static TunnelingAckBody of(final int channelId, final int sequence, final Status status) {
         // validate
         if (status == null) {

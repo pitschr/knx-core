@@ -165,8 +165,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
          * @param mode
          * @return byte array
          */
-
-        public static byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
+    public static byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
             return new byte[]{toByte(a, b, c, d, e, mode)};
         }
 
