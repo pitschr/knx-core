@@ -94,7 +94,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @param accessIdentificationData
      * @return 3 byte array / 24 bits array
      */
-
     private static byte[] getAccessIdentificationData(final byte[] accessIdentificationData) {
         Preconditions.checkArgument(accessIdentificationData.length <= 3, "Access Identification Data must be 3 bytes or less.");
         byte[] newData = new byte[3];

@@ -141,7 +141,6 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-
     private static List<Flow.Subscriber<Body>> getControlChannelTasks(final InternalKnxClient knxClient) {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>(4);
         subscribers.add(new ConnectResponseTask(knxClient));
@@ -164,7 +163,6 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-
     private static List<Flow.Subscriber<Body>> getDataChannelTasks(final InternalKnxClient knxClient) {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>(2);
         subscribers.add(new TunnelingRequestTask(knxClient));
@@ -183,7 +181,6 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-
     private static List<Flow.Subscriber<Body>> getDiscoveryChannelTasks(final InternalKnxClient knxClient) {
         return Collections.singletonList(new SearchResponseTask(knxClient));
     }
@@ -200,7 +197,6 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-
     private static List<Flow.Subscriber<Body>> getRoutingChannelTasks(final InternalKnxClient knxClient) {
         return Collections.singletonList(new RoutingIndicationTask(knxClient));
     }

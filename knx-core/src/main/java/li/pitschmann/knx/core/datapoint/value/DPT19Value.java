@@ -116,7 +116,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * @param bytes
      * @return {@link LocalDate}
      */
-
     private static LocalDate toLocalDate(final byte[] bytes) {
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
         final var year = Bytes.toUnsignedInt(bytes[0]) + 1900;
@@ -138,7 +137,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * @param bytes
      * @return {@link LocalTime}
      */
-
     private static LocalTime toLocalTime(final byte[] bytes) {
         // byte 3: hour (day of week is done separately)
         final var hour = bytes[3] & 0x1F;

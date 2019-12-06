@@ -198,7 +198,6 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value if success. It may throw a {@link IllegalArgumentException} in case the {@code args} is
      * not well-formatted for hex string
      */
-
     private V tryParseAsHexString(final String[] args) {
         Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string should start with '0x'. Actual: {}", args[0]);
         final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());

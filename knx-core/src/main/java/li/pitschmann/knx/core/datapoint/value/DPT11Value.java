@@ -85,7 +85,6 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      * @param bytes
      * @return {@link LocalDate}
      */
-
     private static LocalDate toLocalDate(final byte[] bytes) {
         // day
         final var day = Bytes.toUnsignedInt(bytes[0]);
