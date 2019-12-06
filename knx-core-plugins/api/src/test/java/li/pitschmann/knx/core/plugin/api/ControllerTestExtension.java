@@ -92,7 +92,7 @@ public final class ControllerTestExtension
      * @param <T>
      * @return new instance of {@link Controller}
      */
-    protected final <T extends Controller> T newController(final ControllerTest annotation) {
+    private final <T extends Controller> T newController(final ControllerTest annotation) {
         // Create XML Project
         final XmlProject xmlProjectMock;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
@@ -104,7 +104,8 @@ public final class ControllerTestExtension
 
         try {
             // Create a new instance of controller
-            @SuppressWarnings("unchecked") final T obj = ((Class<T>) annotation.value()).getDeclaredConstructor().newInstance();
+            @SuppressWarnings("unchecked")
+            final T obj = ((Class<T>) annotation.value()).getDeclaredConstructor().newInstance();
 
             final var knxClientMock = getKnxClientMock(xmlProjectMock);
 
@@ -126,7 +127,7 @@ public final class ControllerTestExtension
 
             // apply the route context to the controller instance as RouteContext won't
             // be injected by Pippo Framework
-            final var routeContextInternal = getDefaultRouteContext();
+            final var routeContextInternal = getRouteContextMock();
             final var spyObject = spy(obj);
             when(spyObject.getRouteContext()).thenReturn(routeContextInternal);
 
@@ -136,8 +137,14 @@ public final class ControllerTestExtension
         }
     }
 
+    /**
+     * Returns a mocked {@link KnxClient}
+     * @param xmlProject the {@link XmlProject} that should be considered by {@link KnxClient}
+     *
+     * @return mocked {@link KnxClient}
+     */
     @SuppressWarnings("unchecked")
-    protected KnxClient getKnxClientMock(final XmlProject xmlProject) {
+    private KnxClient getKnxClientMock(final XmlProject xmlProject) {
         // create KNX Client Mock
         final var configMock = mock(Config.class);
         when(configMock.getValue(any(ConfigValue.class))).thenAnswer(i -> ((ConfigValue<?>) i.getArgument(0)).getDefaultValue());
@@ -179,11 +186,11 @@ public final class ControllerTestExtension
     }
 
     /**
-     * Returns default XML project
+     * Creates a mock {@link XmlProject}
      *
-     * @return mocked XML project
+     * @return mocked {@link XmlProject}
      */
-    protected XmlProject getXmlProjectMock() {
+    private XmlProject getXmlProjectMock() {
         final var xmlProject = mock(XmlProject.class);
 
         // XML Group Addresses
@@ -218,21 +225,11 @@ public final class ControllerTestExtension
     }
 
     /**
-     * Returns default route context
+     * Returns a mocked {@link RouteContext}
      *
      * @return mocked {@link RouteContext}
      */
-    protected RouteContext getDefaultRouteContext() {
-        return getRouteContext(null);
-    }
-
-    /**
-     * Returns the route context with applied customer
-     *
-     * @param consumer
-     * @return mocked {@link RouteContext}
-     */
-    protected RouteContext getRouteContext(final @Nullable Consumer<RouteContext> consumer) {
+    private RouteContext getRouteContextMock() {
         final var routeContext = mock(RouteContext.class);
         final var application = mock(ControllerApplication.class);
         final var messages = mock(Messages.class);
@@ -251,10 +248,6 @@ public final class ControllerTestExtension
         when(routeContext.getSettings()).thenReturn(settings);
 
         when(request.getParameter(anyString())).thenReturn(new ParameterValue());
-
-        if (consumer != null) {
-            consumer.accept(routeContext);
-        }
 
         return routeContext;
     }

@@ -77,9 +77,12 @@ public final class TestUtils {
     }
 
     /**
-     * Randomize a {@link GroupAddress}. The group address should not matter in the unit testing.
+     * Randomize a {@link GroupAddress}
      *
-     * @return
+     * The group address should not matter in the unit testing when
+     * not asserting itself.
+     *
+     * @return a randomized {@link GroupAddress}
      */
     public static GroupAddress randomGroupAddress() {
         // a range between between 1 and 65535

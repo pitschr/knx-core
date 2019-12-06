@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.body.SearchRequestBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.communication.InternalKnxEventPool;
 import li.pitschmann.knx.core.communication.InternalKnxStatusPool;
@@ -42,7 +41,6 @@ import li.pitschmann.knx.core.config.ConfigValue;
 
 
 import java.util.Objects;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -200,17 +198,6 @@ public final class TestHelpers {
         when(eventPool.get(any(TunnelingAckBody.class))).thenReturn(eventData);
 
         return eventPool;
-    }
-
-    /**
-     * Randomize a {@link GroupAddress}. The group address should not matter in the unit testing.
-     *
-     * @return
-     */
-    public static GroupAddress randomGroupAddress() {
-        // a range between between 1 and 65535
-        int randomInt = new Random().nextInt(65534) + 1;
-        return GroupAddress.of(randomInt);
     }
 
 }

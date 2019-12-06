@@ -20,8 +20,6 @@ package li.pitschmann.knx.core.plugin.api;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.config.Config;
-import li.pitschmann.knx.core.config.ConfigValue;
-import li.pitschmann.knx.core.config.CoreConfigs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
@@ -29,11 +27,8 @@ import ro.pippo.core.HttpConstants;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +40,7 @@ public class ApiPluginTest {
     @Test
     @DisplayName("Test the API Plugin life-cycle (with health check)")
     public void testApiPluginDefault() throws IOException, InterruptedException {
-        final var mockApiPlugin = new MockApiPlugin();
+        final var mockApiPlugin = new TestApiPlugin();
 
         //
         // Mocking
