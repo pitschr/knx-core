@@ -74,7 +74,7 @@ public class XmlGroupRangeTest {
         assertThat(xmlGroupRange).hasToString("XmlGroupRange" +
                 "{" +
                     "id=XGR-ID, " +
-                    "parentId=XGR-PARENT-ID" +
+                    "parentId=XGR-PARENT-ID, " +
                     "level=4711, " +
                     "rangeStart=13, " +
                     "rangeEnd=17, " +
