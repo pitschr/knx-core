@@ -39,7 +39,7 @@ public class ExceptionsTest {
         assertThat(Exceptions.toErrorMessage("Null: {} {}", null, null)).isEqualTo("Null: <null> <null>");
 
         assertThat(Exceptions.toErrorMessage("My Message")).isEqualTo("My Message");
-        assertThat(Exceptions.toErrorMessage("%s %s!", "Hello", "World")).isEqualTo("Hello World!");
+        assertThat(Exceptions.toErrorMessage("{} {}!", "Hello", "World")).isEqualTo("Hello World!");
         assertThat(Exceptions.toErrorMessage("1+2 = {}", 1 + 2)).isEqualTo("1+2 = 3");
         assertThat(Exceptions.toErrorMessage("My Message: {} {}!", "Hallo", "Erde")).isEqualTo("My Message: Hallo Erde!");
 

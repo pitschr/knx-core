@@ -287,7 +287,7 @@ public class InternalKnxStatisticTest {
             knxStatistic.onError(new IOException());
         }
         for (var i = 0; i < 8; i++) {
-            knxStatistic.onError(new KnxException(null));
+            knxStatistic.onError(new KnxException(""));
         }
         for (var i = 0; i < 8; i++) {
             knxStatistic.onError(new NullPointerException());
