@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -46,10 +45,10 @@ public final class Config {
     private final XmlProject xmlProject;
 
     Config(final boolean routingEnabled,
-           final @Nonnull InetAddress remoteControlAddress,
+           final InetAddress remoteControlAddress,
            final int remoteControlPort,
-           final @Nonnull Map<ConfigValue<?>, Object> settings,
-           final @Nonnull List<Class<Plugin>> pluginClasses) {
+           final Map<ConfigValue<?>, Object> settings,
+           final List<Class<Plugin>> pluginClasses) {
         // communication type
         this.routingEnabled = routingEnabled;
 
@@ -67,7 +66,7 @@ public final class Config {
         final var projectPath = getProjectPath();
         XmlProject tmpXmlProject;
         try {
-            tmpXmlProject = Files.isReadable(projectPath) ? XmlProject.parse(projectPath) : null;
+            tmpXmlProject = Files.isReadable(projectPath) ? XmlProject.of(projectPath) : null;
         } catch (final Throwable t) {
             log.warn("Could not parse KNX Project file: {}. Omitted!", projectPath, t);
             tmpXmlProject = null;
@@ -82,8 +81,7 @@ public final class Config {
      * @param <T>
      * @return the value of {@link ConfigValue}
      */
-    @Nonnull
-    public <T> T getValue(final @Nonnull ConfigValue<T> configValue) {
+    public <T> T getValue(final ConfigValue<T> configValue) {
         final var value = this.settings.get(Objects.requireNonNull(configValue));
         if (value == null) {
             return configValue.getDefaultValue();
@@ -97,7 +95,6 @@ public final class Config {
      *
      * @return {@link InetAddress}, if {@link Networker#getAddressUnbound()} then discovery service will be used
      */
-    @Nonnull
     public InetAddress getRemoteControlAddress() {
         return this.remoteControlAddress;
     }
@@ -125,11 +122,15 @@ public final class Config {
      *
      * @return unmodifiable list of all {@link Plugin} classes
      */
-    @Nonnull
     public List<Class<Plugin>> getPlugins() {
         return this.plugins;
     }
 
+    /**
+     * Returns if Network Address Translation (NAT) is enabled. Only used when tunneling.
+     *
+     * @return {@code true} if enabled, otherwise {@code false}
+     */
     public boolean isNatEnabled() {
         return getValue(CoreConfigs.NAT);
     }
@@ -139,16 +140,15 @@ public final class Config {
      *
      * @return the path to KNX project
      */
-    @Nonnull
     public Path getProjectPath() {
         return getValue(CoreConfigs.PROJECT_PATH);
     }
 
     /**
      * Returns the parsed KNX Project file from {@link #getProjectPath()}.
-     * May be {@code null} if the file was not parsable.
+     * May be {@code null} if the file doesn't exists, was not readable nor parsable.
      *
-     * @return an instance of {@link XmlProject} or {@code null} if not readable
+     * @return an instance of {@link XmlProject}, may be {@code null}
      */
     @Nullable
     public XmlProject getProject() {

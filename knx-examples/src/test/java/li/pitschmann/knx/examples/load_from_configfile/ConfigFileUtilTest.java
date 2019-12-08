@@ -1,10 +1,7 @@
-package li.pitschmann.knx.core.config;
+package li.pitschmann.knx.examples.load_from_configfile;
 
+import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
-import li.pitschmann.knx.core.test.TestHelpers;
-import li.pitschmann.knx.core.test.data.TestExtensionPlugin;
-import li.pitschmann.knx.core.test.data.TestObserverPlugin;
-import li.pitschmann.knx.core.test.data.TestPlugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +53,6 @@ public class ConfigFileUtilTest {
         assertThat(config.getRemoteControlAddress().getAddress()).containsExactly(123, 45, 67, 89);
         assertThat(config.getValue(CoreConfigs.Multicast.TIME_TO_LIVE)).isEqualTo(255);
         assertThat(config.getPlugins()).isEmpty();
-//        assertThat(config.<String>getSetting("my.special.config.setting")).isEqualTo("foobar");
     }
 
     @Test
@@ -64,7 +60,7 @@ public class ConfigFileUtilTest {
     public void testImportNonExistentPlugin() {
         assertThatThrownBy(() -> ConfigFileUtil.loadFile(Paths.get("src/test/resources/config/wrongPlugins.config")))
                 .isInstanceOf(KnxConfigurationException.class)
-                .hasMessage("Could not load plugin: li.pitschmann.knx.core.test.data.TestPluginDOESNOTEXISTS");
+                .hasMessage("Could not load plugin: li.pitschmann.knx.examples.load_from_configfile.TestPluginDOESNOTEXISTS");
     }
 
     @Test
@@ -113,6 +109,10 @@ public class ConfigFileUtilTest {
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(ConfigFileUtil.class);
+        assertThatThrownBy(() -> {
+            final var ctor = ConfigFileUtil.class.getDeclaredConstructor();
+            ctor.trySetAccessible();
+            ctor.newInstance();
+        }).hasCauseInstanceOf(AssertionError.class);
     }
 }

@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
@@ -52,14 +51,14 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
     private final double floatingValue;
     private final byte[] byteArray;
 
-    public DPT9Value(final @Nonnull DPT9 dpt, final @Nonnull byte[] bytes) {
+    public DPT9Value(final DPT9 dpt, final byte[] bytes) {
         super(dpt);
         Preconditions.checkArgument(bytes.length == 2);
         this.floatingValue = toFloatingValue(bytes);
         this.byteArray = bytes;
     }
 
-    public DPT9Value(final @Nonnull DPT9 dpt, final double value) {
+    public DPT9Value(final DPT9 dpt, final double value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.floatingValue = value;
@@ -72,8 +71,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @param bytes
      * @return double value
      */
-    @Nonnull
-    public static double toFloatingValue(final @Nonnull byte[] bytes) {
+    public static double toFloatingValue(final byte[] bytes) {
         final var exponent = getExponent(bytes);
         final var mantissa = getMantissa(bytes);
         return (1 << exponent) * mantissa * 0.01d;
@@ -93,7 +91,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @param bytes
      * @return exponent, between {@code 0} and {@code 15}
      */
-    private static int getExponent(final @Nonnull byte[] bytes) {
+    private static int getExponent(final byte[] bytes) {
         // we are interested in high byte only!
 
         // @formatter:off
@@ -117,7 +115,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @param bytes
      * @return mantissa
      */
-    private static int getMantissa(final @Nonnull byte[] bytes) {
+    private static int getMantissa(final byte[] bytes) {
         // @formatter:off
         // Result: MMMM 0000 0000 0000 0000 0000 0000 0000
         var highByte = // M... .... --> M... .... 0000 0000 0000 0000 0000 0000
@@ -145,7 +143,6 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      * @param value
      * @return {@link DPT9} compatible byte array for double value
      */
-    @Nonnull
     public static byte[] toByteArray(final double value) {
         // multiply with 100 because value is a digit with two decimal places
         var calcValue = value * 100d;
@@ -188,19 +185,16 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         return this.floatingValue;
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-    @Nonnull
     @Override
     public String toText() {
         return getValueAsText(getFloatingValue());
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.datapoint.DPT2;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -43,7 +43,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
     private final boolean controlled;
     private final boolean booleanValue;
 
-    public DPT2Value(final @Nonnull DPT2 dpt, final byte b) {
+    public DPT2Value(final DPT2 dpt, final byte b) {
         super(dpt);
         // bit 1 = controlled
         this.controlled = (b & 0x02) != 0x00;
@@ -51,7 +51,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         this.booleanValue = (b & 0x01) != 0x00;
     }
 
-    public DPT2Value(final @Nonnull DPT2 dpt, final boolean controlled, final boolean booleanValue) {
+    public DPT2Value(final DPT2 dpt, final boolean controlled, final boolean booleanValue) {
         super(dpt);
         this.controlled = controlled;
         this.booleanValue = booleanValue;
@@ -64,7 +64,6 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
      * @param booleanValue
      * @return byte array
      */
-    @Nonnull
     public static byte[] toByteArray(final boolean controlled, final boolean booleanValue) {
         var b = (byte) 0x00;
         if (controlled) {
@@ -84,18 +83,16 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         return this.booleanValue;
     }
 
-    @Nonnull
+
     public String getBooleanText() {
         return this.getDPT().getDPT1().getTextFor(this.booleanValue);
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.booleanValue);
     }
 
-    @Nonnull
     @Override
     public String toText() {
         if (isControlled()) {
@@ -105,7 +102,6 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
         }
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -120,7 +116,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
     }
 
     @Override
-    public boolean equals(final @Nonnull Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT2Value) {

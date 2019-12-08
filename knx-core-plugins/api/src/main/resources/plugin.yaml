@@ -9,10 +9,10 @@ description:
   de: "API für die Erweiterung der Kommunikation mit fremden Applikationen."
 
 configs:
-- port:
-    name:
-      en: "Port"
-      de: "Port"
-    description:
-      en: "Port of API (used by Pippo Web Service)"
-      de: "Port von API (für Pippo Web Service)"
+  - port:
+      name:
+        en: "Port"
+        de: "Port"
+      description:
+        en: "Port of API (used by Pippo Web Service)"
+        de: "Port von API (für Pippo Web Service)"

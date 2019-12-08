@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT18Value;
+import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.util.regex.Pattern;
 
@@ -85,7 +86,7 @@ public final class DPT18 extends AbstractRangeDataPointType<DPT18Value, Integer>
         final var controlled = this.findByString(args, "controlled");
         final var intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
 
-        return new DPT18Value(controlled, intValue);
+        return new DPT18Value(controlled, Preconditions.checkNonNull(intValue, "The scene number must be present."));
     }
 
     public DPT18Value toValue(final boolean controlled, final int sceneNumber) {

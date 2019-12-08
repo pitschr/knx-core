@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,7 +39,6 @@ public final class ByteFormatter {
      * @param b
      * @return hex-decimal formatted byte
      */
-    @Nonnull
     public static String formatHex(final byte b) {
         return String.format("0x%02X", b);
     }
@@ -50,7 +49,6 @@ public final class ByteFormatter {
      * @param number positive number
      * @return hex-decimal formatted integer
      */
-    @Nonnull
     public static String formatHex(final int number) {
         Preconditions.checkArgument(number >= 0, "Argument 'number' must be positive. Got: {}", number);
 
@@ -75,7 +73,6 @@ public final class ByteFormatter {
      * @return string array whereas each bytes are formatted in hex-decimal, if given argument was null or empty then
      * {@code null} is returned
      */
-    @Nonnull
     public static String[] formatHex(final @Nullable byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return new String[0];
@@ -96,7 +93,6 @@ public final class ByteFormatter {
      * @return complete string array whereas whole bytes are formatted as a single string, if given argument was null or
      * empty then an empty String is returned
      */
-    @Nonnull
     public static String formatHexAsString(final @Nullable byte[] bytes) {
         return formatHexAsString(bytes, " ");
     }
@@ -111,8 +107,7 @@ public final class ByteFormatter {
      * @return complete string array whereas whole bytes are formatted as a single string, if given {@code bytes}
      * argument was null or empty then an empty String is returned
      */
-    @Nonnull
-    public static String formatHexAsString(final @Nullable byte[] bytes, final @Nonnull CharSequence delimiter) {
+    public static String formatHexAsString(final @Nullable byte[] bytes, final CharSequence delimiter) {
         if (bytes == null || bytes.length == 0) {
             return "";
         }

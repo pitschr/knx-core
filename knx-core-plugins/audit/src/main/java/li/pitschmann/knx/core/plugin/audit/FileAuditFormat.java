@@ -2,7 +2,6 @@ package li.pitschmann.knx.core.plugin.audit;
 
 import li.pitschmann.knx.core.utils.Json;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
@@ -18,6 +17,8 @@ public enum FileAuditFormat {
      * Audit format should be in JSON format.
      */
     JSON(
+            // Header
+            "",
             // Signal Template (JSON Format)
             "{" +
                     "\"time\":%1$s.%2$s," +
@@ -53,6 +54,13 @@ public enum FileAuditFormat {
      * Audit format should be in TSV text format
      */
     TSV(
+            // Header
+            "" +
+            "Time\t" +
+            "Type\t" +
+            "Header Total Length\tHeader Raw\t" +
+            "Body Service Code\tBody Service Text\tBody Raw\t" +
+            "Error Message\tError Stack Trace",
             // Signal Template (TSV Format)
             "%1$s.%2$s\t" +
                 "%3$s",                        // type
@@ -68,7 +76,7 @@ public enum FileAuditFormat {
             "%1$s.%2$s\t" +
                 "%3$s"+                        // type
                 "\t\t\t\t\t\t" +               // reserved for (body)
-                "%4$s\t" +                     // message
+                "%4$s\t" +                     // error message
                 "%5$s",                        // stacktrace
             // Escaper for TSV message
                 (obj) -> {
@@ -79,34 +87,40 @@ public enum FileAuditFormat {
     );
     // @formatter:on
 
+    private final String header;
     private final String signalTemplate;
     private final String bodyTemplate;
     private final String errorTemplate;
     private final Function<Object, String> escaper;
 
-    FileAuditFormat(final String signalTemplate, final String bodyTemplate, final String errorTemplate, final Function<Object, String> escaper) {
+    FileAuditFormat(final String header,
+                    final String signalTemplate,
+                    final String bodyTemplate,
+                    final String errorTemplate,
+                    final Function<Object, String> escaper) {
+        this.header = header;
         this.signalTemplate = signalTemplate;
         this.bodyTemplate = bodyTemplate;
         this.errorTemplate = errorTemplate;
         this.escaper = escaper;
     }
 
-    @Nonnull
+    public String getHeader() {
+        return header;
+    }
+
     public String getSignalTemplate() {
         return signalTemplate;
     }
 
-    @Nonnull
     public String getBodyTemplate() {
         return bodyTemplate;
     }
 
-    @Nonnull
     public String getErrorTemplate() {
         return errorTemplate;
     }
 
-    @Nonnull
     public String escape(final @Nullable Object str) {
         return str == null ? "" : escaper.apply(str);
     }

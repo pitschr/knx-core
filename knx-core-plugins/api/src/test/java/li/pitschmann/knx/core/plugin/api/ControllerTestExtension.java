@@ -16,26 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.v1.controllers;
+package li.pitschmann.knx.core.plugin.api;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
 import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.body.cemi.APCI;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.communication.KnxStatistic;
+import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.communication.KnxStatusPool;
+import li.pitschmann.knx.core.config.Config;
+import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlGroupRange;
 import li.pitschmann.knx.core.knxproj.XmlProject;
+import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.mockito.Mockito;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.core.Messages;
@@ -46,16 +52,14 @@ import ro.pippo.core.Response;
 import ro.pippo.core.route.DefaultRouter;
 import ro.pippo.core.route.RouteContext;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -80,38 +84,39 @@ public final class ControllerTestExtension
 
 
     /**
-     * Creates a new instance of {@link AbstractController}
+     * Creates a new instance of {@link Controller}
      *
      * @param annotation
      * @param <T>
-     * @return new instance of {@link AbstractController}
+     * @return new instance of {@link Controller}
      */
-    protected final <T extends AbstractController> T newController(final @Nonnull ControllerTest annotation) {
-        // Load XML Project
-        final XmlProject xmlProject;
+    private final <T extends Controller> T newController(final ControllerTest annotation) {
+        // Create XML Project
+        final XmlProject xmlProjectMock;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
             final var xmlProjectPath = Paths.get(annotation.projectPath());
-            xmlProject = spy(XmlProject.parse(xmlProjectPath));
+            xmlProjectMock = spy(XmlProject.of(xmlProjectPath));
         } else {
-            xmlProject = getDefaultXmlProject();
+            xmlProjectMock = getXmlProjectMock();
         }
 
         try {
             // Create a new instance of controller
-            @SuppressWarnings("unchecked") final T obj = ((Class<T>) annotation.value()).getDeclaredConstructor().newInstance();
+            @SuppressWarnings("unchecked")
+            final T obj = ((Class<T>) annotation.value()).getDeclaredConstructor().newInstance();
 
-            final var injectKnxClient = getDefaultKnxClient();
+            final var knxClientMock = getKnxClientMock(xmlProjectMock);
 
             // create guice injector
             final var injector = Guice.createInjector(new AbstractModule() {
                 @Provides
                 private final KnxClient providesKnxClient() {
-                    return injectKnxClient;
+                    return knxClientMock;
                 }
 
                 @Provides
                 private final XmlProject providesXmlProject() {
-                    return xmlProject;
+                    return xmlProjectMock;
                 }
             });
 
@@ -120,7 +125,7 @@ public final class ControllerTestExtension
 
             // apply the route context to the controller instance as RouteContext won't
             // be injected by Pippo Framework
-            final var routeContextInternal = getDefaultRouteContext();
+            final var routeContextInternal = getRouteContextMock();
             final var spyObject = spy(obj);
             when(spyObject.getRouteContext()).thenReturn(routeContextInternal);
 
@@ -131,56 +136,59 @@ public final class ControllerTestExtension
     }
 
     /**
-     * Returns default KNX client
+     * Returns a mocked {@link KnxClient}
      *
-     * @return mocked KNX client
-     */
-    protected DefaultKnxClient getDefaultKnxClient() {
-        return getKnxClient(null);
-    }
-
-    /**
-     * Returns the KNX client with applied consumer
-     *
-     * @param consumer
-     * @return mocked XML client
+     * @param xmlProject the {@link XmlProject} that should be considered by {@link KnxClient}
+     * @return mocked {@link KnxClient}
      */
     @SuppressWarnings("unchecked")
-    protected DefaultKnxClient getKnxClient(final @Nullable Consumer<DefaultKnxClient> consumer) {
-        final var knxClient = mock(DefaultKnxClient.class);
+    private KnxClient getKnxClientMock(final XmlProject xmlProject) {
+        // create KNX Client Mock
+        final var configMock = mock(Config.class);
+        when(configMock.getValue(any(ConfigValue.class))).thenAnswer(i -> ((ConfigValue<?>) i.getArgument(0)).getDefaultValue());
 
-        final var statistic = mock(KnxStatistic.class);
-        final var statusPool = mock(KnxStatusPool.class);
-        when(knxClient.getStatistic()).thenReturn(statistic);
-        when(knxClient.getStatusPool()).thenReturn(statusPool);
+        final var statisticMock = mock(KnxStatistic.class);
+        final var statusPoolMock = mock(KnxStatusPool.class);
 
-        when(knxClient.readRequest(any(GroupAddress.class))).thenReturn(true);
-        when(knxClient.writeRequest(any(GroupAddress.class), any(byte[].class))).thenReturn(true);
-        when(knxClient.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(true);
+        final var knxClientMock = mock(DefaultKnxClient.class);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
+        when(knxClientMock.getStatistic()).thenReturn(statisticMock);
+        when(knxClientMock.getStatusPool()).thenReturn(statusPoolMock);
+        when(knxClientMock.getConfig(any(ConfigValue.class))).thenCallRealMethod();
+        when(knxClientMock.getConfig().getProject()).thenReturn(xmlProject);
+        when(knxClientMock.readRequest(any(GroupAddress.class))).thenReturn(true);
+        when(knxClientMock.writeRequest(any(GroupAddress.class), any(byte[].class))).thenReturn(true);
+        when(knxClientMock.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(true);
 
-        if (consumer != null) {
-            consumer.accept(knxClient);
+        // append pre-defined Group Addresses from XML Project to the KNX Client Mock
+        if (Mockito.mockingDetails(xmlProject).isSpy()) {
+            for (final var xmlGroupAddress : xmlProject.getGroupAddresses()) {
+                final var groupAddress = GroupAddress.of(xmlGroupAddress.getAddress());
+                final var groupAddressName = xmlGroupAddress.getName();
+
+                final byte[] apciData;
+                if (groupAddressName.contains("DPT")) {
+                    final var apciDataAsHexStream = xmlGroupAddress.getName().substring(xmlGroupAddress.getName().lastIndexOf('(') + 1, xmlGroupAddress.getName().lastIndexOf(')'));
+                    apciData = Bytes.toByteArray(apciDataAsHexStream);
+                } else {
+                    apciData = new byte[1];
+                }
+
+                final var knxStatusData = spy(new KnxStatusData(groupAddress, APCI.GROUP_VALUE_WRITE, apciData));
+                when(knxClientMock.getStatusPool().getStatusFor(eq(groupAddress))).thenReturn(knxStatusData);
+            }
         }
 
-        return knxClient;
+
+        return knxClientMock;
     }
 
     /**
-     * Returns default XML project
+     * Creates a mock {@link XmlProject}
      *
-     * @return mocked XML project
+     * @return mocked {@link XmlProject}
      */
-    protected XmlProject getDefaultXmlProject() {
-        return getXmlProject(null);
-    }
-
-    /**
-     * Returns the XML project with applied consumer
-     *
-     * @param consumer
-     * @return mocked XML project
-     */
-    protected XmlProject getXmlProject(final @Nullable Consumer<XmlProject> consumer) {
+    private XmlProject getXmlProjectMock() {
         final var xmlProject = mock(XmlProject.class);
 
         // XML Group Addresses
@@ -211,29 +219,15 @@ public final class ControllerTestExtension
         xmlGroupRangesMock.add(xmlMiddleGroupRangeMock);
         when(xmlProject.getGroupRanges()).thenReturn(xmlGroupRangesMock);
 
-        if (consumer != null) {
-            consumer.accept(xmlProject);
-        }
-
         return xmlProject;
     }
 
     /**
-     * Returns default route context
+     * Returns a mocked {@link RouteContext}
      *
      * @return mocked {@link RouteContext}
      */
-    protected RouteContext getDefaultRouteContext() {
-        return getRouteContext(null);
-    }
-
-    /**
-     * Returns the route context with applied customer
-     *
-     * @param consumer
-     * @return mocked {@link RouteContext}
-     */
-    protected RouteContext getRouteContext(final @Nullable Consumer<RouteContext> consumer) {
+    private RouteContext getRouteContextMock() {
         final var routeContext = mock(RouteContext.class);
         final var application = mock(ControllerApplication.class);
         final var messages = mock(Messages.class);
@@ -252,10 +246,6 @@ public final class ControllerTestExtension
         when(routeContext.getSettings()).thenReturn(settings);
 
         when(request.getParameter(anyString())).thenReturn(new ParameterValue());
-
-        if (consumer != null) {
-            consumer.accept(routeContext);
-        }
 
         return routeContext;
     }

@@ -32,8 +32,8 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
      *
      * @return {@link DPTEnumValue}
      */
-    @SuppressWarnings("unchecked")
     default DPTEnumValue<T> toValue() {
+        @SuppressWarnings("unchecked")
         final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
         return DataPointTypeRegistry.getDataPointType(thisObj);
     }
@@ -50,7 +50,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
     /**
      * Returns the human friendly text of value
      *
-     * @return
+     * @return text
      */
     default String toText() {
         return toValue().getDescription();

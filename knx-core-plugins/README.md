@@ -183,7 +183,6 @@ public class MyConfigurablePlugin implements Plugin {
      */
     public static final AnimalLoud LOUD = new AnimalLoud();
 
-
     @Override
     public void onInitialization(final KnxClient client) {
         System.out.println("Integer: " + client.getConfig(INTEGER));

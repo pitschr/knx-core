@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.communication.queue;
 
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -40,12 +39,12 @@ public final class MulticastInboxQueue extends AbstractInboxQueue<DatagramChanne
      * @param client  internal KNX client for internal actions like informing plug-ins
      * @param channel channel of communication
      */
-    public MulticastInboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+    public MulticastInboxQueue(final InternalKnxClient client, final SelectableChannel channel) {
         super(client, channel);
     }
 
     @Override
-    protected void receive(final @Nonnull DatagramChannel channel, final @Nonnull ByteBuffer bb) throws IOException {
+    protected void receive(final DatagramChannel channel, final ByteBuffer bb) throws IOException {
         channel.receive(bb);
     }
 }

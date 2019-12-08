@@ -21,10 +21,10 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT16Value;
 
-import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Data Point Type 16 for 'Text' (14 Octets)
@@ -122,10 +122,10 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
      * @param desc
      * @param charset
      */
-    private DPT16(final String id, final String desc, final @Nonnull Charset charset) {
+    private DPT16(final String id, final String desc, final Charset charset) {
         super(id, desc);
 
-        this.charset = charset;
+        this.charset = Objects.requireNonNull(charset);
         this.charsetDecoder = charset.newDecoder();
     }
 

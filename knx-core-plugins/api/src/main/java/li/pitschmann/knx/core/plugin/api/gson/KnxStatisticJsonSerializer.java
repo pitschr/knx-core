@@ -15,13 +15,13 @@ import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
+import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.SearchRequestBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 import java.util.function.Function;
 
@@ -51,8 +51,9 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
         inbound.add("description", getRequestResponsePair(receivedFunction, DescriptionRequestBody.class, DescriptionResponseBody.class));
         inbound.add("connect", getRequestResponsePair(receivedFunction, ConnectRequestBody.class, ConnectResponseBody.class));
         inbound.add("connection_state", getRequestResponsePair(receivedFunction, ConnectionStateRequestBody.class, ConnectionStateResponseBody.class));
-        inbound.add("disconnect", getRequestResponsePair(receivedFunction, DisconnectRequestBody.class, DisconnectResponseBody.class));
         inbound.add("tunneling", getRequestResponsePair(receivedFunction, TunnelingRequestBody.class, TunnelingAckBody.class));
+        inbound.add("indication", getRequestResponsePair(receivedFunction, null, RoutingIndicationBody.class));
+        inbound.add("disconnect", getRequestResponsePair(receivedFunction, DisconnectRequestBody.class, DisconnectResponseBody.class));
 
         // sent
         final var outboundTotal = new JsonObject();
@@ -66,8 +67,9 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
         outbound.add("description", getRequestResponsePair(sentFunction, DescriptionRequestBody.class, DescriptionResponseBody.class));
         outbound.add("connect", getRequestResponsePair(sentFunction, ConnectRequestBody.class, ConnectResponseBody.class));
         outbound.add("connection_state", getRequestResponsePair(sentFunction, ConnectionStateRequestBody.class, ConnectionStateResponseBody.class));
-        outbound.add("disconnect", getRequestResponsePair(sentFunction, DisconnectRequestBody.class, DisconnectResponseBody.class));
         outbound.add("tunneling", getRequestResponsePair(sentFunction, TunnelingRequestBody.class, TunnelingAckBody.class));
+        outbound.add("indication", getRequestResponsePair(sentFunction, RoutingIndicationBody.class, null));
+        outbound.add("disconnect", getRequestResponsePair(sentFunction, DisconnectRequestBody.class, DisconnectResponseBody.class));
 
         // error
         final var errorTotal = new JsonObject();
@@ -94,13 +96,13 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
      * @return json pair of request and response
      */
     private JsonObject getRequestResponsePair(
-            final @Nonnull Function<Class<? extends Body>, Long> function,
-            final @Nonnull Class<? extends RequestBody> requestBodyClass,
-            final @Nonnull Class<? extends ResponseBody> responseBodyClass) {
+            final Function<Class<? extends Body>, Long> function,
+            final Class<? extends RequestBody> requestBodyClass,
+            final Class<? extends ResponseBody> responseBodyClass) {
 
         final var pair = new JsonObject();
-        pair.addProperty("request", function.apply(requestBodyClass));
-        pair.addProperty("response", function.apply(responseBodyClass));
+        pair.addProperty("request", requestBodyClass == null ? 0L : function.apply(requestBodyClass));
+        pair.addProperty("response", responseBodyClass == null ? 0L : function.apply(responseBodyClass));
         return pair;
     }
 }

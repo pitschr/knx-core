@@ -10,6 +10,7 @@ JSON:
 
 TSV (tab-separated):
 ```
+Inbound Packets	Inbound Bytes	Outbound Packets	Outbound Bytes	Error Packets	Error Rate (%)	Inbound Description Requests	Inbound Description Responses	Inbound Connect Requests	Inbound Connect Responses	Inbound Connection State Requests	Inbound Connection State Responses	Inbound Disconnect Requests	Inbound Disconnect Responses	Inbound Tunneling Requests	Inbound Tunneling Acknowledges	Inbound Indication Requests	Inbound Indication Responses	Outbound Description Requests	Outbound Description Responses	Outbound Connect Requests	Outbound Connect Responses	Outbound Connection State Requests	Outbound Connection State Responses	Outbound Disconnect Requests	Outbound Disconnect Responses	Outbound Tunneling Requests	Outbound Tunneling Acknowledges	Outbound Indication Requests	Outbound Indication Responses
 10	11	12	13	14	1.50	0	21	0	31	0	41	70	71	50	51	0	60	22	0	32	0	42	0	72	73	52	53	61	0
 ```
 

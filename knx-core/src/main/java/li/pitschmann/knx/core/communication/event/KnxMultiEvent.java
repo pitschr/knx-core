@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -49,10 +48,8 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     }
 
     @Override
-    public void setRequest(final @Nonnull REQUEST request) {
-        final var newRequestEvent = new RequestEvent<REQUEST>();
-        newRequestEvent.setRequest(request);
-        this.requestEvent = newRequestEvent;
+    public void setRequest(final REQUEST request) {
+        this.requestEvent = new RequestEvent<>(request);
     }
 
     @Nullable
@@ -67,12 +64,12 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     }
 
     @Override
-    public void setResponse(final @Nonnull RESPONSE response) {
+    public void setResponse(final RESPONSE response) {
         addResponse(response);
     }
 
     @Nullable
-    public RESPONSE getResponse(final @Nonnull Predicate<RESPONSE> predicate) {
+    public RESPONSE getResponse(final Predicate<RESPONSE> predicate) {
         final var responseEvent = getResponseEvent(predicate);
         return responseEvent == null ? null : responseEvent.getResponse();
     }
@@ -87,10 +84,8 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
         return !responseEvents.isEmpty();
     }
 
-    public void addResponse(final @Nonnull RESPONSE response) {
-        final var newResponseEvent = new ResponseEvent<RESPONSE>();
-        newResponseEvent.setResponse(response);
-        this.responseEvents.add(newResponseEvent);
+    public void addResponse(final RESPONSE response) {
+        this.responseEvents.add(new ResponseEvent<RESPONSE>(response));
     }
 
     @Nullable
@@ -111,13 +106,13 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     }
 
     @Nullable
-    public Instant getResponseTime(final @Nonnull Predicate<RESPONSE> predicate) {
+    public Instant getResponseTime(final Predicate<RESPONSE> predicate) {
         final var responseEvent = getResponseEvent(predicate);
         return responseEvent == null ? null : responseEvent.getResponseTime();
     }
 
     @Nullable
-    public ResponseEvent<RESPONSE> getResponseEvent(final @Nonnull Predicate<RESPONSE> predicate) {
+    public ResponseEvent<RESPONSE> getResponseEvent(final Predicate<RESPONSE> predicate) {
         for (final var responseEvent : new ArrayList<>(this.responseEvents)) {
             if (predicate.test(responseEvent.getResponse())) {
                 return responseEvent;
@@ -126,7 +121,6 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
         return null;
     }
 
-    @Nonnull
     @Override
     public String toString() {
         return Strings.toStringHelper(this) //

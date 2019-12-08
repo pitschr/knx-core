@@ -31,7 +31,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,7 +67,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      * @param mockServer
      * @param testAnnotation
      */
-    MockServerCommunicator(final @Nonnull MockServer mockServer, final @Nonnull MockServerTest testAnnotation) {
+    MockServerCommunicator(final MockServer mockServer, final MockServerTest testAnnotation) {
         Preconditions.checkNonNull(testAnnotation);
         this.mockServer = Objects.requireNonNull(mockServer);
         this.commandParser = new MockServerCommandParser(mockServer, this);
@@ -121,7 +120,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      * @param serviceType
      * @param strategyClasses, if {@code null}, then {@link IgnoreStrategy} will be used
      */
-    private void registerResponseStrategies(final @Nonnull ServiceType serviceType,
+    private void registerResponseStrategies(final ServiceType serviceType,
                                             final @Nullable Class<? extends ResponseStrategy>[] strategyClasses) {
         // re-init values for given service types
         responseStrategies.put(serviceType, new LinkedList<>());
@@ -202,7 +201,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     }
 
     @Override
-    public void onSubscribe(final @Nonnull Flow.Subscription subscription) {
+    public void onSubscribe(final Flow.Subscription subscription) {
         subscription.request(Long.MAX_VALUE);
     }
 

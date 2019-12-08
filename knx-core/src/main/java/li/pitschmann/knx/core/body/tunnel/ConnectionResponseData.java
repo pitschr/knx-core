@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 
 /**
  * Tunneling Connection Response Data (CRD)
@@ -53,7 +52,7 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
     private final ConnectionType connectionType;
     private final IndividualAddress address;
 
-    private ConnectionResponseData(final @Nonnull byte[] crdRawData) {
+    private ConnectionResponseData(final byte[] crdRawData) {
         super(crdRawData);
 
         this.length = Bytes.toUnsignedInt(crdRawData[0]);
@@ -67,8 +66,7 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link ConnectionResponseData}
      * @return a new immutable {@link ConnectionResponseData}
      */
-    @Nonnull
-    public static ConnectionResponseData of(final @Nonnull byte[] bytes) {
+    public static ConnectionResponseData of(final byte[] bytes) {
         return new ConnectionResponseData(bytes);
     }
 
@@ -78,8 +76,7 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * @param address
      * @return a new immutable {@link ConnectionResponseData}
      */
-    @Nonnull
-    public static ConnectionResponseData of(final @Nonnull IndividualAddress address) {
+    public static ConnectionResponseData of(final IndividualAddress address) {
         // validate
         if (address == null) {
             throw new KnxNullPointerException("address");
@@ -101,7 +98,7 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] crdRawData) {
+    protected void validate(final byte[] crdRawData) {
         if (crdRawData == null) {
             throw new KnxNullPointerException("crdRawData");
         } else if (crdRawData.length != 4) {
@@ -115,17 +112,16 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
         return this.length;
     }
 
-    @Nonnull
+
     public ConnectionType getConnectionType() {
         return this.connectionType;
     }
 
-    @Nonnull
+
     public IndividualAddress getAddress() {
         return this.address;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.communication.queue.MulticastOutboxQueue;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.utils.Networker;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.SelectableChannel;
@@ -41,13 +40,12 @@ import java.util.List;
 public final class MulticastChannelCommunicator extends AbstractChannelCommunicator {
     private List<MembershipKey> membershipKeys;
 
-    MulticastChannelCommunicator(final @Nonnull InternalKnxClient client) {
+    MulticastChannelCommunicator(final InternalKnxClient client) {
         super(client);
     }
 
-    @Nonnull
     @Override
-    protected final SelectableChannel newChannel(final @Nonnull InternalKnxClient client) {
+    protected final SelectableChannel newChannel(final InternalKnxClient client) {
         // creates new channel
         final var channel = ChannelFactory.newMulticastChannel(client);
 
@@ -64,17 +62,15 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
         log.debug("Membership of all multicast groups dropped.");
     }
 
-    @Nonnull
     @Override
-    protected final MulticastInboxQueue createInboxQueue(final @Nonnull InternalKnxClient client,
-                                                         final @Nonnull SelectableChannel channel) {
+    protected final MulticastInboxQueue createInboxQueue(final InternalKnxClient client,
+                                                         final SelectableChannel channel) {
         return new MulticastInboxQueue(client, channel);
     }
 
-    @Nonnull
     @Override
-    protected final MulticastOutboxQueue createOutboxQueue(final @Nonnull InternalKnxClient client,
-                                                           final @Nonnull SelectableChannel channel) {
+    protected final MulticastOutboxQueue createOutboxQueue(final InternalKnxClient client,
+                                                           final SelectableChannel channel) {
         return new MulticastOutboxQueue(client, channel);
     }
 

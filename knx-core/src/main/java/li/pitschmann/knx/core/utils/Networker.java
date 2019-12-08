@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -66,7 +65,6 @@ public final class Networker {
      *
      * @return
      */
-    @Nonnull
     public static InetAddress getLocalHost() {
         return LOCALHOST;
     }
@@ -76,7 +74,6 @@ public final class Networker {
      *
      * @return unbound {@link InetAddress}
      */
-    @Nonnull
     public static InetAddress getAddressUnbound() {
         return getByAddress((byte) 0, (byte) 0, (byte) 0, (byte) 0);
     }
@@ -90,8 +87,7 @@ public final class Networker {
      * @return {@link InetAddress}
      * @throws IllegalArgumentException in case the given {@code addressAsString} is not valid
      */
-    @Nonnull
-    public static InetAddress getByAddress(final @Nonnull String addressAsString) {
+    public static InetAddress getByAddress(final String addressAsString) {
         if (addressAsString.equalsIgnoreCase("localhost")) {
             return getLocalHost();
         }
@@ -113,7 +109,6 @@ public final class Networker {
      * @param i4
      * @return {@link InetAddress}
      */
-    @Nonnull
     public static InetAddress getByAddress(final int i1, final int i2, final int i3, final int i4) {
         Preconditions.checkArgument(i1 >= 0 && i1 <= 255);
         Preconditions.checkArgument(i2 >= 0 && i2 <= 255);
@@ -133,7 +128,6 @@ public final class Networker {
      * @param b4
      * @return {@link InetAddress}
      */
-    @Nonnull
     public static InetAddress getByAddress(final byte b1, final byte b2, final byte b3, final byte b4) {
         try {
             return InetAddress.getByAddress(new byte[]{b1, b2, b3, b4});
@@ -146,11 +140,10 @@ public final class Networker {
     /**
      * Returns the remote address for given {@code Channel} as a string representative.
      *
-     * @param channel
+     * @param channel either a {@link DatagramChannel} or a {@link SocketChannel}
      * @return string representative for remote address
      */
-    @Nonnull
-    public static String getRemoteAddressAsString(final @Nonnull Channel channel) {
+    public static String getRemoteAddressAsString(final Channel channel) {
         try {
             final SocketAddress sa;
             if (channel instanceof DatagramChannel) {
@@ -173,8 +166,7 @@ public final class Networker {
      * @param channel
      * @return string representative for local address
      */
-    @Nonnull
-    public static String getLocalAddressAsString(final @Nonnull Channel channel) {
+    public static String getLocalAddressAsString(final Channel channel) {
         try {
             final SocketAddress sa;
             if (channel instanceof NetworkChannel) {
@@ -195,8 +187,7 @@ public final class Networker {
      * @param hpai
      * @return A new {@link InetSocketAddress} instance
      */
-    @Nonnull
-    public static InetSocketAddress toInetSocketAddress(final @Nonnull HPAI hpai) {
+    public static InetSocketAddress toInetSocketAddress(final HPAI hpai) {
         return new InetSocketAddress(hpai.getAddress(), hpai.getPort());
     }
 
@@ -205,7 +196,6 @@ public final class Networker {
      *
      * @return map of network interfaces with list of {@link InetAddress}, in case of issue an empty map is returned
      */
-    @Nonnull
     public static Map<NetworkInterface, List<InetAddress>> getNetworkInterfaces() { // NOSONAR
         // return network interface map from cache if possible
         if (networkInterfaceMap != null) {
@@ -271,8 +261,7 @@ public final class Networker {
      * @param group   multicast address to be joined
      * @return list of {@link MembershipKey} where the multicast group was joined
      */
-    @Nonnull
-    public static List<MembershipKey> joinChannels(final @Nonnull MulticastChannel channel, final @Nonnull InetAddress group) {
+    public static List<MembershipKey> joinChannels(final MulticastChannel channel, final InetAddress group) {
         Preconditions.checkNonNull(group);
         // add all applicable network interfaces for discovery and join the multicast group
         // the membership keys will be return to allow to leave the joined multicast groups

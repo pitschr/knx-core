@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -49,7 +48,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
      * @param client  internal KNX client for internal actions like informing plug-ins
      * @param channel channel of communication
      */
-    public AbstractInboxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+    public AbstractInboxQueue(final InternalKnxClient client, final SelectableChannel channel) {
         super(client, channel);
     }
 
@@ -59,7 +58,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
     }
 
     @Override
-    protected boolean valid(final @Nonnull SelectionKey key) {
+    protected boolean valid(final SelectionKey key) {
         return key.isValid() && key.isReadable();
     }
 
@@ -70,7 +69,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
      * @param key selection key
      * @throws IOException exception while reading from {@link ByteChannel}
      */
-    protected void action(final @Nonnull SelectionKey key) throws IOException {
+    protected void action(final SelectionKey key) throws IOException {
         log.trace("Method 'action(SelectionKey)' called.");
 
         final byte[] receivedBytes;
@@ -89,7 +88,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
         final var body = BodyFactory.of(receivedBytes);
 
         // verify the channel id
-        if (this.getInternalClient().verifyChannelId(body)) {
+        if (getInternalClient().verifyChannelId(body)) {
             // channel id is correct
             if (log.isDebugEnabled()) {
                 final var header = Header.of(receivedBytes);
@@ -110,8 +109,8 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
             }
 
             // add body to queue
-            this.add(body);
-            this.getInternalClient().notifyIncomingBody(body);
+            add(body);
+            getInternalClient().notifyIncomingBody(body);
         }
     }
 

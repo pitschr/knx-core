@@ -22,8 +22,6 @@ import li.pitschmann.knx.core.datapoint.DPT22;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 
-import javax.annotation.Nonnull;
-
 /**
  * Data Point Value for {@link DPT22} (22.xxx)
  *
@@ -106,26 +104,26 @@ public final class DPT22Value {
      *
      * @see DPT22#STATUS_ROOM_HEATING_COOLING_CONTROLLER
      */
-    public static final class StatusRoomHeatinCoolingController extends AbstractDataPointFlags<DPT22.StatusRoomHeatinCoolingController> {
-        public StatusRoomHeatinCoolingController(final byte[] bytes) {
+    public static final class StatusRoomHeatingCoolingController extends AbstractDataPointFlags<DPT22.StatusRoomHeatinCoolingController> {
+        public StatusRoomHeatingCoolingController(final byte[] bytes) {
             super(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER, bytes);
         }
 
-        public StatusRoomHeatinCoolingController(final boolean fault,
-                                                 final boolean statusEcoHeating,
-                                                 final boolean temperatureFlowLimit,
-                                                 final boolean temperatureReturnLimit,
-                                                 final boolean statusMorningBoost,
-                                                 final boolean startOptimizationActive,
-                                                 final boolean stopOptimizationActive,
-                                                 final boolean heatingDisabled,
-                                                 final boolean heatingMode,
-                                                 final boolean statusEcoCooling,
-                                                 final boolean statusPreCooling,
-                                                 final boolean coolingDisabled,
-                                                 final boolean dewPointAlarm,
-                                                 final boolean frostAlarm,
-                                                 final boolean overheatAlarm) {
+        public StatusRoomHeatingCoolingController(final boolean fault,
+                                                  final boolean statusEcoHeating,
+                                                  final boolean temperatureFlowLimit,
+                                                  final boolean temperatureReturnLimit,
+                                                  final boolean statusMorningBoost,
+                                                  final boolean startOptimizationActive,
+                                                  final boolean stopOptimizationActive,
+                                                  final boolean heatingDisabled,
+                                                  final boolean heatingMode,
+                                                  final boolean statusEcoCooling,
+                                                  final boolean statusPreCooling,
+                                                  final boolean coolingDisabled,
+                                                  final boolean dewPointAlarm,
+                                                  final boolean frostAlarm,
+                                                  final boolean overheatAlarm) {
             this(Bytes.toByteArray(false, overheatAlarm, frostAlarm, dewPointAlarm, coolingDisabled, statusPreCooling, statusEcoCooling, heatingMode,
                     heatingDisabled, stopOptimizationActive, startOptimizationActive, statusMorningBoost, temperatureReturnLimit,
                     temperatureFlowLimit, statusEcoHeating, fault));
@@ -259,11 +257,10 @@ public final class DPT22Value {
          *
          * @return human-friendly representation of active channels
          */
-        @Nonnull
         @Override
         public String toText() {
             // return list of channels (e.g. "channel 1" if only channel is
-            final var sb = new StringBuffer(25);
+            final var sb = new StringBuilder(25);
             for (var i = 0; i < 16; i++) {
                 if (this.isSet(i)) {
                     if (sb.length() != 0) {

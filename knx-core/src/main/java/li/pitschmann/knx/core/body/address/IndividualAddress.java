@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
@@ -38,7 +37,7 @@ public final class IndividualAddress extends KnxAddress {
     private final int line;
     private final int device;
 
-    private IndividualAddress(final @Nonnull byte[] addressRawData) {
+    private IndividualAddress(final byte[] addressRawData) {
         super(addressRawData);
 
         // byte 0: xxxx ....
@@ -55,8 +54,7 @@ public final class IndividualAddress extends KnxAddress {
      * @param bytes complete byte array for {@link IndividualAddress}
      * @return a new immutable {@link IndividualAddress}
      */
-    @Nonnull
-    public static IndividualAddress of(final @Nonnull byte[] bytes) {
+    public static IndividualAddress of(final byte[] bytes) {
         // no validation required, validation will be done in KnxAddress class
         return new IndividualAddress(bytes);
     }
@@ -67,7 +65,6 @@ public final class IndividualAddress extends KnxAddress {
      *
      * @return re-usable immutable default {@link IndividualAddress} ({@code 0.0.0})
      */
-    @Nonnull
     public static IndividualAddress useDefault() {
         return DEFAULT;
     }
@@ -84,14 +81,13 @@ public final class IndividualAddress extends KnxAddress {
      * @return An new instance of {@link IndividualAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
-    @Nonnull
-    public static IndividualAddress of(final @Nonnull String addressAsString) {
+    public static IndividualAddress of(final String addressAsString) {
         final String[] individualAddressAreas = addressAsString.split("\\.");
         if (individualAddressAreas.length == 3) {
             return of( //
-                    Integer.valueOf(individualAddressAreas[0]), //
-                    Integer.valueOf(individualAddressAreas[1]), //
-                    Integer.valueOf(individualAddressAreas[2]) //
+                    Integer.parseInt(individualAddressAreas[0]), //
+                    Integer.parseInt(individualAddressAreas[1]), //
+                    Integer.parseInt(individualAddressAreas[2]) //
             );
         }
         throw new KnxIllegalArgumentException("Invalid Individual Address provided: " + addressAsString);
@@ -105,7 +101,6 @@ public final class IndividualAddress extends KnxAddress {
      * @param device [0..255]
      * @return a new immutable {@link IndividualAddress}
      */
-    @Nonnull
     public static IndividualAddress of(final int area, final int line, final int device) {
         if (area < 0 || area > 0x0F) {
             throw new KnxNumberOutOfRangeException("area", 0, 0x0F, area);
@@ -127,19 +122,16 @@ public final class IndividualAddress extends KnxAddress {
         return of(bytes);
     }
 
-    @Nonnull
     @Override
     public AddressType getAddressType() {
         return AddressType.INDIVIDUAL;
     }
 
-    @Nonnull
     @Override
     public String getAddress() {
         return this.area + "." + this.line + "." + this.device;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

@@ -43,7 +43,9 @@
     </licenses>
 
     <!-- Properties -->
-    <properties />
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
+    </properties>
 
     <!-- Dependencies -->
     <dependencies>
@@ -66,7 +68,6 @@
             <version>${project.version}</version>
         </dependency>
 
-
         <!-- Logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -75,5 +76,37 @@
         </dependency>
     </dependencies>
 
+    <!-- Build -->
+    <build>
+        <plugins>
+            <!--
+            Creates a JAR file with all dependencies (one fat JAR)
+            The main class will be: li.pitschmann.knx.examples.tty.Main
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${version.plugin.maven-assembly-plugin}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>li.pitschmann.knx.examples.tty.Main</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
-

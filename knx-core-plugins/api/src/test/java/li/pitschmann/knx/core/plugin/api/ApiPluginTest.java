@@ -18,73 +18,59 @@
 
 package li.pitschmann.knx.core.plugin.api;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.datapoint.DPT1;
-import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
-import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
-import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
-import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
-import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
-import li.pitschmann.knx.core.test.MockServerTest;
+import li.pitschmann.knx.core.communication.KnxClient;
+import li.pitschmann.knx.core.config.Config;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
 
+import java.io.IOException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link ApiPlugin}
  */
 public class ApiPluginTest {
-    /**
-     * Tests the combination of /read and /write requests
-     */
-    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v20).knxproj"))
-    @DisplayName("Test /read and /write endpoints for group address 0/0/10")
-    public void testReadAndWrite(final MockApiPlugin mockApi) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
 
-        final var groupAddress = GroupAddress.of(0, 0, 10);
+    @Test
+    @DisplayName("Test the API Plugin life-cycle (with health check)")
+    public void testApiPluginDefault() throws IOException, InterruptedException {
+        final var mockApiPlugin = new TestApiPlugin();
 
-        // create read request for before and after write request
-        final var readRequest = new ReadRequest();
-        readRequest.setGroupAddress(groupAddress);
+        //
+        // Mocking
+        //
 
-        // create write request
-        final var writeRequest = new WriteRequest();
-        writeRequest.setGroupAddress(groupAddress);
-        writeRequest.setDataPointType(DPT1.SWITCH);
-        writeRequest.setValues("true");
-        final var writeHttpRequest = mockApi.newRequestBuilder("/api/v1/write")
-                .POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(writeRequest))).build();
+        final var knxClientMock = mock(KnxClient.class);
+        final var configMock = mock(Config.class);
+        when(knxClientMock.getConfig()).thenReturn(configMock);
 
-        // Start HTTP communication
-        // ----------------------------
+        //
+        // Verification
+        //
+        try {
+            mockApiPlugin.onInitialization(knxClientMock);
+            mockApiPlugin.onStart();
 
-        // send read request #1
-        final var readHttpRequest = mockApi.newRequestBuilder("/api/v1/read")
-                .POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
-        final var readHttpResponse = httpClient.send(readHttpRequest, HttpResponse.BodyHandlers.ofString());
-        assertThat(readHttpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(readHttpResponse.body()).isEqualTo(readJsonFile("/json/ApiPluginTest-testReadAndWrite-read.json"));
+            // verify if plugin could be started up
+            assertThat(mockApiPlugin.isReady()).isTrue();
+            assertThat(mockApiPlugin.getPort()).isNotZero();
 
-        // write 0x01
-        final var writeHttpResponse = httpClient.send(writeHttpRequest, HttpResponse.BodyHandlers.ofString());
-        assertThat(writeHttpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
-        assertThat(writeHttpResponse.body()).isEqualTo("{}");
+            // verify if health check works
+            final var httpRequest = mockApiPlugin.newRequestBuilder("/api/ping").build();
+            final var httpResponse = HttpClient.newHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
+            assertThat(httpResponse.body()).isEqualTo("OK");
+            assertThat(httpResponse.headers().firstValue("Content-Type").get()).isEqualTo("text/plain; charset=UTF-8");
+        } finally {
+            mockApiPlugin.onShutdown();
+        }
 
-        // send read request #2
-        // - group address: "1-bit (false)" which has been initialized with "false" contains now "true"
-        // - it contains the '$expand' parameters which means that we request for specific data only
-        final var readHttpRequestAfterWrite = mockApi.newRequestBuilder("/api/v1/read")
-                .POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(readRequest))).build();
-        final var readHttpResponseAfterWrite = httpClient.send(readHttpRequestAfterWrite, HttpResponse.BodyHandlers.ofString());
-        assertThat(readHttpResponseAfterWrite.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(readHttpResponseAfterWrite.body()).isEqualTo(readJsonFile("/json/ApiPluginTest-testReadAndWrite-read2.json"));
+        assertThat(mockApiPlugin.isReady()).isFalse();
     }
 }

@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -51,14 +50,14 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
     private final double floatingValue;
     private final byte[] byteArray;
 
-    public DPT14Value(final @Nonnull DPT14 dpt, final @Nonnull byte[] bytes) {
+    public DPT14Value(final DPT14 dpt, final byte[] bytes) {
         super(dpt);
         Preconditions.checkArgument(bytes.length == 4);
         this.floatingValue = toFloatingValue(bytes);
         this.byteArray = bytes;
     }
 
-    public DPT14Value(final @Nonnull DPT14 dpt, final double value) {
+    public DPT14Value(final DPT14 dpt, final double value) {
         super(dpt);
         Preconditions.checkArgument(dpt.isRangeClosed(value));
         this.floatingValue = value;
@@ -71,7 +70,7 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
      * @param bytes
      * @return float value
      */
-    public static double toFloatingValue(final @Nonnull byte[] bytes) {
+    public static double toFloatingValue(final byte[] bytes) {
         return Float.intBitsToFloat(ByteBuffer.wrap(bytes).getInt());
     }
 
@@ -81,7 +80,6 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
      * @param value
      * @return 4-byte array
      */
-    @Nonnull
     public static byte[] toByteArray(final double value) {
         final var rawBits = Float.floatToIntBits(Double.valueOf(value).floatValue());
         return new byte[]{ //
@@ -95,19 +93,16 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
         return this.floatingValue;
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray.clone();
     }
 
-    @Nonnull
     @Override
     public String toText() {
         return getValueAsText(getFloatingValue());
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

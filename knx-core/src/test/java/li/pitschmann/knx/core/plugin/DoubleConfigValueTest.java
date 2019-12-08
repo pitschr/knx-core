@@ -22,8 +22,6 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -67,7 +65,7 @@ public final class DoubleConfigValueTest {
         final DoubleConfigValue TEST_2 = new DoubleConfigValue("double-key2", () -> 15.77, (x) -> x > 10);
 
         @Override
-        public void onInitialization(@Nonnull KnxClient client) {
+        public void onInitialization(final KnxClient client) {
             // NO-OP
         }
     }

@@ -19,9 +19,9 @@
 package li.pitschmann.knx.core.config;
 
 import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
+import li.pitschmann.knx.core.utils.Configs;
 import li.pitschmann.knx.core.utils.Networker;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -85,7 +85,7 @@ public final class CoreConfigs {
     /**
      * Immutable map of lower-cased {@link String} keys and {@link ConfigValue} values
      */
-    private static final Map<String, ConfigValue<Object>> CONFIG_CONSTANTS = Map.copyOf(ConfigFileUtil.getConfigValues(CoreConfigs.class));
+    private static final Map<String, ConfigValue<Object>> CONFIG_CONSTANTS = Configs.getConfigMapValues(CoreConfigs.class);
 
     private CoreConfigs() {
         throw new AssertionError("Do not touch me!");
@@ -96,7 +96,6 @@ public final class CoreConfigs {
      *
      * @return immutable list of {@link ConfigValue}
      */
-    @Nonnull
     public static Map<String, ConfigValue<Object>> getConfigValues() {
         return CONFIG_CONSTANTS;
     }
@@ -321,7 +320,7 @@ public final class CoreConfigs {
          * <p/>
          * <strong>This setting is reserved for internal purpose only!</strong>
          */
-        static final InternalConfigValue<InetAddress> ADDRESS = new InternalConfigValue<>(
+        public static final InternalConfigValue<InetAddress> ADDRESS = new InternalConfigValue<>(
                 "client.endpoint.address",
                 InetAddress.class,
                 Networker::getByAddress,
@@ -333,7 +332,7 @@ public final class CoreConfigs {
          * <p/>
          * <strong>This setting is reserved for internal purpose only!</strong>
          */
-        static final InternalConfigValue<Integer> PORT = new InternalConfigValue<>(
+        public static final InternalConfigValue<Integer> PORT = new InternalConfigValue<>(
                 "client.endpoint.port",
                 Integer.class,
                 Integer::valueOf,

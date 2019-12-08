@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxWrongChannelIdException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;
@@ -53,7 +52,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @param client  internal KNX client for internal actions like informing plug-ins
      * @param channel channel of communication
      */
-    protected AbstractKnxQueue(final @Nonnull InternalKnxClient client, final @Nonnull SelectableChannel channel) {
+    protected AbstractKnxQueue(final InternalKnxClient client, final SelectableChannel channel) {
         this.client = Objects.requireNonNull(client);
         this.channel = Objects.requireNonNull(channel);
     }
@@ -112,7 +111,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return newly created selector with interest ops taken from {@link #interestOps()}
      * @throws IOException - if IO exception happened while performing the action method
      */
-    @Nonnull
     public final Selector openSelector() throws IOException {
         final var selector = Selector.open();
 
@@ -128,7 +126,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      *
      * @return Current {@link InternalKnxClient}
      */
-    @Nonnull
     protected final InternalKnxClient getInternalClient() {
         return client;
     }
@@ -164,8 +161,8 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return An instance of {@link ByteChannel}
      */
     @SuppressWarnings("unchecked")
-    @Nonnull
-    protected T getChannel(final @Nonnull SelectionKey key) {
+
+    protected T getChannel(final SelectionKey key) {
         return (T) key.channel();
     }
 
@@ -175,7 +172,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @param body body to be sent
      * @return {@code true} (as specified by {@link Collection#add})
      */
-    protected boolean add(final @Nonnull Body body) {
+    protected boolean add(final Body body) {
         return this.queue.add(Objects.requireNonNull(body));
     }
 
@@ -185,7 +182,6 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      * @return the {@link Body} from head of queue
      * @throws InterruptedException - if interrupted while waiting
      */
-    @Nonnull
     public final Body next() throws InterruptedException {
         return Objects.requireNonNull(this.queue.take());
     }

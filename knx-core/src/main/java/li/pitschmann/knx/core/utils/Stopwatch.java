@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nonnull;
+
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,7 +27,6 @@ public final class Stopwatch {
      *
      * @return started {@link Stopwatch}
      */
-    @Nonnull
     public static Stopwatch createStarted() {
         return new Stopwatch().start();
     }
@@ -37,7 +36,6 @@ public final class Stopwatch {
      *
      * @return not started {@link Stopwatch}
      */
-    @Nonnull
     public static Stopwatch createUnstarted() {
         return new Stopwatch();
     }
@@ -72,7 +70,7 @@ public final class Stopwatch {
      * @param unit
      * @return human-friendly {@link TimeUnit}
      */
-    private static String toStringUnit(final @Nonnull TimeUnit unit) {
+    private static String toStringUnit(final TimeUnit unit) {
         switch (unit) {
             case MILLISECONDS:
                 return "ms";
@@ -92,7 +90,6 @@ public final class Stopwatch {
      *
      * @return myself
      */
-    @Nonnull
     public Stopwatch start() {
         Preconditions.checkState(!isRunning.getAndSet(true), "This stopwatch is already running.");
         startTick = System.nanoTime();
@@ -105,7 +102,6 @@ public final class Stopwatch {
      * @return myself
      * @throws IllegalStateException if Stopwatch was already stopped
      */
-    @Nonnull
     public Stopwatch stop() {
         final var tick = System.nanoTime();
         Preconditions.checkState(isRunning.getAndSet(false), "This stopwatch is already stopped.");
@@ -118,7 +114,6 @@ public final class Stopwatch {
      *
      * @return myself
      */
-    @Nonnull
     public Stopwatch reset() {
         elapsedNanos = 0;
         isRunning.set(false);
@@ -131,7 +126,7 @@ public final class Stopwatch {
      * @param desiredUnit
      * @return elapsed time in {@link TimeUnit}
      */
-    public long elapsed(final @Nonnull TimeUnit desiredUnit) {
+    public long elapsed(final TimeUnit desiredUnit) {
         return desiredUnit.convert(elapsedNanos(), NANOSECONDS);
     }
 
@@ -149,7 +144,6 @@ public final class Stopwatch {
      *
      * @return string
      */
-    @Nonnull
     public String toString() {
         final var nanos = elapsedNanos();
         return toStringInternal(nanos, chooseUnit(nanos));
@@ -161,13 +155,19 @@ public final class Stopwatch {
      *
      * @return string
      */
-    @Nonnull
-    public String toString(final @Nonnull TimeUnit unit) {
+    public String toString(final TimeUnit unit) {
         return toStringInternal(elapsedNanos(), unit);
     }
 
-    @Nonnull
-    private String toStringInternal(final long nanos, final @Nonnull TimeUnit unit) {
+
+    /**
+     * Internal method to convert the nanos with {@link TimeUnit} into a more readable format.
+     *
+     * @param nanos
+     * @param unit
+     * @return string
+     */
+    private String toStringInternal(final long nanos, final TimeUnit unit) {
         final var value = (double) nanos / NANOSECONDS.convert(1, unit);
 
         return String.format("%.4f %s", value, toStringUnit(unit));

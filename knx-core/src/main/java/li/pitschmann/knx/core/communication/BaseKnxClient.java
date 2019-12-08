@@ -36,7 +36,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,7 +55,7 @@ public class BaseKnxClient implements KnxClient {
      *
      * @param config
      */
-    protected BaseKnxClient(final @Nonnull Config config) {
+    protected BaseKnxClient(final Config config) {
         internalClient = new InternalKnxClient(config);
 
         // notifies all plug-ins about initialization
@@ -65,12 +64,12 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull DataPointValue<?> dataPointValue) {
+    public boolean writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue) {
         return writeRequest(address, dataPointValue.toByteArray());
     }
 
     @Override
-    public boolean writeRequest(final @Nonnull GroupAddress address, final @Nonnull byte[] apciData) {
+    public boolean writeRequest(final GroupAddress address, final byte[] apciData) {
         Preconditions.checkNonNull(address);
         Preconditions.checkNonNull(apciData);
         Preconditions.checkState(isRunning());
@@ -96,17 +95,17 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public boolean readRequest(final @Nonnull GroupAddress address) {
+    public boolean readRequest(final GroupAddress address) {
         Preconditions.checkNonNull(address);
         Preconditions.checkState(isRunning());
 
         if (getConfig().isRoutingEnabled()) {
-            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, (byte[]) null);
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, new byte[0]);
             getInternalClient().send(RoutingIndicationBody.of(cemi));
             return true; // unconfirmed
         } else {
             try {
-                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, (byte[]) null);
+                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, new byte[0]);
                 final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Data.DATA_REQUEST_TIMEOUT)).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
@@ -127,12 +126,17 @@ public class BaseKnxClient implements KnxClient {
         return this.sequence.getAndUpdate(v -> (v + 1) % 256);
     }
 
-    @Nonnull
+    /**
+     * Returns {@link InternalKnxClient} instance for internal purposes only
+     * <p/>
+     * Do not expose it to outside as it may be dangerous!
+     *
+     * @return internal client
+     */
     protected InternalKnxClient getInternalClient() {
         return this.internalClient;
     }
 
-    @Nonnull
     @Override
     public Config getConfig() {
         return getInternalClient().getConfig();
@@ -143,13 +147,11 @@ public class BaseKnxClient implements KnxClient {
         return getInternalClient().getState() == InternalKnxClient.State.STARTED;
     }
 
-    @Nonnull
     @Override
     public KnxStatistic getStatistic() {
         return getInternalClient().getStatistic().asUnmodifiable();
     }
 
-    @Nonnull
     @Override
     public KnxStatusPool getStatusPool() {
         return getInternalClient().getStatusPool();
@@ -161,13 +163,12 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public void send(final @Nonnull Body body) {
+    public void send(final Body body) {
         getInternalClient().send(body);
     }
 
-    @Nonnull
     @Override
-    public <T extends ResponseBody> CompletableFuture<T> send(final @Nonnull RequestBody requestBody, long timeout) {
+    public <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, long timeout) {
         return getInternalClient().send(requestBody, timeout);
     }
 }

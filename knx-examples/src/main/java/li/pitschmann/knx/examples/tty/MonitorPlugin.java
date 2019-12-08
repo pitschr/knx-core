@@ -16,17 +16,16 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.datapoint.DPT8;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
-import li.pitschmann.knx.core.plugin.ExtensionPlugin;
-import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlProject;
+import li.pitschmann.knx.core.plugin.ExtensionPlugin;
+import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Sleeper;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -100,7 +99,7 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      * @return output from terminal, {@code null} if something went wrong
      */
     @Nullable
-    private static String getTerminalOutput(final @Nonnull String command) {
+    private static String getTerminalOutput(final String command) {
         final var pb = new ProcessBuilder().command("bash", "-c", command + " 2> /dev/tty");
         try {
             final var process = pb.start();
@@ -159,7 +158,7 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     }
 
     @Override
-    public void onIncomingBody(@Nonnull Body item) {
+    public void onIncomingBody(final Body item) {
         if (item instanceof TunnelingRequestBody
                 || item instanceof RoutingIndicationBody) {
             printLineInTable(item);
@@ -167,12 +166,12 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     }
 
     @Override
-    public void onOutgoingBody(@Nonnull Body item) {
+    public void onOutgoingBody(final Body item) {
         // NO-OP
     }
 
     @Override
-    public void onError(@Nonnull Throwable throwable) {
+    public void onError(final Throwable throwable) {
         printToTerminal(String.format("[ ERROR ] %s", throwable.getMessage()), "\033[0;31m");
     }
 

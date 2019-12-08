@@ -33,7 +33,6 @@ import li.pitschmann.knx.core.utils.Closeables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -54,7 +53,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     private SocketAddress clientControlSocketAddress;
     private SocketAddress clientDataSocketAddress;
 
-    public MockServerDatagramChannel(final @Nonnull MockServerTest mockServerAnnotation) {
+    public MockServerDatagramChannel(final MockServerTest mockServerAnnotation) {
         // as mock server is used to test locally
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 0);
         this.channel = ChannelFactory.newDatagramChannel(0, 3000, null, socketOptions);
@@ -146,7 +145,6 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
 
         this.channel.send(byteBuffer, address);
     }
-
 
     @Override
     public void close() {

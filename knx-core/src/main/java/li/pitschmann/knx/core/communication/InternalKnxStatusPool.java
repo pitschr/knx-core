@@ -34,7 +34,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
@@ -62,7 +61,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      * @param address    KNX address
      * @param statusData status data to be analyzed for pool
      */
-    public void updateStatus(final @Nonnull KnxAddress address, final @Nonnull KnxStatusData statusData) {
+    public void updateStatus(final KnxAddress address, final KnxStatusData statusData) {
         Preconditions.checkNonNull(address);
         Preconditions.checkNonNull(statusData);
         log.trace("Update status by KNX address {}: {}", address, statusData);
@@ -74,7 +73,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      *
      * @param cemi an instance of {@link CEMI} to be analyzed for pool
      */
-    public void updateStatus(final @Nonnull CEMI cemi) {
+    public void updateStatus(final CEMI cemi) {
         this.updateStatus(cemi.getDestinationAddress(), new KnxStatusData(cemi));
     }
 
@@ -83,7 +82,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      *
      * @param address {@link KnxAddress} for which the status should be marked as dirty
      */
-    public void setDirty(final @Nonnull KnxAddress address) {
+    public void setDirty(final KnxAddress address) {
         Preconditions.checkNonNull(address);
         final var knxStatus = this.statusMap.get(address);
         if (knxStatus != null) {
@@ -108,25 +107,25 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     }
 
     @Override
-    public boolean isUpdated(final @Nonnull KnxAddress address) {
+    public boolean isUpdated(final KnxAddress address) {
         final var knxStatus = this.statusMap.get(Objects.requireNonNull(address));
         return knxStatus != null && !knxStatus.isDirty();
     }
 
     @Override
-    public boolean existsStatusFor(final @Nonnull KnxAddress address) {
+    public boolean existsStatusFor(final KnxAddress address) {
         return this.statusMap.containsKey(address);
     }
 
     @Nullable
     @Override
-    public KnxStatusData getStatusFor(final @Nonnull KnxAddress address) {
+    public KnxStatusData getStatusFor(final KnxAddress address) {
         return getStatusFor(address, true);
     }
 
     @Nullable
     @Override
-    public KnxStatusData getStatusFor(@Nonnull KnxAddress address, boolean mustUpToDate) {
+    public KnxStatusData getStatusFor(KnxAddress address, boolean mustUpToDate) {
         return getStatusForInternal(address, CoreConfigs.Event.STATUS_LOOKUP_TIMEOUT, TimeUnit.MILLISECONDS, true);
     }
 
@@ -143,7 +142,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      * @return {@code KnxStatusData} if exists, otherwise {@code null} when not exists (or dirty) within given time
      */
     @Nullable
-    private KnxStatusData getStatusForInternal(final @Nonnull KnxAddress address, final long duration, final @Nonnull TimeUnit unit, final boolean mustUpToDate) {
+    private KnxStatusData getStatusForInternal(final KnxAddress address, final long duration, final TimeUnit unit, final boolean mustUpToDate) {
         Preconditions.checkNonNull(address);
         Preconditions.checkNonNull(unit);
         final var end = System.currentTimeMillis() + unit.toMillis(duration);
@@ -195,13 +194,11 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
         return null;
     }
 
-    @Nonnull
     @Override
     public Map<KnxAddress, KnxStatusData> copyStatusMap() {
         return Map.copyOf(this.statusMap);
     }
 
-    @Nonnull
     @Override
     public String toString() {
         return Strings.toStringHelper(this) //

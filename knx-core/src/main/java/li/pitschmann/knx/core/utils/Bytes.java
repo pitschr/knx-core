@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -267,8 +267,7 @@ public final class Bytes {
      * @param moreBytes
      * @return byte array
      */
-    @Nonnull
-    private static byte[] concatByteToByteArray(final byte b, final @Nonnull byte[] moreBytes) {
+    private static byte[] concatByteToByteArray(final byte b, final byte[] moreBytes) {
         final var newByteArray = new byte[moreBytes.length + 1];
         newByteArray[0] = b;
         System.arraycopy(moreBytes, 0, newByteArray, 1, moreBytes.length);
@@ -283,7 +282,6 @@ public final class Bytes {
      * @param capacity
      * @return byte array
      */
-    @Nonnull
     public static byte[] toByteArrayWithCapacity(final @Nullable byte[] bytes, int capacity) {
         if (bytes == null) {
             return new byte[capacity];
@@ -313,10 +311,9 @@ public final class Bytes {
      * @param direction     the direction how the template array should be filled
      * @return byte array
      */
-    @Nonnull
-    public static byte[] fillByteArray(final @Nonnull byte[] templateArray,
-                                       final @Nonnull byte[] bytes,
-                                       final @Nonnull FillDirection direction) {
+    public static byte[] fillByteArray(final byte[] templateArray,
+                                       final byte[] bytes,
+                                       final FillDirection direction) {
         Preconditions.checkArgument(bytes.length <= templateArray.length,
                 "Length of bytes cannot exceed the template array capacity.");
 
@@ -341,8 +338,7 @@ public final class Bytes {
      * @param bytes
      * @return trimmed byte array
      */
-    @Nonnull
-    public static byte[] trimRight(final @Nonnull byte[] bytes) {
+    public static byte[] trimRight(final byte[] bytes) {
         return trimRight(bytes, (byte) 0x00);
     }
 
@@ -353,8 +349,7 @@ public final class Bytes {
      * @param byteToRemoved byte to be removed
      * @return trimmed byte array
      */
-    @Nonnull
-    public static byte[] trimRight(final @Nonnull byte[] bytes, final byte byteToRemoved) {
+    public static byte[] trimRight(final byte[] bytes, final byte byteToRemoved) {
         // count occurrence of bytes to be removed
         var count = 0;
         for (var i = bytes.length - 1; i >= 0; i--) {
@@ -375,8 +370,7 @@ public final class Bytes {
      * @param newCapacity
      * @return padded byte array
      */
-    @Nonnull
-    public static byte[] padRight(final @Nonnull byte[] bytes, final byte b, final int newCapacity) {
+    public static byte[] padRight(final byte[] bytes, final byte b, final int newCapacity) {
         Preconditions.checkArgument(bytes.length <= newCapacity,
                 "Capacity cannot be smaller than {} (actual: {})", bytes.length, newCapacity);
 
@@ -407,8 +401,7 @@ public final class Bytes {
      * @param hexString
      * @return bytes array
      */
-    @Nonnull
-    public static byte[] toByteArray(final @Nonnull String hexString) {
+    public static byte[] toByteArray(final String hexString) {
         if (hexString.isEmpty()) {
             return new byte[0];
         }
@@ -495,7 +488,6 @@ public final class Bytes {
      * @param bits the size of bits must be divisible by 8
      * @return byte array
      */
-    @Nonnull
     public static byte[] toByteArray(final boolean... bits) {
         if (bits.length == 8) {
             return new byte[]{toByte(bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7])};
@@ -555,8 +547,7 @@ public final class Bytes {
      * @param arrays zero or more {@code byte} arrays
      * @return a single array containing all the values from the source arrays, in order
      */
-    @Nonnull
-    public static byte[] concat(final @Nonnull byte[]... arrays) {
+    public static byte[] concat(final byte[]... arrays) {
         var length = 0;
         for (final var array : arrays) {
             length += array.length;

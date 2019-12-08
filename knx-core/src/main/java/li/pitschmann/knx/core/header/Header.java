@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -66,7 +65,7 @@ public final class Header extends AbstractMultiRawData {
     private final ServiceType serviceType;
     private final int totalLength;
 
-    private Header(final @Nonnull byte[] headerRawData) {
+    private Header(final byte[] headerRawData) {
         super(headerRawData);
 
         this.length = Byte.toUnsignedInt(headerRawData[0]);
@@ -82,8 +81,7 @@ public final class Header extends AbstractMultiRawData {
      *              case of complete byte array stream the header will be cut at given {@link #KNXNET_HEADER_LENGTH}
      * @return a new immutable {@link Header}
      */
-    @Nonnull
-    public static Header of(final @Nonnull byte[] bytes) {
+    public static Header of(final byte[] bytes) {
         if (bytes == null) {
             throw new KnxNullPointerException("bytes");
         } else if (bytes.length < KNXNET_HEADER_LENGTH) {
@@ -104,8 +102,7 @@ public final class Header extends AbstractMultiRawData {
      * @param totalLength
      * @return a new immutable {@link Header}
      */
-    @Nonnull
-    public static Header of(final @Nonnull ServiceType serviceType, final int totalLength) {
+    public static Header of(final ServiceType serviceType, final int totalLength) {
         if (serviceType == null) {
             throw new KnxNullPointerException("serviceType");
         } else if (totalLength < KNXNET_HEADER_LENGTH || totalLength > 0xFFFF) {
@@ -128,8 +125,7 @@ public final class Header extends AbstractMultiRawData {
      * @param body
      * @return a new immutable {@link Header}
      */
-    @Nonnull
-    public static Header of(final @Nonnull Body body) {
+    public static Header of(final Body body) {
         if (body == null) {
             throw new KnxNullPointerException("body");
         }
@@ -169,7 +165,6 @@ public final class Header extends AbstractMultiRawData {
      *
      * @return {@link ServiceType}
      */
-    @Nonnull
     public ServiceType getServiceType() {
         return this.serviceType;
     }
@@ -181,7 +176,7 @@ public final class Header extends AbstractMultiRawData {
      * @param headerRawData
      */
     @Override
-    protected void validate(final @Nonnull byte[] headerRawData) {
+    protected void validate(final byte[] headerRawData) {
         if (headerRawData[0] != KNXNET_HEADER_LENGTH) {
             throw new KnxNumberOutOfRangeException("headerRawData[0]", KNXNET_HEADER_LENGTH, KNXNET_HEADER_LENGTH, headerRawData[0], headerRawData);
         } else if (headerRawData[1] != KNXNET_PROTOCOL_VERSION) {
@@ -190,7 +185,6 @@ public final class Header extends AbstractMultiRawData {
         }
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

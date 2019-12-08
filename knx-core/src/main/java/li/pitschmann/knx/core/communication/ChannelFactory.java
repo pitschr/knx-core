@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -56,7 +55,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for discovery related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    public static DatagramChannel newMulticastChannel(final @Nonnull InternalKnxClient client) {
+    public static DatagramChannel newMulticastChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Multicast.PORT);
         final var socketTimeout = client.getConfig(CoreConfigs.Multicast.SOCKET_TIMEOUT);
         final var timeToLive = client.getConfig(CoreConfigs.Multicast.TIME_TO_LIVE);
@@ -74,8 +73,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for description related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    @Nonnull
-    public static SelectableChannel newDescriptionChannel(final @Nonnull InternalKnxClient client) {
+    public static SelectableChannel newDescriptionChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Description.PORT);
         final var socketAddress = client.getRemoteEndpoint();
         final var socketTimeout = client.getConfig(CoreConfigs.Description.SOCKET_TIMEOUT);
@@ -92,8 +90,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for control-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    @Nonnull
-    public static SelectableChannel newControlChannel(final @Nonnull InternalKnxClient client) {
+    public static SelectableChannel newControlChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Control.PORT);
         final var socketAddress = client.getRemoteEndpoint();
         final var socketTimeout = client.getConfig(CoreConfigs.Control.SOCKET_TIMEOUT);
@@ -110,8 +107,7 @@ public final class ChannelFactory {
      * @return a new instance of {@link DatagramChannel} for data-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
-    @Nonnull
-    public static SelectableChannel newDataChannel(final @Nonnull InternalKnxClient client) {
+    public static SelectableChannel newDataChannel(final InternalKnxClient client) {
         final var localPort = client.getConfig(CoreConfigs.Data.PORT);
         final var socketAddress = client.getRemoteEndpoint();
         final var socketTimeout = client.getConfig(CoreConfigs.Data.SOCKET_TIMEOUT);
@@ -128,7 +124,6 @@ public final class ChannelFactory {
      * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
      * @return a new instance of {@link DatagramChannel}
      */
-    @Nonnull
     public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort,
                                                                         final long socketTimeout,
                                                                         final @Nullable SocketAddress socketAddress,

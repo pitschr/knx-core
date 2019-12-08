@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 
 /**
  * Body for Description Request
@@ -47,7 +46,7 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
     private static final DescriptionRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI controlEndpoint;
 
-    private DescriptionRequestBody(final @Nonnull byte[] bytes) {
+    private DescriptionRequestBody(final byte[] bytes) {
         super(bytes);
 
         this.controlEndpoint = HPAI.of(bytes);
@@ -60,7 +59,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      *
      * @return re-usable immutable {@link DescriptionRequestBody}
      */
-    @Nonnull
     public static DescriptionRequestBody useDefault() {
         return DEFAULT;
     }
@@ -71,8 +69,7 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      * @param bytes complete byte array for {@link DescriptionRequestBody}
      * @return a new immutable {@link DescriptionRequestBody}
      */
-    @Nonnull
-    public static DescriptionRequestBody of(final @Nonnull byte[] bytes) {
+    public static DescriptionRequestBody of(final byte[] bytes) {
         return new DescriptionRequestBody(bytes);
     }
 
@@ -82,8 +79,7 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      * @param controlEndpoint
      * @return a new immutable {@link DescriptionRequestBody}
      */
-    @Nonnull
-    public static DescriptionRequestBody of(final @Nonnull HPAI controlEndpoint) {
+    public static DescriptionRequestBody of(final HPAI controlEndpoint) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -93,7 +89,7 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != 8) {
@@ -102,18 +98,16 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
         }
     }
 
-    @Nonnull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_REQUEST;
     }
 
-    @Nonnull
+
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

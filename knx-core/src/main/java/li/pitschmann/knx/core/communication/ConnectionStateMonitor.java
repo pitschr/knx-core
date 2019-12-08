@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -57,7 +56,7 @@ public final class ConnectionStateMonitor implements Runnable {
     /**
      * KNX Connection State Monitor (package protected)
      */
-    ConnectionStateMonitor(final @Nonnull InternalKnxClient client) {
+    ConnectionStateMonitor(final InternalKnxClient client) {
         this.client = Objects.requireNonNull(client);
     }
 

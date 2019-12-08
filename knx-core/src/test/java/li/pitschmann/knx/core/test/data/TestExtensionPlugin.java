@@ -3,7 +3,6 @@ package li.pitschmann.knx.core.test.data;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,7 +15,7 @@ public final class TestExtensionPlugin implements ExtensionPlugin {
     private KnxClient knxClient;
 
     @Override
-    public void onInitialization(final @Nonnull KnxClient client) {
+    public void onInitialization(final KnxClient client) {
         initInvocations.incrementAndGet();
         knxClient = client;
     }

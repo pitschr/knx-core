@@ -16,22 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.config;
+package li.pitschmann.knx.examples.load_from_configfile;
 
+import li.pitschmann.knx.core.config.ConfigBuilder;
+import li.pitschmann.knx.core.config.ConfigValue;
+import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxConfigurationException;
 import li.pitschmann.knx.core.plugin.Plugin;
+import li.pitschmann.knx.core.utils.Configs;
 import li.pitschmann.knx.core.utils.Maps;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,9 +55,9 @@ final class ConfigFileUtil {
      * @param filePath
      * @return a new instance of {@link ConfigBuilder}
      */
-    static ConfigBuilder loadFile(final @Nonnull Path filePath) {
+    static ConfigBuilder loadFile(final Path filePath) {
         Preconditions.checkArgument(Files.isReadable(filePath),
-                "The file doesn't exists or is not readable: {}", filePath);
+                "The file doesn't exists or is not readable: {}", filePath.toAbsolutePath());
 
         try {
             final var lines = Files.readAllLines(filePath);
@@ -76,7 +77,7 @@ final class ConfigFileUtil {
             // add plugins
             for (final var plugin : allPlugins) {
                 configBuilder.plugin(plugin);
-                allRegisteredConfigValues.putAll(getConfigValues(plugin));
+                allRegisteredConfigValues.putAll(Configs.getConfigMapValues(plugin));
             }
 
             // add settings
@@ -103,14 +104,13 @@ final class ConfigFileUtil {
      * @param lines
      * @return list of {@link Plugin} classes
      */
-    private static List<Class<Plugin>> asPluginList(final @Nonnull List<String> lines) {
+    private static List<Class<Plugin>> asPluginList(final List<String> lines) {
         final var filteredLines = filterBySection(lines, "plugins");
         final var plugins = new ArrayList<Class<Plugin>>(filteredLines.size());
 
         for (final var line : filteredLines) {
             try {
-                @SuppressWarnings("unchecked")
-                final var pluginClass = (Class<Plugin>) Class.forName(line);
+                @SuppressWarnings("unchecked") final var pluginClass = (Class<Plugin>) Class.forName(line);
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
             } catch (final Exception ex) {
@@ -127,8 +127,7 @@ final class ConfigFileUtil {
      * @param lines
      * @return map of settings, key is a lower-cased and trimmed {@link String}, value is trimmed {@link String}
      */
-    @Nonnull
-    private static Map<String, String> asSettingMap(final @Nonnull List<String> lines) {
+    private static Map<String, String> asSettingMap(final List<String> lines) {
         final var filteredLines = filterBySection(lines, "settings");
         final var settings = Maps.<String, String>newHashMap(filteredLines.size());
 
@@ -153,7 +152,7 @@ final class ConfigFileUtil {
      * @param sectionName
      * @return filtered list
      */
-    private static List<String> filterBySection(final @Nonnull List<String> lines, final @Nonnull String sectionName) {
+    private static List<String> filterBySection(final List<String> lines, final String sectionName) {
         final var filteredLines = new ArrayList<String>(lines.size());
         boolean sectionFound = false;
         for (final var line : lines) {
@@ -170,42 +169,5 @@ final class ConfigFileUtil {
             }
         }
         return filteredLines;
-    }
-
-    /**
-     * Parses the given {@link Class} for all public+static+final fields that are instanec of {@link ConfigValue}
-     *
-     * @param clazz
-     * @return map of config key and {@link ConfigValue}
-     */
-    static Map<String, ConfigValue<Object>> getConfigValues(final @Nonnull Class<?> clazz) {
-        final var map = new HashMap<String, ConfigValue<Object>>();
-
-        // get config value fields from current class
-        for (final var field : clazz.getFields()) {
-            if (Modifier.isPublic(field.getModifiers())
-                    && Modifier.isStatic(field.getModifiers())
-                    && Modifier.isFinal(field.getModifiers())) {
-                try {
-                    final var obj = field.get(null);
-                    if (obj instanceof ConfigValue) {
-                        @SuppressWarnings("unchecked") final var configValue = (ConfigValue<Object>) obj;
-                        map.put(configValue.getKey(), configValue);
-                        log.trace("Field '{}' added to map: {}", field.getName(), configValue);
-                    }
-                } catch (final ReflectiveOperationException e) {
-                    throw new KnxConfigurationException("Could not load field '" + field.getName() + "' from class '" + clazz.getName() + "'");
-                }
-            } else {
-                log.trace("Field '{}' ignored because it is not 'public static final'", field.getName());
-            }
-        }
-
-        // get config constants from sub-class
-        for (final var subClass : clazz.getClasses()) {
-            map.putAll(getConfigValues(subClass));
-        }
-
-        return map;
     }
 }

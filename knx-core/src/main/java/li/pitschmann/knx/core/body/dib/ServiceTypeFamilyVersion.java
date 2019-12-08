@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.body.dib;
 
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -32,12 +31,12 @@ public final class ServiceTypeFamilyVersion {
     private final ServiceTypeFamily family;
     private int version;
 
-    public ServiceTypeFamilyVersion(final @Nonnull ServiceTypeFamily family, final int version) {
+    public ServiceTypeFamilyVersion(final ServiceTypeFamily family, final int version) {
         this.family = Objects.requireNonNull(family);
         this.version = version;
     }
 
-    @Nonnull
+
     public ServiceTypeFamily getFamily() {
         return this.family;
     }
@@ -46,7 +45,6 @@ public final class ServiceTypeFamilyVersion {
         return this.version;
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

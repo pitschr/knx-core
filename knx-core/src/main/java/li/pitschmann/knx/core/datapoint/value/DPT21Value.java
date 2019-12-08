@@ -22,8 +22,6 @@ import li.pitschmann.knx.core.datapoint.DPT21;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 
-import javax.annotation.Nonnull;
-
 /**
  * Data Point Value for {@link DPT21} (21.xxx)
  *
@@ -184,7 +182,6 @@ public final class DPT21Value {
             return this.isSet(0);
         }
 
-        @Nonnull
         @Override
         public String toText() {
             return isForceRequest() ? "forced" : "not forced";
@@ -322,7 +319,6 @@ public final class DPT21Value {
             return this.isSet(0);
         }
 
-        @Nonnull
         @Override
         public String toText() {
             return isFault() ? "fault" : "no fault";
@@ -488,7 +484,6 @@ public final class DPT21Value {
             return this.isSet(0);
         }
 
-        @Nonnull
         @Override
         public String toText() {
             return isFailure() ? "failure" : "no failure";
@@ -524,11 +519,10 @@ public final class DPT21Value {
          *
          * @return human-friendly representation of active channels
          */
-        @Nonnull
         @Override
         public String toText() {
             // return list of channels (e.g. "channel 1" if only channel is
-            final var sb = new StringBuffer(24);
+            final var sb = new StringBuilder(24);
             for (var i = 0; i < 8; i++) {
                 if (this.isSet(i)) {
                     if (sb.length() != 0) {

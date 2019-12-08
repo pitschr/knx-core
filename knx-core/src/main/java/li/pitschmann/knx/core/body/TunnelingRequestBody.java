@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -76,7 +75,7 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     private final int sequence;
     private final CEMI cemi;
 
-    private TunnelingRequestBody(final @Nonnull byte[] bytes) {
+    private TunnelingRequestBody(final byte[] bytes) {
         super(bytes);
 
         this.length = Bytes.toUnsignedInt(bytes[0]);
@@ -92,8 +91,7 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @param bytes complete byte array for {@link TunnelingRequestBody}
      * @return a new immutable {@link TunnelingRequestBody}
      */
-    @Nonnull
-    public static TunnelingRequestBody of(final @Nonnull byte[] bytes) {
+    public static TunnelingRequestBody of(final byte[] bytes) {
         return new TunnelingRequestBody(bytes);
     }
 
@@ -105,8 +103,7 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @param cemi
      * @return a new immutable {@link TunnelingRequestBody}
      */
-    @Nonnull
-    public static TunnelingRequestBody of(final int channelId, final int sequence, final @Nonnull CEMI cemi) {
+    public static TunnelingRequestBody of(final int channelId, final int sequence, final CEMI cemi) {
         // validate
         if (cemi == null) {
             throw new KnxNullPointerException("cemi");
@@ -130,7 +127,7 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
@@ -141,7 +138,6 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         }
     }
 
-    @Nonnull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.TUNNELING_REQUEST;
@@ -160,12 +156,11 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         return this.sequence;
     }
 
-    @Nonnull
+
     public CEMI getCEMI() {
         return this.cemi;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

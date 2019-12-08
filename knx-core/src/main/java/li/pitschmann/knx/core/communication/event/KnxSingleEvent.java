@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
 
@@ -45,10 +44,8 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
     }
 
     @Override
-    public void setRequest(final @Nonnull REQUEST request) {
-        final var newRequestEvent = new RequestEvent<REQUEST>();
-        newRequestEvent.setRequest(request);
-        this.requestEvent = newRequestEvent;
+    public void setRequest(final REQUEST request) {
+        this.requestEvent = new RequestEvent<>(request);
     }
 
     @Nullable
@@ -58,10 +55,8 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
     }
 
     @Override
-    public void setResponse(final @Nonnull RESPONSE response) {
-        final var newEvent = new ResponseEvent<RESPONSE>();
-        newEvent.setResponse(response);
-        this.responseEvent = newEvent;
+    public void setResponse(final RESPONSE response) {
+        this.responseEvent = new ResponseEvent<>(response);
     }
 
     @Override
@@ -86,7 +81,6 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
         return responseEvent == null ? null : responseEvent.getResponseTime();
     }
 
-    @Nonnull
     @Override
     public String toString() {
         return Strings.toStringHelper(this) //

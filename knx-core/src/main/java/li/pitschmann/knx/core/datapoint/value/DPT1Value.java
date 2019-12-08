@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -42,11 +42,11 @@ import java.util.Objects;
 public final class DPT1Value extends AbstractDataPointValue<DPT1> {
     private final boolean booleanValue;
 
-    public DPT1Value(final @Nonnull DPT1 dpt, final byte b) {
+    public DPT1Value(final DPT1 dpt, final byte b) {
         this(dpt, (b & 0x01) != 0x00);
     }
 
-    public DPT1Value(final @Nonnull DPT1 dpt, final boolean booleanValue) {
+    public DPT1Value(final DPT1 dpt, final boolean booleanValue) {
         super(dpt);
         this.booleanValue = booleanValue;
     }
@@ -57,7 +57,6 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
      * @param booleanValue
      * @return byte array
      */
-    @Nonnull
     public static byte[] toByteArray(final boolean booleanValue) {
         return new byte[]{booleanValue ? (byte) 0x01 : 0x00};
     }
@@ -66,24 +65,21 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
         return this.booleanValue;
     }
 
-    @Nonnull
+
     public String getBooleanText() {
         return this.getDPT().getTextFor(this.booleanValue);
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.booleanValue);
     }
 
-    @Nonnull
     @Override
     public String toText() {
         return getBooleanText();
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off
@@ -97,7 +93,7 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
     }
 
     @Override
-    public boolean equals(final @Nonnull Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof DPT1Value) {

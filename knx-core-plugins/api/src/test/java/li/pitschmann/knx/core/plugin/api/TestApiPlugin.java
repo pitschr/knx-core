@@ -16,9 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api;
 
-import li.pitschmann.knx.core.plugin.api.ApiPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.core.Pippo;
@@ -29,13 +28,11 @@ import java.net.BindException;
 import java.net.ServerSocket;
 
 /**
- * Creates a new instance of Mock API to start up the web server
- * <p/>
- * This will also start the KNX Mock Server in background to simulate a
- * communication with the KNX Net/IP device
+ * Creates a new instance of API plugin that is used for testing purposes.
+ * It will start up the web server based on a randomized port address
  */
-public final class MockApiPlugin extends ApiPlugin {
-    private static final Logger log = LoggerFactory.getLogger(MockApiPlugin.class);
+final class TestApiPlugin extends ApiPlugin {
+    private static final Logger log = LoggerFactory.getLogger(TestApiPlugin.class);
 
     @Override
     protected void startPippo(Pippo pippo) {
@@ -45,10 +42,11 @@ public final class MockApiPlugin extends ApiPlugin {
                 pippo.start(nextFreePort);
                 log.debug("Pippo server started successfully on port: {}", pippo.getServer().getPort());
                 return;
-            } catch (PippoRuntimeException pre) {
+            } catch (final PippoRuntimeException pre) {
                 if (pre.getCause() instanceof RuntimeException) {
                     if (pre.getCause().getCause() instanceof BindException) {
-                        log.warn("Could not start pippo because the port '{}' seems not be free yet (race-condition). Try with next attempt.", nextFreePort, pre);
+                        log.warn("Could not start pippo because the port '{}' seems not be free yet (race-condition). " +
+                                "Try with next attempt.", nextFreePort, pre);
                         pippo.stop();
                         continue;
                     }

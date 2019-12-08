@@ -22,8 +22,6 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -54,7 +52,7 @@ public final class EnumConfigValueTest {
         final EnumConfigValue<DummyEnum> TEST = new EnumConfigValue<>("enum-key", DummyEnum.class, () -> DummyEnum.ONE);
 
         @Override
-        public void onInitialization(@Nonnull KnxClient client) {
+        public void onInitialization(final KnxClient client) {
             // NO-OP
         }
     }

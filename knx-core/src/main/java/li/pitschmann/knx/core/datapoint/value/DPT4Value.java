@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -45,7 +44,7 @@ import java.util.Objects;
 public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     private final char character;
 
-    public DPT4Value(final @Nonnull DPT4 dpt, final byte b) {
+    public DPT4Value(final DPT4 dpt, final byte b) {
         super(dpt);
         // character
         try {
@@ -56,7 +55,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         }
     }
 
-    public DPT4Value(final @Nonnull DPT4 dpt, final char character) {
+    public DPT4Value(final DPT4 dpt, final char character) {
         super(dpt);
         this.character = character;
     }
@@ -67,7 +66,6 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
      * @param character
      * @return byte array
      */
-    @Nonnull
     public static byte[] toByteArray(final char character) {
         return new byte[]{(byte) character};
     }
@@ -76,19 +74,16 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         return this.character;
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.character);
     }
 
-    @Nonnull
     @Override
     public String toText() {
         return String.format("char '%c'", getCharacter());
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

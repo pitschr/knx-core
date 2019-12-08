@@ -30,10 +30,10 @@ import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.PathConfigValue;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Closeables;
+import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -64,7 +64,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     private RotatingFileOutputStream fos;
 
     @Override
-    public void onInitialization(final @Nonnull KnxClient client) {
+    public void onInitialization(final KnxClient client) {
         // configurations
         path = client.getConfig(FileAuditPlugin.PATH);
         format = client.getConfig(FileAuditPlugin.FORMAT);
@@ -84,11 +84,16 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 .file(baseFile)
                 .filePattern(rolloverFile)
                 .policy(DailyRotationPolicy.getInstance())
-                .append(true)
-                .build();
+                .append(false);
+
+        // append header rotation callback if present
+        final var header = format.getHeader();
+        if (!Strings.isNullOrEmpty(header)) {
+            config.callback(new HeaderRotationCallback(header));
+        }
 
         // start rollover stream
-        fos = new RotatingFileOutputStream(config);
+        fos = new RotatingFileOutputStream(config.build());
 
         auditSignal(AuditType.INIT);
     }
@@ -107,17 +112,17 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     }
 
     @Override
-    public void onIncomingBody(final @Nonnull Body item) {
+    public void onIncomingBody(final Body item) {
         auditBody(AuditType.INCOMING, item);
     }
 
     @Override
-    public void onOutgoingBody(final @Nonnull Body item) {
+    public void onOutgoingBody(final Body item) {
         auditBody(AuditType.OUTGOING, item);
     }
 
     @Override
-    public void onError(final @Nonnull Throwable throwable) {
+    public void onError(final Throwable throwable) {
         final var now = Instant.now();
         writeToAuditFile(String.format(format.getErrorTemplate(), //
                 now.getEpochSecond(), // #1
@@ -134,7 +139,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param type audit type
      * @param body body to be printed
      */
-    private void auditBody(final @Nonnull AuditType type, final @Nonnull Body body) {
+    private void auditBody(final AuditType type, final Body body) {
         final var now = Instant.now();
         final var header = Header.of(body);
         writeToAuditFile(String.format(format.getBodyTemplate(), //
@@ -154,7 +159,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      *
      * @param type audit type
      */
-    private void auditSignal(final @Nonnull AuditType type) {
+    private void auditSignal(final AuditType type) {
         final var now = Instant.now();
         writeToAuditFile(String.format(format.getSignalTemplate(), //
                 now.getEpochSecond(), // #1
@@ -168,7 +173,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      *
      * @param line
      */
-    private void writeToAuditFile(final @Nonnull String line) {
+    private void writeToAuditFile(final String line) {
         try {
             fos.write(line.getBytes(StandardCharsets.UTF_8));
             fos.write(System.lineSeparator().getBytes());
@@ -214,7 +219,6 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
             this.type = type;
         }
 
-        @Nonnull
         @Override
         public String toString() {
             return this.type;

@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.utils;
 
 import org.slf4j.MDC;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
@@ -78,7 +77,7 @@ public final class Executors {
      * @param <T>
      * @return wrapped {@link Flow.Subscriber}
      */
-    public static <T> Flow.Subscriber<T> wrapSubscriberWithMDC(final @Nonnull Flow.Subscriber<T> subscriber) {
+    public static <T> Flow.Subscriber<T> wrapSubscriberWithMDC(final Flow.Subscriber<T> subscriber) {
         return new MdcSubscriber<>(subscriber);
     }
 
@@ -92,22 +91,22 @@ public final class Executors {
         }
 
         @Override
-        public void execute(final @Nonnull Runnable runnable) {
+        public void execute(final Runnable runnable) {
             super.execute(new MdcRunnable(runnable));
         }
 
         @Override
-        public Future<?> submit(final @Nonnull Runnable task) {
+        public Future<?> submit(final Runnable task) {
             return super.submit(new MdcRunnable(task));
         }
 
         @Override
-        public <T> Future<T> submit(final @Nonnull Callable<T> task) {
+        public <T> Future<T> submit(final Callable<T> task) {
             return super.submit(new MdcCallable<>(task));
         }
 
         @Override
-        public <T> Future<T> submit(final @Nonnull Runnable task, final @Nullable T result) {
+        public <T> Future<T> submit(final Runnable task, final @Nullable T result) {
             return super.submit(new MdcRunnable(task), result);
         }
     }
@@ -121,7 +120,7 @@ public final class Executors {
         private final Map<String, String> context = MDC.getCopyOfContextMap();
         private final Runnable runnable;
 
-        public MdcRunnable(final @Nonnull Runnable runnable) {
+        public MdcRunnable(final Runnable runnable) {
             this.runnable = Objects.requireNonNull(runnable);
         }
 
@@ -155,7 +154,7 @@ public final class Executors {
         private final Map<String, String> context = MDC.getCopyOfContextMap();
         private final Callable<V> callable;
 
-        public MdcCallable(final @Nonnull Callable<V> callable) {
+        public MdcCallable(final Callable<V> callable) {
             this.callable = Objects.requireNonNull(callable);
         }
 
@@ -189,7 +188,7 @@ public final class Executors {
         private final Map<String, String> context = MDC.getCopyOfContextMap();
         private final Flow.Subscriber<T> subscriber;
 
-        public MdcSubscriber(final @Nonnull Flow.Subscriber<T> subscriber) {
+        public MdcSubscriber(final Flow.Subscriber<T> subscriber) {
             this.subscriber = Objects.requireNonNull(subscriber);
         }
 

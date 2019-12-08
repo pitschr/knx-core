@@ -1,7 +1,5 @@
 package li.pitschmann.knx.core.plugin.statistic;
 
-import javax.annotation.Nonnull;
-
 /**
  * Format for {@link FileStatisticPlugin}
  * <p/>
@@ -12,7 +10,11 @@ public enum FileStatisticFormat {
     /**
      * Statistic format should be in JSON format.
      */
-    JSON("" +
+    JSON(
+            // Header
+            "",
+            // Body Template
+            "" +
             "{" +
                 "\"inbound\":{" +
                     "\"total\":{\"packets\":%1$s,\"bytes\":%2$s}," +
@@ -40,7 +42,29 @@ public enum FileStatisticFormat {
     /**
      * Statistic format should be in TSV format.
      */
-    TSV("" +
+    TSV(
+            // Header
+            "" +
+            "Inbound Packets\tInbound Bytes\t" +
+            "Outbound Packets\tOutbound Bytes\t" +
+            "Error Packets\tError Rate (%)\t" +
+
+            "Inbound Description Requests\tInbound Description Responses\t" +
+            "Inbound Connect Requests\tInbound Connect Responses\t" +
+            "Inbound Connection State Requests\tInbound Connection State Responses\t" +
+            "Inbound Disconnect Requests\tInbound Disconnect Responses\t" +
+            "Inbound Tunneling Requests\tInbound Tunneling Acknowledges\t" +
+            "Inbound Indication Requests\tInbound Indication Responses\t" +
+
+            "Outbound Description Requests\tOutbound Description Responses\t" +
+            "Outbound Connect Requests\tOutbound Connect Responses\t" +
+            "Outbound Connection State Requests\tOutbound Connection State Responses\t" +
+            "Outbound Disconnect Requests\tOutbound Disconnect Responses\t" +
+            "Outbound Tunneling Requests\tOutbound Tunneling Acknowledges\t" +
+            "Outbound Indication Requests\tOutbound Indication Responses",
+
+            // Body Template
+            "" +
             "%1$s\t%2$s\t" +                                     // inbound total
             "%3$s\t%4$s\t" +                                     // outbound total
             "%5$s\t%6$.2f\t" +                                   // error total
@@ -52,7 +76,12 @@ public enum FileStatisticFormat {
     /**
      * Statistic format should be in TEXT format
      */
-    TEXT("" +
+    TEXT(
+            // Header
+            "",
+            // Body Template
+            "" +
+            "" +
             "%1$s packets received (%2$s bytes)%n" +                              // line #1
             "\t[Description     ] Request: 0, Response: %7$s%n" +                 // line #2
             "\t[Connect         ] Request: 0, Response: %9$s%n" +                 // line #3
@@ -72,13 +101,18 @@ public enum FileStatisticFormat {
     );
     // @formatter:on
 
+    private final String header;
     private final String template;
 
-    FileStatisticFormat(final String template) {
+    FileStatisticFormat(final String header, final String template) {
+        this.header = header;
         this.template = template;
     }
 
-    @Nonnull
+    public String getHeader() {
+        return header;
+    }
+
     public String getTemplate() {
         return template;
     }

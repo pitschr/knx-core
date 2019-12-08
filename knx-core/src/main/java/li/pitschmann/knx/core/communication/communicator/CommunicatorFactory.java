@@ -13,10 +13,7 @@ import li.pitschmann.knx.core.communication.task.RoutingIndicationTask;
 import li.pitschmann.knx.core.communication.task.SearchResponseTask;
 import li.pitschmann.knx.core.communication.task.TunnelingAckTask;
 import li.pitschmann.knx.core.communication.task.TunnelingRequestTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +29,6 @@ import java.util.concurrent.Flow;
  * Routing: {@link #newRoutingChannelCommunicator(InternalKnxClient)}<br/>
  */
 public final class CommunicatorFactory {
-    private static final Logger log = LoggerFactory.getLogger(CommunicatorFactory.class);
-
     private CommunicatorFactory() {
         throw new AssertionError("Don't touch me!");
     }
@@ -43,8 +38,7 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-    @Nonnull
-    public static DescriptionChannelCommunicator newDescriptionChannelCommunicator(final @Nonnull InternalKnxClient knxClient) {
+    public static DescriptionChannelCommunicator newDescriptionChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new DescriptionChannelCommunicator(knxClient);
         getDescriptionChannelTasks(knxClient).forEach(communicator::subscribe);
         return communicator;
@@ -55,8 +49,7 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-    @Nonnull
-    public static ControlChannelCommunicator newControlChannelCommunicator(final @Nonnull InternalKnxClient knxClient) {
+    public static ControlChannelCommunicator newControlChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new ControlChannelCommunicator(knxClient);
         getControlChannelTasks(knxClient).forEach(communicator::subscribe);
         return communicator;
@@ -67,8 +60,7 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-    @Nonnull
-    public static DataChannelCommunicator newDataChannelCommunicator(final @Nonnull InternalKnxClient knxClient) {
+    public static DataChannelCommunicator newDataChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new DataChannelCommunicator(knxClient);
         getDataChannelTasks(knxClient).forEach(communicator::subscribe);
         return communicator;
@@ -80,8 +72,7 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-    @Nonnull
-    public static ControlAndDataChannelCommunicator newControlAndDataChannelCommunicator(final @Nonnull InternalKnxClient knxClient) {
+    public static ControlAndDataChannelCommunicator newControlAndDataChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new ControlAndDataChannelCommunicator(knxClient);
         getDataChannelTasks(knxClient).forEach(communicator::subscribe);
         getControlChannelTasks(knxClient).forEach(communicator::subscribe);
@@ -93,8 +84,7 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-    @Nonnull
-    public static MulticastChannelCommunicator newDiscoveryChannelCommunicator(final @Nonnull InternalKnxClient knxClient) {
+    public static MulticastChannelCommunicator newDiscoveryChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new MulticastChannelCommunicator(knxClient);
         getDiscoveryChannelTasks(knxClient).forEach(communicator::subscribe);
         return communicator;
@@ -105,8 +95,7 @@ public final class CommunicatorFactory {
      *
      * @return communicator
      */
-    @Nonnull
-    public static MulticastChannelCommunicator newRoutingChannelCommunicator(final @Nonnull InternalKnxClient knxClient) {
+    public static MulticastChannelCommunicator newRoutingChannelCommunicator(final InternalKnxClient knxClient) {
         final var communicator = new MulticastChannelCommunicator(knxClient);
         getRoutingChannelTasks(knxClient).forEach(communicator::subscribe);
         return communicator;
@@ -124,7 +113,7 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return unmodifiable list of subscribers
      */
-    private static List<Flow.Subscriber<Body>> getDescriptionChannelTasks(final @Nonnull InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getDescriptionChannelTasks(final InternalKnxClient knxClient) {
         return Collections.singletonList(new DescriptionResponseTask(knxClient));
     }
 
@@ -143,8 +132,7 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-    @Nonnull
-    private static List<Flow.Subscriber<Body>> getControlChannelTasks(final @Nonnull InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getControlChannelTasks(final InternalKnxClient knxClient) {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>(4);
         subscribers.add(new ConnectResponseTask(knxClient));
         subscribers.add(new ConnectionStateResponseTask(knxClient));
@@ -166,8 +154,7 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-    @Nonnull
-    private static List<Flow.Subscriber<Body>> getDataChannelTasks(final @Nonnull InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getDataChannelTasks(final InternalKnxClient knxClient) {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>(2);
         subscribers.add(new TunnelingRequestTask(knxClient));
         subscribers.add(new TunnelingAckTask(knxClient));
@@ -185,8 +172,7 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-    @Nonnull
-    private static List<Flow.Subscriber<Body>> getDiscoveryChannelTasks(final @Nonnull InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getDiscoveryChannelTasks(final InternalKnxClient knxClient) {
         return Collections.singletonList(new SearchResponseTask(knxClient));
     }
 
@@ -202,8 +188,7 @@ public final class CommunicatorFactory {
      * @param knxClient
      * @return list of subscribers
      */
-    @Nonnull
-    private static List<Flow.Subscriber<Body>> getRoutingChannelTasks(final @Nonnull InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getRoutingChannelTasks(final InternalKnxClient knxClient) {
         return Collections.singletonList(new RoutingIndicationTask(knxClient));
     }
 

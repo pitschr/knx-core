@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.body.SearchRequestBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.communication.InternalKnxEventPool;
 import li.pitschmann.knx.core.communication.InternalKnxStatusPool;
@@ -40,9 +39,7 @@ import li.pitschmann.knx.core.communication.event.KnxSingleEvent;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -56,12 +53,12 @@ public final class TestHelpers {
     }
 
     /**
-     * Assert that the given {@link Class} is not instantiable and an {@link AssertionError} thrown is expected
+     * Assert that the given {@link Class} is not instantiable and
+     * an {@link AssertionError} thrown is expected
      *
      * @param classToTest
      */
     public static void assertThatNotInstantiable(final Class<?> classToTest) {
-        // DPT21Value should not be instantiable
         assertThatThrownBy(() -> {
             final var ctor = classToTest.getDeclaredConstructor();
             ctor.trySetAccessible();
@@ -74,7 +71,6 @@ public final class TestHelpers {
      *
      * @return
      */
-    @Nonnull
     public static Config mockConfig() {
         return mockConfig(x -> {
         });
@@ -86,8 +82,7 @@ public final class TestHelpers {
      * @param configMockConsumer
      * @return
      */
-    @Nonnull
-    public static Config mockConfig(final @Nonnull Consumer<Config> configMockConsumer) {
+    public static Config mockConfig(final Consumer<Config> configMockConsumer) {
         @SuppressWarnings("unchecked")
         final var configValueClass = (Class<ConfigValue<?>>) (Object) ConfigValue.class;
 
@@ -107,9 +102,9 @@ public final class TestHelpers {
      * @param <T>
      * @return
      */
-    public static <T extends KnxClient> T mockKnxClient(final @Nonnull Consumer<Config> configMockConsumer,
-                                                        final @Nonnull Consumer<T> knxClientMockSupplier,
-                                                        final @Nonnull Class<T> clazz) {
+    public static <T extends KnxClient> T mockKnxClient(final Consumer<Config> configMockConsumer,
+                                                        final Consumer<T> knxClientMockSupplier,
+                                                        final Class<T> clazz) {
         final var knxClientMock = mock(Objects.requireNonNull(clazz));
         final var configMock = mockConfig(configMockConsumer);
         final var statusPoolMock = mockInternalStatusPool();
@@ -127,7 +122,6 @@ public final class TestHelpers {
      *
      * @return
      */
-    @Nonnull
     public static InternalKnxClient mockInternalKnxClient() {
         return mockInternalKnxClient(
                 config -> {
@@ -144,9 +138,8 @@ public final class TestHelpers {
      * @param knxClientMockSupplier
      * @return
      */
-    @Nonnull
-    public static InternalKnxClient mockInternalKnxClient(final @Nonnull Consumer<Config> configMockConsumer,
-                                                          final @Nonnull Consumer<InternalKnxClient> knxClientMockSupplier) {
+    public static InternalKnxClient mockInternalKnxClient(final Consumer<Config> configMockConsumer,
+                                                          final Consumer<InternalKnxClient> knxClientMockSupplier) {
         final var knxClientMock = mock(InternalKnxClient.class);
         final var configMock = mockConfig(configMockConsumer);
         final var statusPoolMock = mockInternalStatusPool();
@@ -204,17 +197,6 @@ public final class TestHelpers {
         when(eventPool.get(any(TunnelingAckBody.class))).thenReturn(eventData);
 
         return eventPool;
-    }
-
-    /**
-     * Randomize a {@link GroupAddress}. The group address should not matter in the unit testing.
-     *
-     * @return
-     */
-    public static GroupAddress randomGroupAddress() {
-        // a range between between 1 and 65535
-        int randomInt = new Random().nextInt(65534) + 1;
-        return GroupAddress.of(randomInt);
     }
 
 }

@@ -170,7 +170,7 @@ public final class DPT22 {
         }
     }
 
-    public static final class StatusRoomHeatinCoolingController extends AbstractDataPointType<DPT22Value.StatusRoomHeatinCoolingController> {
+    public static final class StatusRoomHeatinCoolingController extends AbstractDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
         private StatusRoomHeatinCoolingController() {
             super("22.101", "Room Heating / Cooling Controller Status");
         }
@@ -181,16 +181,16 @@ public final class DPT22 {
         }
 
         @Override
-        protected DPT22Value.StatusRoomHeatinCoolingController parse(final byte[] bytes) {
-            return new DPT22Value.StatusRoomHeatinCoolingController(bytes);
+        protected DPT22Value.StatusRoomHeatingCoolingController parse(final byte[] bytes) {
+            return new DPT22Value.StatusRoomHeatingCoolingController(bytes);
         }
 
-        public DPT22Value.StatusRoomHeatinCoolingController toValue(final boolean fault, final boolean statusEcoHeating,
-                                                                    final boolean temperatureFlowLimit, final boolean temperatureReturnLimit, final boolean statusMorningBoost,
-                                                                    final boolean startOptimizationActive, final boolean stopOptimizationActive, final boolean heatingDisabled,
-                                                                    final boolean heatingMode, final boolean statusEcoCooling, final boolean statusPreCooling, final boolean coolingDisabled,
-                                                                    final boolean dewPointAlarm, final boolean frostAlarm, final boolean overheatAlarm) {
-            return new DPT22Value.StatusRoomHeatinCoolingController(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit,
+        public DPT22Value.StatusRoomHeatingCoolingController toValue(final boolean fault, final boolean statusEcoHeating,
+                                                                     final boolean temperatureFlowLimit, final boolean temperatureReturnLimit, final boolean statusMorningBoost,
+                                                                     final boolean startOptimizationActive, final boolean stopOptimizationActive, final boolean heatingDisabled,
+                                                                     final boolean heatingMode, final boolean statusEcoCooling, final boolean statusPreCooling, final boolean coolingDisabled,
+                                                                     final boolean dewPointAlarm, final boolean frostAlarm, final boolean overheatAlarm) {
+            return new DPT22Value.StatusRoomHeatingCoolingController(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit,
                     statusMorningBoost, startOptimizationActive, stopOptimizationActive, heatingDisabled, heatingMode, statusEcoCooling,
                     statusPreCooling, coolingDisabled, dewPointAlarm, frostAlarm, overheatAlarm);
         }

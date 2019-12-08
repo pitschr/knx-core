@@ -6,7 +6,6 @@ import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.Plugin;
 
-import javax.annotation.Nonnull;
 
 /**
  * Test {@link Plugin} implementation that is throwing
@@ -14,7 +13,7 @@ import javax.annotation.Nonnull;
  */
 public final class TestMethodExceptionPlugin implements ObserverPlugin, ExtensionPlugin {
     @Override
-    public void onInitialization(final @Nonnull KnxClient client) {
+    public void onInitialization(final KnxClient client) {
         throw new RuntimeException("Exception in onInitialization(..) method");
     }
 
@@ -24,17 +23,17 @@ public final class TestMethodExceptionPlugin implements ObserverPlugin, Extensio
     }
 
     @Override
-    public void onIncomingBody(@Nonnull Body item) {
+    public void onIncomingBody(final Body item) {
         throw new RuntimeException("Exception in onIncomingBody(..) method");
     }
 
     @Override
-    public void onOutgoingBody(@Nonnull Body item) {
+    public void onOutgoingBody(final Body item) {
         throw new RuntimeException("Exception in onOutgoingBody(..) method");
     }
 
     @Override
-    public void onError(@Nonnull Throwable throwable) {
+    public void onError(final Throwable throwable) {
         throw new RuntimeException("Exception in onError(..) method");
     }
 

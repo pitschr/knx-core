@@ -22,8 +22,6 @@ import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 
-import javax.annotation.Nonnull;
-
 /**
  * Abstract KNX Address class for {@link IndividualAddress} and {@link GroupAddress} implementations
  *
@@ -32,7 +30,7 @@ import javax.annotation.Nonnull;
 public abstract class KnxAddress extends AbstractMultiRawData {
     public static final int STRUCTURE_LENGTH = 2;
 
-    public KnxAddress(final @Nonnull byte[] addressRawData) {
+    public KnxAddress(final byte[] addressRawData) {
         super(addressRawData);
     }
 
@@ -51,7 +49,7 @@ public abstract class KnxAddress extends AbstractMultiRawData {
     public abstract String getAddress();
 
     @Override
-    protected void validate(final @Nonnull byte[] addressRawData) {
+    protected void validate(final byte[] addressRawData) {
         if (addressRawData == null) {
             throw new KnxNullPointerException("addressRawData");
         } else if (addressRawData.length != STRUCTURE_LENGTH) {

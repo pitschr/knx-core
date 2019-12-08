@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 
 /**
  * Tunneling Connection Request Information (CRI)
@@ -53,7 +52,7 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
     private final ConnectionType connectionType;
     private final LayerType layerType;
 
-    private ConnectionRequestInformation(final @Nonnull byte[] criRawData) {
+    private ConnectionRequestInformation(final byte[] criRawData) {
         super(criRawData);
 
         this.length = Bytes.toUnsignedInt(criRawData[0]);
@@ -68,8 +67,7 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      * @param bytes complete byte array for {@link ConnectionRequestInformation}
      * @return a new immutable {@link ConnectionRequestInformation}
      */
-    @Nonnull
-    public static ConnectionRequestInformation of(final @Nonnull byte[] bytes) {
+    public static ConnectionRequestInformation of(final byte[] bytes) {
         return new ConnectionRequestInformation(bytes);
     }
 
@@ -79,7 +77,6 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      *
      * @return re-usable immutable default {@link ConnectionRequestInformation}
      */
-    @Nonnull
     public static ConnectionRequestInformation useDefault() {
         return DEFAULT;
     }
@@ -91,8 +88,7 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
      * @param layerType
      * @return a new immutable {@link ConnectionRequestInformation}
      */
-    @Nonnull
-    public static ConnectionRequestInformation of(final @Nonnull ConnectionType connectionType, final @Nonnull LayerType layerType) {
+    public static ConnectionRequestInformation of(final ConnectionType connectionType, final LayerType layerType) {
         // validate
         if (connectionType == null) {
             throw new KnxNullPointerException("connectionType");
@@ -115,7 +111,7 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] criRawData) {
+    protected void validate(final byte[] criRawData) {
         if (criRawData == null) {
             throw new KnxNullPointerException("criRawData");
         } else if (criRawData.length != 4) {
@@ -129,17 +125,16 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
         return this.length;
     }
 
-    @Nonnull
+
     public ConnectionType getConnectionType() {
         return this.connectionType;
     }
 
-    @Nonnull
+
     public LayerType getLayerType() {
         return this.layerType;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

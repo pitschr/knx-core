@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -28,19 +28,23 @@ public final class Strings {
      * @param obj
      * @return a new instance of {@link ToStringHelper}
      */
-    public static ToStringHelper toStringHelper(final @Nonnull Object obj) {
+    public static ToStringHelper toStringHelper(final Object obj) {
         return new ToStringHelper(obj.getClass().getSimpleName());
     }
 
+    /**
+     * Helper for creating a string representation. This class
+     * is much more simplified than from Guava.
+     */
     public static class ToStringHelper {
         private final StringBuilder sb = new StringBuilder(200);
         private final String className;
 
-        private ToStringHelper(final @Nonnull String name) {
+        private ToStringHelper(final String name) {
             this.className = Preconditions.checkNonNull(name);
         }
 
-        public ToStringHelper add(final @Nonnull String name, @Nullable Object value) {
+        public ToStringHelper add(final String name, @Nullable Object value) {
             Preconditions.checkNonNull(name);
             if (sb.length() != 0) {
                 sb.append(", ");

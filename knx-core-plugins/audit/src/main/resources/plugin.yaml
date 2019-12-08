@@ -9,17 +9,17 @@ description:
   de: "Zeichnet die KNX Ereignisse (Eingang, Ausgang und Fehler) auf und schreibt diese in eine Datei"
 
 configs:
-- path:
-    name:
-      en: "Path"
-      de: "Pfad"
-    description:
-      en: "Recommended: Absolute Path"
-      de: "Empfohlen: Absoluter Pfad"
-- format:
-    name:
-      en: "Format"
-      de: "Format"
-    description:
-      en: "File Format (e.g. JSON)"
-      de: "Dateiformat (e.g. JSON)"
+  - path:
+      name:
+        en: "Path"
+        de: "Pfad"
+      description:
+        en: "Recommended: Absolute Path"
+        de: "Empfohlen: Absoluter Pfad"
+  - format:
+      name:
+        en: "Format"
+        de: "Format"
+      description:
+        en: "File Format (e.g. JSON)"
+        de: "Dateiformat (e.g. JSON)"

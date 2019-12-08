@@ -22,6 +22,7 @@ import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value.Flags;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 
 import javax.annotation.Nullable;
 import java.time.DayOfWeek;
@@ -152,8 +153,10 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
     @Override
     protected DPT19Value parse(final String[] args) {
         final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
-        final var date = this.findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse);
-        final var time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
+        final var date = Preconditions.checkNonNull(this.findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse),
+                "Date must be present in format: 0000-00-00");
+        final var time = Preconditions.checkNonNull(this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse),
+                "Time must be present in format: 00:00:00 or 00:00");
         final var flags = this.findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), null);
 
         return new DPT19Value(dayOfWeek, date, time, flags);

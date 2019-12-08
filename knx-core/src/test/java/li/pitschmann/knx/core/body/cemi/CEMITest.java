@@ -145,7 +145,7 @@ public final class CEMITest {
 
         // create
         final var cemiByCreate = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
         final var cemiByCreateEmptyArray = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress,
                 destinationAddress, TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
         final var cemiByCreateRawData = CEMI.of(cemiByCreate.getRawData());
@@ -469,12 +469,14 @@ public final class CEMITest {
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[1])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, (byte[]) null)).isInstanceOf(KnxIllegalArgumentException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, (byte[]) null)).isInstanceOf(KnxNullPointerException.class);
+
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_WRITE, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, (byte[]) null)).isInstanceOf(KnxIllegalArgumentException.class);
+                TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, (byte[]) null)).isInstanceOf(KnxNullPointerException.class);
+
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_CONTROL_DATA, 0, APCI.GROUP_VALUE_RESPONSE, new byte[0])).isInstanceOf(KnxIllegalArgumentException.class);
 
@@ -547,7 +549,7 @@ public final class CEMITest {
         final var destinationAddress = GroupAddress.of(1, 2, 150);
 
         final var cemi = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, (byte[]) null);
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[0]);
 
         // with raw data
         assertThat(cemi).hasToString(String.format(

@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nonnull;
 
 /**
  * Test matrix for bits
@@ -35,7 +34,6 @@ public final class BitGenerator {
      * @param bits
      * @return array of {@code true}
      */
-    @Nonnull
     public static boolean[] trueOnly(final int bits) {
         final var trueOnly = new boolean[bits];
         for (var i = 0; i < bits; i++) {
@@ -50,7 +48,6 @@ public final class BitGenerator {
      * @param bits
      * @return array of {@code false}
      */
-    @Nonnull
     public static boolean[] falseOnly(final int bits) {
         return new boolean[bits]; // simply return, values are false per default
     }
@@ -63,7 +60,6 @@ public final class BitGenerator {
      * @param bits
      * @return
      */
-    @Nonnull
     public static boolean[][] falseAndTrueOnly(final int bits) {
         return matrix(bits, true, true);
     }
@@ -74,7 +70,6 @@ public final class BitGenerator {
      * @param bits
      * @return
      */
-    @Nonnull
     public static boolean[][] matrix(final int bits) {
         return matrix(bits, false, false);
     }
@@ -87,7 +82,6 @@ public final class BitGenerator {
      * @param skipOnlyTrue  if {@code true} it will skip boolean array with {@code true} values only
      * @return
      */
-    @Nonnull
     public static boolean[][] matrix(final int bitsLength, final boolean skipOnlyFalse, final boolean skipOnlyTrue) {
         final var bitsCombo = 1 << bitsLength;
 

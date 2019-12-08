@@ -20,22 +20,14 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
-import li.pitschmann.knx.core.datapoint.DPT2;
-import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
-import li.pitschmann.knx.core.plugin.api.test.MockApiPlugin;
-import li.pitschmann.knx.core.plugin.api.test.MockApiTest;
+import li.pitschmann.knx.core.plugin.api.ControllerTest;
+import li.pitschmann.knx.core.plugin.api.TestUtils;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
-import li.pitschmann.knx.core.test.MockServerTest;
-import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,35 +37,9 @@ import static org.mockito.Mockito.when;
  * Test class for {@link WriteRequestController}
  */
 public class WriteRequestControllerTest {
-    /**
-     * Test /write endpoint for group address 0/0/22
-     *
-     * @param mockPlugin
-     * @throws Exception
-     */
-    @MockApiTest(@MockServerTest(projectPath = "src/test/resources/Project (3-Level, v20).knxproj"))
-    @DisplayName("OK: Write Request for group address 0/0/22")
-    public void testWrite(final MockApiPlugin mockPlugin) throws Exception {
-        // get http client for requests
-        final var httpClient = HttpClient.newHttpClient();
 
-        // create write request
-        final var writeRequest = new WriteRequest();
-        writeRequest.setGroupAddress(GroupAddress.of(0, 0, 22));
-        writeRequest.setDataPointType(DPT2.ALARM_CONTROL);
-        writeRequest.setValues("control", "false");
-
-        // send write request
-        final var httpRequest = mockPlugin.newRequestBuilder("/api/v1/write").POST(HttpRequest.BodyPublishers.ofString(ApiGsonEngine.INSTANCE.toString(writeRequest))).build();
-        final var responseBody = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString()).body();
-        assertThat(responseBody).isEqualTo("{}");
-    }
-
-    /**
-     * Test /write request for group 0/0/23 with raw data. Using raw data we do not need DPT information.
-     */
     @ControllerTest(WriteRequestController.class)
-    @DisplayName("OK: Write Request endpoint using raw data")
+    @DisplayName("OK: Write Request endpoint using raw data (no DPT information required)")
     public void testWriteUsingRawData(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
         final var groupAddress = GroupAddress.of(0, 0, 23);
@@ -91,6 +57,29 @@ public class WriteRequestControllerTest {
 
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
+    }
+
+    @ControllerTest(WriteRequestController.class)
+    @DisplayName("OK: Write Request endpoint using DPT information")
+    public void testWriteUsingDpt(final Controller controller) {
+        final var writeRequestController = (WriteRequestController) controller;
+        final var groupAddress = GroupAddress.of(0, 0, 23);
+
+        //
+        // Verification
+        //
+
+        final var request = new WriteRequest();
+        request.setGroupAddress(groupAddress);
+        request.setDataPointType(DPT1.SWITCH);
+        request.setValues("on");
+
+        final var response = writeRequestController.writeRequest(request);
+        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
+
+        final var responseJson = asJson(response);
+        assertThatJson(responseJson).isEqualTo("{}");
+
     }
 
     @ControllerTest(WriteRequestController.class)
@@ -117,7 +106,7 @@ public class WriteRequestControllerTest {
     @DisplayName("ERROR: Write Request without ack body from KNX client")
     public void testWriteException(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
-        final var groupAddress = TestHelpers.randomGroupAddress();
+        final var groupAddress = TestUtils.randomGroupAddress();
 
         //
         // Mocking
@@ -159,7 +148,7 @@ public class WriteRequestControllerTest {
         //
 
         final var request = new WriteRequest();
-        request.setGroupAddress(TestHelpers.randomGroupAddress());
+        request.setGroupAddress(TestUtils.randomGroupAddress());
 
         final var response = writeRequestController.writeRequest(request);
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);

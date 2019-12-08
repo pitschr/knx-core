@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 
 /**
  * Body for Routing Indication
@@ -53,7 +52,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     private static final int STRUCTURE_WITH_CEMI_MAX_LENGTH = 0xFF;
     private final CEMI cemi;
 
-    private RoutingIndicationBody(final @Nonnull byte[] bytes) {
+    private RoutingIndicationBody(final byte[] bytes) {
         super(bytes);
         this.cemi = CEMI.of(bytes);
     }
@@ -64,8 +63,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      * @param bytes complete byte array for {@link RoutingIndicationBody}
      * @return a new immutable {@link RoutingIndicationBody}
      */
-    @Nonnull
-    public static RoutingIndicationBody of(final @Nonnull byte[] bytes) {
+    public static RoutingIndicationBody of(final byte[] bytes) {
         return new RoutingIndicationBody(bytes);
     }
 
@@ -75,8 +73,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      * @param cemi
      * @return a new immutable {@link RoutingIndicationBody}
      */
-    @Nonnull
-    public static RoutingIndicationBody of(final @Nonnull CEMI cemi) {
+    public static RoutingIndicationBody of(final CEMI cemi) {
         // validate
         if (cemi == null) {
             throw new KnxNullPointerException("cemi");
@@ -85,7 +82,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
@@ -94,18 +91,16 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
         }
     }
 
-    @Nonnull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.ROUTING_INDICATION;
     }
 
-    @Nonnull
+
     public CEMI getCEMI() {
         return this.cemi;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

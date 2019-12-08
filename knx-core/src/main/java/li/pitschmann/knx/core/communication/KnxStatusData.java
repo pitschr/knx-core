@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.body.cemi.CEMI;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.Arrays;
@@ -47,7 +46,7 @@ public final class KnxStatusData {
      *
      * @param cemi an instance of CEMI
      */
-    public KnxStatusData(final @Nonnull CEMI cemi) {
+    public KnxStatusData(final CEMI cemi) {
         this(cemi.getSourceAddress(), cemi.getApci(), cemi.getApciData());
     }
 
@@ -58,7 +57,7 @@ public final class KnxStatusData {
      * @param apci          the purpose why it was set
      * @param apciData      the value in byte array
      */
-    public KnxStatusData(final @Nonnull KnxAddress sourceAddress, final @Nonnull APCI apci, final @Nullable byte[] apciData) {
+    public KnxStatusData(final KnxAddress sourceAddress, final APCI apci, final @Nullable byte[] apciData) {
         this.timestamp = Instant.now();
         this.apci = apci;
         this.apciData = apciData == null ? new byte[0] : apciData.clone(); // defensive copy
@@ -71,7 +70,6 @@ public final class KnxStatusData {
      *
      * @return The {@link Instant} when this object has been created
      */
-    @Nonnull
     public Instant getTimestamp() {
         return this.timestamp;
     }
@@ -81,7 +79,6 @@ public final class KnxStatusData {
      *
      * @return A {@link KnxAddress}
      */
-    @Nonnull
     public KnxAddress getSourceAddress() {
         return this.sourceAddress;
     }
@@ -91,7 +88,6 @@ public final class KnxStatusData {
      *
      * @return An {@link APCI}
      */
-    @Nonnull
     public APCI getApci() {
         return this.apci;
     }
@@ -101,7 +97,6 @@ public final class KnxStatusData {
      *
      * @return byte array with APCI data
      */
-    @Nonnull
     public byte[] getApciData() {
         return this.apciData.clone(); // defensive copy
     }
@@ -127,7 +122,6 @@ public final class KnxStatusData {
         this.dirty = dirty;
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

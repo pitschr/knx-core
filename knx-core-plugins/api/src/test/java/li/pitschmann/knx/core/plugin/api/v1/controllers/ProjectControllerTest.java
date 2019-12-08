@@ -20,13 +20,14 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
 import li.pitschmann.knx.core.knxproj.XmlGroupRange;
+import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.HttpConstants;
 import ro.pippo.core.ParameterValue;
 
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.asJson;
-import static li.pitschmann.knx.core.plugin.api.test.TestUtils.readJsonFile;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
+import static li.pitschmann.knx.core.plugin.api.TestUtils.readJsonFile;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

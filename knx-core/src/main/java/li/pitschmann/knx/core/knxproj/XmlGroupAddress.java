@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 
 /**
  * XML DTO holding KNX Group Address data which were taken from '*.knxproj' file
@@ -132,7 +131,6 @@ public final class XmlGroupAddress {
         this.updateFlag = updateFlag;
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

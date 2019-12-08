@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
@@ -70,7 +69,6 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
      * @param sceneNumber
      * @return byte array
      */
-    @Nonnull
     public static byte[] toByteArray(final boolean controlled, final int sceneNumber) {
         final var controlledAsByte = controlled ? (byte) 0x80 : 0x00;
         final var sceneNumberAsByte = (byte) sceneNumber;
@@ -86,13 +84,11 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
         return this.sceneNumber;
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return toByteArray(this.controlled, this.sceneNumber);
     }
 
-    @Nonnull
     @Override
     public String toText() {
         if (isControlled()) {
@@ -102,7 +98,6 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
         }
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

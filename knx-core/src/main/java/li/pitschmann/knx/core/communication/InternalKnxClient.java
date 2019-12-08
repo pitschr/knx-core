@@ -56,7 +56,6 @@ import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.List;
@@ -97,7 +96,7 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @param config an instance of {@link Config}
      */
-    InternalKnxClient(final @Nonnull Config config) {
+    InternalKnxClient(final Config config) {
         log.trace("Abstract KNX Client constructor");
         this.config = Objects.requireNonNull(config);
         this.pluginManager = new PluginManager(config);
@@ -342,27 +341,26 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @return the current state
      */
-    @Nonnull
     public State getState() {
         return state;
     }
 
-    @Nonnull
+
     public Config getConfig() {
         return this.config;
     }
 
-    @Nonnull
-    public <T> T getConfig(final @Nonnull ConfigValue<T> configValue) {
+
+    public <T> T getConfig(final ConfigValue<T> configValue) {
         return getConfig().getValue(configValue);
     }
 
-    @Nonnull
+
     public InternalKnxStatistic getStatistic() {
         return this.statistics;
     }
 
-    @Nonnull
+
     public InternalKnxStatusPool getStatusPool() {
         return this.statusPool;
     }
@@ -373,27 +371,24 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @return An instance of {@link InetSocketAddress}, it cannot be {@code null}
      */
-    @Nonnull
     public InetSocketAddress getRemoteEndpoint() {
         return Objects.requireNonNull(this.remoteEndpoint);
     }
 
-    @Nonnull
+
     public HPAI getControlHPAI() {
         return this.controlHPAI == null ? HPAI.useDefault() : this.controlHPAI;
     }
 
-    @Nonnull
+
     public HPAI getDataHPAI() {
         return this.dataHPAI == null ? HPAI.useDefault() : this.dataHPAI;
     }
 
-    @Nonnull
     public InternalKnxEventPool getEventPool() {
         return this.eventPool;
     }
 
-    @Nonnull
     public PluginManager getPluginManager() {
         return this.pluginManager;
     }
@@ -402,12 +397,11 @@ public final class InternalKnxClient implements AutoCloseable {
         return this.channelId;
     }
 
-    public void send(final @Nonnull Body body) {
+    public void send(final Body body) {
         this.getChannelCommunicator(body).send(body);
     }
 
-    @Nonnull
-    public <U extends ResponseBody> CompletableFuture<U> send(final @Nonnull RequestBody requestBody, final long msTimeout) {
+    public <U extends ResponseBody> CompletableFuture<U> send(final RequestBody requestBody, final long msTimeout) {
         return this.getChannelCommunicator(requestBody).send(requestBody, msTimeout);
     }
 
@@ -417,8 +411,7 @@ public final class InternalKnxClient implements AutoCloseable {
      * @param body
      * @return responsible channel communicator, otherwise {@link IllegalArgumentException} if no suitable communicator was found
      */
-    @Nonnull
-    private AbstractChannelCommunicator getChannelCommunicator(final @Nonnull Body body) {
+    private AbstractChannelCommunicator getChannelCommunicator(final Body body) {
         for (final var channelCommunicator : channelCommunicators) {
             if (channelCommunicator.isCompatible(body)) {
                 return channelCommunicator;
@@ -432,7 +425,7 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @param body any KNX body
      */
-    public void notifyIncomingBody(final @Nonnull Body body) {
+    public void notifyIncomingBody(final Body body) {
         statistics.onIncomingBody(body);
         pluginManager.notifyIncomingBody(body);
     }
@@ -442,7 +435,7 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @param body any KNX body
      */
-    public void notifyOutgoingBody(final @Nonnull Body body) {
+    public void notifyOutgoingBody(final Body body) {
         statistics.onOutgoingBody(body);
         pluginManager.notifyOutgoingBody(body);
     }
@@ -452,7 +445,7 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @param throwable an instance of {@link Throwable} to be sent to plug-ins
      */
-    public void notifyError(final @Nonnull Throwable throwable) {
+    public void notifyError(final Throwable throwable) {
         statistics.onError(throwable);
         pluginManager.notifyError(throwable);
     }
@@ -467,7 +460,7 @@ public final class InternalKnxClient implements AutoCloseable {
      * @return {@code true} if channel id is valid for current KNX client, otherwise {@link KnxWrongChannelIdException} is thrown.
      * @throws KnxWrongChannelIdException when channel id is not valid
      */
-    public boolean verifyChannelId(final @Nonnull Body body) {
+    public boolean verifyChannelId(final Body body) {
         // if body is channel id aware then verify the channel id, otherwise skip it
         if (ChannelIdAware.class.isAssignableFrom(body.getClass())) {
             final var channelIdAwareBody = (ChannelIdAware) body;
@@ -491,7 +484,6 @@ public final class InternalKnxClient implements AutoCloseable {
      *
      * @return {@link DescriptionResponseBody}, otherwise {@link KnxDescriptionNotReceivedException} will be thrown
      */
-    @Nonnull
     private DescriptionResponseBody fetchDescriptionFromKNX() {
         log.trace("Method 'fetchDescriptionFromKNX()' called.");
 
@@ -527,7 +519,6 @@ public final class InternalKnxClient implements AutoCloseable {
      * @return First {@link SearchResponseBody} (subsequent should be requested by {@link InternalKnxEventPool}),
      * otherwise {@link KnxDiscoveryNotReceivedException} will be thrown
      */
-    @Nonnull
     private SearchResponseBody fetchDiscoveryFromKNX() {
         log.trace("Method 'fetchDiscoveryFromKNX()' called.");
 

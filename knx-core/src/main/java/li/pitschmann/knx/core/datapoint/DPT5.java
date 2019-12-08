@@ -176,12 +176,12 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * @param lowerValue
      * @param upperValue
      * @param unit
-     * @param calcuationFunction
+     * @param calculationFunction
      */
     private DPT5(final String id, final String desc, final int lowerValue, final int upperValue, final @Nullable String unit,
-                 final @Nullable Function<Integer, Double> calcuationFunction) {
+                 final @Nullable Function<Integer, Double> calculationFunction) {
         super(id, desc, lowerValue, upperValue, unit);
-        this.calcuationFunction = calcuationFunction;
+        this.calcuationFunction = calculationFunction;
     }
 
     public Function<Integer, Double> getCalcuationFunction() {

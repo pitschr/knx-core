@@ -39,7 +39,6 @@ import li.pitschmann.knx.core.utils.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -76,7 +75,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxMultiEvent}
      */
-    @Nonnull
     public KnxMultiEvent<SearchRequestBody, SearchResponseBody> searchEvent() {
         return this.searchEvent;
     }
@@ -86,7 +84,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-    @Nonnull
     public KnxSingleEvent<DescriptionRequestBody, DescriptionResponseBody> descriptionEvent() {
         return this.descriptionEvent;
     }
@@ -96,7 +93,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-    @Nonnull
     public KnxSingleEvent<ConnectRequestBody, ConnectResponseBody> connectEvent() {
         return this.connectEvent;
     }
@@ -106,7 +102,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-    @Nonnull
     public KnxSingleEvent<ConnectionStateRequestBody, ConnectionStateResponseBody> connectionStateEvent() {
         return this.connectionStateEvent;
     }
@@ -116,7 +111,6 @@ public final class InternalKnxEventPool {
      *
      * @return {@link KnxSingleEvent}
      */
-    @Nonnull
     public KnxSingleEvent<DisconnectRequestBody, DisconnectResponseBody> disconnectEvent() {
         return this.disconnectEvent;
     }
@@ -126,7 +120,7 @@ public final class InternalKnxEventPool {
      *
      * @param request
      */
-    public void add(final @Nonnull RequestBody request) {
+    public void add(final RequestBody request) {
         get(request).setRequest(request);
     }
 
@@ -137,8 +131,7 @@ public final class InternalKnxEventPool {
      * @return {@link KnxSingleEvent} or {@code IllegalArgumentException} if not supported
      */
     @SuppressWarnings("unchecked")
-    @Nonnull
-    public <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEvent<REQUEST, RESPONSE> get(final @Nonnull REQUEST request) {
+    public <REQUEST extends RequestBody, RESPONSE extends ResponseBody> KnxEvent<REQUEST, RESPONSE> get(final REQUEST request) {
         if (request instanceof TunnelingRequestBody) {
             return (KnxSingleEvent<REQUEST, RESPONSE>) this.tunnelingMap.get(((TunnelingRequestBody) request).getSequence());
         } else if (request instanceof ConnectionStateRequestBody) {
@@ -162,8 +155,7 @@ public final class InternalKnxEventPool {
      * @param acknowledge
      * @return {@link KnxSingleEvent}
      */
-    @Nonnull
-    public KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody> get(final @Nonnull TunnelingAckBody acknowledge) {
+    public KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody> get(final TunnelingAckBody acknowledge) {
         return this.tunnelingMap.get(acknowledge.getSequence());
     }
 }

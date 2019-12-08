@@ -22,12 +22,12 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.config.CoreConfigs;
-import li.pitschmann.knx.examples.AbstractKnxMain;
 import li.pitschmann.knx.core.plugin.audit.FileAuditPlugin;
 import li.pitschmann.knx.core.plugin.statistic.FileStatisticFormat;
 import li.pitschmann.knx.core.plugin.statistic.FileStatisticPlugin;
 import li.pitschmann.knx.core.utils.Sleeper;
 import li.pitschmann.knx.core.utils.Stopwatch;
+import li.pitschmann.knx.examples.AbstractKnxMain;
 
 import java.nio.file.Paths;
 import java.util.Objects;

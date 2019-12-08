@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api;
 
-import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import ro.pippo.controller.Controller;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,21 +28,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Mock API Test annotation to launch the web server (and the KNX Mock Server indirectly)
+ * Controller Test Annotation to test the behavior of controller without starting up
+ * the Web Framework and Mock Server
  * <p/>
- * This will call the JUnit {@link MockApiExtension} class.
+ * This will call the JUnit {@link ControllerTestExtension} class.
  *
  * @author PITSCHR
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Test
-@ExtendWith(MockApiExtension.class)
-public @interface MockApiTest {
+@ExtendWith(ControllerTestExtension.class)
+public @interface ControllerTest {
     /**
-     * Returns Mock Server annotation
+     * /**
+     * Class of {@link Controller} that should be called
      *
-     * @return MockServerTest annotation
+     * @return an instance of controller
      */
-    MockServerTest value() default @MockServerTest;
+    Class<? extends Controller> value();
+
+    /**
+     * Returns the path of KNX project path (*.knxproj)
+     *
+     * @return path of project if defined, otherwise empty
+     */
+    String projectPath() default "";
 }

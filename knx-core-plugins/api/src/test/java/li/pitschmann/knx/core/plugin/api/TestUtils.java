@@ -16,18 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.test;
+package li.pitschmann.knx.core.plugin.api;
 
 import com.google.gson.JsonParser;
+import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -47,7 +48,7 @@ public final class TestUtils {
      * @param response
      * @return json
      */
-    public static final String asJson(final @Nonnull Object response) {
+    public static final String asJson(final Object response) {
         return ApiGsonEngine.INSTANCE.toString(response);
     }
 
@@ -73,5 +74,19 @@ public final class TestUtils {
             fail(ex);
             throw new AssertionError(ex);
         }
+    }
+
+    /**
+     * Randomize a {@link GroupAddress}
+     * <p>
+     * The group address should not matter in the unit testing when
+     * not asserting itself.
+     *
+     * @return a randomized {@link GroupAddress}
+     */
+    public static GroupAddress randomGroupAddress() {
+        // a range between between 1 and 65535
+        int randomInt = new Random().nextInt(65534) + 1;
+        return GroupAddress.of(randomInt);
     }
 }

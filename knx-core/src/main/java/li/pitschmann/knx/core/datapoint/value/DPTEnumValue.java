@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
@@ -51,7 +50,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
      * @param ordinal
      * @param description
      */
-    public DPTEnumValue(final @Nonnull DPTEnum<T> dpEnum, final @Nonnull T enumField, final int ordinal, final @Nullable String description) {
+    public DPTEnumValue(final DPTEnum<T> dpEnum, final T enumField, final int ordinal, final @Nullable String description) {
         Preconditions.checkNonNull(dpEnum);
         Preconditions.checkNonNull(enumField);
         Preconditions.checkArgument(ordinal >= 0 && ordinal <= 0xFF, "The ordinal of enum should be between 0 and 255.");
@@ -62,7 +61,6 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
         this.byteArray = new byte[]{(byte) (this.ordinal & 0xFF)};
     }
 
-    @Nonnull
     @Override
     public DPTEnum<T> getDPT() {
         return this.dpt;
@@ -73,7 +71,6 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
      *
      * @return enum field value instance
      */
-    @Nonnull
     public T getEnum() {
         return this.enumField;
     }
@@ -92,24 +89,20 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
      *
      * @return description
      */
-    @Nonnull
     public String getDescription() {
         return this.description;
     }
 
-    @Nonnull
     @Override
     public byte[] toByteArray() {
         return this.byteArray;
     }
 
-    @Nonnull
     @Override
     public String toText() {
         return getDescription();
     }
 
-    @Nonnull
     @Override
     public String toString() {
         // @formatter:off

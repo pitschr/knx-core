@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 
 /**
  * Body for Disconnect Response
@@ -52,7 +51,7 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     private final int channelId;
     private final Status status;
 
-    private DisconnectResponseBody(final @Nonnull byte[] bytes) {
+    private DisconnectResponseBody(final byte[] bytes) {
         super(bytes);
 
         this.channelId = Bytes.toUnsignedInt(bytes[0]);
@@ -65,8 +64,7 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
      * @param bytes complete byte array for {@link DisconnectResponseBody}
      * @return a new immutable {@link DisconnectResponseBody}
      */
-    @Nonnull
-    public static DisconnectResponseBody of(final @Nonnull byte[] bytes) {
+    public static DisconnectResponseBody of(final byte[] bytes) {
         return new DisconnectResponseBody(bytes);
     }
 
@@ -93,9 +91,8 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         return of(bytes);
     }
 
-    @Nonnull
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length != STRUCTURE_LENGTH) {
@@ -103,7 +100,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         }
     }
 
-    @Nonnull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.DISCONNECT_RESPONSE;
@@ -114,12 +110,11 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         return this.channelId;
     }
 
-    @Nonnull
+
     public Status getStatus() {
         return this.status;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off

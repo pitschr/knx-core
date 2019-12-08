@@ -26,6 +26,7 @@ import li.pitschmann.knx.core.body.DescriptionRequestBody;
 import li.pitschmann.knx.core.body.DescriptionResponseBody;
 import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
+import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.SearchRequestBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
@@ -63,8 +64,9 @@ public class KnxStatisticJsonTest {
                         "\"description\":{\"request\":0,\"response\":0}," +
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connection_state\":{\"request\":0,\"response\":0}," +
-                        "\"disconnect\":{\"request\":0,\"response\":0}," +
-                        "\"tunneling\":{\"request\":0,\"response\":0}" +
+                        "\"tunneling\":{\"request\":0,\"response\":0}," +
+                        "\"indication\":{\"request\":0,\"response\":0}," +
+                        "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
                     "\"outbound\":{" +
                         "\"total\":{\"packets\":0,\"bytes\":0}," +
@@ -72,8 +74,9 @@ public class KnxStatisticJsonTest {
                         "\"description\":{\"request\":0,\"response\":0}," +
                         "\"connect\":{\"request\":0,\"response\":0}," +
                         "\"connection_state\":{\"request\":0,\"response\":0}," +
-                        "\"disconnect\":{\"request\":0,\"response\":0}," +
-                        "\"tunneling\":{\"request\":0,\"response\":0}" +
+                        "\"tunneling\":{\"request\":0,\"response\":0}," +
+                        "\"indication\":{\"request\":0,\"response\":0}," +
+                        "\"disconnect\":{\"request\":0,\"response\":0}" +
                     "}," +
                     "\"error\":{" +
                         "\"total\":{\"packets\":0,\"rate\":0.0}" +
@@ -104,8 +107,9 @@ public class KnxStatisticJsonTest {
                         "\"description\":{\"request\":65,\"response\":91}," +
                         "\"connect\":{\"request\":117,\"response\":143}," +
                         "\"connection_state\":{\"request\":169,\"response\":195}," +
-                        "\"disconnect\":{\"request\":221,\"response\":247}," +
-                        "\"tunneling\":{\"request\":273,\"response\":299}" +
+                        "\"tunneling\":{\"request\":221,\"response\":247}," +
+                        "\"indication\":{\"request\":0,\"response\":273}," +
+                        "\"disconnect\":{\"request\":299,\"response\":325}" +
                     "}," +
                     "\"outbound\":{" +
                         "\"total\":{\"packets\":949,\"bytes\":1079}," +
@@ -113,8 +117,9 @@ public class KnxStatisticJsonTest {
                         "\"description\":{\"request\":78,\"response\":104}," +
                         "\"connect\":{\"request\":130,\"response\":156}," +
                         "\"connection_state\":{\"request\":182,\"response\":208}," +
-                        "\"disconnect\":{\"request\":234,\"response\":260}," +
-                        "\"tunneling\":{\"request\":286,\"response\":312}" +
+                        "\"tunneling\":{\"request\":234,\"response\":260}," +
+                        "\"indication\":{\"request\":286,\"response\":0}," +
+                        "\"disconnect\":{\"request\":312,\"response\":338}" +
                     "}," +
                     "\"error\":{" +
                         "\"total\":{\"packets\":1157,\"rate\":12.61}" +
@@ -143,8 +148,9 @@ public class KnxStatisticJsonTest {
                 DescriptionRequestBody.class, DescriptionResponseBody.class, // 3*multiplier, ...
                 ConnectRequestBody.class, ConnectResponseBody.class, //
                 ConnectionStateRequestBody.class, ConnectionStateResponseBody.class, //
-                DisconnectRequestBody.class, DisconnectResponseBody.class, //
-                TunnelingRequestBody.class, TunnelingAckBody.class //
+                TunnelingRequestBody.class, TunnelingAckBody.class, //
+                RoutingIndicationBody.class, //
+                DisconnectRequestBody.class, DisconnectResponseBody.class //
         );
         long i = 0;
         for (var body : bodies) {

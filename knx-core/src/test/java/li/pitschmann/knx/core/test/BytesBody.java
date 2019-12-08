@@ -25,8 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
-
 /**
  * Bytes Body
  * <p/>
@@ -37,7 +35,6 @@ public abstract class BytesBody extends AbstractMultiRawData implements Body {
         super(bytes);
     }
 
-    @Nonnull
     @Override
     public ServiceType getServiceType() {
         throw new UnsupportedOperationException();

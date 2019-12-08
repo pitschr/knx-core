@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
 import ro.pippo.core.ParameterValue;

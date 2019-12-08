@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -82,7 +81,7 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     private final DeviceHardwareInformationDIB deviceHardwareInformation;
     private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;
 
-    private SearchResponseBody(final @Nonnull byte[] bytes) {
+    private SearchResponseBody(final byte[] bytes) {
         super(bytes);
 
         int pos = 0;
@@ -100,8 +99,7 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
      * @param bytes complete byte array for {@link SearchResponseBody}
      * @return a new immutable {@link SearchResponseBody}
      */
-    @Nonnull
-    public static SearchResponseBody of(final @Nonnull byte[] bytes) {
+    public static SearchResponseBody of(final byte[] bytes) {
         return new SearchResponseBody(bytes);
     }
 
@@ -113,10 +111,9 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
      * @param supportedDeviceFamilies
      * @return a new immutable {@link SearchResponseBody}
      */
-    @Nonnull
-    public static SearchResponseBody of(final @Nonnull HPAI controlEndpoint,
-                                        final @Nonnull DeviceHardwareInformationDIB deviceHardwareInformation,
-                                        final @Nonnull SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
+    public static SearchResponseBody of(final HPAI controlEndpoint,
+                                        final DeviceHardwareInformationDIB deviceHardwareInformation,
+                                        final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
         // validate
         if (controlEndpoint == null) {
             throw new KnxNullPointerException("controlEndpoint");
@@ -147,7 +144,7 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     }
 
     @Override
-    protected void validate(final @Nonnull byte[] rawData) {
+    protected void validate(final byte[] rawData) {
         if (rawData == null) {
             throw new KnxNullPointerException("rawData");
         } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
@@ -166,28 +163,26 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
         }
     }
 
-    @Nonnull
     @Override
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_RESPONSE;
     }
 
-    @Nonnull
+
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
-    @Nonnull
+
     public DeviceHardwareInformationDIB getDeviceInformation() {
         return this.deviceHardwareInformation;
     }
 
-    @Nonnull
+
     public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
         return this.supportedDeviceFamilies;
     }
 
-    @Nonnull
     @Override
     public String toString(final boolean inclRawData) {
         // @formatter:off
