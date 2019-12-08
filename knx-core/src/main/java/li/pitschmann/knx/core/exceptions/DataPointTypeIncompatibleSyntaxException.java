@@ -20,9 +20,6 @@ package li.pitschmann.knx.core.exceptions;
 
 import li.pitschmann.knx.core.datapoint.DataPointType;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-
 /**
  * Exception when an incompatible syntax was provided.
  *
@@ -36,8 +33,9 @@ public final class DataPointTypeIncompatibleSyntaxException extends KnxException
      * @param dpt
      * @param commands
      */
-    public DataPointTypeIncompatibleSyntaxException(final DataPointType<?> dpt, final @Nullable String[] commands) {
-        super(String.format("Looks like you chose a wrong DPT. Given syntax is not compatible or not sufficient for '%s': %s", dpt.getClass().getSimpleName(),
-                Arrays.toString(commands)));
+    public DataPointTypeIncompatibleSyntaxException(final DataPointType<?> dpt,
+                                                    final String[] commands) {
+        super("Looks like you chose a wrong DPT. Given syntax is not compatible or not sufficient for '{}': {}",
+                dpt.getClass().getSimpleName(), commands);
     }
 }

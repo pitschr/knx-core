@@ -34,10 +34,11 @@ public final class KnxChannelIdNotReceivedException extends KnxCommunicationExce
     private final ConnectResponseBody responseBody;
 
 
-    public KnxChannelIdNotReceivedException(final @Nullable ConnectRequestBody requestBody,
+    public KnxChannelIdNotReceivedException(final ConnectRequestBody requestBody,
                                             final @Nullable ConnectResponseBody responseBody,
                                             final Throwable cause) {
-        super(String.format("Could not get channel id from KNX Net/IP device: (request=%s, response=%s)", requestBody, responseBody), cause);
+        super("Could not get channel id from KNX Net/IP device: request={}, response={}",
+                requestBody, responseBody, cause);
         this.requestBody = requestBody;
         this.responseBody = responseBody;
     }

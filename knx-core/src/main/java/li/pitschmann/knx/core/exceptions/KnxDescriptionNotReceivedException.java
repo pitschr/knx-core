@@ -31,6 +31,6 @@ import javax.annotation.Nullable;
 public final class KnxDescriptionNotReceivedException extends KnxCommunicationException {
 
     public KnxDescriptionNotReceivedException(final @Nullable Body body) {
-        super(String.format("Could not get description from KNX Net/IP device: %s", body));
+        super("Could not get description from KNX Net/IP device: {}", body);
     }
 }

@@ -28,12 +28,8 @@ import javax.annotation.Nullable;
  */
 public final class KnxConfigurationException extends KnxException {
 
-    public KnxConfigurationException(final @Nullable String message) {
-        super(message);
-    }
-
-    public KnxConfigurationException(final @Nullable String message, final @Nullable Throwable cause) {
-        super(message, cause);
+    public KnxConfigurationException(final String message, final @Nullable Object... args) {
+        super(message, args);
     }
 
 }

@@ -35,6 +35,7 @@ public final class KnxWrongChannelIdException extends KnxCommunicationException 
      * @param expectedChannelId
      */
     public KnxWrongChannelIdException(final ChannelIdAware channelIdAware, final int expectedChannelId) {
-        super(String.format("Wrong channel id '%s' received, expected channel id is '%s': %s", channelIdAware.getChannelId(), expectedChannelId, channelIdAware));
+        super("Wrong channel id '{}' received, expected channel id is '{}': {}",
+                channelIdAware.getChannelId(), expectedChannelId, channelIdAware);
     }
 }

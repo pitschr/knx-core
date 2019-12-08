@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import javax.annotation.Nullable;
-
 /**
  * KNX communication partner exception that is being thrown when KNX client cannot establish a communication to the
  * KNX Net/IP device because it doesn't support the tunneling.
@@ -28,7 +26,7 @@ import javax.annotation.Nullable;
  */
 public class KnxNoTunnelingException extends KnxException {
 
-    public KnxNoTunnelingException(final @Nullable String message) {
+    public KnxNoTunnelingException(final String message) {
         super(message);
     }
 

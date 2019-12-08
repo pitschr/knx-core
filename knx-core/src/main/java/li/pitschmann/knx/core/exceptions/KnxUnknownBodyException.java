@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import li.pitschmann.knx.core.utils.ByteFormatter;
-
 import javax.annotation.Nullable;
 
 /**
@@ -36,7 +34,7 @@ public final class KnxUnknownBodyException extends KnxCommunicationException {
      * @param rawData
      */
     public KnxUnknownBodyException(final @Nullable byte[] rawData) {
-        super(String.format("Unknown body received for raw data: %s", ByteFormatter.formatHexAsString(rawData)));
+        super("Unknown body received for raw data: {}", rawData);
     }
 
 }

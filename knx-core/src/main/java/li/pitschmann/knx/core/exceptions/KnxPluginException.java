@@ -27,8 +27,8 @@ import javax.annotation.Nullable;
  */
 public final class KnxPluginException extends KnxException {
 
-    public KnxPluginException(final @Nullable String message, final @Nullable Throwable cause) {
-        super(message, cause);
+    public KnxPluginException(final String message, final @Nullable Object... args) {
+        super(message, args);
     }
 
 }

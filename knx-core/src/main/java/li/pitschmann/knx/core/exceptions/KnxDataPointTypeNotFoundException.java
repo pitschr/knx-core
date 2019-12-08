@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import javax.annotation.Nullable;
-
 /**
  * Exception when KNX/IP specific data point type could not be found
  *
@@ -27,8 +25,8 @@ import javax.annotation.Nullable;
  */
 public final class KnxDataPointTypeNotFoundException extends KnxException {
 
-    public KnxDataPointTypeNotFoundException(final @Nullable String id) {
-        super(String.format("Could not find data point type ID '%s'", id));
+    public KnxDataPointTypeNotFoundException(final String id) {
+        super("Could not find data point type id: {}", id);
     }
 
 }

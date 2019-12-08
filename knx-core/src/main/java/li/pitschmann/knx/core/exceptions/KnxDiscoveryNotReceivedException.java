@@ -33,15 +33,15 @@ public final class KnxDiscoveryNotReceivedException extends KnxCommunicationExce
     private final SearchRequestBody requestBody;
     private final SearchResponseBody responseBody;
 
-    public KnxDiscoveryNotReceivedException(final @Nullable SearchRequestBody requestBody,
+    public KnxDiscoveryNotReceivedException(final SearchRequestBody requestBody,
                                             final @Nullable SearchResponseBody responseBody,
-                                            final @Nullable Throwable cause) {
-        super(String.format("Could not get discovery from KNX Net/IP device (request=%s, response=%s)", requestBody, responseBody), cause);
+                                            final Throwable cause) {
+        super("Could not get discovery from KNX Net/IP device: request={}, response={}",
+                requestBody, responseBody, cause);
         this.requestBody = requestBody;
         this.responseBody = responseBody;
     }
 
-    @Nullable
     public SearchRequestBody getRequestBody() {
         return requestBody;
     }
