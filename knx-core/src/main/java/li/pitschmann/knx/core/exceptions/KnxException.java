@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.utils.Exceptions;
 
 /**
  * This is the "root" exception for all KNX specific exceptions.
@@ -27,12 +27,8 @@ import javax.annotation.Nullable;
  */
 public class KnxException extends RuntimeException {
 
-    public KnxException(final @Nullable String message) {
-        super(message);
-    }
-
-    public KnxException(final @Nullable String message, final @Nullable Throwable cause) {
-        super(message, cause);
+    public KnxException(final String message, final Object... args) {
+        super(Exceptions.toErrorMessage(message, args), Exceptions.getThrowableIfPresent(args));
     }
 
 }

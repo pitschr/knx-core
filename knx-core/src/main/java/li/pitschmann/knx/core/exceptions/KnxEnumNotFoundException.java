@@ -30,6 +30,6 @@ public final class KnxEnumNotFoundException extends KnxException {
     }
 
     public KnxEnumNotFoundException(final Class<? extends Enum<?>> clazz, final int code) {
-        super(String.format("Could not find enum for class '%s' and code: %s", clazz.getName(), code));
+        super("Could not find enum for class '{}' and code: {}", clazz.getName(), code);
     }
 }

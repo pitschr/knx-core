@@ -59,9 +59,11 @@ public final class Preconditions {
     public static <T> T checkNonNull(final @Nullable T obj, final Object arg, final @Nullable Object... args) {
         if (obj == null) {
             if (arg instanceof String) {
-                throw new NullPointerException(toErrorMessage((String) arg, args));
+                throw new NullPointerException(Exceptions.toErrorMessage((String) arg, args));
+            } else if (args == null || args.length == 0) {
+                throw new NullPointerException(Exceptions.toErrorMessage("Null for: {}", arg));
             } else {
-                throw new NullPointerException(toErrorMessage("Null for: {}. More Arguments: {}", arg, Arrays.toString(args)));
+                throw new NullPointerException(Exceptions.toErrorMessage("Null for: {}. More Arguments: {}", arg, Arrays.toString(args)));
             }
         }
         return obj;
@@ -98,9 +100,11 @@ public final class Preconditions {
     public static void checkArgument(boolean expression, final @Nullable Object arg, final @Nullable Object... args) {
         if (!expression) {
             if (arg instanceof String) {
-                throw new IllegalArgumentException(toErrorMessage((String) arg, args));
+                throw new IllegalArgumentException(Exceptions.toErrorMessage((String) arg, args));
+            } else if (args == null || args.length == 0) {
+                throw new IllegalArgumentException(Exceptions.toErrorMessage("Illegal Argument for: {}", arg));
             } else {
-                throw new IllegalArgumentException(toErrorMessage("Illegal Argument for: {}. More Arguments: {}", arg, Arrays.toString(args)));
+                throw new IllegalArgumentException(Exceptions.toErrorMessage("Illegal Argument for: {}. More Arguments: {}", arg, Arrays.toString(args)));
             }
         }
     }
@@ -129,79 +133,21 @@ public final class Preconditions {
      * </pre>
      *
      * @param expression a boolean expression
-     * @param obj        an object reference that should be printed in default error message,
+     * @param arg        an object reference that should be printed in default error message,
      *                   or the error message itself
      * @param args       arguments for customized error message
      * @throws IllegalStateException if expression is {@code false}
      */
-    public static void checkState(boolean expression, final @Nullable Object obj, final @Nullable Object... args) {
+    public static void checkState(boolean expression, final @Nullable Object arg, final @Nullable Object... args) {
         if (!expression) {
-            if (obj instanceof String) {
-                throw new IllegalStateException(toErrorMessage((String) obj, args));
+            if (arg instanceof String) {
+                throw new IllegalStateException(Exceptions.toErrorMessage((String) arg, args));
+            } else if (args == null || args.length == 0) {
+                throw new IllegalStateException(Exceptions.toErrorMessage("Illegal State for: {}", arg));
             } else {
-                throw new IllegalStateException(toErrorMessage("Illegal State for: {}. More Arguments: {}", obj, Arrays.toString(args)));
+                throw new IllegalStateException(Exceptions.toErrorMessage("Illegal State for: {}. More Arguments: {}", arg, Arrays.toString(args)));
             }
         }
     }
 
-    /**
-     * Converts the error message which is in printf-style and arguments into a formatted string representation.
-     * It follows the same rule like defined in {@link java.util.Formatter}, plus {@code {}} is considered as
-     * synonym for {@code %s} to allow same error message like SLF4J
-     * <p/>
-     * Example:
-     * <pre>
-     *     toErrorMessage(bool, "The value '%s' should should be between %d and %d.", valueName, 1, 10);
-     *     toErrorMessage(bool, "The value '{}' should should be between {} and {}.", valueName, 1, 10);
-     * </pre>
-     *
-     * @param errorMessage error messages (may be in printf-style)
-     * @param args         arguments
-     * @return formatted error message
-     */
-    public static String toErrorMessage(final String errorMessage, final @Nullable Object... args) {
-        if (errorMessage.contains("{}") || errorMessage.contains("%")) {
-            return String.format(errorMessage.replaceAll("\\{\\}", "%s"), toErrorMessageArguments(args));
-        } else if (args != null && args.length > 0) {
-            return String.format("%s (Arguments: %s)", errorMessage, Arrays.toString(toErrorMessageArguments(args)));
-        } else {
-            return errorMessage;
-        }
-    }
-
-    /**
-     * Converts and return an array of human-friendly argument for error message
-     *
-     * @param args array of arguments
-     * @return array of formatted arguments
-     */
-    private static Object[] toErrorMessageArguments(final @Nullable Object[] args) {
-        if (args == null) {
-            return new Object[]{toErrorMessageArgument(null)};
-        }
-
-        final Object[] tmpArgs = new Object[args.length];
-        for (var i = 0; i < args.length; i++) {
-            tmpArgs[i] = toErrorMessageArgument(args[i]);
-        }
-        return tmpArgs;
-    }
-
-    /**
-     * Converts and return to a human-friendly argument for error message
-     *
-     * @param arg argument
-     * @return formatted argument
-     */
-    private static Object toErrorMessageArgument(final @Nullable Object arg) {
-        if (arg == null) {
-            return "<null>";
-        }
-
-        if (arg instanceof byte[]) {
-            return ByteFormatter.formatHexAsString((byte[]) arg);
-        } else {
-            return arg;
-        }
-    }
 }

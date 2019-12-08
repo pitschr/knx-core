@@ -98,7 +98,7 @@ public class DataPointTypeRegistryTest {
                 .hasMessage("Could not find enum data point type for: UNKNOWN");
 
         assertThatThrownBy(() -> DataPointTypeRegistry.getDataPointType("UNKNOWN")).isInstanceOf(KnxDataPointTypeNotFoundException.class)
-                .hasMessage("Could not find data point type ID 'UNKNOWN'");
+                .hasMessage("Could not find data point type id: UNKNOWN");
     }
 
     /**

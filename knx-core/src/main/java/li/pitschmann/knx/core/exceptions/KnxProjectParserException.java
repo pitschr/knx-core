@@ -23,14 +23,10 @@ import javax.annotation.Nullable;
 /**
  * Exception about any issue during parsing of '*.knxproj' file
  */
-public final class KnxProjectParserException extends RuntimeException {
+public final class KnxProjectParserException extends KnxException {
 
-    public KnxProjectParserException(final String message) {
-        super(message);
-    }
-
-    public KnxProjectParserException(final String message, final Throwable throwable) {
-        super(message, throwable);
+    public KnxProjectParserException(final String message, final @Nullable Object... args) {
+        super(message, args);
     }
 
 }

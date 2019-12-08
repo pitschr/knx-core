@@ -38,6 +38,7 @@ public class PreconditionsTest {
     @DisplayName("Test if object is non-null")
     public void testCheckNonNull() {
         final var objMock = mock(Object.class);
+        when(objMock.toString()).thenReturn("Object{checkNonNull}");
 
         // no exceptions
         assertThat(Preconditions.checkNonNull(objMock)).isSameAs(objMock);
@@ -54,9 +55,14 @@ public class PreconditionsTest {
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("#checkNonNull");
 
-        assertThatThrownBy(() -> Preconditions.checkNonNull(null, "1: {}, 2: %s, 3: %.2f", "NULL", "nothing", 0d))
+        assertThatThrownBy(() -> Preconditions.checkNonNull(null, objMock))
                 .isInstanceOf(NullPointerException.class)
-                .hasMessage("1: NULL, 2: nothing, 3: 0.00");
+                .hasMessage("Null for: Object{checkNonNull}");
+
+        assertThatThrownBy(() -> Preconditions.checkNonNull(null, "1: {}, 2: {}, 3: {}", "NULL", "nothing", 0d))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("1: NULL, 2: nothing, 3: 0.0");
+
         assertThatThrownBy(() -> Preconditions.checkNonNull(null, new StringBuilder("otherObject"), Integer.valueOf(13), Long.valueOf(17), Boolean.TRUE))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Null for: otherObject. More Arguments: [13, 17, true]");
@@ -81,13 +87,17 @@ public class PreconditionsTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("#checkArgument2");
 
-        assertThatThrownBy(() -> Preconditions.checkArgument(false, "1: {}, 2: %s, 3: %.2f", "FIRST", "SECOND", 345.67))
+        assertThatThrownBy(() -> Preconditions.checkArgument(false, "1: {}, 2: {}, 3: {}", "FIRST", "SECOND", 345.67))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("1: FIRST, 2: SECOND, 3: 345.67");
 
         assertThatThrownBy(() -> Preconditions.checkArgument(false, objMock))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Illegal Argument for: Object{checkArgument}. More Arguments: []");
+                .hasMessage("Illegal Argument for: Object{checkArgument}");
+
+        assertThatThrownBy(() -> Preconditions.checkArgument(false, objMock, 1, 2, 3))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Illegal Argument for: Object{checkArgument}. More Arguments: [1, 2, 3]");
 
         assertThatThrownBy(() -> Preconditions.checkArgument(false, objMock, "one", "two", "three"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -113,35 +123,22 @@ public class PreconditionsTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("#checkState2");
 
-        assertThatThrownBy(() -> Preconditions.checkState(false, "4: {}, 5: %s, 6: %.2f", "FOUR", "FIVE", 6789.01))
+        assertThatThrownBy(() -> Preconditions.checkState(false, "4: {}, 5: {}, 6: {}", "FOUR", "FIVE", 6789.01))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("4: FOUR, 5: FIVE, 6: 6789.01");
 
         assertThatThrownBy(() -> Preconditions.checkState(false, objMock))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Illegal State for: Object{checkState}. More Arguments: []");
+                .hasMessage("Illegal State for: Object{checkState}");
+
+
+        assertThatThrownBy(() -> Preconditions.checkState(false, objMock, 1, 2, 3))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Illegal State for: Object{checkState}. More Arguments: [1, 2, 3]");
 
         assertThatThrownBy(() -> Preconditions.checkState(false, objMock, "one", "two", "three"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Illegal State for: Object{checkState}. More Arguments: [one, two, three]");
-    }
-
-    @Test
-    @DisplayName("Test format using #toErrorMessage(..)")
-    public void testToErrorMessage() {
-        // standard formatting
-        assertThat(Preconditions.toErrorMessage("My Message")).isEqualTo("My Message");
-        assertThat(Preconditions.toErrorMessage("{} {}!", "Hello", "World")).isEqualTo("Hello World!");
-        assertThat(Preconditions.toErrorMessage("%s %s!", "Hello", "Earth")).isEqualTo("Hello Earth!");
-        assertThat(Preconditions.toErrorMessage("1+2 = %d", 1 + 2)).isEqualTo("1+2 = 3");
-        assertThat(Preconditions.toErrorMessage("My Message", "Hallo", "Erde")).isEqualTo("My Message (Arguments: [Hallo, Erde])");
-
-        // customized formatting
-        final var bytes = new byte[]{(byte) 0xFF, (byte) 0xCE, 0x56};
-        assertThat(Preconditions.toErrorMessage("Bytes: {}", bytes)).isEqualTo("Bytes: 0xFF CE 56");
-        assertThat(Preconditions.toErrorMessage("Null: {}", (Object) null)).isEqualTo("Null: <null>");
-        assertThat(Preconditions.toErrorMessage("Null: {}", (Object[]) null)).isEqualTo("Null: <null>");
-        assertThat(Preconditions.toErrorMessage("Null: {} {}", null, null)).isEqualTo("Null: <null> <null>");
     }
 
     @Test

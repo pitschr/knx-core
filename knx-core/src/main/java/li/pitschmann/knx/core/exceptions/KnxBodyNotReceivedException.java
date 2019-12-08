@@ -28,7 +28,13 @@ import li.pitschmann.knx.core.body.Body;
  * @author PITSCHR
  */
 public final class KnxBodyNotReceivedException extends KnxCommunicationException {
+
+    /**
+     * Exception when an expected KNX Body ways not received
+     *
+     * @param bodyClass
+     */
     public KnxBodyNotReceivedException(final Class<? extends Body> bodyClass) {
-        super(String.format("Body with class '%s' not received.", bodyClass.getSimpleName()));
+        super(String.format("Body not received with class: {}", bodyClass.getName()));
     }
 }

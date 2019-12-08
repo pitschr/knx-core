@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.exceptions;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
 /**
  * Exception for KNX/IP specific illegal argument
@@ -27,22 +26,25 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public final class KnxIllegalArgumentException extends KnxException {
+
     /**
-     * Creates an exception for KNX/IP illegal argument with message
+     * Creates an exception for KNX/IP illegal argument with message only
      *
      * @param message
      */
-    public KnxIllegalArgumentException(final @Nullable String message) {
+    public KnxIllegalArgumentException(final String message) {
         super(message);
     }
 
     /**
-     * Creates an exception for KNX/IP illegal argument with message and objects for more diagnostic data
+     * Creates an exception for KNX/IP illegal argument with message and
+     * objects for more diagnostic data
      *
      * @param message
-     * @param obj
+     * @param args
      */
-    public KnxIllegalArgumentException(final @Nullable String message, final @Nullable Object... obj) {
-        super(String.format("KNX Illegal Argument: '%s'. Actual: %s", message, Arrays.toString(obj)));
+    public KnxIllegalArgumentException(final String message, final @Nullable Object... args) {
+        super(message, args);
     }
+
 }

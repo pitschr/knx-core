@@ -18,8 +18,6 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import li.pitschmann.knx.core.utils.ByteFormatter;
-
 import javax.annotation.Nullable;
 
 /**
@@ -41,7 +39,8 @@ public final class KnxNumberOutOfRangeException extends KnxException {
                                         final @Nullable Number startInclusive,
                                         final @Nullable Number endInclusive,
                                         final @Nullable Number actual) {
-        super(String.format("Value '%s' for argument '%s' is out of range '%s'..'%s'.", actual, argumentName, startInclusive, endInclusive));
+        super("Value '{}' for argument '{}' is out of range '{}'..'{}'.",
+                actual, argumentName, startInclusive, endInclusive);
     }
 
     /**
@@ -59,7 +58,7 @@ public final class KnxNumberOutOfRangeException extends KnxException {
                                         final @Nullable Number endInclusive,
                                         final @Nullable Number actual,
                                         final @Nullable byte[] rawData) {
-        super(String.format("Value '%s' for argument '%s' is out of range '%s'..'%s'. Raw Data: %s", actual, argumentName, startInclusive,
-                endInclusive, ByteFormatter.formatHexAsString(rawData)));
+        super("Value '{}' for argument '{}' is out of range '{}'..'{}'. Raw Data: {}",
+                actual, argumentName, startInclusive, endInclusive, rawData);
     }
 }

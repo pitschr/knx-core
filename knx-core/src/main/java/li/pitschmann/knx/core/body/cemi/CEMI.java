@@ -297,17 +297,26 @@ public final class CEMI extends AbstractMultiRawData {
         } else if (tpciPacketNumber < 0 || tpciPacketNumber > 0xFF) {
             throw new KnxNumberOutOfRangeException("tpciPacketNumber", 0, 0xFF, tpciPacketNumber);
         } else if ((tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) && tpciPacketNumber != 0) {
-            throw new KnxIllegalArgumentException("TPCI packet number should not be set when TCPI is unnumbered", tpci, tpciPacketNumber);
+            throw new KnxIllegalArgumentException(
+                    "TPCI packet number should not be set when TCPI is unnumbered: tpci={}, tpciPacketNumber={}",
+                    tpci, tpciPacketNumber
+            );
         } else if (apci == APCI.GROUP_VALUE_READ && apciData.length > 0) {
-            throw new KnxIllegalArgumentException("APCI data should not be set when APCI#READ is used.", apci,
-                    ByteFormatter.formatHexAsString(apciData));
+            throw new KnxIllegalArgumentException(
+                    "APCI data should not be set when APCI#READ is used: apci={}, apciData={}",
+                    apci, apciData
+            );
         } else if ((apci == APCI.GROUP_VALUE_WRITE || apci == APCI.GROUP_VALUE_RESPONSE) && apciData.length == 0) {
-            throw new KnxIllegalArgumentException("APCI data should be set when APCI write or response is used.", apci,
-                    ByteFormatter.formatHexAsString(apciData));
+            throw new KnxIllegalArgumentException(
+                    "APCI data should be set when APCI write or response is used: apci={}, apciData={}",
+                    apci, apciData
+            );
         } else if ((destinationAddress instanceof GroupAddress && controlByte2.getAddressType() != AddressType.GROUP)
                 || (destinationAddress instanceof IndividualAddress && controlByte2.getAddressType() != AddressType.INDIVIDUAL)) {
-            throw new KnxIllegalArgumentException("Misconfiguration between address type in ControlByte2 and destination address type.",
-                    controlByte2.getAddressType(), destinationAddress);
+            throw new KnxIllegalArgumentException(
+                    "Address type in ControlByte2 is not compatible with destination address: addressType={}, destinationAddress={}",
+                    controlByte2.getAddressType(), destinationAddress
+            );
         }
 
         final var sourceAddressAsBytes = sourceAddress.getRawData();

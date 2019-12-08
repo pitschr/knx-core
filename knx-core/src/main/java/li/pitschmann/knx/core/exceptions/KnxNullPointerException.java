@@ -33,6 +33,7 @@ public final class KnxNullPointerException extends KnxException {
      * @param argumentName
      */
     public KnxNullPointerException(final @Nullable String argumentName) {
-        super(String.format("Argument '%s' is null.", argumentName));
+        super("Argument '{}' is null.", argumentName);
     }
+
 }

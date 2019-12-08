@@ -28,6 +28,7 @@ import li.pitschmann.knx.core.header.ServiceType;
  * @see ServiceType#getResponseIdentifier()
  */
 public final class KnxServiceTypeHasNoResponseIdentifier extends KnxCommunicationException {
+
     /**
      * Constructor for {@link KnxServiceTypeHasNoResponseIdentifier} in case when you are trying to get a response
      * identifier for given {@link ServiceType} which has no response identifier.
@@ -35,7 +36,7 @@ public final class KnxServiceTypeHasNoResponseIdentifier extends KnxCommunicatio
      * @param serviceType
      */
     public KnxServiceTypeHasNoResponseIdentifier(final ServiceType serviceType) {
-        super(String.format("Current service type '%s' has no response identifier!", serviceType.name()));
+        super("No response identifier available for service type: {}", serviceType.name());
     }
 
 }
