@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.knxproj.parser.Parser;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
@@ -102,13 +103,13 @@ public final class XmlProject {
     private Map<Integer, XmlGroupAddress> groupAddressIntMap = Map.of();
 
     /**
-     * Parses the given {@link Path} and return a {@link XmlProject} instance
+     * Parses the given {@link Path} and return a new {@link XmlProject} instance
      *
      * @param path
      * @return a new instance of {@link XmlProject}
      */
-    public static XmlProject parse(final Path path) {
-        return Parser.parse(path);
+    public static XmlProject of(final Path path) {
+        return Parser.asXmlProject(path);
     }
 
     public String getId() {
@@ -178,7 +179,7 @@ public final class XmlProject {
 
         this.groupRangeMap = this.groupRanges.stream()
                 .collect(
-                        Collectors.toMap(
+                        Collectors.toUnmodifiableMap(
                                 XmlGroupRange::getId, // key is the XML GroupRange ID
                                 Function.identity() // element itself
                         )
@@ -216,7 +217,7 @@ public final class XmlProject {
         // 1st map whereas key is the XML GroupAddress Id
         this.groupAddressMap = this.groupAddresses.stream()
                 .collect(
-                        Collectors.toMap(
+                        Collectors.toUnmodifiableMap(
                                 XmlGroupAddress::getId, // key is the XML GroupAddress ID
                                 Function.identity() // element itself
                         )
@@ -225,7 +226,7 @@ public final class XmlProject {
         // 2nd map whereas key is the KNX GroupAddress in Integer format
         this.groupAddressIntMap = this.groupAddresses.stream()
                 .collect(
-                        Collectors.toMap(
+                        Collectors.toUnmodifiableMap(
                                 x -> Integer.parseInt(x.getAddress()), // key is the KNX group address (as an integer)
                                 Function.identity() // element itself
                         )

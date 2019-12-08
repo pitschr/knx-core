@@ -52,6 +52,7 @@ public class XmlGroupRangeTest {
         // current group range
         final var xmlGroupRange = new XmlGroupRange();
         xmlGroupRange.setId("XGR-ID");
+        xmlGroupRange.setParentId("XGR-PARENT-ID");
         xmlGroupRange.setLevel(4711);
         xmlGroupRange.setRangeStart(13);
         xmlGroupRange.setRangeEnd(17);
@@ -73,6 +74,7 @@ public class XmlGroupRangeTest {
         assertThat(xmlGroupRange).hasToString("XmlGroupRange" +
                 "{" +
                     "id=XGR-ID, " +
+                    "parentId=XGR-PARENT-ID" +
                     "level=4711, " +
                     "rangeStart=13, " +
                     "rangeEnd=17, " +

@@ -95,7 +95,7 @@ public final class ControllerTestExtension
         final XmlProject xmlProjectMock;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
             final var xmlProjectPath = Paths.get(annotation.projectPath());
-            xmlProjectMock = spy(XmlProject.parse(xmlProjectPath));
+            xmlProjectMock = spy(XmlProject.of(xmlProjectPath));
         } else {
             xmlProjectMock = getXmlProjectMock();
         }

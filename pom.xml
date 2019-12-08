@@ -54,7 +54,6 @@
         <version.plugin.maven-assembly-plugin>3.2.0</version.plugin.maven-assembly-plugin>
         <version.plugin.maven-jar-plugin>3.2.0</version.plugin.maven-jar-plugin>
         <!-- Utility -->
-        <version.vtd-xml>2.13.4</version.vtd-xml>
         <rotating-fos.version>0.9.0</rotating-fos.version>
         <!-- Logging -->
         <version.slf4j>1.7.29</version.slf4j>
@@ -73,11 +72,6 @@
     <dependencyManagement>
         <dependencies>
             <!-- Utility -->
-            <dependency>
-                <groupId>com.ximpleware</groupId>
-                <artifactId>vtd-xml</artifactId>
-                <version>${version.vtd-xml}</version>
-            </dependency>
             <dependency>
                 <groupId>com.vlkan.rfos</groupId>
                 <artifactId>rotating-fos</artifactId>

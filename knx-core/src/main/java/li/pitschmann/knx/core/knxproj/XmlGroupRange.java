@@ -127,6 +127,7 @@ public final class XmlGroupRange {
         // @formatter:off
         return Strings.toStringHelper(this)
                 .add("id", id)
+                .add("parentId", parentId)
                 .add("level", level)
                 .add("rangeStart", rangeStart)
                 .add("rangeEnd", rangeEnd)

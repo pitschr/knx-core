@@ -66,7 +66,7 @@ public final class Config {
         final var projectPath = getProjectPath();
         XmlProject tmpXmlProject;
         try {
-            tmpXmlProject = Files.isReadable(projectPath) ? XmlProject.parse(projectPath) : null;
+            tmpXmlProject = Files.isReadable(projectPath) ? XmlProject.of(projectPath) : null;
         } catch (final Throwable t) {
             log.warn("Could not parse KNX Project file: {}. Omitted!", projectPath, t);
             tmpXmlProject = null;

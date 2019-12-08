@@ -25,8 +25,12 @@ import javax.annotation.Nullable;
  */
 public final class KnxProjectParserException extends RuntimeException {
 
-    public KnxProjectParserException(final @Nullable String message) {
+    public KnxProjectParserException(final String message) {
         super(message);
+    }
+
+    public KnxProjectParserException(final String message, final Throwable throwable) {
+        super(message, throwable);
     }
 
 }

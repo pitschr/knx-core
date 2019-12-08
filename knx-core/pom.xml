@@ -44,11 +44,6 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- Utilities -->
-        <dependency>
-            <groupId>com.ximpleware</groupId>
-            <artifactId>vtd-xml</artifactId>
-        </dependency>
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

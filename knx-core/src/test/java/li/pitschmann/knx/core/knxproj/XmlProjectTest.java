@@ -122,7 +122,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Test common methods on non-empty project")
     public void testExistingProject() {
-        final var xmlProject = XmlProject.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.of(KNX_PROJECT);
 
         assertThat(xmlProject.getId()).isEqualTo("P-0503");
         assertThat(xmlProject.getName()).isEqualTo("Project (3-Level)");
@@ -136,21 +136,21 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get all range groups and by id")
     public void testRangeGroups() {
-        final var xmlProject = XmlProject.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.of(KNX_PROJECT);
 
         // existing range group
         assertThat(xmlProject.getGroupRangeById("P-0503-0_GR-67").getName()).isEqualTo("Main Group - Flags");
         assertThat(xmlProject.getGroupRangeById("P-0503-0_GR-50").getName()).isEqualTo("Middle Group - DPT (3-bytes)");
 
         // non-exiting range group
-        assertThat(xmlProject.getGroupRangeById(null)).isNull();
         assertThat(xmlProject.getGroupRangeById("foo")).isNull();
+        assertThatThrownBy(() -> xmlProject.getGroupRangeById(null)).isInstanceOf(NullPointerException.class);
     }
 
     @Test
     @DisplayName("Get all group addresses and by id")
     public void testGroupAddresses() {
-        final var xmlProject = XmlProject.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.of(KNX_PROJECT);
 
         // exiting group addresses
         assertThat(xmlProject.getGroupAddressById("P-0503-0_GA-117").getName()).isEqualTo("Sub Group - DPT 1 (0x00)");
@@ -164,12 +164,13 @@ public class XmlProjectTest {
         assertThat(xmlProject.getGroupAddressById("foo")).isNull();
         assertThat(xmlProject.getGroupAddress(64711)).isNull();
         assertThat(xmlProject.getGroupAddress(GroupAddress.of(31, 2, 3))).isNull();
+        assertThatThrownBy(() -> xmlProject.getGroupAddressById(null)).isInstanceOf(NullPointerException.class);
     }
 
     @Test
     @DisplayName("Get all main groups")
     public void testAllMainGroups() {
-        final var xmlProject = XmlProject.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.of(KNX_PROJECT);
 
         final var mainRanges = xmlProject.getMainGroupRanges();
         assertThat(mainRanges).hasSize(3);
@@ -181,7 +182,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get selected main group")
     public void testMainGroup() {
-        final var xmlProject = XmlProject.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.of(KNX_PROJECT);
 
         // existing main groups
         assertThat(xmlProject.getGroupRange(0).getName()).isEqualTo("Main Group - DPT");
@@ -200,7 +201,7 @@ public class XmlProjectTest {
     @Test
     @DisplayName("Get selected middle group")
     public void testMiddleGroup() {
-        final var xmlProject = XmlProject.parse(KNX_PROJECT);
+        final var xmlProject = XmlProject.of(KNX_PROJECT);
 
         // existing main groups
         assertThat(xmlProject.getGroupRange(0, 0).getName()).isEqualTo("Middle Group - DPT (1-byte)");
