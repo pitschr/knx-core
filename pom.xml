@@ -280,6 +280,14 @@
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
                         <version>${version.coveralls-maven-plugin}</version>
+                        <!-- Required due bug: https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.xml.bind</groupId>
+                                <artifactId>jaxb-api</artifactId>
+                                <version>2.3.1</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
