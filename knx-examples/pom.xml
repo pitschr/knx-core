@@ -79,6 +79,18 @@
     <!-- Build -->
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${version.maven-jar-plugin}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>li.pitschmann.knx.examples</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <!--
             Creates a JAR file with all dependencies (one fat JAR)
             The main class will be: li.pitschmann.knx.examples.tty.Main
@@ -86,7 +98,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${version.plugin.maven-assembly-plugin}</version>
+                <version>${version.maven-assembly-plugin}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -109,4 +121,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

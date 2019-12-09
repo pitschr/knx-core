@@ -46,26 +46,26 @@
 
     <!-- Properties -->
     <properties>
+        <project.build.java.source>11</project.build.java.source>
+        <project.build.java.target>11</project.build.java.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.maven-source-plugin>3.1.0</version.maven-source-plugin>
-        <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
-        <version.plugin.maven-compiler-plugin>3.8.1</version.plugin.maven-compiler-plugin>
-        <version.plugin.maven-surefire-plugin>2.22.1</version.plugin.maven-surefire-plugin>
-        <version.plugin.maven-assembly-plugin>3.2.0</version.plugin.maven-assembly-plugin>
-        <version.plugin.maven-jar-plugin>3.2.0</version.plugin.maven-jar-plugin>
-        <!-- Utility -->
-        <rotating-fos.version>0.9.0</rotating-fos.version>
-        <!-- Logging -->
-        <version.slf4j>1.7.29</version.slf4j>
-        <version.logback-classic>1.2.3</version.logback-classic>
-        <!-- Test -->
-        <version.junit-jupiter-engine>5.5.2</version.junit-jupiter-engine>
-        <version.junit-platform-runner>1.5.2</version.junit-platform-runner>
-        <version.assertj-core>3.11.1</version.assertj-core>
-        <version.mockito-inline>2.25.0</version.mockito-inline>
-        <!-- Code Coverage -->
-        <version.jacoco-maven-plugin>0.8.2</version.jacoco-maven-plugin>
-        <version.coveralls-maven-plugin>4.3.0</version.coveralls-maven-plugin>
+        <!-- Maven Plugin Versions and Licenses -->
+        <version.coveralls-maven-plugin>4.3.0</version.coveralls-maven-plugin> <!-- MIT -->
+        <version.jacoco-maven-plugin>0.8.2</version.jacoco-maven-plugin> <!-- EPL 2.0 -->
+        <version.maven-assembly-plugin>3.2.0</version.maven-assembly-plugin> <!-- Apache 2.0 -->
+        <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin> <!-- Apache 2.0 -->
+        <version.maven-jar-plugin>3.2.0</version.maven-jar-plugin> <!-- Apache 2.0 -->
+        <version.maven-release-plugin>2.5.3</version.maven-release-plugin> <!-- Apache 2.0 -->
+        <version.maven-source-plugin>3.1.0</version.maven-source-plugin> <!-- Apache 2.0 -->
+        <version.maven-surefire-plugin>2.22.1</version.maven-surefire-plugin> <!-- Apache 2.0 -->
+        <!-- Dependency Versions and Licenses -->
+        <version.assertj-core>3.14.0</version.assertj-core> <!-- Apache 2.0 -->
+        <version.junit-jupiter-engine>5.5.2</version.junit-jupiter-engine> <!-- EPL 2.0 -->
+        <version.junit-platform-runner>1.5.2</version.junit-platform-runner> <!-- EPL 2.0 -->
+        <version.logback-classic>1.2.3</version.logback-classic> <!-- EPL 1.0, LGPL 2.1 -->
+        <version.mockito-inline>3.2.0</version.mockito-inline> <!-- MIT -->
+        <version.rotating-fos>0.9.1</version.rotating-fos> <!-- Apache 2.0 -->
+        <version.slf4j>1.7.29</version.slf4j> <!-- MIT -->
     </properties>
 
     <!-- Dependency Management -->
@@ -75,7 +75,7 @@
             <dependency>
                 <groupId>com.vlkan.rfos</groupId>
                 <artifactId>rotating-fos</artifactId>
-                <version>${rotating-fos.version}</version>
+                <version>${version.rotating-fos}</version>
             </dependency>
             <!-- Logging -->
             <dependency>
@@ -165,11 +165,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.plugin.maven-compiler-plugin}</version>
+                <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <encoding>UTF-8</encoding>
+                    <source>${project.build.java.source}</source>
+                    <target>${project.build.java.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
                         <arg>-parameters</arg>
@@ -210,7 +210,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${version.plugin.maven-surefire-plugin}</version>
+                <version>${version.maven-surefire-plugin}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.junit.jupiter</groupId>
@@ -219,7 +219,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>@{argLine} -Duser.timezone=UTC -Duser.language=en -Duser.country=US -Dfile.encoding=UTF-8</argLine>
+                    <argLine>@{argLine} -Duser.timezone=UTC -Duser.language=en -Duser.country=US -Dfile.encoding=${project.build.sourceEncoding}</argLine>
                 </configuration>
             </plugin>
         </plugins>
@@ -280,17 +280,10 @@
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
                         <version>${version.coveralls-maven-plugin}</version>
-                        <!-- Required due bug: https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax.xml.bind</groupId>
-                                <artifactId>jaxb-api</artifactId>
-                                <version>2.3.1</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
+
 </project>
