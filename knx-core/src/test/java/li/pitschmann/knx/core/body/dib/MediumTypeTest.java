@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.dib;
 
-import li.pitschmann.knx.core.body.dib.MediumType;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class MediumTypeTest extends AbstractKnxByteEnumTest<MediumType> {
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(MediumType.valueOf(0x02)).isEqualTo(MediumType.TP);
         assertThat(MediumType.valueOf(0x04)).isEqualTo(MediumType.PL110);
         assertThat(MediumType.valueOf(0x10)).isEqualTo(MediumType.RF);
@@ -45,7 +45,7 @@ public final class MediumTypeTest extends AbstractKnxByteEnumTest<MediumType> {
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(MediumType.TP.getFriendlyName()).isEqualTo("Twisted Pair 1 (9600bit/s)");
         assertThat(MediumType.PL110.getFriendlyName()).isEqualTo("Power Line 110 (110 kHz)");
         assertThat(MediumType.RF.getFriendlyName()).isEqualTo("Radio Frequency (868 MHz)");

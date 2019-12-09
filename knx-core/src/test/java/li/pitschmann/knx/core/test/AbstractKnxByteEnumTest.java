@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.test;
 
 import li.pitschmann.knx.core.KnxByteEnum;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @param <E>
  * @author PITSCHR
  */
-abstract class AbstractKnxByteEnumTest<E extends Enum<E> & KnxByteEnum> extends AbstractKnxEnumTest<E> {
+public abstract class AbstractKnxByteEnumTest<E extends Enum<E> & KnxByteEnum> extends AbstractKnxEnumTest<E> {
 
     /**
      * Tests if the {@link KnxByteEnum#getCode()} and {@link KnxByteEnum#getCodeAsByte()} is same for single byte enum
@@ -51,7 +51,7 @@ abstract class AbstractKnxByteEnumTest<E extends Enum<E> & KnxByteEnum> extends 
      * Tests the {@code valueOf(int)} static method with <strong>valid</strong> samples
      */
     @Override
-    abstract void validValueOf();
+    protected abstract void validValueOf();
 
     /**
      * Tests the {@code valueOf(int)} static method with <strong>invalid</strong> samples
@@ -73,6 +73,6 @@ abstract class AbstractKnxByteEnumTest<E extends Enum<E> & KnxByteEnum> extends 
      * Tests the {@link KnxByteEnum#getFriendlyName()}
      */
     @Override
-    abstract void friendlyName();
+    protected abstract void friendlyName();
 
 }

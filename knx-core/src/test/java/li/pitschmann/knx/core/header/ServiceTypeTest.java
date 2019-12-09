@@ -16,18 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.header;
 
+import li.pitschmann.knx.core.test.AbstractKnxEnumTest;
 import li.pitschmann.knx.core.body.dib.ServiceTypeFamily;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxServiceTypeHasNoResponseIdentifier;
-import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Bytes;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Verifies {@link ServiceType} enum class
+ *
+ * @author PITSCHR
+ */
 public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
     @Override
     protected int numberOfElements() {

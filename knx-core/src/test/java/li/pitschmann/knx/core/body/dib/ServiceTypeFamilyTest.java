@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.dib;
 
-import li.pitschmann.knx.core.body.dib.ServiceTypeFamily;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(ServiceTypeFamily.valueOf(0x02)).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceTypeFamily.valueOf(0x03)).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(ServiceTypeFamily.valueOf(0x04)).isEqualTo(ServiceTypeFamily.TUNNELING);
@@ -45,7 +45,7 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(ServiceTypeFamily.CORE.getFriendlyName()).isEqualTo("KNX/IP Core");
         assertThat(ServiceTypeFamily.DEVICE_MANAGEMENT.getFriendlyName()).isEqualTo("KNX device Management");
         assertThat(ServiceTypeFamily.TUNNELING.getFriendlyName()).isEqualTo("KNX/IP Tunneling");

@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.cemi;
 
-import li.pitschmann.knx.core.body.cemi.Priority;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class PriorityTest extends AbstractKnxByteEnumTest<Priority> {
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(Priority.valueOf(0x00)).isEqualTo(Priority.SYSTEM);
         assertThat(Priority.valueOf(0x01)).isEqualTo(Priority.NORMAL);
         assertThat(Priority.valueOf(0x02)).isEqualTo(Priority.URGENT);
@@ -45,7 +45,7 @@ public final class PriorityTest extends AbstractKnxByteEnumTest<Priority> {
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(Priority.SYSTEM.getFriendlyName()).isEqualTo("System Priority");
         assertThat(Priority.NORMAL.getFriendlyName()).isEqualTo("Normal Priority");
         assertThat(Priority.URGENT.getFriendlyName()).isEqualTo("Urgent Priority");

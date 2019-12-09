@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.cemi;
 
-import li.pitschmann.knx.core.body.cemi.TPCI;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class TPCITest extends AbstractKnxByteEnumTest<TPCI> {
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(TPCI.valueOf(0x00)).isEqualTo(TPCI.UNNUMBERED_PACKAGE);
         assertThat(TPCI.valueOf(0x40)).isEqualTo(TPCI.NUMBERED_PACKAGE);
         assertThat(TPCI.valueOf(0x80)).isEqualTo(TPCI.UNNUMBERED_CONTROL_DATA);
@@ -45,7 +45,7 @@ public final class TPCITest extends AbstractKnxByteEnumTest<TPCI> {
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(TPCI.UNNUMBERED_PACKAGE.getFriendlyName()).isEqualTo("UDT unnumbered package");
         assertThat(TPCI.NUMBERED_PACKAGE.getFriendlyName()).isEqualTo("NDT numbered package");
         assertThat(TPCI.UNNUMBERED_CONTROL_DATA.getFriendlyName()).isEqualTo("UCD unnumbered control data");
@@ -54,7 +54,7 @@ public final class TPCITest extends AbstractKnxByteEnumTest<TPCI> {
 
     @Test
     @Override
-    void testToString() {
+    public void testToString() {
         assertThat(TPCI.UNNUMBERED_PACKAGE).hasToString("TPCI{name=UNNUMBERED_PACKAGE, friendlyName=UDT unnumbered package, code=0 (0x00)}");
         assertThat(TPCI.NUMBERED_CONTROL_DATA)
                 .hasToString("TPCI{name=NUMBERED_CONTROL_DATA, friendlyName=NCD numbered control data, code=192 (0xC0)}");

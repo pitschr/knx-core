@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.tunnel;
 
-import li.pitschmann.knx.core.body.tunnel.LayerType;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class LayerTypeTest extends AbstractKnxByteEnumTest<LayerType> {
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(LayerType.valueOf(0x02)).isEqualTo(LayerType.TUNNEL_LINKLAYER);
         assertThat(LayerType.valueOf(0x04)).isEqualTo(LayerType.TUNNEL_RAW);
         assertThat(LayerType.valueOf(0x80)).isEqualTo(LayerType.TUNNEL_BUSMONITOR);
@@ -44,7 +44,7 @@ public final class LayerTypeTest extends AbstractKnxByteEnumTest<LayerType> {
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(LayerType.TUNNEL_LINKLAYER.getFriendlyName()).isEqualTo("Tunneling Link Layer");
         assertThat(LayerType.TUNNEL_RAW.getFriendlyName()).isEqualTo("Tunneling Raw Layer");
         assertThat(LayerType.TUNNEL_BUSMONITOR.getFriendlyName()).isEqualTo("Tunneling Busmonitor Layer");

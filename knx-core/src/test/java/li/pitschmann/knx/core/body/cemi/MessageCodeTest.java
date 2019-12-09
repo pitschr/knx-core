@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.cemi;
 
-import li.pitschmann.knx.core.body.cemi.MessageCode;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class MessageCodeTest extends AbstractKnxByteEnumTest<MessageCode> 
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(MessageCode.valueOf(0x11)).isEqualTo(MessageCode.L_DATA_REQ);
         assertThat(MessageCode.valueOf(0x2E)).isEqualTo(MessageCode.L_DATA_CON);
         assertThat(MessageCode.valueOf(0x29)).isEqualTo(MessageCode.L_DATA_IND);
@@ -44,7 +44,7 @@ public final class MessageCodeTest extends AbstractKnxByteEnumTest<MessageCode> 
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(MessageCode.L_DATA_REQ.getFriendlyName()).isEqualTo("L-Data.req (Request)");
         assertThat(MessageCode.L_DATA_CON.getFriendlyName()).isEqualTo("L-Data.con (Confirmation)");
         assertThat(MessageCode.L_DATA_IND.getFriendlyName()).isEqualTo("L-Data.ind (Indication)");

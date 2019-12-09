@@ -41,9 +41,7 @@ public final class PluginConfigValueTest {
     @Test
     @DisplayName("OK: Test General Plugin Config Value in Plugin class")
     public void testInPluginClass() {
-        final var plugin = new DummyPlugin();
-
-        final var configValue = plugin.configValueObject;
+        final var configValue = DummyPlugin.configValueObject;
         assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.b-name"); // lower-cased!
     }
 

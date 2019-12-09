@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.cemi;
 
-import li.pitschmann.knx.core.body.cemi.APCI;
+import li.pitschmann.knx.core.test.AbstractKnxEnumTest;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.utils.Bytes;
 import org.junit.jupiter.api.Test;

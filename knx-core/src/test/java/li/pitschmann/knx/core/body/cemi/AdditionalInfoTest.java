@@ -16,9 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core;
+package li.pitschmann.knx.core.body.cemi;
 
-import li.pitschmann.knx.core.body.cemi.AdditionalInfo;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import org.junit.jupiter.api.Test;
 

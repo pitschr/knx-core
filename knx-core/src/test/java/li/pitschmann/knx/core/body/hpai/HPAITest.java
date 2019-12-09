@@ -16,10 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core;
+package li.pitschmann.knx.core.body.hpai;
 
-import li.pitschmann.knx.core.body.hpai.HPAI;
-import li.pitschmann.knx.core.body.hpai.HostProtocol;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;

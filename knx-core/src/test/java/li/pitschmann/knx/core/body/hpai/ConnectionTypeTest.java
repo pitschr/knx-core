@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.hpai;
 
-import li.pitschmann.knx.core.body.hpai.ConnectionType;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class ConnectionTypeTest extends AbstractKnxByteEnumTest<Connection
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(ConnectionType.valueOf(0x03)).isEqualTo(ConnectionType.DEVICE_MANAGEMENT_CONNECTION);
         assertThat(ConnectionType.valueOf(0x04)).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(ConnectionType.valueOf(0x06)).isEqualTo(ConnectionType.REMOTE_LOGGING_CONNECTION);
@@ -46,7 +46,7 @@ public final class ConnectionTypeTest extends AbstractKnxByteEnumTest<Connection
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(ConnectionType.DEVICE_MANAGEMENT_CONNECTION.getFriendlyName()).isEqualTo("Device Management Connection");
         assertThat(ConnectionType.TUNNEL_CONNECTION.getFriendlyName()).isEqualTo("Tunnel Connection");
         assertThat(ConnectionType.REMOTE_LOGGING_CONNECTION.getFriendlyName()).isEqualTo("Remote Logging Connection");

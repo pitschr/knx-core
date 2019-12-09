@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.dib;
 
-import li.pitschmann.knx.core.body.dib.DescriptionType;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ public final class DescriptionTypeTest extends AbstractKnxByteEnumTest<Descripti
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(DescriptionType.valueOf(0x01)).isEqualTo(DescriptionType.DEVICE_INFO);
         assertThat(DescriptionType.valueOf(0x02)).isEqualTo(DescriptionType.SUPPORTED_SERVICE_FAMILIES);
         assertThat(DescriptionType.valueOf(0x03)).isEqualTo(DescriptionType.IP_CONFIG);
@@ -47,7 +47,7 @@ public final class DescriptionTypeTest extends AbstractKnxByteEnumTest<Descripti
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(DescriptionType.DEVICE_INFO.getFriendlyName()).isEqualTo("Device information");
         assertThat(DescriptionType.SUPPORTED_SERVICE_FAMILIES.getFriendlyName()).isEqualTo("Supported Service Families");
         assertThat(DescriptionType.IP_CONFIG.getFriendlyName()).isEqualTo("IP Configuration");

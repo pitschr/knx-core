@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.test;
 
 import li.pitschmann.knx.core.KnxByteEnum;
 import li.pitschmann.knx.core.KnxEnum;
@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.fail;
  * @param <E>
  * @author PITSCHR
  */
-abstract class AbstractKnxEnumTest<E extends Enum<E> & KnxEnum> {
+public abstract class AbstractKnxEnumTest<E extends Enum<E> & KnxEnum> {
     @SuppressWarnings("unchecked")
     private final Class<E> currentClass = (Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 
@@ -78,25 +78,25 @@ abstract class AbstractKnxEnumTest<E extends Enum<E> & KnxEnum> {
      * Tests the {@code valueOf(int)} static method with <strong>valid</strong> samples
      */
     @Test
-    abstract void validValueOf();
+    protected abstract void validValueOf();
 
     /**
      * Tests the {@code valueOf(int)} static method with <strong>invalid</strong> samples
      */
     @Test
-    abstract void invalidValueOf();
+    protected abstract void invalidValueOf();
 
     /**
      * Tests the {@link KnxByteEnum#getFriendlyName()}
      */
     @Test
-    abstract void friendlyName();
+    protected abstract void friendlyName();
 
     /**
      * Tests the {@link #toString()}
      */
     @Test
-    abstract void testToString();
+    protected abstract void testToString();
 
     /**
      * Invokes the static {@code valueOf(int)} method of KNX Enum class.

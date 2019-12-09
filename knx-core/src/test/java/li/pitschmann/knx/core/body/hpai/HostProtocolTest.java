@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.hpai;
 
-import li.pitschmann.knx.core.body.hpai.HostProtocol;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,14 +36,14 @@ public final class HostProtocolTest extends AbstractKnxByteEnumTest<HostProtocol
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(HostProtocol.valueOf(0x01)).isEqualTo(HostProtocol.IPV4_UDP);
         assertThat(HostProtocol.valueOf(0x02)).isEqualTo(HostProtocol.IPV4_TCP);
     }
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(HostProtocol.IPV4_UDP.getFriendlyName()).isEqualTo("IP v4 UDP communication");
         assertThat(HostProtocol.IPV4_TCP.getFriendlyName()).isEqualTo("IP v4 TCP communication");
     }

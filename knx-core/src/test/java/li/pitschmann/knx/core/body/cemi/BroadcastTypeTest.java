@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.cemi;
 
-import li.pitschmann.knx.core.body.cemi.BroadcastType;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,14 +36,14 @@ public final class BroadcastTypeTest extends AbstractKnxByteEnumTest<BroadcastTy
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(BroadcastType.valueOf(0x00)).isEqualTo(BroadcastType.SYSTEM);
         assertThat(BroadcastType.valueOf(0x01)).isEqualTo(BroadcastType.NORMAL);
     }
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(BroadcastType.SYSTEM.getFriendlyName()).isEqualTo("System Broadcast");
         assertThat(BroadcastType.NORMAL.getFriendlyName()).isEqualTo("Normal Broadcast");
     }

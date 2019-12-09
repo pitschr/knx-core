@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.enums;
+package li.pitschmann.knx.core.body.address;
 
-import li.pitschmann.knx.core.body.address.AddressType;
+import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,14 +36,14 @@ public final class AddressTypeTest extends AbstractKnxByteEnumTest<AddressType> 
 
     @Test
     @Override
-    void validValueOf() {
+    public void validValueOf() {
         assertThat(AddressType.valueOf(0x00)).isEqualTo(AddressType.INDIVIDUAL);
         assertThat(AddressType.valueOf(0x01)).isEqualTo(AddressType.GROUP);
     }
 
     @Test
     @Override
-    void friendlyName() {
+    public void friendlyName() {
         assertThat(AddressType.INDIVIDUAL.getFriendlyName()).isEqualTo("Individual Address");
         assertThat(AddressType.GROUP.getFriendlyName()).isEqualTo("Group Address");
     }
