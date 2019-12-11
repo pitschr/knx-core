@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+    Set log level to 'ALL' for an useful code coverage.
+
+    Due limitation from CI Travis (error: "The job exceeded the maximum log length, and has been terminated.")
+    the logging will be done without any appender because the log length will be too long otherwise.
+    -->
+    <root level="ALL"/>
+</configuration>

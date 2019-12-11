@@ -70,6 +70,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
         path = client.getConfig(FileStatisticPlugin.PATH);
         format = client.getConfig(FileStatisticPlugin.FORMAT);
         final var intervalMs = client.getConfig(FileStatisticPlugin.INTERVAL_MS);
+        log.info("Initialized '{}' with: [path={}, format={}, intervalMs={}]", getClass().getName(), path, format, intervalMs);
 
         final var baseFile = path.toString();
 

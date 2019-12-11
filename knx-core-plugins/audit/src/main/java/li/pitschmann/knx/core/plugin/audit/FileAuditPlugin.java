@@ -68,6 +68,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
         // configurations
         path = client.getConfig(FileAuditPlugin.PATH);
         format = client.getConfig(FileAuditPlugin.FORMAT);
+        log.info("Initialized '{}' with: [path={}, format={}]", getClass().getName(), path, format);
 
         final var baseFile = path.toString();
 

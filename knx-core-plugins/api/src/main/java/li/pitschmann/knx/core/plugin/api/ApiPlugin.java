@@ -27,10 +27,8 @@ import org.slf4j.LoggerFactory;
 import ro.pippo.core.HttpConstants;
 import ro.pippo.core.Pippo;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Plugin for RESTful API (web server)
@@ -46,13 +44,17 @@ public class ApiPlugin implements ExtensionPlugin {
     );
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private AtomicBoolean ready = new AtomicBoolean();
     private KnxClient client;
     private Pippo pippo;
-    private int port = -1;
+    private int pippoPort = -1;
 
     @Override
     public void onInitialization(final KnxClient client) {
         this.client = Objects.requireNonNull(client);
+        pippoPort = client.getConfig(PORT);
+        // port will be
+        log.info("Initialized '{}' with: [port={}]", getClass().getName(), pippoPort);
     }
 
     @Override
@@ -65,14 +67,16 @@ public class ApiPlugin implements ExtensionPlugin {
 
         pippo = new Pippo(app);
         startPippo(pippo);
-        // set port and state
-        port = pippo.getServer().getPort();
-        log.debug("API Plugin and Web Server started at port {}: {}", port, client);
+        ready.getAndSet(true);
+        // set port and state (port may be different than configuration when under test)
+        pippoPort = pippo.getServer().getPort();
+        log.debug("API Plugin and Web Server started at port {}: {}", pippoPort, client);
     }
 
     @Override
     public void onShutdown() {
-        port = -1;
+        ready.getAndSet(false);
+        pippoPort = -1;
         if (pippo != null) {
             pippo.stop();
             pippo = null;
@@ -86,7 +90,7 @@ public class ApiPlugin implements ExtensionPlugin {
      * @param pippo
      */
     protected void startPippo(final Pippo pippo) {
-        pippo.start(client.getConfig(PORT));
+        pippo.start(pippoPort);
     }
 
     /**
@@ -95,8 +99,7 @@ public class ApiPlugin implements ExtensionPlugin {
      * @return actual port
      */
     public final int getPort() {
-        Preconditions.checkState(isReady(), "API Web Server is not ready yet!");
-        return port;
+        return pippoPort;
     }
 
     /**
@@ -105,27 +108,7 @@ public class ApiPlugin implements ExtensionPlugin {
      * @return {@code true} if server is ready, otherwise {@code false}
      */
     public final boolean isReady() {
-        return this.port != -1;
+        return ready.get();
     }
 
-    /**
-     * Creates a new {@link HttpRequest.Builder} for requests to API
-     * <p/>
-     * As we are using communicating via JSON only, the headers
-     * {@link HttpConstants.Header#ACCEPT} and {@link HttpConstants.Header#CONTENT_TYPE}
-     * are pre-defined with {@link HttpConstants.ContentType#APPLICATION_JSON}.
-     *
-     * @param path the path to be requested to API
-     * @return Builder for HttpRequest
-     */
-    public final HttpRequest.Builder newRequestBuilder(final String path) {
-        Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
-        try {
-            return HttpRequest.newBuilder(new URI("http://localhost:" + getPort() + path))
-                    .header(HttpConstants.Header.ACCEPT, HttpConstants.ContentType.APPLICATION_JSON)
-                    .header(HttpConstants.Header.CONTENT_TYPE, HttpConstants.ContentType.APPLICATION_JSON);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid path provided: " + path);
-        }
-    }
 }

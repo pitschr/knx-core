@@ -72,8 +72,6 @@
             -Duser.language=en
             -Duser.country=US
             -Dfile.encoding=UTF-8
-            -Dlogback.configurationFile=logback-off.xml
-            -Dorg.slf4j.simpleLogger.defaultLogLevel=ALL
         </setting.surefire.default.argLine>
     </properties>
 
@@ -86,6 +84,7 @@
                 <artifactId>rotating-fos</artifactId>
                 <version>${version.rotating-fos}</version>
             </dependency>
+
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -277,6 +276,11 @@
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <argLine>
+                    -Dlogback.configurationFile=logback-off.xml
+                </argLine>
+            </properties>
             <build>
                 <plugins>
                     <!--

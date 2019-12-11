@@ -49,6 +49,7 @@ public class ApiPluginTest {
         final var knxClientMock = mock(KnxClient.class);
         final var configMock = mock(Config.class);
         when(knxClientMock.getConfig()).thenReturn(configMock);
+        when(knxClientMock.getConfig(ApiPlugin.PORT)).thenReturn(4711);
 
         //
         // Verification
