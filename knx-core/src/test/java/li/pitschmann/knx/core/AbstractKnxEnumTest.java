@@ -16,10 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.test;
+package li.pitschmann.knx.core;
 
-import li.pitschmann.knx.core.KnxByteEnum;
-import li.pitschmann.knx.core.KnxEnum;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxException;
 import org.junit.jupiter.api.Test;

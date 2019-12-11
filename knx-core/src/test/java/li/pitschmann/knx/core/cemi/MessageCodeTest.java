@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.test.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
