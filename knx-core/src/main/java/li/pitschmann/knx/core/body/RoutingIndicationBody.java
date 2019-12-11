@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Body for Routing Indication
  *
@@ -95,7 +94,6 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     public ServiceType getServiceType() {
         return ServiceType.ROUTING_INDICATION;
     }
-
 
     public CEMI getCEMI() {
         return this.cemi;

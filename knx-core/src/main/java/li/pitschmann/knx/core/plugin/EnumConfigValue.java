@@ -1,6 +1,5 @@
 package li.pitschmann.knx.core.plugin;
 
-
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;

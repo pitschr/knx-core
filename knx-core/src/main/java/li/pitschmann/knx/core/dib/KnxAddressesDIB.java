@@ -106,11 +106,9 @@ public final class KnxAddressesDIB extends AbstractDIB {
         }
     }
 
-
     public IndividualAddress getKnxAddress() {
         return this.knxAddress;
     }
-
 
     public List<IndividualAddress> getAdditionalAddresses() {
         return this.additionalAddresses;

@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Body for Connection State Response
  * <p>
@@ -114,7 +113,6 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
     public int getChannelId() {
         return this.channelId;
     }
-
 
     public Status getStatus() {
         return this.status;

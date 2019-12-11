@@ -114,7 +114,6 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         }
     }
 
-
     public List<ServiceTypeFamilyVersion> getServiceFamilies() {
         return this.serviceFamilies;
     }

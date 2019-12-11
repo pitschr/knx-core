@@ -140,7 +140,6 @@ public class MainClass {
                 .plugin(MyMonitorPlugin.class) // register MyMonitorPlugin
                 .build();                      // create immutable config
 
-
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // wait 60 seconds
@@ -218,7 +217,6 @@ public class MainClass {
                 .setting(MyConfigurablePlugin.ANIMAL, "cat")
                 .setting(MyConfigurablePlugin.LOUD, "meow!")
                 .build();
-
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {

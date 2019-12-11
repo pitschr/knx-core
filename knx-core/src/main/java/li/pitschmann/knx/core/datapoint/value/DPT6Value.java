@@ -173,7 +173,6 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
             return (this.b & (0x80 >> bit)) != 0;
         }
 
-
         public Mode getMode() {
             return Mode.of(this.b & 0x07);
         }

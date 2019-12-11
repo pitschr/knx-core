@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Abstract DIB for all DIB implementations
  *
@@ -55,7 +54,6 @@ abstract class AbstractDIB extends AbstractMultiRawData {
     public int getLength() {
         return this.length;
     }
-
 
     public DescriptionType getDescriptionType() {
         return this.descriptionType;

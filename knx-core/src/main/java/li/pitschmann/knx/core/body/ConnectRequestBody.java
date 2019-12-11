@@ -128,16 +128,13 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
         return ServiceType.CONNECT_REQUEST;
     }
 
-
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
-
     public HPAI getDataEndpoint() {
         return this.dataEndpoint;
     }
-
 
     public ConnectionRequestInformation getConnectionRequestInformation() {
         return this.connectionRequestInformation;

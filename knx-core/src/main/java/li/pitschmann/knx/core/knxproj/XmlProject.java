@@ -176,7 +176,6 @@ public final class XmlProject {
                         }
                 ).collect(Collectors.toUnmodifiableList());
 
-
         this.groupRangeMap = this.groupRanges.stream()
                 .collect(
                         Collectors.toUnmodifiableMap(

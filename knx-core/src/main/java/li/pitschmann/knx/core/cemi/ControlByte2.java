@@ -119,7 +119,6 @@ public final class ControlByte2 extends AbstractSingleRawData {
         // nothing to be validated
     }
 
-
     public AddressType getAddressType() {
         return this.addressType;
     }

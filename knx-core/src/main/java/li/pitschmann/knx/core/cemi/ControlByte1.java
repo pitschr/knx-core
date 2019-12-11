@@ -156,11 +156,9 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.repeatEnabled;
     }
 
-
     public BroadcastType getBroadcastType() {
         return this.broadcastType;
     }
-
 
     public Priority getPriority() {
         return this.priority;

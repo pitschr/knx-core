@@ -1,6 +1,5 @@
 package li.pitschmann.knx.core.utils;
 
-
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;

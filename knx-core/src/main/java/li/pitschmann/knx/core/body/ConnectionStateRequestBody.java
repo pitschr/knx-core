@@ -123,7 +123,6 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
         return this.channelId;
     }
 
-
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }

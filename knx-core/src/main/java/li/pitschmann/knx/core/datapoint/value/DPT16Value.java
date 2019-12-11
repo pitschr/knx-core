@@ -128,7 +128,6 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         }
     }
 
-
     public String getCharacters() {
         return this.characters;
     }

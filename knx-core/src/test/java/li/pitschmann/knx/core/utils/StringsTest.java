@@ -69,7 +69,6 @@ public class StringsTest {
         TestHelpers.assertThatNotInstantiable(Strings.class);
     }
 
-
     /**
      * Dummy class as we cannot mock 'Class.class'
      */

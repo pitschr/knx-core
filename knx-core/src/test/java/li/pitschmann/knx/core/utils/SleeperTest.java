@@ -137,7 +137,6 @@ public class SleeperTest {
         thread.interrupt();
     }
 
-
     /**
      * Test the interruption of {@link Sleeper#seconds(long)}, {@link Sleeper#milliseconds(long)} and
      * {@link Sleeper#sleep(long, java.util.concurrent.TimeUnit)}

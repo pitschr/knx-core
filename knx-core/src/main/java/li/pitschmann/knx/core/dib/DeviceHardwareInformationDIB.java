@@ -149,7 +149,6 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
         }
     }
 
-
     public MediumType getMediumType() {
         return this.mediumType;
     }
@@ -157,7 +156,6 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
     public boolean isProgrammingMode() {
         return this.programmingMode;
     }
-
 
     public IndividualAddress getIndividualAddress() {
         return this.individualAddress;
@@ -171,21 +169,17 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
         return this.projectInstallationIdentifier;
     }
 
-
     public String getSerialNumber() {
         return this.serialNumber;
     }
-
 
     public InetAddress getMulticastAddress() {
         return this.multicastAddress;
     }
 
-
     public String getMacAddress() {
         return this.macAddress;
     }
-
 
     public String getDeviceFriendlyName() {
         return this.deviceFriendlyName;

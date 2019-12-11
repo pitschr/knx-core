@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.utils;
 
-
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;

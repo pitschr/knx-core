@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.utils;
 
-
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;

@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Tunneling Connection Request Information (CRI)
  * <p>
@@ -126,11 +125,9 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
         return this.length;
     }
 
-
     public ConnectionType getConnectionType() {
         return this.connectionType;
     }
-
 
     public LayerType getLayerType() {
         return this.layerType;

@@ -99,7 +99,6 @@ public final class ManufacturerDataDIB extends AbstractDIB {
         return this.manufacturerId;
     }
 
-
     public byte[] getManufacturerSpecificData() {
         return this.manufacturerSpecificData.clone();
     }

@@ -191,7 +191,6 @@ public class ReadRequestControllerTest {
         // Mocking
         //
 
-
         // mock an non-existing xml group address, but status available in status pool
         when(readRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
@@ -236,6 +235,5 @@ public class ReadRequestControllerTest {
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
     }
-
 
 }

@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 
-
 /**
  * Marker interface for plugin to extend the {@link KnxClient} with some features.
  *

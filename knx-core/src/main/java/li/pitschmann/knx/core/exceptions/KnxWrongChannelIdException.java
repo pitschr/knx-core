@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.exceptions;
 
 import li.pitschmann.knx.core.ChannelIdAware;
 
-
 /**
  * Exception in case we received a packet which doesn't belong to our channel id. This exception can be used for
  * ignoring such packets. This exception may apply to objects which contains the {@link ChannelIdAware} interface.

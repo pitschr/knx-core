@@ -113,7 +113,6 @@ public class StatisticControllerTest {
         return statisticMock;
     }
 
-
     public static class ClassMatcher<T> implements ArgumentMatcher<Class<T>> {
         private final Class<T> expectedClass;
 

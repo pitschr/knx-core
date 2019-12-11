@@ -44,7 +44,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Flow;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 /**
  * Logic for KNX mock server (package-protected)
  */
@@ -57,9 +56,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     private final List<MockAction> disconnectTriggers;
     private final MockServerCommandParser commandParser;
     private final List<String> requests;
-
     private boolean requestRunnableStarted;
-
 
     /**
      * Package-protected constructor for logic thread

@@ -36,7 +36,6 @@ public final class ServiceTypeFamilyVersion {
         this.version = version;
     }
 
-
     public ServiceTypeFamily getFamily() {
         return this.family;
     }

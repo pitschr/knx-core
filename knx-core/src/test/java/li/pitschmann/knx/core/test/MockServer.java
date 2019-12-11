@@ -330,7 +330,6 @@ public final class MockServer implements Runnable, Closeable {
         return count == occurrence;
     }
 
-
     /**
      * Asserts if given array of {@link Body} classes have been received by the KNX mock server
      *

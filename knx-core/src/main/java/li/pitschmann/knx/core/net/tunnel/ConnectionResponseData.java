@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Tunneling Connection Response Data (CRD)
  * <p>
@@ -113,11 +112,9 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
         return this.length;
     }
 
-
     public ConnectionType getConnectionType() {
         return this.connectionType;
     }
-
 
     public IndividualAddress getAddress() {
         return this.address;

@@ -38,26 +38,21 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
         this.dpt = Objects.requireNonNull(dpt);
     }
 
-
     protected static String getValueAsText(final double value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
-
 
     protected static String getValueAsText(final float value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
-
     protected static String getValueAsText(final int value) {
         return Integer.toString(value);
     }
 
-
     protected static String getValueAsText(final long value) {
         return Long.toString(value);
     }
-
 
     protected static String getValueAsText(final @Nullable Object value) {
         return String.valueOf(value);

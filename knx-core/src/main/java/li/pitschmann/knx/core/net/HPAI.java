@@ -83,7 +83,6 @@ public final class HPAI extends AbstractMultiRawData {
         this.port = Bytes.toUnsignedInt(hpaiRawData[6], hpaiRawData[7]);
     }
 
-
     /**
      * Returns an instance of {@link HPAI}
      *
@@ -170,11 +169,9 @@ public final class HPAI extends AbstractMultiRawData {
         return this.length;
     }
 
-
     public HostProtocol getProtocol() {
         return this.protocol;
     }
-
 
     public InetAddress getAddress() {
         return this.address;

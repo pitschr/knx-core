@@ -203,16 +203,13 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         return this.dayOfWeek;
     }
 
-
     public LocalDate getDate() {
         return this.date;
     }
 
-
     public LocalTime getTime() {
         return this.time;
     }
-
 
     public Flags getFlags() {
         return this.flags;

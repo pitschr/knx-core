@@ -101,7 +101,6 @@ public class RoutingIndicationBodyTest {
                 APCI.GROUP_VALUE_WRITE,
                 new byte[]{0x0C, 0x35});
 
-
         // create
         final var body = RoutingIndicationBody.of(cemi);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);

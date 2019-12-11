@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.plugin;
 
 import li.pitschmann.knx.core.body.Body;
 
-
 /**
  * Plug-in to be notified when incoming / outgoing {@link Body} or if there was a problem with communication of
  * {@link Body}

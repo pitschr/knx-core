@@ -406,31 +406,25 @@ public final class CEMI extends AbstractMultiRawData {
         }
     }
 
-
     public MessageCode getMessageCode() {
         return this.messageCode;
     }
-
 
     public AdditionalInfo getAdditionalInfo() {
         return this.additionalInfo;
     }
 
-
     public ControlByte1 getControlByte1() {
         return this.controlByte1;
     }
-
 
     public ControlByte2 getControlByte2() {
         return this.controlByte2;
     }
 
-
     public IndividualAddress getSourceAddress() {
         return this.sourceAddress;
     }
-
 
     public KnxAddress getDestinationAddress() {
         return this.destinationAddress;
@@ -440,7 +434,6 @@ public final class CEMI extends AbstractMultiRawData {
         return this.npduLength;
     }
 
-
     public TPCI getTpci() {
         return this.tpci;
     }
@@ -449,11 +442,9 @@ public final class CEMI extends AbstractMultiRawData {
         return this.tpciPacketNumber;
     }
 
-
     public APCI getApci() {
         return this.apci;
     }
-
 
     public byte[] getApciData() {
         return this.apciData;
