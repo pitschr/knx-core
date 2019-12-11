@@ -20,13 +20,13 @@ package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
 import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
-import li.pitschmann.knx.core.net.HPAI;
-import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;

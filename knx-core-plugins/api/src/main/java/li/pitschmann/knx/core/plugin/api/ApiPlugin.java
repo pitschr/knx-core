@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.plugin.api;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.IntegerConfigValue;
-import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.pippo.core.HttpConstants;

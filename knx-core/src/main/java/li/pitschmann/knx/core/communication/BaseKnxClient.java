@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.communication;
 
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
@@ -25,7 +26,6 @@ import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.Status;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.cemi.MessageCode;

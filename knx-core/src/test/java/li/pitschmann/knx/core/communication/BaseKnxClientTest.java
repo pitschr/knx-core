@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.core.communication;
 
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;

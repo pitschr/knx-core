@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.core.communication;
 
-import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.address.KnxAddress;
+import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.cemi.MessageCode;

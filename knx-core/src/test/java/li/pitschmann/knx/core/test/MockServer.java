@@ -18,16 +18,16 @@
 
 package li.pitschmann.knx.core.test;
 
+import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
-import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.communication.BaseKnxClient;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Networker;

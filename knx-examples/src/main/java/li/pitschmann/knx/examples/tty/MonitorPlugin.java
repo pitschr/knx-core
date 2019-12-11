@@ -1,10 +1,10 @@
 package li.pitschmann.knx.examples.tty;
 
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.address.GroupAddress;
-import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.cemi.AdditionalInfo;
 import li.pitschmann.knx.core.cemi.CEMI;

@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.communication.queue;
 
-import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxWrongChannelIdException;
