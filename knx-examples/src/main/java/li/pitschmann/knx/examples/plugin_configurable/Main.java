@@ -20,7 +20,6 @@ public class Main {
                 .setting(MyConfigurablePlugin.LOUD, "meow!")
                 .build();
 
-
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // NO-OP

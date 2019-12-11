@@ -19,12 +19,11 @@
 package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.body.hpai.HPAI;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.utils.Strings;
-
 
 /**
  * Body for Description Request
@@ -102,7 +101,6 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
     public ServiceType getServiceType() {
         return ServiceType.DESCRIPTION_REQUEST;
     }
-
 
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;

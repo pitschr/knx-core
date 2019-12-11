@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.body.dib.DeviceHardwareInformationDIB;
-import li.pitschmann.knx.core.body.dib.IPConfigDIB;
-import li.pitschmann.knx.core.body.dib.IPCurrentConfigDIB;
-import li.pitschmann.knx.core.body.dib.KnxAddressesDIB;
-import li.pitschmann.knx.core.body.dib.ManufacturerDataDIB;
-import li.pitschmann.knx.core.body.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.core.dib.IPConfigDIB;
+import li.pitschmann.knx.core.dib.IPCurrentConfigDIB;
+import li.pitschmann.knx.core.dib.KnxAddressesDIB;
+import li.pitschmann.knx.core.dib.ManufacturerDataDIB;
+import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
 import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.header.ServiceType;

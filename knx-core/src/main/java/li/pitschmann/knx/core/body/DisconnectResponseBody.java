@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Body for Disconnect Response
  *
@@ -109,7 +108,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     public int getChannelId() {
         return this.channelId;
     }
-
 
     public Status getStatus() {
         return this.status;

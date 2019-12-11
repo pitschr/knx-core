@@ -18,18 +18,18 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.body.address.AddressType;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
-import li.pitschmann.knx.core.body.cemi.AdditionalInfo;
-import li.pitschmann.knx.core.body.cemi.BroadcastType;
-import li.pitschmann.knx.core.body.cemi.CEMI;
-import li.pitschmann.knx.core.body.cemi.ControlByte1;
-import li.pitschmann.knx.core.body.cemi.ControlByte2;
-import li.pitschmann.knx.core.body.cemi.MessageCode;
-import li.pitschmann.knx.core.body.cemi.Priority;
-import li.pitschmann.knx.core.body.cemi.TPCI;
+import li.pitschmann.knx.core.address.AddressType;
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
+import li.pitschmann.knx.core.cemi.APCI;
+import li.pitschmann.knx.core.cemi.AdditionalInfo;
+import li.pitschmann.knx.core.cemi.BroadcastType;
+import li.pitschmann.knx.core.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.ControlByte1;
+import li.pitschmann.knx.core.cemi.ControlByte2;
+import li.pitschmann.knx.core.cemi.MessageCode;
+import li.pitschmann.knx.core.cemi.Priority;
+import li.pitschmann.knx.core.cemi.TPCI;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
@@ -100,7 +100,6 @@ public class RoutingIndicationBodyTest {
                 0,
                 APCI.GROUP_VALUE_WRITE,
                 new byte[]{0x0C, 0x35});
-
 
         // create
         final var body = RoutingIndicationBody.of(cemi);

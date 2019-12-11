@@ -20,7 +20,7 @@ package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -103,7 +103,6 @@ public class GroupAddressJsonTest {
             assertThat(actualAddress).isEqualTo(expectedAddress);
         }
     }
-
 
     /**
      * Test deserialization of an unsupported JSON format

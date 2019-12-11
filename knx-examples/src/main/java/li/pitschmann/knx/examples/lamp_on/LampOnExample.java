@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.examples.lamp_on;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import org.slf4j.Logger;

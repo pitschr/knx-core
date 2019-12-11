@@ -95,7 +95,6 @@ public final class Parser extends AbstractParser {
             linkGroupRanges(xmlProject);
             linkGroupAddresses(xmlProject);
         } catch (final IOException | XMLStreamException ex) {
-            ex.printStackTrace();
             throw new KnxProjectParserException("Something went wrong during parsing the zip file: " + path);
         }
         log.info("KNX Project '{}' parse took {} ms:\n{}", path, sw.elapsed(TimeUnit.MILLISECONDS), xmlProject);

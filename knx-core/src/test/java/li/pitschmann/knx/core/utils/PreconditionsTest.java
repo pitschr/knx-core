@@ -131,7 +131,6 @@ public class PreconditionsTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Illegal State for: Object{checkState}");
 
-
         assertThatThrownBy(() -> Preconditions.checkState(false, objMock, 1, 2, 3))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Illegal State for: Object{checkState}. More Arguments: [1, 2, 3]");

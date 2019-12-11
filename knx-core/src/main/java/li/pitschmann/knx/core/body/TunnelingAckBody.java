@@ -27,7 +27,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-
 /**
  * Body for Tunneling Acknowledge / Response
  *
@@ -131,7 +130,6 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     public int getSequence() {
         return this.sequence;
     }
-
 
     public Status getStatus() {
         return this.status;

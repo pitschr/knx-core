@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.communication;
 
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.body.ConnectRequestBody;
 import li.pitschmann.knx.core.body.ConnectResponseBody;
 import li.pitschmann.knx.core.body.ConnectionStateRequestBody;
@@ -28,8 +29,7 @@ import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.SearchRequestBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
+import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.core.header.ServiceType;

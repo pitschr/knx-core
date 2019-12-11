@@ -103,7 +103,6 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         return this.stepCode;
     }
 
-
     public StepInterval getStepInterval() {
         return StepInterval.ofCode(this.stepCode);
     }

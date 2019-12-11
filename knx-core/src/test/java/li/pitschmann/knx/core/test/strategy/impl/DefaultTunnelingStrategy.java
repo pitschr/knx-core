@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.test.strategy.impl;
 import li.pitschmann.knx.core.body.Status;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.test.MockRequest;
 import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;

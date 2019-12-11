@@ -41,11 +41,9 @@ public abstract class AbstractRangeDataPointType<V extends DataPointValue<?>, R 
         this.upperValue = upperValue;
     }
 
-
     public R getLowerValue() {
         return this.lowerValue;
     }
-
 
     public R getUpperValue() {
         return this.upperValue;

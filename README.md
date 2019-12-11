@@ -255,7 +255,6 @@ public final class LampInverseExample {
 }
 ```
 
-
 #### Example: Work with Data Point Type
 
 Given snippet, we want to convert a date and time objects into KNX compatible byte array:

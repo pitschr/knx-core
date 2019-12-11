@@ -19,12 +19,11 @@
 package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
-
 
 /**
  * Body for Routing Indication
@@ -95,7 +94,6 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     public ServiceType getServiceType() {
         return ServiceType.ROUTING_INDICATION;
     }
-
 
     public CEMI getCEMI() {
         return this.cemi;

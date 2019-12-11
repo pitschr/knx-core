@@ -33,7 +33,6 @@ public final class KnxChannelIdNotReceivedException extends KnxCommunicationExce
     private final ConnectRequestBody requestBody;
     private final ConnectResponseBody responseBody;
 
-
     public KnxChannelIdNotReceivedException(final ConnectRequestBody requestBody,
                                             final @Nullable ConnectResponseBody responseBody,
                                             final Throwable cause) {

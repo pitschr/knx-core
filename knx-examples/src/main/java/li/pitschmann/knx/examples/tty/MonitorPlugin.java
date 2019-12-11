@@ -1,17 +1,17 @@
 package li.pitschmann.knx.examples.tty;
 
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
-import li.pitschmann.knx.core.body.cemi.AdditionalInfo;
-import li.pitschmann.knx.core.body.cemi.CEMI;
-import li.pitschmann.knx.core.body.cemi.ControlByte1;
-import li.pitschmann.knx.core.body.cemi.ControlByte2;
-import li.pitschmann.knx.core.body.cemi.MessageCode;
-import li.pitschmann.knx.core.body.cemi.TPCI;
+import li.pitschmann.knx.core.cemi.APCI;
+import li.pitschmann.knx.core.cemi.AdditionalInfo;
+import li.pitschmann.knx.core.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.ControlByte1;
+import li.pitschmann.knx.core.cemi.ControlByte2;
+import li.pitschmann.knx.core.cemi.MessageCode;
+import li.pitschmann.knx.core.cemi.TPCI;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.datapoint.DPT8;
 import li.pitschmann.knx.core.datapoint.DataPointType;
@@ -326,7 +326,6 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     private void printToTerminal(final String str) {
         printToTerminal(str, DEFAULT_TABLE_BODY_COLOR);
     }
-
 
     /**
      * Prints the line to terminal table with specific {@code escapeCode}

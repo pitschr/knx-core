@@ -65,7 +65,6 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
         return this.booleanValue;
     }
 
-
     public String getBooleanText() {
         return this.getDPT().getTextFor(this.booleanValue);
     }

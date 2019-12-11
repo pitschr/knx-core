@@ -106,7 +106,6 @@ public class KnxClientTest {
         assertThat(extensionPlugin.getShutdownInvocations()).isOne();
     }
 
-
     /**
      * Test {@link InternalKnxClient#getControlHPAI()} and {@link InternalKnxClient#getDataHPAI()}
      */

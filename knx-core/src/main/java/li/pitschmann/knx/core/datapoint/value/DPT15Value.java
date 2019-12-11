@@ -119,7 +119,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
                 flags.getAsByte()};
     }
 
-
     public byte[] getAccessIdentificationData() {
         return this.accessIdentificationData.clone();
     }
@@ -269,7 +268,6 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
             }
             return b;
         }
-
 
         public String toText() {
             return ByteFormatter.formatHex(getAsByte());

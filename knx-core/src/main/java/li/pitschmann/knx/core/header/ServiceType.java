@@ -19,7 +19,7 @@
 package li.pitschmann.knx.core.header;
 
 import li.pitschmann.knx.core.KnxBytesEnum;
-import li.pitschmann.knx.core.body.dib.ServiceTypeFamily;
+import li.pitschmann.knx.core.dib.ServiceTypeFamily;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxServiceTypeHasNoResponseIdentifier;
 import li.pitschmann.knx.core.utils.ByteFormatter;

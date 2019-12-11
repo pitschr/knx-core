@@ -18,14 +18,19 @@
 
 package li.pitschmann.knx.core.plugin.api;
 
+import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ro.pippo.core.HttpConstants;
 import ro.pippo.core.Pippo;
 import ro.pippo.core.PippoRuntimeException;
 
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpRequest;
 
 /**
  * Creates a new instance of API plugin that is used for testing purposes.
@@ -68,6 +73,27 @@ final class TestApiPlugin extends ApiPlugin {
         } catch (IOException e) {
             // should never happen
             throw new AssertionError("Could not find a free port!");
+        }
+    }
+
+    /**
+     * Creates a new {@link HttpRequest.Builder} for test requests to API
+     * <p/>
+     * As we are using communicating via JSON only, the headers
+     * {@link HttpConstants.Header#ACCEPT} and {@link HttpConstants.Header#CONTENT_TYPE}
+     * are pre-defined with {@link HttpConstants.ContentType#APPLICATION_JSON}.
+     *
+     * @param path the path to be requested to API
+     * @return Builder for HttpRequest
+     */
+    public final HttpRequest.Builder newRequestBuilder(final String path) {
+        Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
+        try {
+            return HttpRequest.newBuilder(new URI("http://localhost:" + getPort() + path))
+                    .header(HttpConstants.Header.ACCEPT, HttpConstants.ContentType.APPLICATION_JSON)
+                    .header(HttpConstants.Header.CONTENT_TYPE, HttpConstants.ContentType.APPLICATION_JSON);
+        } catch (final URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid path provided: " + path, e);
         }
     }
 }

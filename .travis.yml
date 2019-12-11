@@ -17,5 +17,5 @@ branches:
 
 # Compiles, run test and code coverage
 script:
-  - mvn clean test jacoco:report coveralls:report -Dlogback.configurationFile=logback-off.xml -Dorg.slf4j.simpleLogger.defaultLogLevel=ALL
+  - mvn clean test jacoco:report coveralls:report
 

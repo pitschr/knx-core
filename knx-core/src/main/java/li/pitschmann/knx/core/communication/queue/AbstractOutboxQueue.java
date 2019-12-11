@@ -119,7 +119,6 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
         return add(body);
     }
 
-
     /**
      * Sends the given byte arrays to {@code channel}
      *

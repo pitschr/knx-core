@@ -1,6 +1,5 @@
 package li.pitschmann.knx.core.utils;
 
-
 import javax.annotation.Nullable;
 
 /**

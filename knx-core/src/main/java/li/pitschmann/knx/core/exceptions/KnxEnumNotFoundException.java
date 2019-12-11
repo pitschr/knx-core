@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-
 /**
  * Exception when KNX/IP specific enumeration could not be found
  *

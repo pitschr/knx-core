@@ -16,7 +16,6 @@ public class Main {
                 .plugin(MyPlugin.class) // register MyPlugin
                 .build();                      // create immutable config
 
-
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // wait 60 seconds

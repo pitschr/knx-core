@@ -125,7 +125,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         return new DefaultOutboxQueue(client, channel);
     }
 
-
     public SelectableChannel getChannel() {
         return channel;
     }

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.communication;
 
-import li.pitschmann.knx.core.body.address.KnxAddress;
+import li.pitschmann.knx.core.address.KnxAddress;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;

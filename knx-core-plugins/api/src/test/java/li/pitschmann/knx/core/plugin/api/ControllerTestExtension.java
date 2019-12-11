@@ -21,8 +21,8 @@ package li.pitschmann.knx.core.plugin.api;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.communication.KnxStatistic;
@@ -81,7 +81,6 @@ public final class ControllerTestExtension
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
         return paramContext.getParameter().getType().isAssignableFrom(Controller.class);
     }
-
 
     /**
      * Creates a new instance of {@link Controller}
@@ -178,7 +177,6 @@ public final class ControllerTestExtension
                 when(knxClientMock.getStatusPool().getStatusFor(eq(groupAddress))).thenReturn(knxStatusData);
             }
         }
-
 
         return knxClientMock;
     }

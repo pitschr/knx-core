@@ -19,12 +19,11 @@
 package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.body.hpai.HPAI;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.utils.Strings;
-
 
 /**
  * Body for Search Request
@@ -103,7 +102,6 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
     public ServiceType getServiceType() {
         return ServiceType.SEARCH_REQUEST;
     }
-
 
     public HPAI getDiscoveryEndpoint() {
         return this.discoveryEndpoint;

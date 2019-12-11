@@ -344,8 +344,6 @@ paths:
         403:
           description: 'Forbidden. When calling this endpoint and your project is not three-level.'
 
-
-
   /v1/statistic:
     get:
       description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns the statistic from KNX client. The statistic contain information like how many packets have been sent / received.'

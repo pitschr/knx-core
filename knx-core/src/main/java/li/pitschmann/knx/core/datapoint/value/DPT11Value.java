@@ -128,7 +128,6 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         return bytes;
     }
 
-
     public LocalDate getDate() {
         return this.date;
     }

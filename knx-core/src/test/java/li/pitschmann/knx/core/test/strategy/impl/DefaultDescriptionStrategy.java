@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.test.strategy.impl;
 
 import li.pitschmann.knx.core.body.DescriptionResponseBody;
-import li.pitschmann.knx.core.body.dib.DeviceHardwareInformationDIB;
-import li.pitschmann.knx.core.body.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
 import li.pitschmann.knx.core.test.MockRequest;
 import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;

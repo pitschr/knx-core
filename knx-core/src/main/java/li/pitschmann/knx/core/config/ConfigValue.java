@@ -65,16 +65,13 @@ public class ConfigValue<T> {
         return key;
     }
 
-
     public Class<T> getClassType() {
         return classType;
     }
 
-
     public T getDefaultValue() {
         return defaultSupplier.get();
     }
-
 
     public Function<String, T> getConverter() {
         return this.converter;

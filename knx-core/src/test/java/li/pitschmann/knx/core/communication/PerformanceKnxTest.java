@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.communication;
 
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.ConnectRequestBody;
 import li.pitschmann.knx.core.body.ConnectionStateRequestBody;
@@ -26,7 +27,6 @@ import li.pitschmann.knx.core.body.DescriptionResponseBody;
 import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.test.MockServer;

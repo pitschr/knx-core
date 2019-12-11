@@ -1,6 +1,5 @@
 package li.pitschmann.knx.core.utils;
 
-
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -158,7 +157,6 @@ public final class Stopwatch {
     public String toString(final TimeUnit unit) {
         return toStringInternal(elapsedNanos(), unit);
     }
-
 
     /**
      * Internal method to convert the nanos with {@link TimeUnit} into a more readable format.

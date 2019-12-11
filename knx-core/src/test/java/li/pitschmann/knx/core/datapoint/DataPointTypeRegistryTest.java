@@ -128,7 +128,6 @@ public class DataPointTypeRegistryTest {
         TestHelpers.assertThatNotInstantiable(DataPointTypeRegistry.class);
     }
 
-
     /**
      * Test Enumeration Class for {@link #testGetDataPointTypeFailure()} test method.
      */

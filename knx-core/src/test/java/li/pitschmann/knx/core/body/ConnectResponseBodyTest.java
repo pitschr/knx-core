@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.hpai.HPAI;
-import li.pitschmann.knx.core.body.hpai.HostProtocol;
-import li.pitschmann.knx.core.body.tunnel.ConnectionResponseData;
+import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.net.HostProtocol;
+import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.core.utils.Networker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

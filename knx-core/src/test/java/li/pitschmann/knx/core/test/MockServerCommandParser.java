@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.test;
 
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.test.action.MockAction;
 import li.pitschmann.knx.core.test.action.RequestMockAction;

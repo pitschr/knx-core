@@ -153,7 +153,6 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         return this.dayOfWeek;
     }
 
-
     public LocalTime getTime() {
         return this.time;
     }
@@ -182,8 +181,6 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
                 .add("dayOfWeek", this.dayOfWeek)
                 .add("time", this.time)
                 .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
-
-
                 .toString();
         // @formatter:on
     }

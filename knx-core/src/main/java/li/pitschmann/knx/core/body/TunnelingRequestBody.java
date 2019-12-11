@@ -20,7 +20,7 @@ package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.ChannelIdAware;
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
@@ -155,7 +155,6 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     public int getSequence() {
         return this.sequence;
     }
-
 
     public CEMI getCEMI() {
         return this.cemi;

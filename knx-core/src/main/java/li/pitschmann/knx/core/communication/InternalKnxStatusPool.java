@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.core.communication;
 
+import li.pitschmann.knx.core.address.KnxAddress;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.body.address.KnxAddress;
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT12;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import li.pitschmann.knx.core.plugin.api.TestUtils;
@@ -191,7 +191,6 @@ public class ReadRequestControllerTest {
         // Mocking
         //
 
-
         // mock an non-existing xml group address, but status available in status pool
         when(readRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
@@ -236,6 +235,5 @@ public class ReadRequestControllerTest {
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
     }
-
 
 }

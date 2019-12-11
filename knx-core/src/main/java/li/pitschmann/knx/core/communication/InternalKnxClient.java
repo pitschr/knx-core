@@ -31,14 +31,12 @@ import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.SearchRequestBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.body.Status;
-import li.pitschmann.knx.core.body.dib.ServiceTypeFamily;
-import li.pitschmann.knx.core.body.hpai.HPAI;
-import li.pitschmann.knx.core.body.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.core.communication.communicator.AbstractChannelCommunicator;
 import li.pitschmann.knx.core.communication.communicator.CommunicatorFactory;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.config.CoreConfigs;
+import li.pitschmann.knx.core.dib.ServiceTypeFamily;
 import li.pitschmann.knx.core.exceptions.KnxBodyNotReceivedException;
 import li.pitschmann.knx.core.exceptions.KnxChannelIdNotReceivedException;
 import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
@@ -46,6 +44,8 @@ import li.pitschmann.knx.core.exceptions.KnxDescriptionNotReceivedException;
 import li.pitschmann.knx.core.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.core.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.core.exceptions.KnxWrongChannelIdException;
+import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.PluginManager;
 import li.pitschmann.knx.core.utils.Closeables;
@@ -345,21 +345,17 @@ public final class InternalKnxClient implements AutoCloseable {
         return state;
     }
 
-
     public Config getConfig() {
         return this.config;
     }
-
 
     public <T> T getConfig(final ConfigValue<T> configValue) {
         return getConfig().getValue(configValue);
     }
 
-
     public InternalKnxStatistic getStatistic() {
         return this.statistics;
     }
-
 
     public InternalKnxStatusPool getStatusPool() {
         return this.statusPool;
@@ -375,11 +371,9 @@ public final class InternalKnxClient implements AutoCloseable {
         return Objects.requireNonNull(this.remoteEndpoint);
     }
 
-
     public HPAI getControlHPAI() {
         return this.controlHPAI == null ? HPAI.useDefault() : this.controlHPAI;
     }
-
 
     public HPAI getDataHPAI() {
         return this.dataHPAI == null ? HPAI.useDefault() : this.dataHPAI;

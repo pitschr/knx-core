@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.knxproj;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.knxproj.parser.Parser;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
@@ -175,7 +175,6 @@ public final class XmlProject {
                             }
                         }
                 ).collect(Collectors.toUnmodifiableList());
-
 
         this.groupRangeMap = this.groupRanges.stream()
                 .collect(
