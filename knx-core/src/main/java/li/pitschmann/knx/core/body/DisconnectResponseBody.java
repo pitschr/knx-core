@@ -110,7 +110,6 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
         return this.channelId;
     }
 
-
     public Status getStatus() {
         return this.status;
     }

@@ -56,11 +56,8 @@ import static org.mockito.Mockito.when;
  */
 public class AbstractKnxQueueTest {
 
-    /**
-     * Tests a successful KNX packet
-     */
     @Test
-    @DisplayName("Test incoming KNX packet successfully")
+    @DisplayName("OK: Test incoming KNX packet")
     public void testSuccessful() throws Exception {
         final var selectionKeyMock = mock(SelectionKey.class);
 
@@ -70,17 +67,20 @@ public class AbstractKnxQueueTest {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.selectedKeys()).thenReturn(selectedKeys);
 
-        final var queue = spy(new TestKnxQueue(mock(InternalKnxClient.class)));
-        doReturn(selectorMock).when(queue).openSelector();
-        doReturn(true).when(queue).valid(any(SelectionKey.class));
+        final var queueSpy = spy(new TestKnxQueue(mock(InternalKnxClient.class)));
+        doReturn(selectorMock).when(queueSpy).openSelector();
+        doReturn(true).when(queueSpy).valid(any(SelectionKey.class));
 
+        //
+        // Verification
+        //
         final var executor = Executors.newSingleThreadExecutor();
         try {
-            executor.submit(queue);
+            executor.submit(queueSpy);
             // verify if the action(SelectionKey) has been invoked
             assertThat(Sleeper.milliseconds(() -> {
                 try {
-                    verify(queue).action(selectionKeyMock);
+                    verify(queueSpy).action(selectionKeyMock);
                     return true;
                 } catch (final Throwable e) {
                     return false;
@@ -91,22 +91,22 @@ public class AbstractKnxQueueTest {
         }
     }
 
-    /**
-     * Tests an inbox packet from KNX Net/IP device with wrong channel id information
-     */
     @Test
-    @DisplayName("Test KNX packet with wrong channel")
+    @DisplayName("ERROR: Test KNX packet with wrong channel id")
     public void testInboxWrongChannel() throws Exception {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(KnxWrongChannelIdException.class).thenReturn(0);
 
         final var clientMock = mock(InternalKnxClient.class);
-        final var queue = spy(new TestKnxQueue(clientMock));
-        doReturn(selectorMock).when(queue).openSelector();
+        final var queueSpy = spy(new TestKnxQueue(clientMock));
+        doReturn(selectorMock).when(queueSpy).openSelector();
 
+        //
+        // Verification
+        //
         final var executor = Executors.newSingleThreadExecutor();
         try {
-            executor.submit(queue);
+            executor.submit(queueSpy);
             // wait bit as the task is async
             Sleeper.milliseconds(() -> !mockingDetails(clientMock).getInvocations().isEmpty(), 1000);
             // verifies if the notify plugins about error has been called
@@ -122,7 +122,7 @@ public class AbstractKnxQueueTest {
      * Tests an queue when {@link InterruptedException} was thrown
      */
     @Test
-    @DisplayName("Test interrupted queue")
+    @DisplayName("ERROR: Test interrupted queue")
     public void testInterruption() throws Exception {
         final var selectionKeyMock = mock(SelectionKey.class);
 
@@ -133,15 +133,17 @@ public class AbstractKnxQueueTest {
         when(selectorMock.selectedKeys()).thenReturn(selectedKeys);
 
         final var clientMock = mock(InternalKnxClient.class);
-        final var queueMock = spy(new TestKnxQueue(clientMock));
-        doReturn(selectorMock).when(queueMock).openSelector();
-        doReturn(true).when(queueMock).valid(any(SelectionKey.class));
-        doThrow(InterruptedException.class).when(queueMock).action(any(SelectionKey.class));
+        final var queueSpy = spy(new TestKnxQueue(clientMock));
+        doReturn(selectorMock).when(queueSpy).openSelector();
+        doReturn(true).when(queueSpy).valid(any(SelectionKey.class));
+        doThrow(InterruptedException.class).when(queueSpy).action(any(SelectionKey.class));
 
-
+        //
+        // Verification
+        //
         final var executor = Executors.newSingleThreadExecutor();
         try {
-            final var taskFuture = executor.submit(queueMock);
+            final var taskFuture = executor.submit(queueSpy);
             assertThat(taskFuture.get()).isNull();
         } finally {
             Closeables.shutdownQuietly(executor);
@@ -152,19 +154,22 @@ public class AbstractKnxQueueTest {
      * Tests queue when {@link IOException} was thrown
      */
     @Test
-    @DisplayName("Test queue with IOException")
+    @DisplayName("ERROR: Test queue with IOException")
     public void testInboxIOException() throws Exception {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(IOException.class).thenReturn(0);
 
         final var clientMock = mock(InternalKnxClient.class);
-        final var queueMock = spy(new TestKnxQueue(clientMock));
-        doReturn(selectorMock).when(queueMock).openSelector();
+        final var queueSpy = spy(new TestKnxQueue(clientMock));
+        doReturn(selectorMock).when(queueSpy).openSelector();
 
+        //
+        // Verification
+        //
         final var executor = Executors.newSingleThreadExecutor();
         try {
-            final var taskFuture = executor.submit(queueMock);
-            assertThatThrownBy(() -> taskFuture.get()).hasCauseInstanceOf(KnxException.class);
+            final var taskFuture = executor.submit(queueSpy);
+            assertThatThrownBy(taskFuture::get).hasCauseInstanceOf(KnxException.class);
         } finally {
             Closeables.shutdownQuietly(executor);
         }
@@ -174,7 +179,7 @@ public class AbstractKnxQueueTest {
      * Tests queue when an unexpected exception was thrown
      */
     @Test
-    @DisplayName("Test queue with an unexpected exception")
+    @DisplayName("ERROR: Test queue with an unexpected exception")
     public void testInboxCorrupted() throws Exception {
         final var selectorMock = mock(Selector.class);
         when(selectorMock.select()).thenThrow(RuntimeException.class).thenReturn(0);
@@ -183,6 +188,9 @@ public class AbstractKnxQueueTest {
         final var queueSpy = spy(new TestKnxQueue(clientMock)); // must inject clientMock for 'verify' invocation
         doReturn(selectorMock).when(queueSpy).openSelector();
 
+        //
+        // Verification
+        //
         final var executor = Executors.newSingleThreadExecutor();
         try {
             executor.submit(queueSpy);
@@ -197,9 +205,6 @@ public class AbstractKnxQueueTest {
         }
     }
 
-    /**
-     * Test {@link AbstractKnxQueue#getInternalClient()}
-     */
     @Test
     @DisplayName("Check #getInternalClient()")
     public void testInternalClient() {
@@ -209,11 +214,6 @@ public class AbstractKnxQueueTest {
         assertThat(queue.getInternalClient()).isSameAs(internalClientMock);
     }
 
-    /**
-     * Test {@link AbstractKnxQueue#openSelector()}
-     *
-     * @throws IOException
-     */
     @Test
     @DisplayName("Check #openSelector()")
     public void testOpenSelector() throws IOException {
@@ -222,11 +222,6 @@ public class AbstractKnxQueueTest {
         assertThat(queue.openSelector()).isNotNull();
     }
 
-    /**
-     * Test {@link AbstractKnxQueue#add(Body)} and {@link AbstractKnxQueue#next()}
-     *
-     * @throws InterruptedException
-     */
     @Test
     @DisplayName("Check #add(Body) and #next()")
     public void testAddAndNext() throws InterruptedException {

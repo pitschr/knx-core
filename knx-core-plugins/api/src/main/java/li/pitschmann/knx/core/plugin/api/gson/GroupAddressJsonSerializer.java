@@ -2,7 +2,7 @@ package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 
 /**
  * Serializes the {@link GroupAddress} to a JSON format

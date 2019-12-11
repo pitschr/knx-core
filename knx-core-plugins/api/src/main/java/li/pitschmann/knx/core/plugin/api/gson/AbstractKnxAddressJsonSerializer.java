@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import li.pitschmann.knx.core.body.address.KnxAddress;
+import li.pitschmann.knx.core.address.KnxAddress;
 
 import java.lang.reflect.Type;
 

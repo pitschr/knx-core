@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.utils;
 
-import li.pitschmann.knx.core.body.hpai.HPAI;
-import li.pitschmann.knx.core.body.hpai.HostProtocol;
+import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.core.test.TestHelpers;

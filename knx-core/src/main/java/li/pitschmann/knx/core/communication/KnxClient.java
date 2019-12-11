@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.body.ControlChannelRelated;
 import li.pitschmann.knx.core.body.DataChannelRelated;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigValue;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;

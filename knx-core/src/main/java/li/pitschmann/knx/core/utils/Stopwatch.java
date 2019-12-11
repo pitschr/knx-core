@@ -159,7 +159,6 @@ public final class Stopwatch {
         return toStringInternal(elapsedNanos(), unit);
     }
 
-
     /**
      * Internal method to convert the nanos with {@link TimeUnit} into a more readable format.
      *

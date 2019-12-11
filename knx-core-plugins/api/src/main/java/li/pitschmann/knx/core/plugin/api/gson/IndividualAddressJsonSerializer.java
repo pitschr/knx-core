@@ -2,7 +2,7 @@ package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
 
 /**
  * Serializes the {@link IndividualAddress} to a JSON format

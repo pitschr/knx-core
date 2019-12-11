@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.body.hpai.HPAI;
-import li.pitschmann.knx.core.body.hpai.HostProtocol;
+import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;

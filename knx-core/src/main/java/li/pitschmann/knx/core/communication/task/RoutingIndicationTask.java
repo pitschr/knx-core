@@ -20,8 +20,8 @@ package li.pitschmann.knx.core.communication.task;
 
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
-import li.pitschmann.knx.core.body.cemi.APCI;
-import li.pitschmann.knx.core.body.cemi.MessageCode;
+import li.pitschmann.knx.core.cemi.APCI;
+import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.slf4j.Logger;

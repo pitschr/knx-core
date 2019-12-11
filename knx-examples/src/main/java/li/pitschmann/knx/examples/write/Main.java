@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.examples.write;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
 import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.core.utils.Sleeper;

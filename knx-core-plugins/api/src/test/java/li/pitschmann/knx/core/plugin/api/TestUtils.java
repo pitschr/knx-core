@@ -19,7 +19,7 @@
 package li.pitschmann.knx.core.plugin.api;
 
 import com.google.gson.JsonParser;
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

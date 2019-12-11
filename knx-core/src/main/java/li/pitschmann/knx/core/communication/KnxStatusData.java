@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.communication;
 
-import li.pitschmann.knx.core.body.address.KnxAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.address.KnxAddress;
+import li.pitschmann.knx.core.cemi.APCI;
+import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT12;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import li.pitschmann.knx.core.plugin.api.TestUtils;

@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.address.KnxAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
+import li.pitschmann.knx.core.address.KnxAddress;
+import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;

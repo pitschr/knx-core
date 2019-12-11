@@ -45,7 +45,6 @@ public class ConfigsTest {
         TestHelpers.assertThatNotInstantiable(Configs.class);
     }
 
-
     public static class TestPluginWithConfigs implements Plugin {
         // OK (Boolean)
         public static final BooleanConfigValue OK_BOOLEAN = new BooleanConfigValue(

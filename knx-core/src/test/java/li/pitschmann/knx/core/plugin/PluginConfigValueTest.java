@@ -45,7 +45,6 @@ public final class PluginConfigValueTest {
         assertThat(configValue.getKey()).isEqualTo("plugin.config.dummyplugin.b-name"); // lower-cased!
     }
 
-
     private static class DummyPlugin implements Plugin {
         private static final PluginConfigValue<Object> configValueObject = new PluginConfigValue<>("b-name", Object.class, x -> x, () -> "", null);
         final PluginConfigValue<Object> TEST = new PluginConfigValue<>("b-name", Object.class, x -> x, () -> "", null);

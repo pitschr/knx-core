@@ -19,9 +19,9 @@
 package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.body.dib.DeviceHardwareInformationDIB;
-import li.pitschmann.knx.core.body.dib.SupportedDeviceFamiliesDIB;
-import li.pitschmann.knx.core.body.hpai.HPAI;
+import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
@@ -168,16 +168,13 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
         return ServiceType.SEARCH_RESPONSE;
     }
 
-
     public HPAI getControlEndpoint() {
         return this.controlEndpoint;
     }
 
-
     public DeviceHardwareInformationDIB getDeviceInformation() {
         return this.deviceHardwareInformation;
     }
-
 
     public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
         return this.supportedDeviceFamilies;

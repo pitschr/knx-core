@@ -132,7 +132,6 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
         return this.sequence;
     }
 
-
     public Status getStatus() {
         return this.status;
     }

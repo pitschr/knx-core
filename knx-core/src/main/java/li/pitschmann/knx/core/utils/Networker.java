@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.utils;
 
-import li.pitschmann.knx.core.body.hpai.HPAI;
+import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

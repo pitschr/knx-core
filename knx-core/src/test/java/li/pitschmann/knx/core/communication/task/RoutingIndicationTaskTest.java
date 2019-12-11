@@ -20,11 +20,11 @@ package li.pitschmann.knx.core.communication.task;
 
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
-import li.pitschmann.knx.core.body.cemi.CEMI;
-import li.pitschmann.knx.core.body.cemi.MessageCode;
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
+import li.pitschmann.knx.core.cemi.APCI;
+import li.pitschmann.knx.core.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

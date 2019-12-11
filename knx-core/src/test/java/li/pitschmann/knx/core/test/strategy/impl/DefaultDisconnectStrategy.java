@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.test.strategy.impl;
 import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
 import li.pitschmann.knx.core.body.Status;
-import li.pitschmann.knx.core.body.hpai.HPAI;
+import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.test.MockRequest;
 import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;

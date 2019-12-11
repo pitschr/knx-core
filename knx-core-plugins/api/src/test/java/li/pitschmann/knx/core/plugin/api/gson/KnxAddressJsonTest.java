@@ -19,9 +19,9 @@
 package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.JsonParser;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.address.KnxAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
+import li.pitschmann.knx.core.address.KnxAddress;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

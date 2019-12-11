@@ -163,7 +163,6 @@ public class ExecutorsTest {
         TestHelpers.assertThatNotInstantiable(Executors.class);
     }
 
-
     private final class TestRunnable implements Runnable {
         @Override
         public void run() {

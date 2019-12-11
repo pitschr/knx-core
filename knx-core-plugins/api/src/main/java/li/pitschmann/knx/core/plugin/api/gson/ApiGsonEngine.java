@@ -2,9 +2,9 @@ package li.pitschmann.knx.core.plugin.api.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import li.pitschmann.knx.core.body.address.GroupAddress;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
-import li.pitschmann.knx.core.body.address.KnxAddress;
+import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.address.IndividualAddress;
+import li.pitschmann.knx.core.address.KnxAddress;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;

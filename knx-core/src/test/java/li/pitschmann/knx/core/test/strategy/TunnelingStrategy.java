@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.test.strategy;
 
-import li.pitschmann.knx.core.body.cemi.CEMI;
+import li.pitschmann.knx.core.cemi.CEMI;
 
 /**
  * Marker interface for tunneling strategy to handle tunneling request and

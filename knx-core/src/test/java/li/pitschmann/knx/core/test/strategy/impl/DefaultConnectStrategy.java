@@ -20,8 +20,8 @@ package li.pitschmann.knx.core.test.strategy.impl;
 
 import li.pitschmann.knx.core.body.ConnectResponseBody;
 import li.pitschmann.knx.core.body.Status;
-import li.pitschmann.knx.core.body.hpai.HPAI;
-import li.pitschmann.knx.core.body.tunnel.ConnectionResponseData;
+import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.core.test.MockRequest;
 import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;

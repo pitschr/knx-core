@@ -1,7 +1,7 @@
 package li.pitschmann.knx.core.plugin.api.v1.json;
 
-import li.pitschmann.knx.core.body.address.KnxAddress;
-import li.pitschmann.knx.core.body.cemi.APCI;
+import li.pitschmann.knx.core.address.KnxAddress;
+import li.pitschmann.knx.core.cemi.APCI;
 
 import java.time.Instant;
 

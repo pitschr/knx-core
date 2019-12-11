@@ -1,7 +1,7 @@
 package li.pitschmann.knx.core.plugin.api.gson;
 
-import li.pitschmann.knx.core.body.address.AddressType;
-import li.pitschmann.knx.core.body.address.IndividualAddress;
+import li.pitschmann.knx.core.address.AddressType;
+import li.pitschmann.knx.core.address.IndividualAddress;
 
 /**
  * De-Serializes a JSON format of group address to an instance of {@link IndividualAddress}
