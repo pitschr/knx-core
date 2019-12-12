@@ -248,7 +248,7 @@ public class NetworkerTest {
         // local address
         final var socketAddress = (InetSocketAddress) channel.getLocalAddress();
         assertThat(socketAddress.getAddress().isAnyLocalAddress()).isTrue();
-        assertThat(socketAddress.getPort()).isBetween(49152, 65535); // see https://tools.ietf.org/html/rfc6335
+        assertThat(socketAddress.getPort()).isBetween(1024, 65535); // see https://tools.ietf.org/html/rfc6335
 
         // remote address
         assertThat(channel.getRemoteAddress()).isNull();
@@ -276,7 +276,7 @@ public class NetworkerTest {
         final var socketAddressLocal = (InetSocketAddress) channel.getLocalAddress();
         assertThat(socketAddressLocal.getAddress().isAnyLocalAddress()).isFalse();
         assertThat(socketAddressLocal.getAddress().getAddress()).containsExactly(127, 0, 0, 1);
-        assertThat(socketAddressLocal.getPort()).isBetween(49152, 65535); // see https://tools.ietf.org/html/rfc6335
+        assertThat(socketAddressLocal.getPort()).isBetween(1024, 65535); // see https://tools.ietf.org/html/rfc6335
 
         // remote address
         final var socketAddressRemote = (InetSocketAddress) channel.getRemoteAddress();
