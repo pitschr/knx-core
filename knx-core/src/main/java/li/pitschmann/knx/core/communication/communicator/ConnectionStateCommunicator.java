@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.communication;
+package li.pitschmann.knx.core.communication.communicator;
 
 import li.pitschmann.knx.core.body.ConnectRequestBody;
 import li.pitschmann.knx.core.body.ConnectResponseBody;
 import li.pitschmann.knx.core.body.ConnectionStateRequestBody;
+import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
@@ -37,12 +38,12 @@ import java.util.Objects;
  * {@link ConnectResponseBody} to obtain the channel id which is used as identifier for
  * further communications.
  * <p/>
- * The connection state monitor is used in Tunneling mode only!
+ * The connection state communicator is used in Tunneling mode only!
  *
  * @author PITSCHR
  */
-public final class ConnectionStateMonitor implements Runnable {
-    private static final Logger log = LoggerFactory.getLogger(ConnectionStateMonitor.class);
+public final class ConnectionStateCommunicator implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(ConnectionStateCommunicator.class);
     /**
      * 500ms additional time buffer for response to minimize chance for an unnecessary loop
      */
@@ -56,7 +57,7 @@ public final class ConnectionStateMonitor implements Runnable {
     /**
      * KNX Connection State Monitor (package protected)
      */
-    ConnectionStateMonitor(final InternalKnxClient client) {
+    ConnectionStateCommunicator(final InternalKnxClient client) {
         this.client = Objects.requireNonNull(client);
     }
 

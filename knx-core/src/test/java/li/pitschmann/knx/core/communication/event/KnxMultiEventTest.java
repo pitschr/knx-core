@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.communication;
+package li.pitschmann.knx.core.communication.event;
 
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
-import li.pitschmann.knx.core.communication.event.KnxMultiEvent;
 import li.pitschmann.knx.core.test.KnxBody;
 import li.pitschmann.knx.core.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;

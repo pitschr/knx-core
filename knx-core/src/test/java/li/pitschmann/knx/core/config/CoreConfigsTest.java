@@ -5,9 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing for {@link ConfigConstantsTest} instance
+ * Testing for {@link CoreConfigs} instance
  */
-public class ConfigConstantsTest {
+public class CoreConfigsTest {
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {

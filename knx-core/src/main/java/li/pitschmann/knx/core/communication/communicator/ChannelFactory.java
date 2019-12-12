@@ -16,24 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.communication;
+package li.pitschmann.knx.core.communication.communicator;
 
+import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
+import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.SocketOption;
-import java.net.StandardProtocolFamily;
 import java.net.StandardSocketOptions;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * Channel factory to create new channels.
@@ -62,7 +57,7 @@ public final class ChannelFactory {
         log.debug("Create new multicast channel (local port: {}, socket timeout: {} ms, Time-To-Live (TTL): {})",
                 localPort, socketTimeout, timeToLive);
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, timeToLive);
-        return newDatagramChannel(localPort, socketTimeout, null, socketOptions);
+        return Networker.newDatagramChannel(localPort, socketTimeout, null, socketOptions);
     }
 
     /**
@@ -79,7 +74,7 @@ public final class ChannelFactory {
         final var socketTimeout = client.getConfig(CoreConfigs.Description.SOCKET_TIMEOUT);
         log.debug("Create new description channel for local: {} (local port: {}, socket timeout: {} ms)",
                 socketAddress, localPort, socketTimeout);
-        return newDatagramChannel(localPort, socketTimeout, socketAddress, null);
+        return Networker.newDatagramChannel(localPort, socketTimeout, socketAddress, null);
     }
 
     /**
@@ -96,7 +91,7 @@ public final class ChannelFactory {
         final var socketTimeout = client.getConfig(CoreConfigs.Control.SOCKET_TIMEOUT);
         log.debug("Create new control channel for local: {} (local port: {}, socket timeout: {} ms)",
                 socketAddress, localPort, socketTimeout);
-        return newDatagramChannel(localPort, socketTimeout, socketAddress, null);
+        return Networker.newDatagramChannel(localPort, socketTimeout, socketAddress, null);
     }
 
     /**
@@ -113,38 +108,7 @@ public final class ChannelFactory {
         final var socketTimeout = client.getConfig(CoreConfigs.Data.SOCKET_TIMEOUT);
         log.debug("Create new data channel for local: {} (local port: {}, socket timeout: {} ms)",
                 socketAddress, localPort, socketTimeout);
-        return newDatagramChannel(localPort, socketTimeout, socketAddress, null);
+        return Networker.newDatagramChannel(localPort, socketTimeout, socketAddress, null);
     }
 
-    /**
-     * Creates an UDP channel for communication
-     *
-     * @param localPort     given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
-     * @param socketTimeout socket timeout
-     * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
-     * @return a new instance of {@link DatagramChannel}
-     */
-    public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort,
-                                                                        final long socketTimeout,
-                                                                        final @Nullable SocketAddress socketAddress,
-                                                                        final @Nullable Map<? extends SocketOption<T>, T> socketOptionMap) {
-        try {
-            final var channel = DatagramChannel.open(StandardProtocolFamily.INET);
-            channel.configureBlocking(false);
-            final var socket = channel.socket();
-            if (socketOptionMap != null) {
-                for (final var option : socketOptionMap.entrySet()) {
-                    channel.setOption(option.getKey(), option.getValue());
-                }
-            }
-            socket.bind(new InetSocketAddress(localPort));
-            socket.setSoTimeout((int) socketTimeout);
-            if (socketAddress != null) {
-                socket.connect(socketAddress);
-            }
-            return channel;
-        } catch (final IOException e) {
-            throw new KnxCommunicationException("Exception occurred during creating datagram channel", e);
-        }
-    }
 }

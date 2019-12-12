@@ -23,6 +23,7 @@ import li.pitschmann.knx.core.net.HPAI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -30,6 +31,8 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.SocketOption;
+import java.net.StandardProtocolFamily;
 import java.net.UnknownHostException;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
@@ -274,5 +277,37 @@ public final class Networker {
                 throw new KnxCommunicationException("I/O exception during joining network interface: " + ni, e);
             }
         }).collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Creates an UDP channel for communication
+     *
+     * @param localPort     given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
+     * @param socketTimeout socket timeout
+     * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
+     * @return a new instance of {@link DatagramChannel}
+     */
+    public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort,
+                                                                        final long socketTimeout,
+                                                                        final @Nullable SocketAddress socketAddress,
+                                                                        final @Nullable Map<? extends SocketOption<T>, T> socketOptionMap) {
+        try {
+            final var channel = DatagramChannel.open(StandardProtocolFamily.INET);
+            channel.configureBlocking(false);
+            final var socket = channel.socket();
+            if (socketOptionMap != null) {
+                for (final var option : socketOptionMap.entrySet()) {
+                    channel.setOption(option.getKey(), option.getValue());
+                }
+            }
+            socket.bind(new InetSocketAddress(localPort));
+            socket.setSoTimeout((int) socketTimeout);
+            if (socketAddress != null) {
+                socket.connect(socketAddress);
+            }
+            return channel;
+        } catch (final IOException e) {
+            throw new KnxCommunicationException("Exception occurred during creating datagram channel", e);
+        }
     }
 }
