@@ -250,7 +250,7 @@ public final class InternalKnxClient implements AutoCloseable {
             log.info("Channel ID received: {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
-            this.channelExecutor.submit(new ConnectionStateMonitor(this));
+            this.channelExecutor.submit(CommunicatorFactory.newConnectionStateCommunicator(this));
         }
 
         // do not accept more services anymore!

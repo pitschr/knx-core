@@ -80,6 +80,18 @@ public final class CommunicatorFactory {
     }
 
     /**
+     * Creates new {@link ConnectionStateCommunicator} for regular health-check
+     * <p/>
+     * The connection state monitor is used in Tunneling mode only!
+     *
+     * @param knxClient
+     * @return communicator
+     */
+    public static ConnectionStateCommunicator newConnectionStateCommunicator(final InternalKnxClient knxClient) {
+        return new ConnectionStateCommunicator(knxClient);
+    }
+
+    /**
      * Creates new {@link MulticastChannelCommunicator} for discovery related packet communications
      *
      * @return communicator

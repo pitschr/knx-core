@@ -29,15 +29,18 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.StandardSocketOptions;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.MembershipKey;
 import java.nio.channels.MulticastChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -231,6 +234,65 @@ public class NetworkerTest {
         // test failure
         when(channel.join(any(InetAddress.class), any(NetworkInterface.class))).thenThrow(new IOException("Test I/O Exception"));
         assertThatThrownBy(() -> Networker.joinChannels(channel, CoreConfigs.MULTICAST_ADDRESS)).isInstanceOf(KnxCommunicationException.class);
+    }
+
+    @Test
+    @DisplayName("Test creating an datagram channel (UDP)")
+    public void testDatagramChannel() throws IOException {
+        final var channel = Networker.newDatagramChannel(0, 471, null, null);
+        assertThat(channel.isOpen()).isTrue();
+        assertThat(channel.isConnected()).isFalse();
+        assertThat(channel.isBlocking()).isFalse();
+        assertThat(channel.socket().getSoTimeout()).isEqualTo(471);
+
+        // local address
+        final var socketAddress = (InetSocketAddress) channel.getLocalAddress();
+        assertThat(socketAddress.getAddress().isAnyLocalAddress()).isTrue();
+        assertThat(socketAddress.getPort()).isBetween(1024, 65535); // see https://tools.ietf.org/html/rfc6335
+
+        // remote address
+        assertThat(channel.getRemoteAddress()).isNull();
+    }
+
+    @Test
+    @DisplayName("Test creating an datagram channel (UDP) with socket address and options")
+    public void testDatagramChannelWithSocketAddressAndOptions() throws IOException {
+        final var remoteAddress = Networker.getByAddress(127, 0, 0, 100);
+
+        final var socketAddressMock = mock(InetSocketAddress.class);
+        when(socketAddressMock.isUnresolved()).thenReturn(false);
+        when(socketAddressMock.getAddress()).thenReturn(remoteAddress);
+        when(socketAddressMock.getPort()).thenReturn(1317);
+
+        final var socketOptions = Map.of(StandardSocketOptions.IP_MULTICAST_TTL, 37);
+        final var channel = Networker.newDatagramChannel(0, 382, socketAddressMock, socketOptions);
+
+        assertThat(channel.isOpen()).isTrue();
+        assertThat(channel.isConnected()).isTrue();
+        assertThat(channel.isBlocking()).isFalse();
+        assertThat(channel.socket().getSoTimeout()).isEqualTo(382);
+
+        // local address
+        final var socketAddressLocal = (InetSocketAddress) channel.getLocalAddress();
+        assertThat(socketAddressLocal.getAddress().isAnyLocalAddress()).isFalse();
+        assertThat(socketAddressLocal.getAddress().getAddress()).containsExactly(127, 0, 0, 1);
+        assertThat(socketAddressLocal.getPort()).isBetween(1024, 65535); // see https://tools.ietf.org/html/rfc6335
+
+        // remote address
+        final var socketAddressRemote = (InetSocketAddress) channel.getRemoteAddress();
+        assertThat(socketAddressLocal.getAddress().isAnyLocalAddress()).isFalse();
+        assertThat(socketAddressRemote.getAddress()).isEqualTo(remoteAddress);
+        assertThat(socketAddressRemote.getPort()).isEqualTo(1317);
+    }
+
+    @Test
+    @DisplayName("ERROR: Test creating an datagram channel (UDP) with exception")
+    public void testDatagramChannelException() {
+        final var socketAddressMock = mock(InetSocketAddress.class);
+        when(socketAddressMock.isUnresolved()).thenReturn(true); // that should create IOException
+
+        assertThatThrownBy(() -> Networker.newDatagramChannel(0, 1000, socketAddressMock, null))
+                .isInstanceOf(KnxCommunicationException.class);
     }
 
     /**

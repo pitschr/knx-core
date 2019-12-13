@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.communication.communicator;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.ControlChannelRelated;
 import li.pitschmann.knx.core.body.DataChannelRelated;
-import li.pitschmann.knx.core.communication.ChannelFactory;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 
 import javax.annotation.Nullable;

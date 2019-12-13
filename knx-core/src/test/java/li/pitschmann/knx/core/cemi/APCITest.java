@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.cemi;
 
+import li.pitschmann.knx.core.AbstractKnxEnumTest;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.knx.core.test.AbstractKnxEnumTest;
 import li.pitschmann.knx.core.utils.Bytes;
 import org.junit.jupiter.api.Test;
 

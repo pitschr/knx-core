@@ -26,10 +26,10 @@ import li.pitschmann.knx.core.body.DataChannelRelated;
 import li.pitschmann.knx.core.body.DescriptionChannelRelated;
 import li.pitschmann.knx.core.body.DescriptionRequestBody;
 import li.pitschmann.knx.core.body.MulticastChannelRelated;
-import li.pitschmann.knx.core.communication.ChannelFactory;
 import li.pitschmann.knx.core.header.Header;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Closeables;
+import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     public MockServerDatagramChannel(final MockServerTest mockServerAnnotation) {
         // as mock server is used to test locally
         final var socketOptions = Collections.singletonMap(StandardSocketOptions.IP_MULTICAST_TTL, 0);
-        this.channel = ChannelFactory.newDatagramChannel(0, 3000, null, socketOptions);
+        this.channel = Networker.newDatagramChannel(0, 3000, null, socketOptions);
     }
 
     @Override
