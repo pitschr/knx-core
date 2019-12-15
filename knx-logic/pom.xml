@@ -28,7 +28,7 @@
 
     <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <artifactId>knx-logic</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>KNX Logic Engine</name>
