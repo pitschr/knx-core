@@ -69,7 +69,7 @@ public class PerformanceKnxTest {
                 // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
                 .setting(CoreConfigs.ConnectionState.REQUEST_TIMEOUT, CoreConfigs.ConnectionState.REQUEST_TIMEOUT.getDefaultValue())
                 // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
-                .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, CoreConfigs.ConnectionState.CHECK_INTERVAL.getDefaultValue())
+                .setting(CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL, CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL.getDefaultValue())
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
@@ -122,7 +122,7 @@ public class PerformanceKnxTest {
                 // Use default setting (for unit testing it is set 1 seconds - instead of 10 seconds)
                 .setting(CoreConfigs.ConnectionState.REQUEST_TIMEOUT, CoreConfigs.ConnectionState.REQUEST_TIMEOUT.getDefaultValue())
                 // Use default setting (for unit testing it is set 6 seconds - instead of 60 seconds)
-                .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, CoreConfigs.ConnectionState.CHECK_INTERVAL.getDefaultValue())
+                .setting(CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL, CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL.getDefaultValue())
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {

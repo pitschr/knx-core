@@ -12,7 +12,7 @@ interface) and it supports _tunneling_ and _routing_ modes.
  
 For examples, to get a quick start see examples below. It contains few _main classes_ 
 to get a quick basic understanding how the communication with KNX can be done in 
-programmatically way.
+programmatically way; see [knx-core](knx-core) and [knx-core-plugins](knx-core-plugins).
 
 ### Known limitations
 
@@ -176,102 +176,9 @@ java -cp <file>.jar li.pitschmann.knx.examples.read.Main --routing -ga 1/2/113 -
 
 ## Programming
 
-This tutorial is written for experienced Java developers and explains how to integrate the 
-KNX client with your own application. It looks like:
+#### Core Development
 
-```
-// Creates KNX client and start communication with your KNX Net/IP.
-// The closure of KNX communication will be handled automatically by KNX client.
-try (final var client = DefaultKnxClient.createStarted("address:port")) {
-    // do your stuff you want to do ...
-} catch (final Throwable t) {
-    // catch all throwable you want to handle here (optional)
-} finally {
-    // do final actions (optional)
-}
-```
-
-#### Example: Switch on/off lamp with boolean values
-
-Let's start with an easy sample: You want to switch `on` a lamp. The KNX actuator listens 
-on group address `1/2/110` which is configured for switching on/off a lamp. 
-
-```java
-public final class LampOnExample {
-   public static void main(final String[] args) {
-        // this is the group address where the KNX actuator listens to switch on/off a lamp
-        final var groupAddress = GroupAddress.of(1, 2, 110);
-
-        // create KNX client and connect to KNX Net/IP device using auto-discovery
-        try (final var client = DefaultKnxClient.createStarted()) {
-            // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(true));  // or DPT1.SWITCH.toValue((byte)0x01)
-                                                                           // or DPT1.SWITCH.toValue("on")
-        }
-
-        // auto-closed and disconnected by KNX client
-    }
-}
-```
-
-#### Example: Inverse the lamp status
-
-Given sample, you want to inverse the status of your lamp: 
-* if the lamp is `on`, the lamp should be `off`
-* if the lamp is `off`, the lamp should be `on`
-
-To get the most recent status of lamp, we need this information from the KNX actuator. As
-per KNX Project Design Guidelines we have multiple KNX group addresses, here in our example
-the group address `1/2/110` is responsible for switching on/off the lamp (=write). The group address
-`1/2/113` is used for status feedback of the lamp (=read). 
-
-```java
-public final class LampInverseExample {
-    public static void main(final String[] args) {
-        // this is the group address where the KNX actuator returns the status of lamp
-        final var readGroupAddress = GroupAddress.of(1, 2, 113);
-
-        // this is the group address where the KNX actuator listens to switch on/off the lamp
-        final var writeGroupAddress = GroupAddress.of(1, 2, 110);
-
-        // create KNX client and connect to KNX Net/IP device using auto-discovery
-        try (final var client = DefaultKnxClient.createStarted()) {
-            // send a 'read' request to KNX
-            client.readRequest(readGroupAddress);
-
-            // wait a bit (usually few milliseconds, but up to 1 second maximum)
-            // KNX actuator will send a response to the KNX client with actual lamp status
-            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getBooleanValue();
-
-            // lamp status will be inverted (on -> off / off -> on)
-            final var lampStatusInverted = !lampStatus;
-
-            // send a 'write' request to KNX
-            client.writeRequest(writeGroupAddress, DPT1.SWITCH.toValue(lampStatusInverted));
-        }
-
-        // auto-closed and disconnected by KNX client
-    }
-}
-```
-
-#### Example: Work with Data Point Type
-
-Given snippet, we want to convert a date and time objects into KNX compatible byte array:
-
-```
-// Saturday, 2013-08-17 04:10:45
-final var dayOfWeek = DayOfWeek.SATURDAY;
-final var date = LocalDate.of(2013, 8, 17);
-final var time = LocalTime.of(04, 10, 45);
-
-DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
-```
-
-This can be also more simplified using direct string representation:
-```
-DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45");
-```
+For development with KNX Core there is a [dedicated page](knx-core) available.
 
 #### Plugin Development
 

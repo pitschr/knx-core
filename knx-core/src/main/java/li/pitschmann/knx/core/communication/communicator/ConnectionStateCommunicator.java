@@ -104,7 +104,7 @@ public final class ConnectionStateCommunicator implements Runnable {
                 }
             } else {
                 // request time < response time -> we already got response
-                final var sleepTimeInMillis = this.client.getConfig(CoreConfigs.ConnectionState.CHECK_INTERVAL) - Duration.between(lastRequestTime, lastResponseTime).toMillis();
+                final var sleepTimeInMillis = this.client.getConfig(CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL) - Duration.between(lastRequestTime, lastResponseTime).toMillis();
                 log.debug("Next connection state check will be done in {} ms.", sleepTimeInMillis);
                 if (Sleeper.milliseconds(sleepTimeInMillis)) {
                     this.sendConnectionStateRequest();
