@@ -216,7 +216,10 @@
                     <version>${version.maven-jar-plugin}</version>
                 </plugin>
                 <!--
-                For JAR Source
+                For Deployment
+                * Create JAR Source files
+                * Sign JAR artifacts with GPG
+                * Release
                 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -230,9 +233,6 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!--
-                For Deployment
-                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
@@ -252,10 +252,8 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${version.maven-release-plugin}</version>
                     <configuration>
-                        <goals>deploy</goals>
                         <tagNameFormat>release-@{project.version}</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <releaseProfiles>release</releaseProfiles>
                         <arguments>-Dmaven.test.skipTests=true -Dmaven.test.skip=true</arguments>
                         <dryRun>true</dryRun>
                     </configuration>
@@ -317,9 +315,7 @@
         <profile>
             <id>release</id>
             <properties>
-                <argLine>
-                    -DskipTests
-                </argLine>
+                <argLine />
             </properties>
             <build>
                 <plugins>
