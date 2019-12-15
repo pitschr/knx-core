@@ -93,6 +93,7 @@
             -Duser.language=en
             -Duser.country=US
             -Dfile.encoding=UTF-8
+            -Dlogback.configurationFile=logback-off.xml
         </setting.surefire.default.argLine>
     </properties>
 
@@ -315,6 +316,11 @@
         -->
         <profile>
             <id>release</id>
+            <properties>
+                <argLine>
+                    -DskipTests
+                </argLine>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -346,11 +352,6 @@
                     <value>true</value>
                 </property>
             </activation>
-            <properties>
-                <argLine>
-                    -Dlogback.configurationFile=logback-off.xml
-                </argLine>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
