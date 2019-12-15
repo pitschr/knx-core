@@ -254,8 +254,9 @@
                         <goals>deploy</goals>
                         <tagNameFormat>release-@{project.version}</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <useReleaseProfile>false</useReleaseProfile>
                         <releaseProfiles>release</releaseProfiles>
+                        <arguments>-Dmaven.test.skipTests=true -Dmaven.test.skip=true</arguments>
+                        <dryRun>true</dryRun>
                     </configuration>
                 </plugin>
                 <!--
@@ -334,8 +335,8 @@
         <!--
         Travis Profile
         ==============
-        If the 'env.TRAVIS' property is 'true' then it will consider the code coverage using JaCoCo maven plugin
-        and submits the result to coveralls.
+        If the 'env.TRAVIS' property is 'true' then it will consider the
+        code coverage using JaCoCo maven plugin and submits the result to coveralls.
         -->
         <profile>
             <id>travis</id>
@@ -352,9 +353,6 @@
             </properties>
             <build>
                 <plugins>
-                    <!--
-                    For Code Coverage and submitting to Coveralls
-                    -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
