@@ -31,7 +31,6 @@
     <!-- Sub Modules -->
     <modules>
         <module>knx-core</module>
-        <!-- <module>knx-core-test</module> -->
         <module>knx-core-plugins</module>
         <module>knx-examples</module>
     </modules>
@@ -41,8 +40,29 @@
         <license>
             <name>GPL-v3.0</name>
             <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <!-- Source Control Management -->
+    <scm>
+        <url>https://github.com/pitschr/knx-link</url>
+        <connection>scm:git:https://github.com/pitschr/knx-link.git</connection>
+        <developerConnection>scm:git:https://github.com/pitschr/knx-link.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- Distribution (Maven Repository by Sonatype) -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
 
     <!-- Properties -->
     <properties>
@@ -54,6 +74,7 @@
         <version.jacoco-maven-plugin>0.8.2</version.jacoco-maven-plugin> <!-- EPL 2.0 -->
         <version.maven-assembly-plugin>3.2.0</version.maven-assembly-plugin> <!-- Apache 2.0 -->
         <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin> <!-- Apache 2.0 -->
+        <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin> <!-- Apache 2.0 -->
         <version.maven-jar-plugin>3.2.0</version.maven-jar-plugin> <!-- Apache 2.0 -->
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin> <!-- Apache 2.0 -->
         <version.maven-source-plugin>3.1.0</version.maven-source-plugin> <!-- Apache 2.0 -->
@@ -72,6 +93,7 @@
             -Duser.language=en
             -Duser.country=US
             -Dfile.encoding=UTF-8
+            -Dlogback.configurationFile=logback-off.xml
         </setting.surefire.default.argLine>
     </properties>
 
@@ -194,7 +216,10 @@
                     <version>${version.maven-jar-plugin}</version>
                 </plugin>
                 <!--
-                For JAR Source
+                For Deployment
+                * Create JAR Source files
+                * Sign JAR artifacts with GPG
+                * Release
                 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -207,6 +232,31 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${version.maven-gpg-plugin}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${version.maven-release-plugin}</version>
+                    <configuration>
+                        <tagNameFormat>release-@{project.version}</tagNameFormat>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <arguments>-Dmaven.test.skipTests=true -Dmaven.test.skip=true</arguments>
+                        <dryRun>true</dryRun>
+                    </configuration>
                 </plugin>
                 <!--
                 Executing test in Maven
@@ -239,10 +289,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
@@ -263,10 +309,36 @@
             </properties>
         </profile>
         <!--
+        Release Profile
+        ===============
+        -->
+        <profile>
+            <id>release</id>
+            <properties>
+                <argLine />
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
         Travis Profile
         ==============
-        If the 'env.TRAVIS' property is 'true' then it will consider the code coverage using JaCoCo maven plugin
-        and submits the result to coveralls.
+        If the 'env.TRAVIS' property is 'true' then it will consider the
+        code coverage using JaCoCo maven plugin and submits the result to coveralls.
         -->
         <profile>
             <id>travis</id>
@@ -276,16 +348,8 @@
                     <value>true</value>
                 </property>
             </activation>
-            <properties>
-                <argLine>
-                    -Dlogback.configurationFile=logback-off.xml
-                </argLine>
-            </properties>
             <build>
                 <plugins>
-                    <!--
-                    For Code Coverage and submitting to Coveralls
-                    -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
