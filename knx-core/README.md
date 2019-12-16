@@ -104,14 +104,15 @@ DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45");
 ## Core Configuration
 
 The default configuration settings used by KNX Client are as per KNX Specification 
-but gives you some freedom to adjust some configurations. One example might be to 
-alter the KNX port which differs from the officially registered KNX port `3671` 
-(at IANA). Another example might be to increase the timeout of a specific KNX packet.
+but gives you some freedom to adjust some configurations; e.g. change to use another
+KNX port which differs from the officially registered KNX port `3671` (at IANA).
 
 All KNX Core configurations can be found in: [CoreConfigs.java](src/main/java/li/pitschmann/knx/core/config/CoreConfigs.java) 
 
 | Name | Type | Default Value | Description |
 | ---- | ---- | ------------- | ----------- |
+| NAT | `Boolean` | `false` | Enable/Disable the NAT for *tunneling* communication. <br><br> **Communication:** Tunneling <br> **Config Field:** `li.pitschmann.knx.core.config.CoreConfigs.NAT` <br> **Config Key:** `client.nat.enabled` |
+| KNX Project Path | `Path` | Latest `*.knxproj` file in current work directory. | Absolute path to the `*.knxproj` file that is created/maintained by ETS tool. <br><br> **Config Field:** `li.pitschmann.knx.core.config.CoreConfigs.PROJECT_PATH` <br> **Config Key:** `project.path` |
 | **Search** |
 | Request Timeout | `Long` | `10000` milliseconds | Timeout for *search requests* to find KNX Net/IP device in your network using multicast. <br><br> **Communication:** Tunneling (Discovery Channel, multicast)<br> **Config Field:** `CoreConfigs.Search.REQUEST_TIMEOUT` <br> **Config Key:** `client.communication.search.requestTimeout` |
 | **Description** |
