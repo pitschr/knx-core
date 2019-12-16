@@ -32,6 +32,7 @@
     <modules>
         <module>knx-core</module>
         <module>knx-core-plugins</module>
+        <module>knx-logic</module>
         <module>knx-examples</module>
     </modules>
 

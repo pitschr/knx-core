@@ -472,7 +472,7 @@ public final class MockServer implements Runnable, Closeable {
                 .setting(CoreConfigs.Connect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
                 .setting(CoreConfigs.Disconnect.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
                 .setting(CoreConfigs.ConnectionState.REQUEST_TIMEOUT, 2000L) // 2s instead of 10s
-                .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, 6000L) // 6s instead of 60s
+                .setting(CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL, 6000L) // 6s instead of 60s
                 .setting(CoreConfigs.ConnectionState.HEARTBEAT_TIMEOUT, 12000L) // 12s instead of 120s
                 ;
     }

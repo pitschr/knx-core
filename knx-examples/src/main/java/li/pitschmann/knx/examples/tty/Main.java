@@ -114,7 +114,7 @@ public class Main extends AbstractKnxMain {
                 .plugin(FileAuditPlugin.class)
                 .plugin(MonitorPlugin.class)
                 .plugin(FileStatisticPlugin.class)
-                .setting(CoreConfigs.ConnectionState.CHECK_INTERVAL, 30000L) // instead of 60s
+                .setting(CoreConfigs.ConnectionState.HEARTBEAT_INTERVAL, 30000L) // instead of 60s
                 .setting(CoreConfigs.ConnectionState.HEARTBEAT_TIMEOUT, 60000L) // instead of 120s
                 .setting(CoreConfigs.Description.PORT, 40001) //
                 .setting(CoreConfigs.Control.PORT, 40002) //

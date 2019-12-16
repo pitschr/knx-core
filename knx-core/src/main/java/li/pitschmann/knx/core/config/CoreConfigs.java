@@ -206,10 +206,10 @@ public final class CoreConfigs {
                 Objects::nonNull
         );
         /**
-         * Number of connection state request attempts before KNX connection will be disconnected.
+         * Interval when next connection state request should be sent to KNX Net/IP device.
          */
-        public static final ConfigValue<Long> CHECK_INTERVAL = new ConfigValue<>(
-                "client.communication.connectionState.checkInterval",
+        public static final ConfigValue<Long> HEARTBEAT_INTERVAL = new ConfigValue<>(
+                "client.communication.connectionState.heartbeatInterval",
                 Long.class,
                 Long::valueOf,
                 () -> TimeUnit.SECONDS.toMillis(60),
@@ -217,9 +217,9 @@ public final class CoreConfigs {
         );
 
         /**
-         * If the KNX Net/IP device does not receive a heartbeat request within 120 seconds of the last correctly
-         * received message frame, the server shall terminate the connection by sending a DISCONNECT_REQUEST to the
-         * client’s control endpoint.
+         * If the KNX Net/IP device does not receive a heartbeat within 120 seconds of the
+         * last correctly received message frame, the server shall terminate the connection
+         * by sending a DISCONNECT_REQUEST to the KNX Net/IP device.
          */
         public static final ConfigValue<Long> HEARTBEAT_TIMEOUT = new ConfigValue<>(
                 "client.communication.connectionState.heartbeatTimeout",
@@ -259,6 +259,22 @@ public final class CoreConfigs {
         }
     }
 
+    public static final class Tunneling {
+        /**
+         * KNX client shall wait for 1 second for a TUNNELING_ACK response on
+         * a TUNNELING_REQUEST frame from KNX Net/IP device.
+         */
+        public static final ConfigValue<Long> REQUEST_TIMEOUT = new ConfigValue<>(
+                "client.communication.tunneling.requestTimeout",
+                Long.class,
+                Long::valueOf,
+                () -> TimeUnit.SECONDS.toMillis(1),
+                Objects::nonNull
+        );
+        private Tunneling() {
+        }
+    }
+
     public static final class Data {
         /**
          * Data Channel Port
@@ -268,17 +284,6 @@ public final class CoreConfigs {
                 Integer.class,
                 Integer::valueOf,
                 () -> 0,
-                Objects::nonNull
-        );
-        /**
-         * KNX client shall wait for 1 second for a TUNNELING_ACK response on a TUNNELING_REQUEST frame from
-         * KNX Net/IP device.
-         */
-        public static final ConfigValue<Long> DATA_REQUEST_TIMEOUT = new ConfigValue<>(
-                "client.communication.data.requestTimeout",
-                Long.class,
-                Long::valueOf,
-                () -> TimeUnit.SECONDS.toMillis(1),
                 Objects::nonNull
         );
         /**
