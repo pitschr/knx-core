@@ -21,12 +21,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
     <groupId>li.pitschmann</groupId>
     <artifactId>knx-link</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>KNX Link</name>
     <description>Project for KNX Link</description>
-    <packaging>pom</packaging>
+    <url>https://github.pitschmann.li</url>
 
     <!-- Sub Modules -->
     <modules>
@@ -45,11 +46,21 @@
         </license>
     </licenses>
 
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>Christoph Pitschmann</name>
+            <email>github@pitschmann.li</email>
+            <organization>Pitschmann</organization>
+            <organizationUrl>https://github.pitschmann.li</organizationUrl>
+        </developer>
+    </developers>
+
     <!-- Source Control Management -->
     <scm>
         <url>https://github.com/pitschr/knx-link</url>
-        <connection>scm:git:https://github.com/pitschr/knx-link.git</connection>
-        <developerConnection>scm:git:https://github.com/pitschr/knx-link.git</developerConnection>
+        <connection>scm:git:https://github.com/pitschr/knx-link</connection>
+        <developerConnection>scm:git:https://github.com/pitschr/knx-link</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -78,7 +89,6 @@
         <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin> <!-- Apache 2.0 -->
         <version.maven-jar-plugin>3.2.0</version.maven-jar-plugin> <!-- Apache 2.0 -->
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin> <!-- Apache 2.0 -->
-        <version.maven-source-plugin>3.1.0</version.maven-source-plugin> <!-- Apache 2.0 -->
         <version.maven-surefire-plugin>2.22.1</version.maven-surefire-plugin> <!-- Apache 2.0 -->
         <!-- Dependency Versions and Licenses -->
         <version.assertj-core>3.14.0</version.assertj-core> <!-- Apache 2.0 -->
@@ -218,22 +228,9 @@
                 </plugin>
                 <!--
                 For Deployment
-                * Create JAR Source files
                 * Sign JAR artifacts with GPG
-                * Release
+                * Release (including create JAR source and JavaDoc)
                 -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${version.maven-source-plugin}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
@@ -253,10 +250,8 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${version.maven-release-plugin}</version>
                     <configuration>
-                        <tagNameFormat>release-@{project.version}</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <arguments>-Dmaven.test.skipTests=true -Dmaven.test.skip=true</arguments>
-                        <dryRun>true</dryRun>
+                        <arguments>-Dmaven.test.skipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false</arguments>
                     </configuration>
                 </plugin>
                 <!--
