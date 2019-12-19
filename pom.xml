@@ -311,7 +311,7 @@
         <profile>
             <id>release</id>
             <properties>
-                <argLine />
+                <argLine /> <!-- empty arg line -->
             </properties>
             <build>
                 <plugins>
