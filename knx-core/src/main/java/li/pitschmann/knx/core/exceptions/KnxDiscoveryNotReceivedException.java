@@ -18,10 +18,9 @@
 
 package li.pitschmann.knx.core.exceptions;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.SearchRequestBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
-
-import javax.annotation.Nullable;
 
 /**
  * Exception when discovery information could not be received by KNX Net/IP device.

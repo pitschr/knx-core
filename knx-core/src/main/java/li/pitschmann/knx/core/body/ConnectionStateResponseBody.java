@@ -74,7 +74,7 @@ public final class ConnectionStateResponseBody extends AbstractMultiRawData impl
      * Creates a new {@link ConnectionStateResponseBody} instance
      *
      * @param channelId channel id (0..255)
-     * @param status status of connection state response
+     * @param status    status of connection state response
      * @return a  new immutable {@link ConnectionStateResponseBody}
      */
     public static ConnectionStateResponseBody of(final int channelId, final Status status) {

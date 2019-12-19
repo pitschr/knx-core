@@ -19,12 +19,12 @@
 package li.pitschmann.knx.core.knxproj;
 
 import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;

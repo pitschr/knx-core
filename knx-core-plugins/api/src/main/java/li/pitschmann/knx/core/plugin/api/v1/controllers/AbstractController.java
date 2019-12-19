@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.Path;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

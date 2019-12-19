@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.config;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;

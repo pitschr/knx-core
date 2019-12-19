@@ -77,7 +77,7 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
     /**
      * Creates a new {@link DisconnectRequestBody} instance
      *
-     * @param channelId channel id (0..255)
+     * @param channelId       channel id (0..255)
      * @param controlEndpoint {@link HPAI} of control endpoint
      * @return a new immutable {@link DisconnectRequestBody}
      */

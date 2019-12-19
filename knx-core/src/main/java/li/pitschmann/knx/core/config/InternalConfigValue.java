@@ -1,6 +1,7 @@
 package li.pitschmann.knx.core.config;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;

@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.core.utils;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 
 /**

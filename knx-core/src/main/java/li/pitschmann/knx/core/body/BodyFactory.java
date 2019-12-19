@@ -44,7 +44,7 @@ public final class BodyFactory {
      * given {@code headerAndBodyBytes} as well.
      *
      * @param headerAndBodyBytes header and body in byte-array format
-     * @param <T> an instance of {@link Body}
+     * @param <T>                an instance of {@link Body}
      * @return an instance of {@link Body} or {@link KnxUnknownBodyException} in case the {@link ServiceType} (by header
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
@@ -60,7 +60,7 @@ public final class BodyFactory {
      *
      * @param header    to distinguish which body instance should be used
      * @param bodyBytes body in byte-array format
-     * @param <T> an instance of {@link Body}
+     * @param <T>       an instance of {@link Body}
      * @return an instance of {@link Body} or {@link KnxUnknownBodyException} in case the {@link ServiceType} (by header
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
@@ -74,8 +74,8 @@ public final class BodyFactory {
      * instance.
      *
      * @param serviceType to distinguish which body instance should be used
-     * @param bodyBytes body in byte-array format
-     * @param <T> an instance of {@link Body}
+     * @param bodyBytes   body in byte-array format
+     * @param <T>         an instance of {@link Body}
      * @return an instance of {@link Body} or {@link KnxUnknownBodyException} in case the {@link ServiceType} is not
      * supported.
      * @throws KnxUnknownBodyException in case the body is not known

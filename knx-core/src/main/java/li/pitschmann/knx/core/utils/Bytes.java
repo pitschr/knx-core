@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.regex.Pattern;

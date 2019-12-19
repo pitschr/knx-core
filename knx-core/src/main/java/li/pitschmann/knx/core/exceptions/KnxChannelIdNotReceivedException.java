@@ -18,10 +18,9 @@
 
 package li.pitschmann.knx.core.exceptions;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.ConnectRequestBody;
 import li.pitschmann.knx.core.body.ConnectResponseBody;
-
-import javax.annotation.Nullable;
 
 /**
  * Exception when an channel id could not be received by KNX Net/IP device.

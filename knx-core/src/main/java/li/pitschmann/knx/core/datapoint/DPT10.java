@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT10Value;
 
-import javax.annotation.Nullable;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.regex.Pattern;

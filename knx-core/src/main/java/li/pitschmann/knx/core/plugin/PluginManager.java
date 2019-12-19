@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.plugin;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.config.Config;
@@ -30,7 +31,6 @@ import li.pitschmann.knx.core.utils.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;

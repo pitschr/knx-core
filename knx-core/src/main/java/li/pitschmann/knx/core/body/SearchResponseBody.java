@@ -106,9 +106,9 @@ public final class SearchResponseBody extends AbstractMultiRawData implements Re
     /**
      * Creates a new {@link SearchResponseBody} instance
      *
-     * @param controlEndpoint {@link HPAI} of control endpoint
+     * @param controlEndpoint           {@link HPAI} of control endpoint
      * @param deviceHardwareInformation information about device hardware
-     * @param supportedDeviceFamilies information about supported device capabilities
+     * @param supportedDeviceFamilies   information about supported device capabilities
      * @return a new immutable {@link SearchResponseBody}
      */
     public static SearchResponseBody of(final HPAI controlEndpoint,

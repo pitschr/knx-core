@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.config;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.plugin.Plugin;
 import li.pitschmann.knx.core.utils.Networker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;

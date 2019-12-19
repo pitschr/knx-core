@@ -18,9 +18,8 @@
 
 package li.pitschmann.knx.core.exceptions;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
-
-import javax.annotation.Nullable;
 
 /**
  * Exception when description information could not be received by KNX Net/IP device.

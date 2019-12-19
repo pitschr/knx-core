@@ -19,12 +19,12 @@
 package li.pitschmann.knx.core.communication;
 
 import li.pitschmann.knx.core.address.KnxAddress;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.Arrays;
 

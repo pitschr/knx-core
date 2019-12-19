@@ -18,9 +18,8 @@
 
 package li.pitschmann.knx.core;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxException;
-
-import javax.annotation.Nullable;
 
 /**
  * This class represents a raw data of KNX/IP and is immutable.

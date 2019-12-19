@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.test;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.core.body.RequestBody;
@@ -31,7 +32,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

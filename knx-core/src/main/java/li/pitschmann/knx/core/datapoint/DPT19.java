@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value.Flags;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 
-import javax.annotation.Nullable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;

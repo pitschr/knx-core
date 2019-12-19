@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.core.address;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -116,7 +116,7 @@ public final class GroupAddress extends KnxAddress {
      * The range must be between 0/1 and 31/2047
      *
      * @param main main group [0..31]
-     * @param sub sub group [0..2047] (0 only allowed when main group != 0)
+     * @param sub  sub group [0..2047] (0 only allowed when main group != 0)
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int sub) {
@@ -145,9 +145,9 @@ public final class GroupAddress extends KnxAddress {
      * <p>
      * The range must be between 0/0/1 and 31/7/255
      *
-     * @param main main group [0..31]
+     * @param main   main group [0..31]
      * @param middle middle group [0..7]
-     * @param sub sub group [0..255] (0 only allowed, when main group != 0 or middle group != 0)
+     * @param sub    sub group [0..255] (0 only allowed, when main group != 0 or middle group != 0)
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int middle, final int sub) {

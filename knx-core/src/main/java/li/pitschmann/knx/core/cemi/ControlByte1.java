@@ -94,12 +94,12 @@ public final class ControlByte1 extends AbstractSingleRawData {
     /**
      * Creates a new {@link ControlByte1} instance
      *
-     * @param standardFrame {@code true} for standard frame, {@code false} for extended frame
-     * @param isRepeatEnabled {@code true} if repeat in error, otherwise {@code false}
-     * @param broadcastType type of broadcast
-     * @param priority priority of transmission
+     * @param standardFrame        {@code true} for standard frame, {@code false} for extended frame
+     * @param isRepeatEnabled      {@code true} if repeat in error, otherwise {@code false}
+     * @param broadcastType        type of broadcast
+     * @param priority             priority of transmission
      * @param acknowledgeRequested {@code true} if acknowledge shall be requested
-     * @param errorConfirmation {@code true} if error (negative confirmation), or {@code false} if no error (positive confirmation)
+     * @param errorConfirmation    {@code true} if error (negative confirmation), or {@code false} if no error (positive confirmation)
      * @return a new immutable {@link ControlByte1}
      */
     public static ControlByte1 of(final boolean standardFrame,

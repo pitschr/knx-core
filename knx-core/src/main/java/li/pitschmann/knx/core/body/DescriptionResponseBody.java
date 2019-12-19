@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.dib.DescriptionType;
 import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
 import li.pitschmann.knx.core.dib.IPConfigDIB;
@@ -35,8 +36,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 
 /**
  * Body for Description Response
@@ -107,7 +106,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * Creates a new {@link DescriptionResponseBody} instance
      *
      * @param deviceHardwareInformation information about device hardware
-     * @param supportedDeviceFamilies supported device families
+     * @param supportedDeviceFamilies   supported device families
      * @return a new immutable {@link DescriptionResponseBody}
      */
     public static DescriptionResponseBody of(final DeviceHardwareInformationDIB deviceHardwareInformation,
@@ -156,7 +155,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * Returns the index of {@link DescriptionType} DIB we are looking in {@code rawData} array.
      *
      * @param descriptionType type of description we are looking for
-     * @param rawData byte array to be scanned
+     * @param rawData         byte array to be scanned
      * @return positive number if found, otherwise {@code -1}.
      */
     private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
@@ -186,7 +185,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * Returns the array part for the given {@link DescriptionType} DIB.
      *
      * @param descriptionType type of description we are looking for
-     * @param rawData byte array to be scanned
+     * @param rawData         byte array to be scanned
      * @return byte array if found, otherwise {@code null}
      */
     private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {

@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.utils;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import org.slf4j.MDC;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;

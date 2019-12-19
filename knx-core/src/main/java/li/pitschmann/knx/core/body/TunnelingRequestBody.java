@@ -99,8 +99,8 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * Creates a new {@link TunnelingRequestBody} instance
      *
      * @param channelId channel id (0..255)
-     * @param sequence tunneling packet sequence number
-     * @param cemi the {@link CEMI} to be sent
+     * @param sequence  tunneling packet sequence number
+     * @param cemi      the {@link CEMI} to be sent
      * @return a new immutable {@link TunnelingRequestBody}
      */
     public static TunnelingRequestBody of(final int channelId, final int sequence, final CEMI cemi) {
