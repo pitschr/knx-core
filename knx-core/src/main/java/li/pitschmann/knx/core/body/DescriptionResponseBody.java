@@ -106,8 +106,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     /**
      * Creates a new {@link DescriptionResponseBody} instance
      *
-     * @param deviceHardwareInformation
-     * @param supportedDeviceFamilies
+     * @param deviceHardwareInformation information about device hardware
+     * @param supportedDeviceFamilies supported device families
      * @return a new immutable {@link DescriptionResponseBody}
      */
     public static DescriptionResponseBody of(final DeviceHardwareInformationDIB deviceHardwareInformation,
@@ -155,8 +155,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     /**
      * Returns the index of {@link DescriptionType} DIB we are looking in {@code rawData} array.
      *
-     * @param descriptionType
-     * @param rawData
+     * @param descriptionType type of description we are looking for
+     * @param rawData byte array to be scanned
      * @return positive number if found, otherwise {@code -1}.
      */
     private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
@@ -185,8 +185,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     /**
      * Returns the array part for the given {@link DescriptionType} DIB.
      *
-     * @param descriptionType
-     * @param rawData
+     * @param descriptionType type of description we are looking for
+     * @param rawData byte array to be scanned
      * @return byte array if found, otherwise {@code null}
      */
     private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {

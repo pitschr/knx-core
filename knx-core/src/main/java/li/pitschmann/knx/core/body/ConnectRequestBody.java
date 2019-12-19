@@ -86,9 +86,9 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     /**
      * Creates a new {@link ConnectRequestBody} instance
      *
-     * @param controlEndpoint
-     * @param dataEndpoint
-     * @param cri
+     * @param controlEndpoint {@link HPAI} of control endpoint
+     * @param dataEndpoint {@link HPAI} of data endpoint
+     * @param cri connection request information
      * @return a  new immutable {@link ConnectRequestBody}
      */
     public static ConnectRequestBody of(final HPAI controlEndpoint, final HPAI dataEndpoint, final ConnectionRequestInformation cri) {

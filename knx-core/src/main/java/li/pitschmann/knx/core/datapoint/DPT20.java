@@ -1758,7 +1758,7 @@ public final class DPT20 {
      *             +---+---+---+---+---+---+---+---+
      * Format:     8 bit (r<sub>5</sub> N<sub>3</sub>)
      * Range:      N = [1 .. 4]
-     *                  1 = one push button/binary input; MoveUpDown inverts on each transmission => poor usability, not recommended
+     *                  1 = one push button/binary input; MoveUpDown inverts on each transmission
      *                  2 = one push button/binary input, MoveUp / StepUp message sent
      *                  3 = one push button/binary input, MoveDown / StepDown message sent
      *                  4 = two push buttons/binary inputs mode
@@ -1766,7 +1766,7 @@ public final class DPT20 {
      */
     @KnxDataPointTypeEnum(id = "20.803", description = "SSSB Mode")
     public enum SSSBMode implements DataPointTypeEnum<SSSBMode> {
-        @KnxDataPointValueEnum(value = 1, description = "one push button/binary input; MoveUpDown inverts on each transmission => poor usability, not recommended")
+        @KnxDataPointValueEnum(value = 1, description = "one push button/binary input; MoveUpDown inverts on each transmission")
         ONE_PUSH_INPUT_MOVEUPDOWN, //
         @KnxDataPointValueEnum(value = 2, description = "one push button/binary input, MoveUp / StepUp message sent")
         ONE_PUSH_INPUT_MOVEUP, //

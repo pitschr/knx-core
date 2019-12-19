@@ -57,7 +57,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
         assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.SYSTEM);
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByCreateRawData.isConfirmationFlag()).isFalse();
+        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isFalse();
 
         // create by bytes
         final var controlByteByValueOf = ControlByte1.of((byte) (0x00 << 7 | 0x01 << 5 | 0x00 << 4 | 0x00 << 2 | 0x00 << 1 | 0x00));
@@ -66,7 +66,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
         assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.SYSTEM);
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByValueOf.isConfirmationFlag()).isFalse();
+        assertThat(controlByteByValueOf.isErrorConfirmation()).isFalse();
 
         // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
@@ -88,7 +88,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
         assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.LOW);
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByCreateRawData.isConfirmationFlag()).isTrue();
+        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isTrue();
 
         // create by bytes
         final var controlByteByValueOf = ControlByte1.of((byte) (0x01 << 7 | 0x00 << 5 | 0x01 << 4 | 0x03 << 2 | 0x01 << 1 | 0x01));
@@ -97,7 +97,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
         assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.LOW);
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByValueOf.isConfirmationFlag()).isTrue();
+        assertThat(controlByteByValueOf.isErrorConfirmation()).isTrue();
 
         // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
@@ -119,7 +119,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
         assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.NORMAL);
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByCreateRawData.isConfirmationFlag()).isFalse();
+        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isFalse();
 
         // create by bytes
         final var controlByteByValueOf = ControlByte1.of((byte) (0x01 << 7 | 0x01 << 5 | 0x00 << 4 | 0x01 << 2 | 0x01 << 1 | 0x00));
@@ -128,7 +128,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
         assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.NORMAL);
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByValueOf.isConfirmationFlag()).isFalse();
+        assertThat(controlByteByValueOf.isErrorConfirmation()).isFalse();
 
         // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
@@ -150,7 +150,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
         assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.URGENT);
         assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByCreateRawData.isConfirmationFlag()).isTrue();
+        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isTrue();
 
         // create by bytes
         final var controlByteByValueOf = ControlByte1.of((byte) (0x00 << 7 | 0x00 << 5 | 0x01 << 4 | 0x02 << 2 | 0x00 << 1 | 0x01));
@@ -159,7 +159,7 @@ public final class ControlByte1Test {
         assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
         assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.URGENT);
         assertThat(controlByteByValueOf.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByValueOf.isConfirmationFlag()).isTrue();
+        assertThat(controlByteByValueOf.isErrorConfirmation()).isTrue();
 
         // compare raw data of 'create' and 'create by bytes'
         assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
@@ -183,11 +183,11 @@ public final class ControlByte1Test {
     @Test
     public void testToString() {
         assertThat(ControlByte1.of(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false)).hasToString(String.format(
-                "ControlByte1{standardFrame=false, repeatEnabled=false, broadcastType=%s, priority=%s, requestAcknowledge=false, confirmationFlag=false, rawData=0x20}",
+                "ControlByte1{standardFrame=false, repeatEnabled=false, broadcastType=%s, priority=%s, requestAcknowledge=false, errorConfirmation=false, rawData=0x20}",
                 BroadcastType.SYSTEM, Priority.SYSTEM));
 
         assertThat(ControlByte1.of(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true)).hasToString(String.format(
-                "ControlByte1{standardFrame=false, repeatEnabled=true, broadcastType=%s, priority=%s, requestAcknowledge=false, confirmationFlag=true, rawData=0x19}",
+                "ControlByte1{standardFrame=false, repeatEnabled=true, broadcastType=%s, priority=%s, requestAcknowledge=false, errorConfirmation=true, rawData=0x19}",
                 BroadcastType.NORMAL, Priority.URGENT));
     }
 }

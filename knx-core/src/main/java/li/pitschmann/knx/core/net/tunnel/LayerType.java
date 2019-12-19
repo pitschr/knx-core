@@ -55,7 +55,7 @@ public enum LayerType implements KnxByteEnum {
     /**
      * A matching {@link LayerType} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link LayerType}
      * @return existing {@link LayerType}, or {@link KnxEnumNotFoundException} if no {@link LayerType}
      * for given {@code code} exists
      */

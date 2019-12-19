@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Example Two: Inverse Lamp Status
- * <p/>
- * If the lamp is <strong>on</strong>, the lamp should be <strong>off</strong>.<br/>
- * If the lamp is <strong>off</strong>, the lamp should be <strong>on</strong>.<br/>
- * <p/>
+ * <p>
+ * If the lamp is <strong>on</strong>, the lamp should be <strong>off</strong>.<br>
+ * If the lamp is <strong>off</strong>, the lamp should be <strong>on</strong>.<br>
+ * <p>
  * Note:
  * This works only when write flag is enabled for group address (1/2/110) and
  * group address (1/2/113) has a read flag enabled.

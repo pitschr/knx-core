@@ -178,9 +178,6 @@ public enum ServiceType implements KnxBytesEnum {
 
     /**
      * Constructor for Response/Acknowledge Service Type identifiers
-     *
-     * @param code
-     * @param friendlyName
      */
     ServiceType(final int code, final String friendlyName) {
         this(code, friendlyName, null);
@@ -188,10 +185,6 @@ public enum ServiceType implements KnxBytesEnum {
 
     /**
      * Constructor for Request Service Type Identifiers
-     *
-     * @param code
-     * @param friendlyName
-     * @param responseIdentifier
      */
     ServiceType(final int code, final String friendlyName, final ServiceType responseIdentifier) {
         this.code = code;
@@ -204,7 +197,7 @@ public enum ServiceType implements KnxBytesEnum {
     /**
      * Returns the {@link ServiceType} for given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link ServiceType}
      * @return instance of {@link ServiceType} otherwise {@link KnxEnumNotFoundException}
      * if given {@code code} is not known
      */

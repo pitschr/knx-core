@@ -53,7 +53,7 @@ public abstract class AbstractKnxMain {
      * <li>{@code --nat} ... if the communication should be using Network Address Translation (tunneling)</li>
      * </ul>
      *
-     * @param args
+     * @param args arguments
      * @return a new instance of {@link ConfigBuilder}
      */
     protected ConfigBuilder parseConfigBuilder(final String[] args) {
@@ -87,10 +87,11 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the value of parameter if supplied
      *
-     * @param args
+     * @param args arguments
      * @param parameterNames parameter names, may be comma-separated
      * @param defaultValue   default value in case the parameter could not be found or not parsed correctly
-     * @param function
+     * @param function to be used for conversion from String to {@code <T>} value type
+     * @param <T> type of value
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
@@ -121,7 +122,7 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the value if parameter exists
      *
-     * @param args
+     * @param args arguments
      * @param parameterNames parameter names, may be comma-separated
      * @return {@code true} if parameter was found, otherwise {@code false}
      */
@@ -138,10 +139,11 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the value of parameter if supplied
      *
-     * @param args
+     * @param args arguments
      * @param parameterNames parameter names, may be comma-separated
      * @param defaultValues  default values in case the parameter could not be found or not parsed correctly
-     * @param function
+     * @param function to be used for conversion from String to {@code <T>} value type
+     * @param <T> type of value
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable

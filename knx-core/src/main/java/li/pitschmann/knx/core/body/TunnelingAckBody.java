@@ -79,9 +79,9 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     /**
      * Creates a new {@link TunnelingAckBody} instance
      *
-     * @param channelId
-     * @param sequence
-     * @param status
+     * @param channelId channel id (0..255)
+     * @param sequence tunneling packet sequence number
+     * @param status status of tunneling acknowledge
      * @return a new immutable {@link TunnelingAckBody}
      */
     public static TunnelingAckBody of(final int channelId, final int sequence, final Status status) {

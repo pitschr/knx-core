@@ -43,7 +43,8 @@ public final class BodyFactory {
      * Creates a {@link Body} for given {@code headerAndBodyBytes}. The appropriate {@link Header} will be parsed by
      * given {@code headerAndBodyBytes} as well.
      *
-     * @param headerAndBodyBytes
+     * @param headerAndBodyBytes header and body in byte-array format
+     * @param <T> an instance of {@link Body}
      * @return an instance of {@link Body} or {@link KnxUnknownBodyException} in case the {@link ServiceType} (by header
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
@@ -58,7 +59,8 @@ public final class BodyFactory {
      * used to create a proper Body instance.
      *
      * @param header    to distinguish which body instance should be used
-     * @param bodyBytes
+     * @param bodyBytes body in byte-array format
+     * @param <T> an instance of {@link Body}
      * @return an instance of {@link Body} or {@link KnxUnknownBodyException} in case the {@link ServiceType} (by header
      * info) is not supported.
      * @throws KnxUnknownBodyException in case the body is not known
@@ -72,13 +74,13 @@ public final class BodyFactory {
      * instance.
      *
      * @param serviceType to distinguish which body instance should be used
-     * @param bodyBytes
+     * @param bodyBytes body in byte-array format
+     * @param <T> an instance of {@link Body}
      * @return an instance of {@link Body} or {@link KnxUnknownBodyException} in case the {@link ServiceType} is not
      * supported.
      * @throws KnxUnknownBodyException in case the body is not known
      */
     @SuppressWarnings("unchecked")
-
     public static <T extends Body> T of(final ServiceType serviceType, final byte[] bodyBytes) {
         Preconditions.checkNonNull(serviceType);
         Preconditions.checkNonNull(bodyBytes);

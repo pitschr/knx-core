@@ -77,7 +77,7 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
     /**
      * Creates a new {@link SearchRequestBody} instance
      *
-     * @param discoveryEndpoint
+     * @param discoveryEndpoint {@link HPAI} of discovery endpoint
      * @return a new immutable {@link SearchRequestBody}
      */
     public static SearchRequestBody of(final HPAI discoveryEndpoint) {

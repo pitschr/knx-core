@@ -95,9 +95,8 @@ public enum Status implements KnxByteEnum {
     /**
      * A matching {@link Status} for the given {@code code}
      *
-     * @param code
-     * @return existing {@link Status}, or {@link #E_UNDEFINED_STATUS} if no {@link Status}
-     * for given {@code code} exists
+     * @param code value to find the associated {@link Status}
+     * @return existing {@link Status}, or {@link #E_UNDEFINED_STATUS} if no associated {@link Status} could be found
      */
     public static Status valueOf(final int code) {
         return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()

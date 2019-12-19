@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Example One: Switch Lamp Status On
- * <p/>
+ * <p>
  * Note:
  * This works only when write flag is enabled for group address (1/2/110).
  *

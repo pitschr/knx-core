@@ -173,10 +173,10 @@ public final class CEMI extends AbstractMultiRawData {
      * {@link #useDefault(MessageCode, KnxAddress, APCI, byte[])} while the byte array is taken
      * from {@link DataPointValue} parameter.
      *
-     * @param messageCode
-     * @param destinationAddress
-     * @param apci
-     * @param dataPointValue
+     * @param messageCode the message code
+     * @param destinationAddress destination address
+     * @param apci APCI for application layer control information
+     * @param dataPointValue the data point type value that contains value to be sent to KNX Net/IP device
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode,} {@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI} taken from {@link DataPointValue}.
      */
@@ -196,10 +196,10 @@ public final class CEMI extends AbstractMultiRawData {
      * <li>TPCI Packet Number = 0 (zero)</li>
      * </ul>
      *
-     * @param messageCode
-     * @param destinationAddress
-     * @param apci
-     * @param apciData
+     * @param messageCode message code
+     * @param destinationAddress destination address
+     * @param apci APCI for application layer control information
+     * @param apciData data for APCI (optional)
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode, }{@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI}.
      */
@@ -222,16 +222,16 @@ public final class CEMI extends AbstractMultiRawData {
     /**
      * Creates a new {@link CEMI} instance
      *
-     * @param messageCode
-     * @param additionalInfo
-     * @param controlByte1
-     * @param controlByte2
-     * @param sourceAddress
-     * @param destinationAddress
-     * @param tpci
-     * @param tpciPacketNumber
-     * @param apci
-     * @param dataPointValue
+     * @param messageCode message code
+     * @param additionalInfo additional information for CEMI
+     * @param controlByte1 control byte #1
+     * @param controlByte2 control byte #2
+     * @param sourceAddress source address (physical address of KNX device)
+     * @param destinationAddress destination address
+     * @param tpci TCPI for transport information
+     * @param tpciPacketNumber packet number for TCPI (optional)
+     * @param apci APCI for application layer control information
+     * @param dataPointValue the data point type value that contains value to be sent to KNX Net/IP device
      * @return a new immutable {@link CEMI}
      */
     public static CEMI of(final MessageCode messageCode,
@@ -251,16 +251,16 @@ public final class CEMI extends AbstractMultiRawData {
     /**
      * Creates a new {@link CEMI} instance
      *
-     * @param messageCode
-     * @param additionalInfo
-     * @param controlByte1
-     * @param controlByte2
-     * @param sourceAddress
-     * @param destinationAddress
-     * @param tpci
-     * @param tpciPacketNumber
-     * @param apci
-     * @param apciData
+     * @param messageCode message code
+     * @param additionalInfo additional information for CEMI
+     * @param controlByte1 control byte #1
+     * @param controlByte2 control byte #2
+     * @param sourceAddress source address (physical address of KNX device)
+     * @param destinationAddress destination address
+     * @param tpci TCPI for transport information
+     * @param tpciPacketNumber packet number for TCPI (optional)
+     * @param apci APCI for application layer control information
+     * @param apciData data for APCI (optional)
      * @return a new immutable {@link CEMI}
      */
     public static CEMI of(final MessageCode messageCode,

@@ -104,9 +104,9 @@ public final class HPAI extends AbstractMultiRawData {
     }
 
     /**
-     * Returns an instance of {@link HPAI}
+     * Returns an instance of {@link HPAI} based on {@link Channel} instance
      *
-     * @param channel
+     * @param channel communication channel
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final Channel channel) {
@@ -131,9 +131,9 @@ public final class HPAI extends AbstractMultiRawData {
     /**
      * Returns an instance of {@link HPAI}
      *
-     * @param protocol
-     * @param address
-     * @param port
+     * @param protocol host protocol (UDP or TCP)
+     * @param address address of endpoint
+     * @param port port of endpoint
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final HostProtocol protocol, final InetAddress address, final int port) {

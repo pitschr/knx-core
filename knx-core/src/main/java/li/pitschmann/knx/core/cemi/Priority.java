@@ -54,7 +54,7 @@ public enum Priority implements KnxByteEnum {
     /**
      * A matching {@link Priority} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link Priority}
      * @return existing {@link Priority}, or {@link KnxEnumNotFoundException} if no {@link Priority}
      * for given {@code code} exists
      */

@@ -67,7 +67,7 @@ public enum DescriptionType implements KnxByteEnum {
     /**
      * A matching {@link DescriptionType} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link DescriptionType}
      * @return existing {@link DescriptionType}, or {@link KnxEnumNotFoundException} if no {@link DescriptionType}
      * for given {@code code} exists
      */

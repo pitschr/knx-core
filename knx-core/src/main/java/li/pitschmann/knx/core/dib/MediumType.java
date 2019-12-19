@@ -59,7 +59,7 @@ public enum MediumType implements KnxByteEnum {
     /**
      * A matching {@link MediumType} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link MediumType}
      * @return existing {@link MediumType}, or {@link KnxEnumNotFoundException} if no {@link MediumType}
      * for given {@code code} exists
      */

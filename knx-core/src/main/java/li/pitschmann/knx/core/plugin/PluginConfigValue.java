@@ -10,7 +10,8 @@ import java.util.function.Supplier;
 /**
  * Dedicated {@link ConfigValue} instance for Plugin
  *
- * @param <T>
+ * @param <T> value type of plugin config (e.g. Boolean)
+ * @author PITSCHR
  */
 public class PluginConfigValue<T> extends ConfigValue<T> {
     /**

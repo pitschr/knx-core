@@ -101,11 +101,11 @@ public enum MessageCode implements KnxByteEnum {
 
     /**
      * A matching {@link MessageCode} for the given {@code code}
-     * <p/>
+     * <p>
      * In case if the message code is unknown or unsupported message, the received message should be simply be ignored
      * and no confirmation message should be sent.
      *
-     * @param code
+     * @param code value to find the associated {@link MessageCode}
      * @return existing {@link MessageCode}, or {@link KnxEnumNotFoundException} if no {@link MessageCode}
      * for given {@code code} exists
      */

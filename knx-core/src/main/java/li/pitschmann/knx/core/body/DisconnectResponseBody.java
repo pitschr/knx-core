@@ -70,8 +70,8 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     /**
      * Creates a new {@link DisconnectResponseBody} instance
      *
-     * @param channelId
-     * @param status
+     * @param channelId channel id (0..255)
+     * @param status status of disconnect response
      * @return a new immutable {@link DisconnectResponseBody}
      */
     public static DisconnectResponseBody of(final int channelId, final Status status) {

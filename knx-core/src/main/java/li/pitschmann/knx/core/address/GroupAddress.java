@@ -37,7 +37,7 @@ public final class GroupAddress extends KnxAddress {
     /**
      * Private Constructor for {@link GroupAddress}
      *
-     * @param addressRawData
+     * @param addressRawData address in two-byte array
      */
     private GroupAddress(final byte[] addressRawData) {
         super(addressRawData);
@@ -65,7 +65,7 @@ public final class GroupAddress extends KnxAddress {
      * This method will call, based on occurrence of {@code /} (slash) character,
      * either {@link #of(int)}, {@link #of(int, int)} or {@link #of(int, int, int)}
      *
-     * @param addressAsString
+     * @param addressAsString address in a string format to be parsed
      * @return a new instance of {@link GroupAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
@@ -90,10 +90,10 @@ public final class GroupAddress extends KnxAddress {
 
     /**
      * Returns an instance of {@link GroupAddress} based on free-level topology.
-     * <p/>
+     * <p>
      * The range must be between 1 and 65535
      *
-     * @param address
+     * @param address address as integer
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int address) {
@@ -112,11 +112,11 @@ public final class GroupAddress extends KnxAddress {
 
     /**
      * Returns an instance of {@link GroupAddress} based on 2-level topology
-     * <p/>
+     * <p>
      * The range must be between 0/1 and 31/2047
      *
-     * @param main
-     * @param sub
+     * @param main main group [0..31]
+     * @param sub sub group [0..2047] (0 only allowed when main group != 0)
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int sub) {
@@ -142,12 +142,12 @@ public final class GroupAddress extends KnxAddress {
 
     /**
      * Returns an instance of {@link GroupAddress} based on 3-level topology
-     * <p/>
+     * <p>
      * The range must be between 0/0/1 and 31/7/255
      *
-     * @param main
-     * @param middle
-     * @param sub
+     * @param main main group [0..31]
+     * @param middle middle group [0..7]
+     * @param sub sub group [0..255] (0 only allowed, when main group != 0 or middle group != 0)
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int middle, final int sub) {

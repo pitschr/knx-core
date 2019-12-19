@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 /**
  * Format for {@link FileAuditPlugin}
- * <p/>
+ * <p>
  * JSON and TSV are supported.
  */
 public enum FileAuditFormat {

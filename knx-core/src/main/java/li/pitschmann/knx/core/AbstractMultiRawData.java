@@ -66,7 +66,7 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
      * current class. In case the validation fails a {@link KnxException}
      * will be thrown.
      *
-     * @param rawData
+     * @param rawData byte array to be validated
      */
     protected abstract void validate(final byte[] rawData);
 

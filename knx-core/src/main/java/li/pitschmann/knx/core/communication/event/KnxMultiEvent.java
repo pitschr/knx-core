@@ -33,8 +33,8 @@ import java.util.function.Predicate;
  * Mutable KNX event data containing <strong>one request</strong>
  * and <strong>multiple response</strong>.
  *
- * @param <REQUEST>
- * @param <RESPONSE>
+ * @param <REQUEST> instance that extends {@link RequestBody}
+ * @param <RESPONSE> instance that extends {@link ResponseBody}
  * @author PITSCHR
  */
 public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> implements KnxEvent<REQUEST, RESPONSE> {

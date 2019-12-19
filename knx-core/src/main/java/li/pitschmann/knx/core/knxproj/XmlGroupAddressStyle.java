@@ -58,10 +58,7 @@ public enum XmlGroupAddressStyle {
     private final Function<GroupAddress, String> resolver;
 
     /**
-     * Constructor for Response/Acknowledge Service Type identifiers
-     *
-     * @param code
-     * @param resolver
+     * Constructor for XML Group Address Style
      */
     XmlGroupAddressStyle(final String code, final String friendlyName, final Function<GroupAddress, String> resolver) {
         this.code = code;
@@ -71,7 +68,7 @@ public enum XmlGroupAddressStyle {
 
     /**
      * Returns the {@link XmlGroupAddressStyle} for given xmlMappingValue
-     * <p/>
+     * <p>
      * Note: {@link #valueOf(String)} uses a different look-up approach
      *
      * @param id

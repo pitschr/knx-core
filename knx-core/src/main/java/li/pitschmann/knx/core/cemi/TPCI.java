@@ -59,7 +59,7 @@ public enum TPCI implements KnxByteEnum {
     /**
      * A matching {@link TPCI} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link TPCI}
      * @return existing {@link TPCI}, or {@link KnxEnumNotFoundException} if no {@link TPCI}
      * for given {@code code} exists
      */

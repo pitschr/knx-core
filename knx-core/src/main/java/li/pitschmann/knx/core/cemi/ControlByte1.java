@@ -29,7 +29,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
     private final BroadcastType broadcastType;
     private final Priority priority;
     private final boolean requestAcknowledge;
-    private final boolean confirmationFlag;
+    private final boolean errorConfirmation;
 
     private ControlByte1(final byte ctrlRawData) {
         super(ctrlRawData);
@@ -60,7 +60,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
         // .... ...x confirmation flag
         // 0 = no error (confirm)
         // 1 = error (L-Data.Connection)
-        this.confirmationFlag = (ctrlRawData & 0x01) == 0x01;
+        this.errorConfirmation = (ctrlRawData & 0x01) == 0x01;
     }
 
     /**
@@ -77,12 +77,12 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * Returns the default {@link ControlByte1} with default settings:
      *
      * <ul>
-     * <li>Use Standard Frame = {@code true}</li>
-     * <li>Is Repeat Enabled = {@code false}</li>
-     * <li>{@link BroadcastType#NORMAL}</li>
-     * <li>{@link Priority#LOW}</li>
-     * <li>Request Acknowledge = {@code false}</li>
-     * <li>Confirmation Flag = {@code false}</li>
+     * <li>Use Standard Frame</li>
+     * <li>No Repeat in case of error</li>
+     * <li>Use {@link BroadcastType#NORMAL}</li>
+     * <li>Use {@link Priority#LOW}</li>
+     * <li>No Acknowledge Request</li>
+     * <li>No Error</li>
      * </ul>
      *
      * @return re-usable immutable default {@link ControlByte1}
@@ -94,12 +94,12 @@ public final class ControlByte1 extends AbstractSingleRawData {
     /**
      * Creates a new {@link ControlByte1} instance
      *
-     * @param standardFrame
-     * @param isRepeatEnabled
-     * @param broadcastType
-     * @param priority
-     * @param acknowledgeRequested
-     * @param confirmationFlag
+     * @param standardFrame {@code true} for standard frame, {@code false} for extended frame
+     * @param isRepeatEnabled {@code true} if repeat in error, otherwise {@code false}
+     * @param broadcastType type of broadcast
+     * @param priority priority of transmission
+     * @param acknowledgeRequested {@code true} if acknowledge shall be requested
+     * @param errorConfirmation {@code true} if error (negative confirmation), or {@code false} if no error (positive confirmation)
      * @return a new immutable {@link ControlByte1}
      */
     public static ControlByte1 of(final boolean standardFrame,
@@ -107,7 +107,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
                                   final BroadcastType broadcastType,
                                   final Priority priority,
                                   final boolean acknowledgeRequested,
-                                  final boolean confirmationFlag) {
+                                  final boolean errorConfirmation) {
         // validate
         if (broadcastType == null) {
             throw new KnxNullPointerException("broadcastType");
@@ -136,10 +136,10 @@ public final class ControlByte1 extends AbstractSingleRawData {
         // .... ...x confirmation flag
         // 0 = no error (confirm)
         // 1 = error (L-Data.Connection)
-        final var confirmationFlagAsByte = confirmationFlag ? (byte) 0x01 : 0x00;
+        final var errorConfirmationAsByte = errorConfirmation ? (byte) 0x01 : 0x00;
 
         // create byte
-        final var b = (byte) (frameAsByte | repeatAsByte | broadcastTypeAsByte | priorityAsByte | requestAckAsByte | confirmationFlagAsByte);
+        final var b = (byte) (frameAsByte | repeatAsByte | broadcastTypeAsByte | priorityAsByte | requestAckAsByte | errorConfirmationAsByte);
         return of(b);
     }
 
@@ -168,8 +168,9 @@ public final class ControlByte1 extends AbstractSingleRawData {
         return this.requestAcknowledge;
     }
 
-    public boolean isConfirmationFlag() {
-        return this.confirmationFlag;
+
+    public boolean isErrorConfirmation() {
+        return this.errorConfirmation;
     }
 
     @Override
@@ -181,7 +182,7 @@ public final class ControlByte1 extends AbstractSingleRawData {
                 .add("broadcastType", this.broadcastType)
                 .add("priority", this.priority)
                 .add("requestAcknowledge", this.requestAcknowledge)
-                .add("confirmationFlag", this.confirmationFlag)
+                .add("errorConfirmation", this.errorConfirmation)
                 .add("rawData", this.getRawDataAsHexString())
                 .toString();
         // @formatter:on

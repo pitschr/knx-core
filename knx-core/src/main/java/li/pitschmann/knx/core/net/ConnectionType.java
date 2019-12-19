@@ -67,7 +67,7 @@ public enum ConnectionType implements KnxByteEnum {
     /**
      * A matching {@link ConnectionType} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link ConnectionType}
      * @return existing {@link ConnectionType}, or {@link KnxEnumNotFoundException} if no {@link ConnectionType}
      * for given {@code code} exists
      */

@@ -34,7 +34,8 @@ import java.util.function.Supplier;
  * <li>{@code defaultSupplier} ... supplier for default value</li>
  * </ul>
  *
- * @param <T>
+ * @param <T> value type of config (e.g. Boolean)
+ * @author PITSCHR
  */
 public class ConfigValue<T> {
     private final String key;
