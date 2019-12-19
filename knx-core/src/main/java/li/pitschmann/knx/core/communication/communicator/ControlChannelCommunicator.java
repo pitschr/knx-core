@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.core.communication.communicator;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.ControlChannelRelated;
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 
-import javax.annotation.Nullable;
 import java.nio.channels.SelectableChannel;
 
 /**

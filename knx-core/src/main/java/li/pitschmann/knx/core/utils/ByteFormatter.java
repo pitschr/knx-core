@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.core.utils;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 

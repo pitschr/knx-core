@@ -65,7 +65,7 @@ public enum ServiceTypeFamily implements KnxByteEnum {
     /**
      * A matching {@link ServiceTypeFamily} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link ServiceTypeFamily}
      * @return existing {@link ServiceTypeFamily}, or {@link KnxEnumNotFoundException} if no {@link ServiceTypeFamily}
      * for given {@code code} exists
      */

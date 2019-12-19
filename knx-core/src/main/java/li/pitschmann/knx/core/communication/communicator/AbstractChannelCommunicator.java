@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.communication.communicator;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
@@ -35,7 +36,6 @@ import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;
 import java.util.Objects;

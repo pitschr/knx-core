@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
 
 /**
  * Exception about any issue during parsing of '*.knxproj' file

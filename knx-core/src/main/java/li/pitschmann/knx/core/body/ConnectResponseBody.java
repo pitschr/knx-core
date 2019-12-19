@@ -95,8 +95,8 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
     /**
      * Creates a new {@link ConnectResponseBody} instance
      *
-     * @param channelId
-     * @param status
+     * @param channelId    channel id (0..255)
+     * @param status       status of connect response
      * @param dataEndpoint (required only when {@link Status#E_NO_ERROR})
      * @param crd          (required only when {@link Status#E_NO_ERROR})
      * @return a new immutable {@link ConnectResponseBody}
@@ -168,7 +168,7 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
     /**
      * Get the status of connect response
      *
-     * @return
+     * @return status
      */
     public Status getStatus() {
         return this.status;

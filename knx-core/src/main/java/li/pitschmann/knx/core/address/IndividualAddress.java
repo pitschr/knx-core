@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.core.address;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -77,7 +77,7 @@ public final class IndividualAddress extends KnxAddress {
      * This method will split based of {@code .} delimiter and will call
      * {@link #of(int, int, int)}
      *
-     * @param addressAsString
+     * @param addressAsString address in a string format to be parsed
      * @return An new instance of {@link IndividualAddress}
      * or {@link KnxIllegalArgumentException} when a wrong format was provided
      */
@@ -98,7 +98,7 @@ public final class IndividualAddress extends KnxAddress {
      *
      * @param area   [0..15]
      * @param line   [0..15]
-     * @param device [0..255]
+     * @param device [0..255] (0 only allowed, when main group != 0 or middle group != 0)
      * @return a new immutable {@link IndividualAddress}
      */
     public static IndividualAddress of(final int area, final int line, final int device) {

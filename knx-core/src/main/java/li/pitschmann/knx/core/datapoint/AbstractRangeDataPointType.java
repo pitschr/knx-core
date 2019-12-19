@@ -18,9 +18,8 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
-
-import javax.annotation.Nullable;
 
 /**
  * {@link AbstractDataPointType} extended class with range

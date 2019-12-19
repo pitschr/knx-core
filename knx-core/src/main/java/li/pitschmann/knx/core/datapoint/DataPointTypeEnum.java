@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.datapoint.value.DPTEnumValue;
 /**
  * Interface representing that data point type is an enumeration
  *
- * @param <T>
+ * @param <T> the enumeration that should be a data point type enumeration
  * @author PITSCHR
  */
 public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {

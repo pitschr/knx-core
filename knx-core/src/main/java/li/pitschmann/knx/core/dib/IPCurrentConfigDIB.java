@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 
 /**
  * IP Current Config DIB to specify DIB for type {@link DescriptionType#IP_CURRENT_CONFIG}
- * <p>
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+

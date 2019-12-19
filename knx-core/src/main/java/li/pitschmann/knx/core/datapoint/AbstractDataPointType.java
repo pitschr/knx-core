@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
@@ -29,7 +30,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;

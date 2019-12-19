@@ -82,9 +82,9 @@ public final class ControlByte2 extends AbstractSingleRawData {
     /**
      * Creates a new {@link ControlByte2} instance
      *
-     * @param addressType
-     * @param hopCount
-     * @param frameFormat
+     * @param addressType type of address used for the CEMI message
+     * @param hopCount    routing maximum hops
+     * @param frameFormat format of frame (standard, extended, ...)
      * @return a new immutable {@link ControlByte2}
      */
     public static ControlByte2 of(final AddressType addressType, final int hopCount, final int frameFormat) {

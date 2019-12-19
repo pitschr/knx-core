@@ -26,7 +26,7 @@ import li.pitschmann.knx.examples.AbstractKnxMain;
 
 /**
  * Demo class how to send a read request to a KNX group address.
- * <p/>
+ * <p>
  * Examples:
  * <pre>
  * --routing --groupAddress 1/2/113

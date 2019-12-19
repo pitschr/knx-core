@@ -103,7 +103,7 @@ public enum APCI implements KnxBytesEnum {
     /**
      * A matching {@link APCI} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link APCI}
      * @return existing {@link APCI}, or {@link KnxEnumNotFoundException} if no {@link APCI}
      * for given {@code code} exists
      */

@@ -75,7 +75,7 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
     /**
      * Creates a new {@link DescriptionRequestBody} instance
      *
-     * @param controlEndpoint
+     * @param controlEndpoint {@link HPAI} of control endpoint
      * @return a new immutable {@link DescriptionRequestBody}
      */
     public static DescriptionRequestBody of(final HPAI controlEndpoint) {

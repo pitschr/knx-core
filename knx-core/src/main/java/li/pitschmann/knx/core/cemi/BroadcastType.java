@@ -46,7 +46,7 @@ public enum BroadcastType implements KnxByteEnum {
     /**
      * A matching {@link BroadcastType} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link BroadcastType}
      * @return existing {@link BroadcastType}, or {@link KnxEnumNotFoundException} if no {@link BroadcastType}
      * for given {@code code} exists
      */

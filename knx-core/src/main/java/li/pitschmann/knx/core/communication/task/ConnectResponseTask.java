@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.communication.task;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.ConnectRequestBody;
 import li.pitschmann.knx.core.body.ConnectResponseBody;
@@ -26,7 +27,6 @@ import li.pitschmann.knx.core.exceptions.KnxBodyNotReceivedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;

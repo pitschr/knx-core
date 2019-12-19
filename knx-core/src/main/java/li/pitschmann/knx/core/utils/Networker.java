@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.core.utils;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.core.net.HPAI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;

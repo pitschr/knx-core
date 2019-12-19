@@ -1,8 +1,8 @@
 package li.pitschmann.knx.core.plugin;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.config.ConfigValue;
 
-import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -10,7 +10,8 @@ import java.util.function.Supplier;
 /**
  * Dedicated {@link ConfigValue} instance for Plugin
  *
- * @param <T>
+ * @param <T> value type of plugin config (e.g. Boolean)
+ * @author PITSCHR
  */
 public class PluginConfigValue<T> extends ConfigValue<T> {
     /**

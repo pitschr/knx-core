@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
 
 /**
  * A general KNX/IP communication exception. This exception is used for general communication issues as well like

@@ -25,6 +25,11 @@ import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
 
+/**
+ * Type of KNX Address
+ *
+ * @author PITSCHR
+ */
 public enum AddressType implements KnxByteEnum {
     /**
      * Individual Address
@@ -46,7 +51,7 @@ public enum AddressType implements KnxByteEnum {
     /**
      * A matching {@link AddressType} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link AddressType}
      * @return existing {@link AddressType}, or {@link KnxEnumNotFoundException} if no {@link AddressType}
      * for given {@code code} exists
      */

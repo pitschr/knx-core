@@ -1,6 +1,7 @@
 package li.pitschmann.knx.core.config;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -8,17 +9,18 @@ import java.util.function.Supplier;
 /**
  * {@link ConfigValue} for internal purposes only!
  * Initialization of this class is package-protected.
- * <p/>
+ * <p>
  * This allows us to read / parse the config from a file, but
  * does not allow user to set the configuration directly in code.
- * <p/>
+ * <p>
  * Used for:
  * <ul>
  * <li>{@link CoreConfigs.Endpoint#ADDRESS}</li>
  * <li>{@link CoreConfigs.Endpoint#PORT}</li>
  * </ul>
  *
- * @param <T>
+ * @param <T> value type of internal config (e.g. Boolean)
+ * @author PITSCHR
  */
 public final class InternalConfigValue<T> extends ConfigValue<T> {
     InternalConfigValue(

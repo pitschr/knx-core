@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.net;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
@@ -27,7 +28,6 @@ import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
@@ -104,9 +104,9 @@ public final class HPAI extends AbstractMultiRawData {
     }
 
     /**
-     * Returns an instance of {@link HPAI}
+     * Returns an instance of {@link HPAI} based on {@link Channel} instance
      *
-     * @param channel
+     * @param channel communication channel
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final Channel channel) {
@@ -131,9 +131,9 @@ public final class HPAI extends AbstractMultiRawData {
     /**
      * Returns an instance of {@link HPAI}
      *
-     * @param protocol
-     * @param address
-     * @param port
+     * @param protocol host protocol (UDP or TCP)
+     * @param address  address of endpoint
+     * @param port     port of endpoint
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final HostProtocol protocol, final InetAddress address, final int port) {

@@ -2,13 +2,13 @@ package li.pitschmann.knx.core.plugin.audit;
 
 import li.pitschmann.knx.core.utils.Json;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 
 /**
  * Format for {@link FileAuditPlugin}
- * <p/>
+ * <p>
  * JSON and TSV are supported.
  */
 public enum FileAuditFormat {

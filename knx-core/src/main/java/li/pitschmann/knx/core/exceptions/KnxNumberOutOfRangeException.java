@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.exceptions;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
 
 /**
  * Exception being thrown in case the a number is out of the range.

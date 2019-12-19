@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.core.knxproj.parser;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxProjectParserException;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;

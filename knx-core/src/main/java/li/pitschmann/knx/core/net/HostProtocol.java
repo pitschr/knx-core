@@ -53,7 +53,7 @@ public enum HostProtocol implements KnxByteEnum {
     /**
      * A matching {@link HostProtocol} for the given {@code code}
      *
-     * @param code
+     * @param code value to find the associated {@link HostProtocol}
      * @return existing {@link HostProtocol}, or {@link KnxEnumNotFoundException} if no {@link HostProtocol}
      * for given {@code code} exists
      */

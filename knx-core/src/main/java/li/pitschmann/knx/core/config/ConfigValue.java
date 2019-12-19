@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.config;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -34,7 +34,8 @@ import java.util.function.Supplier;
  * <li>{@code defaultSupplier} ... supplier for default value</li>
  * </ul>
  *
- * @param <T>
+ * @param <T> value type of config (e.g. Boolean)
+ * @author PITSCHR
  */
 public class ConfigValue<T> {
     private final String key;

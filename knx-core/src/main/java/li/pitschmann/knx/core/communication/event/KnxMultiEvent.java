@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.core.communication.event;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.utils.Strings;
 
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,8 +33,8 @@ import java.util.function.Predicate;
  * Mutable KNX event data containing <strong>one request</strong>
  * and <strong>multiple response</strong>.
  *
- * @param <REQUEST>
- * @param <RESPONSE>
+ * @param <REQUEST>  instance that extends {@link RequestBody}
+ * @param <RESPONSE> instance that extends {@link ResponseBody}
  * @author PITSCHR
  */
 public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> implements KnxEvent<REQUEST, RESPONSE> {

@@ -42,7 +42,7 @@ import java.time.Instant;
 
 /**
  * Audit Plug-in that logs every signal arriving KNX client to a file
- * <p/>
+ * <p>
  * JSON (default) and TSV formats are supported.
  *
  * @author PITSCHR

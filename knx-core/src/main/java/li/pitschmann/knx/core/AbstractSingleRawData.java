@@ -18,9 +18,8 @@
 
 package li.pitschmann.knx.core;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxException;
-
-import javax.annotation.Nullable;
 
 /**
  * This class represents a raw data of KNX/IP and is immutable.
@@ -59,7 +58,7 @@ public abstract class AbstractSingleRawData implements SingleRawDataAware {
      * Validates the given {@code rawData} raw data it qualifies for the current class. In case the validation fails
      * then a {@link KnxException} will be thrown.
      *
-     * @param rawData
+     * @param rawData byte array to be validated
      * @throws KnxException will be thrown when validation fails
      */
     protected abstract void validate(final byte rawData);

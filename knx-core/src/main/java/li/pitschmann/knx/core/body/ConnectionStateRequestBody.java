@@ -82,7 +82,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * Creates a new {@link ConnectionStateRequestBody} instance
      *
      * @param channelId       channel id between 0..255
-     * @param controlEndpoint
+     * @param controlEndpoint {@link HPAI} of control endpoint
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
     public static ConnectionStateRequestBody of(final int channelId, final HPAI controlEndpoint) {

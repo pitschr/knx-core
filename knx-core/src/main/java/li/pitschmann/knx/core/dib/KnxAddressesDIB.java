@@ -30,7 +30,6 @@ import java.util.List;
 
 /**
  * KNX Addresses DIB to specify DIB for type {@link DescriptionType#KNX_ADDRESSES}
- * <p>
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+

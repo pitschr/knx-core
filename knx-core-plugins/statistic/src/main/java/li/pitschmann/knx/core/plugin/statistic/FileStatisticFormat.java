@@ -2,7 +2,7 @@ package li.pitschmann.knx.core.plugin.statistic;
 
 /**
  * Format for {@link FileStatisticPlugin}
- * <p/>
+ * <p>
  * JSON, TSV and TEXT are supported.
  */
 public enum FileStatisticFormat {

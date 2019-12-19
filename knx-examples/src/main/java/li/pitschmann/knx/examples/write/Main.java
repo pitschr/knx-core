@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 /**
  * Demo class how to send a write request to a KNX group address.
- * <p/>
+ * <p>
  * Examples:
  * <pre>
  * --routing --groupAddress 1/2/50 --dataPointType 1.001 --value on off

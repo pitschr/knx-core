@@ -31,7 +31,7 @@ import java.util.zip.ZipFile;
 /**
  * Project Info Parser for KNXPROJ FILE
  *
- * @PITSCHR
+ * @author PITSCHR
  */
 public final class ProjectInfoParser extends AbstractParser implements ParserStrategy {
     private static final Logger log = LoggerFactory.getLogger(ProjectInfoParser.class);

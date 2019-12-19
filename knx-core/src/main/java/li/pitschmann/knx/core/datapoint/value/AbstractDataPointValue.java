@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.datapoint.value;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.AbstractDataPointType;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;

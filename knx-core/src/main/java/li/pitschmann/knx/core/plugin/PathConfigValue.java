@@ -1,6 +1,7 @@
 package li.pitschmann.knx.core.plugin;
 
-import javax.annotation.Nullable;
+import li.pitschmann.knx.core.annotations.Nullable;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Predicate;

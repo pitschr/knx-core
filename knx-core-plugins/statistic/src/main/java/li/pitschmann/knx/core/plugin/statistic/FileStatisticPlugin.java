@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * Statistic plug-in to write the statistic to a file
- * <p/>
+ * <p>
  * You can control the file path and how often the statistic
  * should be printed (interval).
  *

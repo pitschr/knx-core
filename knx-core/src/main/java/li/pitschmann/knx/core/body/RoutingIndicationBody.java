@@ -69,7 +69,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     /**
      * Creates a new {@link RoutingIndicationBody} instance
      *
-     * @param cemi
+     * @param cemi the {@link CEMI} to be sent
      * @return a new immutable {@link RoutingIndicationBody}
      */
     public static RoutingIndicationBody of(final CEMI cemi) {
