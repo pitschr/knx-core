@@ -176,7 +176,7 @@ public final class PluginManager implements AutoCloseable {
         // for extension plugins, we have a special case:
         // if the KNX Client is already started -> kick in the onStart immediately!
         if (plugin instanceof ExtensionPlugin && client.isRunning()) {
-            notifyPluginInternal(null, ExtensionPlugin.class.cast(plugin), (p, x) -> p.onStart());
+            notifyPluginInternal(null, (ExtensionPlugin) plugin, (p, x) -> p.onStart());
         }
 
         return plugin;

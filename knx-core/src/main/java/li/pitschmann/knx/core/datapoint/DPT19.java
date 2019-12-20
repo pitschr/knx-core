@@ -31,7 +31,7 @@ import java.time.LocalTime;
 import java.util.regex.Pattern;
 
 /**
- * Data Point Type 19 for 'Date & Time' (8 Octets)
+ * Data Point Type 19 for 'Date &amp; Time' (8 Octets)
  *
  * <pre>
  *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+

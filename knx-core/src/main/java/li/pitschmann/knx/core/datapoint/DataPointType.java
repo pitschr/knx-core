@@ -83,15 +83,15 @@ public interface DataPointType<V extends DataPointValue<?>> {
     /**
      * Returns a {@link DataPointValue} for specified byte array.
      *
-     * @param bytes
-     * @return data point value
+     * @param bytes raw bytes
+     * @return data point value from raw bytes
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
     V toValue(byte[] bytes);
 
     /**
      * Returns a {@link DataPointValue} for specified byte variable array.
-     * <p/>
+     * <p>
      * It is a wrapper caller of {@link #toValue(byte[])}
      *
      * @param b         first byte to be parsed
@@ -117,14 +117,14 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * class.
      *
      * @param args arguments to be parsed
-     * @return data point value
+     * @return data point value from arguments
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
     V toValue(String[] args);
 
     /**
      * Returns a {@link DataPointValue} for specified variable string arguments.
-     * <p/>
+     * <p>
      * It is a wrapper caller of {@link #toValue(String[])}
      *
      * @param arg      first arguments to be parsed
@@ -148,11 +148,10 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * Returns byte array based for specified string arguments. This method is handy one
      * that calls {@link #toValue(String, String...)} to return the byte array.
      *
-     * @param arg
-     * @param moreArgs
-     * @return byte array
+     * @param arg      first argument
+     * @param moreArgs more arguments
+     * @return byte array from arguments
      */
-
     default byte[] toByteArray(final String arg, final String... moreArgs) {
         return toValue(arg, moreArgs).toByteArray();
     }

@@ -43,7 +43,7 @@ public interface KnxStatusPool {
     /**
      * Returns if {@link KnxStatusData} exists for given {@link KnxAddress}
      *
-     * @param address
+     * @param address {@link KnxAddress} for which the status should be checked for its existence
      * @return {@code true} if it exists (regardless if it is up-to-date or not), otherwise {@code false}
      */
     boolean existsStatusFor(final KnxAddress address);
@@ -73,8 +73,9 @@ public interface KnxStatusPool {
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
      *
-     * @param address
-     * @param dptId
+     * @param address {@link KnxAddress} for which the {@link DataPointValue} should be returned
+     * @param dptId   the DPT id we are looking for to get the {@link DataPointValue}
+     * @param <V>     an instance of {@link DataPointType}
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found or was not up-to-date for default time
      */
     @Nullable
@@ -83,11 +84,12 @@ public interface KnxStatusPool {
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
      *
-     * @param address
-     * @param dptId
+     * @param address      {@link KnxAddress} for which the {@link DataPointValue} should be returned
+     * @param dptId        the DPT id we are looking for to get the {@link DataPointValue}
      * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
      *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
      *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
+     * @param <V>          an instance of {@link DataPointType}
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
      */
     @Nullable
@@ -96,8 +98,9 @@ public interface KnxStatusPool {
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
      *
-     * @param address
-     * @param dpt
+     * @param address {@link KnxAddress} for which the {@link DataPointValue} should be returned
+     * @param dpt     the DPT instance we are using to get the {@link DataPointValue}
+     * @param <V>     an instance of {@link DataPointType}
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found or was not up-to-date for default time
      */
     @Nullable
@@ -106,11 +109,12 @@ public interface KnxStatusPool {
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
      *
-     * @param address
-     * @param dpt
+     * @param address      {@link KnxAddress} for which the {@link DataPointValue} should be returned
+     * @param dpt          the DPT instance we are using to get the {@link DataPointValue}
      * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
      *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
      *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
+     * @param <V>          an instance of {@link DataPointType}
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
      */
     @Nullable

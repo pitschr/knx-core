@@ -80,8 +80,8 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Returns a {@link DataPointValue} for specified byte array.
      *
-     * @param bytes
-     * @return data point value
+     * @param bytes raw bytes
+     * @return data point value from raw bytes
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
     public final V toValue(final byte[] bytes) {
@@ -104,16 +104,16 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Checks if the given {@code bytes} is compatible with the current DPT
      *
-     * @param bytes
-     * @return {@code true} if compatible, otherwise {@code false}
+     * @param bytes raw bytes
+     * @return {@code true} if raw bytes are compatible, otherwise {@code false}
      */
     protected abstract boolean isCompatible(final byte[] bytes);
 
     /**
      * Parses the {@code bytes} to an instance of {@code <V>}
      *
-     * @param bytes
-     * @return {@link DataPointValue}
+     * @param bytes raw bytes to be parsed
+     * @return {@link DataPointValue} from raw bytes
      */
     protected abstract V parse(final byte[] bytes);
 
@@ -168,8 +168,8 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Checks if the given {@code args} is compatible with the current DPT
      *
-     * @param args
-     * @return {@code true} if compatible, otherwise {@code false}
+     * @param args arguments
+     * @return {@code true} if arguments are compatible, otherwise {@code false}
      */
     protected boolean isCompatible(final String[] args) {
         return false;
@@ -202,8 +202,9 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Returns the first matching enumeration constant
      *
-     * @param args
-     * @param enumClass
+     * @param args      array of arguments
+     * @param enumClass the enumeration class that should be used for finding enum constant
+     * @param <E>       the enum type we are looking for
      * @return first matching enumeration constant, {@code null} if not found
      */
     @Nullable
@@ -222,9 +223,10 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Returns the first matching by pattern
      *
-     * @param args
-     * @param pattern
+     * @param args     array of arguments
+     * @param pattern  pattern to find the suitable argument
      * @param function if found then convert to desired object instance
+     * @param <T>      the value type we are looking for
      * @return found and converted object instance, otherwise {@code null} if not found
      */
     @Nullable
@@ -235,10 +237,11 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Returns the first matching by pattern
      *
-     * @param args
-     * @param pattern
+     * @param args         array of arguments
+     * @param pattern      pattern to find the suitable argument
      * @param function     if found then convert to desired object instance
      * @param defaultValue value to be returned in case the pattern could not be found
+     * @param <T>          the value type we are looking for
      * @return found and converted object instance, otherwise {@code defaultValue} if not found
      */
     @Nullable
@@ -254,19 +257,21 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Returns if the given {@code searchString} or {@code moreSearchStrings} was found in argument array.
      *
-     * @param args
-     * @param searchString
-     * @param moreSearchStrings
+     * @param args              array of arguments
+     * @param searchString      first search string to find the suitable argument
+     * @param moreSearchStrings alternative search strings to find the suitable argument
      * @return {@code true} if found, otherwise {@code false}
      */
-    protected final boolean findByString(final String[] args, final String searchString, final String... moreSearchStrings) {
+    protected final boolean findByString(final String[] args, final String searchString, final @Nullable String... moreSearchStrings) {
         for (var i = 0; i < args.length; i++) {
             if (searchString.equalsIgnoreCase(args[i])) {
                 return true;
             }
-            for (final String moreSearchString : moreSearchStrings) {
-                if (moreSearchString.equalsIgnoreCase(args[i])) {
-                    return true;
+            if (moreSearchStrings == null) {
+                for (final String moreSearchString : moreSearchStrings) {
+                    if (moreSearchString.equalsIgnoreCase(args[i])) {
+                        return true;
+                    }
                 }
             }
         }

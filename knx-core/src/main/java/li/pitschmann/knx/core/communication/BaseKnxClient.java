@@ -53,7 +53,7 @@ public class BaseKnxClient implements KnxClient {
     /**
      * Starts KNX client with given config
      *
-     * @param config
+     * @param config the configuration that should be used to create a link to KNX
      */
     protected BaseKnxClient(final Config config) {
         internalClient = new InternalKnxClient(config);
@@ -128,7 +128,7 @@ public class BaseKnxClient implements KnxClient {
 
     /**
      * Returns {@link InternalKnxClient} instance for internal purposes only
-     * <p/>
+     * <p>
      * Do not expose it to outside as it may be dangerous!
      *
      * @return internal client

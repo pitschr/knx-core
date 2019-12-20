@@ -91,9 +91,11 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     }
 
     /**
-     * Marks the status for given RequestBody as dirty (not up-to-date)
+     * Marks the status for given RequestBody as dirty (not up-to-date) to inform
+     * the status pool that the value of given request body may be obsolete (and
+     * we have requested for most recent value from KNX)
      *
-     * @param requestBody
+     * @param requestBody the request body we want to mark as dirty
      */
     public void setDirty(final @Nullable RequestBody requestBody) {
         // for tunneling

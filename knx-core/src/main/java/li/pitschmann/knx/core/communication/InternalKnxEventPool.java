@@ -118,7 +118,7 @@ public final class InternalKnxEventPool {
     /**
      * Adds {@link RequestBody} to the event pool
      *
-     * @param request
+     * @param request an instance of {@link RequestBody} to be added
      */
     public void add(final RequestBody request) {
         get(request).setRequest(request);
@@ -127,7 +127,7 @@ public final class InternalKnxEventPool {
     /**
      * Returns the {@link KnxSingleEvent} for given {@link RequestBody} from event pool
      *
-     * @param request
+     * @param request {@link RequestBody} we are looking for {@link KnxEvent}
      * @return {@link KnxSingleEvent} or {@code IllegalArgumentException} if not supported
      */
     @SuppressWarnings("unchecked")
@@ -152,7 +152,7 @@ public final class InternalKnxEventPool {
     /**
      * Returns the {@link KnxSingleEvent} for given {@link TunnelingAckBody} from event pool
      *
-     * @param acknowledge
+     * @param acknowledge the tunneling acknowledge to get the event
      * @return {@link KnxSingleEvent}
      */
     public KnxSingleEvent<TunnelingRequestBody, TunnelingAckBody> get(final TunnelingAckBody acknowledge) {

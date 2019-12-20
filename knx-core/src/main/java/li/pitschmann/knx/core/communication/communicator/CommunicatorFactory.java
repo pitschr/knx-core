@@ -58,11 +58,12 @@ public final class CommunicatorFactory {
     /**
      * Creates new {@link DataChannelCommunicator} for data related packet communications
      *
+     * @param client the internal knx client
      * @return communicator
      */
-    public static DataChannelCommunicator newDataChannelCommunicator(final InternalKnxClient knxClient) {
-        final var communicator = new DataChannelCommunicator(knxClient);
-        getDataChannelTasks(knxClient).forEach(communicator::subscribe);
+    public static DataChannelCommunicator newDataChannelCommunicator(final InternalKnxClient client) {
+        final var communicator = new DataChannelCommunicator(client);
+        getDataChannelTasks(client).forEach(communicator::subscribe);
         return communicator;
     }
 
@@ -70,46 +71,49 @@ public final class CommunicatorFactory {
      * Creates new {@link ControlAndDataChannelCommunicator} for control <strong>AND</strong> data
      * related packet communications
      *
+     * @param client the internal KNX client
      * @return communicator
      */
-    public static ControlAndDataChannelCommunicator newControlAndDataChannelCommunicator(final InternalKnxClient knxClient) {
-        final var communicator = new ControlAndDataChannelCommunicator(knxClient);
-        getDataChannelTasks(knxClient).forEach(communicator::subscribe);
-        getControlChannelTasks(knxClient).forEach(communicator::subscribe);
+    public static ControlAndDataChannelCommunicator newControlAndDataChannelCommunicator(final InternalKnxClient client) {
+        final var communicator = new ControlAndDataChannelCommunicator(client);
+        getDataChannelTasks(client).forEach(communicator::subscribe);
+        getControlChannelTasks(client).forEach(communicator::subscribe);
         return communicator;
     }
 
     /**
      * Creates new {@link ConnectionStateCommunicator} for regular health-check
-     * <p/>
+     * <p>
      * The connection state monitor is used in Tunneling mode only!
      *
-     * @param knxClient
+     * @param client the internal knx client
      * @return communicator
      */
-    public static ConnectionStateCommunicator newConnectionStateCommunicator(final InternalKnxClient knxClient) {
-        return new ConnectionStateCommunicator(knxClient);
+    public static ConnectionStateCommunicator newConnectionStateCommunicator(final InternalKnxClient client) {
+        return new ConnectionStateCommunicator(client);
     }
 
     /**
      * Creates new {@link MulticastChannelCommunicator} for discovery related packet communications
      *
+     * @param client the internal knx client
      * @return communicator
      */
-    public static MulticastChannelCommunicator newDiscoveryChannelCommunicator(final InternalKnxClient knxClient) {
-        final var communicator = new MulticastChannelCommunicator(knxClient);
-        getDiscoveryChannelTasks(knxClient).forEach(communicator::subscribe);
+    public static MulticastChannelCommunicator newDiscoveryChannelCommunicator(final InternalKnxClient client) {
+        final var communicator = new MulticastChannelCommunicator(client);
+        getDiscoveryChannelTasks(client).forEach(communicator::subscribe);
         return communicator;
     }
 
     /**
      * Creates new {@link MulticastChannelCommunicator} for routing related packet communications
      *
+     * @param client the internal knx client
      * @return communicator
      */
-    public static MulticastChannelCommunicator newRoutingChannelCommunicator(final InternalKnxClient knxClient) {
-        final var communicator = new MulticastChannelCommunicator(knxClient);
-        getRoutingChannelTasks(knxClient).forEach(communicator::subscribe);
+    public static MulticastChannelCommunicator newRoutingChannelCommunicator(final InternalKnxClient client) {
+        final var communicator = new MulticastChannelCommunicator(client);
+        getRoutingChannelTasks(client).forEach(communicator::subscribe);
         return communicator;
     }
 
@@ -118,15 +122,14 @@ public final class CommunicatorFactory {
      * <p>
      * Following subscribers are:
      * <ul>
-     * <li>{@link DescriptionResponseTask} receiving the response after {@link DescriptionRequestBody}</li>
-     * client</li>
+     * <li>{@link DescriptionResponseTask} receiving the response after {@link DescriptionRequestBody} from client</li>
      * </ul>
      *
-     * @param knxClient
+     * @param client the internal knx client
      * @return unmodifiable list of subscribers
      */
-    private static List<Flow.Subscriber<Body>> getDescriptionChannelTasks(final InternalKnxClient knxClient) {
-        return Collections.singletonList(new DescriptionResponseTask(knxClient));
+    private static List<Flow.Subscriber<Body>> getDescriptionChannelTasks(final InternalKnxClient client) {
+        return Collections.singletonList(new DescriptionResponseTask(client));
     }
 
     /**
@@ -141,15 +144,15 @@ public final class CommunicatorFactory {
      * client</li>
      * </ul>
      *
-     * @param knxClient
+     * @param client the internal knx client
      * @return list of subscribers
      */
-    private static List<Flow.Subscriber<Body>> getControlChannelTasks(final InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getControlChannelTasks(final InternalKnxClient client) {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>(4);
-        subscribers.add(new ConnectResponseTask(knxClient));
-        subscribers.add(new ConnectionStateResponseTask(knxClient));
-        subscribers.add(new DisconnectRequestTask(knxClient));
-        subscribers.add(new DisconnectResponseTask(knxClient));
+        subscribers.add(new ConnectResponseTask(client));
+        subscribers.add(new ConnectionStateResponseTask(client));
+        subscribers.add(new DisconnectRequestTask(client));
+        subscribers.add(new DisconnectResponseTask(client));
         return subscribers;
     }
 
@@ -163,13 +166,13 @@ public final class CommunicatorFactory {
      * <li>{@link TunnelingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
      * </ul>
      *
-     * @param knxClient
+     * @param client the internal knx client
      * @return list of subscribers
      */
-    private static List<Flow.Subscriber<Body>> getDataChannelTasks(final InternalKnxClient knxClient) {
+    private static List<Flow.Subscriber<Body>> getDataChannelTasks(final InternalKnxClient client) {
         final var subscribers = new ArrayList<Flow.Subscriber<Body>>(2);
-        subscribers.add(new TunnelingRequestTask(knxClient));
-        subscribers.add(new TunnelingAckTask(knxClient));
+        subscribers.add(new TunnelingRequestTask(client));
+        subscribers.add(new TunnelingAckTask(client));
         return subscribers;
     }
 
@@ -181,11 +184,11 @@ public final class CommunicatorFactory {
      * <li>{@link SearchResponseTask} when we want to look up for KNX Net/IP devices</li>
      * </ul>
      *
-     * @param knxClient
+     * @param client the internal knx client
      * @return list of subscribers
      */
-    private static List<Flow.Subscriber<Body>> getDiscoveryChannelTasks(final InternalKnxClient knxClient) {
-        return Collections.singletonList(new SearchResponseTask(knxClient));
+    private static List<Flow.Subscriber<Body>> getDiscoveryChannelTasks(final InternalKnxClient client) {
+        return Collections.singletonList(new SearchResponseTask(client));
     }
 
     /**
@@ -197,11 +200,11 @@ public final class CommunicatorFactory {
      * device</li>
      * </ul>
      *
-     * @param knxClient
+     * @param client the internal knx client
      * @return list of subscribers
      */
-    private static List<Flow.Subscriber<Body>> getRoutingChannelTasks(final InternalKnxClient knxClient) {
-        return Collections.singletonList(new RoutingIndicationTask(knxClient));
+    private static List<Flow.Subscriber<Body>> getRoutingChannelTasks(final InternalKnxClient client) {
+        return Collections.singletonList(new RoutingIndicationTask(client));
     }
 
 }

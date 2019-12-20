@@ -53,8 +53,8 @@ public interface KnxClient extends AutoCloseable {
     /**
      * Handy method to get the value of given {@link ConfigValue} via {@link #getConfig()}
      *
-     * @param configValue
-     * @param <T>
+     * @param configValue configuration value
+     * @param <T>         type of configuration (e.g. Boolean)
      * @return the config value
      */
     default <T> T getConfig(final ConfigValue<T> configValue) {
@@ -66,7 +66,6 @@ public interface KnxClient extends AutoCloseable {
      *
      * @return an immutable {@link KnxStatistic}
      */
-
     KnxStatistic getStatistic();
 
     /**
@@ -74,7 +73,6 @@ public interface KnxClient extends AutoCloseable {
      *
      * @return an immutable {@link KnxStatusPool}
      */
-
     KnxStatusPool getStatusPool();
 
     /**
@@ -98,8 +96,9 @@ public interface KnxClient extends AutoCloseable {
      * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
      * It returns a {@link Future} for further processing.
      *
-     * @param requestBody
+     * @param requestBody request body to be sent to KNX Net/IP device
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
+     * @param <T>         type of response body
      * @return a {@link CompletableFuture} representing pending completion of the task containing either
      * an instance of {@link ResponseBody}, or {@code null} if no response was received because of e.g. timeout
      */
@@ -109,8 +108,8 @@ public interface KnxClient extends AutoCloseable {
     /**
      * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} <strong>asynchronously</strong>.
      *
-     * @param address
-     * @param dataPointValue
+     * @param address        the recipient which is an KNX group address
+     * @param dataPointValue value to be sent to KNX group address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
     boolean writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue);
@@ -118,8 +117,8 @@ public interface KnxClient extends AutoCloseable {
     /**
      * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
      *
-     * @param address
-     * @param apciData
+     * @param address  the recipient which is an KNX group address
+     * @param apciData value in byte array form to be sent to KNX group address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
     boolean writeRequest(final GroupAddress address, final byte[] apciData);
@@ -127,7 +126,7 @@ public interface KnxClient extends AutoCloseable {
     /**
      * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>
      *
-     * @param address
+     * @param address this is the KNX group address we want to send the read request to obtain the current value
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
     boolean readRequest(final GroupAddress address);

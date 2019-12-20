@@ -78,7 +78,7 @@ public final class Config {
      * Returns the actual value for given {@code configValue}
      *
      * @param configValue the key to be used to find the value
-     * @param <T>
+     * @param <T>         the type of value (e.g. Boolean)
      * @return the value of {@link ConfigValue}
      */
     public <T> T getValue(final ConfigValue<T> configValue) {

@@ -60,7 +60,7 @@ public class ConfigValue<T> {
     /**
      * Key in lower-case
      *
-     * @return
+     * @return the key (lower-cased)
      */
     public String getKey() {
         return key;
@@ -88,7 +88,6 @@ public class ConfigValue<T> {
      *
      * @param value value to be tested
      * @return {@code true} if valid/applicable, otherwise {@code false}.
-     * Returns {@code false} if value is {@code null}
      */
     public boolean isValid(final @Nullable T value) {
         if (value == null) {
@@ -101,7 +100,7 @@ public class ConfigValue<T> {
     /**
      * Converts from a {@link String} representation to an instance of type {@code <T>}
      *
-     * @param value
+     * @param value the value to be converted
      * @return value with an instance type of {@code <T>}
      */
     public T convert(final String value) {
