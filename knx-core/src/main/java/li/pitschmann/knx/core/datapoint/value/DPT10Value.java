@@ -127,7 +127,7 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
      * Converts {@link DayOfWeek} and {@link LocalTime} values to byte array
      *
      * @param dayOfWeek 1=Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday, 7=Sunday, null=no day
-     * @param time
+     * @param time the local time
      * @return byte array
      */
     public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {

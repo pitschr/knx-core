@@ -68,8 +68,8 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
     /**
      * Converts the two byte array to double according to formula {@code (0.01 * M)*2(E)}
      *
-     * @param bytes
-     * @return double value
+     * @param bytes byte array to be converted
+     * @return double value from byte array
      */
     public static double toFloatingValue(final byte[] bytes) {
         final var exponent = getExponent(bytes);
@@ -88,7 +88,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      *              E = [0 .. 15]
      * </pre>
      *
-     * @param bytes
+     * @param bytes byte array to get the exponent
      * @return exponent, between {@code 0} and {@code 15}
      */
     private static int getExponent(final byte[] bytes) {
@@ -112,7 +112,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      *              M = [-2048 .. 2047], two's complement notation
      * </pre>
      *
-     * @param bytes
+     * @param bytes byte array to get the mantissa
      * @return mantissa
      */
     private static int getMantissa(final byte[] bytes) {
@@ -140,7 +140,7 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
     /**
      * Converts double value to byte array that is compatible with {@link DPT9}
      *
-     * @param value
+     * @param value double value to be converted
      * @return {@link DPT9} compatible byte array for double value
      */
     public static byte[] toByteArray(final double value) {

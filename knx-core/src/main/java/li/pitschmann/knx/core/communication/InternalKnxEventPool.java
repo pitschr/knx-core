@@ -128,6 +128,8 @@ public final class InternalKnxEventPool {
      * Returns the {@link KnxSingleEvent} for given {@link RequestBody} from event pool
      *
      * @param request {@link RequestBody} we are looking for {@link KnxEvent}
+     * @param <REQUEST> instance of request body we are requesting for
+     * @param <RESPONSE> instance of response body we are expecting to be returned
      * @return {@link KnxSingleEvent} or {@code IllegalArgumentException} if not supported
      */
     @SuppressWarnings("unchecked")

@@ -90,7 +90,7 @@ public final class DataPointTypeRegistry {
      * Registers the given data point type class. By calling this method the class will be visited with the result that
      * all data point types of given class will be registered.
      *
-     * @param dataPointTypeClass
+     * @param dataPointTypeClass DPT class to be registered
      */
     public static void registerDataPointType(final Class<?> dataPointTypeClass) {
         log.debug("Register Data Point Type Class: {}", dataPointTypeClass);
@@ -192,7 +192,8 @@ public final class DataPointTypeRegistry {
     /**
      * Returns the data point type by given enumeration field
      *
-     * @param e
+     * @param e the enum instance that should be looked up in the map
+     * @param <T> the type of DPT enum value
      * @return {@link DPTEnumValue}
      */
     public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
@@ -207,7 +208,8 @@ public final class DataPointTypeRegistry {
     /**
      * Returns the data point type by given {@code id}
      *
-     * @param id
+     * @param id the DPT identifier that should be looked up in the map
+     * @param <T> the type of DPT
      * @return {@link DataPointType}
      */
     public static <T extends DataPointType> T getDataPointType(final String id) {

@@ -97,7 +97,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     /**
      * Converts byte array to {@link DayOfWeek}
      *
-     * @param bytes
+     * @param bytes byte array to be converted
      * @return {@link DayOfWeek}, if no-day then return {@code null}
      */
     @Nullable
@@ -113,8 +113,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     /**
      * Converts byte array to {@link LocalDate}
      *
-     * @param bytes
-     * @return {@link LocalDate}
+     * @param bytes byte array to be converted
+     * @return {@link LocalDate} converted from byte array
      */
     private static LocalDate toLocalDate(final byte[] bytes) {
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
@@ -134,8 +134,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     /**
      * Converts byte array to {@link LocalTime}
      *
-     * @param bytes
-     * @return {@link LocalTime}
+     * @param bytes byte array to be converted
+     * @return {@link LocalTime} converted from byte array
      */
     private static LocalTime toLocalTime(final byte[] bytes) {
         // byte 3: hour (day of week is done separately)
@@ -155,10 +155,10 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     /**
      * Converts {@link LocalDateTime} value to byte array
      *
-     * @param dayOfWeek
-     * @param date
-     * @param time
-     * @param flags
+     * @param dayOfWeek day of week
+     * @param date local date
+     * @param time local time
+     * @param flags flags for date and time
      * @return byte array
      */
     public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek,
@@ -288,7 +288,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         /**
          * Create {@link Flags} given two bytes
          *
-         * @param bytes
+         * @param bytes byte array for flag
          * @return new instance of {@link Flags}
          */
         public Flags(final byte[] bytes) {
@@ -311,15 +311,15 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         /**
          * Create {@link Flags} with given parameters
          *
-         * @param fault
-         * @param workingDay
-         * @param workingDayValid
-         * @param yearValid
-         * @param dateValid
-         * @param dayOfWeekValid
-         * @param timeValid
-         * @param summerTime
-         * @param clockWithExternalSyncSignal
+         * @param fault if there was a fault
+         * @param workingDay if it is a working day
+         * @param workingDayValid if working day is valid
+         * @param yearValid if year is valid
+         * @param dateValid if date is valid
+         * @param dayOfWeekValid if day of week is valid
+         * @param timeValid if time is valid
+         * @param summerTime if it is a summer time (or standard time)
+         * @param clockWithExternalSyncSignal if clock is externally synchronized
          * @return new instance of {@link Flags}
          */
         public Flags(final boolean fault,

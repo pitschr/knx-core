@@ -67,7 +67,7 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
     /**
      * Converts signed int value to byte array
      *
-     * @param value
+     * @param value integer value to be converted
      * @return byte array
      */
     public static byte[] toByteArray(final int value) {

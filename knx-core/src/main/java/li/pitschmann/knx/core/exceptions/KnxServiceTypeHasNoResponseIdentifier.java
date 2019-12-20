@@ -32,7 +32,7 @@ public final class KnxServiceTypeHasNoResponseIdentifier extends KnxCommunicatio
      * Constructor for {@link KnxServiceTypeHasNoResponseIdentifier} in case when you are trying to get a response
      * identifier for given {@link ServiceType} which has no response identifier.
      *
-     * @param serviceType
+     * @param serviceType service type that has no response identifier
      */
     public KnxServiceTypeHasNoResponseIdentifier(final ServiceType serviceType) {
         super("No response identifier available for service type: {}", serviceType.name());

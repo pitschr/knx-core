@@ -121,7 +121,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
     /**
      * Returns if the {@link ServiceTypeFamily} exists in the current DIB
      *
-     * @param serviceTypeFamily
+     * @param serviceTypeFamily service type family to check for its existence
      * @return {@code true} if the service type family exists, otherwise {@code false}
      */
     public boolean hasServiceTypeFamily(final ServiceTypeFamily serviceTypeFamily) {

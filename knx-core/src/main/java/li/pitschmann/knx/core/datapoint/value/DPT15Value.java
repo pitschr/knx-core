@@ -91,7 +91,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * Provide Access Identification Data with padding zeros in case the access identification data is smaller than 24
      * bits.
      *
-     * @param accessIdentificationData
+     * @param accessIdentificationData byte array with access identification data
      * @return 3 byte array / 24 bits array
      */
     private static byte[] getAccessIdentificationData(final byte[] accessIdentificationData) {
@@ -104,8 +104,8 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
     /**
      * Converts 'Access Identification Data' data to 4-byte array
      *
-     * @param accessIdentificationData
-     * @param flags
+     * @param accessIdentificationData byte array with access identification data
+     * @param flags flags for access identification data
      * @return byte array
      */
     public static byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
@@ -207,11 +207,11 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         /**
          * Create {@link Flags} with given parameters
          *
-         * @param error
-         * @param permissionAccepted
-         * @param readDirectionRightToLeft
-         * @param encryptionEnabled
-         * @param index
+         * @param error if there was an error
+         * @param permissionAccepted if permission was accepted
+         * @param readDirectionRightToLeft read from right to left (e.g. from badge)
+         * @param encryptionEnabled if encryption is enabled
+         * @param index the index
          * @return new instance of {@link Flags}
          */
         public Flags(final boolean error,

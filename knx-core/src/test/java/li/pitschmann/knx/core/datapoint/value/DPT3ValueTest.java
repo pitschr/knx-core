@@ -129,25 +129,23 @@ public final class DPT3ValueTest {
         assertThat(StepInterval.ofInterval(1)).isEqualTo(StepInterval.PERCENT_100);
         // 2
         assertThat(StepInterval.ofInterval(2)).isEqualTo(StepInterval.PERCENT_50);
-        assertThat(StepInterval.ofInterval(3)).isEqualTo(StepInterval.PERCENT_50);
         // 3
+        assertThat(StepInterval.ofInterval(3)).isEqualTo(StepInterval.PERCENT_25);
         assertThat(StepInterval.ofInterval(4)).isEqualTo(StepInterval.PERCENT_25);
-        assertThat(StepInterval.ofInterval(5)).isEqualTo(StepInterval.PERCENT_25);
-        assertThat(StepInterval.ofInterval(6)).isEqualTo(StepInterval.PERCENT_25);
         // 4
-        for (var i = 7; i <= 12; i++) {
+        for (var i = 5; i <= 8; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_12);
         }
         // 5
-        for (var i = 13; i <= 24; i++) {
+        for (var i = 9; i <= 16; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_6);
         }
         // 6
-        for (var i = 25; i <= 48; i++) {
+        for (var i = 17; i <= 32; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_3);
         }
         // 7
-        for (var i = 49; i <= 64; i++) {
+        for (var i = 33; i <= 64; i++) {
             assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_1);
         }
 

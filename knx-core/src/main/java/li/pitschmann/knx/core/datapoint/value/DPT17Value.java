@@ -57,7 +57,7 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
     /**
      * Converts {@code sceneNumber} value to byte array
      *
-     * @param sceneNumber
+     * @param sceneNumber scene number [0..63]
      * @return byte array
      */
     public static byte[] toByteArray(final int sceneNumber) {

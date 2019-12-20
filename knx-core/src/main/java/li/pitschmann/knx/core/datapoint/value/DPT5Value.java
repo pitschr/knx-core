@@ -60,8 +60,8 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     /**
      * Converts unsigned int value to byte array
      *
-     * @param value
-     * @return byte array
+     * @param value unsigned integer value [0 .. 255]
+     * @return one byte array
      */
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) value};

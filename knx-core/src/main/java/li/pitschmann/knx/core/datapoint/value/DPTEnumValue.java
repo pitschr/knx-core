@@ -45,10 +45,10 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
     /**
      * Constructor is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.
      *
-     * @param dpEnum
-     * @param enumField
-     * @param ordinal
-     * @param description
+     * @param dpEnum data point enum type
+     * @param enumField DPT enum value
+     * @param ordinal enum ordinal value
+     * @param description description for DPT enum value
      */
     public DPTEnumValue(final DPTEnum<T> dpEnum, final T enumField, final int ordinal, final @Nullable String description) {
         Preconditions.checkNonNull(dpEnum);
@@ -67,9 +67,9 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
     }
 
     /**
-     * Returns the enum field value instance
+     * Returns the enum value instance
      *
-     * @return enum field value instance
+     * @return enum value instance
      */
     public T getEnum() {
         return this.enumField;

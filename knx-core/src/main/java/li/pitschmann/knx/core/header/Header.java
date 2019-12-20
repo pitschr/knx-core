@@ -98,8 +98,8 @@ public final class Header extends AbstractMultiRawData {
     /**
      * Creates a new {@link Header} instance
      *
-     * @param serviceType
-     * @param totalLength
+     * @param serviceType service type
+     * @param totalLength total length of header
      * @return a new immutable {@link Header}
      */
     public static Header of(final ServiceType serviceType, final int totalLength) {
@@ -122,8 +122,8 @@ public final class Header extends AbstractMultiRawData {
     /**
      * Creates a new {@link Header} instance based on {@link Body} structure.
      *
-     * @param body
-     * @return a new immutable {@link Header}
+     * @param body body of header
+     * @return a new immutable {@link Header} calculated based on {@link Body}
      */
     public static Header of(final Body body) {
         if (body == null) {
@@ -173,7 +173,7 @@ public final class Header extends AbstractMultiRawData {
      * Validates the given {@code rawData} if it qualifies to for KNX NET/IP header. In case the validation fails then a
      * {@link KnxException} will be thrown.
      *
-     * @param headerRawData
+     * @param headerRawData raw data for header to be validated
      */
     @Override
     protected void validate(final byte[] headerRawData) {

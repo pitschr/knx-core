@@ -96,7 +96,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * Creates a new channel to be used by this communicator. It will be called during initialization
      * and only once time.
      *
-     * @param client
+     * @param client the internal KNX client
      * @return A new channel
      */
     protected abstract SelectableChannel newChannel(final InternalKnxClient client);
@@ -104,8 +104,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     /**
      * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
      *
-     * @param client
-     * @param channel
+     * @param client the internal KNX client
+     * @param channel channel where packets are received
      * @return new instance of {@link AbstractInboxQueue}
      */
     protected AbstractInboxQueue<? extends ByteChannel> createInboxQueue(final InternalKnxClient client,
@@ -116,8 +116,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     /**
      * Creates a new instance of {@link AbstractOutboxQueue} that should be used by this communicator
      *
-     * @param client
-     * @param channel
+     * @param client the internal KNX client
+     * @param channel channel where packets are sent
      * @return new instance of {@link AbstractOutboxQueue}
      */
     protected AbstractOutboxQueue<? extends ByteChannel> createOutboxQueue(final InternalKnxClient client,

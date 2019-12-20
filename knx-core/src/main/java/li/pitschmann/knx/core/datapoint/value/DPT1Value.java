@@ -54,8 +54,8 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
     /**
      * Converts {@code booleanValue} to byte array
      *
-     * @param booleanValue
-     * @return byte array
+     * @param booleanValue boolean to be converted
+     * @return one byte array from boolean
      */
     public static byte[] toByteArray(final boolean booleanValue) {
         return new byte[]{booleanValue ? (byte) 0x01 : 0x00};

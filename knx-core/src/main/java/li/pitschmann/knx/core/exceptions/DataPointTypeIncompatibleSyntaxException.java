@@ -30,8 +30,8 @@ public final class DataPointTypeIncompatibleSyntaxException extends KnxException
     /**
      * Creates an exception in case incompatible {@code commands} array have been provided for the {@code dpt}.
      *
-     * @param dpt
-     * @param commands
+     * @param dpt data point type
+     * @param commands incompatible commands / syntax
      */
     public DataPointTypeIncompatibleSyntaxException(final DataPointType<?> dpt,
                                                     final String[] commands) {

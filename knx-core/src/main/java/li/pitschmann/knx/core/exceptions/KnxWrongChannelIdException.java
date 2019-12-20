@@ -30,8 +30,8 @@ public final class KnxWrongChannelIdException extends KnxCommunicationException 
     /**
      * Constructor for {@link KnxWrongChannelIdException} in case we received a packet with unexpected channel id.
      *
-     * @param channelIdAware
-     * @param expectedChannelId
+     * @param channelIdAware the body that is channel id aware (incl. actual channel id)
+     * @param expectedChannelId the expected channel id
      */
     public KnxWrongChannelIdException(final ChannelIdAware channelIdAware, final int expectedChannelId) {
         super("Wrong channel id '{}' received, expected channel id is '{}': {}",

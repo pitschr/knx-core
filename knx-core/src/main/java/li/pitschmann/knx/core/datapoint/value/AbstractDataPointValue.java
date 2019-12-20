@@ -61,7 +61,7 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
     /**
      * Returns the Data Point Type for the Value
      *
-     * @return
+     * @return data point type
      */
     @Override
     public T getDPT() {
