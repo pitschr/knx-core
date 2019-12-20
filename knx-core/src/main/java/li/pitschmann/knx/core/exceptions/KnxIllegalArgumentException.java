@@ -30,7 +30,7 @@ public final class KnxIllegalArgumentException extends KnxException {
     /**
      * Creates an exception for KNX/IP illegal argument with message only
      *
-     * @param message
+     * @param message error message
      */
     public KnxIllegalArgumentException(final String message) {
         super(message);
@@ -40,8 +40,8 @@ public final class KnxIllegalArgumentException extends KnxException {
      * Creates an exception for KNX/IP illegal argument with message and
      * objects for more diagnostic data
      *
-     * @param message
-     * @param args
+     * @param message error message
+     * @param args arguments for error message
      */
     public KnxIllegalArgumentException(final String message, final @Nullable Object... args) {
         super(message, args);

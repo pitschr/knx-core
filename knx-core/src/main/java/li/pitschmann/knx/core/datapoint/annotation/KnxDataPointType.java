@@ -41,7 +41,7 @@ public @interface KnxDataPointType {
     /**
      * Description of KNX data point type
      *
-     * @return
+     * @return description
      */
     String description();
 }

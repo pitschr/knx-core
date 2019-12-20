@@ -31,8 +31,8 @@ public final class DataPointTypeIncompatibleBytesException extends KnxException 
      * Creates an exception in case incompatible {@code bytes} array have
      * been provided for the {@code dpt}.
      *
-     * @param dpt
-     * @param bytes
+     * @param dpt data point type
+     * @param bytes incompatible byte array
      */
     public DataPointTypeIncompatibleBytesException(final DataPointType<?> dpt,
                                                    final byte[] bytes) {

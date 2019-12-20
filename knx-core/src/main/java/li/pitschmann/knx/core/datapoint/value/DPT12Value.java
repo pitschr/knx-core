@@ -68,7 +68,7 @@ public final class DPT12Value extends AbstractDataPointValue<DPT12> {
     /**
      * Converts signed long value to 4-byte array
      *
-     * @param value
+     * @param value long value to be converted
      * @return byte array
      */
     public static byte[] toByteArray(final long value) {

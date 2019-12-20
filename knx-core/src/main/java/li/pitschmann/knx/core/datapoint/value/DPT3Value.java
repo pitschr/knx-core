@@ -83,8 +83,8 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
     /**
      * Converts {@code controlled} and {@code booleanValue} to byte array
      *
-     * @param controlled
-     * @param stepCode
+     * @param controlled if controlled
+     * @param stepCode the step code [0..7]
      * @return byte array
      */
     public static byte[] toByteArray(final boolean controlled, final int stepCode) {
@@ -203,7 +203,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         /**
          * Returns the {@link StepInterval} by {@code stepCode}.
          *
-         * @param stepCode
+         * @param stepCode the step code [0..7]
          * @return {@link StepInterval}
          */
         public static StepInterval ofCode(final int stepCode) {
@@ -217,8 +217,10 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
 
         /**
          * Returns the {@link StepInterval} by {@code interval}.
+         * <p>
+         * The formula of step interval: {@code 2^(step-1)}
          *
-         * @param interval number of interval in range of [1 .. 64]
+         * @param interval number of interval in range of [0 .. 64]
          * @return {@link StepInterval}
          */
         public static StepInterval ofInterval(final int interval) {
@@ -228,31 +230,31 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
             }
 
             // return by interval
-            // 1% => 49 .. 64
-            if (interval > 48) {
+            // 1% => 33 .. 64 = 2^(7-1)
+            if (interval > 32) {
                 return PERCENT_1;
             }
-            // 3% => 25 .. 48
-            else if (interval > 24) {
+            // 3% => 17 .. 32 = 2^(6-1)
+            else if (interval > 16) {
                 return PERCENT_3;
             }
-            // 6% => 13 .. 24
-            else if (interval > 12) {
+            // 6% => 9 .. 16 = 2^(5-1)
+            else if (interval > 8) {
                 return PERCENT_6;
             }
-            // 12% => 7 .. 12
-            else if (interval > 6) {
+            // 12% => 5 .. 8 = 2^(4-1)
+            else if (interval > 4) {
                 return PERCENT_12;
             }
-            // 25% => 4 .. 6
-            else if (interval > 3) {
+            // 25% => 3 .. 4 = 2^(3-1)
+            else if (interval == 3 || interval == 4) {
                 return PERCENT_25;
             }
-            // 50% => 2 .. 3
-            else if (interval > 1) {
+            // 50% => 2 = 2^(2-1)
+            else if (interval == 2) {
                 return PERCENT_50;
             }
-            // 100% => 1
+            // 100% => 1 = 2^(1-1)
             else if (interval == 1) {
                 return PERCENT_100;
             }

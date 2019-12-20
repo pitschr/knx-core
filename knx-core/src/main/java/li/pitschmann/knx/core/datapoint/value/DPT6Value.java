@@ -60,8 +60,8 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     /**
      * Converts relative signed value to byte array
      *
-     * @param value
-     * @return byte array
+     * @param value relatively signed integer value [-128 .. 127]
+     * @return one byte array
      */
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) value};
@@ -154,12 +154,12 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         /**
          * Returns given params as byte array
          *
-         * @param a
-         * @param b
-         * @param c
-         * @param d
-         * @param e
-         * @param mode
+         * @param a first status bit (0x80)
+         * @param b second status bit (0x40)
+         * @param c third status bit (0x20)
+         * @param d fourth status bit (0x10)
+         * @param e fifth status bit (0x08)
+         * @param mode which mode is active [0, 1, 2]
          * @return byte array
          */
         public static byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {

@@ -60,9 +60,9 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
     /**
      * Converts {@code controlled} and {@code booleanValue} to byte array
      *
-     * @param controlled
-     * @param booleanValue
-     * @return byte array
+     * @param controlled if controlled
+     * @param booleanValue boolean value to be converted
+     * @return one byte array
      */
     public static byte[] toByteArray(final boolean controlled, final boolean booleanValue) {
         var b = (byte) 0x00;

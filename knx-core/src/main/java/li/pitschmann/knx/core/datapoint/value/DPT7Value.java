@@ -64,8 +64,8 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
     /**
      * Converts signed int value to byte array
      *
-     * @param value
-     * @return byte array
+     * @param value unsigned integer value [0 .. 65535]
+     * @return two byte array
      */
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) (value >>> 8), (byte) value};

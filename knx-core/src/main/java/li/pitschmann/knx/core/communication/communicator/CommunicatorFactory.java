@@ -38,22 +38,24 @@ public final class CommunicatorFactory {
     /**
      * Creates new {@link DescriptionChannelCommunicator} for description related packet communications
      *
+     * @param client the internal KNX client
      * @return communicator
      */
-    public static DescriptionChannelCommunicator newDescriptionChannelCommunicator(final InternalKnxClient knxClient) {
-        final var communicator = new DescriptionChannelCommunicator(knxClient);
-        getDescriptionChannelTasks(knxClient).forEach(communicator::subscribe);
+    public static DescriptionChannelCommunicator newDescriptionChannelCommunicator(final InternalKnxClient client) {
+        final var communicator = new DescriptionChannelCommunicator(client);
+        getDescriptionChannelTasks(client).forEach(communicator::subscribe);
         return communicator;
     }
 
     /**
      * Creates new {@link ControlChannelCommunicator} for control related packet communications
      *
+     * @param client the internal KNX client
      * @return communicator
      */
-    public static ControlChannelCommunicator newControlChannelCommunicator(final InternalKnxClient knxClient) {
-        final var communicator = new ControlChannelCommunicator(knxClient);
-        getControlChannelTasks(knxClient).forEach(communicator::subscribe);
+    public static ControlChannelCommunicator newControlChannelCommunicator(final InternalKnxClient client) {
+        final var communicator = new ControlChannelCommunicator(client);
+        getControlChannelTasks(client).forEach(communicator::subscribe);
         return communicator;
     }
 

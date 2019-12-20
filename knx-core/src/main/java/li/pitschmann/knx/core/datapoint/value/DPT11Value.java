@@ -106,7 +106,7 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
     /**
      * Converts {@link LocalDate} value to byte array
      *
-     * @param date
+     * @param date the local date
      * @return byte array
      */
     public static byte[] toByteArray(final LocalDate date) {

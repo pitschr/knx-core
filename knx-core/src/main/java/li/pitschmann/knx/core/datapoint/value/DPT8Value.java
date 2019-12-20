@@ -63,8 +63,8 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
     /**
      * Converts signed int value to byte array
      *
-     * @param value
-     * @return byte array
+     * @param value signed integer value [-32768 .. 32767]
+     * @return two byte array
      */
     public static byte[] toByteArray(final int value) {
         return new byte[]{(byte) (value >>> 8), (byte) value};

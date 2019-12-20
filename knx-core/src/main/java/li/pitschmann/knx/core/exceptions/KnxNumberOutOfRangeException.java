@@ -30,10 +30,10 @@ public final class KnxNumberOutOfRangeException extends KnxException {
      * Exception if {@code actual} number argument is out of the defined range ({@code startInclusive},
      * {@code endInclusive})
      *
-     * @param argumentName
-     * @param startInclusive
-     * @param endInclusive
-     * @param actual
+     * @param argumentName argument that is out of range
+     * @param startInclusive start number inclusive
+     * @param endInclusive end number inclusive
+     * @param actual the actual number
      */
     public KnxNumberOutOfRangeException(final @Nullable String argumentName,
                                         final @Nullable Number startInclusive,
@@ -47,11 +47,11 @@ public final class KnxNumberOutOfRangeException extends KnxException {
      * Exception if {@code actual} number argument is out of the defined range ({@code startInclusive},
      * {@code endInclusive}). This method can also obtain the raw data.
      *
-     * @param argumentName
-     * @param startInclusive
-     * @param endInclusive
-     * @param actual
-     * @param rawData
+     * @param argumentName argument that is out of range
+     * @param startInclusive start number inclusive
+     * @param endInclusive end number inclusive
+     * @param actual the actual number
+     * @param rawData raw byte array
      */
     public KnxNumberOutOfRangeException(final @Nullable String argumentName,
                                         final @Nullable Number startInclusive,

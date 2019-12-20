@@ -67,7 +67,7 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
     /**
      * Converts the four byte array to float
      *
-     * @param bytes
+     * @param bytes byte array to be converted
      * @return float value
      */
     public static double toFloatingValue(final byte[] bytes) {
@@ -77,7 +77,7 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
     /**
      * Converts double value to byte array
      *
-     * @param value
+     * @param value double value to be converted
      * @return 4-byte array
      */
     public static byte[] toByteArray(final double value) {

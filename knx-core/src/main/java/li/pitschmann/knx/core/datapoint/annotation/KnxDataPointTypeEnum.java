@@ -41,7 +41,7 @@ public @interface KnxDataPointTypeEnum {
     /**
      * Description of enumerated KNX data point type
      *
-     * @return
+     * @return description
      */
     String description();
 }

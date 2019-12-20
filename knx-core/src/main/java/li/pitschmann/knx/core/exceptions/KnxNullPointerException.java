@@ -30,7 +30,7 @@ public final class KnxNullPointerException extends KnxException {
     /**
      * {@link NullPointerException} for KNX specific array
      *
-     * @param argumentName
+     * @param argumentName argument that is null
      */
     public KnxNullPointerException(final @Nullable String argumentName) {
         super("Argument '{}' is null.", argumentName);

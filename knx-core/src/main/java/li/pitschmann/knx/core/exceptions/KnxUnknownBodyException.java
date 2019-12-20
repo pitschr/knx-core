@@ -31,7 +31,7 @@ public final class KnxUnknownBodyException extends KnxCommunicationException {
      * Constructor for {@link KnxUnknownBodyException} in case the body could not be parsed based on given
      * {@code rawData}.
      *
-     * @param rawData
+     * @param rawData raw byte array that could not be converted into a suitable KNX packet
      */
     public KnxUnknownBodyException(final @Nullable byte[] rawData) {
         super("Unknown body received for raw data: {}", rawData);

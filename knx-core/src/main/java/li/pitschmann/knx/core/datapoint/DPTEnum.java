@@ -38,7 +38,7 @@ import java.util.Map;
  * Format:     8 bit (U<sub>8</sub>)
  * </pre>
  *
- * @param <T>
+ * @param <T> type of DPT enumeration
  * @author PITSCHR
  */
 public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends AbstractDataPointType<DPTEnumValue<T>> {
