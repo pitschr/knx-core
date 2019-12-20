@@ -39,7 +39,7 @@ import java.util.Objects;
 
 /**
  * Supporter for Configuration for file-based solutions
- * <p/>
+ * <p>
  * This class is package-protected and should be called by {@link ConfigBuilder} instance only.
  */
 final class ConfigFileUtil {
@@ -122,7 +122,7 @@ final class ConfigFileUtil {
 
     /**
      * Returns the list of String lines which should follow the pattern {@code key=value}
-     * <p/>
+     * <p>
      *
      * @param lines
      * @return map of settings, key is a lower-cased and trimmed {@link String}, value is trimmed {@link String}

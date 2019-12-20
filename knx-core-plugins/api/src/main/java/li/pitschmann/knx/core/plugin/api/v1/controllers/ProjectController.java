@@ -45,7 +45,7 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the all group main ranges for a two-level project ({@code main}/{@code sub})
      * or a three-level project ({@code main}/{@code middle}/{@code sub})
-     * <p/>
+     * <p>
      * Not supported for: free-level projects
      *
      * @return list of {@link XmlGroupRange} on root level
@@ -76,7 +76,7 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the middle group ranges for a three-level project ({@code main}/{@code middle}/{@code sub})
      * <ul>
-     * <li>Main: 0 .. 31</li>
+     *      <li>Main: 0 .. 31</li>
      * </ul>
      * Not supported for: two-level and free-level projects
      *
@@ -105,7 +105,7 @@ public final class ProjectController extends AbstractController {
 
     /**
      * Returns all group addresses
-     * <p/>
+     * <p>
      * Supported for all projects: free-level, two-level and three-level
      *
      * @return list of {@link XmlGroupAddress} for given project
@@ -122,7 +122,7 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the group addresses for a two-level project ({@code main}/{@code sub})
      * <ul>
-     * <li>Main: 0 .. 31</li>
+     *      <li>Main: 0 .. 31</li>
      * </ul>
      * Not supported for: three-level and free-level projects
      *
@@ -151,8 +151,8 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the group addresses for a three-level project ({@code main}/{@code middle}/{@code sub})
      * <ul>
-     * <li>Main: 0 .. 31</li>
-     * <li>Middle: 0 .. 7</li>
+     *      <li>Main: 0 .. 31</li>
+     *      <li>Middle: 0 .. 7</li>
      * </ul>
      * Not supported for: two-level and free-level projects
      *

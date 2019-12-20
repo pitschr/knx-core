@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 /**
  * Controller Test Annotation to test the behavior of controller without starting up
  * the Web Framework and Mock Server
- * <p/>
+ * <p>
  * This will call the JUnit {@link ControllerTestExtension} class.
  *
  * @author PITSCHR

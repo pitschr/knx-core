@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 
 /**
  * De-Serializes a JSON format of knx address to a sub-type of {@link KnxAddress}
- * <p/>
+ * <p>
  * Currently supported are {@link AddressType#INDIVIDUAL} and {@link AddressType#GROUP} which will
  * call either {@link IndividualAddressJsonDeserializer} or {@link GroupAddressJsonDeserializer}, respectively.
  *

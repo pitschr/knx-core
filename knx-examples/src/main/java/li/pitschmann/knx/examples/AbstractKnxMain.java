@@ -47,10 +47,10 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the Configuration Builder based on following arguments:
      * <ul>
-     * <li>{@code --ip} ... defined endpoint in {@code <address>:<port>} format.
-     * If the address is a multicast, then routing will be used, otherwise tunneling (no NAT)</li>
-     * <li>{@code --routing} ... if the communication should be over multicast (routing)</li>
-     * <li>{@code --nat} ... if the communication should be using Network Address Translation (tunneling)</li>
+     *      <li>{@code --ip} ... defined endpoint in {@code <address>:<port>} format.
+     *      If the address is a multicast, then routing will be used, otherwise tunneling (no NAT)</li>
+     *      <li>{@code --routing} ... if the communication should be over multicast (routing)</li>
+     *      <li>{@code --nat} ... if the communication should be using Network Address Translation (tunneling)</li>
      * </ul>
      *
      * @param args arguments

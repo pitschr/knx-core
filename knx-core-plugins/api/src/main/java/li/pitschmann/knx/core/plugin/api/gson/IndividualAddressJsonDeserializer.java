@@ -5,7 +5,7 @@ import li.pitschmann.knx.core.address.IndividualAddress;
 
 /**
  * De-Serializes a JSON format of group address to an instance of {@link IndividualAddress}
- * <p/>
+ * <p>
  * Supported JSON formats:
  * <pre>
  * {"type":0,"raw":[-61,45]}

@@ -16,7 +16,7 @@ public final class ReadRequestController extends AbstractController {
 
     /**
      * Endpoint for read request to be forwarded to KNX Net/IP device
-     * <p/>
+     * <p>
      * As soon we get an acknowledge frame from KNX Net/IP device, we will wait for
      * a read request frame up to 3 seconds. If successful, the API will return the
      * actual value with details like data point type. Otherwise, we simply return

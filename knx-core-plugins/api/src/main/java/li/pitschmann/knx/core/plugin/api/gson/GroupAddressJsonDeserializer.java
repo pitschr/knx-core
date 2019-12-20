@@ -5,7 +5,7 @@ import li.pitschmann.knx.core.address.GroupAddress;
 
 /**
  * De-Serializes a JSON format of group address to an instance of {@link GroupAddress}
- * <p/>
+ * <p>
  * Supported JSON formats:
  * <pre>
  * {"type":1,"raw":[15,19]}
