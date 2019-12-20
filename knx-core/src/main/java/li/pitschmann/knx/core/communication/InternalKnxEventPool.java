@@ -43,7 +43,7 @@ import java.util.Map;
 
 /**
  * KNX event pool for communication.
- * <p/>
+ * <p>
  * This class is also indented to find the appropriate request and response bodies.
  *
  * @author PITSCHR

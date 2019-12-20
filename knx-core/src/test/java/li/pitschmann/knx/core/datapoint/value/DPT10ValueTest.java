@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public final class DPT10ValueTest {
     /**
      * Test {@link DPT10Value}
-     * <p/>
+     * <p>
      * Hint: If this test is failing because of wrong date translation, then check if environment variable
      * {@code -Duser.language=en -Duser.country=US} is set
      */

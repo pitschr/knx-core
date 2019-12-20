@@ -43,7 +43,7 @@ public interface DataPointValue<T extends DataPointType<?>> {
 
     /**
      * Returns the human-friendly text representation of Data Point Value
-     * <p/>
+     * <p>
      * <strong>This text is not STABLE and should only be used for display purposes only!</strong>
      *
      * @return text

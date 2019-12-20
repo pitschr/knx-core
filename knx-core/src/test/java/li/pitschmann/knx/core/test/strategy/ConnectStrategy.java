@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.test.strategy;
 /**
  * Marker interface for connect strategy to establish a connection between
  * KNX Net/IP client and the KNX mock server
- * <p/>
+ * <p>
  * <u>Possible workflow:</u>
  * <pre>
  * [ Client ] --- request --> [ Mock Server ]

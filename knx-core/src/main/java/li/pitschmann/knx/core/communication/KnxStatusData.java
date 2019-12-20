@@ -112,7 +112,7 @@ public final class KnxStatusData {
 
     /**
      * Sets if the current {@link KnxStatusData} is dirty or it isn't dirty.
-     * <p/>
+     * <p>
      * Used for internal purposes only (e.g. marking it as dirty when
      * requested for an update to KNX Net/IP device)
      *

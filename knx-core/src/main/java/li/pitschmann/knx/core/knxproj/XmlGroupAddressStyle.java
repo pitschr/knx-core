@@ -34,9 +34,9 @@ import java.util.function.Function;
  * <p>
  * Currently following level styles are supported
  * <ul>
- * <li>Free Level (example: 57133)</li>
- * <li>2-Level (example: 27/1837)</li>
- * <li>3-Level (example: 27/7/45)</li>
+ *      <li>Free Level (example: 57133)</li>
+ *      <li>2-Level (example: 27/1837)</li>
+ *      <li>3-Level (example: 27/7/45)</li>
  * </ul>
  */
 public enum XmlGroupAddressStyle {

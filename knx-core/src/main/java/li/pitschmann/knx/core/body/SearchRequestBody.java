@@ -27,7 +27,7 @@ import li.pitschmann.knx.core.utils.Strings;
 
 /**
  * Body for Search Request
- * <p/>
+ * <p>
  * The {@link ServiceType#SEARCH_REQUEST} frame shall be sent by a KNXnet/IP Client
  * via multicast to the discovery endpoints of any listening KNXnet/IP Server. As
  * communication with the discovery endpoint shall be connectionless and stateless,

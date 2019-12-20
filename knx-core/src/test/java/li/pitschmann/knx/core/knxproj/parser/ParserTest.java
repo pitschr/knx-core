@@ -200,16 +200,16 @@ public class ParserTest {
     /**
      * Asserts a corrupted KNX project without mandatory attributes
      * <ul>
-     * <li>Missing {@code @Id} on {@code <Project />}</li>
-     * <li>Missing {@code @Name} on {@code <ProjectInformation />}</li>
-     * <li>Missing {@code @GroupAddressStyle} on {@code <ProjectInformation />}</li>
-     * <li>Missing {@code @Id} on {@code <GroupRange />}</li>
-     * <li>Missing {@code @RangeStart} on {@code <GroupRange />}</li>
-     * <li>Missing {@code @RangeEnd} on {@code <GroupRange />}</li>
-     * <li>Missing {@code @Name} on {@code <GroupRange />}</li>
-     * <li>Missing {@code @Id} on {@code <GroupAddress />}</li>
-     * <li>Missing {@code @Name} on {@code <GroupAddress />}</li>
-     * <li>Missing {@code @Address} on {@code <GroupAddress />}</li>
+     *      <li>Missing {@code @Id} on {@code <Project />}</li>
+     *      <li>Missing {@code @Name} on {@code <ProjectInformation />}</li>
+     *      <li>Missing {@code @GroupAddressStyle} on {@code <ProjectInformation />}</li>
+     *      <li>Missing {@code @Id} on {@code <GroupRange />}</li>
+     *      <li>Missing {@code @RangeStart} on {@code <GroupRange />}</li>
+     *      <li>Missing {@code @RangeEnd} on {@code <GroupRange />}</li>
+     *      <li>Missing {@code @Name} on {@code <GroupRange />}</li>
+     *      <li>Missing {@code @Id} on {@code <GroupAddress />}</li>
+     *      <li>Missing {@code @Name} on {@code <GroupAddress />}</li>
+     *      <li>Missing {@code @Address} on {@code <GroupAddress />}</li>
      * </ul>
      */
     @Test

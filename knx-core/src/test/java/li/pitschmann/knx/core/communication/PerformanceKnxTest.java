@@ -110,7 +110,7 @@ public class PerformanceKnxTest {
 
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device with N packets.
-     * <p/>
+     * <p>
      * Here the client is sending {@code TIMES} tunneling requests to KNX mock server
      */
     @MockServerTest

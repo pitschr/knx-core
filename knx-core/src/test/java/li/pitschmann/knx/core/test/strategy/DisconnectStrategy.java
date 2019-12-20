@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.test.strategy;
 /**
  * Marker interface for disconnect strategy to handle the disconnection.
  * The disconnect can be initiated by the KNX Net/IP client and by KNX mock server
- * <p/>
+ * <p>
  * <u>Possible workflows:</u><br>
  * KNX client sends the disconnect request if it wants to close the connection and the
  * disconnect request will be received by the KNX mock server which will respond the

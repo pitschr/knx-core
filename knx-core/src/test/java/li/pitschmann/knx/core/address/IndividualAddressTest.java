@@ -116,8 +116,8 @@ public final class IndividualAddressTest {
     /**
      * Asserts the {@link IndividualAddress} if area, line and device parameters are correctly parsed
      * <ul>
-     * <li>{@link IndividualAddress#of(int, int, int)}</li>
-     * <li>{@link IndividualAddress#of(byte[])}</li>
+     *      <li>{@link IndividualAddress#of(int, int, int)}</li>
+     *      <li>{@link IndividualAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.

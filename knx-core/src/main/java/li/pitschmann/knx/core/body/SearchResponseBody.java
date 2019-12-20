@@ -34,18 +34,18 @@ import java.util.Arrays;
 
 /**
  * Body for Search Response
- * <p/>
+ * <p>
  * The {@link ServiceType#SEARCH_RESPONSE} frame shall be sent by the KNXnet/IP
  * Server as an answer to a received SEARCH_REQUEST frame. It shall be addressed
  * to the KNXnet/IP Client’s discovery endpoint using the HPAI included in the
  * received {@link ServiceType#SEARCH_REQUEST} frame.
- * <p/>
+ * <p>
  * The HPAI of the KNXnet/IP Server’s own control endpoint shall be carried in the
  * KNXnet/IP body of the SEARCH_RESPONSE frame along with the description of the
  * device hardware and the supported service families. If the KNXnet/IP Server
  * supports more than one KNX connection, the KNXnet/IP Server shall announce each
  * of its own control endpoints in a single SEARCH_RESPONSE frame.
- * <p/>
+ * <p>
  * At least two DIB structures shall be returned with information about the device capabilities on:
  * {@link DeviceHardwareInformationDIB} and {@link SupportedDeviceFamiliesDIB}.
  *

@@ -61,7 +61,8 @@ public final class Configs {
                     if (obj instanceof InternalConfigValue) {
                         log.debug("Field '{}' is ignored because it is an instance of InternalConfigValue", field.getName());
                     } else if (obj instanceof ConfigValue) {
-                        @SuppressWarnings("unchecked") final var configValue = (ConfigValue<Object>) obj;
+                        @SuppressWarnings("unchecked")
+                        final var configValue = (ConfigValue<Object>) obj;
                         list.add(configValue);
                         log.trace("Field '{}' added to list: {}", field.getName(), configValue);
                     }

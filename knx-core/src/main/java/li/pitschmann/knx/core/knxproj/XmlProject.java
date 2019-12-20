@@ -91,13 +91,13 @@ public final class XmlProject {
     private List<XmlGroupAddress> groupAddresses = List.of();
     /**
      * Map of KNX Group Addresses by Key {@code Id} (e.g. P-06EF-0_GA-3), taken from '*.knxproj' file.
-     * <p/>
+     * <p>
      * {@code <GroupAddresses Id="..." />}
      */
     private Map<String, XmlGroupAddress> groupAddressMap = Map.of();
     /**
      * Map of KNX Group Addresses by {@code Address} (e.g. 1025), taken from '*.knxproj' file.
-     * <p/>
+     * <p>
      * {@code <GroupAddresses Address="..." />}
      */
     private Map<Integer, XmlGroupAddress> groupAddressIntMap = Map.of();
@@ -198,8 +198,8 @@ public final class XmlProject {
      * Sets the group addresses by the given collection of {@link XmlGroupAddress}
      * Internally it will create two maps:<br>
      * <ol>
-     * <li>one map, whereas key is the Id taken from '*.knxproj'</li>
-     * <li>one map, whereas key is the KNX group address (unique as integer)</li>
+     *      <li>one map, whereas key is the Id taken from '*.knxproj'</li>
+     *      <li>one map, whereas key is the KNX group address (unique as integer)</li>
      * </ol>
      * Using those two maps we can find the group address quickly by id from XML Project file
      * or by the KNX group address.

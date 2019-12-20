@@ -47,7 +47,7 @@ import java.util.function.BiConsumer;
 
 /**
  * Plugin Manager
- * <p/>
+ * <p>
  * This class is mutable and allows register/unregister plugins on-demand.
  *
  * @author PITSCHR
@@ -77,7 +77,7 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Notifies all {@link Plugin} about KNX Client initialization
-     * <p/>
+     * <p>
      * <strong>For internal use only!</strong>
      */
     public void notifyInitialization(final KnxClient client) {
@@ -117,7 +117,7 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Notifies all {@link ExtensionPlugin} about KNX Client communication start
-     * <p/>
+     * <p>
      * <strong>For internal use only!</strong>
      */
     public void notifyClientStart() {
@@ -126,7 +126,7 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Notifies all {@link ExtensionPlugin} about KNX Client communication shutdown
-     * <p/>
+     * <p>
      * <strong>For internal use only!</strong>
      */
     public void notifyClientShutdown() {
@@ -135,7 +135,7 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Adds and registers the plugin from given URL and class path
-     * <p/>
+     * <p>
      * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
      * {@code com.mycompany.MyPlugin} as {@code className}.
      *
@@ -156,7 +156,8 @@ public final class PluginManager implements AutoCloseable {
             Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
                     "Seems the given plugin is not an instance of {}: {}", Plugin.class, className);
 
-            @SuppressWarnings("unchecked") final var plugin = addPlugin((Class<Plugin>) cls);
+            @SuppressWarnings("unchecked")
+            final var plugin = addPlugin((Class<Plugin>) cls);
             log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
             return plugin;
         } catch (final Throwable t) {
@@ -184,7 +185,7 @@ public final class PluginManager implements AutoCloseable {
 
     /**
      * Creates and registers the plugin based on {@code pluginClass}
-     * <p/>
+     * <p>
      * It will give plugin 10 seconds time for create. Otherwise, the plugin won't be registered.
      *
      * @param pluginClass

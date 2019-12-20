@@ -39,7 +39,7 @@ public class ConnectResponseTaskTest {
 
     /**
      * Tests the {@link ConnectResponseTask#onNext(Body)}
-     * <p/>
+     * <p>
      * Providing an unexpected {@link Body} (others than {@link ConnectResponseBody}) will
      * throw {@link KnxBodyNotReceivedException}.
      */
@@ -59,7 +59,7 @@ public class ConnectResponseTaskTest {
 
     /**
      * Test the {@link ConnectResponseTask#onError(Throwable)}
-     * <p/>
+     * <p>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
     @Test
@@ -71,7 +71,7 @@ public class ConnectResponseTaskTest {
 
     /**
      * Test the {@link ConnectResponseTask#onComplete()}
-     * <p/>
+     * <p>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
     @Test

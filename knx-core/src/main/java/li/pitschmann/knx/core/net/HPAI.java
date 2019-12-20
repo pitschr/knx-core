@@ -41,7 +41,7 @@ import java.util.Objects;
  * that is necessary to uniquely identify an Internet Protocol transport
  * connection endpoint. This shall include the Network Layer address
  * and the Transport Layer identifier called Port number.
- * <p/>
+ * <p>
  * Both, IP address and port number, shall be stored binary in
  * network octet order.
  *

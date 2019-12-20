@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.test.strategy;
 /**
  * Marker interface for discovery strategy to provide available KNX Net/IP client and
  * device hardware and capabilities of the KNX mock server.
- * <p/>
+ * <p>
  * <u>Possible workflow:</u>
  * <pre>
  * [ Client ] --- request --> [ Mock Server ]

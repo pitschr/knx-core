@@ -174,7 +174,8 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
-            @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
+            @SuppressWarnings("unchecked")
+            final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
             return dataPointValue;
         }
         return null;

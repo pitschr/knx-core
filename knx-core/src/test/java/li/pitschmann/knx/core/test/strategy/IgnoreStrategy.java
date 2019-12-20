@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.test.MockServer;
 
 /**
  * A special {@link ResponseStrategy} to ignore the requests from KNX mock client
- * <p/>
+ * <p>
  * This is useful if you want to simulate/test a no reaction on e.g. description request frame.
  * In this case the KNX client should resend the description request frame again which will be
  * responded by a different strategy class.

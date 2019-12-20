@@ -55,7 +55,7 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
 
     /**
      * Returns the sequence from {@link TunnelingRequestBody}.
-     * <p/>
+     * <p>
      * Normally the sequence should be always same like request body because
      * we are acknowledging this. However for testing purpose it may useful
      * to return a wrong sequence. This method can be overridden.

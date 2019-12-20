@@ -182,7 +182,7 @@ public final class InternalKnxClient implements AutoCloseable {
     /**
      * Verify if the retrieved {@link DescriptionResponseBody} returned by the KNX Net/IP device
      * is applicable for current client implementation.
-     * <p/>
+     * <p>
      * It will just check if the KNX Net/IP device supports tunneling.
      *
      * @return {@code true} if tunneling is supported by KNX Net/IP device and we can proceed with connect, otherwise {@code false}.
@@ -447,7 +447,7 @@ public final class InternalKnxClient implements AutoCloseable {
     /**
      * Verifies if the {@link Body} response if it meets the {@link #channelId}. The channel id check is skipped when
      * given {@link Body} doesn't implement the {@link ChannelIdAware} interface.
-     * <p/>
+     * <p>
      * The {@link #channelId} is fetched and set during initialization of connection with KNX Net/IP device.
      *
      * @param body any KNX body to be verified
@@ -576,13 +576,13 @@ public final class InternalKnxClient implements AutoCloseable {
     public enum State {
         /**
          * The KNX Client is not started (or has been stopped)
-         * <p/>
+         * <p>
          * Next state is: {@link #START_REQUEST}
          */
         NOT_STARTED,
         /**
          * The start has been requested and KNX Client may not communicate actively with KNX Net/IP device yet.
-         * <p/>
+         * <p>
          * Next State is either: {@link #STARTED} if successfully, otherwise {@link #STOP_REQUEST} if the
          * communication cannot be established for some reasons.
          */
@@ -590,13 +590,13 @@ public final class InternalKnxClient implements AutoCloseable {
         /**
          * The communication has been established and the KNX Client is actively communicating with the
          * KNX Net/IP device.
-         * <p/>
+         * <p>
          * Next State is: {@link #STOP_REQUEST}
          */
         STARTED,
         /**
          * The communication has been stopped. This can be happen successfully, or also because of failure.
-         * <p/>
+         * <p>
          * Next State is: {@link #NOT_STARTED} as soon the stop procedure is completed.
          */
         STOP_REQUEST

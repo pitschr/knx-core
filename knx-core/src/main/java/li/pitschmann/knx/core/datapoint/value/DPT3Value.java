@@ -315,7 +315,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
 
         /**
          * Returns the human-friendly text representation of Step Interval
-         * <p/>
+         * <p>
          * <strong>This text is not STABLE and should only be used for display purposes only!</strong>
          *
          * @return human-friendy representation of Step Interval

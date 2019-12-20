@@ -37,7 +37,7 @@ import java.util.Objects;
  * send {@link ConnectRequestBody} to the KNX Net/IP device and waits for
  * {@link ConnectResponseBody} to obtain the channel id which is used as identifier for
  * further communications.
- * <p/>
+ * <p>
  * The connection state communicator is used in Tunneling mode only!
  *
  * @author PITSCHR

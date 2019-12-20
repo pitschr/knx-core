@@ -53,10 +53,10 @@ public class DefaultKnxClientTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device returns following:
      * <ol>
-     * <li>{@link DescriptionResponseBody}</li>
-     * <li>{@link ConnectResponseBody}</li>
-     * <li>{@link ConnectionStateResponseBody}</li>
-     * <li>{@link DisconnectResponseBody}</li>
+     *      <li>{@link DescriptionResponseBody}</li>
+     *      <li>{@link ConnectResponseBody}</li>
+     *      <li>{@link ConnectionStateResponseBody}</li>
+     *      <li>{@link DisconnectResponseBody}</li>
      * </ol>
      * <p>
      * Disconnect will be initiated by the KNX client.
@@ -83,10 +83,10 @@ public class DefaultKnxClientTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device returns following:
      * <ol>
-     * <li>{@link DescriptionResponseBody}</li>
-     * <li>{@link ConnectResponseBody}</li>
-     * <li>{@link ConnectionStateResponseBody}</li>
-     * <li>{@link DisconnectResponseBody}</li>
+     *      <li>{@link DescriptionResponseBody}</li>
+     *      <li>{@link ConnectResponseBody}</li>
+     *      <li>{@link ConnectionStateResponseBody}</li>
+     *      <li>{@link DisconnectResponseBody} (three times)</li>
      * </ol>
      * <p>
      * Disconnect will be initiated by the KNX client.
@@ -115,10 +115,10 @@ public class DefaultKnxClientTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device returns following:
      * <ol>
-     * <li>{@link DescriptionResponseBody}</li>
-     * <li>{@link ConnectResponseBody}</li>
-     * <li>{@link ConnectionStateResponseBody}</li>
-     * <li>{@link DisconnectRequestBody}</li>
+     *      <li>{@link DescriptionResponseBody}</li>
+     *      <li>{@link ConnectResponseBody}</li>
+     *      <li>{@link ConnectionStateResponseBody}</li>
+     *      <li>{@link DisconnectRequestBody}</li>
      * </ol>
      * <p>
      * Disconnect will be initiated by the KNX Net/IP device.
@@ -145,7 +145,7 @@ public class DefaultKnxClientTest {
     /**
      * Test no responding/not available KNX Net/IP device
      *
-     * @param mockServer
+     * @param mockServer the KNX mock server
      */
     @MockServerTest
     @DisplayName("Error: Test alive but no response from KNX Net/IP device")
@@ -171,7 +171,7 @@ public class DefaultKnxClientTest {
     /**
      * Test {@link DefaultKnxClient#createStarted(String)}
      *
-     * @param mockServer
+     * @param mockServer the KNX mock server
      */
     @MockServerTest
     @DisplayName("Success: Test KNX client instantiation using host address as string")
@@ -198,7 +198,7 @@ public class DefaultKnxClientTest {
      * Test {@link DefaultKnxClient#createStarted()} which will find mock server using
      * discovery service. Here we are testing the official KNX port number.
      *
-     * @param mockServer
+     * @param mockServer the KNX mock server
      */
     @MockServerTest(useDiscovery = true)
     @DisplayName("Success: Test KNX client instantiation using discovery service and default KNX port")
@@ -226,7 +226,7 @@ public class DefaultKnxClientTest {
      * Test {@link DefaultKnxClient#createStarted(String)} with multicast address.
      * Here we are testing the routing feature.
      *
-     * @param mockServer
+     * @param mockServer the KNX mock server
      */
     @MockServerTest(useRouting = true)
     @DisplayName("Success: Test KNX client instantiation using routing service (via multicast)")

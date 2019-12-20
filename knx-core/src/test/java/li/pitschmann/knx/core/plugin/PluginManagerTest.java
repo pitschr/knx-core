@@ -251,7 +251,8 @@ public final class PluginManagerTest {
      */
     @SafeVarargs
     private KnxClient newKnxClientMockWithPlugins(Class<? extends Plugin>... plugins) {
-        @SuppressWarnings("unchecked") final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
+        @SuppressWarnings("unchecked")
+        final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
 
         final var mockConfig = TestHelpers.mockConfig(
                 config -> when(config.getPlugins()).thenReturn(castedList)

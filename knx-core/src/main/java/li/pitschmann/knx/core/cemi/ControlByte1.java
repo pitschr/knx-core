@@ -77,12 +77,12 @@ public final class ControlByte1 extends AbstractSingleRawData {
      * Returns the default {@link ControlByte1} with default settings:
      *
      * <ul>
-     * <li>Use Standard Frame</li>
-     * <li>No Repeat in case of error</li>
-     * <li>Use {@link BroadcastType#NORMAL}</li>
-     * <li>Use {@link Priority#LOW}</li>
-     * <li>No Acknowledge Request</li>
-     * <li>No Error</li>
+     *      <li>Use Standard Frame</li>
+     *      <li>No Repeat in case of error</li>
+     *      <li>Use {@link BroadcastType#NORMAL}</li>
+     *      <li>Use {@link Priority#LOW}</li>
+     *      <li>No Acknowledge Request</li>
+     *      <li>No Error</li>
      * </ul>
      *
      * @return re-usable immutable default {@link ControlByte1}

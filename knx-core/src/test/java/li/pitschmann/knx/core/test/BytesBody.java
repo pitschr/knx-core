@@ -27,7 +27,7 @@ import li.pitschmann.knx.core.utils.Strings;
 
 /**
  * Bytes Body
- * <p/>
+ * <p>
  * With KNX mock server we are simulating bad / corrupt scenarios.
  */
 public abstract class BytesBody extends AbstractMultiRawData implements Body {

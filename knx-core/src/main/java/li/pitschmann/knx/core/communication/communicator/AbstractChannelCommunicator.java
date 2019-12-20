@@ -51,7 +51,7 @@ import java.util.function.Predicate;
  * Abstract channel communicator. It coordinates the communication for given channel
  * ( created by {@link #newChannel(InternalKnxClient)} method) and creates an inbox
  * and an outbox queue for non-blocking communication.
- * <p/>
+ * <p>
  * It also controls the lifecycle of channel (opening, closing) and all receiving
  * KNX packets are forwarded to all subscribers.
  *

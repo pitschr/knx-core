@@ -14,7 +14,7 @@ public final class Exceptions {
      * Converts the error message which is in printf-style and arguments
      * into a formatted string representation. It uses the {@code {}} as
      * placeholder similar SLF4J.
-     * <p/>
+     * <p>
      * Example:
      * <pre>
      *     toErrorMessage(bool, "The value '{}' should should be between {} and {}.", valueName, 1, 10);

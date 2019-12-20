@@ -33,7 +33,8 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
      * @return {@link DPTEnumValue}
      */
     default DPTEnumValue<T> toValue() {
-        @SuppressWarnings("unchecked") final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
+        @SuppressWarnings("unchecked")
+        final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
         return DataPointTypeRegistry.getDataPointType(thisObj);
     }
 

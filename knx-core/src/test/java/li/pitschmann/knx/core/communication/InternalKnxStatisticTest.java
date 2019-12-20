@@ -191,18 +191,18 @@ public class InternalKnxStatisticTest {
 
     /**
      * Adds 55 <strong>incoming</strong> bodies to {@link InternalKnxStatistic}
-     * <p/>
+     * <p>
      * <ul>
-     * <li>1x {@link DescriptionRequestBody}</li>
-     * <li>2x {@link DescriptionResponseBody}</li>
-     * <li>3x {@link ConnectRequestBody}</li>
-     * <li>4x {@link ConnectResponseBody}</li>
-     * <li>5x {@link ConnectionStateRequestBody}</li>
-     * <li>6x {@link ConnectionStateResponseBody}</li>
-     * <li>7x {@link DisconnectRequestBody}</li>
-     * <li>8x {@link DisconnectResponseBody}</li>
-     * <li>9x {@link TunnelingRequestBody}</li>
-     * <li>10x {@link TunnelingAckBody}</li>
+     *      <li>1x {@link DescriptionRequestBody}</li>
+     *      <li>2x {@link DescriptionResponseBody}</li>
+     *      <li>3x {@link ConnectRequestBody}</li>
+     *      <li>4x {@link ConnectResponseBody}</li>
+     *      <li>5x {@link ConnectionStateRequestBody}</li>
+     *      <li>6x {@link ConnectionStateResponseBody}</li>
+     *      <li>7x {@link DisconnectRequestBody}</li>
+     *      <li>8x {@link DisconnectResponseBody}</li>
+     *      <li>9x {@link TunnelingRequestBody}</li>
+     *      <li>10x {@link TunnelingAckBody}</li>
      * </ul>
      *
      * @param knxStatistic
@@ -226,18 +226,18 @@ public class InternalKnxStatisticTest {
 
     /**
      * Adds 155 <strong>outgoing</strong> bodies to {@link InternalKnxStatistic}
-     * <p/>
+     * <p>
      * <ul>
-     * <li>21x {@link DescriptionRequestBody}</li>
-     * <li>22x {@link DescriptionResponseBody}</li>
-     * <li>23x {@link ConnectRequestBody}</li>
-     * <li>24x {@link ConnectResponseBody}</li>
-     * <li>25x {@link ConnectionStateRequestBody}</li>
-     * <li>26x {@link ConnectionStateResponseBody}</li>
-     * <li>27x {@link DisconnectRequestBody}</li>
-     * <li>28x {@link DisconnectResponseBody}</li>
-     * <li>29x {@link TunnelingRequestBody}</li>
-     * <li>30x {@link TunnelingAckBody}</li>
+     *      <li>21x {@link DescriptionRequestBody}</li>
+     *      <li>22x {@link DescriptionResponseBody}</li>
+     *      <li>23x {@link ConnectRequestBody}</li>
+     *      <li>24x {@link ConnectResponseBody}</li>
+     *      <li>25x {@link ConnectionStateRequestBody}</li>
+     *      <li>26x {@link ConnectionStateResponseBody}</li>
+     *      <li>27x {@link DisconnectRequestBody}</li>
+     *      <li>28x {@link DisconnectResponseBody}</li>
+     *      <li>29x {@link TunnelingRequestBody}</li>
+     *      <li>30x {@link TunnelingAckBody}</li>
      * </ul>
      *
      * @param knxStatistic
@@ -269,13 +269,13 @@ public class InternalKnxStatisticTest {
 
     /**
      * Adds 40 <strong>errors</strong> to {@link InternalKnxStatistic}
-     * <p/>
+     * <p>
      * <ul>
-     * <li>8x {@link IllegalArgumentException}</li>
-     * <li>8x {@link IOException}</li>
-     * <li>8x {@link KnxException}</li>
-     * <li>8x {@link NullPointerException}</li>
-     * <li>8x {@link Throwable}</li>
+     *      <li>8x {@link IllegalArgumentException}</li>
+     *      <li>8x {@link IOException}</li>
+     *      <li>8x {@link KnxException}</li>
+     *      <li>8x {@link NullPointerException}</li>
+     *      <li>8x {@link Throwable}</li>
      * </ul>
      *
      * @param knxStatistic

@@ -54,7 +54,7 @@ public class DisconnectRequestTaskTest {
 
     /**
      * Test the {@link DisconnectRequestTask#onError(Throwable)}
-     * <p/>
+     * <p>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
     @Test
@@ -66,7 +66,7 @@ public class DisconnectRequestTaskTest {
 
     /**
      * Test the {@link DisconnectRequestTask#onComplete()}
-     * <p/>
+     * <p>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
     @Test
