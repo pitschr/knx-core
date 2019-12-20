@@ -267,7 +267,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
             if (searchString.equalsIgnoreCase(args[i])) {
                 return true;
             }
-            if (moreSearchStrings == null) {
+            if (moreSearchStrings != null) {
                 for (final String moreSearchString : moreSearchStrings) {
                     if (moreSearchString.equalsIgnoreCase(args[i])) {
                         return true;
