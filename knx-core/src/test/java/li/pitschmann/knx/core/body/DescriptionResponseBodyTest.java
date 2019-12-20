@@ -182,12 +182,12 @@ public class DescriptionResponseBodyTest {
     /**
      * Tests the {@link DescriptionResponseBody#of(byte[])} method with following DIBs:
      * <ul>
-     * <li>DeviceHardwareInformationDIB</li>
-     * <li>SupportedDeviceFamiliesDIB</li>
-     * <li>IPConfigDIB</li>
-     * <li>IPCurrentConfigDIB</li>
-     * <li>KnxAddressesDIB</li>
-     * <li>ManufacturerDataDIB</li>
+     *      <li>DeviceHardwareInformationDIB</li>
+     *      <li>SupportedDeviceFamiliesDIB</li>
+     *      <li>IPConfigDIB</li>
+     *      <li>IPCurrentConfigDIB</li>
+     *      <li>KnxAddressesDIB</li>
+     *      <li>ManufacturerDataDIB</li>
      * </ul>
      */
     @Test

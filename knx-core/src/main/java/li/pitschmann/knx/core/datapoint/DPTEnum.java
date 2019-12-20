@@ -47,8 +47,8 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
     /**
      * Constructor is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.
      *
-     * @param id
-     * @param description
+     * @param id          id of DPT enumeration
+     * @param description description of DPT enumeration
      */
     public DPTEnum(final String id, final String description) {
         super(id, description);
@@ -57,7 +57,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
     /**
      * This method is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.
      *
-     * @param enumValue
+     * @param enumValue value that should be used for DPT enumeration
      */
     final void addValue(final DPTEnumValue<T> enumValue) {
         Preconditions.checkArgument(!this.values.containsKey(enumValue.getOrdinal()),
@@ -68,7 +68,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
     /**
      * Returns a {@link DPTEnumValue} for specified value.
      *
-     * @param value
+     * @param value the enumeration key to return the DPT enumeration instance
      * @return data point enumeration value
      * @throws KnxEnumNotFoundException if enumeration with given value could not be found
      */

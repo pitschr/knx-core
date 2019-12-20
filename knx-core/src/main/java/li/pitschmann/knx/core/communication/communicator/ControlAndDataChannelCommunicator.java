@@ -28,7 +28,7 @@ import java.nio.channels.SelectableChannel;
 
 /**
  * Communicator for control <strong>AND</strong> data channel related packets.
- * <p/>
+ * <p>
  * When using NAT then control and data packets are going over the same channel.
  *
  * @author PITSCHR

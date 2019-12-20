@@ -14,7 +14,7 @@ import java.time.Instant;
 
 /**
  * Rotation Callback for files that requires header line (e.g. TSV files)
- * <p/>
+ * <p>
  * This callback is used to append a header when a new file is opened or rotated.
  *
  * @author PITSCHR

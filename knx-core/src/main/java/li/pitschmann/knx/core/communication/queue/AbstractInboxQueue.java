@@ -117,9 +117,9 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
     /**
      * Reads the bytes from given {@code channel} into {@link ByteBuffer}
      *
-     * @param channel
-     * @param bb
-     * @throws IOException
+     * @param channel the channel
+     * @param bb      byte buffer that should keep received data
+     * @throws IOException If an I/O error occurs
      */
     protected abstract void receive(final T channel, final ByteBuffer bb) throws IOException;
 }

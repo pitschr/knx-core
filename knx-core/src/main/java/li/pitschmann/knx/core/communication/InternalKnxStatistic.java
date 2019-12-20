@@ -100,7 +100,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     /**
      * (internal) Updates the statistics about received {@link Body}
      *
-     * @param body
+     * @param body the incoming body
      */
     public void onIncomingBody(final Body body) {
         this.numberOfBodyReceived.incrementAndGet();
@@ -111,7 +111,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     /**
      * (internal) Updates the statistics about sent {@link Body}
      *
-     * @param body
+     * @param body the outgoing body
      */
     public void onOutgoingBody(final Body body) {
         this.numberOfBodySent.incrementAndGet();

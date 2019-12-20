@@ -41,7 +41,7 @@ public interface KnxEvent<REQUEST extends RequestBody, RESPONSE extends Response
     /**
      * Sets the KNX request event
      *
-     * @param request
+     * @param request the request body
      */
     void setRequest(REQUEST request);
 
@@ -62,7 +62,7 @@ public interface KnxEvent<REQUEST extends RequestBody, RESPONSE extends Response
     /**
      * Sets the KNX response event
      *
-     * @param response
+     * @param response the response body
      */
     void setResponse(RESPONSE response);
 

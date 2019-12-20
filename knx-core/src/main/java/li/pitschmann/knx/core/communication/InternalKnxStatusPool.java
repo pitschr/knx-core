@@ -91,9 +91,11 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     }
 
     /**
-     * Marks the status for given RequestBody as dirty (not up-to-date)
+     * Marks the status for given RequestBody as dirty (not up-to-date) to inform
+     * the status pool that the value of given request body may be obsolete (and
+     * we have requested for most recent value from KNX)
      *
-     * @param requestBody
+     * @param requestBody the request body we want to mark as dirty
      */
     public void setDirty(final @Nullable RequestBody requestBody) {
         // for tunneling
@@ -172,7 +174,8 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
-            @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
+            @SuppressWarnings("unchecked")
+            final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
             return dataPointValue;
         }
         return null;

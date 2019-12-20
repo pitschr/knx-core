@@ -101,7 +101,7 @@ public class TunnelingRequestTaskTest {
 
     /**
      * Test the {@link TunnelingRequestTask#onError(Throwable)}
-     * <p/>
+     * <p>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
     @Test
@@ -113,7 +113,7 @@ public class TunnelingRequestTaskTest {
 
     /**
      * Test the {@link TunnelingRequestTask#onComplete()}
-     * <p/>
+     * <p>
      * Calling this method should not throw a {@link Throwable}. It is used for logging purposes only.
      */
     @Test

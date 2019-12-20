@@ -112,7 +112,8 @@ public final class DataPointTypeRegistry {
      */
     private static <T extends Enum<T> & DataPointTypeEnum<T>> void registerDataPointTypeEnums(final Class<?> clazz) {
         // we can cast safely here
-        @SuppressWarnings("unchecked") final var enumInnerClass = (Class<T>) clazz;
+        @SuppressWarnings("unchecked")
+        final var enumInnerClass = (Class<T>) clazz;
 
         final var classAnnotation = enumInnerClass.getAnnotation(KnxDataPointTypeEnum.class);
         // inner class is enum class and has data point type annotation
@@ -130,7 +131,8 @@ public final class DataPointTypeRegistry {
 
             try {
                 // we are safe to cast here with "null" because field is an enumeration
-                @SuppressWarnings("unchecked") final var fieldInstance = (T) field.get(null);
+                @SuppressWarnings("unchecked")
+                final var fieldInstance = (T) field.get(null);
                 final var dptEnumValue = new DPTEnumValue<>(dptEnum, fieldInstance, fieldAnnotation.value(),
                         fieldAnnotation.description());
                 dptEnum.addValue(dptEnumValue);
@@ -194,7 +196,8 @@ public final class DataPointTypeRegistry {
      * @return {@link DPTEnumValue}
      */
     public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
-        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
+        @SuppressWarnings("unchecked")
+        final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
         if (dpt == null) {
             throw new KnxEnumNotFoundException("Could not find enum data point type for: " + e);
         }
@@ -208,7 +211,8 @@ public final class DataPointTypeRegistry {
      * @return {@link DataPointType}
      */
     public static <T extends DataPointType> T getDataPointType(final String id) {
-        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
+        @SuppressWarnings("unchecked")
+        final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);
         }

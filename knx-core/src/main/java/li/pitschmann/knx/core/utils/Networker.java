@@ -66,7 +66,7 @@ public final class Networker {
     /**
      * Returns {@link InetAddress} instance for localhost
      *
-     * @return
+     * @return the local IP address
      */
     public static InetAddress getLocalHost() {
         return LOCALHOST;
@@ -106,11 +106,11 @@ public final class Networker {
      * <p>
      * It is a wrapper of {@link InetAddress#getByAddress(byte[])} without throwing {@link UnknownHostException}.
      *
-     * @param i1
-     * @param i2
-     * @param i3
-     * @param i4
-     * @return {@link InetAddress}
+     * @param i1 first int [0..255] of IP address
+     * @param i2 second int [0..255] of IP address
+     * @param i3 third int [0..255] of IP address
+     * @param i4 fourth int [0..255] of IP address
+     * @return created {@link InetAddress} based on given raw four integers [0..255].[0..255].[0..255].[0..255]
      */
     public static InetAddress getByAddress(final int i1, final int i2, final int i3, final int i4) {
         Preconditions.checkArgument(i1 >= 0 && i1 <= 255);
@@ -125,11 +125,11 @@ public final class Networker {
      * <p>
      * It is a wrapper of {@link InetAddress#getByAddress(byte[])} without throwing {@link UnknownHostException}.
      *
-     * @param b1
-     * @param b2
-     * @param b3
-     * @param b4
-     * @return {@link InetAddress}
+     * @param b1 first byte of IP address
+     * @param b2 second byte of IP address
+     * @param b3 third byte of IP address
+     * @param b4 fourth byte of IP address
+     * @return created {@link InetAddress} based on given raw four bytes
      */
     public static InetAddress getByAddress(final byte b1, final byte b2, final byte b3, final byte b4) {
         try {
@@ -166,7 +166,7 @@ public final class Networker {
     /**
      * Returns the local address for given {@code Channel} as a string representative.
      *
-     * @param channel
+     * @param channel the channel
      * @return string representative for local address
      */
     public static String getLocalAddressAsString(final Channel channel) {
@@ -187,8 +187,8 @@ public final class Networker {
     /**
      * Converts from {@link HPAI} containing address and port to {@link InetSocketAddress}
      *
-     * @param hpai
-     * @return A new {@link InetSocketAddress} instance
+     * @param hpai the {@link HPAI} instance
+     * @return A new {@link InetSocketAddress} instance based on {@link HPAI}
      */
     public static InetSocketAddress toInetSocketAddress(final HPAI hpai) {
         return new InetSocketAddress(hpai.getAddress(), hpai.getPort());

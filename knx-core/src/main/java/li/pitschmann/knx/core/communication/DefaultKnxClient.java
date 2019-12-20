@@ -32,7 +32,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
     /**
      * Starts Default KNX client with {@link Config}
      *
-     * @param config
+     * @param config the configuration that should be used to create a link to KNX
      */
     private DefaultKnxClient(final Config config) {
         super(config);
@@ -43,7 +43,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * applicable KNX Net/IP device will be using KNX discovery service on a broadcast
      * address according to the KXN specification.
      *
-     * @return
+     * @return an instance of {@link DefaultKnxClient}
      */
     public static DefaultKnxClient createStarted() {
         return createStarted("");
@@ -51,9 +51,16 @@ public final class DefaultKnxClient extends BaseKnxClient {
 
     /**
      * Creates the Default KNX Client with pre-defined endpoint {@code address}
+     * <p>
+     * Acceptable formats:
+     * <ul>
+     *     <li>{@code <ip-address>} or {@code <host>}</li>
+     *     <li>{@code <ip-address>:<port>} or {@code <host>:<port>}</li>
+     *     <li>{@code :<port>} to use the discovery)</li>
+     * </ul>
      *
-     * @param address
-     * @return
+     * @param address the remote endpoint of KNX Net/IP device
+     * @return an instance of {@link DefaultKnxClient}
      */
     public static DefaultKnxClient createStarted(final @Nullable String address) {
         return createStarted(ConfigBuilder.create(address).build());
@@ -62,8 +69,8 @@ public final class DefaultKnxClient extends BaseKnxClient {
     /**
      * Creates the Default KNX Client with {@link Config} instance
      *
-     * @param config
-     * @return
+     * @param config the configuration that should be used to create a link to KNX
+     * @return an instance of {@link DefaultKnxClient}
      */
     public static DefaultKnxClient createStarted(final Config config) {
         final var client = new DefaultKnxClient(config);

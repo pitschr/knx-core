@@ -204,19 +204,19 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
 
     /**
      * Returns if the disconnect should be initiated from KNX mock server.
-     * <p/>
+     * <p>
      * Using {@link MockServerTest#disconnectTrigger()} we can define several requests
      * that must be matched before the disconnect request is sent out from KNX mock server.
-     * <p/>
+     * <p>
      * <u>Example:</u><br>
      * <ol>
-     * <li>wait for connection state request</li>
-     * <li>wait for tunnelling request</li>
-     * <li>wait for connection state request</li>
+     *      <li>wait for connection state request</li>
+     *      <li>wait for tunnelling request</li>
+     *      <li>wait for connection state request</li>
      * </ol>
      * The disconnect will be initiated by KNX mock server as soon as possible when
      * connection state, tunnelling request and connection state packets arrived.
-     * <p/>
+     * <p>
      * It doesn't matter if there were other packets arrived or sent in the meantime.
      *
      * @return {@code true} if mock server should send out a disconnect frame to

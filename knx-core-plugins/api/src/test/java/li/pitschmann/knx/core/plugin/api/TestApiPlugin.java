@@ -78,7 +78,7 @@ final class TestApiPlugin extends ApiPlugin {
 
     /**
      * Creates a new {@link HttpRequest.Builder} for test requests to API
-     * <p/>
+     * <p>
      * As we are using communicating via JSON only, the headers
      * {@link HttpConstants.Header#ACCEPT} and {@link HttpConstants.Header#CONTENT_TYPE}
      * are pre-defined with {@link HttpConstants.ContentType#APPLICATION_JSON}.

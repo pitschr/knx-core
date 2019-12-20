@@ -58,7 +58,7 @@ public interface KnxStatistic {
 
     /**
      * Returns number of bytes received by KNX Net/IP Client from KNX Net/IP device
-     * <p/>
+     * <p>
      * The number of bytes is not 100% guaranteed, because it depends on underlying protocol as well.
      *
      * @return number of received bytes
@@ -67,7 +67,7 @@ public interface KnxStatistic {
 
     /**
      * Returns number of bytes sent from KNX Net/IP Client to the KNX Net/IP device.
-     * <p/>
+     * <p>
      * The number of bytes is not 100% guaranteed, because it depends on underlying protocol as well.
      *
      * @return number of sent bytes

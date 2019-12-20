@@ -183,8 +183,8 @@ public final class GroupAddressTest {
     /**
      * Asserts the {@link GroupAddress} (Free-Level) if group are correctly parsed
      * <ul>
-     * <li>{@link GroupAddress#of(int)}</li>
-     * <li>{@link GroupAddress#of(byte[])}</li>
+     *      <li>{@link GroupAddress#of(int)}</li>
+     *      <li>{@link GroupAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.
@@ -223,8 +223,8 @@ public final class GroupAddressTest {
     /**
      * Asserts the {@link GroupAddress} (2-Level) if main and sub groups are correctly parsed
      * <ul>
-     * <li>{@link GroupAddress#of(int, int)}</li>
-     * <li>{@link GroupAddress#of(byte[])}</li>
+     *      <li>{@link GroupAddress#of(int, int)}</li>
+     *      <li>{@link GroupAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.
@@ -264,8 +264,8 @@ public final class GroupAddressTest {
     /**
      * Asserts the {@link GroupAddress} (3-Level) if main, middle and sub groups are correctly parsed
      * <ul>
-     * <li>{@link GroupAddress#of(int, int, int)}</li>
-     * <li>{@link GroupAddress#of(byte[])}</li>
+     *      <li>{@link GroupAddress#of(int, int, int)}</li>
+     *      <li>{@link GroupAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.

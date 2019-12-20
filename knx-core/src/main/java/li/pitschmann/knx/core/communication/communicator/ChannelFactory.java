@@ -46,7 +46,7 @@ public final class ChannelFactory {
      * Creates a channel for multicast communication to the given
      * socket address provided by {@link InternalKnxClient}
      *
-     * @param client
+     * @param client the internal knx client
      * @return a new instance of {@link DatagramChannel} for discovery related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
@@ -64,7 +64,7 @@ public final class ChannelFactory {
      * Creates a channel for description communication (description) to the given
      * socket address provided by {@link InternalKnxClient}
      *
-     * @param client
+     * @param client the internal knx client
      * @return a new instance of {@link DatagramChannel} for description related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
@@ -81,7 +81,7 @@ public final class ChannelFactory {
      * Creates a channel for control communication (connect, description, connection state, disconnect)
      * to the given socket address provided by {@link InternalKnxClient}
      *
-     * @param client
+     * @param client the internal knx client
      * @return a new instance of {@link DatagramChannel} for control-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */
@@ -98,7 +98,7 @@ public final class ChannelFactory {
      * Creates channel for data communication and connects to the given socket
      * address provided by {@link InternalKnxClient}
      *
-     * @param client
+     * @param client the internal knx client
      * @return a new instance of {@link DatagramChannel} for data-related communication
      * @throws KnxCommunicationException in case the channel could not be created
      */

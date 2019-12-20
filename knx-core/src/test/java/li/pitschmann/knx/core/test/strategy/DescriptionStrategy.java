@@ -22,7 +22,7 @@ package li.pitschmann.knx.core.test.strategy;
  * Marker interface for description strategy to provide description about the
  * KNX mock server. The KNX Net/IP client will check the predication if the
  * communication between the KNX mock server and client are meet.
- * <p/>
+ * <p>
  * <u>Possible workflow:</u>
  * <pre>
  * [ Client ] --- request --> [ Mock Server ]

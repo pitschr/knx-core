@@ -16,7 +16,7 @@ public final class WriteRequestController extends AbstractController {
 
     /**
      * Endpoint for write request to be forwarded to KNX Net/IP device
-     * <p/>
+     * <p>
      * As soon we get an acknowledge frame from KNX, our write request action is done!
      *
      * @param writeRequest

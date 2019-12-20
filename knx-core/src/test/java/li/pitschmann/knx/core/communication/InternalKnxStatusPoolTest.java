@@ -48,7 +48,7 @@ public final class InternalKnxStatusPoolTest {
 
     /**
      * Test {@link InternalKnxStatusPool#updateStatus(CEMI)} and {@link KnxStatusPool#getStatusFor(KnxAddress)}.
-     * <p/>
+     * <p>
      * This will test {@link InternalKnxStatusPool#updateStatus(KnxAddress, KnxStatusData)} indirectly.
      */
     @Test

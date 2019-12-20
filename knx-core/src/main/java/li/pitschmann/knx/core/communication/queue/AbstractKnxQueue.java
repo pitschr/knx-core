@@ -157,7 +157,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
     /**
      * Returns the channel from {@link SelectionKey}
      *
-     * @param key
+     * @param key the selection key to obtain the channel
      * @return An instance of {@link ByteChannel}
      */
     @SuppressWarnings("unchecked")

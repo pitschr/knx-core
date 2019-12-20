@@ -58,7 +58,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * KNX Mock Server
- * <p/>
+ * <p>
  * This mock server is used to test and simulate the communication between
  * KNX client and KNX Net/IP device.
  */

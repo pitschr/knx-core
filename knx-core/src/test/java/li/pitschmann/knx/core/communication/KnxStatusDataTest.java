@@ -60,7 +60,7 @@ public class KnxStatusDataTest {
 
     /**
      * Checks if the {@link KnxStatusData} is immutable.
-     * <p/><
+     * <p><
      * In {@link KnxStatusData} we only need to take care about immutability for apci data.
      * Rest are immutable as they don't provide a setter.
      */

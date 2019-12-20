@@ -51,7 +51,7 @@ import java.util.function.Predicate;
  * Abstract channel communicator. It coordinates the communication for given channel
  * ( created by {@link #newChannel(InternalKnxClient)} method) and creates an inbox
  * and an outbox queue for non-blocking communication.
- * <p/>
+ * <p>
  * It also controls the lifecycle of channel (opening, closing) and all receiving
  * KNX packets are forwarded to all subscribers.
  *
@@ -168,7 +168,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     /**
      * Returns if given {@link Body} is compatible
      *
-     * @param body
+     * @param body to be checked if it is compatible
      * @return {@code true} if compatible, otherwise {@code false}
      */
     public abstract boolean isCompatible(final Body body);
@@ -176,7 +176,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     /**
      * Send {@link Body} to the outbox queue
      *
-     * @param body
+     * @param body {@link Body} that shall be sent
      */
     public final void send(final Body body) {
         this.outboxQueue.send(Objects.requireNonNull(body));
@@ -187,8 +187,9 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
      * It returns a {@link Future} for further processing.
      *
-     * @param requestBody
+     * @param requestBody request body to be sent
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
+     * @param <T>         an instance of {@link ResponseBody
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
@@ -201,10 +202,11 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
      * It returns a {@link Future} for further processing.
      *
-     * @param requestBody
+     * @param requestBody request body to be sent
      * @param predicate   predicates if the condition of {@link KnxEvent} was meet ({@code true}) or not ({@code false}),
      *                    {@code null} means that no predicate check
      * @param msTimeout   timeout in milliseconds waiting until the expected response body is fetched
+     * @param <T>         an instance of {@link ResponseBody}
      * @return a {@link CompletableFuture} representing pending completion of the task containing
      * either an instance of {@link ResponseBody}, or {@code null} if no response was received
      */
@@ -223,10 +225,11 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      * Sends the {@link RequestBody} packet to the appropriate channel and then finally wait for the expected response
      * that meets the {@link Predicate} criteria and is an an instance of {@link ResponseBody}.
      *
-     * @param requestBody
+     * @param requestBody request body to be sent
      * @param predicate   predicates if the condition of {@link KnxEvent} was meet ({@code true}) or not ({@code false}),
      *                    {@code null} means that no predicate check
      * @param msTimeout   timeout in milliseconds waiting until expected response body is fetched
+     * @param <T>         an instance of {@link ResponseBody
      * @return an instance of {@link ResponseBody}, or {@code null} if no response was received (timeout) or no response that meets the preconditions was received
      */
     @Nullable

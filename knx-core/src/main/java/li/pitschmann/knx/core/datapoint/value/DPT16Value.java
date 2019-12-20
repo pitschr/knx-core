@@ -53,14 +53,14 @@ import java.util.Objects;
  *              +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * Format:     14 octets (A<sub>112</sub>)
  * </pre>
- * <p/>
+ * <p>
  * These Data Point Types are used to transmit strings of characters. The length is fixed
  * to 14 octets. The contents are filled starting from the most significant octet. Each
  * octet shall be encoded as specified for the chosen character set, as defined in clause 0.
- * <p/>
+ * <p>
  * If the string to be transmitted is smaller then 14 octets, unused trailing
  * octets in the character string shall be set to NULL (00h).
- * <p/>
+ * <p>
  * Example:<br>
  * "KNX is OK" is encoded as follows: "0x4B 4E 58 20 69 73 20 4F 4B 00 00 00 00 00"
  *

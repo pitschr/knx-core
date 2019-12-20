@@ -15,7 +15,7 @@ public final class Maps {
 
     /**
      * Creates a new {@link HashMap} with expected size.
-     * <p/>
+     * <p>
      * Similar to Guava's Maps#newHashMapWithExpectedSize(int)
      *
      * @param expectedSize
@@ -29,7 +29,7 @@ public final class Maps {
 
     /**
      * Creates a new {@link LinkedHashMap} with expected size.
-     * <p/>
+     * <p>
      * Similar to Guava's Maps#newLinkedHashMapWithExpectedSize(int)
      *
      * @param expectedSize

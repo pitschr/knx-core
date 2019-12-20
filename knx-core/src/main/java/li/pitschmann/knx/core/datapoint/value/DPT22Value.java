@@ -251,9 +251,9 @@ public final class DPT22Value {
 
         /**
          * Returns human-friendly representation of active channels.
-         * <p/>
-         * If only channel 1 is active, then "1" is returned.<br/>
-         * If channel 1, 3 and 8 is active, then "1, 3, 8" is returned.<br/>
+         * <p>
+         * If only channel 1 is active, then "1" is returned.<br>
+         * If channel 1, 3 and 8 is active, then "1, 3, 8" is returned.<br>
          *
          * @return human-friendly representation of active channels
          */

@@ -122,8 +122,9 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
     /**
      * Sends the given byte arrays to {@code channel}
      *
-     * @param channel
-     * @throws IOException
+     * @param channel channel
+     * @param bb      byte buffer holding data to be sent to channel
+     * @throws IOException If an I/O error occurs
      */
     protected abstract void send(final T channel, final ByteBuffer bb) throws IOException;
 }

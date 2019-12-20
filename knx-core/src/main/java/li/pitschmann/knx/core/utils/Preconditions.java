@@ -44,7 +44,7 @@ public final class Preconditions {
     /**
      * Checks that the specified object reference is not {@code null} and
      * throws a customized {@link NullPointerException} if it is.
-     * <p/>
+     * <p>
      * Example:
      * <pre>
      *     checkNotNull(obj, "The object is null");
@@ -85,7 +85,7 @@ public final class Preconditions {
     /**
      * Checks the truth of given {@code expression}. In case the expression was not meet,
      * an {@link IllegalArgumentException} with custom error message will be thrown.
-     * <p/>
+     * <p>
      * Example:
      * <pre>
      *     checkArgument(bool, "The value '%s' should should be between %d and %d.", valueName, 1, 10);
@@ -126,7 +126,7 @@ public final class Preconditions {
      * Ensures the truth of given expression if the state was meet. In case
      * the state was not meet, an {@link IllegalStateException} with custom error message
      * will be thrown.
-     * <p/>
+     * <p>
      * Example:
      * <pre>
      *     checkState(bool, "The value '%s' should should be between %d and %d.", valueName, 1, 10);

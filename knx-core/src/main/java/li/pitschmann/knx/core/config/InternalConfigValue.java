@@ -15,8 +15,8 @@ import java.util.function.Supplier;
  * <p>
  * Used for:
  * <ul>
- * <li>{@link CoreConfigs.Endpoint#ADDRESS}</li>
- * <li>{@link CoreConfigs.Endpoint#PORT}</li>
+ *      <li>{@link CoreConfigs.Endpoint#ADDRESS}</li>
+ *      <li>{@link CoreConfigs.Endpoint#PORT}</li>
  * </ul>
  *
  * @param <T> value type of internal config (e.g. Boolean)

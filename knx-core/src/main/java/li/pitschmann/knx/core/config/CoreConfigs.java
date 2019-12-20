@@ -323,7 +323,7 @@ public final class CoreConfigs {
     public static final class Endpoint {
         /**
          * Endpoint Address (of KNX/Net IP device)
-         * <p/>
+         * <p>
          * <strong>This setting is reserved for internal purpose only!</strong>
          */
         public static final InternalConfigValue<InetAddress> ADDRESS = new InternalConfigValue<>(
@@ -335,7 +335,7 @@ public final class CoreConfigs {
         );
         /**
          * Endpoint Port (of KNX/Net IP device)
-         * <p/>
+         * <p>
          * <strong>This setting is reserved for internal purpose only!</strong>
          */
         public static final InternalConfigValue<Integer> PORT = new InternalConfigValue<>(

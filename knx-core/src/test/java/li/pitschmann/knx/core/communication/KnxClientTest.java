@@ -52,11 +52,11 @@ public class KnxClientTest {
     /**
      * Test following methods indirectly (inside {@link InternalKnxClient)}:
      * <ul>
-     * <li>{@code InternalKnxClient#notifyPlugins(Object, List, BiConsumer)}
-     * (internally used for initialization, start and shutdown)</li>
-     * <li>{@link InternalKnxClient#notifyIncomingBody(Body)}</li>
-     * <li>{@link InternalKnxClient#notifyOutgoingBody(Body)}</li>
-     * <li>{@link InternalKnxClient#notifyError(Throwable)}</li>
+     *      <li>{@code InternalKnxClient#notifyPlugins(Object, List, BiConsumer)}
+     *          (internally used for initialization, start and shutdown)</li>
+     *      <li>{@link InternalKnxClient#notifyIncomingBody(Body)}</li>
+     *      <li>{@link InternalKnxClient#notifyOutgoingBody(Body)}</li>
+     *      <li>{@link InternalKnxClient#notifyError(Throwable)}</li>
      * </ul>
      */
     @MockServerTest(requests = {
@@ -138,7 +138,7 @@ public class KnxClientTest {
 
     /**
      * Test {@link InternalKnxClient#notifyError(Throwable)} when calling an erroneous plug-in.
-     * <p/>
+     * <p>
      * In case an exception is thrown by plug-in the KNX client should still be alive.
      */
     @Test

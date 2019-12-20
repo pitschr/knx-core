@@ -22,7 +22,7 @@ import li.pitschmann.knx.core.body.ControlChannelRelated;
 
 /**
  * A {@link BytesBody} that is going to be sent to Control channel.
- * <p/>
+ * <p>
  * Using it we can simulate a false body routing.
  */
 public final class ControlBytesBody extends BytesBody implements ControlChannelRelated {

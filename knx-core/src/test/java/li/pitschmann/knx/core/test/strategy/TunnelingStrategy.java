@@ -23,7 +23,7 @@ import li.pitschmann.knx.core.cemi.CEMI;
 /**
  * Marker interface for tunneling strategy to handle tunneling request and
  * acknowledge packets. The tunneling packets are communicated bi-directional
- * <p/>
+ * <p>
  * <u>Possible workflows:</u><br>
  * KNX client will send a read/write tunneling request to the KNX mock server and
  * the request will be acknowledged by the KNX mock server - in parallel the request

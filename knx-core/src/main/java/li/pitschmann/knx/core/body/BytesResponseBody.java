@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * A custom ResponseBody for non-KNX-specified responses. It may be used for customized bodies
  * which are not specified in KNX or may be used for testing purposes (e.g. corrupted packets).
- * <p/>
+ * <p>
  * It may hold 0 and up to 250 bytes. Keep in mind, that KNX body can hold up to 256 bytes in
  * total whereas 6 bytes is already reserved for KNX header (see: {@link li.pitschmann.knx.core.header.Header})
  *

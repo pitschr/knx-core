@@ -34,6 +34,5 @@ public interface ResponseStrategy {
      * @param request
      * @return a mocked response
      */
-
     MockResponse createResponse(MockServer mockServer, MockRequest request);
 }
