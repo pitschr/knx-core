@@ -104,7 +104,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     /**
      * Creates a new instance of {@link AbstractInboxQueue} that should be used by this communicator
      *
-     * @param client the internal KNX client
+     * @param client  the internal KNX client
      * @param channel channel where packets are received
      * @return new instance of {@link AbstractInboxQueue}
      */
@@ -116,7 +116,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     /**
      * Creates a new instance of {@link AbstractOutboxQueue} that should be used by this communicator
      *
-     * @param client the internal KNX client
+     * @param client  the internal KNX client
      * @param channel channel where packets are sent
      * @return new instance of {@link AbstractOutboxQueue}
      */

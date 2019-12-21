@@ -221,11 +221,13 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
     /**
      * Constructor for {@link DPT2}
      *
-     * @param id
-     * @param description
-     * @param dpt1
+     * @param id          identifier for {@link DPT2}
+     * @param description description for {@link DPT2}
+     * @param dpt1        the basis {@link DPT1} for {@link DPT2}
      */
-    private DPT2(final String id, final String description, final DPT1 dpt1) {
+    private DPT2(final String id,
+                 final String description,
+                 final DPT1 dpt1) {
         super(id, description);
         this.dpt1 = dpt1;
     }

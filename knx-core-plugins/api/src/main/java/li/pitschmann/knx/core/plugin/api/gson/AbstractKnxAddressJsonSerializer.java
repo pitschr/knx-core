@@ -34,9 +34,9 @@ public abstract class AbstractKnxAddressJsonSerializer<T extends KnxAddress> imp
     }
 
     /**
-     * Creates a JSON Element for given address
+     * Creates a JSON element for given address
      *
-     * @param address
+     * @param address address to be converted to JSON element
      * @return an instance of {@link JsonElement}
      */
     protected abstract JsonElement createAddressJsonElement(final T address);

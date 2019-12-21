@@ -22,7 +22,7 @@ public final class ReadRequestController extends AbstractController {
      * actual value with details like data point type. Otherwise, we simply return
      * a JSON response with error state.
      *
-     * @param readRequest
+     * @param readRequest the read request from HTTP client
      * @return a new instance of {@link ReadResponse}
      */
     @POST("/read")

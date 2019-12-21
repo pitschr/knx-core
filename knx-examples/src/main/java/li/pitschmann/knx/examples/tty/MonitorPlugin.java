@@ -2,6 +2,7 @@ package li.pitschmann.knx.examples.tty;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.address.IndividualAddress;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
@@ -26,7 +27,6 @@ import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import li.pitschmann.knx.core.annotations.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -250,9 +250,9 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     /**
      * Print line in table
      *
-     * @param item
+     * @param body the body that should be printed to table
      */
-    private void printLineInTable(final Body item) {
+    private void printLineInTable(final Body body) {
         try {
             final var sb = new StringBuilder();
             sb.append(String.format("%10s", numberOfIncomingBodies.incrementAndGet()))
@@ -261,10 +261,10 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
                     .append(" | ");
 
             final CEMI cemi;
-            if (item instanceof TunnelingRequestBody) {
-                cemi = ((TunnelingRequestBody) item).getCEMI();
-            } else if (item instanceof RoutingIndicationBody) {
-                cemi = ((RoutingIndicationBody) item).getCEMI();
+            if (body instanceof TunnelingRequestBody) {
+                cemi = ((TunnelingRequestBody) body).getCEMI();
+            } else if (body instanceof RoutingIndicationBody) {
+                cemi = ((RoutingIndicationBody) body).getCEMI();
             } else {
                 throw new AssertionError();
             }
@@ -321,7 +321,7 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
      * Prints the line to terminal table with default {@code escapeCode} taken
      * from {@link #DEFAULT_TABLE_BODY_COLOR}
      *
-     * @param str
+     * @param str the string to be printed to terminal
      */
     private void printToTerminal(final String str) {
         printToTerminal(str, DEFAULT_TABLE_BODY_COLOR);
@@ -330,8 +330,8 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
     /**
      * Prints the line to terminal table with specific {@code escapeCode}
      *
-     * @param str
-     * @param escapeCode
+     * @param str        the string to be printed to terminal
+     * @param escapeCode the escape code to be invoked before printing to terminal (e.g. set color)
      */
     private synchronized final void printToTerminal(final String str, final String escapeCode) {
         out.print(String.format("\0338\033[K%s%s%s\033[0m\0337", escapeCode, emptyTable.getAndSet(false) ? "" : System.lineSeparator(), str));

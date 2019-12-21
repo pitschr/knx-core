@@ -72,10 +72,10 @@ public final class ConfigBuilder {
      * <p>
      * It supports a lot of different patterns:<br>
      * <ul>
-     *      <li><strong>Config-arg:</strong><br><i>null</i><br><i>empty</i><br>{@code :}</li>
-     *      <li><strong>Host and port</strong><br>{@code <host>:<port>"}</li>
-     *      <li><strong>Host only</strong><br>{@code <host>}<br>{@code <host>:}</li>
-     *      <li><strong>Port only</strong><br>{@code :<port>}</li>
+     * <li><strong>Config-arg:</strong><br><i>null</i><br><i>empty</i><br>{@code :}</li>
+     * <li><strong>Host and port</strong><br>{@code <host>:<port>"}</li>
+     * <li><strong>Host only</strong><br>{@code <host>}<br>{@code <host>:}</li>
+     * <li><strong>Port only</strong><br>{@code :<port>}</li>
      * </ul>
      *
      * @param address remote control address (and port)

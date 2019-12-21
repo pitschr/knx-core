@@ -30,7 +30,7 @@ public final class BitGenerator {
     /**
      * Returns for given {@code bits} only {@code true} signals
      *
-     * @param bits
+     * @param bits number of expected array length
      * @return array of {@code true}
      */
     public static boolean[] trueOnly(final int bits) {
@@ -44,7 +44,7 @@ public final class BitGenerator {
     /**
      * Returns for given {@code bits} only {@code false} signals
      *
-     * @param bits
+     * @param bits number of expected array length
      * @return array of {@code false}
      */
     public static boolean[] falseOnly(final int bits) {
@@ -56,8 +56,8 @@ public final class BitGenerator {
      * <p>
      * Excluded are: only {@code false} and only {@code true} signals
      *
-     * @param bits
-     * @return
+     * @param bits number of expected matrix size
+     * @return a matrix of combination with {@code true} and {@code false}
      */
     public static boolean[][] falseAndTrueOnly(final int bits) {
         return matrix(bits, true, true);
@@ -66,8 +66,8 @@ public final class BitGenerator {
     /**
      * Returns for given {@code bits} a full matrix with all combinations of {@code true} and {@code false} signals
      *
-     * @param bits
-     * @return
+     * @param bits number of expected matrix size
+     * @return a matrix with {@code true} only, {@code false} only and combination of {@code true} and {@code false}
      */
     public static boolean[][] matrix(final int bits) {
         return matrix(bits, false, false);
@@ -76,20 +76,20 @@ public final class BitGenerator {
     /**
      * Returns for given {@code bytes} a full matrix with all necessary combinations.
      *
-     * @param bitsLength
+     * @param bits          number of expected matrix size
      * @param skipOnlyFalse if {@code true} it will skip boolean array with {@code false} values only
      * @param skipOnlyTrue  if {@code true} it will skip boolean array with {@code true} values only
-     * @return
+     * @return a matrix with customized combiantions
      */
-    public static boolean[][] matrix(final int bitsLength, final boolean skipOnlyFalse, final boolean skipOnlyTrue) {
-        final var bitsCombo = 1 << bitsLength;
+    public static boolean[][] matrix(final int bits, final boolean skipOnlyFalse, final boolean skipOnlyTrue) {
+        final var bitsCombo = 1 << bits;
 
         // create full matrix
-        final var matrix = new boolean[bitsCombo][bitsLength];
+        final var matrix = new boolean[bitsCombo][bits];
         for (var i = 0; i < bitsCombo; i++) {
-            final var tmp = new boolean[bitsLength];
-            for (var j = 0; j < bitsLength; j++) {
-                tmp[bitsLength - 1 - j] = (i & (1 << j)) != 0;
+            final var tmp = new boolean[bits];
+            for (var j = 0; j < bits; j++) {
+                tmp[bits - 1 - j] = (i & (1 << j)) != 0;
             }
             matrix[i] = tmp;
         }
@@ -98,7 +98,7 @@ public final class BitGenerator {
         if (skipOnlyFalse || skipOnlyTrue) {
             final var startPos = skipOnlyFalse ? 1 : 0;
             final var endPos = bitsCombo - startPos - (skipOnlyTrue ? 1 : 0);
-            final var newMatrix = new boolean[endPos][bitsLength];
+            final var newMatrix = new boolean[endPos][bits];
             System.arraycopy(matrix, startPos, newMatrix, 0, endPos);
             return newMatrix;
         } else {

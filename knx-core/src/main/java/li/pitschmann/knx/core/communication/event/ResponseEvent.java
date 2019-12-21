@@ -37,7 +37,7 @@ public class ResponseEvent<T extends ResponseBody> {
      * Creates a new response event (package-protected)
      * to be called by {@link KnxSingleEvent} or {@link KnxMultiEvent}
      *
-     * @param response
+     * @param response the response body
      */
     ResponseEvent(final T response) {
         this.responseTime = Instant.now();

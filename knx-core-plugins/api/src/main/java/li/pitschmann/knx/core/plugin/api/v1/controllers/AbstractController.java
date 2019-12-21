@@ -1,6 +1,7 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import com.google.inject.Inject;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.Path;
 
-import li.pitschmann.knx.core.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,8 +42,8 @@ abstract class AbstractController extends Controller {
      * Returns a range of {@code T} elements from list.
      * May be limited using {@code start} and {@code limit} request parameters.
      *
-     * @param list
-     * @param <T>
+     * @param list the list that may be limited
+     * @param <T>  the type of list value to be limited
      * @return a new list of elements from {@link Collection}
      */
     protected final <T> List<T> limitAndGetAsList(final Collection<T> list) {

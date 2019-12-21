@@ -30,7 +30,7 @@ public class MockRequest {
      * Creates a new instance of {@link MockRequest} containing the
      * request body received from KNX Net/IP client
      *
-     * @param requestBody
+     * @param requestBody the request body to be mocked
      */
     public MockRequest(final RequestBody requestBody) {
         this.requestBody = requestBody;
@@ -39,7 +39,7 @@ public class MockRequest {
     /**
      * Returns the request body from KNX Net/IP client
      *
-     * @param <T>
+     * @param <T> the instance of {@link RequestBody}
      * @return request body
      */
     @SuppressWarnings("unchecked")

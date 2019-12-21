@@ -52,11 +52,11 @@ public class KnxClientTest {
     /**
      * Test following methods indirectly (inside {@link InternalKnxClient)}:
      * <ul>
-     *      <li>{@code InternalKnxClient#notifyPlugins(Object, List, BiConsumer)}
-     *          (internally used for initialization, start and shutdown)</li>
-     *      <li>{@link InternalKnxClient#notifyIncomingBody(Body)}</li>
-     *      <li>{@link InternalKnxClient#notifyOutgoingBody(Body)}</li>
-     *      <li>{@link InternalKnxClient#notifyError(Throwable)}</li>
+     * <li>{@code InternalKnxClient#notifyPlugins(Object, List, BiConsumer)}
+     * (internally used for initialization, start and shutdown)</li>
+     * <li>{@link InternalKnxClient#notifyIncomingBody(Body)}</li>
+     * <li>{@link InternalKnxClient#notifyOutgoingBody(Body)}</li>
+     * <li>{@link InternalKnxClient#notifyError(Throwable)}</li>
      * </ul>
      */
     @MockServerTest(requests = {

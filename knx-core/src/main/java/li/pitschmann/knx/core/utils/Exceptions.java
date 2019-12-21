@@ -60,7 +60,7 @@ public final class Exceptions {
     /**
      * Returns if the throwable is present in last index of {@code args} array.
      *
-     * @param args
+     * @param args array of arguments that may contain the {@link Throwable} at the end
      * @return An instance of {@link Throwable} if found, otherwise {@code null}
      */
     @Nullable

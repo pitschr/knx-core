@@ -58,9 +58,9 @@ public final class GroupAddress extends KnxAddress {
     /**
      * Returns an instance of {@link GroupAddress} based on format:
      * <ul>
-     *      <li>{@code X    } (The range must be between 1 and 65535)</li>
-     *      <li>{@code X/Y  } (The range must be between 0/1 and 31/2047)</li>
-     *      <li>{@code X/Y/Z} (The range must be between 0/0/1 and 31/7/255)</li>
+     * <li>{@code X    } (The range must be between 1 and 65535)</li>
+     * <li>{@code X/Y  } (The range must be between 0/1 and 31/2047)</li>
+     * <li>{@code X/Y/Z} (The range must be between 0/0/1 and 31/7/255)</li>
      * </ul>
      * This method will call, based on occurrence of {@code /} (slash) character,
      * either {@link #of(int)}, {@link #of(int, int)} or {@link #of(int, int, int)}

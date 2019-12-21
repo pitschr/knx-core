@@ -178,7 +178,6 @@ public class MyConfigurablePlugin implements Plugin {
     public static final PluginConfigValue<String> ANIMAL = new PluginConfigValue<>("animal", String.class, String::valueOf, () -> "dog", Objects::nonNull);
     /**
      * Config for special purposes extended by an inner class, defaults back to "woof!"
-     * @param client
      */
     public static final AnimalLoud LOUD = new AnimalLoud();
 

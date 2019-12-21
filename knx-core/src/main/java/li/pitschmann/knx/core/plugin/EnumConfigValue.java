@@ -20,9 +20,9 @@ public final class EnumConfigValue<E extends Enum<E>> extends PluginConfigValue<
     /**
      * Create default converter for {@link Enum} instances
      *
-     * @param enumClass
-     * @param <T>
-     * @return
+     * @param enumClass the enumeration class for look-up
+     * @param <T>       type of enumeration value
+     * @return the enumeration value
      */
     private static <T extends Enum<T>> Function<String, T> createConverter(final Class<T> enumClass) {
         return s -> Enum.valueOf(enumClass, s);

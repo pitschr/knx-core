@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT14Value;
 
@@ -1848,11 +1849,13 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
     /**
      * Constructor for {@link DPT14}
      *
-     * @param id
-     * @param desc
-     * @param unit
+     * @param id   identifier for {@link DPT14}
+     * @param desc description for {@link DPT14}
+     * @param unit the unit representation for {@link DPT14}
      */
-    private DPT14(final String id, final String desc, final String unit) {
+    private DPT14(final String id,
+                  final String desc,
+                  final @Nullable String unit) {
         super(id, desc, -3.40282347e+38, 3.40282347e+38, unit);
     }
 

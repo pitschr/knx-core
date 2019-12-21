@@ -75,13 +75,17 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
     /**
      * Constructor for {@link DPT4}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param charset
+     * @param id         identifier for {@link DPT4}
+     * @param desc       description for {@link DPT4}
+     * @param lowerValue the lower value for {@link DPT4}
+     * @param upperValue the upper value for {@link DPT4}
+     * @param charset    the character encoding set for {@link DPT4}
      */
-    private DPT4(final String id, final String desc, final int lowerValue, final int upperValue, final Charset charset) {
+    private DPT4(final String id,
+                 final String desc,
+                 final int lowerValue,
+                 final int upperValue,
+                 final Charset charset) {
         super(id, desc, lowerValue, upperValue, null);
 
         this.charset = charset;

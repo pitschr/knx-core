@@ -44,7 +44,7 @@ public final class Stopwatch {
      * {@link TimeUnit} that should be used for human-friendly
      * time representation.
      *
-     * @param nanos
+     * @param nanos number of nanoseconds to choose the proper {@link TimeUnit}
      * @return the type of {@link TimeUnit} to be printed in {@link #toString()}
      */
     private static TimeUnit chooseUnit(final long nanos) {
@@ -66,8 +66,8 @@ public final class Stopwatch {
      * human-friendly {@link TimeUnit}. Example: {@code s} for
      * seconds, {@code min} for minutes.
      *
-     * @param unit
-     * @return human-friendly {@link TimeUnit}
+     * @param unit the time unit
+     * @return human-friendly {@link TimeUnit} from {@code unit}
      */
     private static String toStringUnit(final TimeUnit unit) {
         switch (unit) {
@@ -122,11 +122,11 @@ public final class Stopwatch {
     /**
      * The elapsed time in {@link TimeUnit}
      *
-     * @param desiredUnit
-     * @return elapsed time in {@link TimeUnit}
+     * @param unit the time unit
+     * @return elapsed time for given {@link TimeUnit}
      */
-    public long elapsed(final TimeUnit desiredUnit) {
-        return desiredUnit.convert(elapsedNanos(), NANOSECONDS);
+    public long elapsed(final TimeUnit unit) {
+        return unit.convert(elapsedNanos(), NANOSECONDS);
     }
 
     /**
@@ -161,9 +161,9 @@ public final class Stopwatch {
     /**
      * Internal method to convert the nanos with {@link TimeUnit} into a more readable format.
      *
-     * @param nanos
-     * @param unit
-     * @return string
+     * @param nanos number of nanoseconds
+     * @param unit  the expected time unit for string representation
+     * @return string based on {@code nanos} and {@code unit}
      */
     private String toStringInternal(final long nanos, final TimeUnit unit) {
         final var value = (double) nanos / NANOSECONDS.convert(1, unit);

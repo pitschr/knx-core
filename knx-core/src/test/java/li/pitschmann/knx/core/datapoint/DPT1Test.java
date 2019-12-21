@@ -107,11 +107,11 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
      * the human-friendly text for given arguments, while {@code strIntValue} uses the binary character for true/false
      * evaluation (true=1, false=0).
      *
-     * @param dpt
-     * @param byteValue
-     * @param boolValue
-     * @param strValue
-     * @param strIntValue
+     * @param dpt         data point type
+     * @param byteValue   byte value
+     * @param boolValue   boolean value
+     * @param strValue    string value
+     * @param strIntValue integer value as string representation
      */
     private void assertDPT(final DPT1 dpt, final byte byteValue, final boolean boolValue, final String strValue, final String strIntValue) {
         final var dptValue = dpt.toValue(boolValue);

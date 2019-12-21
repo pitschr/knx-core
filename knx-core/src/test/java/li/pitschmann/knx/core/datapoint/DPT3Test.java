@@ -100,12 +100,12 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
      * {@code stepInterval} represents the same value like {@code stepCode}. The {@code strValue} is the human-friendly
      * text for given arguments.
      *
-     * @param dpt
-     * @param byteValue
-     * @param controlled
-     * @param stepCode
-     * @param stepInterval
-     * @param strValue
+     * @param dpt          data point type
+     * @param byteValue    byte value
+     * @param controlled   controlled value
+     * @param stepCode     step code
+     * @param stepInterval step interval
+     * @param strValue     string value
      */
     private void assertDPT(final DPT3 dpt, final byte byteValue, final boolean controlled, final int stepCode, final StepInterval stepInterval,
                            final String[] strValue) {

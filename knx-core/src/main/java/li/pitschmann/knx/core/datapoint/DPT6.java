@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT6Value;
 import li.pitschmann.knx.core.datapoint.value.DPT6Value.StatusMode.Mode;
@@ -97,13 +98,17 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
     /**
      * Constructor for {@link DPT6}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
+     * @param id         identifier for {@link DPT6}
+     * @param desc       description for {@link DPT6}
+     * @param lowerValue the lower value for {@link DPT6}
+     * @param upperValue the upper value for {@link DPT6}
+     * @param unit       the unit representation for {@link DPT6}
      */
-    private DPT6(final String id, final String desc, final int lowerValue, final int upperValue, final String unit) {
+    private DPT6(final String id,
+                 final String desc,
+                 final int lowerValue,
+                 final int upperValue,
+                 final @Nullable String unit) {
         super(id, desc, lowerValue, upperValue, unit);
     }
 
@@ -144,8 +149,8 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
         /**
          * Constructor for {@link DPT6.StatusMode}
          *
-         * @param id
-         * @param desc
+         * @param id   identifier of {@link StatusMode}
+         * @param desc description of {@link StatusMode}
          */
         private StatusMode(final String id, final String desc) {
             super(id, desc);

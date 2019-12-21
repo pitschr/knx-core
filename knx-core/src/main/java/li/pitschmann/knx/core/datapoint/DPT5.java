@@ -158,32 +158,41 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
     /**
      * Constructor for {@link DPT5}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
+     * @param id         identifier for {@link DPT5}
+     * @param desc       description for {@link DPT5}
+     * @param lowerValue the lower value for {@link DPT5}
+     * @param upperValue the upper value for {@link DPT5}
+     * @param unit       the unit representation for {@link DPT5}
      */
-    private DPT5(final String id, final String desc, final int lowerValue, final int upperValue, final String unit) {
+    private DPT5(final String id,
+                 final String desc,
+                 final int lowerValue,
+                 final int upperValue,
+                 final @Nullable String unit) {
         this(id, desc, lowerValue, upperValue, unit, null);
     }
 
     /**
      * Constructor for {@link DPT5}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
-     * @param calculationFunction
+     * @param id                  identifier for {@link DPT5}
+     * @param desc                description for {@link DPT5}
+     * @param lowerValue          the lower value for {@link DPT5}
+     * @param upperValue          the upper value for {@link DPT5}
+     * @param unit                the unit representation for {@link DPT5}
+     * @param calculationFunction the calculation function for value representation
      */
-    private DPT5(final String id, final String desc, final int lowerValue, final int upperValue, final @Nullable String unit,
+    private DPT5(final String id,
+                 final String desc,
+                 final int lowerValue,
+                 final int upperValue,
+                 final @Nullable String unit,
                  final @Nullable Function<Integer, Double> calculationFunction) {
         super(id, desc, lowerValue, upperValue, unit);
         this.calcuationFunction = calculationFunction;
     }
 
+    @Nullable
     public Function<Integer, Double> getCalcuationFunction() {
         return this.calcuationFunction;
     }

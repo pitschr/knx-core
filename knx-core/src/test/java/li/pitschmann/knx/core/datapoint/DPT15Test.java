@@ -72,9 +72,9 @@ public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
     /**
      * Asserts the DPT for given arguments {@code bValueArray} and {@code dptValue}
      *
-     * @param bValueArray
-     * @param accessIdData
-     * @param flags
+     * @param bValueArray  byte array with values
+     * @param accessIdData access identification data
+     * @param flags        flags for access identification data
      */
     private void assertDPT(final byte[] bValueArray, final byte[] accessIdData, final Flags flags) {
         final var dpt = DPT_ACCESS_DATA;

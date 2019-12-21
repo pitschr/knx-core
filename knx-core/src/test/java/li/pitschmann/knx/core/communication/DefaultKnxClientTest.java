@@ -53,10 +53,10 @@ public class DefaultKnxClientTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device returns following:
      * <ol>
-     *      <li>{@link DescriptionResponseBody}</li>
-     *      <li>{@link ConnectResponseBody}</li>
-     *      <li>{@link ConnectionStateResponseBody}</li>
-     *      <li>{@link DisconnectResponseBody}</li>
+     * <li>{@link DescriptionResponseBody}</li>
+     * <li>{@link ConnectResponseBody}</li>
+     * <li>{@link ConnectionStateResponseBody}</li>
+     * <li>{@link DisconnectResponseBody}</li>
      * </ol>
      * <p>
      * Disconnect will be initiated by the KNX client.
@@ -83,10 +83,10 @@ public class DefaultKnxClientTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device returns following:
      * <ol>
-     *      <li>{@link DescriptionResponseBody}</li>
-     *      <li>{@link ConnectResponseBody}</li>
-     *      <li>{@link ConnectionStateResponseBody}</li>
-     *      <li>{@link DisconnectResponseBody} (three times)</li>
+     * <li>{@link DescriptionResponseBody}</li>
+     * <li>{@link ConnectResponseBody}</li>
+     * <li>{@link ConnectionStateResponseBody}</li>
+     * <li>{@link DisconnectResponseBody} (three times)</li>
      * </ol>
      * <p>
      * Disconnect will be initiated by the KNX client.
@@ -115,10 +115,10 @@ public class DefaultKnxClientTest {
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device returns following:
      * <ol>
-     *      <li>{@link DescriptionResponseBody}</li>
-     *      <li>{@link ConnectResponseBody}</li>
-     *      <li>{@link ConnectionStateResponseBody}</li>
-     *      <li>{@link DisconnectRequestBody}</li>
+     * <li>{@link DescriptionResponseBody}</li>
+     * <li>{@link ConnectResponseBody}</li>
+     * <li>{@link ConnectionStateResponseBody}</li>
+     * <li>{@link DisconnectRequestBody}</li>
      * </ol>
      * <p>
      * Disconnect will be initiated by the KNX Net/IP device.

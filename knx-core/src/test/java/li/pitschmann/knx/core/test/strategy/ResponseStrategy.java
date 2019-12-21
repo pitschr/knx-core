@@ -30,8 +30,8 @@ public interface ResponseStrategy {
     /**
      * Creates a new instance of mock response to be sent to KNX Net/IP client
      *
-     * @param mockServer
-     * @param request
+     * @param mockServer the mock server
+     * @param request    the mock request
      * @return a mocked response
      */
     MockResponse createResponse(MockServer mockServer, MockRequest request);

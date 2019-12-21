@@ -34,7 +34,7 @@ public class DefaultConnectionStateStrategy implements ConnectionStateStrategy {
     /**
      * Returns the channel id that is used by the mock server
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return channel id
      */
     protected int getChannelId(final MockServer mockServer) {

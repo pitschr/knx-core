@@ -13,7 +13,7 @@ public final class Strings {
     /**
      * Returns {@code true} if the given {@link String} is null or empty.
      *
-     * @param string
+     * @param string the string representation to be checked
      * @return {@code true} if the string is null or is empty
      */
     public static boolean isNullOrEmpty(final @Nullable String string) {
@@ -24,7 +24,7 @@ public final class Strings {
      * Creates a {@link ToStringHelper} for creating string representations.
      * Similar to Guava's {@code ToStringHelper} but simpler.
      *
-     * @param obj
+     * @param obj the instance of {@link Object} that should be used for creating a {@link ToStringHelper}
      * @return a new instance of {@link ToStringHelper}
      */
     public static ToStringHelper toStringHelper(final Object obj) {

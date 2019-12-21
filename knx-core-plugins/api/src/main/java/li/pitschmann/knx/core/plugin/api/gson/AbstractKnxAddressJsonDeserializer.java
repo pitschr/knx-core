@@ -66,17 +66,17 @@ public abstract class AbstractKnxAddressJsonDeserializer<T extends KnxAddress> i
     protected abstract AddressType supportedAddressType();
 
     /**
-     * Creates a new instance of given {@code byte} array
+     * Creates a new instance of {@link KnxAddress} from given {@code address} byte array
      *
-     * @param address
+     * @param address byte array to be converted to {@link KnxAddress}
      * @return an instance of KnxAddress (Individual or Group Address)
      */
     protected abstract T convert(final byte[] address);
 
     /**
-     * Creates a new instance of given {@code String}
+     * Creates a new instance of {@link KnxAddress} from given {@code String}
      *
-     * @param address
+     * @param address address to be converted to {@link KnxAddress}
      * @return address instance of KnxAddress (Individual or Group Address)
      */
     protected abstract T convert(final String address);

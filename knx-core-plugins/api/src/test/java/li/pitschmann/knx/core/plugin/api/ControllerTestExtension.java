@@ -85,8 +85,8 @@ public final class ControllerTestExtension
     /**
      * Creates a new instance of {@link Controller}
      *
-     * @param annotation
-     * @param <T>
+     * @param annotation annotation of {@link ControllerTest} that contains test related configuration
+     * @param <T>        an instance that extends {@link Controller}
      * @return new instance of {@link Controller}
      */
     private final <T extends Controller> T newController(final ControllerTest annotation) {

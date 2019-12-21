@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.examples;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import li.pitschmann.knx.core.annotations.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -47,10 +47,10 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the Configuration Builder based on following arguments:
      * <ul>
-     *      <li>{@code --ip} ... defined endpoint in {@code <address>:<port>} format.
-     *      If the address is a multicast, then routing will be used, otherwise tunneling (no NAT)</li>
-     *      <li>{@code --routing} ... if the communication should be over multicast (routing)</li>
-     *      <li>{@code --nat} ... if the communication should be using Network Address Translation (tunneling)</li>
+     * <li>{@code --ip} ... defined endpoint in {@code <address>:<port>} format.
+     * If the address is a multicast, then routing will be used, otherwise tunneling (no NAT)</li>
+     * <li>{@code --routing} ... if the communication should be over multicast (routing)</li>
+     * <li>{@code --nat} ... if the communication should be using Network Address Translation (tunneling)</li>
      * </ul>
      *
      * @param args arguments
@@ -87,11 +87,11 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the value of parameter if supplied
      *
-     * @param args arguments
+     * @param args           arguments
      * @param parameterNames parameter names, may be comma-separated
      * @param defaultValue   default value in case the parameter could not be found or not parsed correctly
-     * @param function to be used for conversion from String to {@code <T>} value type
-     * @param <T> type of value
+     * @param function       to be used for conversion from String to {@code <T>} value type
+     * @param <T>            type of value
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable
@@ -122,7 +122,7 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the value if parameter exists
      *
-     * @param args arguments
+     * @param args           arguments
      * @param parameterNames parameter names, may be comma-separated
      * @return {@code true} if parameter was found, otherwise {@code false}
      */
@@ -139,11 +139,11 @@ public abstract class AbstractKnxMain {
     /**
      * Returns the value of parameter if supplied
      *
-     * @param args arguments
+     * @param args           arguments
      * @param parameterNames parameter names, may be comma-separated
      * @param defaultValues  default values in case the parameter could not be found or not parsed correctly
-     * @param function to be used for conversion from String to {@code <T>} value type
-     * @param <T> type of value
+     * @param function       to be used for conversion from String to {@code <T>} value type
+     * @param <T>            type of value
      * @return the value of parameter, otherwise {@code defaultValue}
      */
     @Nullable

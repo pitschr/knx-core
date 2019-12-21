@@ -77,8 +77,8 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
     /**
      * Asserts the DPT for given arguments {@code bValueArray} and {@code localDate}
      *
-     * @param bValueArray
-     * @param localDate
+     * @param bValueArray byte array with values
+     * @param localDate   local date
      */
     private void assertDPT(final byte[] bValueArray, final LocalDate localDate) {
         final var dpt = DPT_DATE;

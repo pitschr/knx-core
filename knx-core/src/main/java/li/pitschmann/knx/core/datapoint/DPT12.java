@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT12Value;
 
@@ -101,13 +102,17 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
     /**
      * Constructor for {@link DPT12}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
+     * @param id         identifier for {@link DPT12}
+     * @param desc       description for {@link DPT12}
+     * @param lowerValue the lower value for {@link DPT12}
+     * @param upperValue the upper value for {@link DPT12}
+     * @param unit       the unit representation for {@link DPT12}
      */
-    private DPT12(final String id, final String desc, final long lowerValue, final long upperValue, final String unit) {
+    private DPT12(final String id,
+                  final String desc,
+                  final long lowerValue,
+                  final long upperValue,
+                  final @Nullable String unit) {
         super(id, desc, lowerValue, upperValue, unit);
     }
 

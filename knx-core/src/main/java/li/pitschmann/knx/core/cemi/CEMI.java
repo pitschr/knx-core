@@ -188,12 +188,12 @@ public final class CEMI extends AbstractMultiRawData {
      * Creates a new {@link CEMI} instance with default settings:
      *
      * <ul>
-     *      <li>Additional Info = N/A (empty)</li>
-     *      <li>ControlByte 1 = {@link ControlByte1#useDefault()}</li>
-     *      <li>ControlByte 2 = {@link ControlByte2#of(KnxAddress)}
-     *      (KnxAddress taken from parameter {@code destinationAddress})</li>
-     *      <li>TPCI = {@link TPCI#UNNUMBERED_PACKAGE}</li>
-     *      <li>TPCI Packet Number = 0 (zero)</li>
+     * <li>Additional Info = N/A (empty)</li>
+     * <li>ControlByte 1 = {@link ControlByte1#useDefault()}</li>
+     * <li>ControlByte 2 = {@link ControlByte2#of(KnxAddress)}
+     * (KnxAddress taken from parameter {@code destinationAddress})</li>
+     * <li>TPCI = {@link TPCI#UNNUMBERED_PACKAGE}</li>
+     * <li>TPCI Packet Number = 0 (zero)</li>
      * </ul>
      *
      * @param messageCode        message code

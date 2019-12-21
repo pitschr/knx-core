@@ -95,9 +95,9 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
     /**
      * Asserts the DPT for given arguments {@code bValueArray} and {@code doubleValue}
      *
-     * @param dpt
-     * @param bValueArray
-     * @param doubleValue
+     * @param dpt         data point type
+     * @param bValueArray byte array with values
+     * @param doubleValue double value
      */
     private void assertInternal(final DPT9 dpt, final byte[] bValueArray, final double doubleValue) {
         final var dptValue = dpt.toValue(doubleValue);

@@ -97,14 +97,14 @@ public class ConnectionStateRequestTest {
     /**
      * Generate list of expected received bodies for assertion
      *
-     * @param numberOfConnectionStateRequestBodies
+     * @param expectedNumber expected number of connection state request bodies to be generated
      * @return list of body classes
      */
-    private final List<Class<? extends Body>> generateExpectedReceivedBodies(final int numberOfConnectionStateRequestBodies) {
-        final var list = new ArrayList<Class<? extends Body>>(numberOfConnectionStateRequestBodies + 3);
+    private final List<Class<? extends Body>> generateExpectedReceivedBodies(final int expectedNumber) {
+        final var list = new ArrayList<Class<? extends Body>>(expectedNumber + 3);
         list.add(DescriptionRequestBody.class); // first request
         list.add(ConnectRequestBody.class); // second request
-        for (var i = 0; i < numberOfConnectionStateRequestBodies; i++) {
+        for (var i = 0; i < expectedNumber; i++) {
             list.add(ConnectionStateRequestBody.class);
         }
         list.add(DisconnectRequestBody.class); // last request

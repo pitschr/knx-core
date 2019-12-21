@@ -19,7 +19,7 @@ public final class WriteRequestController extends AbstractController {
      * <p>
      * As soon we get an acknowledge frame from KNX, our write request action is done!
      *
-     * @param writeRequest
+     * @param writeRequest write request from HTTP client
      * @return a new instance of {@link WriteResponse}
      */
     @POST("/write")

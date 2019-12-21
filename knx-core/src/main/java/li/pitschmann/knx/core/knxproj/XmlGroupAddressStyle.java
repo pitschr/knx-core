@@ -34,9 +34,9 @@ import java.util.function.Function;
  * <p>
  * Currently following level styles are supported
  * <ul>
- *      <li>Free Level (example: 57133)</li>
- *      <li>2-Level (example: 27/1837)</li>
- *      <li>3-Level (example: 27/7/45)</li>
+ * <li>Free Level (example: 57133)</li>
+ * <li>2-Level (example: 27/1837)</li>
+ * <li>3-Level (example: 27/7/45)</li>
  * </ul>
  */
 public enum XmlGroupAddressStyle {
@@ -71,7 +71,7 @@ public enum XmlGroupAddressStyle {
      * <p>
      * Note: {@link #valueOf(String)} uses a different look-up approach
      *
-     * @param id
+     * @param id identifier of XML Group Address Style
      * @return instance of {@link ServiceType} otherwise {@link KnxEnumNotFoundException}
      * if the given {@code code} is not registered one
      */

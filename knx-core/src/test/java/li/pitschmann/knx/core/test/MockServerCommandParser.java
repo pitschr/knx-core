@@ -52,8 +52,8 @@ public class MockServerCommandParser {
     /**
      * The commands are hardcoded for now, no reason to do it for now!
      *
-     * @param command
-     * @return
+     * @param command the command to be parsed
+     * @return list of {@link MockAction}
      */
     public List<MockAction> parse(final String command) {
         // One disconnect request

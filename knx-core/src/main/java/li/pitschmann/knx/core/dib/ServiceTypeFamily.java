@@ -51,12 +51,6 @@ public enum ServiceTypeFamily implements KnxByteEnum {
     private final int code;
     private final String friendlyName;
 
-    /**
-     * Constructor for Service Type Family
-     *
-     * @param code
-     * @param friendlyName
-     */
     ServiceTypeFamily(final int code, final String friendlyName) {
         this.code = code;
         this.friendlyName = friendlyName;

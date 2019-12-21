@@ -282,11 +282,11 @@ public final class Networker {
     /**
      * Creates an UDP channel for communication
      *
-     * @param localPort     given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
-     * @param socketTimeout socket timeout
-     * @param socketAddress socket address to be connected, if {@code null} the socket won't be connected yet
+     * @param localPort       given port to be used (A port number of {@code zero} will let the system pick up an ephemeral port)
+     * @param socketTimeout   socket timeout
+     * @param socketAddress   socket address to be connected, if {@code null} the socket won't be connected yet
      * @param socketOptionMap socket option map that should be used (may be null / empty)
-     * @param <T> the type of the socket option value
+     * @param <T>             the type of the socket option value
      * @return a new instance of {@link DatagramChannel}
      */
     public static <T extends Object> DatagramChannel newDatagramChannel(final int localPort,

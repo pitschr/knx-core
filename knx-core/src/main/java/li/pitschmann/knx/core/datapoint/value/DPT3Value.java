@@ -84,7 +84,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
      * Converts {@code controlled} and {@code booleanValue} to byte array
      *
      * @param controlled if controlled
-     * @param stepCode the step code [0..7]
+     * @param stepCode   the step code [0..7]
      * @return byte array
      */
     public static byte[] toByteArray(final boolean controlled, final int stepCode) {

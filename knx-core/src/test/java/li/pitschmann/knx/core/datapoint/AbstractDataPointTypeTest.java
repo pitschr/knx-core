@@ -110,9 +110,9 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
      * Asserts the {@link AbstractDataPointType} for given arguments {@code dpt}, {@code bValueArray} and
      * {@code dptValue}
      *
-     * @param dpt
-     * @param bValueArray
-     * @param dptValue
+     * @param dpt         data point type
+     * @param bValueArray byte array with byte value
+     * @param dptValue    data point type value
      */
     protected void assertBaseDPT(final D dpt, final byte[] bValueArray, final DV dptValue) {
         // create by #of(byte[])

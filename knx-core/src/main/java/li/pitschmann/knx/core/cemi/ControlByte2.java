@@ -63,9 +63,9 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * Creates a new {@link ControlByte2} instance with default settings:
      *
      * <ul>
-     *      <li>Address Type = {@link KnxAddress#getAddressType()}</li>
-     *      <li>Hop Count = {@link #DEFAULT_HOP_COUNT}</li>
-     *      <li>Frame Format = {@link #DEFAULT_FRAME_FORMAT}</li>
+     * <li>Address Type = {@link KnxAddress#getAddressType()}</li>
+     * <li>Hop Count = {@link #DEFAULT_HOP_COUNT}</li>
+     * <li>Frame Format = {@link #DEFAULT_FRAME_FORMAT}</li>
      * </ul>
      *
      * @param knxAddress to distinguish which address type from destination address should be used.

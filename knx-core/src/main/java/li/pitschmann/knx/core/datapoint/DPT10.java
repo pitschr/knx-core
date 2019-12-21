@@ -79,10 +79,11 @@ public final class DPT10 extends AbstractDataPointType<DPT10Value> {
     /**
      * Constructor for {@link DPT10}
      *
-     * @param id
-     * @param desc
+     * @param id   identifier for {@link DPT10}
+     * @param desc description for {@link DPT10}
      */
-    private DPT10(final String id, final String desc) {
+    private DPT10(final String id,
+                  final String desc) {
         super(id, desc);
     }
 

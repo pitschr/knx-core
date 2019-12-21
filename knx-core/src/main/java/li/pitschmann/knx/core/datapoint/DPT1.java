@@ -385,12 +385,15 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
     /**
      * Constructor for {@link DPT1}
      *
-     * @param id
-     * @param description
-     * @param textForFalse
-     * @param textForTrue
+     * @param id           identifier for {@link DPT1}
+     * @param description  description for {@link DPT1}
+     * @param textForFalse the text if value is {@code false}
+     * @param textForTrue  the text if value is {@code true}
      */
-    private DPT1(final String id, final String description, final String textForFalse, final String textForTrue) {
+    private DPT1(final String id,
+                 final String description,
+                 final String textForFalse,
+                 final String textForTrue) {
         super(id, description);
         this.textForFalse = textForFalse;
         this.textForTrue = textForTrue;

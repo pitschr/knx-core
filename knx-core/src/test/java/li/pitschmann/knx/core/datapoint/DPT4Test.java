@@ -125,9 +125,9 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
     /**
      * Asserts the DPT for given arguments {@code dpt}, {@code byteValue} and {@code charValue}
      *
-     * @param dpt
-     * @param byteValue
-     * @param charValue
+     * @param dpt       data point type
+     * @param byteValue byte value
+     * @param charValue character value
      */
     private void assertDPT(final DPT4 dpt, final byte byteValue, final char charValue) {
         final var dptValue = dpt.toValue(charValue);

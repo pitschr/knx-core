@@ -40,7 +40,7 @@ public final class Closeables {
     /**
      * Closes the given {@link DatagramChannel} quietly (no throwable)
      *
-     * @param channel
+     * @param channel the channel that should be closed quietly
      * @return {@code true} if the close was gracefully, otherwise {@code false}
      */
     public static boolean closeQuietly(final @Nullable Channel channel) {
@@ -62,7 +62,7 @@ public final class Closeables {
     /**
      * Closes the given {@link AutoCloseable} quietly (no throwable)
      *
-     * @param closeable
+     * @param closeable the {@link AutoCloseable} that should be closed quietly
      * @return {@code true} if the close was gracefully, otherwise {@code false}
      */
     public static boolean closeQuietly(final @Nullable AutoCloseable closeable) {
@@ -82,7 +82,7 @@ public final class Closeables {
     /**
      * Shuts down the {@link ExecutorService} quietly (no throwable) immediately.
      *
-     * @param executorService
+     * @param executorService the executor service that should be closed quietly
      * @return {@code true} if the shutdown was gracefully, otherwise {@code false}
      */
     public static boolean shutdownQuietly(final @Nullable ExecutorService executorService) {
@@ -93,9 +93,9 @@ public final class Closeables {
      * Shuts down the {@link ExecutorService} quietly (no throwable) with
      * {@link ExecutorService#awaitTermination(long, TimeUnit)}
      *
-     * @param executorService
-     * @param timeout
-     * @param timeUnit
+     * @param executorService the executor service that should be closed quietly
+     * @param timeout         the maximum timeout number until when the executor service should be closed
+     * @param timeUnit        the timeout unit until when the executor should be closed
      * @return {@code true} if the shutdown was gracefully, otherwise {@code false}
      */
     public static boolean shutdownQuietly(final @Nullable ExecutorService executorService,

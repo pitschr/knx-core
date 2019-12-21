@@ -112,9 +112,9 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
     /**
      * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code intValue}
      *
-     * @param dpt
-     * @param bValueArray
-     * @param intValue
+     * @param dpt         data point type
+     * @param bValueArray byte array with values
+     * @param intValue    integer value
      */
     private void assertDPT(final DPT8 dpt, final byte[] bValueArray, final int intValue) {
         final var dptValue = dpt.toValue(intValue);

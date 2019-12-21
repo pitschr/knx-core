@@ -54,9 +54,9 @@ public final class DefaultKnxClient extends BaseKnxClient {
      * <p>
      * Acceptable formats:
      * <ul>
-     *     <li>{@code <ip-address>} or {@code <host>}</li>
-     *     <li>{@code <ip-address>:<port>} or {@code <host>:<port>}</li>
-     *     <li>{@code :<port>} to use the discovery)</li>
+     * <li>{@code <ip-address>} or {@code <host>}</li>
+     * <li>{@code <ip-address>:<port>} or {@code <host>:<port>}</li>
+     * <li>{@code :<port>} to use the discovery)</li>
      * </ul>
      *
      * @param address the remote endpoint of KNX Net/IP device

@@ -505,22 +505,31 @@ public final class CEMITest {
     /**
      * Asserts the given {@link CEMI} it has been read and processed correctly.
      *
-     * @param cemi
-     * @param messageCode
-     * @param additionalInfo
-     * @param controlByte1
-     * @param controlByte2
-     * @param sourceAddress
-     * @param destinationAddress
-     * @param npduLength
-     * @param tpci
-     * @param tpciPacketNumber
-     * @param apci
-     * @param apciData
+     * @param cemi               CEMI to be asserted
+     * @param messageCode        expected message code
+     * @param additionalInfo     expected additional information
+     * @param controlByte1       expected first control byte
+     * @param controlByte2       expected second control byte
+     * @param sourceAddress      expected source individual address
+     * @param destinationAddress expected destination KNX address
+     * @param npduLength         expected NDPU length
+     * @param tpci               expected TPCI
+     * @param tpciPacketNumber   expected packet number for TCPI
+     * @param apci               expected APCI
+     * @param apciData           expected data for APCI
      */
-    private void assertCEMI(final CEMI cemi, final MessageCode messageCode, final AdditionalInfo additionalInfo, final ControlByte1 controlByte1,
-                            final ControlByte2 controlByte2, final IndividualAddress sourceAddress, final KnxAddress destinationAddress, final int npduLength,
-                            final TPCI tpci, final int tpciPacketNumber, final APCI apci, final byte[] apciData) {
+    private void assertCEMI(final CEMI cemi,
+                            final MessageCode messageCode,
+                            final AdditionalInfo additionalInfo,
+                            final ControlByte1 controlByte1,
+                            final ControlByte2 controlByte2,
+                            final IndividualAddress sourceAddress,
+                            final KnxAddress destinationAddress,
+                            final int npduLength,
+                            final TPCI tpci,
+                            final int tpciPacketNumber,
+                            final APCI apci,
+                            final byte[] apciData) {
         assertThat(cemi.getMessageCode()).isEqualTo(messageCode);
         assertThat(cemi.getAdditionalInfo()).isEqualTo(additionalInfo);
         assertThat(cemi.getControlByte1()).isEqualTo(controlByte1);

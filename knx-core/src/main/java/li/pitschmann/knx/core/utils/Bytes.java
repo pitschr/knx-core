@@ -39,8 +39,8 @@ public final class Bytes {
     /**
      * Converts given bytes to a signed short
      *
-     * @param b
-     * @param moreBytes
+     * @param b         byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return signed short, between {@link Short#MIN_VALUE} and {@link Short#MAX_VALUE}
      */
     public static short toSignedShort(final byte b, final byte... moreBytes) {
@@ -54,7 +54,7 @@ public final class Bytes {
     /**
      * Converts two byte array to a signed short
      *
-     * @param bytes
+     * @param bytes byte array to be converted
      * @return signed short, between {@link Short#MIN_VALUE} and {@link Short#MAX_VALUE}
      */
     public static short toSignedShort(final @Nullable byte[] bytes) {
@@ -65,8 +65,8 @@ public final class Bytes {
     /**
      * Converts given bytes to an unsigned short
      *
-     * @param b
-     * @param moreBytes
+     * @param b         byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
      */
     public static short toUnsignedShort(final byte b, final byte... moreBytes) {
@@ -80,7 +80,7 @@ public final class Bytes {
     /**
      * Converts two byte array to an unsigned short
      *
-     * @param bytes
+     * @param bytes bytes to be converted
      * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
      */
     public static short toUnsignedShort(final @Nullable byte[] bytes) {
@@ -97,8 +97,8 @@ public final class Bytes {
     /**
      * Converts given bytes to a signed int
      *
-     * @param b
-     * @param moreBytes
+     * @param b         byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return signed int, between {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE}
      */
     public static int toSignedInt(final byte b, final byte... moreBytes) {
@@ -112,7 +112,7 @@ public final class Bytes {
     /**
      * Converts four byte array to a signed int
      *
-     * @param bytes
+     * @param bytes to be converted
      * @return signed int, between {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE}
      */
     public static int toSignedInt(byte[] bytes) {
@@ -127,8 +127,8 @@ public final class Bytes {
     /**
      * Converts given bytes to an unsigned int
      *
-     * @param b
-     * @param moreBytes
+     * @param b         byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return unsigned int, between {@code 0} and {@link Integer#MAX_VALUE}
      */
     public static int toUnsignedInt(final byte b, final byte... moreBytes) {
@@ -142,7 +142,7 @@ public final class Bytes {
     /**
      * Converts four byte array to an unsigned int
      *
-     * @param bytes
+     * @param bytes bytes to be converted
      * @return unsigned int, between {@code 0} and {@link Integer#MAX_VALUE}
      */
     public static int toUnsignedInt(final @Nullable byte[] bytes) {
@@ -156,10 +156,10 @@ public final class Bytes {
     /**
      * Converts four bytes to an unsigned int
      *
-     * @param b3
-     * @param b2
-     * @param b1
-     * @param b0
+     * @param b3 bit 3 [.... x...]
+     * @param b2 bit 2 [.... .x..]
+     * @param b1 bit 1 [.... ..x.]
+     * @param b0 bit 0 [.... ...x]
      * @return unsigned int, between {@code 0} and {@link Integer#MAX_VALUE}
      */
     public static int toUnsignedInt(byte b3, byte b2, byte b1, byte b0) {
@@ -174,8 +174,8 @@ public final class Bytes {
     /**
      * Converts given bytes to an unsigned long
      *
-     * @param b
-     * @param moreBytes
+     * @param b         first byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
      */
     public static long toSignedLong(final byte b, final byte... moreBytes) {
@@ -189,14 +189,14 @@ public final class Bytes {
     /**
      * Converts eight bytes to a signed long
      *
-     * @param b7
-     * @param b6
-     * @param b5
-     * @param b4
-     * @param b3
-     * @param b2
-     * @param b1
-     * @param b0
+     * @param b7 bit 7 [x... ....]
+     * @param b6 bit 6 [.x.. ....]
+     * @param b5 bit 5 [..x. ....]
+     * @param b4 bit 4 [...x ....]
+     * @param b3 bit 3 [.... x...]
+     * @param b2 bit 2 [.... .x..]
+     * @param b1 bit 1 [.... ..x.]
+     * @param b0 bit 0 [.... ...x]
      * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
      */
     public static long toSignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) { // NOSONAR
@@ -206,7 +206,7 @@ public final class Bytes {
     /**
      * Converts eight byte array to a signed long
      *
-     * @param bytes
+     * @param bytes bytes to be converted
      * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
      */
     public static long toSignedLong(byte[] bytes) {
@@ -216,8 +216,8 @@ public final class Bytes {
     /**
      * Converts given bytes to an unsigned long
      *
-     * @param b
-     * @param moreBytes
+     * @param b         first byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
      */
     public static long toUnsignedLong(final byte b, final byte... moreBytes) {
@@ -231,14 +231,14 @@ public final class Bytes {
     /**
      * Converts eight bytes to a signed long
      *
-     * @param b7
-     * @param b6
-     * @param b5
-     * @param b4
-     * @param b3
-     * @param b2
-     * @param b1
-     * @param b0
+     * @param b7 bit 7 [x... ....]
+     * @param b6 bit 6 [.x.. ....]
+     * @param b5 bit 5 [..x. ....]
+     * @param b4 bit 4 [...x ....]
+     * @param b3 bit 3 [.... x...]
+     * @param b2 bit 2 [.... .x..]
+     * @param b1 bit 1 [.... ..x.]
+     * @param b0 bit 0 [.... ...x]
      * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
      */
     public static long toUnsignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) { // NOSONAR
@@ -248,7 +248,7 @@ public final class Bytes {
     /**
      * Converts eight byte array to a signed long
      *
-     * @param bytes
+     * @param bytes byte array to be converted
      * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
      */
     public static long toUnsignedLong(final @Nullable byte[] bytes) {
@@ -263,8 +263,8 @@ public final class Bytes {
     /**
      * Concatenates the {@code b} and {@code moreBytes} into one byte array
      *
-     * @param b
-     * @param moreBytes
+     * @param b         first byte to be converted
+     * @param moreBytes more bytes to be converted
      * @return byte array
      */
     private static byte[] concatByteToByteArray(final byte b, final byte[] moreBytes) {
@@ -278,8 +278,8 @@ public final class Bytes {
      * Returns the byte array ({@code bytes}) with given {@code capacity}. In case the byte array is larger than
      * capacity, then we will try to shrink it. It would work only when there are leading zero bytes.
      *
-     * @param bytes
-     * @param capacity
+     * @param bytes    initial byte array
+     * @param capacity expected capacity for byte array
      * @return byte array
      */
     public static byte[] toByteArrayWithCapacity(final @Nullable byte[] bytes, int capacity) {
@@ -307,9 +307,9 @@ public final class Bytes {
      * Fills the {@code templateArray} with {@code bytes} in given {@code direction}.
      *
      * @param templateArray the template array to be filled by {@code bytes}
-     * @param bytes
+     * @param bytes         the byte array
      * @param direction     the direction how the template array should be filled
-     * @return byte array
+     * @return byte array with filled {@code bytes}
      */
     public static byte[] fillByteArray(final byte[] templateArray,
                                        final byte[] bytes,
@@ -335,7 +335,7 @@ public final class Bytes {
     /**
      * Trims {@code 0x00} from {@code bytes} array on right side
      *
-     * @param bytes
+     * @param bytes the byte array to be right-trimmed
      * @return trimmed byte array
      */
     public static byte[] trimRight(final byte[] bytes) {
@@ -345,8 +345,8 @@ public final class Bytes {
     /**
      * Trims the given {@code byteToRemoved} from {@code bytes} array.
      *
-     * @param bytes
-     * @param byteToRemoved byte to be removed
+     * @param bytes         the byte array to be right-trimmed
+     * @param byteToRemoved byte to be removed from right-to-left
      * @return trimmed byte array
      */
     public static byte[] trimRight(final byte[] bytes, final byte byteToRemoved) {
@@ -365,10 +365,10 @@ public final class Bytes {
     /**
      * Pads the given {@code b} to {@code bytes} array until {@code newCapacity} is reached
      *
-     * @param bytes
-     * @param b
-     * @param newCapacity
-     * @return padded byte array
+     * @param bytes       the byte array to be right-padded
+     * @param b           byte to be used to fill the free capacity
+     * @param newCapacity the expected new capacity
+     * @return padded byte array with expected capacity
      */
     public static byte[] padRight(final byte[] bytes, final byte b, final int newCapacity) {
         Preconditions.checkArgument(bytes.length <= newCapacity,
@@ -398,7 +398,7 @@ public final class Bytes {
      * 0610020800080700<br>
      * 061004200017040705002900bce010824c040300800c1d<br>
      *
-     * @param hexString
+     * @param hexString hex-decimal string to be converted
      * @return bytes array
      */
     public static byte[] toByteArray(final String hexString) {
@@ -425,14 +425,14 @@ public final class Bytes {
     /**
      * Converts given 8-booleans to one byte
      *
-     * @param b7
-     * @param b6
-     * @param b5
-     * @param b4
-     * @param b3
-     * @param b2
-     * @param b1
-     * @param b0
+     * @param b7 bit 7
+     * @param b6 bit 6
+     * @param b5 bit 5
+     * @param b4 bit 4
+     * @param b3 bit 3
+     * @param b2 bit 2
+     * @param b1 bit 1
+     * @param b0 bit 0
      * @return one byte
      */
     public static byte toByte(final boolean b7, final boolean b6, final boolean b5, final boolean b4,    // NOSONAR
@@ -468,8 +468,8 @@ public final class Bytes {
     /**
      * Converts given booleans to one byte
      *
-     * @param b
-     * @param moreBits up to 7 booleans only
+     * @param b        first bit
+     * @param moreBits more bits (up to 7 bits)
      * @return one byte
      */
     public static byte toByte(final boolean b, final boolean... moreBits) {
@@ -527,14 +527,15 @@ public final class Bytes {
      * E.g. {@code true, true} will return an integer of {@code 3}<br>
      * E.g. {@code true, false, true} will return an integer of {@code 5}
      *
-     * @param bits
-     * @return
+     * @param bit      first bit
+     * @param moreBits more bits
+     * @return integer
      */
-    public static int toInt(final boolean bit, final boolean... bits) {
+    public static int toInt(final boolean bit, final boolean... moreBits) {
         var n = bit ? 1 : 0;
-        if (bits.length > 0) {
-            for (var i = 0; i < bits.length; ++i) {
-                n = (n << 1) + (bits[i] ? 1 : 0);
+        if (moreBits.length > 0) {
+            for (var i = 0; i < moreBits.length; ++i) {
+                n = (n << 1) + (moreBits[i] ? 1 : 0);
             }
         }
         return n;

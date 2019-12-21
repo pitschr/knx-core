@@ -32,8 +32,8 @@ public interface RequestStrategy<T> {
     /**
      * Creates a new instance of mock request to be sent to KNX Net/IP client
      *
-     * @param mockServer
-     * @param context
+     * @param mockServer the mock server
+     * @param context    the context of request strategy
      * @return a mocked request
      */
     MockRequest createRequest(MockServer mockServer, T context);

@@ -52,7 +52,7 @@ final class ConfigFileUtil {
     /**
      * Creates a {@link ConfigBuilder} from specified {@code filePath}.
      *
-     * @param filePath
+     * @param filePath file path of config file
      * @return a new instance of {@link ConfigBuilder}
      */
     static ConfigBuilder loadFile(final Path filePath) {
@@ -101,7 +101,7 @@ final class ConfigFileUtil {
      * Returns the list of String lines which should follow the fully qualified class name pattern
      * like {@code my.package.MyClass}
      *
-     * @param lines
+     * @param lines lines to be parsed
      * @return list of {@link Plugin} classes
      */
     private static List<Class<Plugin>> asPluginList(final List<String> lines) {
@@ -110,7 +110,8 @@ final class ConfigFileUtil {
 
         for (final var line : filteredLines) {
             try {
-                @SuppressWarnings("unchecked") final var pluginClass = (Class<Plugin>) Class.forName(line);
+                @SuppressWarnings("unchecked")
+                final var pluginClass = (Class<Plugin>) Class.forName(line);
                 log.info("Plugin class: {}", pluginClass);
                 plugins.add(pluginClass);
             } catch (final Exception ex) {
@@ -124,7 +125,7 @@ final class ConfigFileUtil {
      * Returns the list of String lines which should follow the pattern {@code key=value}
      * <p>
      *
-     * @param lines
+     * @param lines lines to be parsed
      * @return map of settings, key is a lower-cased and trimmed {@link String}, value is trimmed {@link String}
      */
     private static Map<String, String> asSettingMap(final List<String> lines) {
@@ -148,8 +149,8 @@ final class ConfigFileUtil {
      * Returns a list of lines for a specific section. Lines which are outside of this section
      * are filtered. Blank lines are also not considered.
      *
-     * @param lines
-     * @param sectionName
+     * @param lines       lines to be parsed
+     * @param sectionName the section name to filter for lines that are in the expected section
      * @return filtered list
      */
     private static List<String> filterBySection(final List<String> lines, final String sectionName) {

@@ -36,7 +36,7 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
     /**
      * Returns the channel id. This method can be overridden.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return channel id
      */
     protected int getChannelId(final MockServer mockServer) {
@@ -46,7 +46,7 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
     /**
      * Returns the sequence from KNX mock server that is used for request. This method can be overridden.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return sequence from KNX mock server
      */
     protected int getRequestSequence(final MockServer mockServer) {
@@ -60,7 +60,7 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
      * we are acknowledging this. However for testing purpose it may useful
      * to return a wrong sequence. This method can be overridden.
      *
-     * @param requestBody
+     * @param requestBody request body
      * @return sequence
      */
     protected int getResponseSequence(final TunnelingRequestBody requestBody) {

@@ -156,9 +156,9 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      * Converts {@link LocalDateTime} value to byte array
      *
      * @param dayOfWeek day of week
-     * @param date local date
-     * @param time local time
-     * @param flags flags for date and time
+     * @param date      local date
+     * @param time      local time
+     * @param flags     flags for date and time
      * @return byte array
      */
     public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek,
@@ -311,14 +311,14 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         /**
          * Create {@link Flags} with given parameters
          *
-         * @param fault if there was a fault
-         * @param workingDay if it is a working day
-         * @param workingDayValid if working day is valid
-         * @param yearValid if year is valid
-         * @param dateValid if date is valid
-         * @param dayOfWeekValid if day of week is valid
-         * @param timeValid if time is valid
-         * @param summerTime if it is a summer time (or standard time)
+         * @param fault                       if there was a fault
+         * @param workingDay                  if it is a working day
+         * @param workingDayValid             if working day is valid
+         * @param yearValid                   if year is valid
+         * @param dateValid                   if date is valid
+         * @param dayOfWeekValid              if day of week is valid
+         * @param timeValid                   if time is valid
+         * @param summerTime                  if it is a summer time (or standard time)
          * @param clockWithExternalSyncSignal if clock is externally synchronized
          * @return new instance of {@link Flags}
          */

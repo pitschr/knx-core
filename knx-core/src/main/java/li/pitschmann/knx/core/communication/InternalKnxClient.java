@@ -402,7 +402,7 @@ public final class InternalKnxClient implements AutoCloseable {
     /**
      * Finds the responsible channel communicator for the given {@code body}
      *
-     * @param body
+     * @param body the body to obtain the correct channel communicator
      * @return responsible channel communicator, otherwise {@link IllegalArgumentException} if no suitable communicator was found
      */
     private AbstractChannelCommunicator getChannelCommunicator(final Body body) {

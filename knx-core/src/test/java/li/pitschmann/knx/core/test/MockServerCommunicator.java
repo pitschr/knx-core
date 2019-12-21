@@ -61,31 +61,31 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     /**
      * Package-protected constructor for logic thread
      *
-     * @param mockServer
-     * @param testAnnotation
+     * @param mockServer           the mock server
+     * @param mockServerAnnotation the annotation of mock server
      */
-    MockServerCommunicator(final MockServer mockServer, final MockServerTest testAnnotation) {
-        Preconditions.checkNonNull(testAnnotation);
+    MockServerCommunicator(final MockServer mockServer, final MockServerTest mockServerAnnotation) {
+        Preconditions.checkNonNull(mockServerAnnotation);
         this.mockServer = Objects.requireNonNull(mockServer);
         this.commandParser = new MockServerCommandParser(mockServer, this);
 
         // registering response strategy
-        registerResponseStrategies(ServiceType.SEARCH_REQUEST, testAnnotation.discoveryStrategy());
-        registerResponseStrategies(ServiceType.DESCRIPTION_REQUEST, testAnnotation.descriptionStrategy());
-        registerResponseStrategies(ServiceType.CONNECT_REQUEST, testAnnotation.connectStrategy());
-        registerResponseStrategies(ServiceType.CONNECTION_STATE_REQUEST, testAnnotation.connectionStateStrategy());
-        registerResponseStrategies(ServiceType.DISCONNECT_REQUEST, testAnnotation.disconnectStrategy());
-        registerResponseStrategies(ServiceType.TUNNELING_REQUEST, testAnnotation.tunnelingStrategy());
+        registerResponseStrategies(ServiceType.SEARCH_REQUEST, mockServerAnnotation.discoveryStrategy());
+        registerResponseStrategies(ServiceType.DESCRIPTION_REQUEST, mockServerAnnotation.descriptionStrategy());
+        registerResponseStrategies(ServiceType.CONNECT_REQUEST, mockServerAnnotation.connectStrategy());
+        registerResponseStrategies(ServiceType.CONNECTION_STATE_REQUEST, mockServerAnnotation.connectionStateStrategy());
+        registerResponseStrategies(ServiceType.DISCONNECT_REQUEST, mockServerAnnotation.disconnectStrategy());
+        registerResponseStrategies(ServiceType.TUNNELING_REQUEST, mockServerAnnotation.tunnelingStrategy());
         registerResponseStrategies(ServiceType.ROUTING_INDICATION, null);
 
         // Logic for Disconnect Trigger
         // --------------------------------
         var shouldDisconnectAfterTrigger = false;
-        if (testAnnotation.disconnectTrigger().length > 0) {
-            disconnectTriggers = new ArrayList<>(testAnnotation.disconnectTrigger().length);
+        if (mockServerAnnotation.disconnectTrigger().length > 0) {
+            disconnectTriggers = new ArrayList<>(mockServerAnnotation.disconnectTrigger().length);
             // hardcoded for now, to make it more dynamic the command must be parsed
             // no reason to do it for now!
-            for (final var command : testAnnotation.disconnectTrigger()) {
+            for (final var command : mockServerAnnotation.disconnectTrigger()) {
                 // special command 'after-trigger' to fire the disconnect
                 // as soon the trigger runnable is finished.
                 if ("after-trigger".equals(command)) {
@@ -101,8 +101,8 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
 
         // Runnable for Requests
         // --------------------------------
-        requests = new ArrayList<>(testAnnotation.requests().length + 1);
-        for (final var command : testAnnotation.requests()) {
+        requests = new ArrayList<>(mockServerAnnotation.requests().length + 1);
+        for (final var command : mockServerAnnotation.requests()) {
             requests.add(command);
         }
         // Send disconnect request after trigger if specified in MockServerTest#disconnectTrigger()
@@ -114,7 +114,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     /**
      * Registers the response strategies
      *
-     * @param serviceType
+     * @param serviceType      the service type
      * @param strategyClasses, if {@code null}, then {@link IgnoreStrategy} will be used
      */
     private void registerResponseStrategies(final ServiceType serviceType,
@@ -210,9 +210,9 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
      * <p>
      * <u>Example:</u><br>
      * <ol>
-     *      <li>wait for connection state request</li>
-     *      <li>wait for tunnelling request</li>
-     *      <li>wait for connection state request</li>
+     * <li>wait for connection state request</li>
+     * <li>wait for tunnelling request</li>
+     * <li>wait for connection state request</li>
      * </ol>
      * The disconnect will be initiated by KNX mock server as soon as possible when
      * connection state, tunnelling request and connection state packets arrived.
@@ -239,7 +239,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
     /**
      * Get counter of service type (how many service types was received by the mock server communicator)
      *
-     * @param serviceType
+     * @param serviceType the service type
      * @return counter of given service type
      */
     protected AtomicInteger getServiceTypeCounter(final ServiceType serviceType) {
