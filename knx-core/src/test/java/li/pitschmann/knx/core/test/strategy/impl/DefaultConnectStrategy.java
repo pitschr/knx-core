@@ -36,7 +36,7 @@ public class DefaultConnectStrategy implements ConnectStrategy {
     /**
      * Returns the channel id. This method can be overridden.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return channel id
      */
     protected int getChannelId(final MockServer mockServer) {
@@ -53,10 +53,10 @@ public class DefaultConnectStrategy implements ConnectStrategy {
     }
 
     /**
-     * Returns the HPAI for mock server. This method can be overridden.
+     * Returns the {@link HPAI} for mock server. This method can be overridden.
      *
-     * @param mockServer
-     * @return HPAI of mock server
+     * @param mockServer the mock server
+     * @return the {@link HPAI} of mock server
      */
     protected HPAI getHPAI(final MockServer mockServer) {
         return mockServer.getHPAI();
@@ -65,7 +65,7 @@ public class DefaultConnectStrategy implements ConnectStrategy {
     /**
      * Returns a new instance of {@link ConnectionResponseData}. This method can be overridden.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return connection response data
      */
     protected ConnectionResponseData getConnectionResponseData(final MockServer mockServer) {

@@ -22,12 +22,12 @@ import java.util.concurrent.Flow;
 /**
  * Factory for channel communicators
  * <ul>
- *     <li>Discovery: {@link #newDiscoveryChannelCommunicator(InternalKnxClient)}</li>
- *     <li>Description: {@link #newDescriptionChannelCommunicator(InternalKnxClient)}</li>
- *     <li>Tunneling (without NAT): {@link #newControlChannelCommunicator(InternalKnxClient)}} and {@link #newDataChannelCommunicator(InternalKnxClient)}</li>
- *     <li>Tunnelling (with NAT): {@link #newControlAndDataChannelCommunicator(InternalKnxClient)}</li>
- *     <li>Routing: {@link #newRoutingChannelCommunicator(InternalKnxClient)}</li>
- *     <li>Health Check: {@link #newConnectionStateCommunicator(InternalKnxClient)}</li>
+ * <li>Discovery: {@link #newDiscoveryChannelCommunicator(InternalKnxClient)}</li>
+ * <li>Description: {@link #newDescriptionChannelCommunicator(InternalKnxClient)}</li>
+ * <li>Tunneling (without NAT): {@link #newControlChannelCommunicator(InternalKnxClient)}} and {@link #newDataChannelCommunicator(InternalKnxClient)}</li>
+ * <li>Tunnelling (with NAT): {@link #newControlAndDataChannelCommunicator(InternalKnxClient)}</li>
+ * <li>Routing: {@link #newRoutingChannelCommunicator(InternalKnxClient)}</li>
+ * <li>Health Check: {@link #newConnectionStateCommunicator(InternalKnxClient)}</li>
  * </ul>
  */
 public final class CommunicatorFactory {
@@ -126,7 +126,7 @@ public final class CommunicatorFactory {
      * <p>
      * Following subscribers are:
      * <ul>
-     *      <li>{@link DescriptionResponseTask} receiving the response after {@link DescriptionRequestBody} from client</li>
+     * <li>{@link DescriptionResponseTask} receiving the response after {@link DescriptionRequestBody} from client</li>
      * </ul>
      *
      * @param client the internal knx client
@@ -141,10 +141,10 @@ public final class CommunicatorFactory {
      * <p>
      * Following subscribers are:
      * <ul>
-     *      <li>{@link ConnectResponseTask} receiving the response after {@link ConnectRequestBody}</li>
-     *      <li>{@link ConnectionStateResponseTask} receiving connection health status from KNX Net/IP device</li>
-     *      <li>{@link DisconnectRequestTask} when disconnect is initiated by the KNX Net/IP device</li>
-     *      <li>{@link DisconnectResponseTask} as answer from KNX Net/IP device when disconnect is initiated by the client</li>
+     * <li>{@link ConnectResponseTask} receiving the response after {@link ConnectRequestBody}</li>
+     * <li>{@link ConnectionStateResponseTask} receiving connection health status from KNX Net/IP device</li>
+     * <li>{@link DisconnectRequestTask} when disconnect is initiated by the KNX Net/IP device</li>
+     * <li>{@link DisconnectResponseTask} as answer from KNX Net/IP device when disconnect is initiated by the client</li>
      * </ul>
      *
      * @param client the internal knx client
@@ -164,9 +164,9 @@ public final class CommunicatorFactory {
      * <p>
      * Following subscribers are:
      * <ul>
-     *      <li>{@link TunnelingRequestTask} when KNX Net/IP device notifies the client
-     *      about a change from a remote KNX device</li>
-     *      <li>{@link TunnelingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
+     * <li>{@link TunnelingRequestTask} when KNX Net/IP device notifies the client
+     * about a change from a remote KNX device</li>
+     * <li>{@link TunnelingAckTask} as answer from KNX Net/IP device when sending a data packet</li>
      * </ul>
      *
      * @param client the internal knx client
@@ -184,7 +184,7 @@ public final class CommunicatorFactory {
      * <p>
      * Following subscribers are:
      * <ul>
-     *      <li>{@link SearchResponseTask} when we want to look up for KNX Net/IP devices</li>
+     * <li>{@link SearchResponseTask} when we want to look up for KNX Net/IP devices</li>
      * </ul>
      *
      * @param client the internal knx client
@@ -199,8 +199,8 @@ public final class CommunicatorFactory {
      * <p>
      * Following subscribers are:
      * <ul>
-     *      <li>{@link RoutingIndicationTask} when KNX Net/IP device notifies the client
-     *      about a change from a remote KNX device</li>
+     * <li>{@link RoutingIndicationTask} when KNX Net/IP device notifies the client
+     * about a change from a remote KNX device</li>
      * </ul>
      *
      * @param client the internal knx client

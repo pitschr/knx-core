@@ -74,13 +74,13 @@ public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMod
      * Asserts the {@link DPT6Value} for given arguments {@link DPT6.StatusMode}, {@code byteValue} and status mode
      * value relevant parameters
      *
-     * @param byteValue
-     * @param bool1
-     * @param bool2
-     * @param bool3
-     * @param bool4
-     * @param bool5
-     * @param mode
+     * @param byteValue byte value
+     * @param bool1     first boolean / bit
+     * @param bool2     second boolean / bit
+     * @param bool3     third boolean / bit
+     * @param bool4     forth boolean / bit
+     * @param bool5     fifth boolean / bit
+     * @param mode      the status mode
      */
     private void assertInternal(final byte byteValue, final boolean bool1, final boolean bool2, final boolean bool3, final boolean bool4,
                                 final boolean bool5, final Mode mode) {

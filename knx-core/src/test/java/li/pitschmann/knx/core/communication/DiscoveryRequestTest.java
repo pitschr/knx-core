@@ -45,7 +45,7 @@ public class DiscoveryRequestTest {
      * Tests a successful discovery mode. Knx NET/IP Device is found
      * and can be established
      *
-     * @param mockServer
+     * @param mockServer the mock server
      */
     @MockServerTest(useDiscovery = true)
     @DisplayName("Test a successful discovery request")
@@ -71,7 +71,7 @@ public class DiscoveryRequestTest {
      * Tests a failed discovery. KNX Net/IP device is not found. Here we are simulating that
      * the mock server is not responding on search request
      *
-     * @param mockServer
+     * @param mockServer the mock server
      */
     @MockServerTest(useDiscovery = true, discoveryStrategy = IgnoreStrategy.class)
     @DisplayName("Test a failed discovery request (mock server not responding on search request)")

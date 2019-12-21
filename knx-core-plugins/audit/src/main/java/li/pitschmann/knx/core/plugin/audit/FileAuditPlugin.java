@@ -172,7 +172,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
     /**
      * Writes the {@link String} line to audit file
      *
-     * @param line
+     * @param line line that should be written to audit file
      */
     private void writeToAuditFile(final String line) {
         try {

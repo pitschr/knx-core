@@ -28,7 +28,7 @@ public class TunnelingWrongChannelIdStrategy extends DefaultTunnelingStrategy {
     /**
      * Returns the wrong channel id.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return wrong channel id
      */
     protected int getChannelId(final MockServer mockServer) {

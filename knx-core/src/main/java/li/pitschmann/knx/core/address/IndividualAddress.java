@@ -72,7 +72,7 @@ public final class IndividualAddress extends KnxAddress {
     /**
      * Returns an instance of {@link IndividualAddress} based on format:
      * <ul>
-     *      <li>{@code X.Y.Z} (The range must be between 0.0.0 and 15.15.255)</li>
+     * <li>{@code X.Y.Z} (The range must be between 0.0.0 and 15.15.255)</li>
      * </ul>
      * This method will split based of {@code .} delimiter and will call
      * {@link #of(int, int, int)}

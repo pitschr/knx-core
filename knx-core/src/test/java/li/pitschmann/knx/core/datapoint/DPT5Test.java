@@ -128,9 +128,9 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     /**
      * Asserts the DPT for given arguments {@code dpt}, {@code byteValue} and {@code intValue}
      *
-     * @param dpt
-     * @param byteValue
-     * @param intValue
+     * @param dpt       data point type
+     * @param byteValue byte value
+     * @param intValue  integer value
      */
     private void assertDPT(final DPT5 dpt, final byte byteValue, final int intValue) {
         final var dptValue = dpt.toValue(intValue);

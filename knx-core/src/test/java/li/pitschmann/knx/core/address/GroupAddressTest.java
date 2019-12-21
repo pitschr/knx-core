@@ -183,14 +183,14 @@ public final class GroupAddressTest {
     /**
      * Asserts the {@link GroupAddress} (Free-Level) if group are correctly parsed
      * <ul>
-     *      <li>{@link GroupAddress#of(int)}</li>
-     *      <li>{@link GroupAddress#of(byte[])}</li>
+     * <li>{@link GroupAddress#of(int)}</li>
+     * <li>{@link GroupAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.
      *
-     * @param address
-     * @param bytes
+     * @param address free-level address number
+     * @param bytes   byte array of address
      */
     private void assertGroupAddressFreeLevel(final int address, final byte[] bytes) {
         final var testByCreate = GroupAddress.of(address);
@@ -223,15 +223,15 @@ public final class GroupAddressTest {
     /**
      * Asserts the {@link GroupAddress} (2-Level) if main and sub groups are correctly parsed
      * <ul>
-     *      <li>{@link GroupAddress#of(int, int)}</li>
-     *      <li>{@link GroupAddress#of(byte[])}</li>
+     * <li>{@link GroupAddress#of(int, int)}</li>
+     * <li>{@link GroupAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.
      *
-     * @param main
-     * @param sub
-     * @param bytes
+     * @param main  main group range of group address
+     * @param sub   sub group range of group address
+     * @param bytes byte array of group address
      */
     private void assertGroupAddress2Level(final int main, final int sub, final byte[] bytes) {
         final var testByCreate = GroupAddress.of(main, sub);
@@ -264,16 +264,16 @@ public final class GroupAddressTest {
     /**
      * Asserts the {@link GroupAddress} (3-Level) if main, middle and sub groups are correctly parsed
      * <ul>
-     *      <li>{@link GroupAddress#of(int, int, int)}</li>
-     *      <li>{@link GroupAddress#of(byte[])}</li>
+     * <li>{@link GroupAddress#of(int, int, int)}</li>
+     * <li>{@link GroupAddress#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters.
      *
-     * @param main
-     * @param middle
-     * @param sub
-     * @param bytes
+     * @param main   main group range of group address
+     * @param middle middle group range of group address
+     * @param sub    sub group range of group address
+     * @param bytes  byte array of group address
      */
     private void assertGroupAddress3Level(final int main, final int middle, final int sub, final byte[] bytes) {
         final var testByCreate = GroupAddress.of(main, middle, sub);

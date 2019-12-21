@@ -118,11 +118,13 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
     /**
      * Constructor for {@link DPT16}
      *
-     * @param id
-     * @param desc
-     * @param charset
+     * @param id      identifier for {@link DPT16}
+     * @param desc    description for {@link DPT16}
+     * @param charset the character encoding set for {@link DPT16}
      */
-    private DPT16(final String id, final String desc, final Charset charset) {
+    private DPT16(final String id,
+                  final String desc,
+                  final Charset charset) {
         super(id, desc);
 
         this.charset = Objects.requireNonNull(charset);

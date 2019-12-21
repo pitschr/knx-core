@@ -246,8 +246,8 @@ public final class PluginManagerTest {
     /**
      * Creates {@link KnxClient} with customized config that is pre-configured with {@code plugins}
      *
-     * @param plugins
-     * @return
+     * @param plugins array of plugins to be registered
+     * @return mocked KNX client
      */
     @SafeVarargs
     private KnxClient newKnxClientMockWithPlugins(Class<? extends Plugin>... plugins) {

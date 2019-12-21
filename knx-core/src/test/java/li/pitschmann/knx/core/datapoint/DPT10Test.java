@@ -89,9 +89,9 @@ public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
     /**
      * Asserts the DPT for given arguments {@code bValueArray}, {@code dayOfWeek} and {@code localTime}
      *
-     * @param bValueArray
-     * @param dayOfWeek
-     * @param localTime
+     * @param bValueArray byte array with values
+     * @param dayOfWeek   day of week
+     * @param localTime   local time
      */
     private void assertDPT(final byte[] bValueArray, final DayOfWeek dayOfWeek, final LocalTime localTime) {
         final var dpt = DPT_TIME;

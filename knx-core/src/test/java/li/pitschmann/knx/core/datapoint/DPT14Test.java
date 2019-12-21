@@ -79,9 +79,9 @@ public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
     /**
      * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code doubleValue}
      *
-     * @param dpt
-     * @param bValueArray
-     * @param doubleValue
+     * @param dpt         data point type
+     * @param bValueArray byte array with values
+     * @param doubleValue double value
      */
     private void assertDPT(final DPT14 dpt, final byte[] bValueArray, final double doubleValue) {
         final var dptValue = dpt.toValue(doubleValue);

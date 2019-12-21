@@ -73,8 +73,8 @@ public final class Executors {
     /**
      * Wraps the {@link Flow.Subscriber} with MDC
      *
-     * @param subscriber
-     * @param <T>
+     * @param subscriber subscriber to be wrapped
+     * @param <T>        the subscribed item type
      * @return wrapped {@link Flow.Subscriber}
      */
     public static <T> Flow.Subscriber<T> wrapSubscriberWithMDC(final Flow.Subscriber<T> subscriber) {

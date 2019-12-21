@@ -41,7 +41,7 @@ public final class KnxIllegalArgumentException extends KnxException {
      * objects for more diagnostic data
      *
      * @param message error message
-     * @param args arguments for error message
+     * @param args    arguments for error message
      */
     public KnxIllegalArgumentException(final String message, final @Nullable Object... args) {
         super(message, args);

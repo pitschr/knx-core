@@ -62,11 +62,11 @@ public class BaseKnxClientTest {
      * Tests common methods for {@link BaseKnxClient}.
      *
      * <ul>
-     *      <li>Checks if {@link BaseKnxClient#getStatistic()} is an unmodifiable instance of {@link KnxStatistic}</li>
-     *      <li>Checks if {@link ExtensionPlugin#onInitialization(KnxClient)} is invoked with an instance of {@link BaseKnxClient}</li>
+     * <li>Checks if {@link BaseKnxClient#getStatistic()} is an unmodifiable instance of {@link KnxStatistic}</li>
+     * <li>Checks if {@link ExtensionPlugin#onInitialization(KnxClient)} is invoked with an instance of {@link BaseKnxClient}</li>
      * </ul>
      *
-     * @param mockServer
+     * @param mockServer the mock server
      */
     @MockServerTest
     @DisplayName("OK: Check Base KNX Client")
@@ -137,7 +137,7 @@ public class BaseKnxClientTest {
      * Tests read and write requests methods for {@link BaseKnxClient} using
      * default behavior (NAT = not enabled)
      *
-     * @param mockServer
+     * @param mockServer the mock server
      */
     @MockServerTest
     @DisplayName("OK: Test read and write requests (incl. async)")
@@ -149,7 +149,7 @@ public class BaseKnxClientTest {
      * Tests read and write requests methods for {@link BaseKnxClient} using
      * enabled NAT (non-default behavior)
      *
-     * @param mockServer
+     * @param mockServer the mock server
      */
     @MockServerTest
     @DisplayName("OK: Test read and write requests (incl. async) over NAT")
@@ -161,7 +161,7 @@ public class BaseKnxClientTest {
      * Tests read and write requests methods for {@link BaseKnxClient} using a
      * specific configuration which is defined via {@code configFunction} function.
      *
-     * @param mockServer
+     * @param mockServer     the mock server
      * @param configFunction defines which configuration should be used
      */
     private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Config> configFunction) {

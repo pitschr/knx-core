@@ -91,10 +91,10 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
     /**
      * Asserts the DPT for given arguments {@code dpt}, {@code bValue}, {@code controlled} and {@code intValue}
      *
-     * @param dpt
-     * @param bValue
-     * @param controlled
-     * @param intValue
+     * @param dpt        data point type
+     * @param bValue     byte value
+     * @param controlled controlled
+     * @param intValue   integer value
      */
     private void assertDPT(final DPT18 dpt, final byte bValue, final boolean controlled, final int intValue) {
         final var dptValue = dpt.toValue(controlled, intValue);

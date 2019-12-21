@@ -38,7 +38,7 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
     /**
      * Returns the {@link Class} of Plugin where this
      *
-     * @return
+     * @return the class that holds the {@link PluginConfigValue}
      */
     private static Class<?> findPluginClass() {
         try {
@@ -58,7 +58,7 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
      * Plugin Config specific key with following format:
      * {@code plugin.config.<pluginName>.<configName>}
      *
-     * @return
+     * @return the key (lower-cased)
      */
     @Override
     public String getKey() {

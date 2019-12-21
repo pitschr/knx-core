@@ -136,7 +136,7 @@ public class KnxStatisticJsonTest {
      * Creates a mocked {@link KnxStatistic} whereas the number of packets/bytes and errors
      * are faked with {@code multiplier}
      *
-     * @param multiplier
+     * @param multiplier multiplier to provide an unique number for packets
      * @return mocked {@link KnxStatistic}
      */
     private final KnxStatistic mockKnxStatistic(final long multiplier) {

@@ -102,12 +102,12 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
      * {@code strValue} is the human-friendly text for given arguments, while {@code strIntValue} uses the binary
      * character for true/false evaluation (true=1, false=0).
      *
-     * @param dpt
-     * @param byteValue
-     * @param controlled
-     * @param boolValue
-     * @param strValue
-     * @param strIntValue
+     * @param dpt         data point type
+     * @param byteValue   byte value
+     * @param controlled  controlled value
+     * @param boolValue   boolean value
+     * @param strValue    string value
+     * @param strIntValue integer value as string representation
      */
     private void assertDPT(final DPT2 dpt, final byte byteValue, final boolean controlled, final boolean boolValue,
                            final String[] strValue, final String[] strIntValue) {

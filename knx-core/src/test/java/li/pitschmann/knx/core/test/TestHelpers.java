@@ -56,7 +56,7 @@ public final class TestHelpers {
      * Assert that the given {@link Class} is not instantiable and
      * an {@link AssertionError} thrown is expected
      *
-     * @param classToTest
+     * @param classToTest the class to be tested
      */
     public static void assertThatNotInstantiable(final Class<?> classToTest) {
         assertThatThrownBy(() -> {
@@ -69,7 +69,7 @@ public final class TestHelpers {
     /**
      * Returns prepared {@link Config} without special customization.
      *
-     * @return
+     * @return the mocked configuration
      */
     public static Config mockConfig() {
         return mockConfig(x -> {
@@ -79,8 +79,8 @@ public final class TestHelpers {
     /**
      * Returns prepared {@link Config} with ability to customize it.
      *
-     * @param configMockConsumer
-     * @return
+     * @param configMockConsumer consumer for configuration mock for customization
+     * @return the mocked configuration
      */
     public static Config mockConfig(final Consumer<Config> configMockConsumer) {
         @SuppressWarnings("unchecked")
@@ -97,10 +97,10 @@ public final class TestHelpers {
      * Returns prepared {@link KnxClient} implementation with ability
      * to customize {@link Config}
      *
-     * @param configMockConsumer
-     * @param clazz
-     * @param <T>
-     * @return
+     * @param configMockConsumer consumer for configuration mock for customization
+     * @param clazz              the class of KNX client
+     * @param <T>                the instance of KNX client
+     * @return the mocked KNX client
      */
     public static <T extends KnxClient> T mockKnxClient(final Consumer<Config> configMockConsumer,
                                                         final Consumer<T> knxClientMockSupplier,
@@ -120,7 +120,7 @@ public final class TestHelpers {
     /**
      * Returns prepared {@link InternalKnxClient} with no customization.
      *
-     * @return
+     * @return the mocked internal KNX client instance
      */
     public static InternalKnxClient mockInternalKnxClient() {
         return mockInternalKnxClient(
@@ -134,12 +134,12 @@ public final class TestHelpers {
      * Returns prepared {@link InternalKnxClient} with ability to customize
      * the {@link Config} and {@link InternalKnxClient}.
      *
-     * @param configMockConsumer
-     * @param knxClientMockSupplier
-     * @return
+     * @param configMockConsumer consumer for configuration mock for customization
+     * @param clientMockConsumer consumer for KNX client for customization
+     * @return the mocked internal KNX client instance
      */
     public static InternalKnxClient mockInternalKnxClient(final Consumer<Config> configMockConsumer,
-                                                          final Consumer<InternalKnxClient> knxClientMockSupplier) {
+                                                          final Consumer<InternalKnxClient> clientMockConsumer) {
         final var knxClientMock = mock(InternalKnxClient.class);
         final var configMock = mockConfig(configMockConsumer);
         final var statusPoolMock = mockInternalStatusPool();
@@ -150,14 +150,14 @@ public final class TestHelpers {
         when(knxClientMock.getStatusPool()).thenReturn(statusPoolMock);
         when(knxClientMock.getEventPool()).thenReturn(eventPoolMock);
 
-        knxClientMockSupplier.accept(knxClientMock);
+        clientMockConsumer.accept(knxClientMock);
         return knxClientMock;
     }
 
     /**
      * Returns prepared {@link InternalKnxStatusPool}
      *
-     * @return
+     * @return mocked internal status pool
      */
     private static InternalKnxStatusPool mockInternalStatusPool() {
         return mock(InternalKnxStatusPool.class);
@@ -166,7 +166,7 @@ public final class TestHelpers {
     /**
      * Returns prepared {@link InternalKnxEventPool}
      *
-     * @return
+     * @return mocked internal KNX event pool
      */
     private static InternalKnxEventPool mockInternalEventPool() {
         // Events + Event Pool

@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT9Value;
 
@@ -425,13 +426,17 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
     /**
      * Constructor for {@link DPT9}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
+     * @param id         identifier for {@link DPT9}
+     * @param desc       description for {@link DPT9}
+     * @param lowerValue the lower value for {@link DPT9}
+     * @param upperValue the upper value for {@link DPT9}
+     * @param unit       the unit representation for {@link DPT9}
      */
-    private DPT9(final String id, final String desc, final double lowerValue, final double upperValue, final String unit) {
+    private DPT9(final String id,
+                 final String desc,
+                 final double lowerValue,
+                 final double upperValue,
+                 final @Nullable String unit) {
         super(id, desc, lowerValue, upperValue, unit);
     }
 

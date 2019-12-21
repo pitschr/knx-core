@@ -48,8 +48,8 @@ abstract class AbstractParser {
      * Returns byte array of {@code filePathRegExp} file inside the {@link ZipFile}.
      * The byte array are encoded with {@link StandardCharsets#UTF_8}.
      *
-     * @param zipFile
-     * @param filePathRegExp
+     * @param zipFile        the zip file
+     * @param filePathRegExp the file to be looked up in zip file
      * @return byte array, file content
      */
     protected byte[] extractBytes(final ZipFile zipFile,
@@ -81,7 +81,7 @@ abstract class AbstractParser {
     /**
      * Creates a new instance of {@link XMLEventReader} with {@code bytes} as input stream.
      *
-     * @param bytes
+     * @param bytes byte array to be used for event reading
      * @return new instance of {@link XMLEventReader}
      */
     protected XMLEventReader createXmlEventReader(final byte[] bytes) {
@@ -127,8 +127,9 @@ abstract class AbstractParser {
     /**
      * Returns value of optional attribute
      *
-     * @param element   XML {@link StartElement}
-     * @param attribute attribute name to look up
+     * @param element      XML {@link StartElement}
+     * @param attribute    attribute name to look up
+     * @param defaultValue the default value in case the attribute could not be found
      * @return value of attribute, otherwise {@code defaultValue}
      */
     @Nullable

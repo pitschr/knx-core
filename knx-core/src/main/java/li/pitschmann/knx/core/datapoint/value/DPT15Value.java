@@ -105,7 +105,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * Converts 'Access Identification Data' data to 4-byte array
      *
      * @param accessIdentificationData byte array with access identification data
-     * @param flags flags for access identification data
+     * @param flags                    flags for access identification data
      * @return byte array
      */
     public static byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
@@ -191,7 +191,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         /**
          * Create {@link Flags} given byte parameter
          *
-         * @param b
+         * @param b byte
          * @return new instance of {@link Flags}
          */
         public Flags(final byte b) {
@@ -207,11 +207,11 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
         /**
          * Create {@link Flags} with given parameters
          *
-         * @param error if there was an error
-         * @param permissionAccepted if permission was accepted
+         * @param error                    if there was an error
+         * @param permissionAccepted       if permission was accepted
          * @param readDirectionRightToLeft read from right to left (e.g. from badge)
-         * @param encryptionEnabled if encryption is enabled
-         * @param index the index
+         * @param encryptionEnabled        if encryption is enabled
+         * @param index                    the index
          * @return new instance of {@link Flags}
          */
         public Flags(final boolean error,

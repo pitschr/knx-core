@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT13Value;
 
@@ -283,32 +284,41 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
     /**
      * Constructor for {@link DPT13}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
+     * @param id         identifier for {@link DPT13}
+     * @param desc       description for {@link DPT13}
+     * @param lowerValue the lower value for {@link DPT13}
+     * @param upperValue the upper value for {@link DPT13}
+     * @param unit       the unit representation for {@link DPT13}
      */
-    private DPT13(final String id, final String desc, final int lowerValue, final int upperValue, final String unit) {
+    private DPT13(final String id,
+                  final String desc,
+                  final int lowerValue,
+                  final int upperValue,
+                  final @Nullable String unit) {
         this(id, desc, lowerValue, upperValue, unit, null);
     }
 
     /**
      * Constructor for {@link DPT13}
      *
-     * @param id
-     * @param desc
-     * @param lowerValue
-     * @param upperValue
-     * @param unit
-     * @param calculationFunction
+     * @param id                  identifier for {@link DPT13}
+     * @param desc                description for {@link DPT13}
+     * @param lowerValue          the lower value for {@link DPT13}
+     * @param upperValue          the upper value for {@link DPT13}
+     * @param unit                the unit representation for {@link DPT13}
+     * @param calculationFunction the calculation function for value representation
      */
-    private DPT13(final String id, final String desc, final int lowerValue, final int upperValue, final String unit,
-                  final Function<Integer, Double> calculationFunction) {
+    private DPT13(final String id,
+                  final String desc,
+                  final int lowerValue,
+                  final int upperValue,
+                  final @Nullable String unit,
+                  final @Nullable Function<Integer, Double> calculationFunction) {
         super(id, desc, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
+    @Nullable
     public Function<Integer, Double> getCalculationFunction() {
         return this.calculationFunction;
     }

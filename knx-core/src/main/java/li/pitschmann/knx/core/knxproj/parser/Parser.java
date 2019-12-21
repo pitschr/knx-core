@@ -42,12 +42,12 @@ import java.util.zip.ZipFile;
  * KNX Project (*.knxproj) Parser for
  *
  * <ul>
- *      <li>http://knx.org/xml/project/14</li>
- *      <li>http://knx.org/xml/project/15</li>
- *      <li>http://knx.org/xml/project/16</li>
- *      <li>http://knx.org/xml/project/17</li>
- *      <li>http://knx.org/xml/project/18</li>
- *      <li>http://knx.org/xml/project/20</li>
+ * <li>http://knx.org/xml/project/14</li>
+ * <li>http://knx.org/xml/project/15</li>
+ * <li>http://knx.org/xml/project/16</li>
+ * <li>http://knx.org/xml/project/17</li>
+ * <li>http://knx.org/xml/project/18</li>
+ * <li>http://knx.org/xml/project/20</li>
  * </ul>
  *
  * @author PITSCHR
@@ -63,7 +63,7 @@ public final class Parser extends AbstractParser {
     /**
      * Creates a new {@link XmlProject} parsed from given {@link Path}
      *
-     * @param path
+     * @param path path of KNXPROJ file
      * @return new instance of {@link XmlProject}
      */
     public static XmlProject asXmlProject(final Path path) {
@@ -105,7 +105,7 @@ public final class Parser extends AbstractParser {
     /**
      * Links between parent {@link XmlGroupRange} and child {@link XmlGroupRange}
      *
-     * @param xmlProject
+     * @param xmlProject the XML project instance
      */
     private static void linkGroupRanges(final XmlProject xmlProject) {
         // create temporary map of parent group range (key) and list of child group ranges (values)
@@ -126,7 +126,7 @@ public final class Parser extends AbstractParser {
     /**
      * Links between {@link XmlGroupRange} and {@link XmlGroupAddress}
      *
-     * @param xmlProject
+     * @param xmlProject the XML project instance
      */
     private static void linkGroupAddresses(final XmlProject xmlProject) {
         // create temporary map of group range (key) and child group addresses (values)

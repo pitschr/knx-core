@@ -111,16 +111,16 @@ public final class HeaderTest {
     /**
      * Asserts the header if {@link ServiceType} and {@code totalLength} are correctly parsed for
      * <ul>
-     *      <li>{@link Header#of(ServiceType, int)}</li>
-     *      <li>{@link Header#of(byte[])}</li>
+     * <li>{@link Header#of(ServiceType, int)}</li>
+     * <li>{@link Header#of(byte[])}</li>
      * </ul>
      * <p>
      * The param {@code bytes} is the stream to be compared as well against other parameters. This method will also test
      * the string representation from {@link #toString()}.
      *
-     * @param serviceType
-     * @param totalLength
-     * @param bytes
+     * @param serviceType the service type
+     * @param totalLength the total length
+     * @param bytes       the byte array
      */
     private void assertHeader(final ServiceType serviceType, final int totalLength, final byte[] bytes) {
         final var testByCreate = Header.of(serviceType, totalLength);

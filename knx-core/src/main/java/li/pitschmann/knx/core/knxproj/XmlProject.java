@@ -105,7 +105,7 @@ public final class XmlProject {
     /**
      * Parses the given {@link Path} and return a new {@link XmlProject} instance
      *
-     * @param path
+     * @param path path to KNXPROJ file
      * @return a new instance of {@link XmlProject}
      */
     public static XmlProject of(final Path path) {
@@ -160,7 +160,7 @@ public final class XmlProject {
      * The group ranges will be sorted by {@link XmlGroupRange#getRangeStart()}.
      * if both are same, then it will be compared against {@link XmlGroupRange#getLevel()}.
      *
-     * @param groupRanges
+     * @param groupRanges group ranges to be used
      */
     public void setGroupRanges(final Collection<XmlGroupRange> groupRanges) {
         // immutable list of KNX Group Ranges sorted by range start, and then level
@@ -198,13 +198,13 @@ public final class XmlProject {
      * Sets the group addresses by the given collection of {@link XmlGroupAddress}
      * Internally it will create two maps:<br>
      * <ol>
-     *      <li>one map, whereas key is the Id taken from '*.knxproj'</li>
-     *      <li>one map, whereas key is the KNX group address (unique as integer)</li>
+     * <li>one map, whereas key is the Id taken from '*.knxproj'</li>
+     * <li>one map, whereas key is the KNX group address (unique as integer)</li>
      * </ol>
      * Using those two maps we can find the group address quickly by id from XML Project file
      * or by the KNX group address.
      *
-     * @param groupAddresses
+     * @param groupAddresses group addresses to be used
      */
     public void setGroupAddresses(final Collection<XmlGroupAddress> groupAddresses) {
         // immutable list of KNX Group Address sorted by Group Address as Integer
@@ -235,7 +235,7 @@ public final class XmlProject {
     /**
      * Returns the {@link XmlGroupAddress} for given {@link GroupAddress}
      *
-     * @param groupAddress
+     * @param groupAddress the KNX Group Address
      * @return the {@link XmlGroupAddress}, or {@code null} if not found
      */
     @Nullable
@@ -247,7 +247,7 @@ public final class XmlProject {
      * Returns the {@link XmlGroupAddress} for given {@code address} that is used
      * by all levels (free-level, two-level and three-level) internally.
      *
-     * @param address
+     * @param address the address as an integer
      * @return the {@link XmlGroupAddress}, or {@code null} if not found
      */
     @Nullable
@@ -291,7 +291,7 @@ public final class XmlProject {
     /**
      * Returns the XML Group Range for given {@code main} group
      *
-     * @param main
+     * @param main main group range
      * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
     public XmlGroupRange getGroupRange(final int main) {
@@ -326,8 +326,8 @@ public final class XmlProject {
     /**
      * Returns the XML Group Range for given {@code main/middle} group
      *
-     * @param main
-     * @param middle
+     * @param main   main group range
+     * @param middle middle group range
      * @return an instance of {@link XmlGroupRange}, or {@link IllegalArgumentException} if not found
      */
     public XmlGroupRange getGroupRange(final int main, final int middle) {

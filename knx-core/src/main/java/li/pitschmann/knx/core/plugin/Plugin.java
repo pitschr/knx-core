@@ -29,7 +29,7 @@ public interface Plugin {
     /**
      * Notifies the plug-in on {@link KnxClient} initialization.
      *
-     * @param client
+     * @param client the KNX client
      */
     void onInitialization(final KnxClient client);
 }

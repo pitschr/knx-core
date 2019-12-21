@@ -51,7 +51,7 @@ public final class MockServerTestExtension
     /**
      * Initializes the {@link MockServer} and start
      *
-     * @param context
+     * @param context the current extension context; never {@code null}
      */
     @Override
     public void beforeTestExecution(final ExtensionContext context) {
@@ -84,7 +84,7 @@ public final class MockServerTestExtension
     /**
      * Shuts down the executor service running {@link MockServer} after test
      *
-     * @param context
+     * @param context the current extension context; never {@code null}
      */
     @Override
     public void afterTestExecution(final ExtensionContext context) {

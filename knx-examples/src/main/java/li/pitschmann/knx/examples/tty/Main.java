@@ -80,7 +80,7 @@ public class Main extends AbstractKnxMain {
     /**
      * Start KNX Monitor
      *
-     * @param args
+     * @param args arguments
      */
     private void startMonitoring(final String[] args) {
         // Detach Console Appender

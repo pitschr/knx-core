@@ -37,11 +37,11 @@ public class InternalKnxEventPoolTest {
     /**
      * Test events:
      * <ol>
-     *      <li>Description</li>
-     *      <li>Connect</li>
-     *      <li>Connection State</li>
-     *      <li>Disconnect</li>
-     *      <li>Tunneling Request & Ack</li>
+     * <li>Description</li>
+     * <li>Connect</li>
+     * <li>Connection State</li>
+     * <li>Disconnect</li>
+     * <li>Tunneling Request & Ack</li>
      * </ol>
      */
     @Test

@@ -86,7 +86,7 @@ public class ApiPlugin implements ExtensionPlugin {
     /**
      * Starts the Pippo server. This method can be overridden.
      *
-     * @param pippo
+     * @param pippo the instance for Pippo web server
      */
     protected void startPippo(final Pippo pippo) {
         pippo.start(pippoPort);

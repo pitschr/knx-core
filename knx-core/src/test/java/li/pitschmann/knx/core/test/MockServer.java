@@ -95,7 +95,7 @@ public final class MockServer implements Runnable, Closeable {
     /**
      * Creates the KNX Mock Server and start it immediately based on test case configuration ( {@link MockServerTest} )
      *
-     * @param mockServerAnnotation
+     * @param mockServerAnnotation the mock server annotation that contains config about mock server behavior
      * @return started KNX Mock Server
      */
     public static MockServer createStarted(final MockServerTest mockServerAnnotation) {
@@ -287,19 +287,19 @@ public final class MockServer implements Runnable, Closeable {
     }
 
     /**
-     * Waits until the packet with {@link ServiceType} is received
+     * Waits until the first packet with {@link ServiceType} is received
      *
-     * @param serviceType
+     * @param serviceType service type to be waited for
      */
     public void waitForReceivedServiceType(final ServiceType serviceType) {
         waitForReceivedServiceType(serviceType, 1);
     }
 
     /**
-     * Waits until the packet with {@link ServiceType} is received
+     * Waits until the {@code N-th} packet with {@link ServiceType} is received
      *
-     * @param serviceType
-     * @param occurrence
+     * @param serviceType service type to be waited for
+     * @param occurrence  the expected number of occurrence of service type
      */
     public boolean waitForReceivedServiceType(final ServiceType serviceType, final int occurrence) {
         final var notInterrupted = Sleeper.milliseconds(100, () -> !isCancelled() && this.contains(new ArrayList<>(this.receivedBodies), serviceType, occurrence), 30000);
@@ -320,8 +320,8 @@ public final class MockServer implements Runnable, Closeable {
     /**
      * Returns {@code true} when given {@code N-th} {@link ServiceType} is in list of {@link Body}
      *
-     * @param bodies
-     * @param serviceType
+     * @param bodies      list of {@link Body} to be checked
+     * @param serviceType the service type
      * @param occurrence  use {@code 1} if you want to expect the first occurrence of {@link ServiceType}
      * @return {@code true} if found (and on N-th occurrence), otherwise {@code false}
      */
@@ -333,7 +333,7 @@ public final class MockServer implements Runnable, Closeable {
     /**
      * Asserts if given array of {@link Body} classes have been received by the KNX mock server
      *
-     * @param bodyClasses
+     * @param bodyClasses array of body classes
      */
     @SafeVarargs
     public final void assertReceivedPackets(final Class<? extends Body>... bodyClasses) {
@@ -343,7 +343,7 @@ public final class MockServer implements Runnable, Closeable {
     /**
      * Asserts if given iterable of {@link Body} classes have been received by the KNX mock server
      *
-     * @param bodyClasses
+     * @param bodyClasses array of body classes
      */
     public final void assertReceivedPackets(final Iterable<Class<? extends Body>> bodyClasses) {
         // set mock server as closed because we are verifying the received packets
@@ -480,7 +480,7 @@ public final class MockServer implements Runnable, Closeable {
     /**
      * Adds {@link Body} to outbox queue
      *
-     * @param body
+     * @param body body to be added to outbox
      */
     public void addToOutbox(final Body body) {
         this.outbox.add(body);

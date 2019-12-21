@@ -18,9 +18,9 @@ public final class Maps {
      * <p>
      * Similar to Guava's Maps#newHashMapWithExpectedSize(int)
      *
-     * @param expectedSize
-     * @param <K>
-     * @param <V>
+     * @param expectedSize the expected size of hash map
+     * @param <K>          the type of keys maintained by this map
+     * @param <V>          the type of mapped values
      * @return new {@link HashMap} initialized with expected size
      */
     public static <K, V> HashMap<K, V> newHashMap(final int expectedSize) {
@@ -32,9 +32,9 @@ public final class Maps {
      * <p>
      * Similar to Guava's Maps#newLinkedHashMapWithExpectedSize(int)
      *
-     * @param expectedSize
-     * @param <K>
-     * @param <V>
+     * @param expectedSize the expected size of linked hash map
+     * @param <K>          the type of keys maintained by this map
+     * @param <V>          the type of mapped values
      * @return new {@link LinkedHashMap} initialized with expected size
      */
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMap(final int expectedSize) {
@@ -45,7 +45,7 @@ public final class Maps {
      * Returns a properly calculated capacity for maps that is large
      * enough to avoid map from resizing/reallocating its capacity.
      *
-     * @param expectedSize
+     * @param expectedSize the expected size of capacity
      * @return calculated capacity based on {@code expectedSize}
      */
     private static int capacity(final int expectedSize) {

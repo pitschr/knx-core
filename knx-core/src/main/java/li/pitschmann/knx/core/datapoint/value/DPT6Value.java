@@ -154,11 +154,11 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         /**
          * Returns given params as byte array
          *
-         * @param a first status bit (0x80)
-         * @param b second status bit (0x40)
-         * @param c third status bit (0x20)
-         * @param d fourth status bit (0x10)
-         * @param e fifth status bit (0x08)
+         * @param a    first status bit (0x80)
+         * @param b    second status bit (0x40)
+         * @param c    third status bit (0x20)
+         * @param d    fourth status bit (0x10)
+         * @param e    fifth status bit (0x08)
          * @param mode which mode is active [0, 1, 2]
          * @return byte array
          */

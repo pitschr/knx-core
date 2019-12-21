@@ -41,7 +41,7 @@ public class DescriptionNoTunnelingStrategy extends DefaultDescriptionStrategy {
     /**
      * Returns the supported device families without TUNNELING feature.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return DIB supported device families
      */
     protected SupportedDeviceFamiliesDIB getSupportedDeviceFamilies(final MockServer mockServer) {

@@ -99,7 +99,7 @@ public abstract class AbstractKnxEnumTest<E extends Enum<E> & KnxEnum> {
     /**
      * Invokes the static {@code valueOf(int)} method of KNX Enum class.
      *
-     * @param value
+     * @param value the value to be invoked
      * @return {@code KnxEnum} if found, otherwise {@link KnxException} is thrown
      */
     protected KnxEnum invokeValueOf(final Object value) {

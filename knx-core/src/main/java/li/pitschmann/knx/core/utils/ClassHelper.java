@@ -37,8 +37,8 @@ public final class ClassHelper {
     /**
      * Returns the generic type class (default index: {@code 0}) from super class of given {@code clazz}
      *
-     * @param clazz
-     * @param <T>
+     * @param clazz the class
+     * @param <T>   the expected super class type
      * @return {@code Class<T>} if found
      * @throws IllegalArgumentException in case the class has no generic type class
      */
@@ -50,7 +50,7 @@ public final class ClassHelper {
     /**
      * Returns the {@code index}-th generic type class from super class of given {@code clazz}
      *
-     * @param clazz
+     * @param clazz the class
      * @return {@code Class<T>} if found
      * @throws IllegalArgumentException in case the class is not qualified to get the generic type class
      */

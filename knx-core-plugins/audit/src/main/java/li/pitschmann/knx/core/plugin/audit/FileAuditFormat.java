@@ -1,8 +1,8 @@
 package li.pitschmann.knx.core.plugin.audit;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.utils.Json;
 
-import li.pitschmann.knx.core.annotations.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 

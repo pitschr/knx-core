@@ -30,21 +30,21 @@ public interface ObserverPlugin extends Plugin {
     /**
      * Notifies the plug-in about incoming successful {@link Body} message
      *
-     * @param item
+     * @param item the incoming body
      */
     void onIncomingBody(Body item);
 
     /**
      * Notifies the plug-in about outgoing successful {@link Body} message
      *
-     * @param item
+     * @param item the outgoing body
      */
     void onOutgoingBody(Body item);
 
     /**
      * Notifies the plug-in about a {@link Throwable}.
      *
-     * @param throwable
+     * @param throwable the cause
      */
     void onError(Throwable throwable);
 }

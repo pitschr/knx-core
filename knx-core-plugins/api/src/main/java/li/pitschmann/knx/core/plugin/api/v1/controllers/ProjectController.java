@@ -76,7 +76,7 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the middle group ranges for a three-level project ({@code main}/{@code middle}/{@code sub})
      * <ul>
-     *      <li>Main: 0 .. 31</li>
+     * <li>Main: 0 .. 31</li>
      * </ul>
      * Not supported for: two-level and free-level projects
      *
@@ -122,7 +122,7 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the group addresses for a two-level project ({@code main}/{@code sub})
      * <ul>
-     *      <li>Main: 0 .. 31</li>
+     * <li>Main: 0 .. 31</li>
      * </ul>
      * Not supported for: three-level and free-level projects
      *
@@ -151,8 +151,8 @@ public final class ProjectController extends AbstractController {
     /**
      * Returns the group addresses for a three-level project ({@code main}/{@code middle}/{@code sub})
      * <ul>
-     *      <li>Main: 0 .. 31</li>
-     *      <li>Middle: 0 .. 7</li>
+     * <li>Main: 0 .. 31</li>
+     * <li>Middle: 0 .. 7</li>
      * </ul>
      * Not supported for: two-level and free-level projects
      *

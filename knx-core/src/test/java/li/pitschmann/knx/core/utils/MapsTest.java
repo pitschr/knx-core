@@ -78,8 +78,8 @@ public class MapsTest {
      * Assert the capacity of {@link HashMap} which is hold by an internal
      * field called {@code threshold}
      *
-     * @param map
-     * @param expectedCapacity
+     * @param map              the map to be checked
+     * @param expectedCapacity the expected capacity
      */
     private void assertCapacity(final HashMap<?, ?> map, final int expectedCapacity) {
         // we have to check 'threshold' in HashMap

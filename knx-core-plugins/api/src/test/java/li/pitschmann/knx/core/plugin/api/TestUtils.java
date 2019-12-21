@@ -43,20 +43,20 @@ public final class TestUtils {
     }
 
     /**
-     * Returns the given response object as JSON
+     * Returns the given object as JSON
      *
-     * @param response
-     * @return json
+     * @param object object to be converted
+     * @return json string representation from object
      */
-    public static final String asJson(final Object response) {
-        return ApiGsonEngine.INSTANCE.toString(response);
+    public static final String asJson(final Object object) {
+        return ApiGsonEngine.INSTANCE.toString(object);
     }
 
     /**
      * Reads the given test resource on {@code filePath} and returns the content
      * as an UTF-8 compliant String representation.
      *
-     * @param filePath
+     * @param filePath the file path of JSON file to be read and parsed
      * @return content (UTF-8 decoded)
      */
     public static String readJsonFile(final String filePath) {

@@ -118,10 +118,10 @@ public class DPT19Test extends AbstractDataPointTypeTest<DPT19, DPT19Value> {
     /**
      * Asserts the DPT for given arguments {@code bValueArray}, {@code dayOfWeek} and {@code localTime}
      *
-     * @param bValueArray
-     * @param dayOfWeek
-     * @param date
-     * @param time
+     * @param bValueArray byte array with values
+     * @param dayOfWeek   day of week
+     * @param date        local date
+     * @param time        local time
      */
     private void assertDPT(final byte[] bValueArray, final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
         final var dpt = DPT_DATE_TIME;

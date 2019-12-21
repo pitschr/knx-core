@@ -84,8 +84,8 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
     /**
      * Returns an instance of {@link ConnectionRequestInformation}
      *
-     * @param connectionType
-     * @param layerType
+     * @param connectionType the connection type
+     * @param layerType      the layer type
      * @return a new immutable {@link ConnectionRequestInformation}
      */
     public static ConnectionRequestInformation of(final ConnectionType connectionType, final LayerType layerType) {

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.body.ConnectRequestBody;
 import li.pitschmann.knx.core.body.ConnectResponseBody;
@@ -90,15 +91,15 @@ public final class KnxStatisticJsonSerializer implements JsonSerializer<KnxStati
     /**
      * Returns a JSON pair of request and response
      *
-     * @param function
-     * @param requestBodyClass
-     * @param responseBodyClass
+     * @param function          function to obtain body related packet number
+     * @param requestBodyClass  class of request body
+     * @param responseBodyClass class or response body
      * @return json pair of request and response
      */
     private JsonObject getRequestResponsePair(
             final Function<Class<? extends Body>, Long> function,
-            final Class<? extends RequestBody> requestBodyClass,
-            final Class<? extends ResponseBody> responseBodyClass) {
+            final @Nullable Class<? extends RequestBody> requestBodyClass,
+            final @Nullable Class<? extends ResponseBody> responseBodyClass) {
 
         final var pair = new JsonObject();
         pair.addProperty("request", requestBodyClass == null ? 0L : function.apply(requestBodyClass));

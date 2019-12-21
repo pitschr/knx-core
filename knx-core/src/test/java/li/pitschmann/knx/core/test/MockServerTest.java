@@ -101,12 +101,12 @@ public @interface MockServerTest {
      * Trigger when disconnect request frame should be sent by KNX mock server
      * <p>
      * <ul>
-     *      <li>If empty, no trigger is setup and no action taken by KNX mock server.</li>
-     *      <li>If defined, the command will be parsed and disconnect request
-     *      will be sent by KNX mock server.<br>
-     *      Example: {@code "wait-request(1)=CONNECTION_STATE_REQUEST", "wait=100"}<br>
-     *      (Given example, the KNX mock server will wait for 1st CONNECTION_STATE_REQUEST frame,
-     *      wait 100 milliseconds and then send disconnect frame)</li>
+     * <li>If empty, no trigger is setup and no action taken by KNX mock server.</li>
+     * <li>If defined, the command will be parsed and disconnect request
+     * will be sent by KNX mock server.<br>
+     * Example: {@code "wait-request(1)=CONNECTION_STATE_REQUEST", "wait=100"}<br>
+     * (Given example, the KNX mock server will wait for 1st CONNECTION_STATE_REQUEST frame,
+     * wait 100 milliseconds and then send disconnect frame)</li>
      * </ul>
      * <p>
      * Default: No disconnect trigger from KNX mock server, awaiting disconnect from client
@@ -119,14 +119,14 @@ public @interface MockServerTest {
      * Defines list of requests to be sent by KNX mock server (e.g. tunneling requests)
      * <p>
      * <ul>
-     *      <li>If empty, no request is setup and no action taken by KNX mock server.</li>
-     *      <li>If defined, the commands are parsed and request packets are sent by KNX mock server<br>
-     *      Example: {@code "wait-request(2)=TUNNELING_REQUEST", "wait=200", "cemi=0x01..", "wait=5000",
-     *      "repeat(10){cemi=0x02..}"}<br>
-     *      (Given example, the KNX mock server will wait for 2nd TUNNELING request frame from KNX client,
-     *      wait 200 milliseconds, send tunneling request (CEMI=0x01..), wait 5000 milliseconds,
-     *      and then send tunneling request (CEMI=0x02..) 10-times.
-     *      </li>
+     * <li>If empty, no request is setup and no action taken by KNX mock server.</li>
+     * <li>If defined, the commands are parsed and request packets are sent by KNX mock server<br>
+     * Example: {@code "wait-request(2)=TUNNELING_REQUEST", "wait=200", "cemi=0x01..", "wait=5000",
+     * "repeat(10){cemi=0x02..}"}<br>
+     * (Given example, the KNX mock server will wait for 2nd TUNNELING request frame from KNX client,
+     * wait 200 milliseconds, send tunneling request (CEMI=0x01..), wait 5000 milliseconds,
+     * and then send tunneling request (CEMI=0x02..) 10-times.
+     * </li>
      * </ul>
      * Default: no requests
      *

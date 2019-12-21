@@ -67,7 +67,7 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
     /**
      * Returns the device hardware information DIB. This method can be overridden.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return DIB about device hardware information
      */
     protected DeviceHardwareInformationDIB getDeviceHardwareInformation(final MockServer mockServer) {
@@ -78,7 +78,7 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
      * Returns the supported device families (e.g. TUNNELING, ROUTING, ...).
      * This method can be overridden.
      *
-     * @param mockServer
+     * @param mockServer the mock server
      * @return DIB supported device families
      */
     protected SupportedDeviceFamiliesDIB getSupportedDeviceFamilies(final MockServer mockServer) {

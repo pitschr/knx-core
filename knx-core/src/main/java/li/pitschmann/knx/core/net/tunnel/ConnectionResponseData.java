@@ -73,7 +73,7 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
     /**
      * Creates a new {@link ConnectionResponseData} instance
      *
-     * @param address
+     * @param address the individual address
      * @return a new immutable {@link ConnectionResponseData}
      */
     public static ConnectionResponseData of(final IndividualAddress address) {

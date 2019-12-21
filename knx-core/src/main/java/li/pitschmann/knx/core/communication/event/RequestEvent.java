@@ -37,7 +37,7 @@ public class RequestEvent<T extends RequestBody> {
      * Creates a new request event (package-protected)
      * to be called by {@link KnxSingleEvent} or {@link KnxMultiEvent}
      *
-     * @param request
+     * @param request the request body
      */
     RequestEvent(final T request) {
         this.requestTime = Instant.now();

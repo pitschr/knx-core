@@ -65,7 +65,7 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
     /**
      * Converts {@code control} and {@code sceneNumber} value to byte array
      *
-     * @param controlled {@code true} if learn, {@code false} if activate
+     * @param controlled  {@code true} if learn, {@code false} if activate
      * @param sceneNumber the scene number [0..63]
      * @return byte array
      */

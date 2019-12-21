@@ -36,7 +36,7 @@ public final class ByteFormatter {
     /**
      * Formats a single byte to a hex-decimal format
      *
-     * @param b
+     * @param b byte to be formatted
      * @return hex-decimal formatted byte
      */
     public static String formatHex(final byte b) {
@@ -69,7 +69,7 @@ public final class ByteFormatter {
      * Returns a hex-decimal formatted byte array as String array. Every array item will start with "0x" prefix. In case
      * the {@code bytes} is null or empty, a {@code null} will be returned.
      *
-     * @param bytes
+     * @param bytes byte array to be formatted
      * @return string array whereas each bytes are formatted in hex-decimal, if given argument was null or empty then
      * {@code null} is returned
      */
@@ -89,7 +89,7 @@ public final class ByteFormatter {
      * Returns a hex-decimal formatted byte array as a String. The hex format will have only one "0x" prefix and are
      * separated by an empty space. In case the {@code bytes} is null or empty, a {@code null} will be returned.
      *
-     * @param bytes
+     * @param bytes byte array to be formatted
      * @return complete string array whereas whole bytes are formatted as a single string, if given argument was null or
      * empty then an empty String is returned
      */
@@ -102,7 +102,7 @@ public final class ByteFormatter {
      * separated by given {@code delimiter} char sequence. In case the {@code bytes} is null or empty, a {@code null}
      * will be returned.
      *
-     * @param bytes
+     * @param bytes     byte array to be formatted
      * @param delimiter between hex-decimal values
      * @return complete string array whereas whole bytes are formatted as a single string, if given {@code bytes}
      * argument was null or empty then an empty String is returned

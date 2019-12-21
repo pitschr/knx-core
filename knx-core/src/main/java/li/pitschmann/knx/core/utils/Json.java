@@ -15,8 +15,8 @@ public final class Json {
     /**
      * Escapes the {@link Object} to a JSON compatible format (limited functionality!)
      *
-     * @param object
-     * @return
+     * @param object the object to be converted to JSON format
+     * @return JSON compatible string representation
      */
     public static String toJson(final @Nullable Object object) {
         if (object == null) {
@@ -48,7 +48,7 @@ public final class Json {
     /**
      * Escapes the {@link String} to a JSON compatible format
      *
-     * @param string
+     * @param string string representation to be JSON escaped
      * @return JSON compatible string representation
      */
     public static String escapeJson(final @Nullable String string) {

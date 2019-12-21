@@ -1,6 +1,7 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import li.pitschmann.knx.core.address.GroupAddress;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
@@ -10,7 +11,6 @@ import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
 import ro.pippo.controller.extractor.Param;
 
-import li.pitschmann.knx.core.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,10 +81,10 @@ public final class StatusController extends AbstractController {
     /**
      * Fill the given {@link StatusResponse} with data that is requested by {@code $expand} parameter
      *
-     * @param response
-     * @param groupAddress
-     * @param xmlGroupAddress
-     * @param knxStatusData
+     * @param response        the status repsonse
+     * @param groupAddress    KNX group address
+     * @param xmlGroupAddress XML group address
+     * @param knxStatusData   KNX status data
      */
     private void fill(final StatusResponse response,
                       final GroupAddress groupAddress,

@@ -53,10 +53,11 @@ public final class DPT17 extends AbstractRangeDataPointType<DPT17Value, Integer>
     /**
      * Constructor for {@link DPT17}
      *
-     * @param id
-     * @param desc
+     * @param id   identifier for {@link DPT17}
+     * @param desc description for {@link DPT17}
      */
-    private DPT17(final String id, final String desc) {
+    private DPT17(final String id,
+                  final String desc) {
         super(id, desc, 0, 63, null);
     }
 

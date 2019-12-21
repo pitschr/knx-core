@@ -151,7 +151,7 @@ public final class DataPointTypeRegistry {
     /**
      * Finds all normal constants with annotation {@link KnxDataPointType}.
      *
-     * @param clazz
+     * @param clazz the class that contains data point type
      */
     private static void registerDataPointTypes(final Class<?> clazz) {
         var first = true;
@@ -192,7 +192,7 @@ public final class DataPointTypeRegistry {
     /**
      * Returns the data point type by given enumeration field
      *
-     * @param e the enum instance that should be looked up in the map
+     * @param e   the enum instance that should be looked up in the map
      * @param <T> the type of DPT enum value
      * @return {@link DPTEnumValue}
      */
@@ -208,7 +208,7 @@ public final class DataPointTypeRegistry {
     /**
      * Returns the data point type by given {@code id}
      *
-     * @param id the DPT identifier that should be looked up in the map
+     * @param id  the DPT identifier that should be looked up in the map
      * @param <T> the type of DPT
      * @return {@link DataPointType}
      */

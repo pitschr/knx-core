@@ -128,10 +128,11 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
     /**
      * Constructor for {@link DPT19}
      *
-     * @param id
-     * @param desc
+     * @param id   identifier for {@link DPT19}
+     * @param desc description for {@link DPT19}
      */
-    private DPT19(final String id, final String desc) {
+    private DPT19(final String id,
+                  final String desc) {
         super(id, desc);
     }
 

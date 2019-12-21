@@ -79,6 +79,8 @@ public final class PluginManager implements AutoCloseable {
      * Notifies all {@link Plugin} about KNX Client initialization
      * <p>
      * <strong>For internal use only!</strong>
+     *
+     * @param client the KNX client that should be forwarded to plugin
      */
     public void notifyInitialization(final KnxClient client) {
         this.client = Objects.requireNonNull(client);
@@ -109,10 +111,10 @@ public final class PluginManager implements AutoCloseable {
     /**
      * Notifies all {@link ObserverPlugin} about throwable during incoming or outgoing {@link Body}
      *
-     * @param throwable an instance of {@link Throwable} to be sent to plug-ins
+     * @param cause the cause to be sent to plug-ins
      */
-    public void notifyError(final Throwable throwable) {
-        notifyPlugins(Objects.requireNonNull(throwable), observerPlugins, ObserverPlugin::onError);
+    public void notifyError(final Throwable cause) {
+        notifyPlugins(Objects.requireNonNull(cause), observerPlugins, ObserverPlugin::onError);
     }
 
     /**
@@ -141,9 +143,10 @@ public final class PluginManager implements AutoCloseable {
      *
      * @param filePath  path to the JAR file
      * @param className fully qualified class name
+     * @param <T>       the instance of {@link Plugin} which is an instance of {@code pluginClass}
      * @return a new {@link Plugin} loaded from given URL and fully qualified class name
      */
-    public Plugin addPlugin(final Path filePath, final String className) {
+    public <T extends Plugin> T addPlugin(final Path filePath, final String className) {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
                 "File doesn't end with '.jar' extension: {}", filePath);
         Preconditions.checkNonNull(className);
@@ -157,7 +160,7 @@ public final class PluginManager implements AutoCloseable {
                     "Seems the given plugin is not an instance of {}: {}", Plugin.class, className);
 
             @SuppressWarnings("unchecked")
-            final var plugin = addPlugin((Class<Plugin>) cls);
+            final var plugin = addPlugin((Class<T>) cls);
             log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
             return plugin;
         } catch (final Throwable t) {
@@ -168,7 +171,8 @@ public final class PluginManager implements AutoCloseable {
     /**
      * Creates and registers the plugin
      *
-     * @param pluginClass
+     * @param pluginClass the plugin class to be added
+     * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
      * @return new instance of {@link Plugin}
      */
     public <T extends Plugin> T addPlugin(final Class<T> pluginClass) {
@@ -188,8 +192,8 @@ public final class PluginManager implements AutoCloseable {
      * <p>
      * It will give plugin 10 seconds time for create. Otherwise, the plugin won't be registered.
      *
-     * @param pluginClass
-     * @param <T>
+     * @param pluginClass the plugin class to be added
+     * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
      * @return new instance of plugin
      */
     private <T extends Plugin> T registerPluginInternal(final Class<T> pluginClass) {
@@ -231,8 +235,8 @@ public final class PluginManager implements AutoCloseable {
     /**
      * Returns an an already-registered Plugin for given {@code pluginClass}
      *
-     * @param pluginClass
-     * @param <T>
+     * @param pluginClass the plugin class to fetch the plugin instance
+     * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
      * @return An existing instance of {@link Plugin} if found, otherwise {@code null}
      */
     @Nullable
@@ -249,10 +253,10 @@ public final class PluginManager implements AutoCloseable {
     /**
      * De-Registers the plugin by class
      *
-     * @param pluginClass
-     * @param <T>
+     * @param pluginClass the plugin class to be unregistered
+     * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
      * @return plugin instance that is being de-registered, otherwise {@link IllegalArgumentException} will be thrown
-     * @thows IllegalArgumentException in case the plugin class could not be found
+     * @throws IllegalArgumentException in case the plugin class could not be found
      */
     public <T extends Plugin> T unregisterPlugin(final Class<T> pluginClass) {
         final var plugin = getPlugin(pluginClass);
@@ -268,47 +272,47 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Notifies the list of plug-ins about {@code <O>}.
+     * Notifies the list of plug-ins about {@code object}.
      *
-     * @param obj      object to be sent to plug-ins (for non-arg method the object may be {@code null})
+     * @param object   object to be sent to plug-ins (for non-arg method the object may be {@code null})
      * @param plugins  list of plug-ins to be notified
      * @param consumer consumer defining which method should be called
-     * @param <O>
-     * @param <P>
+     * @param <P>      the instance of {@link Plugin}
+     * @param <T>      the instance of object
      */
-    private <O, P extends Plugin> void notifyPlugins(final @Nullable O obj,
+    private <T, P extends Plugin> void notifyPlugins(final @Nullable T object,
                                                      final List<P> plugins,
-                                                     final BiConsumer<P, O> consumer) {
-        for (final P plugin : plugins) {
-            notifyPluginInternal(obj, plugin, consumer);
+                                                     final BiConsumer<P, T> consumer) {
+        for (final var plugin : plugins) {
+            notifyPluginInternal(object, plugin, consumer);
         }
     }
 
     /**
-     * Notifies the plugin about {@code <O>}
+     * Notifies the plugin about {@code object}
      *
-     * @param obj      object to be sent to plug-ins (for non-arg method the object may be {@code null})
+     * @param object   object to be sent to plug-ins (for non-arg method the object may be {@code null})
      * @param plugin   plug-ins to be notified
      * @param consumer consumer defining which method should be called
-     * @param <O>
-     * @param <P>
+     * @param <P>      the instance of {@link Plugin}
+     * @param <T>      the instance of object
      * @return future for further check
      */
     @Nullable
-    private <O, P extends Plugin> Future<Void> notifyPluginInternal(final @Nullable O obj,
+    private <T, P extends Plugin> Future<Void> notifyPluginInternal(final @Nullable T object,
                                                                     final P plugin,
-                                                                    final BiConsumer<P, O> consumer) {
+                                                                    final BiConsumer<P, T> consumer) {
         if (this.pluginExecutor.isShutdown()) {
             log.warn("Could not send to plug-in '{}' because plugin executor is shutdown already: {}",
-                    plugin, obj instanceof Throwable ? ((Throwable) obj).getMessage() : obj);
+                    plugin, object instanceof Throwable ? ((Throwable) object).getMessage() : object);
             return null;
         } else {
             return CompletableFuture.runAsync(() -> {
                 log.trace("Send to plugin: {}", plugin);
                 try {
-                    consumer.accept(plugin, obj);
+                    consumer.accept(plugin, object);
                 } catch (final Exception ex) {
-                    log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): obj={}, plugin={}", obj, plugin, ex);
+                    log.warn("Exception during notifyPlugins(T, List<Plugin>, BiConsumer): object={}, plugin={}", object, plugin, ex);
                 }
             }, this.pluginExecutor);
         }
