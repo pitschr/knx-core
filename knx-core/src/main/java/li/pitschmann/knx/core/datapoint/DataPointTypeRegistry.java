@@ -199,7 +199,7 @@ public final class DataPointTypeRegistry {
      * @return {@link DataPointType}
      */
     public static <T extends DataPointType> T getDataPointType(final String id) {
-        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
+        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(id.toLowerCase());
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);
         }
