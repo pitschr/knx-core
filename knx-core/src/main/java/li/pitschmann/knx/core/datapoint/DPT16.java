@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT16Value;
 
 import java.nio.charset.Charset;
@@ -83,7 +82,7 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
      * Format:     14 octets (A<sub>112</sub>)
      * </pre>
      */
-    @KnxDataPointType(id = "16.000", description = "ASCII Characters")
+    @KnxDataPointType({"16.000", "dpst-16-0"})
     public static final DPT16 ASCII = new DPT16("16.000", "ASCII Characters", StandardCharsets.US_ASCII);
 
     /**
@@ -109,7 +108,7 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
      * Format:     14 octets (A<sub>112</sub>)
      * </pre>
      */
-    @KnxDataPointType(id = "16.001", description = "ISO 8859-1 Characters")
+    @KnxDataPointType({"16.001", "dpt-16", "dpst-16-1"})
     public static final DPT16 ISO_8859_1 = new DPT16("16.001", "ISO 8859-1 Characters", StandardCharsets.ISO_8859_1);
 
     private final Charset charset;

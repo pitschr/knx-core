@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.datapoint.annotation;
+package li.pitschmann.knx.core.datapoint;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,24 +24,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * KNX Data Point Type to define the id and description for enumerated KNX data point
+ * KNX Data Point Type to define the id and description for KNX data point
  *
  * @author PITSCHR
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface KnxDataPointTypeEnum {
+public @interface KnxDataPointType {
     /**
-     * ID of enumerated KNX data point type
+     * Identifiers for KNX data point type
      *
-     * @return id
+     * @return string array of possible DPT identifiers, at least one DPT identifier must be defined
      */
-    String id();
+    String[] value();
 
     /**
-     * Description of enumerated KNX data point type
+     * Description of KNX data point type
      *
      * @return description
      */
-    String description();
+    String description() default "";
 }

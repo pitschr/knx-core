@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT5Value;
 
 import java.util.function.Function;
@@ -54,7 +53,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType(id = "5.001", description = "Scaling")
+    @KnxDataPointType({"5.001", "dpst-5-1"})
     public static final DPT5 SCALING = new DPT5("5.001", "Scaling", 0, 100, "%", v -> v * 100d / 255d);
     /**
      * <strong>5.003</strong> Angle (°)
@@ -72,7 +71,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType(id = "5.003", description = "Angle")
+    @KnxDataPointType({"5.003", "dpst-5-3"})
     public static final DPT5 ANGLE = new DPT5("5.003", "Angle", 0, 360, "°", v -> v * 360d / 255d);
     /**
      * <strong>5.004</strong> Percent 8-bit (%)
@@ -90,7 +89,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType(id = "5.004", description = "Percent 8-bit")
+    @KnxDataPointType({"5.004", "dpst-5-4"})
     public static final DPT5 PERCENT_U8 = new DPT5("5.004", "Percent 8-bit", 0, 255, "%");
     /**
      * <strong>5.005</strong> Decimal Factor (%)
@@ -109,7 +108,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType(id = "5.005", description = "Decimal Factor")
+    @KnxDataPointType({"5.005", "dpst-5-5"})
     public static final DPT5 DECIMAL_FACTOR = new DPT5("5.005", "Decimal Factor", 0, 255, "ratio");
     /**
      * <strong>5.006</strong> Tariff Information
@@ -130,7 +129,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * This DPT shall be used for reading and setting tariff information.
      * </pre>
      */
-    @KnxDataPointType(id = "5.006", description = "Tariff Information")
+    @KnxDataPointType({"5.006", "dpst-5-6"})
     public static final DPT5 TARIFF_INFORMATION = new DPT5("5.006", "Tariff Information", 0, 254, null);
     /**
      * <strong>5.010</strong> Value 1-octet unsigned count
@@ -146,7 +145,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType(id = "5.010", description = "Value 1-Octet Unsigned Count")
+    @KnxDataPointType({"5.010", "dpt-5", "dpst-5-10"})
     public static final DPT5 VALUE_1_OCTET_UNSIGNED_COUNT = new DPT5("5.010", "Value 1-Octet Unsigned Count", 0, 255, "pulses");
     /**
      * Calculation function

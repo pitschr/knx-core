@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT4Value;
 
 import java.nio.charset.Charset;
@@ -51,7 +50,7 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
      * Range:      A = [0 .. 127]
      * </pre>
      */
-    @KnxDataPointType(id = "4.001", description = "ASCII Character")
+    @KnxDataPointType({"4.001", "dpst-4-1"})
     public static final DPT4 ASCII = new DPT4("4.001", "ASCII Character", 0, 127, StandardCharsets.US_ASCII);
 
     /**
@@ -66,7 +65,7 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
      * Range:      A = [0 .. 255]
      * </pre>
      */
-    @KnxDataPointType(id = "4.002", description = "ISO 8895-1 Character")
+    @KnxDataPointType({"4.002", "dpt-4", "dpst-4-2"})
     public static final DPT4 ISO_8859_1 = new DPT4("4.002", "ISO 8895-1 Character", 0, 255, StandardCharsets.ISO_8859_1);
 
     private final Charset charset;

@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT14Value;
 
 /**
@@ -61,7 +60,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m/s<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.000", description = "Acceleration")
+    @KnxDataPointType({"14.000", "dpt-14", "dpst-14-0"})
     public static final DPT14 ACCELERATION = new DPT14("14.000", "Acceleration", "m/s²");
 
     /**
@@ -83,7 +82,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 rad/s<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.001", description = "Acceleration Angular")
+    @KnxDataPointType({"14.001", "dpst-14-1"})
     public static final DPT14 ACCELERATION_ANGULAR = new DPT14("14.001", "Acceleration Angular", "rad/s²");
 
     /**
@@ -105,7 +104,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: J/mol
      * </pre>
      */
-    @KnxDataPointType(id = "14.002", description = "Activation Energy")
+    @KnxDataPointType({"14.002", "dpst-14-2"})
     public static final DPT14 ACTIVATION_ENERGY = new DPT14("14.002", "Activation Energy", "J/mol");
 
     /**
@@ -127,7 +126,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 s<sup>-1</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.003", description = "Activity")
+    @KnxDataPointType({"14.003", "dpst-14-3"})
     public static final DPT14 ACTIVITY = new DPT14("14.003", "Activity", "s⁻¹");
 
     /**
@@ -149,7 +148,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 mol
      * </pre>
      */
-    @KnxDataPointType(id = "14.004", description = "Mol")
+    @KnxDataPointType({"14.004", "dpst-14-4"})
     public static final DPT14 MOL = new DPT14("14.004", "Mol", "mol");
 
     /**
@@ -171,7 +170,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: N/A
      * </pre>
      */
-    @KnxDataPointType(id = "14.005", description = "Amplitude")
+    @KnxDataPointType({"14.005", "dpst-14-5"})
     public static final DPT14 AMPLITUDE = new DPT14("14.005", "Amplitude", null);
 
     /**
@@ -193,7 +192,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 rad
      * </pre>
      */
-    @KnxDataPointType(id = "14.006", description = "Angle Radiant")
+    @KnxDataPointType({"14.006", "dpst-14-6"})
     public static final DPT14 ANGLE_RADIANT = new DPT14("14.006", "Angle Radiant", "rad");
 
     /**
@@ -215,7 +214,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1°
      * </pre>
      */
-    @KnxDataPointType(id = "14.007", description = "Angle Degree")
+    @KnxDataPointType({"14.007", "dpst-14-7"})
     public static final DPT14 ANGLE_DEGREE = new DPT14("14.007", "Angle Degree", "°");
 
     /**
@@ -237,7 +236,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J s
      * </pre>
      */
-    @KnxDataPointType(id = "14.008", description = "Angular Momentum")
+    @KnxDataPointType({"14.008", "dpst-14-8"})
     public static final DPT14 ANGULAR_MOMENTUM = new DPT14("14.008", "Angular Momentum", "J s");
 
     /**
@@ -259,7 +258,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 rad/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.009", description = "Angular Velocity")
+    @KnxDataPointType({"14.009", "dpst-14-9"})
     public static final DPT14 ANGULAR_VELOCITY = new DPT14("14.009", "Angular Velocity", "rad/s");
 
     /**
@@ -281,7 +280,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.010", description = "Area")
+    @KnxDataPointType({"14.010", "dpst-14-10"})
     public static final DPT14 AREA = new DPT14("14.010", "Area", "m²");
 
     /**
@@ -303,7 +302,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 F
      * </pre>
      */
-    @KnxDataPointType(id = "14.011", description = "Capacitance")
+    @KnxDataPointType({"14.011", "dpst-14-11"})
     public static final DPT14 CAPACITANCE = new DPT14("14.011", "Capacitance", "F");
 
     /**
@@ -325,7 +324,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: C/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.012", description = "Charge Density Surface")
+    @KnxDataPointType({"14.012", "dpst-14-12"})
     public static final DPT14 CHARGE_DENSITY_SURFACE = new DPT14("14.012", "Charge Density Surface", "C/m²");
 
     /**
@@ -347,7 +346,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 C/m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.013", description = "Charge Density Volume")
+    @KnxDataPointType({"14.013", "dpst-14-13"})
     public static final DPT14 CHARGE_DENSITY_VOLUME = new DPT14("14.013", "Charge Density Volume", "C/m³");
 
     /**
@@ -369,7 +368,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m<sup>2</sup>/N
      * </pre>
      */
-    @KnxDataPointType(id = "14.014", description = "Compressibility")
+    @KnxDataPointType({"14.014", "dpst-14-14"})
     public static final DPT14 COMPRESSIBILITY = new DPT14("14.014", "Compressibility", "m²/N");
 
     /**
@@ -391,7 +390,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Ω<sup>-1</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.015", description = "Conductance")
+    @KnxDataPointType({"14.015", "dpst-14-15"})
     public static final DPT14 CONDUCTANCE = new DPT14("14.015", "Conductance", "Ω⁻¹");
 
     /**
@@ -413,7 +412,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 S/m
      * </pre>
      */
-    @KnxDataPointType(id = "14.016", description = "Electrical Conductivity")
+    @KnxDataPointType({"14.016", "dpst-14-16"})
     public static final DPT14 ELECTRICAL_CONDUCTIVITY = new DPT14("14.016", "Electrical Conductivity", "S/m");
 
     /**
@@ -435,7 +434,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 kg/m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.017", description = "Density")
+    @KnxDataPointType({"14.017", "dpst-14-17"})
     public static final DPT14 DENSITY = new DPT14("14.017", "Density", "kg/m³");
 
     /**
@@ -457,7 +456,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 C
      * </pre>
      */
-    @KnxDataPointType(id = "14.018", description = "Electric Charge")
+    @KnxDataPointType({"14.018", "dpst-14-18"})
     public static final DPT14 ELECTRIC_CHARGE = new DPT14("14.018", "Electric Charge", "C");
 
     /**
@@ -479,7 +478,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A
      * </pre>
      */
-    @KnxDataPointType(id = "14.019", description = "Electric Current")
+    @KnxDataPointType({"14.019", "dpst-14-19"})
     public static final DPT14 ELECTRIC_CURRENT = new DPT14("14.019", "Electric Current", "A");
 
     /**
@@ -501,7 +500,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.020", description = "Electric Current Density")
+    @KnxDataPointType({"14.020", "dpst-14-20"})
     public static final DPT14 ELECTRIC_CURRENT_DENSITY = new DPT14("14.020", "Electric Current Density", "A/m²");
 
     /**
@@ -523,7 +522,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 C m
      * </pre>
      */
-    @KnxDataPointType(id = "14.021", description = "Electric Dipole Moment")
+    @KnxDataPointType({"14.021", "dpst-14-21"})
     public static final DPT14 ELECTRIC_DIPOLE_MOMENT = new DPT14("14.021", "Electric Dipole Moment", "C m");
 
     /**
@@ -545,7 +544,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 C/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.022", description = "NAME")
+    @KnxDataPointType({"14.022", "dpst-14-22"})
     public static final DPT14 ELECTRIC_DISPLACEMENT = new DPT14("14.022", "NAME", "C/m²");
 
     /**
@@ -567,7 +566,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 V/m
      * </pre>
      */
-    @KnxDataPointType(id = "14.023", description = "Electric Field Strength")
+    @KnxDataPointType({"14.023", "dpst-14-23"})
     public static final DPT14 ELECTRIC_FIELD_STRENGTH = new DPT14("14.023", "Electric Field Strength", "V/m");
 
     /**
@@ -589,7 +588,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 c
      * </pre>
      */
-    @KnxDataPointType(id = "14.024", description = "Electric Flux")
+    @KnxDataPointType({"14.024", "dpst-14-24"})
     public static final DPT14 ELECTRIC_FLUX = new DPT14("14.024", "Electric Flux", "c");
 
     /**
@@ -611,7 +610,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 C/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.025", description = "Electric Flux Density")
+    @KnxDataPointType({"14.025", "dpst-14-25"})
     public static final DPT14 ELECTRIC_FLUX_DENSITY = new DPT14("14.025", "Electric Flux Density", "C/m²");
 
     /**
@@ -633,7 +632,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 C/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.026", description = "Electric Polarization")
+    @KnxDataPointType({"14.026", "dpst-14-26"})
     public static final DPT14 ELECTRIC_POLARIZATION = new DPT14("14.026", "Electric Polarization", "C/m²");
 
     /**
@@ -655,7 +654,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 V
      * </pre>
      */
-    @KnxDataPointType(id = "14.027", description = "Electric Potential")
+    @KnxDataPointType({"14.027", "dpst-14-27"})
     public static final DPT14 ELECTRIC_POTENTIAL = new DPT14("14.027", "Electric Potential", "V");
 
     /**
@@ -677,7 +676,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 V
      * </pre>
      */
-    @KnxDataPointType(id = "14.028", description = "Electric Potential Difference")
+    @KnxDataPointType({"14.028", "dpst-14-28"})
     public static final DPT14 ELECTRIC_POTENTIAL_DIFFERENCE = new DPT14("14.028", "Electric Potential Difference", "V");
 
     /**
@@ -699,7 +698,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.029", description = "NAME")
+    @KnxDataPointType({"14.029", "dpst-14-29"})
     public static final DPT14 ELECTROMAGNETIC_MOMENT = new DPT14("14.029", "NAME", "A m²");
 
     /**
@@ -721,7 +720,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 V
      * </pre>
      */
-    @KnxDataPointType(id = "14.030", description = "Electromotive Force")
+    @KnxDataPointType({"14.030", "dpst-14-30"})
     public static final DPT14 ELECTROMOTIVE_FORCE = new DPT14("14.030", "Electromotive Force", "V");
 
     /**
@@ -743,7 +742,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J
      * </pre>
      */
-    @KnxDataPointType(id = "14.031", description = "Energy")
+    @KnxDataPointType({"14.031", "dpst-14-31"})
     public static final DPT14 ENERGY = new DPT14("14.031", "Energy", "J");
 
     /**
@@ -765,7 +764,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 N
      * </pre>
      */
-    @KnxDataPointType(id = "14.032", description = "Force")
+    @KnxDataPointType({"14.032", "dpst-14-32"})
     public static final DPT14 FORCE = new DPT14("14.032", "Force", "N");
 
     /**
@@ -787,7 +786,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Hz
      * </pre>
      */
-    @KnxDataPointType(id = "14.033", description = "Frequency")
+    @KnxDataPointType({"14.033", "dpst-14-33"})
     public static final DPT14 FREQUENCY = new DPT14("14.033", "Frequency", "Hz");
 
     /**
@@ -809,7 +808,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 rad/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.034", description = "Angular Frequency")
+    @KnxDataPointType({"14.034", "dpst-14-34"})
     public static final DPT14 ANGULAR_FREQUENCY = new DPT14("14.034", "Angular Frequency", "rad/s");
 
     /**
@@ -831,7 +830,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J/K
      * </pre>
      */
-    @KnxDataPointType(id = "14.035", description = "Heat Capacity")
+    @KnxDataPointType({"14.035", "dpst-14-35"})
     public static final DPT14 HEAT_CAPACITY = new DPT14("14.035", "Heat Capacity", "J/K");
 
     /**
@@ -853,7 +852,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 W
      * </pre>
      */
-    @KnxDataPointType(id = "14.036", description = "Heat Flow Rate")
+    @KnxDataPointType({"14.036", "dpst-14-36"})
     public static final DPT14 HEAT_FLOW_RATE = new DPT14("14.036", "Heat Flow Rate", "W");
 
     /**
@@ -875,7 +874,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J
      * </pre>
      */
-    @KnxDataPointType(id = "14.037", description = "Heat Quantity")
+    @KnxDataPointType({"14.037", "dpst-14-37"})
     public static final DPT14 HEAT_QUANTITY = new DPT14("14.037", "Heat Quantity", "J");
 
     /**
@@ -897,7 +896,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Ω
      * </pre>
      */
-    @KnxDataPointType(id = "14.038", description = "Impedance")
+    @KnxDataPointType({"14.038", "dpst-14-38"})
     public static final DPT14 IMPEDANCE = new DPT14("14.038", "Impedance", "Ω");
 
     /**
@@ -919,7 +918,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m
      * </pre>
      */
-    @KnxDataPointType(id = "14.039", description = "Length")
+    @KnxDataPointType({"14.039", "dpst-14-39"})
     public static final DPT14 LENGTH = new DPT14("14.039", "Length", "m");
 
     /**
@@ -941,7 +940,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J
      * </pre>
      */
-    @KnxDataPointType(id = "14.040", description = "Light Quantity")
+    @KnxDataPointType({"14.040", "dpst-14-40"})
     public static final DPT14 LIGHT_QUANTITY = new DPT14("14.040", "Light Quantity", "J");
 
     /**
@@ -963,7 +962,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 cd/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.041", description = "Luminance")
+    @KnxDataPointType({"14.041", "dpst-14-41"})
     public static final DPT14 LUMINANCE = new DPT14("14.041", "Luminance", "cd/m²");
 
     /**
@@ -985,7 +984,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 lm
      * </pre>
      */
-    @KnxDataPointType(id = "14.042", description = "Luminous Flux")
+    @KnxDataPointType({"14.042", "dpst-14-42"})
     public static final DPT14 LUMINOUS_FLUX = new DPT14("14.042", "Luminous Flux", "lm");
 
     /**
@@ -1007,7 +1006,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 cd
      * </pre>
      */
-    @KnxDataPointType(id = "14.043", description = "Lumnious Intensity")
+    @KnxDataPointType({"14.043", "dpst-14-43"})
     public static final DPT14 LUMINOUS_INTENSITY = new DPT14("14.043", "Lumnious Intensity", "cd");
 
     /**
@@ -1029,7 +1028,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A/m
      * </pre>
      */
-    @KnxDataPointType(id = "14.044", description = "Magnetic Field Strength")
+    @KnxDataPointType({"14.044", "dpst-14-44"})
     public static final DPT14 MAGNETIC_FIELD_STRENGTH = new DPT14("14.044", "Magnetic Field Strength", "A/m");
 
     /**
@@ -1051,7 +1050,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Wb
      * </pre>
      */
-    @KnxDataPointType(id = "14.045", description = "Magnetic Flux")
+    @KnxDataPointType({"14.045", "dpst-14-45"})
     public static final DPT14 MAGNETIC_FLUX = new DPT14("14.045", "Magnetic Flux", "Wb");
 
     /**
@@ -1073,7 +1072,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 T
      * </pre>
      */
-    @KnxDataPointType(id = "14.046", description = "Magnetic Flux Density")
+    @KnxDataPointType({"14.046", "dpst-14-46"})
     public static final DPT14 MAGNETIC_FLUX_DENSITY = new DPT14("14.046", "Magnetic Flux Density", "T");
 
     /**
@@ -1095,7 +1094,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.047", description = "Magnetic Moment")
+    @KnxDataPointType({"14.047", "dpst-14-47"})
     public static final DPT14 MAGNETIC_MOMENT = new DPT14("14.047", "Magnetic Moment", "A m²");
 
     /**
@@ -1117,7 +1116,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 T
      * </pre>
      */
-    @KnxDataPointType(id = "14.048", description = "Magnetic Polarization")
+    @KnxDataPointType({"14.048", "dpst-14-48"})
     public static final DPT14 MAGNETIC_POLARIZATION = new DPT14("14.048", "Magnetic Polarization", "T");
 
     /**
@@ -1139,7 +1138,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A/m
      * </pre>
      */
-    @KnxDataPointType(id = "14.049", description = "Magnetization")
+    @KnxDataPointType({"14.049", "dpst-14-49"})
     public static final DPT14 MAGNETIZATION = new DPT14("14.049", "Magnetization", "A/m");
 
     /**
@@ -1161,7 +1160,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 A
      * </pre>
      */
-    @KnxDataPointType(id = "14.050", description = "Magnetomotive Force")
+    @KnxDataPointType({"14.050", "dpst-14-50"})
     public static final DPT14 MAGNETOMOTIVE_FORCE = new DPT14("14.050", "Magnetomotive Force", "A");
 
     /**
@@ -1183,7 +1182,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 kg
      * </pre>
      */
-    @KnxDataPointType(id = "14.051", description = "Mass")
+    @KnxDataPointType({"14.051", "dpst-14-51"})
     public static final DPT14 MASS = new DPT14("14.051", "Mass", "kg");
 
     /**
@@ -1205,7 +1204,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 kg/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.052", description = "Mass Flux")
+    @KnxDataPointType({"14.052", "dpst-14-52"})
     public static final DPT14 MASS_FLUX = new DPT14("14.052", "Mass Flux", "kg/s");
 
     /**
@@ -1227,7 +1226,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 N/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.053", description = "Momentum")
+    @KnxDataPointType({"14.053", "dpst-14-53"})
     public static final DPT14 MOMENTUM = new DPT14("14.053", "Momentum", "N/s");
 
     /**
@@ -1249,7 +1248,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 rad
      * </pre>
      */
-    @KnxDataPointType(id = "14.054", description = "Phase Angle Radiant")
+    @KnxDataPointType({"14.054", "dpst-14-54"})
     public static final DPT14 PHASE_ANGLE_RADIANT = new DPT14("14.054", "Phase Angle Radiant", "rad");
 
     /**
@@ -1271,7 +1270,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 °
      * </pre>
      */
-    @KnxDataPointType(id = "14.055", description = "Phase Angle Degree")
+    @KnxDataPointType({"14.055", "dpst-14-55"})
     public static final DPT14 PHASE_ANGLE_DEGREE = new DPT14("14.055", "Phase Angle Degree", "°");
 
     /**
@@ -1293,7 +1292,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 W
      * </pre>
      */
-    @KnxDataPointType(id = "14.056", description = "Power")
+    @KnxDataPointType({"14.056", "dpst-14-56"})
     public static final DPT14 POWER = new DPT14("14.056", "Power", "W");
 
     /**
@@ -1315,7 +1314,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: N/A
      * </pre>
      */
-    @KnxDataPointType(id = "14.057", description = "Power Factor")
+    @KnxDataPointType({"14.057", "dpst-14-57"})
     public static final DPT14 POWER_FACTOR = new DPT14("14.057", "Power Factor", "");
 
     /**
@@ -1337,7 +1336,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Pa
      * </pre>
      */
-    @KnxDataPointType(id = "14.058", description = "Pressure")
+    @KnxDataPointType({"14.058", "dpst-14-58"})
     public static final DPT14 PRESSURE = new DPT14("14.058", "Pressure", "Pa");
 
     /**
@@ -1359,7 +1358,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Ω
      * </pre>
      */
-    @KnxDataPointType(id = "14.059", description = "Reactance")
+    @KnxDataPointType({"14.059", "dpst-14-59"})
     public static final DPT14 REACTANCE = new DPT14("14.059", "Reactance", "Ω");
 
     /**
@@ -1381,7 +1380,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Ω
      * </pre>
      */
-    @KnxDataPointType(id = "14.060", description = "Resistance")
+    @KnxDataPointType({"14.060", "dpst-14-60"})
     public static final DPT14 RESISTANCE = new DPT14("14.060", "Resistance", "Ω");
 
     /**
@@ -1403,7 +1402,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Ωm
      * </pre>
      */
-    @KnxDataPointType(id = "14.061", description = "Resistivity")
+    @KnxDataPointType({"14.061", "dpst-14-61"})
     public static final DPT14 RESISTIVITY = new DPT14("14.061", "Resistivity", "Ωm");
 
     /**
@@ -1425,7 +1424,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 H
      * </pre>
      */
-    @KnxDataPointType(id = "14.062", description = "Self Inductance")
+    @KnxDataPointType({"14.062", "dpst-14-62"})
     public static final DPT14 SELF_INDUCTANCE = new DPT14("14.062", "Self Inductance", "H");
 
     /**
@@ -1447,7 +1446,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 sr
      * </pre>
      */
-    @KnxDataPointType(id = "14.063", description = "Solid Angle")
+    @KnxDataPointType({"14.063", "dpst-14-63"})
     public static final DPT14 SOLID_ANGLE = new DPT14("14.063", "Solid Angle", "sr");
 
     /**
@@ -1469,7 +1468,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 W/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.064", description = "Sound Intensity")
+    @KnxDataPointType({"14.064", "dpst-14-64"})
     public static final DPT14 SOUND_INTENSITY = new DPT14("14.064", "Sound Intensity", "W/m²");
 
     /**
@@ -1491,7 +1490,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.065", description = "Speed")
+    @KnxDataPointType({"14.065", "dpst-14-65"})
     public static final DPT14 SPEED = new DPT14("14.065", "Speed", "m/s");
 
     /**
@@ -1513,7 +1512,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Pa
      * </pre>
      */
-    @KnxDataPointType(id = "14.066", description = "Stress")
+    @KnxDataPointType({"14.066", "dpst-14-66"})
     public static final DPT14 STRESS = new DPT14("14.066", "Stress", "Pa");
 
     /**
@@ -1535,7 +1534,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 N/m
      * </pre>
      */
-    @KnxDataPointType(id = "14.067", description = "Surface Tension")
+    @KnxDataPointType({"14.067", "dpst-14-67"})
     public static final DPT14 SURFACE_TENSION = new DPT14("14.067", "Surface Tension", "N/m");
 
     /**
@@ -1557,7 +1556,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 °C
      * </pre>
      */
-    @KnxDataPointType(id = "14.068", description = "Temperature")
+    @KnxDataPointType({"14.068", "dpst-14-68"})
     public static final DPT14 TEMPERATURE = new DPT14("14.068", "Temperature", "°C");
 
     /**
@@ -1579,7 +1578,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 K
      * </pre>
      */
-    @KnxDataPointType(id = "14.069", description = "Temperature Kelvin")
+    @KnxDataPointType({"14.069", "dpst-14-69"})
     public static final DPT14 TEMPERATURE_KELVIN = new DPT14("14.069", "Temperature Kelvin", "K");
 
     /**
@@ -1601,7 +1600,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 K
      * </pre>
      */
-    @KnxDataPointType(id = "14.070", description = "Temperature Difference")
+    @KnxDataPointType({"14.070", "dpst-14-70"})
     public static final DPT14 TEMPERATURE_DIFFERENCE = new DPT14("14.070", "Temperature Difference", "K");
 
     /**
@@ -1623,7 +1622,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J/K
      * </pre>
      */
-    @KnxDataPointType(id = "14.071", description = "Thermal Capacity")
+    @KnxDataPointType({"14.071", "dpst-14-71"})
     public static final DPT14 THERMAL_CAPACITY = new DPT14("14.071", "Thermal Capacity", "J/K");
 
     /**
@@ -1645,7 +1644,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 W/(m•K)
      * </pre>
      */
-    @KnxDataPointType(id = "14.072", description = "Thermal Conductivity")
+    @KnxDataPointType({"14.072", "dpst-14-72"})
     public static final DPT14 THERMAL_CONDUCTIVITY = new DPT14("14.072", "Thermal Conductivity", "W/(m•K)");
 
     /**
@@ -1667,7 +1666,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 V/K
      * </pre>
      */
-    @KnxDataPointType(id = "14.073", description = "Thermoelectric Power")
+    @KnxDataPointType({"14.073", "dpst-14-73"})
     public static final DPT14 THERMOELECTRIC_POWER = new DPT14("14.073", "Thermoelectric Power", "V/K");
 
     /**
@@ -1689,7 +1688,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 s
      * </pre>
      */
-    @KnxDataPointType(id = "14.074", description = "Time")
+    @KnxDataPointType({"14.074", "dpst-14-74"})
     public static final DPT14 TIME = new DPT14("14.074", "Time", "s");
 
     /**
@@ -1711,7 +1710,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 Nm
      * </pre>
      */
-    @KnxDataPointType(id = "14.075", description = "Torque")
+    @KnxDataPointType({"14.075", "dpst-14-75"})
     public static final DPT14 TORQUE = new DPT14("14.075", "Torque", "Nm");
 
     /**
@@ -1733,7 +1732,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "14.076", description = "Volume")
+    @KnxDataPointType({"14.076", "dpst-14-76"})
     public static final DPT14 VOLUME = new DPT14("14.076", "Volume", "m³");
 
     /**
@@ -1755,7 +1754,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m<sup>3</sup>/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.077", description = "Volume Flux")
+    @KnxDataPointType({"14.077", "dpst-14-77"})
     public static final DPT14 VOLUME_FLUX = new DPT14("14.077", "Volume Flux", "m³/s");
 
     /**
@@ -1777,7 +1776,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 N
      * </pre>
      */
-    @KnxDataPointType(id = "14.078", description = "Weight")
+    @KnxDataPointType({"14.078", "dpst-14-78"})
     public static final DPT14 WEIGHT = new DPT14("14.078", "Weight", "N");
 
     /**
@@ -1799,7 +1798,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 J
      * </pre>
      */
-    @KnxDataPointType(id = "14.079", description = "Work")
+    @KnxDataPointType({"14.079", "dpst-14-79"})
     public static final DPT14 WORK = new DPT14("14.079", "Work", "J");
 
     /**
@@ -1821,7 +1820,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 m<sup>3</sup>/h
      * </pre>
      */
-    @KnxDataPointType(id = "14.1200", description = "Volume Flux For Meters")
+    @KnxDataPointType({"14.1200", "dpst-14-1200"})
     public static final DPT14 VOLUME_FLUX_METER = new DPT14("14.1200", "Volume Flux For Meters", "m³/h");
 
     /**
@@ -1843,7 +1842,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
      * Resolution: 1 l/s
      * </pre>
      */
-    @KnxDataPointType(id = "14.1201", description = "Volume Flux For Meters")
+    @KnxDataPointType({"14.1201", "dpst-14-1201"})
     public static final DPT14 VOLUME_FLUX_LITER_PER_SECONDS = new DPT14("14.1201", "Volume Flux For Meters", "l/s");
 
     /**

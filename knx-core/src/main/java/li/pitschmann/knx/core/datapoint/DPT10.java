@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT10Value;
 
 import java.time.DayOfWeek;
@@ -73,7 +72,7 @@ public final class DPT10 extends AbstractDataPointType<DPT10Value> {
      *             Seconds = [0 .. 59]
      * </pre>
      */
-    @KnxDataPointType(id = "10.001", description = "Time Of Day")
+    @KnxDataPointType({"10.001", "dpt-10", "dpst-10-1"})
     public static final DPT10 TIME_OF_DAY = new DPT10("10.001", "Time Of Day");
 
     /**

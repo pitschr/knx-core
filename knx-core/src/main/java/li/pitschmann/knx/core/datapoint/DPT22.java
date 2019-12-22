@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value;
 
 /**
@@ -61,7 +60,7 @@ public final class DPT22 {
      *                 b7 = Temperature Setpoint is influenced {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType(id = "22.100", description = "DHW Controller Status")
+    @KnxDataPointType({"22.100", "dpst-22-100"})
     public static final StatusDHWController STATUS_DHW_CONTROLLER = new StatusDHWController();
     /**
      * <strong>22.101</strong> Room Heating / Cooling Controller Status
@@ -93,7 +92,7 @@ public final class DPT22 {
      *                 b14 = Overheat Alarm                    {0 = no alarm, 1 = alarm}
      * </pre>
      */
-    @KnxDataPointType(id = "22.101", description = "Room Heating / Cooling Controller Status")
+    @KnxDataPointType({"22.101", "dpst-22-101"})
     public static final StatusRoomHeatinCoolingController STATUS_ROOM_HEATING_COOLING_CONTROLLER = new StatusRoomHeatinCoolingController();
     /**
      * <strong>22.1000</strong> Media
@@ -114,7 +113,7 @@ public final class DPT22 {
      *                 b5 = KNX/IP supported {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType(id = "22.1000", description = "Media")
+    @KnxDataPointType({"22.1000", "dpst-22-1000"})
     public static final Media MEDIA = new Media();
     /**
      * <strong>22.1010</strong> Channel Activation for 16 channels
@@ -133,7 +132,7 @@ public final class DPT22 {
      *                     e.g. b0 = Channel 1, b10 = Channel 11
      * </pre>
      */
-    @KnxDataPointType(id = "22.1010", description = "Channel Activation for 16 channels")
+    @KnxDataPointType({"22.1010", "dpst-22-1010"})
     public static final ChannelActivation16 CHANNEL_ACTIVATION_16 = new ChannelActivation16();
 
     private DPT22() {

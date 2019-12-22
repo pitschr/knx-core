@@ -18,9 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointTypeEnum;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointValueEnum;
 import li.pitschmann.knx.core.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.core.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
@@ -97,7 +94,7 @@ public final class DataPointTypeRegistry {
 
         // find data point types by enumeration classes (e.g. DPT20, DPT23, ...)
         Stream.of(dataPointTypeClass.getClasses()).filter(
-                c -> c.isEnum() && DataPointTypeEnum.class.isAssignableFrom(c) && c.isAnnotationPresent(KnxDataPointTypeEnum.class))
+                c -> c.isEnum() && DataPointTypeEnum.class.isAssignableFrom(c) && c.isAnnotationPresent(KnxDataPointType.class))
                 .forEach(DataPointTypeRegistry::registerDataPointTypeEnums);
 
         // find data point types by fields (e.g. DPT1, DPT2, ...)
@@ -112,27 +109,26 @@ public final class DataPointTypeRegistry {
      */
     private static <T extends Enum<T> & DataPointTypeEnum<T>> void registerDataPointTypeEnums(final Class<?> clazz) {
         // we can cast safely here
-        @SuppressWarnings("unchecked")
-        final var enumInnerClass = (Class<T>) clazz;
+        @SuppressWarnings("unchecked") final var enumInnerClass = (Class<T>) clazz;
 
-        final var classAnnotation = enumInnerClass.getAnnotation(KnxDataPointTypeEnum.class);
+        final var classAnnotation = enumInnerClass.getAnnotation(KnxDataPointType.class);
+        final var mainDptId = classAnnotation.value()[0];
         // inner class is enum class and has data point type annotation
-        log.debug("Inner Class: {} [id={}, description={}]", enumInnerClass, classAnnotation.id(), classAnnotation.description());
-        Preconditions.checkArgument(!dataPointTypeMap.containsKey(classAnnotation.id()),
-                String.format("Data point type key '%s' is already registered. Please check your DPT implementation!", classAnnotation.id()));
-        final var dptEnum = new DPTEnum<T>(classAnnotation.id(), classAnnotation.description());
+        log.debug("Inner Class: {} [dptId={}]", enumInnerClass, mainDptId);
+        Preconditions.checkArgument(!dataPointTypeMap.containsKey(mainDptId),
+                String.format("Data point type key '%s' is already registered. Please check your DPT implementation!", mainDptId));
+        final var dptEnum = new DPTEnum<T>(mainDptId, classAnnotation.description());
 
         // iterate for all enum constant fields which have the desired annotation
         for (final var field : Stream.of(enumInnerClass.getFields())
-                .filter(f -> f.isEnumConstant() && f.isAnnotationPresent(KnxDataPointValueEnum.class)).toArray(Field[]::new)) {
-            final var fieldAnnotation = field.getAnnotation(KnxDataPointValueEnum.class);
+                .filter(f -> f.isEnumConstant() && f.isAnnotationPresent(KnxDataPointEnumValue.class)).toArray(Field[]::new)) {
+            final var fieldAnnotation = field.getAnnotation(KnxDataPointEnumValue.class);
             log.debug("Field: {}->{} [value={}, description={}]", enumInnerClass, field.getName(), fieldAnnotation.value(),
                     fieldAnnotation.description());
 
             try {
                 // we are safe to cast here with "null" because field is an enumeration
-                @SuppressWarnings("unchecked")
-                final var fieldInstance = (T) field.get(null);
+                @SuppressWarnings("unchecked") final var fieldInstance = (T) field.get(null);
                 final var dptEnumValue = new DPTEnumValue<>(dptEnum, fieldInstance, fieldAnnotation.value(),
                         fieldAnnotation.description());
                 dptEnum.addValue(dptEnumValue);
@@ -144,8 +140,10 @@ public final class DataPointTypeRegistry {
             }
         }
 
-        dataPointTypeMap.put(classAnnotation.id(), dptEnum);
-        log.debug("Enum Data Point Type registered: {}", dptEnum);
+        for (final var id : classAnnotation.value()) {
+            dataPointTypeMap.put(id, dptEnum);
+            log.debug("Enum Data Point Type registered: {}={}", id, dptEnum);
+        }
     }
 
     /**
@@ -162,29 +160,18 @@ public final class DataPointTypeRegistry {
                         && f.isAnnotationPresent(KnxDataPointType.class))
                 .toArray(Field[]::new)) {
             final var fieldAnnotation = field.getAnnotation(KnxDataPointType.class);
-            log.debug("Field: {}->{} [id={}, description={}]", clazz, field.getName(), fieldAnnotation.id(), fieldAnnotation.description());
-
+            final var mainDptId = fieldAnnotation.value()[0];
             try {
-                Preconditions.checkArgument(!dataPointTypeMap.containsKey(fieldAnnotation.id()), String.format(
-                        "Data Point Type key '{}' is already registered. Please check your DPT implementation!", fieldAnnotation.id()));
+                Preconditions.checkArgument(!dataPointTypeMap.containsKey(mainDptId), String.format(
+                        "Data Point Type key '{}' is already registered. Please check your DPT implementation!", mainDptId));
+
                 final var fieldInstance = (DataPointType<?>) field.get(null);
-                dataPointTypeMap.put(fieldAnnotation.id(), fieldInstance);
-
-                // register DPT-x and DPST-x-y format as well which are used in '*.knxproj' file
-                final var dptIds = fieldAnnotation.id().split("\\.");
-                // register DPT-x for first field of class only!
-                // example: 1.001 -> DPT-1
-                if (first) {
-                    first = false;
-                    dataPointTypeMap.put("DPT-" + dptIds[0], fieldInstance);
+                for (final var id : fieldAnnotation.value()) {
+                    dataPointTypeMap.put(id, fieldInstance);
                 }
-                // register DPST-x-y for all fields
-                // example: 1.001 -> DPST-1-1
-                dataPointTypeMap.put("DPST-" + dptIds[0] + "-" + Integer.parseInt(dptIds[1]), fieldInstance);
-
+                log.debug("Field: {}->{} [dptId={}]", clazz, field.getName(), mainDptId);
             } catch (final Exception ex) {
-                log.error("Exception for field '{}'", field.getName(), ex);
-                throw new KnxException(fieldAnnotation.id());
+                throw new KnxException(String.format("Exception for field '{}'", field.getName(), ex));
             }
         }
     }
@@ -197,8 +184,7 @@ public final class DataPointTypeRegistry {
      * @return {@link DPTEnumValue}
      */
     public static <T extends Enum<T> & DataPointTypeEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
-        @SuppressWarnings("unchecked")
-        final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
+        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
         if (dpt == null) {
             throw new KnxEnumNotFoundException("Could not find enum data point type for: " + e);
         }
@@ -213,8 +199,7 @@ public final class DataPointTypeRegistry {
      * @return {@link DataPointType}
      */
     public static <T extends DataPointType> T getDataPointType(final String id) {
-        @SuppressWarnings("unchecked")
-        final T dpt = (T) dataPointTypeMap.get(Objects.requireNonNull(id));
+        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(id.toLowerCase());
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);
         }

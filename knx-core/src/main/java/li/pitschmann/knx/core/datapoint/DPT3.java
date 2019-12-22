@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT3Value;
 import li.pitschmann.knx.core.datapoint.value.DPT3Value.StepInterval;
 
@@ -56,7 +55,7 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType(id = "3.007", description = "Control Dimming")
+    @KnxDataPointType({"3.007", "dpt-3", "dpst-3-7"})
     public static final DPT3 DPT_CONTROL_DIMMING = new DPT3("3.007", "Control Dimming", DPT1.STEP);
 
     /**
@@ -76,7 +75,7 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType(id = "3.008", description = "Control Blinds")
+    @KnxDataPointType({"3.008", "dpst-3-8"})
     public static final DPT3 DPT_CONTROL_BLINDS = new DPT3("3.008", "Control Blinds", DPT1.UP_DOWN);
 
     private final DPT1 dpt1;

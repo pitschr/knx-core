@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value.Flags;
 import li.pitschmann.knx.core.utils.Bytes;
@@ -122,7 +121,7 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
      * The receiver (e.g. a room unit, MMI) will interpret Date&Time with "Fault" as corrupted and will either ignore
      * the message or show --:--:-- or blinking 00:00:00 (as known from Video recorders after power-up).
      */
-    @KnxDataPointType(id = "19.001", description = "Date & Time")
+    @KnxDataPointType({"19.001", "dpt-19", "dpst-19-1"})
     public static final DPT19 DATE_TIME = new DPT19("19.001", "Date & Time");
 
     /**
