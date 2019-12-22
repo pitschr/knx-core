@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT12Value;
 
 /**
@@ -56,7 +55,7 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType(id = "12.001", description = "Value 4-Octet Unsigned Count")
+    @KnxDataPointType({"12.001", "dpt-12", "dpst-12-1"})
     public static final DPT12 VALUE_4_OCTET_UNSIGNED_COUNT = new DPT12("12.001", "Value 4-Octet Unsigned Count", 0L, 4294967295L, "pulses");
 
     /**
@@ -76,7 +75,7 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
      * Resolution: 1 l
      * </pre>
      */
-    @KnxDataPointType(id = "12.1200", description = "Volume")
+    @KnxDataPointType({"12.1200", "dpst-12-1200"})
     public static final DPT12 VOLUME_L = new DPT12("12.1200", "Volume", 0L, 4294967295L, "l");
 
     /**
@@ -96,7 +95,7 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
      * Resolution: 1 m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "12.1201", description = "Volume")
+    @KnxDataPointType({"12.1201", "dpst-12-1201"})
     public static final DPT12 VOLUME_M3 = new DPT12("12.1201", "Volume", 0L, 4294967295L, "m³");
 
     /**

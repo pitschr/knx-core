@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT1Value;
 
 /**
@@ -47,7 +46,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = off, 1 = on}
      * </pre>
      */
-    @KnxDataPointType(id = "1.001", description = "Switch")
+    @KnxDataPointType({"1.001", "dpt-1", "dpst-1-1"})
     public static final DPT1 SWITCH = new DPT1("1.001", "Switch", "off", "on");
     /**
      * <strong>1.002</strong> Boolean
@@ -61,7 +60,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType(id = "1.002", description = "Boolean")
+    @KnxDataPointType({"1.002", "dpst-1-2"})
     public static final DPT1 BOOL = new DPT1("1.002", "Boolean", "false", "true");
     /**
      * <strong>1.003</strong> Enable
@@ -75,7 +74,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = disable, 1 = enable}
      * </pre>
      */
-    @KnxDataPointType(id = "1.003", description = "Enable")
+    @KnxDataPointType({"1.003", "dpst-1-3"})
     public static final DPT1 ENABLE = new DPT1("1.003", "Enable", "Disable", "Enable");
     /**
      * <strong>1.004</strong> Ramp
@@ -89,7 +88,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = no ramp, 1 = ramp}
      * </pre>
      */
-    @KnxDataPointType(id = "1.004", description = "Ramp")
+    @KnxDataPointType({"1.004", "dpst-1-4"})
     public static final DPT1 RAMP = new DPT1("1.004", "Ramp", "No Ramp", "Ramp");
     /**
      * <strong>1.005</strong> Alarm
@@ -103,7 +102,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = no alarm, 1 = alarm}
      * </pre>
      */
-    @KnxDataPointType(id = "1.005", description = "Alarm")
+    @KnxDataPointType({"1.005", "dpst-1-5"})
     public static final DPT1 ALARM = new DPT1("1.005", "Alarm", "No Alarm", "Alarm");
     /**
      * <strong>1.006</strong> Binary Value
@@ -117,7 +116,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = low, 1 = high}
      * </pre>
      */
-    @KnxDataPointType(id = "1.006", description = "Binary Value")
+    @KnxDataPointType({"1.006", "dpst-1-6"})
     public static final DPT1 BINARY_VALUE = new DPT1("1.006", "Binary Value", "Low", "High");
     /**
      * <strong>1.007</strong> Step
@@ -131,7 +130,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = decrease, 1 = increase}
      * </pre>
      */
-    @KnxDataPointType(id = "1.007", description = "Step")
+    @KnxDataPointType({"1.007", "dpst-1-7"})
     public static final DPT1 STEP = new DPT1("1.007", "Step", "Decrease", "Increase");
     /**
      * <strong>1.008</strong> Up & Down
@@ -145,7 +144,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = up, 1 = down}
      * </pre>
      */
-    @KnxDataPointType(id = "1.008", description = "Up & Down")
+    @KnxDataPointType({"1.008", "dpst-1-8"})
     public static final DPT1 UP_DOWN = new DPT1("1.008", "Up & Down", "Up", "Down");
     /**
      * <strong>1.009</strong> Open & Close
@@ -159,7 +158,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = open, 1 = close}
      * </pre>
      */
-    @KnxDataPointType(id = "1.009", description = "Open & Close")
+    @KnxDataPointType({"1.009", "dpst-1-9"})
     public static final DPT1 OPEN_CLOSE = new DPT1("1.009", "Open & Close", "Open", "Close");
     /**
      * <strong>1.010</strong> Start
@@ -173,7 +172,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = stop, 1 = start}
      * </pre>
      */
-    @KnxDataPointType(id = "1.010", description = "Start")
+    @KnxDataPointType({"1.010", "dpst-1-10"})
     public static final DPT1 START = new DPT1("1.010", "Start", "Stop", "Start");
     /**
      * <strong>1.011</strong> State
@@ -187,7 +186,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = inactive, 1 = active}
      * </pre>
      */
-    @KnxDataPointType(id = "1.011", description = "State")
+    @KnxDataPointType({"1.011", "dpst-1-11"})
     public static final DPT1 STATE = new DPT1("1.011", "State", "Inactive", "Active");
     /**
      * <strong>1.012</strong> Invert
@@ -201,7 +200,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = not inverted, 1 = inverted}
      * </pre>
      */
-    @KnxDataPointType(id = "1.012", description = "Invert")
+    @KnxDataPointType({"1.012", "dpst-1-12"})
     public static final DPT1 INVERT = new DPT1("1.012", "Invert", "Not Inverted", "Inverted");
     /**
      * <strong>1.013</strong> Dim Send Style
@@ -215,7 +214,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = start/stop, 1 = cyclically}
      * </pre>
      */
-    @KnxDataPointType(id = "1.013", description = "Dim Send Style")
+    @KnxDataPointType({"1.013", "dpst-1-13"})
     public static final DPT1 DIM_SEND_STYLE = new DPT1("1.013", "Dim Send Style", "Start/Stop", "Cyclically");
     /**
      * <strong>1.014</strong> Input Source
@@ -229,7 +228,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = fixed, 1 = calculated}
      * </pre>
      */
-    @KnxDataPointType(id = "1.014", description = "Input Source")
+    @KnxDataPointType({"1.014", "dpst-1-14"})
     public static final DPT1 INPUT_SOURCE = new DPT1("1.014", "Input Source", "Fixed", "Calculated");
     /**
      * <strong>1.015</strong> Reset
@@ -243,7 +242,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = no action, 1 = reset}
      * </pre>
      */
-    @KnxDataPointType(id = "1.015", description = "Reset")
+    @KnxDataPointType({"1.015", "dpst-1-15"})
     public static final DPT1 RESET = new DPT1("1.015", "Reset", "No Action", "Reset");
     /**
      * <strong>1.016</strong> Acknowledge
@@ -257,7 +256,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = no action, 1 = acknowledge}
      * </pre>
      */
-    @KnxDataPointType(id = "1.016", description = "Acknowledge")
+    @KnxDataPointType({"1.016", "dpst-1-16"})
     public static final DPT1 ACK = new DPT1("1.016", "Acknowledge", "No Action", "Acknowledge");
     /**
      * <strong>1.017</strong> Trigger
@@ -273,7 +272,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * For DPT_Trigger, both values 0 and 1 shall have the same effect and shall not be differentiated in sender or receiver.
      * </pre>
      */
-    @KnxDataPointType(id = "1.017", description = "Trigger")
+    @KnxDataPointType({"1.017", "dpst-1-17"})
     public static final DPT1 TRIGGER = new DPT1("1.017", "Trigger", "Trigger (0)", "Trigger (1)");
     /**
      * <strong>1.018</strong> Occupancy
@@ -287,7 +286,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = not occupied, 1 = occupied}
      * </pre>
      */
-    @KnxDataPointType(id = "1.018", description = "Occupancy")
+    @KnxDataPointType({"1.018", "dpst-1-18"})
     public static final DPT1 OCCUPANCY = new DPT1("1.018", "Occupancy", "Not Occupied", "Occupied");
     /**
      * <strong>1.019</strong> Window & Door
@@ -301,7 +300,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = closed, 1 = open}
      * </pre>
      */
-    @KnxDataPointType(id = "1.019", description = "Window & Door")
+    @KnxDataPointType({"1.019", "dpst-1-19"})
     public static final DPT1 WINDOW_DOOR = new DPT1("1.019", "Window & Door", "Closed", "Open");
     /**
      * <strong>1.021</strong> Logical Function
@@ -315,7 +314,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = or, 1 = and}
      * </pre>
      */
-    @KnxDataPointType(id = "1.021", description = "Logical Function")
+    @KnxDataPointType({"1.021", "dpst-1-21"})
     public static final DPT1 LOGICAL_FUNCTION = new DPT1("1.021", "Logical Function", "OR", "AND");
     /**
      * <strong>1.022</strong> Scene
@@ -331,7 +330,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * DPT_Scene_AB allows numbering the scenes with 0 and 1.
      * </pre>
      */
-    @KnxDataPointType(id = "1.022", description = "Scene")
+    @KnxDataPointType({"1.022", "dpst-1-22"})
     public static final DPT1 SCENE_AB = new DPT1("1.022", "Scene", "Scene (A)", "Scene (B)");
     /**
      * <strong>1.023</strong> Shutter & Blinds Mode
@@ -345,7 +344,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = only move up/down, 1 = move up/down + step/stop}
      * </pre>
      */
-    @KnxDataPointType(id = "1.023", description = "Shutter & Blinds Mode")
+    @KnxDataPointType({"1.023", "dpst-1-23"})
     public static final DPT1 SHUTTER_BLINDS_MODE = new DPT1("1.023", "Shutter & Blinds Mode", "Only Move Up/Down (shutter)",
             "Move Up/Down + Step/Stop (blind)");
 
@@ -361,7 +360,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = Day, 1 = Night}
      * </pre>
      */
-    @KnxDataPointType(id = "1.024", description = "Day & Night")
+    @KnxDataPointType({"1.024", "dpst-1-24"})
     public static final DPT1 DAY_NIGHT = new DPT1("1.024", "Day & Night", "Day", "Night");
 
     /**
@@ -376,7 +375,7 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
      * Range:      b = {0 = cooling, 1 = heating}
      * </pre>
      */
-    @KnxDataPointType(id = "1.100", description = "Heating & Cooling")
+    @KnxDataPointType({"1.100", "dpst-1-100"})
     public static final DPT1 HEAT_COOL = new DPT1("1.100", "Heating & Cooling", "Cooling", "Heating");
 
     private final String textForFalse;

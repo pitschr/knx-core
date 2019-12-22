@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT15Value;
 import li.pitschmann.knx.core.datapoint.value.DPT15Value.Flags;
 
@@ -75,7 +74,7 @@ public final class DPT15 extends AbstractDataPointType<DPT15Value> {
      *                1 = Encryption
      * </pre>
      */
-    @KnxDataPointType(id = "15.000", description = "Access Data")
+    @KnxDataPointType({"15.000", "dpt-15", "dpst-15-0"})
     public static final DPT15 ACCESS_DATA = new DPT15("15.000", "Access Data");
 
     /**

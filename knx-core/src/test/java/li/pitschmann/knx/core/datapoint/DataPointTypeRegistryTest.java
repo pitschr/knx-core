@@ -18,9 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointTypeEnum;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointValueEnum;
 import li.pitschmann.knx.core.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxException;
@@ -62,7 +59,7 @@ public class DataPointTypeRegistryTest {
      * Test {@link DataPointTypeRegistry#getDataPointType(String)} for enumerated data point types
      * <p>
      * {@link DPTEnum} is a wrapper class which is created by {@link DataPointTypeRegistry} during class loading based
-     * on {@link KnxDataPointTypeEnum} and {@link KnxDataPointValueEnum} annotations. Therefore, we have no direct
+     * on {@link KnxDataPointType} and {@link KnxDataPointEnumValue} annotations. Therefore, we have no direct
      * access to the {@link DPTEnum} instance, however, due the nature of enumeration it will be a single instance and
      * therefore it will share same hash code and {@link #equals(Object)} will match.
      */
@@ -145,7 +142,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithDuplicateId {
-        @KnxDataPointTypeEnum(id = "20.001", description = "DPT with alraedy existing id.")
+        @KnxDataPointType(value = "20.001", description = "DPT with alraedy existing id.")
         public enum Empty implements DataPointTypeEnum<Empty> {
             EMPTY
         }
@@ -157,7 +154,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTWithWithDuplicatedId {
-        @KnxDataPointType(id = "1.001", description = "")
+        @KnxDataPointType(value = "1.001", description = "")
         public static final String STRING1 = "";
     }
 
@@ -167,11 +164,11 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithTwoSameValues {
-        @KnxDataPointTypeEnum(id = "", description = "DPT with two same values")
+        @KnxDataPointType(value = "", description = "DPT with two same values")
         public enum Number implements DataPointTypeEnum<Number> {
-            @KnxDataPointValueEnum(value = 0, description = "foo")
+            @KnxDataPointEnumValue(value = 0, description = "foo")
             FOO, //
-            @KnxDataPointValueEnum(value = 0, description = "bar")
+            @KnxDataPointEnumValue(value = 0, description = "bar")
             BAR
         }
     }
@@ -182,7 +179,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithoutValue {
-        @KnxDataPointTypeEnum(id = "9999.000", description = "DPT without value")
+        @KnxDataPointType(value = "9999.000", description = "DPT without value")
         public enum Empty implements DataPointTypeEnum<Empty> {
             EMPTY
         }
@@ -194,7 +191,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithoutInterface {
-        @KnxDataPointTypeEnum(id = "9999.001", description = "DPT without interface")
+        @KnxDataPointType(value = "9999.001", description = "DPT without interface")
         public enum Empty {
             EMPTY
         }
@@ -206,7 +203,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithWrongInterface {
-        @KnxDataPointTypeEnum(id = "9999.002", description = "DPT with wrong interface")
+        @KnxDataPointType(value = "9999.002", description = "DPT with wrong interface")
         public enum Empty implements Serializable {
             EMPTY
         }
@@ -232,11 +229,11 @@ public class DataPointTypeRegistryTest {
      */
     private static final class DPTWithUnsupportedFields {
         public static final Object NO_ANNOTATION = null; // no annotation
-        @KnxDataPointType(id = "9999.102", description = "")
+        @KnxDataPointType(value = "9999.102", description = "")
         public static Object NO_FINAL = null; // no final
-        @KnxDataPointType(id = "9999.101", description = "")
+        @KnxDataPointType(value = "9999.101", description = "")
         public final Object NO_STATIC = null; // no static
-        @KnxDataPointType(id = "9999.100", description = "")
+        @KnxDataPointType(value = "9999.100", description = "")
         public Object NO_STATIC_FINAL = null; // no static, no final
 
         private DPTWithUnsupportedFields() {

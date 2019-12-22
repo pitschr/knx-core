@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT18Value;
 import li.pitschmann.knx.core.utils.Preconditions;
 
@@ -53,7 +52,7 @@ public final class DPT18 extends AbstractRangeDataPointType<DPT18Value, Integer>
      *             U = [0 .. 63]
      * </pre>
      */
-    @KnxDataPointType(id = "18.001", description = "Scene Control")
+    @KnxDataPointType({"18.001", "dpt-18", "dpst-18-1"})
     public static final DPT18 SCENE_CONTROL = new DPT18("18.001", "Scene Control");
 
     /**

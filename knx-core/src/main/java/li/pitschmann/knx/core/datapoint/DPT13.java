@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT13Value;
 
 import java.util.function.Function;
@@ -58,7 +57,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType(id = "13.001", description = "Value 4-Octet Signed Count")
+    @KnxDataPointType({"13.001", "dpt-13", "dpst-13-1"})
     public static final DPT13 VALUE_4_OCTET_COUNT = new DPT13("13.001", "Value 4-Octet Signed Count", -2147483648, 2147483647, "pulses");
     /**
      * <strong>13.002</strong> Flow Rate (m<sup>3</sup>/h) with high resolution
@@ -77,7 +76,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 0.0001 m<sup>3</sup>/h
      * </pre>
      */
-    @KnxDataPointType(id = "13.002", description = "Flow Rate")
+    @KnxDataPointType({"13.002", "dpst-13-2"})
     public static final DPT13 FLOW_RATE = new DPT13("13.002", "Flow Rate", -2147483648, 2147483647, "m³/h", v -> v / 10000d);
     /**
      * <strong>13.010</strong> Active Energy (Wh)
@@ -96,7 +95,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 Wh
      * </pre>
      */
-    @KnxDataPointType(id = "13.010", description = "Active Energy (Wh)")
+    @KnxDataPointType({"13.010", "dpst-13-10"})
     public static final DPT13 ACTIVE_ENERGY = new DPT13("13.010", "Active Energy (Wh)", -2147483648, 2147483647, "Wh");
     /**
      * <strong>13.011</strong> Apparant Energy (VAh)
@@ -115,7 +114,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 VAh
      * </pre>
      */
-    @KnxDataPointType(id = "13.011", description = "Apparant Energy")
+    @KnxDataPointType({"13.011", "dpst-13-11"})
     public static final DPT13 APPARANT_ENERGY = new DPT13("13.011", "Apparant Energy", -2147483648, 2147483647, "VAh");
     /**
      * <strong>13.012</strong> Reactive Energy (VARh)
@@ -134,7 +133,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 VARh
      * </pre>
      */
-    @KnxDataPointType(id = "13.012", description = "Reactive Energy")
+    @KnxDataPointType({"13.012", "dpst-13-12"})
     public static final DPT13 REACTIVE_ENERGY = new DPT13("13.012", "Reactive Energy", -2147483648, 2147483647, "VARh");
     /**
      * <strong>13.013</strong> Active Energy (kWh)
@@ -153,7 +152,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 kWh
      * </pre>
      */
-    @KnxDataPointType(id = "13.013", description = "Active Energy (kWh)")
+    @KnxDataPointType({"13.013", "dpst-13-13"})
     public static final DPT13 ACTIVE_ENERGY_KWH = new DPT13("13.013", "Active Energy (kWh)", -2147483648, 2147483647, "kWh");
     /**
      * <strong>13.014</strong> Apparant Energy (kVAh)
@@ -172,7 +171,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 kVAh
      * </pre>
      */
-    @KnxDataPointType(id = "13.014", description = "Apparant Energy")
+    @KnxDataPointType({"13.014", "dpst-13-14"})
     public static final DPT13 APPARANT_ENERGY_KVAH = new DPT13("13.014", "Apparant Energy", -2147483648, 2147483647, "kVAh");
     /**
      * <strong>13.015</strong> Reactive Energy (kVARh)
@@ -191,7 +190,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 kVARh
      * </pre>
      */
-    @KnxDataPointType(id = "13.015", description = "Reactive Energy")
+    @KnxDataPointType({"13.015", "dpst-13-15"})
     public static final DPT13 REACTIVE_ENERGY_KVARH = new DPT13("13.015", "Reactive Energy", -2147483648, 2147483647, "kVARh");
 
     /**
@@ -211,7 +210,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 MWh
      * </pre>
      */
-    @KnxDataPointType(id = "13.016", description = "Active Energy (MWh)")
+    @KnxDataPointType({"13.016", "dpst-13-16"})
     public static final DPT13 ACTIVE_ENERGY_MWH = new DPT13("13.016", "Active Energy (MWh)", -2147483648, 2147483647, "MWh");
 
     /**
@@ -231,7 +230,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 s
      * </pre>
      */
-    @KnxDataPointType(id = "13.100", description = "Long Delta Time")
+    @KnxDataPointType({"13.100", "dpst-13-100"})
     public static final DPT13 LONG_DELTA_TIME_SEC = new DPT13("13.100", "Long Delta Time", -2147483648, 2147483647, "s");
 
     /**
@@ -251,7 +250,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 l
      * </pre>
      */
-    @KnxDataPointType(id = "13.1200", description = "Delta Volume")
+    @KnxDataPointType({"13.1200", "dpst-13-1200"})
     public static final DPT13 DELTA_VOLUME_L = new DPT13("13.1200", "Delta Volume", -2147483648, 2147483647, "l");
 
     /**
@@ -271,7 +270,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType(id = "13.1201", description = "Delta Volume")
+    @KnxDataPointType({"13.1201", "dpst-13-1201"})
     public static final DPT13 DELTA_VOLUME_M3 = new DPT13("13.1201", "Delta Volume", -2147483648, 2147483647, "m³");
 
     /**

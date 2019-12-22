@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT6Value;
 import li.pitschmann.knx.core.datapoint.value.DPT6Value.StatusMode.Mode;
 import li.pitschmann.knx.core.utils.Bytes;
@@ -52,7 +51,7 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      * Resolution: 1%
      * </pre>
      */
-    @KnxDataPointType(id = "6.001", description = "Percent")
+    @KnxDataPointType({"6.001", "dpst-6-1"})
     public static final DPT6 PERCENT = new DPT6("6.001", "Percent", -128, 127, "%");
 
     /**
@@ -69,7 +68,7 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType(id = "6.010", description = "Value 1 Octet Signed Count")
+    @KnxDataPointType({"6.010", "dpt-6", "dpst-6-10"})
     public static final DPT6 VALUE_1_OCTET_COUNT = new DPT6("6.010", "Value 1 Octet Signed Count", -128, 127, "pulses");
 
     /**
@@ -92,7 +91,7 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      * Resolution: N/A
      * </pre>
      */
-    @KnxDataPointType(id = "6.020", description = "Status Mode")
+    @KnxDataPointType({"6.020", "dpst-6-20"})
     public static final DPT6.StatusMode STATUS_MODE = new DPT6.StatusMode("6.020", "Status Mode");
 
     /**

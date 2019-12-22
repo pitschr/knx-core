@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT11Value;
 
 import java.time.LocalDate;
@@ -72,7 +71,7 @@ public final class DPT11 extends AbstractDataPointType<DPT11Value> {
      * - If Octet 3 contains value ≥ 90 : interpret as 20th century<br>
      * - If Octet 3 contains value < 90: interpret as 21st century<br>
      */
-    @KnxDataPointType(id = "11.001", description = "Date")
+    @KnxDataPointType({"11.001", "dpt-11", "dpst-11-1"})
     public static final DPT11 DATE = new DPT11("11.001", "Date");
 
     /**

@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.annotation.KnxDataPointType;
 import li.pitschmann.knx.core.datapoint.value.DPT8Value;
 
 import java.util.function.Function;
@@ -52,7 +51,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType(id = "8.001", description = "Value 2-Octet Signed Count")
+    @KnxDataPointType({"8.001", "dpt-8", "dpst-8-1"})
     public static final DPT8 VALUE_2_OCTET_COUNT = new DPT8("8.001", "Value 2-Octet Signed Count", -32768, 32767, "pulses");
 
     /**
@@ -70,7 +69,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: ms
      * </pre>
      */
-    @KnxDataPointType(id = "8.002", description = "Delta Time (1ms)")
+    @KnxDataPointType({"8.002", "dpst-8-2"})
     public static final DPT8 DELTA_TIME_MS = new DPT8("8.002", "Delta Time (1ms)", -32768, 32767, "ms");
 
     /**
@@ -88,7 +87,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 10 ms
      * </pre>
      */
-    @KnxDataPointType(id = "8.003", description = "Delta Time (10ms)")
+    @KnxDataPointType({"8.003", "dpst-8-3"})
     public static final DPT8 DELTA_TIME_10MS = new DPT8("8.003", "Delta Time (10ms)", -32768, 32767, "ms", v -> v / 100d);
 
     /**
@@ -106,7 +105,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 100 ms
      * </pre>
      */
-    @KnxDataPointType(id = "8.004", description = "Delta Time (100ms)")
+    @KnxDataPointType({"8.004", "dpst-8-4"})
     public static final DPT8 DELTA_TIME_100MS = new DPT8("8.004", "Delta Time (100ms)", -32768, 32767, "ms", v -> v / 10d);
 
     /**
@@ -123,7 +122,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 1 s
      * </pre>
      */
-    @KnxDataPointType(id = "8.005", description = "Delta Time (s)")
+    @KnxDataPointType({"8.005", "dpst-8-5"})
     public static final DPT8 DELTA_TIME_SECONDS = new DPT8("8.005", "Delta Time (s)", -32768, 32767, "s");
 
     /**
@@ -140,7 +139,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 1 min
      * </pre>
      */
-    @KnxDataPointType(id = "8.006", description = "Delta Time (min)")
+    @KnxDataPointType({"8.006", "dpst-8-6"})
     public static final DPT8 DELTA_TIME_MINUTES = new DPT8("8.006", "Delta Time (min)", -32768, 32767, "min");
 
     /**
@@ -157,7 +156,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 1 h
      * </pre>
      */
-    @KnxDataPointType(id = "8.007", description = "Delta Time (h)")
+    @KnxDataPointType({"8.007", "dpst-8-7"})
     public static final DPT8 DELTA_TIME_HOURS = new DPT8("8.007", "Delta Time (h)", -32768, 32767, "h");
 
     /**
@@ -174,7 +173,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * Resolution: 0.01 %
      * </pre>
      */
-    @KnxDataPointType(id = "8.010", description = "Percent")
+    @KnxDataPointType({"8.010", "dpst-8-10"})
     public static final DPT8 PERCENT = new DPT8("8.010", "Percent", -32768, 32767, "%", v -> v / 100d);
 
     /**
@@ -193,7 +192,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * <p>
      * Used for absolute control, slats position in degrees for Shutters and Blinds.
      */
-    @KnxDataPointType(id = "8.011", description = "Rotation Angle")
+    @KnxDataPointType({"8.011", "dpst-8-11"})
     public static final DPT8 ROTATION_ANGLE = new DPT8("8.011", "Rotation Angle", -32768, 32767, "°");
 
     /**
@@ -213,7 +212,7 @@ public final class DPT8 extends AbstractRangeDataPointType<DPT8Value, Integer> {
      * This DPT shall be used to encode information about the altitude above sea level. Since altitude may be negative,
      * signed value type is needed.
      */
-    @KnxDataPointType(id = "8.012", description = "Length / Altitude Above Sea Level")
+    @KnxDataPointType({"8.012", "dpst-8-12"})
     public static final DPT8 LENGTH_IN_METER = new DPT8("8.012", "Length / Altitude Above Sea Level", -32768, 32767, "m");
 
     /**
