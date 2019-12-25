@@ -25,16 +25,15 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link DataPointTypeEnum}
+ * Tests for {@link DataPointEnum}
  *
  * @author PITSCHR
  */
-public class DataPointTypeEnumTest {
+public class DataPointEnumTest {
 
     @Test
     @DisplayName("Test the methods of enum value")
     public void testEnum() {
-        // using an enumeration that is using DataPointTypeEnum
         final var priorityValue = Priority.HIGH.toValue();
         assertThat(priorityValue).isNotNull();
         assertThat(priorityValue.getDPT().getId()).isEqualTo("20.004");

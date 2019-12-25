@@ -51,7 +51,7 @@ public final class DPT21 {
      *                 b4 = Alarm Not Acknowledged {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.001", "dpst-21-1"})
+    @DataPoint({"21.001", "dpst-21-1"})
     public static final GeneralStatus GENERAL_STATUS = new GeneralStatus();
     /**
      * <strong>21.002</strong> Device Control
@@ -68,7 +68,7 @@ public final class DPT21 {
      *                 b2 = Verify Mode is On            {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.002", "dpst-21-2"})
+    @DataPoint({"21.002", "dpst-21-2"})
     public static final DeviceControl DEVICE_CONTROL = new DeviceControl();
     /**
      * <strong>21.100</strong> Forcing Signal
@@ -90,7 +90,7 @@ public final class DPT21 {
      *                 b7 = Room Heating to 'Max flow Temperature' {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.100", "dpst-21-100"})
+    @DataPoint({"21.100", "dpst-21-100"})
     public static final ForcingSignal FORCING_SIGNAL = new ForcingSignal();
     /**
      * <strong>21.101</strong> Forcing Signal Cooling
@@ -105,7 +105,7 @@ public final class DPT21 {
      *                 b0 = Force Request {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.101", "dpst-21-101"})
+    @DataPoint({"21.101", "dpst-21-101"})
     public static final ForcingSignalCooling FORCING_SIGNAL_COOLING = new ForcingSignalCooling();
     /**
      * <strong>21.102</strong> Room Heating Controller Status
@@ -127,7 +127,7 @@ public final class DPT21 {
      *                 b7 = Summer Mode                        {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.102", "dpst-21-102"})
+    @DataPoint({"21.102", "dpst-21-102"})
     public static final StatusRoomHeatingController STATUS_ROOM_HEATING_CONTROLLER = new StatusRoomHeatingController();
     /**
      * <strong>21.103</strong> Solar DHW Controller Status
@@ -144,7 +144,7 @@ public final class DPT21 {
      *                 b2 = Solar Load sufficient          {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.103", "dpst-21-103"})
+    @DataPoint({"21.103", "dpst-21-103"})
     public static final StatusSolarDHWController STATUS_SOLAR_DHW_CONTROLLER = new StatusSolarDHWController();
     /**
      * <strong>21.104</strong> Fuel Type Set
@@ -161,7 +161,7 @@ public final class DPT21 {
      *                 b2 = Solid State Fuel Supported {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.104", "dpst-21-104"})
+    @DataPoint({"21.104", "dpst-21-104"})
     public static final FuelTypeSet FUEL_TYPE_SET = new FuelTypeSet();
     /**
      * <strong>21.105</strong> Room Cooling Controller Status
@@ -176,7 +176,7 @@ public final class DPT21 {
      *                 b0 = Fault {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.105", "dpst-21-105"})
+    @DataPoint({"21.105", "dpst-21-105"})
     public static final StatusRoomCoolingController STATUS_ROOM_COOLING_CONTROLLER = new StatusRoomCoolingController();
     /**
      * <strong>21.106</strong> Ventilation Controller Status
@@ -194,7 +194,7 @@ public final class DPT21 {
      *                 b3 = Cooling mode is active {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.106", "dpst-21-106"})
+    @DataPoint({"21.106", "dpst-21-106"})
     public static final StatusVentilationController STATUS_VENTILATION_CONTROLLER = new StatusVentilationController();
     /**
      * <strong>21.601</strong> Lighting Actuator Error Information
@@ -215,7 +215,7 @@ public final class DPT21 {
      *                 b6 = Overheat             {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.601", "dpst-21-601"})
+    @DataPoint({"21.601", "dpst-21-601"})
     public static final LightingActuatorErrorInfo LIGHTING_ACTUATOR_ERROR_INFO = new LightingActuatorErrorInfo();
     /**
      * <strong>21.1000</strong> Radio Frequency Communication Mode Info
@@ -232,7 +232,7 @@ public final class DPT21 {
      *                 b2 = BiBat Slave   {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.1000", "dpst-21-1000"})
+    @DataPoint({"21.1000", "dpst-21-1000"})
     public static final RadioFrequencyCommunicationModeInfo RADIO_FREQUENCY_COMMUNICATION_MODE_INFO = new RadioFrequencyCommunicationModeInfo();
     /**
      * <strong>21.1001</strong> cEMI Server Supported Filtering Mode
@@ -249,7 +249,7 @@ public final class DPT21 {
      *                 b2 = Filtering by Domain Address and KNX Serial Number {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.1001", "dpst-21-1001"})
+    @DataPoint({"21.1001", "dpst-21-1001"})
     public static final CEMIServerSupportedFilteringMode CEMI_SERVER_SUPPORTED_FILTERING_MODE = new CEMIServerSupportedFilteringMode();
     /**
      * <strong>21.1002</strong> Security Report
@@ -264,7 +264,7 @@ public final class DPT21 {
      *                 b0 = Security Failure {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"21.1002", "dpst-21-1002"})
+    @DataPoint({"21.1002", "dpst-21-1002"})
     public static final SecurityReport SECURITY_REPORT = new SecurityReport();
     /**
      * <strong>21.1010</strong> Channel Activation for 8 channels
@@ -280,7 +280,7 @@ public final class DPT21 {
      *                     e.g. b0 = Channel 1, b3 = Channel 4
      * </pre>
      */
-    @KnxDataPointType({"21.1010", "dpst-21-1010"})
+    @DataPoint({"21.1010", "dpst-21-1010"})
     public static final ChannelActivation8 CHANNEL_ACTIVATION_8 = new ChannelActivation8();
 
     private DPT21() {
@@ -289,7 +289,7 @@ public final class DPT21 {
 
     public static final class GeneralStatus extends AbstractDataPointType<DPT21Value.GeneralStatus> {
         private GeneralStatus() {
-            super("21.001", "General Status");
+            super("General Status");
         }
 
         @Override
@@ -315,7 +315,7 @@ public final class DPT21 {
 
     public static final class DeviceControl extends AbstractDataPointType<DPT21Value.DeviceControl> {
         private DeviceControl() {
-            super("21.002", "Device Control");
+            super("Device Control");
         }
 
         @Override
@@ -340,7 +340,7 @@ public final class DPT21 {
 
     public static final class ForcingSignal extends AbstractDataPointType<DPT21Value.ForcingSignal> {
         private ForcingSignal() {
-            super("21.100", "Forcing Signal");
+            super("Forcing Signal");
         }
 
         @Override
@@ -370,7 +370,7 @@ public final class DPT21 {
 
     public static final class ForcingSignalCooling extends AbstractDataPointType<DPT21Value.ForcingSignalCooling> {
         private ForcingSignalCooling() {
-            super("21.101", "Forcing Signal Cooling");
+            super("Forcing Signal Cooling");
         }
 
         @Override
@@ -394,7 +394,7 @@ public final class DPT21 {
 
     public static final class StatusRoomHeatingController extends AbstractDataPointType<DPT21Value.StatusRoomHeatingController> {
         private StatusRoomHeatingController() {
-            super("21.102", "Room Heating Controller Status");
+            super("Room Heating Controller Status");
         }
 
         @Override
@@ -424,7 +424,7 @@ public final class DPT21 {
 
     public static final class StatusSolarDHWController extends AbstractDataPointType<DPT21Value.StatusSolarDHWController> {
         private StatusSolarDHWController() {
-            super("21.103", "Solar DHW Controller Status");
+            super("Solar DHW Controller Status");
         }
 
         @Override
@@ -449,7 +449,7 @@ public final class DPT21 {
 
     public static final class FuelTypeSet extends AbstractDataPointType<DPT21Value.FuelTypeSet> {
         private FuelTypeSet() {
-            super("21.104", "Fuel Type Set");
+            super("Fuel Type Set");
         }
 
         @Override
@@ -473,7 +473,7 @@ public final class DPT21 {
 
     public static final class StatusRoomCoolingController extends AbstractDataPointType<DPT21Value.StatusRoomCoolingController> {
         private StatusRoomCoolingController() {
-            super("21.105", "Room Cooling Controller Status");
+            super("Room Cooling Controller Status");
         }
 
         @Override
@@ -497,7 +497,7 @@ public final class DPT21 {
 
     public static final class StatusVentilationController extends AbstractDataPointType<DPT21Value.StatusVentilationController> {
         private StatusVentilationController() {
-            super("21.106", "Ventilation Controller Status");
+            super("Ventilation Controller Status");
         }
 
         @Override
@@ -522,7 +522,7 @@ public final class DPT21 {
 
     public static final class LightingActuatorErrorInfo extends AbstractDataPointType<DPT21Value.LightingActuatorErrorInfo> {
         private LightingActuatorErrorInfo() {
-            super("21.601", "Lighting Actuator Error Information");
+            super("Lighting Actuator Error Information");
         }
 
         @Override
@@ -548,7 +548,7 @@ public final class DPT21 {
 
     public static final class RadioFrequencyCommunicationModeInfo extends AbstractDataPointType<DPT21Value.RadioFrequencyCommunicationModeInfo> {
         private RadioFrequencyCommunicationModeInfo() {
-            super("21.1000", "Radio Frequency Communication Mode Info");
+            super("Radio Frequency Communication Mode Info");
         }
 
         @Override
@@ -572,7 +572,7 @@ public final class DPT21 {
 
     public static final class CEMIServerSupportedFilteringMode extends AbstractDataPointType<DPT21Value.CEMIServerSupportedFilteringMode> {
         private CEMIServerSupportedFilteringMode() {
-            super("21.1001", "cEMI Server Supported Filtering Mode");
+            super("cEMI Server Supported Filtering Mode");
         }
 
         @Override
@@ -597,7 +597,7 @@ public final class DPT21 {
 
     public static final class SecurityReport extends AbstractDataPointType<DPT21Value.SecurityReport> {
         private SecurityReport() {
-            super("21.1002", "Security Report");
+            super("Security Report");
         }
 
         @Override
@@ -621,7 +621,7 @@ public final class DPT21 {
 
     public static final class ChannelActivation8 extends AbstractDataPointType<DPT21Value.ChannelActivation8> {
         private ChannelActivation8() {
-            super("21.1010", "Channel Activation for 8 channels");
+            super("Channel Activation for 8 channels");
         }
 
         @Override

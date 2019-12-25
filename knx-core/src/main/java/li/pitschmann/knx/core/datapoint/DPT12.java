@@ -55,8 +55,8 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType({"12.001", "dpt-12", "dpst-12-1"})
-    public static final DPT12 VALUE_4_OCTET_UNSIGNED_COUNT = new DPT12("12.001", "Value 4-Octet Unsigned Count", 0L, 4294967295L, "pulses");
+    @DataPoint({"12.001", "dpt-12", "dpst-12-1"})
+    public static final DPT12 VALUE_4_OCTET_UNSIGNED_COUNT = new DPT12("Value 4-Octet Unsigned Count", 0L, 4294967295L, "pulses");
 
     /**
      * <strong>12.1200</strong> Volume (l)
@@ -75,8 +75,8 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
      * Resolution: 1 l
      * </pre>
      */
-    @KnxDataPointType({"12.1200", "dpst-12-1200"})
-    public static final DPT12 VOLUME_L = new DPT12("12.1200", "Volume", 0L, 4294967295L, "l");
+    @DataPoint({"12.1200", "dpst-12-1200"})
+    public static final DPT12 VOLUME_L = new DPT12("Volume", 0L, 4294967295L, "l");
 
     /**
      * <strong>12.1201</strong> Volume (m<sup>3</sup>)
@@ -95,24 +95,22 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
      * Resolution: 1 m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType({"12.1201", "dpst-12-1201"})
-    public static final DPT12 VOLUME_M3 = new DPT12("12.1201", "Volume", 0L, 4294967295L, "m³");
+    @DataPoint({"12.1201", "dpst-12-1201"})
+    public static final DPT12 VOLUME_M3 = new DPT12("Volume", 0L, 4294967295L, "m³");
 
     /**
      * Constructor for {@link DPT12}
      *
-     * @param id         identifier for {@link DPT12}
      * @param desc       description for {@link DPT12}
      * @param lowerValue the lower value for {@link DPT12}
      * @param upperValue the upper value for {@link DPT12}
      * @param unit       the unit representation for {@link DPT12}
      */
-    private DPT12(final String id,
-                  final String desc,
+    private DPT12(final String desc,
                   final long lowerValue,
                   final long upperValue,
                   final @Nullable String unit) {
-        super(id, desc, lowerValue, upperValue, unit);
+        super(desc, lowerValue, upperValue, unit);
     }
 
     @Override

@@ -72,18 +72,16 @@ public final class DPT10 extends AbstractDataPointType<DPT10Value> {
      *             Seconds = [0 .. 59]
      * </pre>
      */
-    @KnxDataPointType({"10.001", "dpt-10", "dpst-10-1"})
-    public static final DPT10 TIME_OF_DAY = new DPT10("10.001", "Time Of Day");
+    @DataPoint({"10.001", "dpt-10", "dpst-10-1"})
+    public static final DPT10 TIME_OF_DAY = new DPT10("Time Of Day");
 
     /**
      * Constructor for {@link DPT10}
      *
-     * @param id   identifier for {@link DPT10}
      * @param desc description for {@link DPT10}
      */
-    private DPT10(final String id,
-                  final String desc) {
-        super(id, desc);
+    private DPT10(final String desc) {
+        super(desc);
     }
 
     @Override

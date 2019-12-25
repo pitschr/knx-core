@@ -51,8 +51,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType({"7.001", "dpt-7", "dpst-7-1"})
-    public static final DPT7 VALUE_2_OCTET_UNSIGNED_COUNT = new DPT7("7.001", "Value 2-Octet Unsigned Count", 0, 65535, "pulses");
+    @DataPoint({"7.001", "dpt-7", "dpst-7-1"})
+    public static final DPT7 VALUE_2_OCTET_UNSIGNED_COUNT = new DPT7("Value 2-Octet Unsigned Count", 0, 65535, "pulses", null);
     /**
      * <strong>7.002</strong> Time Period (milliseconds)
      *
@@ -68,8 +68,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 ms
      * </pre>
      */
-    @KnxDataPointType({"7.002", "dpst-7-2"})
-    public static final DPT7 TIME_PERIOD_MS = new DPT7("7.002", "Time Period", 0, 65535, "ms");
+    @DataPoint({"7.002", "dpst-7-2"})
+    public static final DPT7 TIME_PERIOD_MS = new DPT7("Time Period", 0, 65535, "ms", null);
     /**
      * <strong>7.003</strong> Time Period (milliseconds, resolution 10ms)
      *
@@ -85,8 +85,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 10 ms
      * </pre>
      */
-    @KnxDataPointType({"7.003", "dpst-7-3"})
-    public static final DPT7 TIME_PERIOD_10MS = new DPT7("7.003", "Time Period 1/10", 0, 65535, "ms", v -> v / 100d);
+    @DataPoint({"7.003", "dpst-7-3"})
+    public static final DPT7 TIME_PERIOD_10MS = new DPT7("Time Period 1/10", 0, 65535, "ms", v -> v / 100d);
     /**
      * <strong>7.004</strong> Time Period (milliseconds, resolution 100ms)
      *
@@ -102,8 +102,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 100 ms
      * </pre>
      */
-    @KnxDataPointType({"7.004", "dpst-7-4"})
-    public static final DPT7 TIME_PERIOD_100MS = new DPT7("7.004", "Time Period 1/100", 0, 65535, "ms", v -> v / 10d);
+    @DataPoint({"7.004", "dpst-7-4"})
+    public static final DPT7 TIME_PERIOD_100MS = new DPT7("Time Period 1/100", 0, 65535, "ms", v -> v / 10d);
     /**
      * <strong>7.005</strong> Time Period (seconds)
      *
@@ -118,8 +118,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 s
      * </pre>
      */
-    @KnxDataPointType({"7.005", "dpst-7-5"})
-    public static final DPT7 TIME_PERIOD_SECONDS = new DPT7("7.005", "Time Period (sec)", 0, 65535, "s");
+    @DataPoint({"7.005", "dpst-7-5"})
+    public static final DPT7 TIME_PERIOD_SECONDS = new DPT7("Time Period (sec)", 0, 65535, "s", null);
     /**
      * <strong>7.006</strong> Time Period (minutes)
      *
@@ -134,8 +134,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 min
      * </pre>
      */
-    @KnxDataPointType({"7.006", "dpst-7-6"})
-    public static final DPT7 TIME_PERIOD_MINUTES = new DPT7("7.006", "Time Period (min)", 0, 65535, "min");
+    @DataPoint({"7.006", "dpst-7-6"})
+    public static final DPT7 TIME_PERIOD_MINUTES = new DPT7("Time Period (min)", 0, 65535, "min", null);
     /**
      * <strong>7.007</strong> Time Period (hours)
      *
@@ -150,8 +150,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 h
      * </pre>
      */
-    @KnxDataPointType({"7.007", "dpst-7-7"})
-    public static final DPT7 TIME_PERIOD_HOURS = new DPT7("7.007", "Time Period (h)", 0, 65535, "h");
+    @DataPoint({"7.007", "dpst-7-7"})
+    public static final DPT7 TIME_PERIOD_HOURS = new DPT7("Time Period (h)", 0, 65535, "h", null);
     /**
      * <strong>7.010</strong> Identifier Interface Object Property Data Type
      *
@@ -168,8 +168,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Identifier Interface Object Property data type. No Unit.
      * </pre>
      */
-    @KnxDataPointType({"7.010", "dpst-7-10"})
-    public static final DPT7 PROP_DATA_TYPE = new DPT7("7.010", "Interface Object Property ID", 0, 65535, null);
+    @DataPoint({"7.010", "dpst-7-10"})
+    public static final DPT7 PROP_DATA_TYPE = new DPT7("Interface Object Property ID", 0, 65535, null, null);
     /**
      * <strong>7.011</strong> Length (mm)
      *
@@ -184,8 +184,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 mm
      * </pre>
      */
-    @KnxDataPointType({"7.011", "dpst-7-11"})
-    public static final DPT7 LENGTH_MM = new DPT7("7.011", "Length", 0, 65535, "mm");
+    @DataPoint({"7.011", "dpst-7-11"})
+    public static final DPT7 LENGTH_MM = new DPT7("Length", 0, 65535, "mm", null);
     /**
      * <strong>7.012</strong> Electric current (mA)
      *
@@ -202,8 +202,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 mA
      * </pre>
      */
-    @KnxDataPointType({"7.012", "dpst-7-12"})
-    public static final DPT7 ELECTRIC_CURRENT_MILLIAMPERES = new DPT7("7.012", "Electrical Power", 0, 65535, "mA");
+    @DataPoint({"7.012", "dpst-7-12"})
+    public static final DPT7 ELECTRIC_CURRENT_MILLIAMPERES = new DPT7("Electrical Power", 0, 65535, "mA", null);
     /**
      * <strong>7.013</strong> Brightness (lux)
      *
@@ -218,8 +218,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 lux
      * </pre>
      */
-    @KnxDataPointType({"7.013", "dpst-7-13"})
-    public static final DPT7 BRIGHTNESS = new DPT7("7.013", "Brightness", 0, 65535, "lux");
+    @DataPoint({"7.013", "dpst-7-13"})
+    public static final DPT7 BRIGHTNESS = new DPT7("Brightness", 0, 65535, "lux", null);
 
     /**
      * <strong>7.600</strong> Absolute Color Temperature (K)
@@ -235,8 +235,8 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
      * Resolution: 1 K
      * </pre>
      */
-    @KnxDataPointType({"7.600", "dpst-7-600"})
-    public static final DPT7 ABSOLUTE_COLOR_TEMPERATURE = new DPT7("7.600", "Absolute Color Temperature", 0, 65535, "K");
+    @DataPoint({"7.600", "dpst-7-600"})
+    public static final DPT7 ABSOLUTE_COLOR_TEMPERATURE = new DPT7("Absolute Color Temperature", 0, 65535, "K", null);
     /**
      * Calculation function
      * <p>
@@ -247,37 +247,18 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
     /**
      * Constructor for {@link DPT7}
      *
-     * @param id         identifier for {@link DPT7}
-     * @param desc       description for {@link DPT7}
-     * @param lowerValue the lower value for {@link DPT7}
-     * @param upperValue the upper value for {@link DPT7}
-     * @param unit       the unit representation for {@link DPT7}
-     */
-    private DPT7(final String id,
-                 final String desc,
-                 final int lowerValue,
-                 final int upperValue,
-                 final @Nullable String unit) {
-        this(id, desc, lowerValue, upperValue, unit, null);
-    }
-
-    /**
-     * Constructor for {@link DPT7}
-     *
-     * @param id                  identifier for {@link DPT7}
      * @param desc                description for {@link DPT7}
      * @param lowerValue          the lower value for {@link DPT7}
      * @param upperValue          the upper value for {@link DPT7
      * @param unit                the unit representation for {@link DPT7}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT7(final String id,
-                 final String desc,
+    private DPT7(final String desc,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
                  final @Nullable Function<Integer, Double> calculationFunction) {
-        super(id, desc, lowerValue, upperValue, unit);
+        super(desc, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 

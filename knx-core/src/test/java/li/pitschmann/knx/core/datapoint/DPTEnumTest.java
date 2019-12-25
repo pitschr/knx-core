@@ -55,8 +55,7 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
         // failures
         assertThatThrownBy(() -> DPT_ENUM.toValue(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new String[]{null})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue("")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> DPT_ENUM.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
@@ -71,6 +70,8 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
         assertThat(DPT_ENUM.toValue("NO_LAYER")).isInstanceOf(DPTEnumValue.class);
         assertThat(DPT_ENUM.toValue(0)).isInstanceOf(DPTEnumValue.class);
         assertThat(DPT_ENUM.toValue(255)).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.toValue("0x00")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.toValue("0xFF")).isInstanceOf(DPTEnumValue.class);
     }
 
     @Test

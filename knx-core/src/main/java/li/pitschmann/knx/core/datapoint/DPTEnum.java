@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.utils.Bytes;
@@ -41,21 +42,28 @@ import java.util.Map;
  * @param <T> type of DPT enumeration
  * @author PITSCHR
  */
-public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends AbstractDataPointType<DPTEnumValue<T>> {
+public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends AbstractDataPointType<DPTEnumValue<T>> {
     private final Map<Integer, DPTEnumValue<T>> values = Maps.newHashMap(255);
+    private final String id;
 
     /**
-     * Constructor is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.
+     * Constructor is visible for package only. It is subject to be called by {@link DataPointRegistry}.
      *
      * @param id          id of DPT enumeration
      * @param description description of DPT enumeration
      */
     public DPTEnum(final String id, final String description) {
-        super(id, description);
+        super(description);
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     /**
-     * This method is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.
+     * This method is visible for package only. It is subject to be called by {@link DataPointRegistry}.
      *
      * @param enumValue value that should be used for DPT enumeration
      */
@@ -122,5 +130,32 @@ public final class DPTEnum<T extends Enum<T> & DataPointTypeEnum<T>> extends Abs
             throw new KnxEnumNotFoundException(
                     String.format("Could not find data point enum value for dpt '%s' and value '%s'.", this.getId(), args[0]));
         }
+    }
+
+
+    /**
+     * When comparing we take care of the id only.
+     *
+     * @param obj return {@code true} if equals, otherwise {@code false}
+     */
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof DPTEnum) {
+            final var other = (DPTEnum) obj;
+            return this.id.equals(other.id);
+        }
+        return false;
+    }
+
+    /**
+     * Returns the hash code of {@link #id}
+     *
+     * @return hash code of {@link #id}
+     */
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 }

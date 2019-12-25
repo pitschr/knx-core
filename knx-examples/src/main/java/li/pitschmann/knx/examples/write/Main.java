@@ -20,7 +20,7 @@ package li.pitschmann.knx.examples.write;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.utils.Sleeper;
 import li.pitschmann.knx.examples.AbstractKnxMain;
 
@@ -71,7 +71,7 @@ public final class Main extends AbstractKnxMain {
         try (final var client = DefaultKnxClient.createStarted(config)) {
             Sleeper.seconds(1);
             for (final String value : values) {
-                final var dpValue = DataPointTypeRegistry.getDataPointType(dpt).toValue(new String[]{value});
+                final var dpValue = DataPointRegistry.getDataPointType(dpt).toValue(new String[]{value});
                 client.writeRequest(groupAddress, dpValue);
                 log.debug("=> WRITE: {} - {}", value, dpValue);
                 Sleeper.seconds(2);

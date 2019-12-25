@@ -51,27 +51,30 @@ public class DPT19Test extends AbstractDataPointTypeTest<DPT19, DPT19Value> {
     @Override
     @Test
     public void testCompatibility() {
+        final var dpt = DPT_DATE_TIME;
+
         // failures
-        assertThatThrownBy(() -> DPT_DATE_TIME.toValue(new byte[7])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE_TIME.toValue(new byte[9])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE_TIME.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_DATE_TIME.toValue("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_DATE_TIME.toValue("a", "b", "c", "d", "e"))
+        assertThatThrownBy(() -> dpt.toValue(new byte[7])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue(new byte[9])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("a", "b", "c", "d", "e"))
                 .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_DATE_TIME.toValue("9999-99-99", "99:99:99"))
+        assertThatThrownBy(() -> dpt.toValue("9999-99-99", "99:99:99"))
                 .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(DPT_DATE_TIME.toValue((byte) 0x00, (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT19Value.class);
-        assertThat(DPT_DATE_TIME.toValue((byte) 0xff, (byte) 0x0c, (byte) 0x1f, (byte) 0xf7, (byte) 0x3b, (byte) 0x3b, (byte) 0xff, (byte) 0x80))
-                .isInstanceOf(DPT19Value.class);
-
-        assertThat(DPT_DATE_TIME.toValue(null, LocalDate.now(), LocalTime.now(), null)).isInstanceOf(DPT19Value.class);
-        assertThat(DPT_DATE_TIME.toValue(DayOfWeek.WEDNESDAY, LocalDate.now(), LocalTime.now(),
+        assertThat(dpt.toValue((byte) 0x00, (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue((byte) 0xff, (byte) 0x0c, (byte) 0x1f, (byte) 0xf7, (byte) 0x3b, (byte) 0x3b, (byte) 0xff, (byte) 0x80)).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue("0x00", "0x01", "0x01", "0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue("0xff", "0x0c", "0x1f", "0xf7", "0x3b", "0x3b", "0xff", "0x80")).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue(null, LocalDate.now(), LocalTime.now(), null)).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue(DayOfWeek.WEDNESDAY, LocalDate.now(), LocalTime.now(),
                 new Flags(true, true, true, true, false, false, false, false, false))).isInstanceOf(DPT19Value.class);
-        assertThat(DPT_DATE_TIME.toValue("2010-03-04", "14:56:30")).isInstanceOf(DPT19Value.class);
-        assertThat(DPT_DATE_TIME.toValue("FrIDaY", "14:56:30", "2010-03-04")).isInstanceOf(DPT19Value.class);
-        assertThat(DPT_DATE_TIME.toValue("FrIDaY", "14:56:30", "2010-03-04", "0x33 44")).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue("2010-03-04", "14:56:30")).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue("FrIDaY", "14:56:30", "2010-03-04")).isInstanceOf(DPT19Value.class);
+        assertThat(dpt.toValue("FrIDaY", "14:56:30", "2010-03-04", "0x33 44")).isInstanceOf(DPT19Value.class);
     }
 
     @Override

@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Data Point Value for {@link DPT5} (5.xxx)
@@ -68,7 +67,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     }
 
     public double getUnsignedValue() {
-        final Function<Integer, Double> calcFunction = this.getDPT().getCalcuationFunction();
+        final var calcFunction = this.getDPT().getCalculationFunction();
         if (calcFunction == null) {
             return this.rawUnsignedValue;
         } else {

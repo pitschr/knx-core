@@ -3,7 +3,7 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.communication.KnxStatusData;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.plugin.api.v1.json.Status;
 import li.pitschmann.knx.core.plugin.api.v1.json.StatusResponse;
@@ -101,7 +101,7 @@ public final class StatusController extends AbstractController {
         }
 
         if (xmlGroupAddress != null) {
-            response.setDataPointType(DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
+            response.setDataPointType(DataPointRegistry.getDataPointType(xmlGroupAddress.getDataPointType()));
             response.setName(xmlGroupAddress.getName());
             response.setDescription(xmlGroupAddress.getDescription());
         } else {

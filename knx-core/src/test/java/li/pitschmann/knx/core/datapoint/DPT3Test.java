@@ -50,7 +50,7 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue((byte) 0x10)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x11")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue("false", "true", "false")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
@@ -61,6 +61,8 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
             assertThat(dpt.toValue(String.valueOf(i))).isInstanceOf(DPT3Value.class);
             assertThat(dpt.toValue("controlled", String.valueOf(i))).isInstanceOf(DPT3Value.class);
         }
+        assertThat(dpt.toValue("0x0A")).isInstanceOf(DPT3Value.class);
+        assertThat(dpt.toValue("0x0E")).isInstanceOf(DPT3Value.class);
     }
 
     @Override

@@ -51,8 +51,8 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      * Resolution: 1%
      * </pre>
      */
-    @KnxDataPointType({"6.001", "dpst-6-1"})
-    public static final DPT6 PERCENT = new DPT6("6.001", "Percent", -128, 127, "%");
+    @DataPoint({"6.001", "dpst-6-1"})
+    public static final DPT6 PERCENT = new DPT6("Percent", -128, 127, "%");
 
     /**
      * <strong>6.010</strong> Value 1 Octet Signed Count
@@ -68,8 +68,8 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType({"6.010", "dpt-6", "dpst-6-10"})
-    public static final DPT6 VALUE_1_OCTET_COUNT = new DPT6("6.010", "Value 1 Octet Signed Count", -128, 127, "pulses");
+    @DataPoint({"6.010", "dpt-6", "dpst-6-10"})
+    public static final DPT6 VALUE_1_OCTET_COUNT = new DPT6("Value 1 Octet Signed Count", -128, 127, "pulses");
 
     /**
      * <strong>6.020</strong> Status Mode
@@ -91,24 +91,22 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      * Resolution: N/A
      * </pre>
      */
-    @KnxDataPointType({"6.020", "dpst-6-20"})
-    public static final DPT6.StatusMode STATUS_MODE = new DPT6.StatusMode("6.020", "Status Mode");
+    @DataPoint({"6.020", "dpst-6-20"})
+    public static final DPT6.StatusMode STATUS_MODE = new DPT6.StatusMode("Status Mode");
 
     /**
      * Constructor for {@link DPT6}
      *
-     * @param id         identifier for {@link DPT6}
      * @param desc       description for {@link DPT6}
      * @param lowerValue the lower value for {@link DPT6}
      * @param upperValue the upper value for {@link DPT6}
      * @param unit       the unit representation for {@link DPT6}
      */
-    private DPT6(final String id,
-                 final String desc,
+    private DPT6(final String desc,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit) {
-        super(id, desc, lowerValue, upperValue, unit);
+        super(desc, lowerValue, upperValue, unit);
     }
 
     @Override
@@ -148,11 +146,10 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
         /**
          * Constructor for {@link DPT6.StatusMode}
          *
-         * @param id   identifier of {@link StatusMode}
          * @param desc description of {@link StatusMode}
          */
-        private StatusMode(final String id, final String desc) {
-            super(id, desc);
+        private StatusMode(final String desc) {
+            super(desc);
         }
 
         @Override

@@ -51,9 +51,11 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x80")).isInstanceOf(KnxException.class)
+                .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0x80");
+
         // OK
         assertThat(dpt.toValue((byte) 'a')).isInstanceOf(DPT4Value.class);
         assertThat(dpt.toValue((byte) 'z')).isInstanceOf(DPT4Value.class);
@@ -61,6 +63,8 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         assertThat(dpt.toValue('z')).isInstanceOf(DPT4Value.class);
         assertThat(dpt.toValue("a")).isInstanceOf(DPT4Value.class);
         assertThat(dpt.toValue("z")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue("0x50")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.toValue("0x5F")).isInstanceOf(DPT4Value.class);
     }
 
     @Test

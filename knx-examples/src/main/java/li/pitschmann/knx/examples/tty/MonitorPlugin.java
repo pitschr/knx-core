@@ -16,7 +16,7 @@ import li.pitschmann.knx.core.cemi.TPCI;
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.datapoint.DPT8;
 import li.pitschmann.knx.core.datapoint.DataPointType;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
@@ -291,7 +291,7 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
                 if (xmlGroupAddress != null) {
                     final var dptString = xmlGroupAddress.getDataPointType();
                     if (!Strings.isNullOrEmpty(dptString)) {
-                        dpt = DataPointTypeRegistry.getDataPointType(dptString);
+                        dpt = DataPointRegistry.getDataPointType(dptString);
                     }
                 }
             }

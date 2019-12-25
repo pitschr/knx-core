@@ -74,18 +74,16 @@ public final class DPT15 extends AbstractDataPointType<DPT15Value> {
      *                1 = Encryption
      * </pre>
      */
-    @KnxDataPointType({"15.000", "dpt-15", "dpst-15-0"})
-    public static final DPT15 ACCESS_DATA = new DPT15("15.000", "Access Data");
+    @DataPoint({"15.000", "dpt-15", "dpst-15-0"})
+    public static final DPT15 ACCESS_DATA = new DPT15("Access Data");
 
     /**
      * Constructor for {@link DPT15}
      *
-     * @param id   identifier for {@link DPT15}
      * @param desc description for {@link DPT15}
      */
-    private DPT15(final String id,
-                  final String desc) {
-        super(id, desc);
+    private DPT15(final String desc) {
+        super(desc);
     }
 
     @Override

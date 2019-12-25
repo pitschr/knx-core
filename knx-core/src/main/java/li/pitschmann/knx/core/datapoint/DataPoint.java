@@ -24,22 +24,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * KNX Data Point Type to define the id and description for KNX data point
+ * Data Point Annotation to define the id and description of KNX data point
  *
  * @author PITSCHR
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface KnxDataPointType {
+public @interface DataPoint {
     /**
-     * Identifiers for KNX data point type
+     * Identifiers for KNX data point
+     * <p>
+     * First is the main data point type identifier, and rest are alternative identifiers (e.g. for XML)
      *
      * @return string array of possible DPT identifiers, at least one DPT identifier must be defined
      */
     String[] value();
 
     /**
-     * Description of KNX data point type
+     * Description for KNX data point
      *
      * @return description
      */

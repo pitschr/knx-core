@@ -30,12 +30,11 @@ public abstract class AbstractRangeDataPointType<V extends DataPointValue<?>, R 
     private final R lowerValue;
     private final R upperValue;
 
-    public AbstractRangeDataPointType(final String id,
-                                      final String description,
+    public AbstractRangeDataPointType(final String description,
                                       final R lowerValue,
                                       final R upperValue,
                                       final @Nullable String unit) {
-        super(id, description, unit);
+        super(description, unit);
         this.lowerValue = lowerValue;
         this.upperValue = upperValue;
     }

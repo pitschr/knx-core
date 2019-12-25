@@ -53,8 +53,8 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType({"5.001", "dpst-5-1"})
-    public static final DPT5 SCALING = new DPT5("5.001", "Scaling", 0, 100, "%", v -> v * 100d / 255d);
+    @DataPoint({"5.001", "dpst-5-1"})
+    public static final DPT5 SCALING = new DPT5("Scaling", 0, 100, "%", v -> v * 100d / 255d);
     /**
      * <strong>5.003</strong> Angle (°)
      *
@@ -71,8 +71,8 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType({"5.003", "dpst-5-3"})
-    public static final DPT5 ANGLE = new DPT5("5.003", "Angle", 0, 360, "°", v -> v * 360d / 255d);
+    @DataPoint({"5.003", "dpst-5-3"})
+    public static final DPT5 ANGLE = new DPT5("Angle", 0, 360, "°", v -> v * 360d / 255d);
     /**
      * <strong>5.004</strong> Percent 8-bit (%)
      *
@@ -89,8 +89,8 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType({"5.004", "dpst-5-4"})
-    public static final DPT5 PERCENT_U8 = new DPT5("5.004", "Percent 8-bit", 0, 255, "%");
+    @DataPoint({"5.004", "dpst-5-4"})
+    public static final DPT5 PERCENT_U8 = new DPT5("Percent 8-bit", 0, 255, "%", null);
     /**
      * <strong>5.005</strong> Decimal Factor (%)
      *
@@ -108,8 +108,8 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType({"5.005", "dpst-5-5"})
-    public static final DPT5 DECIMAL_FACTOR = new DPT5("5.005", "Decimal Factor", 0, 255, "ratio");
+    @DataPoint({"5.005", "dpst-5-5"})
+    public static final DPT5 DECIMAL_FACTOR = new DPT5("Decimal Factor", 0, 255, "ratio", null);
     /**
      * <strong>5.006</strong> Tariff Information
      *
@@ -129,8 +129,8 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * This DPT shall be used for reading and setting tariff information.
      * </pre>
      */
-    @KnxDataPointType({"5.006", "dpst-5-6"})
-    public static final DPT5 TARIFF_INFORMATION = new DPT5("5.006", "Tariff Information", 0, 254, null);
+    @DataPoint({"5.006", "dpst-5-6"})
+    public static final DPT5 TARIFF_INFORMATION = new DPT5("Tariff Information", 0, 254, null, null);
     /**
      * <strong>5.010</strong> Value 1-octet unsigned count
      *
@@ -145,55 +145,36 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType({"5.010", "dpt-5", "dpst-5-10"})
-    public static final DPT5 VALUE_1_OCTET_UNSIGNED_COUNT = new DPT5("5.010", "Value 1-Octet Unsigned Count", 0, 255, "pulses");
+    @DataPoint({"5.010", "dpt-5", "dpst-5-10"})
+    public static final DPT5 VALUE_1_OCTET_UNSIGNED_COUNT = new DPT5("Value 1-Octet Unsigned Count", 0, 255, "pulses", null);
     /**
      * Calculation function
      * <p>
      * Calculates from {@link Integer} to {@link Float} using a formula
      */
-    private final Function<Integer, Double> calcuationFunction;
+    private final Function<Integer, Double> calculationFunction;
 
     /**
      * Constructor for {@link DPT5}
      *
-     * @param id         identifier for {@link DPT5}
-     * @param desc       description for {@link DPT5}
-     * @param lowerValue the lower value for {@link DPT5}
-     * @param upperValue the upper value for {@link DPT5}
-     * @param unit       the unit representation for {@link DPT5}
-     */
-    private DPT5(final String id,
-                 final String desc,
-                 final int lowerValue,
-                 final int upperValue,
-                 final @Nullable String unit) {
-        this(id, desc, lowerValue, upperValue, unit, null);
-    }
-
-    /**
-     * Constructor for {@link DPT5}
-     *
-     * @param id                  identifier for {@link DPT5}
      * @param desc                description for {@link DPT5}
      * @param lowerValue          the lower value for {@link DPT5}
      * @param upperValue          the upper value for {@link DPT5}
      * @param unit                the unit representation for {@link DPT5}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT5(final String id,
-                 final String desc,
+    private DPT5(final String desc,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
                  final @Nullable Function<Integer, Double> calculationFunction) {
-        super(id, desc, lowerValue, upperValue, unit);
-        this.calcuationFunction = calculationFunction;
+        super(desc, lowerValue, upperValue, unit);
+        this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public Function<Integer, Double> getCalcuationFunction() {
-        return this.calcuationFunction;
+    public Function<Integer, Double> getCalculationFunction() {
+        return this.calculationFunction;
     }
 
     @Override

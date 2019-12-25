@@ -50,10 +50,13 @@ public class DPT21Test implements DPTTest {
         // failures
         assertThatThrownBy(() -> DPT21.CHANNEL_ACTIVATION_8.toValue(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT21.CHANNEL_ACTIVATION_8.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT21.CHANNEL_ACTIVATION_8.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
 
         // OK
         assertThat(DPT21.CHANNEL_ACTIVATION_8.toValue((byte) 0x00)).isInstanceOf(DPT21Value.ChannelActivation8.class);
         assertThat(DPT21.FORCING_SIGNAL_COOLING.toValue((byte) 0xFF)).isInstanceOf(DPT21Value.ForcingSignalCooling.class);
+        assertThat(DPT21.CHANNEL_ACTIVATION_8.toValue("0x00")).isInstanceOf(DPT21Value.ChannelActivation8.class);
+        assertThat(DPT21.FORCING_SIGNAL_COOLING.toValue("0xFF")).isInstanceOf(DPT21Value.ForcingSignalCooling.class);
     }
 
     @Override

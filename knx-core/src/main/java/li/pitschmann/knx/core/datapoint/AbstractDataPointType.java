@@ -44,27 +44,25 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractDataPointType<V extends DataPointValue<?>> implements DataPointType<V> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final String id;
     private final String description;
     private final String unit;
 
-    public AbstractDataPointType(final String id, final String description) {
-        this(id, description, null);
+    public AbstractDataPointType(final String description) {
+        this(description, null);
     }
 
-    public AbstractDataPointType(final String id, final String description, final @Nullable String unit) {
-        this.id = Objects.requireNonNull(id);
+    public AbstractDataPointType(final String description, final @Nullable String unit) {
         this.description = Objects.requireNonNull(description);
         this.unit = unit;
     }
 
     @Override
-    public final String getId() {
-        return this.id;
+    public String getId() {
+        return DataPointRegistry.getDataPointIdentifiers(this)[0];
     }
 
     @Override
-    public final String getDescription() {
+    public String getDescription() {
         if (this.unit == null) {
             return this.description;
         } else {
@@ -73,7 +71,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     }
 
     @Override
-    public final String getUnit() {
+    public String getUnit() {
         return Objects.toString(this.unit, "");
     }
 
@@ -120,49 +118,32 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     /**
      * Returns a {@link DataPointValue} for specified string arguments.
      * <p>
-     * Per default it just parses the string arguments as hex string. This behavior can differ for the specific DPT
-     * class.
+     * Per default it just parses the string arguments as hex string.
+     * This behavior can differ for the specific DPT class.
      *
      * @param args arguments to be parsed
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
     public final V toValue(final String[] args) {
-        Preconditions.checkNonNull(args, "No arguments provided for conversion to data point value object.");
+        Preconditions.checkArgument(args!=null && args.length > 0,
+                "No arguments provided for conversion to data point value object.");
 
-        // not compatible?
-        boolean isCompatible;
-        try {
-            isCompatible = this.isCompatible(args);
-        } catch (final Throwable t) {
-            log.debug("Throwable during isCompatible(String[]) check: {}: {}", t.getClass(), t.getMessage());
-            isCompatible = false;
+        // check if it is a hex string
+        if (args[0].startsWith("0x")) {
+            // looks like a hex-string
+            return tryParseAsHexString(args);
         }
-        if (!isCompatible) {
-            if (log.isDebugEnabled()) {
-                log.debug("Incompatible arguments for parse(String[]). Try with parse as hex string: {}", Arrays.toString(args));
-            }
+        // not a string
+        else if (this.isCompatible(args)) {
+            // seems be ok -> try parse it!
             try {
-                // it may be a hex string -> try to parse it!
-                return this.tryParseAsHexString(args);
-            } catch (final Throwable t) {
-                log.warn("Could not parse hex string for following arguments: {}", Arrays.toString(args));
-                throw new DataPointTypeIncompatibleSyntaxException(this, args);
+                return parse(args);
+            } catch (final Exception ex) {
+                log.debug("Incompatible arguments for parse(String[]): {}", Arrays.toString(args));
             }
         }
-
-        // all OK, now let's parse it
-        try {
-            return this.parse(args);
-        } catch (final Throwable throwable) {
-            log.debug("Could not parse following arguments: {}", Arrays.toString(args));
-            try {
-                return this.tryParseAsHexString(args);
-            } catch (final Throwable throwable2) {
-                log.warn("Throwable during tryParseAsHexString(String[]): {}", throwable.getClass(), throwable2);
-                throw new DataPointTypeIncompatibleSyntaxException(this, args);
-            }
-        }
+        throw new DataPointTypeIncompatibleSyntaxException(this, args);
     }
 
     /**
@@ -282,35 +263,9 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("id", this.id)
+                .add("id", this.getId())
                 .add("description", this.getDescription())
                 .toString();
         // @formatter:on
-    }
-
-    /**
-     * When comparing we take care of the id only.
-     *
-     * @param obj return {@code true} if equals, otherwise {@code false}
-     */
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj instanceof AbstractDataPointType) {
-            final var other = (AbstractDataPointType) obj;
-            return this.id.equals(other.id);
-        }
-        return false;
-    }
-
-    /**
-     * Returns the hash code of {@link #id}
-     *
-     * @return hash code of {@link #id}
-     */
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
     }
 }

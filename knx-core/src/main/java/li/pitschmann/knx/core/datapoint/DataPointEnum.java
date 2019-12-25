@@ -26,7 +26,7 @@ import li.pitschmann.knx.core.datapoint.value.DPTEnumValue;
  * @param <T> the enumeration that should be a data point type enumeration
  * @author PITSCHR
  */
-public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
+public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
     /**
      * Returns the Data Point Value of current enumeration instance
      *
@@ -35,7 +35,7 @@ public interface DataPointTypeEnum<T extends Enum<T> & DataPointTypeEnum<T>> {
     default DPTEnumValue<T> toValue() {
         @SuppressWarnings("unchecked")
         final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
-        return DataPointTypeRegistry.getDataPointType(thisObj);
+        return DataPointRegistry.getDataPointType(thisObj);
     }
 
     /**
