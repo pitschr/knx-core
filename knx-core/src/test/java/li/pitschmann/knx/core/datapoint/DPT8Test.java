@@ -52,6 +52,8 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("-32769")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
@@ -62,6 +64,8 @@ public class DPT8Test extends AbstractDataPointTypeTest<DPT8, DPT8Value> {
         assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT8Value.class);
         assertThat(dpt.toValue(-32768)).isInstanceOf(DPT8Value.class);
         assertThat(dpt.toValue(32767)).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.toValue("0x00", "0x00")).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.toValue("0xFF", "0xFF")).isInstanceOf(DPT8Value.class);
         assertThat(dpt.toValue("-32768")).isInstanceOf(DPT8Value.class);
         assertThat(dpt.toValue("32767")).isInstanceOf(DPT8Value.class);
     }

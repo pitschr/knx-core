@@ -121,18 +121,16 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
      * The receiver (e.g. a room unit, MMI) will interpret Date&Time with "Fault" as corrupted and will either ignore
      * the message or show --:--:-- or blinking 00:00:00 (as known from Video recorders after power-up).
      */
-    @KnxDataPointType({"19.001", "dpt-19", "dpst-19-1"})
-    public static final DPT19 DATE_TIME = new DPT19("19.001", "Date & Time");
+    @DataPoint({"19.001", "dpt-19", "dpst-19-1"})
+    public static final DPT19 DATE_TIME = new DPT19("Date & Time");
 
     /**
      * Constructor for {@link DPT19}
      *
-     * @param id   identifier for {@link DPT19}
      * @param desc description for {@link DPT19}
      */
-    private DPT19(final String id,
-                  final String desc) {
-        super(id, desc);
+    private DPT19(final String desc) {
+        super(desc);
     }
 
     @Override

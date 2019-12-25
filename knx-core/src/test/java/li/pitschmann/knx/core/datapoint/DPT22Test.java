@@ -47,14 +47,20 @@ public class DPT22Test implements DPTTest {
     @Override
     @Test
     public void testCompatibility() {
+        final var dpt = DPT22.CHANNEL_ACTIVATION_16;
+
         // failures
-        assertThatThrownBy(() -> DPT22.CHANNEL_ACTIVATION_16.toValue(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT22.CHANNEL_ACTIVATION_16.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT22.CHANNEL_ACTIVATION_16.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
 
         // OK
-        assertThat(DPT22.CHANNEL_ACTIVATION_16.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT22Value.ChannelActivation16.class);
-        assertThat(DPT22.MEDIA.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT22Value.Media.class);
+        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT22Value.ChannelActivation16.class);
+        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT22Value.ChannelActivation16.class);
+        assertThat(dpt.toValue("0x00", "0x00")).isInstanceOf(DPT22Value.ChannelActivation16.class);
+        assertThat(dpt.toValue("0xFF", "0xFF")).isInstanceOf(DPT22Value.ChannelActivation16.class);
     }
 
     @Override

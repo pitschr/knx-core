@@ -51,7 +51,6 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
@@ -68,14 +67,14 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     @Test
     public void testCalculation() {
         // without calculation functions
-        assertThat(DPT5.PERCENT_U8.getCalcuationFunction()).isNull();
+        assertThat(DPT5.PERCENT_U8.getCalculationFunction()).isNull();
 
         /*
          * SCALING
          */
         // with calculation functions
         final var dptScaling = DPT5.SCALING;
-        assertThat(dptScaling.getCalcuationFunction()).isInstanceOf(Function.class);
+        assertThat(dptScaling.getCalculationFunction()).isInstanceOf(Function.class);
         // value: 0%
         assertThat(dptScaling.toValue(0).getUnsignedValue()).isEqualTo(0d);
         // value: ~25%

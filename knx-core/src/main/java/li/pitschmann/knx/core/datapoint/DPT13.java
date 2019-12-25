@@ -57,8 +57,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 pulse
      * </pre>
      */
-    @KnxDataPointType({"13.001", "dpt-13", "dpst-13-1"})
-    public static final DPT13 VALUE_4_OCTET_COUNT = new DPT13("13.001", "Value 4-Octet Signed Count", -2147483648, 2147483647, "pulses");
+    @DataPoint({"13.001", "dpt-13", "dpst-13-1"})
+    public static final DPT13 VALUE_4_OCTET_COUNT = new DPT13("Value 4-Octet Signed Count", -2147483648, 2147483647, "pulses", null);
     /**
      * <strong>13.002</strong> Flow Rate (m<sup>3</sup>/h) with high resolution
      *
@@ -76,8 +76,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 0.0001 m<sup>3</sup>/h
      * </pre>
      */
-    @KnxDataPointType({"13.002", "dpst-13-2"})
-    public static final DPT13 FLOW_RATE = new DPT13("13.002", "Flow Rate", -2147483648, 2147483647, "m³/h", v -> v / 10000d);
+    @DataPoint({"13.002", "dpst-13-2"})
+    public static final DPT13 FLOW_RATE = new DPT13("Flow Rate", -2147483648, 2147483647, "m³/h", v -> v / 10000d);
     /**
      * <strong>13.010</strong> Active Energy (Wh)
      *
@@ -95,8 +95,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 Wh
      * </pre>
      */
-    @KnxDataPointType({"13.010", "dpst-13-10"})
-    public static final DPT13 ACTIVE_ENERGY = new DPT13("13.010", "Active Energy (Wh)", -2147483648, 2147483647, "Wh");
+    @DataPoint({"13.010", "dpst-13-10"})
+    public static final DPT13 ACTIVE_ENERGY = new DPT13("Active Energy (Wh)", -2147483648, 2147483647, "Wh", null);
     /**
      * <strong>13.011</strong> Apparant Energy (VAh)
      *
@@ -114,8 +114,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 VAh
      * </pre>
      */
-    @KnxDataPointType({"13.011", "dpst-13-11"})
-    public static final DPT13 APPARANT_ENERGY = new DPT13("13.011", "Apparant Energy", -2147483648, 2147483647, "VAh");
+    @DataPoint({"13.011", "dpst-13-11"})
+    public static final DPT13 APPARANT_ENERGY = new DPT13("Apparant Energy", -2147483648, 2147483647, "VAh", null);
     /**
      * <strong>13.012</strong> Reactive Energy (VARh)
      *
@@ -133,8 +133,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 VARh
      * </pre>
      */
-    @KnxDataPointType({"13.012", "dpst-13-12"})
-    public static final DPT13 REACTIVE_ENERGY = new DPT13("13.012", "Reactive Energy", -2147483648, 2147483647, "VARh");
+    @DataPoint({"13.012", "dpst-13-12"})
+    public static final DPT13 REACTIVE_ENERGY = new DPT13("Reactive Energy", -2147483648, 2147483647, "VARh", null);
     /**
      * <strong>13.013</strong> Active Energy (kWh)
      *
@@ -152,8 +152,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 kWh
      * </pre>
      */
-    @KnxDataPointType({"13.013", "dpst-13-13"})
-    public static final DPT13 ACTIVE_ENERGY_KWH = new DPT13("13.013", "Active Energy (kWh)", -2147483648, 2147483647, "kWh");
+    @DataPoint({"13.013", "dpst-13-13"})
+    public static final DPT13 ACTIVE_ENERGY_KWH = new DPT13("Active Energy (kWh)", -2147483648, 2147483647, "kWh", null);
     /**
      * <strong>13.014</strong> Apparant Energy (kVAh)
      *
@@ -171,8 +171,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 kVAh
      * </pre>
      */
-    @KnxDataPointType({"13.014", "dpst-13-14"})
-    public static final DPT13 APPARANT_ENERGY_KVAH = new DPT13("13.014", "Apparant Energy", -2147483648, 2147483647, "kVAh");
+    @DataPoint({"13.014", "dpst-13-14"})
+    public static final DPT13 APPARANT_ENERGY_KVAH = new DPT13("Apparant Energy", -2147483648, 2147483647, "kVAh", null);
     /**
      * <strong>13.015</strong> Reactive Energy (kVARh)
      *
@@ -190,8 +190,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 kVARh
      * </pre>
      */
-    @KnxDataPointType({"13.015", "dpst-13-15"})
-    public static final DPT13 REACTIVE_ENERGY_KVARH = new DPT13("13.015", "Reactive Energy", -2147483648, 2147483647, "kVARh");
+    @DataPoint({"13.015", "dpst-13-15"})
+    public static final DPT13 REACTIVE_ENERGY_KVARH = new DPT13("Reactive Energy", -2147483648, 2147483647, "kVARh", null);
 
     /**
      * <strong>13.016</strong> Active Energy (MWh)
@@ -210,8 +210,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 MWh
      * </pre>
      */
-    @KnxDataPointType({"13.016", "dpst-13-16"})
-    public static final DPT13 ACTIVE_ENERGY_MWH = new DPT13("13.016", "Active Energy (MWh)", -2147483648, 2147483647, "MWh");
+    @DataPoint({"13.016", "dpst-13-16"})
+    public static final DPT13 ACTIVE_ENERGY_MWH = new DPT13("Active Energy (MWh)", -2147483648, 2147483647, "MWh", null);
 
     /**
      * <strong>13.100</strong> Long Delta Time (s)
@@ -230,8 +230,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 s
      * </pre>
      */
-    @KnxDataPointType({"13.100", "dpst-13-100"})
-    public static final DPT13 LONG_DELTA_TIME_SEC = new DPT13("13.100", "Long Delta Time", -2147483648, 2147483647, "s");
+    @DataPoint({"13.100", "dpst-13-100"})
+    public static final DPT13 LONG_DELTA_TIME_SEC = new DPT13("Long Delta Time", -2147483648, 2147483647, "s", null);
 
     /**
      * <strong>13.1200</strong> Delta Volume (l)
@@ -250,8 +250,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 l
      * </pre>
      */
-    @KnxDataPointType({"13.1200", "dpst-13-1200"})
-    public static final DPT13 DELTA_VOLUME_L = new DPT13("13.1200", "Delta Volume", -2147483648, 2147483647, "l");
+    @DataPoint({"13.1200", "dpst-13-1200"})
+    public static final DPT13 DELTA_VOLUME_L = new DPT13("Delta Volume", -2147483648, 2147483647, "l", null);
 
     /**
      * <strong>13.1201</strong> Delta Volume (m<sup>3</sup>)
@@ -270,8 +270,8 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
      * Resolution: 1 m<sup>3</sup>
      * </pre>
      */
-    @KnxDataPointType({"13.1201", "dpst-13-1201"})
-    public static final DPT13 DELTA_VOLUME_M3 = new DPT13("13.1201", "Delta Volume", -2147483648, 2147483647, "m³");
+    @DataPoint({"13.1201", "dpst-13-1201"})
+    public static final DPT13 DELTA_VOLUME_M3 = new DPT13("Delta Volume", -2147483648, 2147483647, "m³", null);
 
     /**
      * Calculation function
@@ -283,37 +283,18 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
     /**
      * Constructor for {@link DPT13}
      *
-     * @param id         identifier for {@link DPT13}
-     * @param desc       description for {@link DPT13}
-     * @param lowerValue the lower value for {@link DPT13}
-     * @param upperValue the upper value for {@link DPT13}
-     * @param unit       the unit representation for {@link DPT13}
-     */
-    private DPT13(final String id,
-                  final String desc,
-                  final int lowerValue,
-                  final int upperValue,
-                  final @Nullable String unit) {
-        this(id, desc, lowerValue, upperValue, unit, null);
-    }
-
-    /**
-     * Constructor for {@link DPT13}
-     *
-     * @param id                  identifier for {@link DPT13}
      * @param desc                description for {@link DPT13}
      * @param lowerValue          the lower value for {@link DPT13}
      * @param upperValue          the upper value for {@link DPT13}
      * @param unit                the unit representation for {@link DPT13}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT13(final String id,
-                  final String desc,
+    private DPT13(final String desc,
                   final int lowerValue,
                   final int upperValue,
                   final @Nullable String unit,
                   final @Nullable Function<Integer, Double> calculationFunction) {
-        super(id, desc, lowerValue, upperValue, unit);
+        super(desc, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 

@@ -53,13 +53,15 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
 
         // failures
         assertThatThrownBy(() -> dpt.toValue(new byte[15])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[2])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue(new String[] {"",""})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> dpt.toValue("Hello World Overflow!")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
+        assertThat(dpt.toValue(new byte[]{'H','a','l','l','o'})).isInstanceOf(DPT16Value.class);
         assertThat(dpt.toValue(Bytes.fillByteArray(new byte[14], new byte[]{'a'}, FillDirection.LEFT_TO_RIGHT))).isInstanceOf(DPT16Value.class);
         assertThat(dpt.toValue(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
         assertThat(dpt.toValue("Hello World!!!")).isInstanceOf(DPT16Value.class);
+        assertThat(dpt.toValue("0x48", "0x61", "0x6C", "0x6C", "0x6F")).isInstanceOf(DPT16Value.class);
     }
 
     /**

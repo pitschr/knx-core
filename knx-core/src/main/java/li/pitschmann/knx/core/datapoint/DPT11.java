@@ -71,18 +71,16 @@ public final class DPT11 extends AbstractDataPointType<DPT11Value> {
      * - If Octet 3 contains value ≥ 90 : interpret as 20th century<br>
      * - If Octet 3 contains value < 90: interpret as 21st century<br>
      */
-    @KnxDataPointType({"11.001", "dpt-11", "dpst-11-1"})
-    public static final DPT11 DATE = new DPT11("11.001", "Date");
+    @DataPoint({"11.001", "dpt-11", "dpst-11-1"})
+    public static final DPT11 DATE = new DPT11("Date");
 
     /**
      * Constructor for {@link DPT11}
      *
-     * @param id   identifier for {@link DPT11}
      * @param desc description for {@link DPT11}
      */
-    private DPT11(final String id,
-                  final String desc) {
-        super(id, desc);
+    private DPT11(final String desc) {
+        super(desc);
     }
 
     @Override

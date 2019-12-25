@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import li.pitschmann.knx.core.datapoint.DataPointType;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.lang.reflect.Type;
@@ -24,6 +24,6 @@ public final class DataPointTypeJsonDeserializer implements JsonDeserializer<Dat
         Preconditions.checkArgument(jsonElement.isJsonPrimitive(),
                 "Expected JsonElement should be a JsonPrimitive, but I got: {}", jsonElement);
 
-        return DataPointTypeRegistry.getDataPointType(jsonElement.getAsString());
+        return DataPointRegistry.getDataPointType(jsonElement.getAsString());
     }
 }

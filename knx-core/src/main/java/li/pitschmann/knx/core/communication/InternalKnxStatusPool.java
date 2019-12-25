@@ -26,7 +26,7 @@ import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DataPointType;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.utils.Maps;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -175,7 +175,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
             @SuppressWarnings("unchecked")
-            final V dataPointValue = (V) DataPointTypeRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
+            final V dataPointValue = (V) DataPointRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
             return dataPointValue;
         }
         return null;

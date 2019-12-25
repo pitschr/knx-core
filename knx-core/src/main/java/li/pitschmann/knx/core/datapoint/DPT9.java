@@ -55,8 +55,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 °C
      * </pre>
      */
-    @KnxDataPointType({"9.001", "dpt-9", "dpst-9-1"})
-    public static final DPT9 TEMPERATURE = new DPT9("9.001", "Temperature", -273, 670760.96, "°C");
+    @DataPoint({"9.001", "dpt-9", "dpst-9-1"})
+    public static final DPT9 TEMPERATURE = new DPT9("Temperature", -273, 670760.96, "°C");
 
     /**
      * <strong>9.002</strong> Temperature Difference (K)
@@ -75,8 +75,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 K
      * </pre>
      */
-    @KnxDataPointType({"9.002", "dpst-9-2"})
-    public static final DPT9 TEMPERATURE_DIFFERENCE = new DPT9("9.002", "Temperature Difference", -671088.64, 670760.96, "K");
+    @DataPoint({"9.002", "dpst-9-2"})
+    public static final DPT9 TEMPERATURE_DIFFERENCE = new DPT9("Temperature Difference", -671088.64, 670760.96, "K");
     /**
      * <strong>9.003</strong> Temperature Kelvin/Hour (K/h)
      *
@@ -94,8 +94,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 K/h
      * </pre>
      */
-    @KnxDataPointType({"9.003", "dpst-9-3"})
-    public static final DPT9 TEMPERATURE_KELVIN_HOUR = new DPT9("9.003", "Temperature Kelvin/Hour", -671088.64, 670760.96, "K/h");
+    @DataPoint({"9.003", "dpst-9-3"})
+    public static final DPT9 TEMPERATURE_KELVIN_HOUR = new DPT9("Temperature Kelvin/Hour", -671088.64, 670760.96, "K/h");
     /**
      * <strong>9.004</strong> Luminous Flux (lux)
      *
@@ -113,8 +113,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 lux
      * </pre>
      */
-    @KnxDataPointType({"9.004", "dpst-9-4"})
-    public static final DPT9 LUMINOUS_FLUX = new DPT9("9.004", "Luminous Flux", 0, 670760.96, "lux");
+    @DataPoint({"9.004", "dpst-9-4"})
+    public static final DPT9 LUMINOUS_FLUX = new DPT9("Luminous Flux", 0, 670760.96, "lux");
     /**
      * <strong>9.005</strong> Wind Speed (m/s)
      *
@@ -132,8 +132,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 m/s
      * </pre>
      */
-    @KnxDataPointType({"9.005", "dpst-9-5"})
-    public static final DPT9 WIND_SPEED = new DPT9("9.005", "Wind Speed", 0, 670760.96, "m/s");
+    @DataPoint({"9.005", "dpst-9-5"})
+    public static final DPT9 WIND_SPEED = new DPT9("Wind Speed", 0, 670760.96, "m/s");
     /**
      * <strong>9.006</strong> Air Pressure (Pa)
      *
@@ -151,8 +151,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 Pa
      * </pre>
      */
-    @KnxDataPointType({"9.006", "dpst-9-6"})
-    public static final DPT9 AIR_PRESSURE = new DPT9("9.006", "Air Pressure", 0, 670760.96, "Pa");
+    @DataPoint({"9.006", "dpst-9-6"})
+    public static final DPT9 AIR_PRESSURE = new DPT9("Air Pressure", 0, 670760.96, "Pa");
     /**
      * <strong>9.007</strong> Humidity (%)
      *
@@ -170,8 +170,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 %
      * </pre>
      */
-    @KnxDataPointType({"9.007", "dpst-9-7"})
-    public static final DPT9 HUMIDITY = new DPT9("9.007", "Humidity", 0, 670760.96, "%");
+    @DataPoint({"9.007", "dpst-9-7"})
+    public static final DPT9 HUMIDITY = new DPT9("Humidity", 0, 670760.96, "%");
     /**
      * <strong>9.008</strong> Air Quality (ppm)
      *
@@ -189,8 +189,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 ppm
      * </pre>
      */
-    @KnxDataPointType({"9.008", "dpst-9-8"})
-    public static final DPT9 AIR_QUALITY = new DPT9("9.008", "Air Quality", 0, 670760.96, "ppm");
+    @DataPoint({"9.008", "dpst-9-8"})
+    public static final DPT9 AIR_QUALITY = new DPT9("Air Quality", 0, 670760.96, "ppm");
 
     /**
      * <strong>9.009</strong> Air Flow (m<sup>3</sup>/h)
@@ -209,8 +209,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 m<sup>3</sup>/h
      * </pre>
      */
-    @KnxDataPointType({"9.009", "dpst-9-9"})
-    public static final DPT9 AIR_FLOW = new DPT9("9.009", "Air Flow", -671088.64, 670760.96, "m³/h");
+    @DataPoint({"9.009", "dpst-9-9"})
+    public static final DPT9 AIR_FLOW = new DPT9("Air Flow", -671088.64, 670760.96, "m³/h");
 
     /**
      * <strong>9.010</strong> Time Difference (seconds)
@@ -229,8 +229,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 s
      * </pre>
      */
-    @KnxDataPointType({"9.010", "dpst-9-10"})
-    public static final DPT9 TIME_DIFFERENCE_SECONDS = new DPT9("9.010", "Time Difference", -671088.64, 670760.96, "s");
+    @DataPoint({"9.010", "dpst-9-10"})
+    public static final DPT9 TIME_DIFFERENCE_SECONDS = new DPT9("Time Difference", -671088.64, 670760.96, "s");
     /**
      * <strong>9.011</strong> Time Difference (milliseconds)
      *
@@ -248,8 +248,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 ms
      * </pre>
      */
-    @KnxDataPointType({"9.011", "dpst-9-11"})
-    public static final DPT9 TIME_DIFFERENCE_MILLISECONDS = new DPT9("9.011", "Time Difference", -671088.64, 670760.96, "ms");
+    @DataPoint({"9.011", "dpst-9-11"})
+    public static final DPT9 TIME_DIFFERENCE_MILLISECONDS = new DPT9("Time Difference", -671088.64, 670760.96, "ms");
     /**
      * <strong>9.020</strong> Voltage (mV)
      *
@@ -267,8 +267,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 mV
      * </pre>
      */
-    @KnxDataPointType({"9.020", "dpst-9-20"})
-    public static final DPT9 VOLTAGE = new DPT9("9.020", "Voltage", -671088.64, 670760.96, "mV");
+    @DataPoint({"9.020", "dpst-9-20"})
+    public static final DPT9 VOLTAGE = new DPT9("Voltage", -671088.64, 670760.96, "mV");
     /**
      * <strong>9.021</strong> Electric Current (mA)
      *
@@ -286,8 +286,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 mA
      * </pre>
      */
-    @KnxDataPointType({"9.021", "dpst-9-21"})
-    public static final DPT9 ELECTRIC_CURRENT = new DPT9("9.021", "Electric Current", -671088.64, 670760.96, "mA");
+    @DataPoint({"9.021", "dpst-9-21"})
+    public static final DPT9 ELECTRIC_CURRENT = new DPT9("Electric Current", -671088.64, 670760.96, "mA");
     /**
      * <strong>9.022</strong> Power Density (W/m<sup>2</sup>)
      *
@@ -305,8 +305,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 W/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType({"9.022", "dpst-9-22"})
-    public static final DPT9 POWER_DENSITY = new DPT9("9.022", "Power Density", -671088.64, 670760.96, "W/m²");
+    @DataPoint({"9.022", "dpst-9-22"})
+    public static final DPT9 POWER_DENSITY = new DPT9("Power Density", -671088.64, 670760.96, "W/m²");
     /**
      * <strong>9.023</strong> Kelvin Per Percent (K/%)
      *
@@ -324,8 +324,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 K/%
      * </pre>
      */
-    @KnxDataPointType({"9.023", "dpst-9-23"})
-    public static final DPT9 KELVIN_PER_PERCENT = new DPT9("9.023", "Kelvin Per Percent", -671088.64, 670760.96, "K/%");
+    @DataPoint({"9.023", "dpst-9-23"})
+    public static final DPT9 KELVIN_PER_PERCENT = new DPT9("Kelvin Per Percent", -671088.64, 670760.96, "K/%");
     /**
      * <strong>9.024</strong> Power (kW)
      *
@@ -343,8 +343,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 kW
      * </pre>
      */
-    @KnxDataPointType({"9.024", "dpst-9-24"})
-    public static final DPT9 POWER = new DPT9("9.024", "Power", -671088.64, 670760.96, "kW");
+    @DataPoint({"9.024", "dpst-9-24"})
+    public static final DPT9 POWER = new DPT9("Power", -671088.64, 670760.96, "kW");
     /**
      * <strong>9.025</strong> Volume Flow (l/h)
      *
@@ -362,8 +362,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 l/h
      * </pre>
      */
-    @KnxDataPointType({"9.025", "dpst-9-25"})
-    public static final DPT9 VOLUME_FLOW = new DPT9("9.025", "Volume Flow", -671088.64, 670760.96, "l/h");
+    @DataPoint({"9.025", "dpst-9-25"})
+    public static final DPT9 VOLUME_FLOW = new DPT9("Volume Flow", -671088.64, 670760.96, "l/h");
     /**
      * <strong>9.026</strong> Rain Amount (l/m<sup>2</sup>)
      *
@@ -381,8 +381,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 l/m<sup>2</sup>
      * </pre>
      */
-    @KnxDataPointType({"9.026", "dpst-9-26"})
-    public static final DPT9 RAIN_AMOUNT = new DPT9("9.026", "Rain Amount", -671088.64f, 670760.96, "l/m²");
+    @DataPoint({"9.026", "dpst-9-26"})
+    public static final DPT9 RAIN_AMOUNT = new DPT9("Rain Amount", -671088.64f, 670760.96, "l/m²");
     /**
      * <strong>9.027</strong> Temperature (°F)
      *
@@ -400,8 +400,8 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 °F
      * </pre>
      */
-    @KnxDataPointType({"9.027", "dpst-9-27"})
-    public static final DPT9 TEMPERATURE_FAHRENHEIT = new DPT9("9.027", "Temperature", -459.6f, 670760.96, "°F");
+    @DataPoint({"9.027", "dpst-9-27"})
+    public static final DPT9 TEMPERATURE_FAHRENHEIT = new DPT9("Temperature", -459.6f, 670760.96, "°F");
     /**
      * <strong>9.028</strong> Wind Speed (km/h)
      *
@@ -419,24 +419,22 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
      * Resolution: 0.01 km/h
      * </pre>
      */
-    @KnxDataPointType({"9.028", "dpst-9-28"})
-    public static final DPT9 WIND_SPEED_KMH = new DPT9("9.028", "Wind Speed", 0f, 670760.96, "km/h");
+    @DataPoint({"9.028", "dpst-9-28"})
+    public static final DPT9 WIND_SPEED_KMH = new DPT9("Wind Speed", 0f, 670760.96, "km/h");
 
     /**
      * Constructor for {@link DPT9}
      *
-     * @param id         identifier for {@link DPT9}
      * @param desc       description for {@link DPT9}
      * @param lowerValue the lower value for {@link DPT9}
      * @param upperValue the upper value for {@link DPT9}
      * @param unit       the unit representation for {@link DPT9}
      */
-    private DPT9(final String id,
-                 final String desc,
+    private DPT9(final String desc,
                  final double lowerValue,
                  final double upperValue,
                  final @Nullable String unit) {
-        super(id, desc, lowerValue, upperValue, unit);
+        super(desc, lowerValue, upperValue, unit);
     }
 
     @Override

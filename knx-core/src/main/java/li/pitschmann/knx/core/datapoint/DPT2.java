@@ -47,8 +47,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = off, 1 = on}
      * </pre>
      */
-    @KnxDataPointType({"2.001", "dpt-2", "dpst-2-1"})
-    public static final DPT2 SWITCH_CONTROL = new DPT2("2.001", "Switch Controlled", DPT1.SWITCH);
+    @DataPoint({"2.001", "dpt-2", "dpst-2-1"})
+    public static final DPT2 SWITCH_CONTROL = new DPT2("Switch Controlled", DPT1.SWITCH);
     /**
      * <strong>2.002</strong> Boolean Controlled
      *
@@ -62,8 +62,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = false, 1 = true}
      * </pre>
      */
-    @KnxDataPointType({"2.002", "dpst-2-2"})
-    public static final DPT2 BOOL_CONTROL = new DPT2("2.002", "Boolean Controlled", DPT1.BOOL);
+    @DataPoint({"2.002", "dpst-2-2"})
+    public static final DPT2 BOOL_CONTROL = new DPT2("Boolean Controlled", DPT1.BOOL);
     /**
      * <strong>2.003</strong> Enable Controlled
      *
@@ -77,8 +77,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = disable, 1 = enable}
      * </pre>
      */
-    @KnxDataPointType({"2.003", "dpst-2-3"})
-    public static final DPT2 ENABLE_CONTROL = new DPT2("2.003", "Enable Controlled", DPT1.ENABLE);
+    @DataPoint({"2.003", "dpst-2-3"})
+    public static final DPT2 ENABLE_CONTROL = new DPT2("Enable Controlled", DPT1.ENABLE);
     /**
      * <strong>2.004</strong> Ramp Controlled
      *
@@ -92,8 +92,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = no ramp, 1 = ramp}
      * </pre>
      */
-    @KnxDataPointType({"2.004", "dpst-2-4"})
-    public static final DPT2 RAMP_CONTROL = new DPT2("2.004", "Ramp Controlled", DPT1.RAMP);
+    @DataPoint({"2.004", "dpst-2-4"})
+    public static final DPT2 RAMP_CONTROL = new DPT2("Ramp Controlled", DPT1.RAMP);
     /**
      * <strong>2.005</strong> Alarm Controlled
      *
@@ -107,8 +107,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = no alarm, 1 = alarm}
      * </pre>
      */
-    @KnxDataPointType({"2.005", "dpst-2-5"})
-    public static final DPT2 ALARM_CONTROL = new DPT2("2.005", "Alarm Controlled", DPT1.ALARM);
+    @DataPoint({"2.005", "dpst-2-5"})
+    public static final DPT2 ALARM_CONTROL = new DPT2("Alarm Controlled", DPT1.ALARM);
     /**
      * <strong>2.006</strong> Binary Value Controlled
      *
@@ -122,8 +122,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = low, 1 = high}
      * </pre>
      */
-    @KnxDataPointType({"2.006", "dpst-2-6"})
-    public static final DPT2 BINARY_VALUE_CONTROL = new DPT2("2.006", "Binary Value Controlled", DPT1.BINARY_VALUE);
+    @DataPoint({"2.006", "dpst-2-6"})
+    public static final DPT2 BINARY_VALUE_CONTROL = new DPT2("Binary Value Controlled", DPT1.BINARY_VALUE);
     /**
      * <strong>2.007</strong> Step Controlled
      *
@@ -137,8 +137,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = decrease, 1 = increase}
      * </pre>
      */
-    @KnxDataPointType({"2.007", "dpst-2-7"})
-    public static final DPT2 STEP_CONTROL = new DPT2("2.007", "Step Controlled", DPT1.STEP);
+    @DataPoint({"2.007", "dpst-2-7"})
+    public static final DPT2 STEP_CONTROL = new DPT2("Step Controlled", DPT1.STEP);
     /**
      * <strong>2.008</strong> Up & Down Controlled
      *
@@ -152,8 +152,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = up, 1 = down}
      * </pre>
      */
-    @KnxDataPointType({"2.008", "dpst-2-8"})
-    public static final DPT2 UP_DOWN_CONTROL = new DPT2("2.008", "Up & Down Controlled", DPT1.UP_DOWN);
+    @DataPoint({"2.008", "dpst-2-8"})
+    public static final DPT2 UP_DOWN_CONTROL = new DPT2("Up & Down Controlled", DPT1.UP_DOWN);
     /**
      * <strong>2.009</strong> Open & Close Controlled
      *
@@ -167,8 +167,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = open, 1 = close}
      * </pre>
      */
-    @KnxDataPointType({"2.009", "dpst-2-9"})
-    public static final DPT2 OPEN_CLOSE_CONTROL = new DPT2("2.009", "Open & Close Controlled", DPT1.OPEN_CLOSE);
+    @DataPoint({"2.009", "dpst-2-9"})
+    public static final DPT2 OPEN_CLOSE_CONTROL = new DPT2("Open & Close Controlled", DPT1.OPEN_CLOSE);
     /**
      * <strong>2.010</strong> Start Controlled
      *
@@ -182,8 +182,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = stop, 1 = start}
      * </pre>
      */
-    @KnxDataPointType({"2.010", "dpst-2-10"})
-    public static final DPT2 START_CONTROL = new DPT2("2.010", "Start Controlled", DPT1.START);
+    @DataPoint({"2.010", "dpst-2-10"})
+    public static final DPT2 START_CONTROL = new DPT2("Start Controlled", DPT1.START);
     /**
      * <strong>2.011</strong> State Controlled
      *
@@ -197,8 +197,8 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = inactive, 1 = active}
      * </pre>
      */
-    @KnxDataPointType({"2.011", "dpst-2-11"})
-    public static final DPT2 STATE_CONTROL = new DPT2("2.011", "State Controlled", DPT1.STATE);
+    @DataPoint({"2.011", "dpst-2-11"})
+    public static final DPT2 STATE_CONTROL = new DPT2("State Controlled", DPT1.STATE);
     /**
      * <strong>2.012</strong> Invert Controlled
      *
@@ -212,22 +212,20 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
      *             v = {0 = not inverted, 1 = inverted}
      * </pre>
      */
-    @KnxDataPointType({"2.012", "dpst-2-12"})
-    public static final DPT2 INVERT_CONTROL = new DPT2("2.012", "Invert Controlled", DPT1.INVERT);
+    @DataPoint({"2.012", "dpst-2-12"})
+    public static final DPT2 INVERT_CONTROL = new DPT2("Invert Controlled", DPT1.INVERT);
 
     private final DPT1 dpt1;
 
     /**
      * Constructor for {@link DPT2}
      *
-     * @param id          identifier for {@link DPT2}
      * @param description description for {@link DPT2}
      * @param dpt1        the basis {@link DPT1} for {@link DPT2}
      */
-    private DPT2(final String id,
-                 final String description,
+    private DPT2(final String description,
                  final DPT1 dpt1) {
-        super(id, description);
+        super(description);
         this.dpt1 = dpt1;
     }
 

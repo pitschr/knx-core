@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.datapoint.value.DataPointEnumValue;
+
 /**
  * Data Point Type 20 for '8-Bit Enumeration' (1 Octet)
  *
@@ -51,13 +53,13 @@ public final class DPT20 {
      *                  2 = Master
      * </pre>
      */
-    @KnxDataPointType(value = {"20.001", "dpst-20-1"}, description = "SCLO Mode")
-    public enum SCLOMode implements DataPointTypeEnum<SCLOMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Autonomous")
+    @DataPoint(value = {"20.001", "dpst-20-1"}, description = "SCLO Mode")
+    public enum SCLOMode implements DataPointEnum<SCLOMode> {
+        @DataPointEnumValue(value = 0, description = "Autonomous")
         AUTONOMOUS, //
-        @KnxDataPointEnumValue(value = 1, description = "Slave")
+        @DataPointEnumValue(value = 1, description = "Slave")
         SLAVE, //
-        @KnxDataPointEnumValue(value = 2, description = "Master")
+        @DataPointEnumValue(value = 2, description = "Master")
         MASTER
     }
 
@@ -76,13 +78,13 @@ public final class DPT20 {
      *                  2 = Building protection
      * </pre>
      */
-    @KnxDataPointType(value = {"20.002", "dpst-20-2"}, description = "Building Mode")
-    public enum BuildingMode implements DataPointTypeEnum<BuildingMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Building in use")
+    @DataPoint(value = {"20.002", "dpst-20-2"}, description = "Building Mode")
+    public enum BuildingMode implements DataPointEnum<BuildingMode> {
+        @DataPointEnumValue(value = 0, description = "Building in use")
         BUILDING_IN_USE, //
-        @KnxDataPointEnumValue(value = 1, description = "Building not used")
+        @DataPointEnumValue(value = 1, description = "Building not used")
         BUILDING_NOT_USED, //
-        @KnxDataPointEnumValue(value = 2, description = "Building protection")
+        @DataPointEnumValue(value = 2, description = "Building protection")
         BUILDING_PROTECTION
     }
 
@@ -101,13 +103,13 @@ public final class DPT20 {
      *                  2 = Not Occupied
      * </pre>
      */
-    @KnxDataPointType(value = {"20.003", "dpst-20-3"}, description = "Occupancy Mode")
-    public enum OccupancyMode implements DataPointTypeEnum<OccupancyMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Occupied")
+    @DataPoint(value = {"20.003", "dpst-20-3"}, description = "Occupancy Mode")
+    public enum OccupancyMode implements DataPointEnum<OccupancyMode> {
+        @DataPointEnumValue(value = 0, description = "Occupied")
         OCCUPIED, //
-        @KnxDataPointEnumValue(value = 1, description = "Standby")
+        @DataPointEnumValue(value = 1, description = "Standby")
         STANDBY, //
-        @KnxDataPointEnumValue(value = 2, description = "Not Occupied")
+        @DataPointEnumValue(value = 2, description = "Not Occupied")
         NOT_OCCUPIED
     }
 
@@ -127,15 +129,15 @@ public final class DPT20 {
      *                  3 = (void)
      * </pre>
      */
-    @KnxDataPointType(value = {"20.004", "dpst-20-4"}, description = "Priority")
-    public enum Priority implements DataPointTypeEnum<Priority> {
-        @KnxDataPointEnumValue(value = 0, description = "High")
+    @DataPoint(value = {"20.004", "dpst-20-4"}, description = "Priority")
+    public enum Priority implements DataPointEnum<Priority> {
+        @DataPointEnumValue(value = 0, description = "High")
         HIGH, //
-        @KnxDataPointEnumValue(value = 1, description = "Medium")
+        @DataPointEnumValue(value = 1, description = "Medium")
         MEDIUM, //
-        @KnxDataPointEnumValue(value = 2, description = "Low")
+        @DataPointEnumValue(value = 2, description = "Low")
         LOW, //
-        @KnxDataPointEnumValue(value = 3, description = "(void)")
+        @DataPointEnumValue(value = 3, description = "(void)")
         VOID
     }
 
@@ -154,13 +156,13 @@ public final class DPT20 {
      *                  2 = Night Round
      * </pre>
      */
-    @KnxDataPointType(value = {"20.005", "dpst-20-5"}, description = "Light Application Mode")
-    public enum LightApplicationMode implements DataPointTypeEnum<LightApplicationMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Normal")
+    @DataPoint(value = {"20.005", "dpst-20-5"}, description = "Light Application Mode")
+    public enum LightApplicationMode implements DataPointEnum<LightApplicationMode> {
+        @DataPointEnumValue(value = 0, description = "Normal")
         NORMAL, //
-        @KnxDataPointEnumValue(value = 1, description = "Presence Simulation")
+        @DataPointEnumValue(value = 1, description = "Presence Simulation")
         PRESENCE_SIMULATION, //
-        @KnxDataPointEnumValue(value = 2, description = "Night Round")
+        @DataPointEnumValue(value = 2, description = "Night Round")
         NIGHT_ROUND
     }
 
@@ -187,29 +189,29 @@ public final class DPT20 {
      *                 50 = Shutters and Blinds
      * </pre>
      */
-    @KnxDataPointType(value = {"20.006", "dpst-20-6"}, description = "Application Area")
-    public enum ApplicationArea implements DataPointTypeEnum<ApplicationArea> {
-        @KnxDataPointEnumValue(value = 0, description = "No Fault")
+    @DataPoint(value = {"20.006", "dpst-20-6"}, description = "Application Area")
+    public enum ApplicationArea implements DataPointEnum<ApplicationArea> {
+        @DataPointEnumValue(value = 0, description = "No Fault")
         NO_FAULT, //
-        @KnxDataPointEnumValue(value = 1, description = "System and Functions of common interest")
+        @DataPointEnumValue(value = 1, description = "System and Functions of common interest")
         SYSTEM_AND_FUNCTIONS, //
-        @KnxDataPointEnumValue(value = 10, description = "HVAC General FBs")
+        @DataPointEnumValue(value = 10, description = "HVAC General FBs")
         HVAC_GENERAL, //
-        @KnxDataPointEnumValue(value = 11, description = "HVAC Hot Water Heating")
+        @DataPointEnumValue(value = 11, description = "HVAC Hot Water Heating")
         HVAC_HOT_WATER_HEATING, //
-        @KnxDataPointEnumValue(value = 12, description = "HVAC Direct Electrical Heating")
+        @DataPointEnumValue(value = 12, description = "HVAC Direct Electrical Heating")
         HVAC_DIRECT_ELECTRICAL_HEATING, //
-        @KnxDataPointEnumValue(value = 13, description = "HVAC Terminal Units")
+        @DataPointEnumValue(value = 13, description = "HVAC Terminal Units")
         HVAC_TERMINAL_UNITS, //
-        @KnxDataPointEnumValue(value = 14, description = "HVAC VAC")
+        @DataPointEnumValue(value = 14, description = "HVAC VAC")
         HVAC_VAC, //
-        @KnxDataPointEnumValue(value = 20, description = "Lighting")
+        @DataPointEnumValue(value = 20, description = "Lighting")
         LIGHTING, //
-        @KnxDataPointEnumValue(value = 30, description = "Security")
+        @DataPointEnumValue(value = 30, description = "Security")
         SECURITY, //
-        @KnxDataPointEnumValue(value = 40, description = "Load Management")
+        @DataPointEnumValue(value = 40, description = "Load Management")
         LOAD_MANAGEMENT, //
-        @KnxDataPointEnumValue(value = 50, description = "Shutters and Blinds")
+        @DataPointEnumValue(value = 50, description = "Shutters and Blinds")
         SHUTTERS_AND_BLINDS
     }
 
@@ -229,13 +231,13 @@ public final class DPT20 {
      *                  3 = Extended Alarm
      * </pre>
      */
-    @KnxDataPointType(value = {"20.007", "dpst-20-7"}, description = "Alarm Class Type")
-    public enum AlarmClassType implements DataPointTypeEnum<AlarmClassType> {
-        @KnxDataPointEnumValue(value = 1, description = "Simple Alarm")
+    @DataPoint(value = {"20.007", "dpst-20-7"}, description = "Alarm Class Type")
+    public enum AlarmClassType implements DataPointEnum<AlarmClassType> {
+        @DataPointEnumValue(value = 1, description = "Simple Alarm")
         SIMPLE, //
-        @KnxDataPointEnumValue(value = 2, description = "Basic Alarm")
+        @DataPointEnumValue(value = 2, description = "Basic Alarm")
         BASIC, //
-        @KnxDataPointEnumValue(value = 3, description = "Extended Alarm")
+        @DataPointEnumValue(value = 3, description = "Extended Alarm")
         EXTENDED
     }
 
@@ -254,13 +256,13 @@ public final class DPT20 {
      *                  2 = Auto
      * </pre>
      */
-    @KnxDataPointType(value = {"20.008", "dpst-20-8"}, description = "PSU Mode")
-    public enum PSUMode implements DataPointTypeEnum<PSUMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Disabled")
+    @DataPoint(value = {"20.008", "dpst-20-8"}, description = "PSU Mode")
+    public enum PSUMode implements DataPointEnum<PSUMode> {
+        @DataPointEnumValue(value = 0, description = "Disabled")
         DISABLED, //
-        @KnxDataPointEnumValue(value = 1, description = "Enabled")
+        @DataPointEnumValue(value = 1, description = "Enabled")
         ENABLED, //
-        @KnxDataPointEnumValue(value = 2, description = "Auto")
+        @DataPointEnumValue(value = 2, description = "Auto")
         AUTO
     }
 
@@ -295,45 +297,45 @@ public final class DPT20 {
      *                 18 = Group Object Type exceeds
      * </pre>
      */
-    @KnxDataPointType(value = {"20.011", "dpst-20-11"}, description = "Error Class Type")
-    public enum ErrorClassType implements DataPointTypeEnum<ErrorClassType> {
-        @KnxDataPointEnumValue(value = 0, description = "No Fault")
+    @DataPoint(value = {"20.011", "dpst-20-11"}, description = "Error Class Type")
+    public enum ErrorClassType implements DataPointEnum<ErrorClassType> {
+        @DataPointEnumValue(value = 0, description = "No Fault")
         NO_FAULT, //
-        @KnxDataPointEnumValue(value = 1, description = "General Device Fault (e.g. RAM, EEPROM, UI, watchdog, ...)")
+        @DataPointEnumValue(value = 1, description = "General Device Fault (e.g. RAM, EEPROM, UI, watchdog, ...)")
         GENERAL_DEVICE_FAULT, //
-        @KnxDataPointEnumValue(value = 2, description = "Communication Fault")
+        @DataPointEnumValue(value = 2, description = "Communication Fault")
         COMMUNICATION_FAULT, //
-        @KnxDataPointEnumValue(value = 3, description = "Configuration Fault")
+        @DataPointEnumValue(value = 3, description = "Configuration Fault")
         CONFIGURATION_FAULT, //
-        @KnxDataPointEnumValue(value = 4, description = "Hardware Fault")
+        @DataPointEnumValue(value = 4, description = "Hardware Fault")
         HARDWARE_FAULT, //
-        @KnxDataPointEnumValue(value = 5, description = "Software Fault")
+        @DataPointEnumValue(value = 5, description = "Software Fault")
         SOFTWARE_FAULT, //
-        @KnxDataPointEnumValue(value = 6, description = "Insufficient non volatile memory")
+        @DataPointEnumValue(value = 6, description = "Insufficient non volatile memory")
         INSUFFICIENT_NON_VOLATILE_MEMORY, //
-        @KnxDataPointEnumValue(value = 7, description = "Insufficient volatile memory")
+        @DataPointEnumValue(value = 7, description = "Insufficient volatile memory")
         INSUFFICIENT_VOLATILE_MEMORY, //
-        @KnxDataPointEnumValue(value = 8, description = "Memory allocation command with size 0 received")
+        @DataPointEnumValue(value = 8, description = "Memory allocation command with size 0 received")
         MEMORY_ALLOCATION_COMMAND_WITH_SIZE_0_RECEIVED, //
-        @KnxDataPointEnumValue(value = 9, description = "CRC-error")
+        @DataPointEnumValue(value = 9, description = "CRC-error")
         CRC_ERROR, //
-        @KnxDataPointEnumValue(value = 10, description = "Watchdog reset detected")
+        @DataPointEnumValue(value = 10, description = "Watchdog reset detected")
         WATCHDOG_RESET_DETECTED, //
-        @KnxDataPointEnumValue(value = 11, description = "Invalid opcode detected")
+        @DataPointEnumValue(value = 11, description = "Invalid opcode detected")
         INVALID_OPCODE_DETECTED, //
-        @KnxDataPointEnumValue(value = 12, description = "General Protection Fault")
+        @DataPointEnumValue(value = 12, description = "General Protection Fault")
         GENERAL_PROTECTION_FAULT, //
-        @KnxDataPointEnumValue(value = 13, description = "Maximal table length exceeded")
+        @DataPointEnumValue(value = 13, description = "Maximal table length exceeded")
         MAXIMAL_TABLE_LENGTH_EXCEEDED, //
-        @KnxDataPointEnumValue(value = 14, description = "Undefined load command received")
+        @DataPointEnumValue(value = 14, description = "Undefined load command received")
         UNDEFINED_LOAD_COMMAND_RECEIVED, //
-        @KnxDataPointEnumValue(value = 15, description = "Group Address Table is not sorted")
+        @DataPointEnumValue(value = 15, description = "Group Address Table is not sorted")
         GROUP_ADDRESS_TABLE_IS_NOT_SORTED, //
-        @KnxDataPointEnumValue(value = 16, description = "Invalid connection number (TSAP)")
+        @DataPointEnumValue(value = 16, description = "Invalid connection number (TSAP)")
         INVALID_CONNECTION_NUMBER, //
-        @KnxDataPointEnumValue(value = 17, description = "Invalid Group Object number (ASAP)")
+        @DataPointEnumValue(value = 17, description = "Invalid Group Object number (ASAP)")
         INVALID_GROUP_OBJECT_NUMBER, //
-        @KnxDataPointEnumValue(value = 18, description = "Group Object Type exceeds")
+        @DataPointEnumValue(value = 18, description = "Group Object Type exceeds")
         GROUP_OBJECT_TYPE_EXCEEDS
     }
 
@@ -354,17 +356,17 @@ public final class DPT20 {
      *                  4 = Other Fault
      * </pre>
      */
-    @KnxDataPointType(value = {"20.012", "dpst-20-12"}, description = "Error Class HVAC")
-    public enum ErrorClassHVAC implements DataPointTypeEnum<ErrorClassHVAC> {
-        @KnxDataPointEnumValue(value = 0, description = "No Fault")
+    @DataPoint(value = {"20.012", "dpst-20-12"}, description = "Error Class HVAC")
+    public enum ErrorClassHVAC implements DataPointEnum<ErrorClassHVAC> {
+        @DataPointEnumValue(value = 0, description = "No Fault")
         NO_FAULT, //
-        @KnxDataPointEnumValue(value = 1, description = "Sensor Fault")
+        @DataPointEnumValue(value = 1, description = "Sensor Fault")
         SENSOR_FAULT, //
-        @KnxDataPointEnumValue(value = 2, description = "Process Fault / Controller Fault")
+        @DataPointEnumValue(value = 2, description = "Process Fault / Controller Fault")
         PROCESS_OR_CONTROLLER_FAULT, //
-        @KnxDataPointEnumValue(value = 3, description = "Actuator Fault")
+        @DataPointEnumValue(value = 3, description = "Actuator Fault")
         ACTUATOR_FAULT, //
-        @KnxDataPointEnumValue(value = 4, description = "Other Fault")
+        @DataPointEnumValue(value = 4, description = "Other Fault")
         OTHER_FAULT
     }
 
@@ -406,59 +408,59 @@ public final class DPT20 {
      *                 25 = 24 h
      * </pre>
      */
-    @KnxDataPointType(value = {"20.013", "dpst-20-13"}, description = "Time Delay")
-    public enum TimeDelay implements DataPointTypeEnum<TimeDelay> {
-        @KnxDataPointEnumValue(value = 0, description = "not active")
+    @DataPoint(value = {"20.013", "dpst-20-13"}, description = "Time Delay")
+    public enum TimeDelay implements DataPointEnum<TimeDelay> {
+        @DataPointEnumValue(value = 0, description = "not active")
         NO_DELAY, //
-        @KnxDataPointEnumValue(value = 1, description = "1 s")
+        @DataPointEnumValue(value = 1, description = "1 s")
         DELAY_1SEC, //
-        @KnxDataPointEnumValue(value = 2, description = "2 s")
+        @DataPointEnumValue(value = 2, description = "2 s")
         DELAY_2SEC, //
-        @KnxDataPointEnumValue(value = 3, description = "3 s")
+        @DataPointEnumValue(value = 3, description = "3 s")
         DELAY_3SEC, //
-        @KnxDataPointEnumValue(value = 4, description = "5 s")
+        @DataPointEnumValue(value = 4, description = "5 s")
         DELAY_5SEC, //
-        @KnxDataPointEnumValue(value = 5, description = "10 s")
+        @DataPointEnumValue(value = 5, description = "10 s")
         DELAY_10SEC, //
-        @KnxDataPointEnumValue(value = 6, description = "15 s")
+        @DataPointEnumValue(value = 6, description = "15 s")
         DELAY_15SEC, //
-        @KnxDataPointEnumValue(value = 7, description = "20 s")
+        @DataPointEnumValue(value = 7, description = "20 s")
         DELAY_20SEC, //
-        @KnxDataPointEnumValue(value = 8, description = "30 s")
+        @DataPointEnumValue(value = 8, description = "30 s")
         DELAY_30SEC, //
-        @KnxDataPointEnumValue(value = 9, description = "45 s")
+        @DataPointEnumValue(value = 9, description = "45 s")
         DELAY_45SEC, //
-        @KnxDataPointEnumValue(value = 10, description = "1 min")
+        @DataPointEnumValue(value = 10, description = "1 min")
         DELAY_1MIN, //
-        @KnxDataPointEnumValue(value = 11, description = "1 1/4 min")
+        @DataPointEnumValue(value = 11, description = "1 1/4 min")
         DELAY_1MIN_AND_15SEC, //
-        @KnxDataPointEnumValue(value = 12, description = "1 1/2 min")
+        @DataPointEnumValue(value = 12, description = "1 1/2 min")
         DELAY_1MIN_AND_30SEC, //
-        @KnxDataPointEnumValue(value = 13, description = "2 min")
+        @DataPointEnumValue(value = 13, description = "2 min")
         DELAY_2MIN, //
-        @KnxDataPointEnumValue(value = 14, description = "2 1/2 min")
+        @DataPointEnumValue(value = 14, description = "2 1/2 min")
         DELAY_2MIN_AND_30SEC, //
-        @KnxDataPointEnumValue(value = 15, description = "3 min")
+        @DataPointEnumValue(value = 15, description = "3 min")
         DELAY_3MIN, //
-        @KnxDataPointEnumValue(value = 16, description = "5 min")
+        @DataPointEnumValue(value = 16, description = "5 min")
         DELAY_5MIN, //
-        @KnxDataPointEnumValue(value = 17, description = "15 min")
+        @DataPointEnumValue(value = 17, description = "15 min")
         DELAY_15MIN, //
-        @KnxDataPointEnumValue(value = 18, description = "20 min")
+        @DataPointEnumValue(value = 18, description = "20 min")
         DELAY_20MIN, //
-        @KnxDataPointEnumValue(value = 19, description = "30 min")
+        @DataPointEnumValue(value = 19, description = "30 min")
         DELAY_30MIN, //
-        @KnxDataPointEnumValue(value = 20, description = "1 h")
+        @DataPointEnumValue(value = 20, description = "1 h")
         DELAY_1HOUR, //
-        @KnxDataPointEnumValue(value = 21, description = "2 h")
+        @DataPointEnumValue(value = 21, description = "2 h")
         DELAY_2H, //
-        @KnxDataPointEnumValue(value = 22, description = "3 h")
+        @DataPointEnumValue(value = 22, description = "3 h")
         DELAY_3H, //
-        @KnxDataPointEnumValue(value = 23, description = "5 h")
+        @DataPointEnumValue(value = 23, description = "5 h")
         DELAY_5H, //
-        @KnxDataPointEnumValue(value = 24, description = "12 h")
+        @DataPointEnumValue(value = 24, description = "12 h")
         DELAY_12H, //
-        @KnxDataPointEnumValue(value = 25, description = "24 h")
+        @DataPointEnumValue(value = 25, description = "24 h")
         DELAY_24H
     }
 
@@ -487,33 +489,33 @@ public final class DPT20 {
      *                  12 = hurricane
      * </pre>
      */
-    @KnxDataPointType(value = {"20.014", "dpst-20-14"}, description = "Beaufort Wind Force Scale")
-    public enum BeaufortWindForceScale implements DataPointTypeEnum<BeaufortWindForceScale> {
-        @KnxDataPointEnumValue(value = 0, description = "no wind")
+    @DataPoint(value = {"20.014", "dpst-20-14"}, description = "Beaufort Wind Force Scale")
+    public enum BeaufortWindForceScale implements DataPointEnum<BeaufortWindForceScale> {
+        @DataPointEnumValue(value = 0, description = "no wind")
         NO_WIND, //
-        @KnxDataPointEnumValue(value = 1, description = "light air")
+        @DataPointEnumValue(value = 1, description = "light air")
         LIGHT_AIR, //
-        @KnxDataPointEnumValue(value = 2, description = "light breeze")
+        @DataPointEnumValue(value = 2, description = "light breeze")
         LIGHT_BREEZE, //
-        @KnxDataPointEnumValue(value = 3, description = "gentle breeze")
+        @DataPointEnumValue(value = 3, description = "gentle breeze")
         GENTLE_BREEZE, //
-        @KnxDataPointEnumValue(value = 4, description = "moderate breeze")
+        @DataPointEnumValue(value = 4, description = "moderate breeze")
         MODERATE_BREEZE, //
-        @KnxDataPointEnumValue(value = 5, description = "fresh breeze")
+        @DataPointEnumValue(value = 5, description = "fresh breeze")
         FRESH_BREEZE, //
-        @KnxDataPointEnumValue(value = 6, description = "strong breeze")
+        @DataPointEnumValue(value = 6, description = "strong breeze")
         STRONG_BREEZE, //
-        @KnxDataPointEnumValue(value = 7, description = "near gale / moderate gale")
+        @DataPointEnumValue(value = 7, description = "near gale / moderate gale")
         MODERATE_GALE, //
-        @KnxDataPointEnumValue(value = 8, description = "fresh gale")
+        @DataPointEnumValue(value = 8, description = "fresh gale")
         FRESH_GALE, //
-        @KnxDataPointEnumValue(value = 9, description = "strong gale")
+        @DataPointEnumValue(value = 9, description = "strong gale")
         STRONG_GALE, //
-        @KnxDataPointEnumValue(value = 10, description = "whole gale / storm")
+        @DataPointEnumValue(value = 10, description = "whole gale / storm")
         STORM, //
-        @KnxDataPointEnumValue(value = 11, description = "violent storm")
+        @DataPointEnumValue(value = 11, description = "violent storm")
         VIOLENT_STORM, //
-        @KnxDataPointEnumValue(value = 12, description = "hurricane")
+        @DataPointEnumValue(value = 12, description = "hurricane")
         HURRICANE
     }
 
@@ -534,17 +536,17 @@ public final class DPT20 {
      *                  4 = temperature sensor input
      * </pre>
      */
-    @KnxDataPointType(value = {"20.017", "dpst-20-17"}, description = "Sensor Select")
-    public enum SensorSelect implements DataPointTypeEnum<SensorSelect> {
-        @KnxDataPointEnumValue(value = 0, description = "Inactive")
+    @DataPoint(value = {"20.017", "dpst-20-17"}, description = "Sensor Select")
+    public enum SensorSelect implements DataPointEnum<SensorSelect> {
+        @DataPointEnumValue(value = 0, description = "Inactive")
         INACTIVE, //
-        @KnxDataPointEnumValue(value = 1, description = "Digital Input (not inverted)")
+        @DataPointEnumValue(value = 1, description = "Digital Input (not inverted)")
         DIGITAL_INPUT_NOT_INVERTED, //
-        @KnxDataPointEnumValue(value = 2, description = "Digital Input (inverted)")
+        @DataPointEnumValue(value = 2, description = "Digital Input (inverted)")
         DIGITAL_INPUT_INVERTED, //
-        @KnxDataPointEnumValue(value = 3, description = "Analog Input (0..100%)")
+        @DataPointEnumValue(value = 3, description = "Analog Input (0..100%)")
         ANALOG_INPUT_0_TO_100, //
-        @KnxDataPointEnumValue(value = 4, description = "Temperature Sensor Input")
+        @DataPointEnumValue(value = 4, description = "Temperature Sensor Input")
         TEMPERATURE_SENSOR_INPUT
     }
 
@@ -562,11 +564,11 @@ public final class DPT20 {
      *                  2 = Controller Connection
      * </pre>
      */
-    @KnxDataPointType(value = {"20.020", "dpst-20-20"}, description = "Actuator Connect Type")
-    public enum ActuatorConnectType implements DataPointTypeEnum<ActuatorConnectType> {
-        @KnxDataPointEnumValue(value = 1, description = "Sensor Connection")
+    @DataPoint(value = {"20.020", "dpst-20-20"}, description = "Actuator Connect Type")
+    public enum ActuatorConnectType implements DataPointEnum<ActuatorConnectType> {
+        @DataPointEnumValue(value = 1, description = "Sensor Connection")
         SENSOR, //
-        @KnxDataPointEnumValue(value = 2, description = "Controller Connection")
+        @DataPointEnumValue(value = 2, description = "Controller Connection")
         CONTROLLER
     }
 
@@ -587,17 +589,17 @@ public final class DPT20 {
      *                  4 = temperature sensor input
      * </pre>
      */
-    @KnxDataPointType(value = {"20.022", "dpst-20-22"}, description = "Power Return Mode")
-    public enum PowerReturnMode implements DataPointTypeEnum<PowerReturnMode> {
-        @KnxDataPointEnumValue(value = 0, description = "inactive")
+    @DataPoint(value = {"20.022", "dpst-20-22"}, description = "Power Return Mode")
+    public enum PowerReturnMode implements DataPointEnum<PowerReturnMode> {
+        @DataPointEnumValue(value = 0, description = "inactive")
         INACTIVE, //
-        @KnxDataPointEnumValue(value = 1, description = "digital input not inverted")
+        @DataPointEnumValue(value = 1, description = "digital input not inverted")
         DIGITAL_INPUT_NOT_INVERTED, //
-        @KnxDataPointEnumValue(value = 2, description = "digital input inverted")
+        @DataPointEnumValue(value = 2, description = "digital input inverted")
         DIGITAL_INPUT_INVERTED, //
-        @KnxDataPointEnumValue(value = 3, description = "analog input -> 0 % to 100%")
+        @DataPointEnumValue(value = 3, description = "analog input -> 0 % to 100%")
         ANALOG_INPUT_0_TO_100, //
-        @KnxDataPointEnumValue(value = 4, description = "temperature sensor input")
+        @DataPointEnumValue(value = 4, description = "temperature sensor input")
         TEMPERATURE_SENSOR_INPUT
     }
 
@@ -617,15 +619,15 @@ public final class DPT20 {
      *                  3 = Solid State Fuel
      * </pre>
      */
-    @KnxDataPointType(value = {"20.100", "dpst-20-100"}, description = "Fuel Type")
-    public enum FuelType implements DataPointTypeEnum<FuelType> {
-        @KnxDataPointEnumValue(value = 0, description = "Auto")
+    @DataPoint(value = {"20.100", "dpst-20-100"}, description = "Fuel Type")
+    public enum FuelType implements DataPointEnum<FuelType> {
+        @DataPointEnumValue(value = 0, description = "Auto")
         AUTO, //
-        @KnxDataPointEnumValue(value = 1, description = "Oil")
+        @DataPointEnumValue(value = 1, description = "Oil")
         OIL, //
-        @KnxDataPointEnumValue(value = 2, description = "Gas")
+        @DataPointEnumValue(value = 2, description = "Gas")
         GAS, //
-        @KnxDataPointEnumValue(value = 3, description = "Solid State Fuel")
+        @DataPointEnumValue(value = 3, description = "Solid State Fuel")
         SOLID_STATE_FUEL
     }
 
@@ -644,13 +646,13 @@ public final class DPT20 {
      *                  3 = Modulating
      * </pre>
      */
-    @KnxDataPointType(value = {"20.101", "dpst-20-101"}, description = "Burner Type")
-    public enum BurnerType implements DataPointTypeEnum<BurnerType> {
-        @KnxDataPointEnumValue(value = 1, description = "Stage 1")
+    @DataPoint(value = {"20.101", "dpst-20-101"}, description = "Burner Type")
+    public enum BurnerType implements DataPointEnum<BurnerType> {
+        @DataPointEnumValue(value = 1, description = "Stage 1")
         STAGE_1, //
-        @KnxDataPointEnumValue(value = 2, description = "Stage 2")
+        @DataPointEnumValue(value = 2, description = "Stage 2")
         STAGE_2, //
-        @KnxDataPointEnumValue(value = 3, description = "Modulating")
+        @DataPointEnumValue(value = 3, description = "Modulating")
         MODULATING
     }
 
@@ -671,17 +673,17 @@ public final class DPT20 {
      *                  4 = Building Protection
      * </pre>
      */
-    @KnxDataPointType(value = {"20.102", "dpst-20-102"}, description = "HVAC Mode")
-    public enum HVACMode implements DataPointTypeEnum<HVACMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Auto")
+    @DataPoint(value = {"20.102", "dpst-20-102"}, description = "HVAC Mode")
+    public enum HVACMode implements DataPointEnum<HVACMode> {
+        @DataPointEnumValue(value = 0, description = "Auto")
         AUTO, //
-        @KnxDataPointEnumValue(value = 1, description = "Comfort")
+        @DataPointEnumValue(value = 1, description = "Comfort")
         COMFORT, //
-        @KnxDataPointEnumValue(value = 2, description = "Standby")
+        @DataPointEnumValue(value = 2, description = "Standby")
         STANDBY, //
-        @KnxDataPointEnumValue(value = 3, description = "Economy")
+        @DataPointEnumValue(value = 3, description = "Economy")
         ECONOMY, //
-        @KnxDataPointEnumValue(value = 4, description = "Building Protection")
+        @DataPointEnumValue(value = 4, description = "Building Protection")
         BUILDING_PROTECTION
     }
 
@@ -702,17 +704,17 @@ public final class DPT20 {
      *                  4 = Off / Frost Protection
      * </pre>
      */
-    @KnxDataPointType(value = {"20.103", "dpst-20-103"}, description = "DHW Mode")
-    public enum DHWMode implements DataPointTypeEnum<DHWMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Auto")
+    @DataPoint(value = {"20.103", "dpst-20-103"}, description = "DHW Mode")
+    public enum DHWMode implements DataPointEnum<DHWMode> {
+        @DataPointEnumValue(value = 0, description = "Auto")
         AUTO, //
-        @KnxDataPointEnumValue(value = 1, description = "Legionella Protection")
+        @DataPointEnumValue(value = 1, description = "Legionella Protection")
         LEGIONELLA_PROTECTION, //
-        @KnxDataPointEnumValue(value = 2, description = "Normal")
+        @DataPointEnumValue(value = 2, description = "Normal")
         NORMAL, //
-        @KnxDataPointEnumValue(value = 3, description = "Reduced")
+        @DataPointEnumValue(value = 3, description = "Reduced")
         REDUCED, //
-        @KnxDataPointEnumValue(value = 4, description = "Off / Frost Protection")
+        @DataPointEnumValue(value = 4, description = "Off / Frost Protection")
         OFF_FROST_PROTECTION
     }
 
@@ -731,13 +733,13 @@ public final class DPT20 {
      *                  2 = Absolute Load Priority
      * </pre>
      */
-    @KnxDataPointType(value = {"20.104", "dpst-20-104"}, description = "Load Priority")
-    public enum LoadPriority implements DataPointTypeEnum<LoadPriority> {
-        @KnxDataPointEnumValue(value = 0, description = "None")
+    @DataPoint(value = {"20.104", "dpst-20-104"}, description = "Load Priority")
+    public enum LoadPriority implements DataPointEnum<LoadPriority> {
+        @DataPointEnumValue(value = 0, description = "None")
         NONE, //
-        @KnxDataPointEnumValue(value = 1, description = "Shift Load Priority")
+        @DataPointEnumValue(value = 1, description = "Shift Load Priority")
         SHIFT, //
-        @KnxDataPointEnumValue(value = 2, description = "Absolute Load Priority")
+        @DataPointEnumValue(value = 2, description = "Absolute Load Priority")
         ABSOLUTE
     }
 
@@ -774,45 +776,45 @@ public final class DPT20 {
      *                  20 = NoDem
      * </pre>
      */
-    @KnxDataPointType(value = {"20.105", "dpst-20-105"}, description = "HVAC Control Mode")
-    public enum HVACControlMode implements DataPointTypeEnum<HVACControlMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Auto")
+    @DataPoint(value = {"20.105", "dpst-20-105"}, description = "HVAC Control Mode")
+    public enum HVACControlMode implements DataPointEnum<HVACControlMode> {
+        @DataPointEnumValue(value = 0, description = "Auto")
         AUTO, //
-        @KnxDataPointEnumValue(value = 1, description = "Heat")
+        @DataPointEnumValue(value = 1, description = "Heat")
         HEAT, //
-        @KnxDataPointEnumValue(value = 2, description = "Morning Warmup")
+        @DataPointEnumValue(value = 2, description = "Morning Warmup")
         MORNING_WARMUP, //
-        @KnxDataPointEnumValue(value = 3, description = "Cool")
+        @DataPointEnumValue(value = 3, description = "Cool")
         COOL, //
-        @KnxDataPointEnumValue(value = 4, description = "Night Purge")
+        @DataPointEnumValue(value = 4, description = "Night Purge")
         NIGHT_PURGE, //
-        @KnxDataPointEnumValue(value = 5, description = "Precool")
+        @DataPointEnumValue(value = 5, description = "Precool")
         PRECOOL, //
-        @KnxDataPointEnumValue(value = 6, description = "Off")
+        @DataPointEnumValue(value = 6, description = "Off")
         OFF, //
-        @KnxDataPointEnumValue(value = 7, description = "Test")
+        @DataPointEnumValue(value = 7, description = "Test")
         TEST, //
-        @KnxDataPointEnumValue(value = 8, description = "Emergency Heat")
+        @DataPointEnumValue(value = 8, description = "Emergency Heat")
         EMERGENCY_HEAT, //
-        @KnxDataPointEnumValue(value = 9, description = "Fan only")
+        @DataPointEnumValue(value = 9, description = "Fan only")
         FAN_ONLY, //
-        @KnxDataPointEnumValue(value = 10, description = "Free Cool")
+        @DataPointEnumValue(value = 10, description = "Free Cool")
         FREE_COOL, //
-        @KnxDataPointEnumValue(value = 11, description = "Ice")
+        @DataPointEnumValue(value = 11, description = "Ice")
         ICE, //
-        @KnxDataPointEnumValue(value = 12, description = "Maximum Heating Mode")
+        @DataPointEnumValue(value = 12, description = "Maximum Heating Mode")
         MAXIMUM_HEATING, //
-        @KnxDataPointEnumValue(value = 13, description = "Economic Heat/Cool Mode")
+        @DataPointEnumValue(value = 13, description = "Economic Heat/Cool Mode")
         ECONOMIC_HEAT_COOL, //
-        @KnxDataPointEnumValue(value = 14, description = "Dehumidification")
+        @DataPointEnumValue(value = 14, description = "Dehumidification")
         DEHUMIDIFICATION, //
-        @KnxDataPointEnumValue(value = 15, description = "Calibration Mode")
+        @DataPointEnumValue(value = 15, description = "Calibration Mode")
         CALIBRATION_MODE, //
-        @KnxDataPointEnumValue(value = 16, description = "Emergency Cool Mode")
+        @DataPointEnumValue(value = 16, description = "Emergency Cool Mode")
         EMERGENCY_COOL, //
-        @KnxDataPointEnumValue(value = 17, description = "Emergency Steam Mode")
+        @DataPointEnumValue(value = 17, description = "Emergency Steam Mode")
         EMERGENCY_STEAM, //
-        @KnxDataPointEnumValue(value = 20, description = "NoDem")
+        @DataPointEnumValue(value = 20, description = "NoDem")
         NO_DEM
     }
 
@@ -834,19 +836,19 @@ public final class DPT20 {
      *                  5 = Emergency Fire
      * </pre>
      */
-    @KnxDataPointType(value = {"20.106", "dpst-20-106"}, description = "HVAC Emergency Mode")
-    public enum HVACEmergencyMode implements DataPointTypeEnum<HVACEmergencyMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Normal")
+    @DataPoint(value = {"20.106", "dpst-20-106"}, description = "HVAC Emergency Mode")
+    public enum HVACEmergencyMode implements DataPointEnum<HVACEmergencyMode> {
+        @DataPointEnumValue(value = 0, description = "Normal")
         NORMAL, //
-        @KnxDataPointEnumValue(value = 1, description = "Emergency Pressure")
+        @DataPointEnumValue(value = 1, description = "Emergency Pressure")
         PRESSURE, //
-        @KnxDataPointEnumValue(value = 2, description = "Emergency Depressure")
+        @DataPointEnumValue(value = 2, description = "Emergency Depressure")
         DEPRESSURE, //
-        @KnxDataPointEnumValue(value = 3, description = "Emergency Purge")
+        @DataPointEnumValue(value = 3, description = "Emergency Purge")
         PURGE, //
-        @KnxDataPointEnumValue(value = 4, description = "Emergency Shutdown")
+        @DataPointEnumValue(value = 4, description = "Emergency Shutdown")
         SHUTDOWN, //
-        @KnxDataPointEnumValue(value = 5, description = "Emergency Fire")
+        @DataPointEnumValue(value = 5, description = "Emergency Fire")
         FIRE
     }
 
@@ -865,13 +867,13 @@ public final class DPT20 {
      *                  2 = Heating Only
      * </pre>
      */
-    @KnxDataPointType(value = {"20.107", "dpst-20-107"}, description = "Changeover Mode")
-    public enum ChangeoverMode implements DataPointTypeEnum<ChangeoverMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Auto")
+    @DataPoint(value = {"20.107", "dpst-20-107"}, description = "Changeover Mode")
+    public enum ChangeoverMode implements DataPointEnum<ChangeoverMode> {
+        @DataPointEnumValue(value = 0, description = "Auto")
         AUTO, //
-        @KnxDataPointEnumValue(value = 1, description = "Cooling Only")
+        @DataPointEnumValue(value = 1, description = "Cooling Only")
         COOLING_ONLY, //
-        @KnxDataPointEnumValue(value = 2, description = "Heating Only")
+        @DataPointEnumValue(value = 2, description = "Heating Only")
         HEATING_ONLY
     }
 
@@ -892,17 +894,17 @@ public final class DPT20 {
      *                  5 = Heat/Cool for changeover applications
      * </pre>
      */
-    @KnxDataPointType(value = {"20.108", "dpst-20-108"}, description = "Valve Mode")
-    public enum ValveMode implements DataPointTypeEnum<ValveMode> {
-        @KnxDataPointEnumValue(value = 1, description = "Heat stage A for normal heating")
+    @DataPoint(value = {"20.108", "dpst-20-108"}, description = "Valve Mode")
+    public enum ValveMode implements DataPointEnum<ValveMode> {
+        @DataPointEnumValue(value = 1, description = "Heat stage A for normal heating")
         HEAT_STAGE_A_FOR_HEATING, //
-        @KnxDataPointEnumValue(value = 2, description = "Heat stage B for heating with two stages (A + B)")
+        @DataPointEnumValue(value = 2, description = "Heat stage B for heating with two stages (A + B)")
         HEAT_STAGE_B_FOR_HEATING_WITH_TWO_STAGES, //
-        @KnxDataPointEnumValue(value = 3, description = "Cool stage A for normal cooling")
+        @DataPointEnumValue(value = 3, description = "Cool stage A for normal cooling")
         COOL_STAGE_A_FOR_COOLING, //
-        @KnxDataPointEnumValue(value = 4, description = "Cool stage B for cooling with two stages (A + B)")
+        @DataPointEnumValue(value = 4, description = "Cool stage B for cooling with two stages (A + B)")
         COOL_STAGE_B_FOR_COOLING_WITH_TWO_STAGES, //
-        @KnxDataPointEnumValue(value = 5, description = "Heat/Cool for changeover applications")
+        @DataPointEnumValue(value = 5, description = "Heat/Cool for changeover applications")
         HEAT_AND_COOL_CHANGEOVE
     }
 
@@ -922,15 +924,15 @@ public final class DPT20 {
      *                  4 = Extract Air 2 e.g. for VAV
      * </pre>
      */
-    @KnxDataPointType(value = {"20.109", "dpst-20-109"}, description = "Damper Mode")
-    public enum DamperMode implements DataPointTypeEnum<DamperMode> {
-        @KnxDataPointEnumValue(value = 1, description = "Fresh air, e.g. for fancoils")
+    @DataPoint(value = {"20.109", "dpst-20-109"}, description = "Damper Mode")
+    public enum DamperMode implements DataPointEnum<DamperMode> {
+        @DataPointEnumValue(value = 1, description = "Fresh air, e.g. for fancoils")
         FRESH_AIR, //
-        @KnxDataPointEnumValue(value = 2, description = "Supply Air. e.g. for VAV")
+        @DataPointEnumValue(value = 2, description = "Supply Air. e.g. for VAV")
         SUPPLY_AIR, //
-        @KnxDataPointEnumValue(value = 3, description = "Extract Air e.g. for VAV")
+        @DataPointEnumValue(value = 3, description = "Extract Air e.g. for VAV")
         EXTRACT_AIR, //
-        @KnxDataPointEnumValue(value = 4, description = "Extract Air 2 e.g. for VAV")
+        @DataPointEnumValue(value = 4, description = "Extract Air 2 e.g. for VAV")
         EXTRACT_AIR_2
     }
 
@@ -949,13 +951,13 @@ public final class DPT20 {
      *                  3 = Heat Stage B Proportional
      * </pre>
      */
-    @KnxDataPointType(value = {"20.110", "dpst-20-110"}, description = "Heater Mode")
-    public enum HeaterMode implements DataPointTypeEnum<HeaterMode> {
-        @KnxDataPointEnumValue(value = 1, description = "Heat Stage A On/Off")
+    @DataPoint(value = {"20.110", "dpst-20-110"}, description = "Heater Mode")
+    public enum HeaterMode implements DataPointEnum<HeaterMode> {
+        @DataPointEnumValue(value = 1, description = "Heat Stage A On/Off")
         HEAT_STAGE_A_ON_OFF, //
-        @KnxDataPointEnumValue(value = 2, description = "Heat Stage A Proportional")
+        @DataPointEnumValue(value = 2, description = "Heat Stage A Proportional")
         HEAT_STAGE_A_PROPORTIONAL, //
-        @KnxDataPointEnumValue(value = 3, description = "Heat Stage B Proportional")
+        @DataPointEnumValue(value = 3, description = "Heat Stage B Proportional")
         HEAT_STAGE_B_PROPORTIONAL
     }
 
@@ -974,13 +976,13 @@ public final class DPT20 {
      *                  2 = Running in Intervals
      * </pre>
      */
-    @KnxDataPointType(value = {"20.111", "dpst-20-111"}, description = "Fan Mode")
-    public enum FanMode implements DataPointTypeEnum<FanMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Not Running")
+    @DataPoint(value = {"20.111", "dpst-20-111"}, description = "Fan Mode")
+    public enum FanMode implements DataPointEnum<FanMode> {
+        @DataPointEnumValue(value = 0, description = "Not Running")
         NOT_RUNNING, //
-        @KnxDataPointEnumValue(value = 1, description = "Permanently Running")
+        @DataPointEnumValue(value = 1, description = "Permanently Running")
         RUNNING_PERMANENTLY, //
-        @KnxDataPointEnumValue(value = 2, description = "Running in Intervals")
+        @DataPointEnumValue(value = 2, description = "Running in Intervals")
         RUNNING_IN_INTERVALS
     }
 
@@ -999,13 +1001,13 @@ public final class DPT20 {
      *                  2 = Slave
      * </pre>
      */
-    @KnxDataPointType(value = {"20.112", "dpst-20-112"}, description = "Master/Slave Mode")
-    public enum MasterSlaveMode implements DataPointTypeEnum<MasterSlaveMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Auto")
+    @DataPoint(value = {"20.112", "dpst-20-112"}, description = "Master/Slave Mode")
+    public enum MasterSlaveMode implements DataPointEnum<MasterSlaveMode> {
+        @DataPointEnumValue(value = 0, description = "Auto")
         AUTO, //
-        @KnxDataPointEnumValue(value = 1, description = "Master")
+        @DataPointEnumValue(value = 1, description = "Master")
         MASTER, //
-        @KnxDataPointEnumValue(value = 2, description = "Slave")
+        @DataPointEnumValue(value = 2, description = "Slave")
         SLAVE
     }
 
@@ -1024,13 +1026,13 @@ public final class DPT20 {
      *                  2 = Building Protection Setpoint
      * </pre>
      */
-    @KnxDataPointType(value = {"20.113", "dpst-20-113"}, description = "Status Room Setpoint")
-    public enum StatusRoomSetpoint implements DataPointTypeEnum<StatusRoomSetpoint> {
-        @KnxDataPointEnumValue(value = 0, description = "Normal Setpoint")
+    @DataPoint(value = {"20.113", "dpst-20-113"}, description = "Status Room Setpoint")
+    public enum StatusRoomSetpoint implements DataPointEnum<StatusRoomSetpoint> {
+        @DataPointEnumValue(value = 0, description = "Normal Setpoint")
         NORMAL, //
-        @KnxDataPointEnumValue(value = 1, description = "Alternative Setpoint")
+        @DataPointEnumValue(value = 1, description = "Alternative Setpoint")
         ALTERNATIVE, //
-        @KnxDataPointEnumValue(value = 2, description = "Building Protection Setpoint")
+        @DataPointEnumValue(value = 2, description = "Building Protection Setpoint")
         BUILDING_PROTECTION
     }
 
@@ -1064,43 +1066,43 @@ public final class DPT20 {
      *                255 = void device type
      * </pre>
      */
-    @KnxDataPointType(value = {"20.114", "dpst-20-114"}, description = "Metering Device Type")
-    public enum MeteringDeviceType implements DataPointTypeEnum<MeteringDeviceType> {
-        @KnxDataPointEnumValue(value = 0, description = "Other device type")
+    @DataPoint(value = {"20.114", "dpst-20-114"}, description = "Metering Device Type")
+    public enum MeteringDeviceType implements DataPointEnum<MeteringDeviceType> {
+        @DataPointEnumValue(value = 0, description = "Other device type")
         OTHER_DEVICE_TYPE, //
-        @KnxDataPointEnumValue(value = 1, description = "Oil meter")
+        @DataPointEnumValue(value = 1, description = "Oil meter")
         OIL_METER, //
-        @KnxDataPointEnumValue(value = 2, description = "Electricity meter")
+        @DataPointEnumValue(value = 2, description = "Electricity meter")
         ELECTRICITY_METER, //
-        @KnxDataPointEnumValue(value = 3, description = "Gas meter")
+        @DataPointEnumValue(value = 3, description = "Gas meter")
         GAS_METER, //
-        @KnxDataPointEnumValue(value = 4, description = "Heat meter")
+        @DataPointEnumValue(value = 4, description = "Heat meter")
         HEAT_METER, //
-        @KnxDataPointEnumValue(value = 5, description = "Steam meter")
+        @DataPointEnumValue(value = 5, description = "Steam meter")
         STEAM_METER, //
-        @KnxDataPointEnumValue(value = 6, description = "Warm Water meter")
+        @DataPointEnumValue(value = 6, description = "Warm Water meter")
         WARM_WATER_METER, //
-        @KnxDataPointEnumValue(value = 7, description = "Water meter")
+        @DataPointEnumValue(value = 7, description = "Water meter")
         WATER_METER, //
-        @KnxDataPointEnumValue(value = 8, description = "Heat cost allocator")
+        @DataPointEnumValue(value = 8, description = "Heat cost allocator")
         HEAT_COST_ALLOCATOR, //
-        @KnxDataPointEnumValue(value = 10, description = "Cooling Load meter (outlet)")
+        @DataPointEnumValue(value = 10, description = "Cooling Load meter (outlet)")
         COOLING_LOAD_METER_OUTLET, //
-        @KnxDataPointEnumValue(value = 11, description = "Cooling Load meter (inlet)")
+        @DataPointEnumValue(value = 11, description = "Cooling Load meter (inlet)")
         COOLING_LOAD_METER_INLET, //
-        @KnxDataPointEnumValue(value = 12, description = "Heat")
+        @DataPointEnumValue(value = 12, description = "Heat")
         HEAT, //
-        @KnxDataPointEnumValue(value = 13, description = "Heat and Cool")
+        @DataPointEnumValue(value = 13, description = "Heat and Cool")
         HEAT_AND_COOL, //
-        @KnxDataPointEnumValue(value = 32, description = "breaker (electricity)")
+        @DataPointEnumValue(value = 32, description = "breaker (electricity)")
         BREAKER, //
-        @KnxDataPointEnumValue(value = 33, description = "valve (gas or water)")
+        @DataPointEnumValue(value = 33, description = "valve (gas or water)")
         VALVE, //
-        @KnxDataPointEnumValue(value = 40, description = "waste water meter")
+        @DataPointEnumValue(value = 40, description = "waste water meter")
         WASTE_WATER_METER, //
-        @KnxDataPointEnumValue(value = 41, description = "garbage")
+        @DataPointEnumValue(value = 41, description = "garbage")
         GARBAGE, //
-        @KnxDataPointEnumValue(value = 255, description = "void device type")
+        @DataPointEnumValue(value = 255, description = "void device type")
         VOID
     }
 
@@ -1119,13 +1121,13 @@ public final class DPT20 {
      *                  2 = De-Humidification
      * </pre>
      */
-    @KnxDataPointType(value = {"20.115", "dpst-20-115"}, description = "Humidification Mode")
-    public enum HumidificationMode implements DataPointTypeEnum<HumidificationMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Inactive")
+    @DataPoint(value = {"20.115", "dpst-20-115"}, description = "Humidification Mode")
+    public enum HumidificationMode implements DataPointEnum<HumidificationMode> {
+        @DataPointEnumValue(value = 0, description = "Inactive")
         INACTIVE, //
-        @KnxDataPointEnumValue(value = 1, description = "Humidification")
+        @DataPointEnumValue(value = 1, description = "Humidification")
         HUMIDIFICATION, //
-        @KnxDataPointEnumValue(value = 2, description = "De-Humidification")
+        @DataPointEnumValue(value = 2, description = "De-Humidification")
         DEHUMIDIFICATION
     }
 
@@ -1143,11 +1145,11 @@ public final class DPT20 {
      *                  2 = VAV
      * </pre>
      */
-    @KnxDataPointType(value = {"20.120", "dpst-20-120"}, description = "ADA Type")
-    public enum ADAType implements DataPointTypeEnum<ADAType> {
-        @KnxDataPointEnumValue(value = 1, description = "Air Damper")
+    @DataPoint(value = {"20.120", "dpst-20-120"}, description = "ADA Type")
+    public enum ADAType implements DataPointEnum<ADAType> {
+        @DataPointEnumValue(value = 1, description = "Air Damper")
         AIR_DAMPER, //
-        @KnxDataPointEnumValue(value = 2, description = "VAV")
+        @DataPointEnumValue(value = 2, description = "VAV")
         VAV
     }
 
@@ -1165,11 +1167,11 @@ public final class DPT20 {
      *                  1 = Keep Last State
      * </pre>
      */
-    @KnxDataPointType(value = {"20.121", "dpst-20-121"}, description = "Backup Mode")
-    public enum BackupMode implements DataPointTypeEnum<BackupMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Backup Value")
+    @DataPoint(value = {"20.121", "dpst-20-121"}, description = "Backup Mode")
+    public enum BackupMode implements DataPointEnum<BackupMode> {
+        @DataPointEnumValue(value = 0, description = "Backup Value")
         BACKUP_VALUE, //
-        @KnxDataPointEnumValue(value = 1, description = "Keep Last State")
+        @DataPointEnumValue(value = 1, description = "Keep Last State")
         KEEP_LAST_STATE
     }
 
@@ -1188,13 +1190,13 @@ public final class DPT20 {
      *                  2 = Single Open
      * </pre>
      */
-    @KnxDataPointType(value = {"20.122", "dpst-20-122"}, description = "Start Synchronization")
-    public enum StartSynchronization implements DataPointTypeEnum<StartSynchronization> {
-        @KnxDataPointEnumValue(value = 0, description = "Position Unchanged")
+    @DataPoint(value = {"20.122", "dpst-20-122"}, description = "Start Synchronization")
+    public enum StartSynchronization implements DataPointEnum<StartSynchronization> {
+        @DataPointEnumValue(value = 0, description = "Position Unchanged")
         POSITION_UNCHANGED, //
-        @KnxDataPointEnumValue(value = 1, description = "Single Close")
+        @DataPointEnumValue(value = 1, description = "Single Close")
         SINGLE_CLOSE, //
-        @KnxDataPointEnumValue(value = 2, description = "Single Open")
+        @DataPointEnumValue(value = 2, description = "Single Open")
         SINGLE_OPEN
     }
 
@@ -1217,21 +1219,21 @@ public final class DPT20 {
      *                  6 = value before locking
      * </pre>
      */
-    @KnxDataPointType(value = {"20.600", "dpst-20-600"}, description = "Behavior Lock/Unlock")
-    public enum BehaviorLockUnlock implements DataPointTypeEnum<BehaviorLockUnlock> {
-        @KnxDataPointEnumValue(value = 0, description = "Off")
+    @DataPoint(value = {"20.600", "dpst-20-600"}, description = "Behavior Lock/Unlock")
+    public enum BehaviorLockUnlock implements DataPointEnum<BehaviorLockUnlock> {
+        @DataPointEnumValue(value = 0, description = "Off")
         OFF, //
-        @KnxDataPointEnumValue(value = 1, description = "On")
+        @DataPointEnumValue(value = 1, description = "On")
         ON, //
-        @KnxDataPointEnumValue(value = 2, description = "No Change")
+        @DataPointEnumValue(value = 2, description = "No Change")
         NO_CHANGE, //
-        @KnxDataPointEnumValue(value = 3, description = "value according additional parameter")
+        @DataPointEnumValue(value = 3, description = "value according additional parameter")
         VALUE_ACCORDING_ADDITIONAL_PARAMETER, //
-        @KnxDataPointEnumValue(value = 4, description = "memory function value")
+        @DataPointEnumValue(value = 4, description = "memory function value")
         MEMORY_FUNCTION_VALUE, //
-        @KnxDataPointEnumValue(value = 5, description = "updated value")
+        @DataPointEnumValue(value = 5, description = "updated value")
         UPDATED_VALUE, //
-        @KnxDataPointEnumValue(value = 6, description = "value before locking")
+        @DataPointEnumValue(value = 6, description = "value before locking")
         VALUE_BEFORE_LOCKING
     }
 
@@ -1252,17 +1254,17 @@ public final class DPT20 {
      *                  4 = last value before bus power down
      * </pre>
      */
-    @KnxDataPointType(value = {"20.601", "dpst-20-601"}, description = "Behavior Bus Power Up/Down")
-    public enum BehaviorBusPowerUpDown implements DataPointTypeEnum<BehaviorBusPowerUpDown> {
-        @KnxDataPointEnumValue(value = 0, description = "Off")
+    @DataPoint(value = {"20.601", "dpst-20-601"}, description = "Behavior Bus Power Up/Down")
+    public enum BehaviorBusPowerUpDown implements DataPointEnum<BehaviorBusPowerUpDown> {
+        @DataPointEnumValue(value = 0, description = "Off")
         OFF, //
-        @KnxDataPointEnumValue(value = 1, description = "On")
+        @DataPointEnumValue(value = 1, description = "On")
         ON, //
-        @KnxDataPointEnumValue(value = 2, description = "No Change")
+        @DataPointEnumValue(value = 2, description = "No Change")
         NO_CHANGE, //
-        @KnxDataPointEnumValue(value = 3, description = "value according additional parameter")
+        @DataPointEnumValue(value = 3, description = "value according additional parameter")
         VALUE_ACCORDING_ADDITIONAL_PARAMETER, //
-        @KnxDataPointEnumValue(value = 4, description = "last value before bus power down")
+        @DataPointEnumValue(value = 4, description = "last value before bus power down")
         LAST_VALUE_BEFORE_BUS_POWER_DOWN
     }
 
@@ -1294,39 +1296,39 @@ public final class DPT20 {
      *                 15 = 90,5 s
      * </pre>
      */
-    @KnxDataPointType(value = {"20.602", "dpst-20-602"}, description = "DALI Fade Time")
-    public enum DALIFadeTime implements DataPointTypeEnum<DALIFadeTime> {
-        @KnxDataPointEnumValue(value = 0, description = "0 s (no fade)")
+    @DataPoint(value = {"20.602", "dpst-20-602"}, description = "DALI Fade Time")
+    public enum DALIFadeTime implements DataPointEnum<DALIFadeTime> {
+        @DataPointEnumValue(value = 0, description = "0 s (no fade)")
         NO_FADE, //
-        @KnxDataPointEnumValue(value = 1, description = "0,7 s")
+        @DataPointEnumValue(value = 1, description = "0,7 s")
         FADE_700MS, //
-        @KnxDataPointEnumValue(value = 2, description = "1,0 s")
+        @DataPointEnumValue(value = 2, description = "1,0 s")
         FADE_1SEC, //
-        @KnxDataPointEnumValue(value = 3, description = "1,4 s")
+        @DataPointEnumValue(value = 3, description = "1,4 s")
         FADE_1SEC_AND_400MS, //
-        @KnxDataPointEnumValue(value = 4, description = "2,0 s")
+        @DataPointEnumValue(value = 4, description = "2,0 s")
         FADE_2SEC, //
-        @KnxDataPointEnumValue(value = 5, description = "2,8 s")
+        @DataPointEnumValue(value = 5, description = "2,8 s")
         FADE_2SEC_AND_800MS, //
-        @KnxDataPointEnumValue(value = 6, description = "4,0 s")
+        @DataPointEnumValue(value = 6, description = "4,0 s")
         FADE_4SEC, //
-        @KnxDataPointEnumValue(value = 7, description = "5,7 s")
+        @DataPointEnumValue(value = 7, description = "5,7 s")
         FADE_5SEC_AND_700MS, //
-        @KnxDataPointEnumValue(value = 8, description = "8,0 s")
+        @DataPointEnumValue(value = 8, description = "8,0 s")
         FADE_8SEC, //
-        @KnxDataPointEnumValue(value = 9, description = "11,3 s")
+        @DataPointEnumValue(value = 9, description = "11,3 s")
         FADE_11SEC_AND_300MS, //
-        @KnxDataPointEnumValue(value = 10, description = "16,0 s")
+        @DataPointEnumValue(value = 10, description = "16,0 s")
         FADE_16SEC, //
-        @KnxDataPointEnumValue(value = 11, description = "22,6 s")
+        @DataPointEnumValue(value = 11, description = "22,6 s")
         FADE_22SEC_AND_600MS, //
-        @KnxDataPointEnumValue(value = 12, description = "32,0 s")
+        @DataPointEnumValue(value = 12, description = "32,0 s")
         FADE_32SEC, //
-        @KnxDataPointEnumValue(value = 13, description = "45,3 s")
+        @DataPointEnumValue(value = 13, description = "45,3 s")
         FADE_45SEC_AND_300MS, //
-        @KnxDataPointEnumValue(value = 14, description = "64,0 s")
+        @DataPointEnumValue(value = 14, description = "64,0 s")
         FADE_64SEC, //
-        @KnxDataPointEnumValue(value = 15, description = "90,5 s")
+        @DataPointEnumValue(value = 15, description = "90,5 s")
         FADE_90SEC_AND_500MS
     }
 
@@ -1345,13 +1347,13 @@ public final class DPT20 {
      *                  2 = Blinking With Acknowledge
      * </pre>
      */
-    @KnxDataPointType(value = {"20.603", "dpst-20-603"}, description = "Blinking Mode")
-    public enum BlinkingMode implements DataPointTypeEnum<BlinkingMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Blinking Disabled")
+    @DataPoint(value = {"20.603", "dpst-20-603"}, description = "Blinking Mode")
+    public enum BlinkingMode implements DataPointEnum<BlinkingMode> {
+        @DataPointEnumValue(value = 0, description = "Blinking Disabled")
         DISABLED, //
-        @KnxDataPointEnumValue(value = 1, description = "Without Acknowledge")
+        @DataPointEnumValue(value = 1, description = "Without Acknowledge")
         WITHOUT_ACKNOWLEDGE, //
-        @KnxDataPointEnumValue(value = 2, description = "Blinking With Acknowledge")
+        @DataPointEnumValue(value = 2, description = "Blinking With Acknowledge")
         WITH_ACKNOWLEDGE
     }
 
@@ -1369,11 +1371,11 @@ public final class DPT20 {
      *                  1 = Manual Light Control
      * </pre>
      */
-    @KnxDataPointType(value = {"20.604", "dpst-20-604"}, description = "Light Control Mode")
-    public enum LightControlMode implements DataPointTypeEnum<LightControlMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Automatic Light Control")
+    @DataPoint(value = {"20.604", "dpst-20-604"}, description = "Light Control Mode")
+    public enum LightControlMode implements DataPointEnum<LightControlMode> {
+        @DataPointEnumValue(value = 0, description = "Automatic Light Control")
         AUTOMATIC, //
-        @KnxDataPointEnumValue(value = 1, description = "Manual Light Control")
+        @DataPointEnumValue(value = 1, description = "Manual Light Control")
         MANUAL
     }
 
@@ -1391,11 +1393,11 @@ public final class DPT20 {
      *                  2 = Two PBs/binary inputs mode
      * </pre>
      */
-    @KnxDataPointType(value = {"20.605", "dpst-20-605"}, description = "Switch PB Model")
-    public enum SwitchPBModel implements DataPointTypeEnum<SwitchPBModel> {
-        @KnxDataPointEnumValue(value = 1, description = "One PB/binary input mode")
+    @DataPoint(value = {"20.605", "dpst-20-605"}, description = "Switch PB Model")
+    public enum SwitchPBModel implements DataPointEnum<SwitchPBModel> {
+        @DataPointEnumValue(value = 1, description = "One PB/binary input mode")
         ONE_INPUT, //
-        @KnxDataPointEnumValue(value = 2, description = "Two PBs/binary inputs mode")
+        @DataPointEnumValue(value = 2, description = "Two PBs/binary inputs mode")
         TWO_INPUTS
     }
 
@@ -1415,15 +1417,15 @@ public final class DPT20 {
      *                  3 = inverse
      * </pre>
      */
-    @KnxDataPointType(value = {"20.606", "dpst-20-606"}, description = "PB Action")
-    public enum PBAction implements DataPointTypeEnum<PBAction> {
-        @KnxDataPointEnumValue(value = 0, description = "inactive (no message sent)")
+    @DataPoint(value = {"20.606", "dpst-20-606"}, description = "PB Action")
+    public enum PBAction implements DataPointEnum<PBAction> {
+        @DataPointEnumValue(value = 0, description = "inactive (no message sent)")
         INACTIVE, //
-        @KnxDataPointEnumValue(value = 1, description = "SwitchOff message sent")
+        @DataPointEnumValue(value = 1, description = "SwitchOff message sent")
         SWITCH_OFF, //
-        @KnxDataPointEnumValue(value = 2, description = "SwitchOn message sent")
+        @DataPointEnumValue(value = 2, description = "SwitchOn message sent")
         SWITCH_ON, //
-        @KnxDataPointEnumValue(value = 3, description = "inverse")
+        @DataPointEnumValue(value = 3, description = "inverse")
         INVERSE
     }
 
@@ -1443,15 +1445,15 @@ public final class DPT20 {
      *                  4 = two PBs/binary inputs mode
      * </pre>
      */
-    @KnxDataPointType(value = {"20.607", "dpst-20-607"}, description = "Dimm PB Model")
-    public enum DimmingPBModel implements DataPointTypeEnum<DimmingPBModel> {
-        @KnxDataPointEnumValue(value = 1, description = "one PB/binary input; SwitchOnOff inverts on each transmission")
+    @DataPoint(value = {"20.607", "dpst-20-607"}, description = "Dimm PB Model")
+    public enum DimmingPBModel implements DataPointEnum<DimmingPBModel> {
+        @DataPointEnumValue(value = 1, description = "one PB/binary input; SwitchOnOff inverts on each transmission")
         ONE_BINARY_INPUT_SWITCHONOFF_INVERTS_ON_EACH_TRANSMISSION, //
-        @KnxDataPointEnumValue(value = 2, description = "one PB/binary input, On / DimUp message sent")
+        @DataPointEnumValue(value = 2, description = "one PB/binary input, On / DimUp message sent")
         ONE_BINARY_INPUT_ON_DIMUP_MESSAGE_SENT, //
-        @KnxDataPointEnumValue(value = 3, description = "one PB/binary input, Off / DimDown message sent")
+        @DataPointEnumValue(value = 3, description = "one PB/binary input, Off / DimDown message sent")
         ONE_BINARY_INPUT_OFF_DIMDOWN_MESSAGE_SENT, //
-        @KnxDataPointEnumValue(value = 4, description = "two PBs/binary inputs mode")
+        @DataPointEnumValue(value = 4, description = "two PBs/binary inputs mode")
         TWO_BINARY_INPUTS_MODE
     }
 
@@ -1470,13 +1472,13 @@ public final class DPT20 {
      *                  2 = last received absolute setvalue
      * </pre>
      */
-    @KnxDataPointType(value = {"20.608", "dpst-20-608"}, description = "Switch On Mode")
-    public enum SwitchOnMode implements DataPointTypeEnum<SwitchOnMode> {
-        @KnxDataPointEnumValue(value = 0, description = "last actual value")
+    @DataPoint(value = {"20.608", "dpst-20-608"}, description = "Switch On Mode")
+    public enum SwitchOnMode implements DataPointEnum<SwitchOnMode> {
+        @DataPointEnumValue(value = 0, description = "last actual value")
         LAST_ACTUAL_VALUE, //
-        @KnxDataPointEnumValue(value = 1, description = "value according additional parameter")
+        @DataPointEnumValue(value = 1, description = "value according additional parameter")
         VALUE_ACCORDING_ADDITIONAL_PARAMETER, //
-        @KnxDataPointEnumValue(value = 2, description = "last received absolute setvalue")
+        @DataPointEnumValue(value = 2, description = "last received absolute setvalue")
         LAST_RECEIVED_ABSOLUTE_SETVALUE
     }
 
@@ -1501,25 +1503,25 @@ public final class DPT20 {
      *                  8 = LED, trailing
      * </pre>
      */
-    @KnxDataPointType(value = {"20.609", "dpst-20-609"}, description = "Load Type Set")
-    public enum LoadTypeSet implements DataPointTypeEnum<LoadTypeSet> {
-        @KnxDataPointEnumValue(value = 0, description = "automatic (resistive, capacitive or inductive)")
+    @DataPoint(value = {"20.609", "dpst-20-609"}, description = "Load Type Set")
+    public enum LoadTypeSet implements DataPointEnum<LoadTypeSet> {
+        @DataPointEnumValue(value = 0, description = "automatic (resistive, capacitive or inductive)")
         AUTOMATIC, //
-        @KnxDataPointEnumValue(value = 1, description = "leading edge (inductive load)")
+        @DataPointEnumValue(value = 1, description = "leading edge (inductive load)")
         LEADING_EDGE, //
-        @KnxDataPointEnumValue(value = 2, description = "trailing edge (capacitive load)")
+        @DataPointEnumValue(value = 2, description = "trailing edge (capacitive load)")
         TRAILING_EDGE, //
-        @KnxDataPointEnumValue(value = 3, description = "switch mode only (non-dimmable load)")
+        @DataPointEnumValue(value = 3, description = "switch mode only (non-dimmable load)")
         SWITCH_MODE_ONLY, //
-        @KnxDataPointEnumValue(value = 4, description = "automatic once")
+        @DataPointEnumValue(value = 4, description = "automatic once")
         AUTOMATIC_ONCE, //
-        @KnxDataPointEnumValue(value = 5, description = "Compact Fluorescent Lamps, leading")
+        @DataPointEnumValue(value = 5, description = "Compact Fluorescent Lamps, leading")
         CFL_LEADING, //
-        @KnxDataPointEnumValue(value = 6, description = "Compact Fluorescent Lamps, trailing")
+        @DataPointEnumValue(value = 6, description = "Compact Fluorescent Lamps, trailing")
         CFL_TRAILING, //
-        @KnxDataPointEnumValue(value = 7, description = "LED, leading")
+        @DataPointEnumValue(value = 7, description = "LED, leading")
         LED_LEADING, //
-        @KnxDataPointEnumValue(value = 8, description = "LED, trailing")
+        @DataPointEnumValue(value = 8, description = "LED, trailing")
         LED_TRAILING
     }
 
@@ -1544,25 +1546,25 @@ public final class DPT20 {
      *                  8 = LED, trailing
      * </pre>
      */
-    @KnxDataPointType(value = {"20.610", "dpst-20-610"}, description = "Load Type Detected")
-    public enum LoadTypeDetected implements DataPointTypeEnum<LoadTypeDetected> {
-        @KnxDataPointEnumValue(value = 0, description = "undefined")
+    @DataPoint(value = {"20.610", "dpst-20-610"}, description = "Load Type Detected")
+    public enum LoadTypeDetected implements DataPointEnum<LoadTypeDetected> {
+        @DataPointEnumValue(value = 0, description = "undefined")
         UNDEFINED, //
-        @KnxDataPointEnumValue(value = 1, description = "leading edge (inductive load)")
+        @DataPointEnumValue(value = 1, description = "leading edge (inductive load)")
         LEADING_EDGE, //
-        @KnxDataPointEnumValue(value = 2, description = "trailing edge (capacitive load)")
+        @DataPointEnumValue(value = 2, description = "trailing edge (capacitive load)")
         TRAILING_EDGE, //
-        @KnxDataPointEnumValue(value = 3, description = "detection not possible or error")
+        @DataPointEnumValue(value = 3, description = "detection not possible or error")
         DETECTION_NOT_POSSIBLE_OR_ERROR, //
-        @KnxDataPointEnumValue(value = 4, description = "calibration pending, waiting on trigger")
+        @DataPointEnumValue(value = 4, description = "calibration pending, waiting on trigger")
         CALIBRATION_PENDING, //
-        @KnxDataPointEnumValue(value = 5, description = "Compact Fluorescent Lamps, leading")
+        @DataPointEnumValue(value = 5, description = "Compact Fluorescent Lamps, leading")
         CFL_LEADING, //
-        @KnxDataPointEnumValue(value = 6, description = "Compact Fluorescent Lamps, trailing")
+        @DataPointEnumValue(value = 6, description = "Compact Fluorescent Lamps, trailing")
         CFL_TRAILING, //
-        @KnxDataPointEnumValue(value = 7, description = "LED, leading")
+        @DataPointEnumValue(value = 7, description = "LED, leading")
         LED_LEADING, //
-        @KnxDataPointEnumValue(value = 8, description = "LED, trailing")
+        @DataPointEnumValue(value = 8, description = "LED, trailing")
         LED_TRAILING
     }
 
@@ -1585,21 +1587,21 @@ public final class DPT20 {
      *                  6 = Reset Duration Test Done Acc. DALI Cmd. 231
      * </pre>
      */
-    @KnxDataPointType(value = {"20.611", "dpst-20-611"}, description = "Converter Test Control")
-    public enum ConverterTestControl implements DataPointTypeEnum<ConverterTestControl> {
-        @KnxDataPointEnumValue(value = 0, description = "Reserved, no effect")
+    @DataPoint(value = {"20.611", "dpst-20-611"}, description = "Converter Test Control")
+    public enum ConverterTestControl implements DataPointEnum<ConverterTestControl> {
+        @DataPointEnumValue(value = 0, description = "Reserved, no effect")
         NO_EFFECT, //
-        @KnxDataPointEnumValue(value = 1, description = "Start Function Test (FT) Acc. DALI Cmd. 227")
+        @DataPointEnumValue(value = 1, description = "Start Function Test (FT) Acc. DALI Cmd. 227")
         START_FUNCTION_TEST, //
-        @KnxDataPointEnumValue(value = 2, description = "Start Duration Test (DT) Acc. DALI Cmd. 228")
+        @DataPointEnumValue(value = 2, description = "Start Duration Test (DT) Acc. DALI Cmd. 228")
         START_DURATION_TEST, //
-        @KnxDataPointEnumValue(value = 3, description = "Start Partial Duration Test (PDT)")
+        @DataPointEnumValue(value = 3, description = "Start Partial Duration Test (PDT)")
         START_PARTIAL_DURATION_TEST, //
-        @KnxDataPointEnumValue(value = 4, description = "Stop Test Acc. DALI Cmd 229")
+        @DataPointEnumValue(value = 4, description = "Stop Test Acc. DALI Cmd 229")
         STOP_TEST_ACC, //
-        @KnxDataPointEnumValue(value = 5, description = "Reset Function Test Done Flag Acc. DALI Cmd. 230")
+        @DataPointEnumValue(value = 5, description = "Reset Function Test Done Flag Acc. DALI Cmd. 230")
         RESET_FUNCTION_TEST_DONE, //
-        @KnxDataPointEnumValue(value = 6, description = "Reset Duration Test Done Acc. DALI Cmd. 231")
+        @DataPointEnumValue(value = 6, description = "Reset Duration Test Done Acc. DALI Cmd. 231")
         RESET_DURATION_TEST_DONE
     }
 
@@ -1620,17 +1622,17 @@ public final class DPT20 {
      *                  4 = Reset Lamp Time Resets the Lamp Emergency Time and the Lamp Total Operation Time. Acc. DALI Cmd. 232
      * </pre>
      */
-    @KnxDataPointType(value = {"20.612", "dpst-20-612"}, description = "Converter Control")
-    public enum ConverterControl implements DataPointTypeEnum<ConverterControl> {
-        @KnxDataPointEnumValue(value = 0, description = "Restore Factory Default Settings Acc. DALI Cmd. 254")
+    @DataPoint(value = {"20.612", "dpst-20-612"}, description = "Converter Control")
+    public enum ConverterControl implements DataPointEnum<ConverterControl> {
+        @DataPointEnumValue(value = 0, description = "Restore Factory Default Settings Acc. DALI Cmd. 254")
         RESTORE_FACTORY_SETTINGS, //
-        @KnxDataPointEnumValue(value = 1, description = "Goto Rest Mode Acc. DALI Cmd. 224")
+        @DataPointEnumValue(value = 1, description = "Goto Rest Mode Acc. DALI Cmd. 224")
         GOTO_REST_MODE, //
-        @KnxDataPointEnumValue(value = 2, description = "Goto Inhibit Mode Acc. DALI Cmd. 225")
+        @DataPointEnumValue(value = 2, description = "Goto Inhibit Mode Acc. DALI Cmd. 225")
         GOTO_INHIBIT, //
-        @KnxDataPointEnumValue(value = 3, description = "Re-Light / Reset Inhibit Acc. DALI Cmd. 226")
+        @DataPointEnumValue(value = 3, description = "Re-Light / Reset Inhibit Acc. DALI Cmd. 226")
         RE_LIGHT_RESET_INHIBIT, //
-        @KnxDataPointEnumValue(value = 4, description = "Reset Lamp Time Resets the Lamp Emergency Time and the Lamp Total Operation Time. Acc. DALICmd.232")
+        @DataPointEnumValue(value = 4, description = "Reset Lamp Time Resets the Lamp Emergency Time and the Lamp Total Operation Time. Acc. DALICmd.232")
         RESET_LAMP_TIME_AND_OPERATION_TIME
     }
 
@@ -1655,25 +1657,25 @@ public final class DPT20 {
      *                  8 = Request Converter Info Fix
      * </pre>
      */
-    @KnxDataPointType(value = {"20.613", "dpst-20-613"}, description = "Converter Data Request")
-    public enum ConverterDataRequest implements DataPointTypeEnum<ConverterDataRequest> {
-        @KnxDataPointEnumValue(value = 0, description = "Reserved, no effect")
+    @DataPoint(value = {"20.613", "dpst-20-613"}, description = "Converter Data Request")
+    public enum ConverterDataRequest implements DataPointEnum<ConverterDataRequest> {
+        @DataPointEnumValue(value = 0, description = "Reserved, no effect")
         NO_EFFECT, //
-        @KnxDataPointEnumValue(value = 1, description = "Request Converter Status")
+        @DataPointEnumValue(value = 1, description = "Request Converter Status")
         REQUEST_CONVERTER_STATUS, //
-        @KnxDataPointEnumValue(value = 2, description = "Request Converter Test Result")
+        @DataPointEnumValue(value = 2, description = "Request Converter Test Result")
         REQUEST_CONVERTER_TEST_RESULT, //
-        @KnxDataPointEnumValue(value = 3, description = "Request Battery Info")
+        @DataPointEnumValue(value = 3, description = "Request Battery Info")
         REQUEST_BATTERY_INFO, //
-        @KnxDataPointEnumValue(value = 4, description = "Request Converter FT Info")
+        @DataPointEnumValue(value = 4, description = "Request Converter FT Info")
         REQUEST_CONVERTER_FT_INFO, //
-        @KnxDataPointEnumValue(value = 5, description = "Request Converter DT Info")
+        @DataPointEnumValue(value = 5, description = "Request Converter DT Info")
         REQUEST_CONVERTER_DT_INFO, //
-        @KnxDataPointEnumValue(value = 6, description = "Request Converter PDT Info")
+        @DataPointEnumValue(value = 6, description = "Request Converter PDT Info")
         REQUEST_CONVERTER_PDT_INFO, //
-        @KnxDataPointEnumValue(value = 7, description = "Request Converter Info")
+        @DataPointEnumValue(value = 7, description = "Request Converter Info")
         REQUEST_CONVERTER_INFO, //
-        @KnxDataPointEnumValue(value = 8, description = "Request Converter Info Fix")
+        @DataPointEnumValue(value = 8, description = "Request Converter Info Fix")
         REQUEST_CONVERTER_INFO_FIX
     }
 
@@ -1694,17 +1696,17 @@ public final class DPT20 {
      *                  4 = stop
      * </pre>
      */
-    @KnxDataPointType(value = {"20.801", "dpst-20-801"}, description = "SAB Except Behavior")
-    public enum SABExceptBehavior implements DataPointTypeEnum<SABExceptBehavior> {
-        @KnxDataPointEnumValue(value = 0, description = "up")
+    @DataPoint(value = {"20.801", "dpst-20-801"}, description = "SAB Except Behavior")
+    public enum SABExceptBehavior implements DataPointEnum<SABExceptBehavior> {
+        @DataPointEnumValue(value = 0, description = "up")
         UP, //
-        @KnxDataPointEnumValue(value = 1, description = "down")
+        @DataPointEnumValue(value = 1, description = "down")
         DOWN, //
-        @KnxDataPointEnumValue(value = 2, description = "no change")
+        @DataPointEnumValue(value = 2, description = "no change")
         NO_CHANGE, //
-        @KnxDataPointEnumValue(value = 3, description = "value according additional parameter")
+        @DataPointEnumValue(value = 3, description = "value according additional parameter")
         VALUE_ACCORDING_ADDITIONAL_PARAMETER, //
-        @KnxDataPointEnumValue(value = 4, description = "stop")
+        @DataPointEnumValue(value = 4, description = "stop")
         STOP
     }
 
@@ -1727,21 +1729,21 @@ public final class DPT20 {
      *                  6 = value before locking
      * </pre>
      */
-    @KnxDataPointType(value = {"20.802", "dpst-20-802"}, description = "SAB Behavior Lock/Unlock")
-    public enum SABBehaviorLockUnlock implements DataPointTypeEnum<SABBehaviorLockUnlock> {
-        @KnxDataPointEnumValue(value = 0, description = "up")
+    @DataPoint(value = {"20.802", "dpst-20-802"}, description = "SAB Behavior Lock/Unlock")
+    public enum SABBehaviorLockUnlock implements DataPointEnum<SABBehaviorLockUnlock> {
+        @DataPointEnumValue(value = 0, description = "up")
         UP, //
-        @KnxDataPointEnumValue(value = 1, description = "down")
+        @DataPointEnumValue(value = 1, description = "down")
         DOWN, //
-        @KnxDataPointEnumValue(value = 2, description = "no change")
+        @DataPointEnumValue(value = 2, description = "no change")
         NO_CHANGE, //
-        @KnxDataPointEnumValue(value = 3, description = "value according additional parameter")
+        @DataPointEnumValue(value = 3, description = "value according additional parameter")
         VALUE_ACCORDING_ADDITIONAL_PARAMETER, //
-        @KnxDataPointEnumValue(value = 4, description = "stop")
+        @DataPointEnumValue(value = 4, description = "stop")
         STOP, //
-        @KnxDataPointEnumValue(value = 5, description = "updated value")
+        @DataPointEnumValue(value = 5, description = "updated value")
         UPDATED_VALUE, //
-        @KnxDataPointEnumValue(value = 6, description = "value before locking")
+        @DataPointEnumValue(value = 6, description = "value before locking")
         VALUE_BEFORE_LOCKING
     }
 
@@ -1761,15 +1763,15 @@ public final class DPT20 {
      *                  4 = two push buttons/binary inputs mode
      * </pre>
      */
-    @KnxDataPointType(value = {"20.803", "dpst-20-803"}, description = "SSSB Mode")
-    public enum SSSBMode implements DataPointTypeEnum<SSSBMode> {
-        @KnxDataPointEnumValue(value = 1, description = "one push button/binary input; MoveUpDown inverts on each transmission")
+    @DataPoint(value = {"20.803", "dpst-20-803"}, description = "SSSB Mode")
+    public enum SSSBMode implements DataPointEnum<SSSBMode> {
+        @DataPointEnumValue(value = 1, description = "one push button/binary input; MoveUpDown inverts on each transmission")
         ONE_PUSH_INPUT_MOVEUPDOWN, //
-        @KnxDataPointEnumValue(value = 2, description = "one push button/binary input, MoveUp / StepUp message sent")
+        @DataPointEnumValue(value = 2, description = "one push button/binary input, MoveUp / StepUp message sent")
         ONE_PUSH_INPUT_MOVEUP, //
-        @KnxDataPointEnumValue(value = 3, description = "one push button/binary input, MoveDown / StepDown message sent")
+        @DataPointEnumValue(value = 3, description = "one push button/binary input, MoveDown / StepDown message sent")
         ONE_PUSH_INPUT_MOVEDOWN, //
-        @KnxDataPointEnumValue(value = 4, description = "two push buttons/binary inputs mode")
+        @DataPointEnumValue(value = 4, description = "two push buttons/binary inputs mode")
         TWO_PUSH_INPUTS
     }
 
@@ -1787,11 +1789,11 @@ public final class DPT20 {
      *                  1 = Manual Control
      * </pre>
      */
-    @KnxDataPointType(value = {"20.804", "dpst-20-804"}, description = "Blinds Control Mode")
-    public enum BlindsControlMode implements DataPointTypeEnum<BlindsControlMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Automatic Control")
+    @DataPoint(value = {"20.804", "dpst-20-804"}, description = "Blinds Control Mode")
+    public enum BlindsControlMode implements DataPointEnum<BlindsControlMode> {
+        @DataPointEnumValue(value = 0, description = "Automatic Control")
         AUTOMATIC, //
-        @KnxDataPointEnumValue(value = 1, description = "Manual Control")
+        @DataPointEnumValue(value = 1, description = "Manual Control")
         MANUAL
     }
 
@@ -1818,23 +1820,23 @@ public final class DPT20 {
      *
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1000", "dpst-20-1000"}, description = "Communication Mode")
-    public enum CommunicationMode implements DataPointTypeEnum<CommunicationMode> {
-        @KnxDataPointEnumValue(value = 0, description = "Data Link Layer")
+    @DataPoint(value = {"20.1000", "dpst-20-1000"}, description = "Communication Mode")
+    public enum CommunicationMode implements DataPointEnum<CommunicationMode> {
+        @DataPointEnumValue(value = 0, description = "Data Link Layer")
         DATA_LINK_LAYER, //
-        @KnxDataPointEnumValue(value = 1, description = "Busmonitor")
+        @DataPointEnumValue(value = 1, description = "Busmonitor")
         BUSMONITOR, //
-        @KnxDataPointEnumValue(value = 2, description = "Data Link Layer Raw Frames")
+        @DataPointEnumValue(value = 2, description = "Data Link Layer Raw Frames")
         DATA_LINK_LAYER_RAW_FRAMES, //
-        @KnxDataPointEnumValue(value = 3, description = "Network Layer")
+        @DataPointEnumValue(value = 3, description = "Network Layer")
         NETWORK_LAYER, //
-        @KnxDataPointEnumValue(value = 4, description = "TL Group Oriented")
+        @DataPointEnumValue(value = 4, description = "TL Group Oriented")
         TL_GROUP_ORIENTED, //
-        @KnxDataPointEnumValue(value = 5, description = "TL Connection Oriented")
+        @DataPointEnumValue(value = 5, description = "TL Connection Oriented")
         TL_CONNECTION_ORIENTED, //
-        @KnxDataPointEnumValue(value = 6, description = "cEMI Transport Layer")
+        @DataPointEnumValue(value = 6, description = "cEMI Transport Layer")
         CEMI_TRANSPORT_LAYER, //
-        @KnxDataPointEnumValue(value = 255, description = "No Layer")
+        @DataPointEnumValue(value = 255, description = "No Layer")
         NO_LAYER
     }
 
@@ -1858,23 +1860,23 @@ public final class DPT20 {
      *                255 = reserved for future system extensions (ESC code)
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1001", "dpst-20-1001"}, description = "Additional Info Types")
-    public enum AdditionalInfoTypes implements DataPointTypeEnum<AdditionalInfoTypes> {
-        @KnxDataPointEnumValue(value = 1, description = "PL medium Domain Address")
+    @DataPoint(value = {"20.1001", "dpst-20-1001"}, description = "Additional Info Types")
+    public enum AdditionalInfoTypes implements DataPointEnum<AdditionalInfoTypes> {
+        @DataPointEnumValue(value = 1, description = "PL medium Domain Address")
         PL_MEDIUM_DOMAIN_ADDRESS, //
-        @KnxDataPointEnumValue(value = 2, description = "RF Control Octet and Serial Number or DoA")
+        @DataPointEnumValue(value = 2, description = "RF Control Octet and Serial Number or DoA")
         RF_CONTROL_OCTET_AND_SERIAL_NUMBER_OR_DOA, //
-        @KnxDataPointEnumValue(value = 3, description = "Busmonitor Error Flags")
+        @DataPointEnumValue(value = 3, description = "Busmonitor Error Flags")
         BUSMONITOR_ERROR_FLAGS, //
-        @KnxDataPointEnumValue(value = 4, description = "Relative timestamp")
+        @DataPointEnumValue(value = 4, description = "Relative timestamp")
         RELATIVE_TIMESTAMP, //
-        @KnxDataPointEnumValue(value = 5, description = "Time delay")
+        @DataPointEnumValue(value = 5, description = "Time delay")
         TIME_DELAY, //
-        @KnxDataPointEnumValue(value = 6, description = "Extended Relative Timestamp")
+        @DataPointEnumValue(value = 6, description = "Extended Relative Timestamp")
         EXTENDED_RELATIVE_TIMESTAMP, //
-        @KnxDataPointEnumValue(value = 7, description = "BiBat information")
+        @DataPointEnumValue(value = 7, description = "BiBat information")
         BIBAT_INFORMATION, //
-        @KnxDataPointEnumValue(value = 255, description = "reserved for future system extensions (ESC code)")
+        @DataPointEnumValue(value = 255, description = "reserved for future system extensions (ESC code)")
         ESC_CODE
     }
 
@@ -1893,13 +1895,13 @@ public final class DPT20 {
      *                  2 = asynchronous + BiBat Slave
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1002", "dpst-20-1002"}, description = "RF Mode Select")
-    public enum RFModeSelect implements DataPointTypeEnum<RFModeSelect> {
-        @KnxDataPointEnumValue(value = 0, description = "asynchronous")
+    @DataPoint(value = {"20.1002", "dpst-20-1002"}, description = "RF Mode Select")
+    public enum RFModeSelect implements DataPointEnum<RFModeSelect> {
+        @DataPointEnumValue(value = 0, description = "asynchronous")
         ASYNCHRONOUS, //
-        @KnxDataPointEnumValue(value = 1, description = "asynchronous + BiBat Master")
+        @DataPointEnumValue(value = 1, description = "asynchronous + BiBat Master")
         ASYNCHRONOUS_BIBAT_MASTER, //
-        @KnxDataPointEnumValue(value = 2, description = "asynchronous + BiBat Slave")
+        @DataPointEnumValue(value = 2, description = "asynchronous + BiBat Slave")
         ASYNCHRONOUS_BIBAT_SLAVE
     }
 
@@ -1919,15 +1921,15 @@ public final class DPT20 {
      *                  3 = filtering by Domain Address and by Serial number table
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1003", "dpst-20-1003"}, description = "RF Filter Select")
-    public enum RFFilterSelect implements DataPointTypeEnum<RFFilterSelect> {
-        @KnxDataPointEnumValue(value = 0, description = "no filtering, all supported received frames shall be passed to the cEMI clientusing L_Data.ind")
+    @DataPoint(value = {"20.1003", "dpst-20-1003"}, description = "RF Filter Select")
+    public enum RFFilterSelect implements DataPointEnum<RFFilterSelect> {
+        @DataPointEnumValue(value = 0, description = "no filtering, all supported received frames shall be passed to the cEMI clientusing L_Data.ind")
         NO_FILTERING, //
-        @KnxDataPointEnumValue(value = 1, description = "filtering by Domain Address")
+        @DataPointEnumValue(value = 1, description = "filtering by Domain Address")
         BY_DOMAIN_ADDRESS, //
-        @KnxDataPointEnumValue(value = 2, description = "filtering by KNX Serial Number table")
+        @DataPointEnumValue(value = 2, description = "filtering by KNX Serial Number table")
         BY_SERIAL_NUMBER, //
-        @KnxDataPointEnumValue(value = 3, description = "filtering by Domain Address and by Serial numbertable")
+        @DataPointEnumValue(value = 3, description = "filtering by Domain Address and by Serial numbertable")
         BY_DOMAIN_ADDRESS_AND_BY_SERIAL_NUMBER
     }
 
@@ -1947,15 +1949,15 @@ public final class DPT20 {
      *                  5 = KNX IP
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1004", "dpst-20-1004"}, description = "Medium")
-    public enum Medium implements DataPointTypeEnum<Medium> {
-        @KnxDataPointEnumValue(value = 0, description = "KNX_TP1")
+    @DataPoint(value = {"20.1004", "dpst-20-1004"}, description = "Medium")
+    public enum Medium implements DataPointEnum<Medium> {
+        @DataPointEnumValue(value = 0, description = "KNX_TP1")
         KNX_TP1, //
-        @KnxDataPointEnumValue(value = 1, description = "KNX_PL110")
+        @DataPointEnumValue(value = 1, description = "KNX_PL110")
         KNX_PL110, //
-        @KnxDataPointEnumValue(value = 2, description = "KNX_RF")
+        @DataPointEnumValue(value = 2, description = "KNX_RF")
         KNX_RF, //
-        @KnxDataPointEnumValue(value = 5, description = "KNX_IP")
+        @DataPointEnumValue(value = 5, description = "KNX_IP")
         KNX_IP
     }
 
@@ -2026,117 +2028,117 @@ public final class DPT20 {
      *                 55 = Sub detector
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1005", "dpst-20-1005"}, description = "PB Function")
-    public enum PBFunction implements DataPointTypeEnum<PBFunction> {
-        @KnxDataPointEnumValue(value = 1, description = "default function")
+    @DataPoint(value = {"20.1005", "dpst-20-1005"}, description = "PB Function")
+    public enum PBFunction implements DataPointEnum<PBFunction> {
+        @DataPointEnumValue(value = 1, description = "default function")
         DEFAULT_FUNCTION, //
-        @KnxDataPointEnumValue(value = 2, description = "ON")
+        @DataPointEnumValue(value = 2, description = "ON")
         ON, //
-        @KnxDataPointEnumValue(value = 3, description = "OFF")
+        @DataPointEnumValue(value = 3, description = "OFF")
         OFF, //
-        @KnxDataPointEnumValue(value = 4, description = "Toggle")
+        @DataPointEnumValue(value = 4, description = "Toggle")
         TOGGLE, //
-        @KnxDataPointEnumValue(value = 5, description = "Dimming Up Down")
+        @DataPointEnumValue(value = 5, description = "Dimming Up Down")
         DIMMING_UP_DOWN, //
-        @KnxDataPointEnumValue(value = 6, description = "Dimming Up")
+        @DataPointEnumValue(value = 6, description = "Dimming Up")
         DIMMING_UP, //
-        @KnxDataPointEnumValue(value = 7, description = "Dimming Down")
+        @DataPointEnumValue(value = 7, description = "Dimming Down")
         DIMMING_DOWN, //
-        @KnxDataPointEnumValue(value = 8, description = "On / Off")
+        @DataPointEnumValue(value = 8, description = "On / Off")
         ON_OFF, //
-        @KnxDataPointEnumValue(value = 9, description = "Timed On Off")
+        @DataPointEnumValue(value = 9, description = "Timed On Off")
         TIMED_ON_OFF, //
-        @KnxDataPointEnumValue(value = 10, description = "Forced On")
+        @DataPointEnumValue(value = 10, description = "Forced On")
         FORCED_ON, //
-        @KnxDataPointEnumValue(value = 11, description = "Forced Off")
+        @DataPointEnumValue(value = 11, description = "Forced Off")
         FORCED_OFF, //
-        @KnxDataPointEnumValue(value = 12, description = "Shutter Up (for PB)")
+        @DataPointEnumValue(value = 12, description = "Shutter Up (for PB)")
         SHUTTER_UP, //
-        @KnxDataPointEnumValue(value = 13, description = "Shutter Down (for (PB)")
+        @DataPointEnumValue(value = 13, description = "Shutter Down (for (PB)")
         SHUTTER_DOWN, //
-        @KnxDataPointEnumValue(value = 14, description = "Shutter Up Down (for PB)")
+        @DataPointEnumValue(value = 14, description = "Shutter Up Down (for PB)")
         SHUTTER_UP_DOWN, //
-        @KnxDataPointEnumValue(value = 15, description = "reserved")
+        @DataPointEnumValue(value = 15, description = "reserved")
         RESERVED, //
-        @KnxDataPointEnumValue(value = 16, description = "Forced Up")
+        @DataPointEnumValue(value = 16, description = "Forced Up")
         FORCED_UP, //
-        @KnxDataPointEnumValue(value = 17, description = "Forced Down")
+        @DataPointEnumValue(value = 17, description = "Forced Down")
         FORCED_DOWN, //
-        @KnxDataPointEnumValue(value = 18, description = "Wind Alarm")
+        @DataPointEnumValue(value = 18, description = "Wind Alarm")
         WIND_ALARM, //
-        @KnxDataPointEnumValue(value = 19, description = "Rain Alarm")
+        @DataPointEnumValue(value = 19, description = "Rain Alarm")
         RAIN_ALARM, //
-        @KnxDataPointEnumValue(value = 20, description = "HVAC Mode Comfort / Economy")
+        @DataPointEnumValue(value = 20, description = "HVAC Mode Comfort / Economy")
         HVAC_MODE_COMFORT_ECONOMY, //
-        @KnxDataPointEnumValue(value = 21, description = "HVAC Mode Comfort / -")
+        @DataPointEnumValue(value = 21, description = "HVAC Mode Comfort / -")
         HVAC_MODE_COMFORT, //
-        @KnxDataPointEnumValue(value = 22, description = "HVAC Mode Economy / -")
+        @DataPointEnumValue(value = 22, description = "HVAC Mode Economy / -")
         HVAC_MODE_ECONOMY, //
-        @KnxDataPointEnumValue(value = 23, description = "HVAC Mode Building protection / HVAC mode auto")
+        @DataPointEnumValue(value = 23, description = "HVAC Mode Building protection / HVAC mode auto")
         HVAC_MODE_BUILDING_PROTECTION_AUTO, //
-        @KnxDataPointEnumValue(value = 24, description = "Shutter Stop")
+        @DataPointEnumValue(value = 24, description = "Shutter Stop")
         SHUTTER_STOP, //
-        @KnxDataPointEnumValue(value = 25, description = "Timed Comfort Standby")
+        @DataPointEnumValue(value = 25, description = "Timed Comfort Standby")
         TIMED_COMFORT_STANDBY, //
-        @KnxDataPointEnumValue(value = 26, description = "Forced Comfort")
+        @DataPointEnumValue(value = 26, description = "Forced Comfort")
         FORCED_COMFORT, //
-        @KnxDataPointEnumValue(value = 27, description = "Forced Building protection")
+        @DataPointEnumValue(value = 27, description = "Forced Building protection")
         FORCED_BUILDING_PROTECTION, //
-        @KnxDataPointEnumValue(value = 28, description = "Scene 1")
+        @DataPointEnumValue(value = 28, description = "Scene 1")
         SCENE_1, //
-        @KnxDataPointEnumValue(value = 29, description = "Scene 2")
+        @DataPointEnumValue(value = 29, description = "Scene 2")
         SCENE_2, //
-        @KnxDataPointEnumValue(value = 30, description = "Scene 3")
+        @DataPointEnumValue(value = 30, description = "Scene 3")
         SCENE_3, //
-        @KnxDataPointEnumValue(value = 31, description = "Scene 4")
+        @DataPointEnumValue(value = 31, description = "Scene 4")
         SCENE_4, //
-        @KnxDataPointEnumValue(value = 32, description = "Scene 5")
+        @DataPointEnumValue(value = 32, description = "Scene 5")
         SCENE_5, //
-        @KnxDataPointEnumValue(value = 33, description = "Scene 6")
+        @DataPointEnumValue(value = 33, description = "Scene 6")
         SCENE_6, //
-        @KnxDataPointEnumValue(value = 34, description = "Scene 7")
+        @DataPointEnumValue(value = 34, description = "Scene 7")
         SCENE_7, //
-        @KnxDataPointEnumValue(value = 35, description = "Scene 8")
+        @DataPointEnumValue(value = 35, description = "Scene 8")
         SCENE_8, //
-        @KnxDataPointEnumValue(value = 36, description = "Absolute dimming 25 %")
+        @DataPointEnumValue(value = 36, description = "Absolute dimming 25 %")
         ABSOLUTE_DIMMING_25, //
-        @KnxDataPointEnumValue(value = 37, description = "Absolute dimming 50 %")
+        @DataPointEnumValue(value = 37, description = "Absolute dimming 50 %")
         ABSOLUTE_DIMMING_50, //
-        @KnxDataPointEnumValue(value = 38, description = "Absolute dimming 75 %")
+        @DataPointEnumValue(value = 38, description = "Absolute dimming 75 %")
         ABSOLUTE_DIMMING_75, //
-        @KnxDataPointEnumValue(value = 39, description = "Absolute dimming 100 %")
+        @DataPointEnumValue(value = 39, description = "Absolute dimming 100 %")
         ABSOLUTE_DIMMING_100, //
-        @KnxDataPointEnumValue(value = 40, description = "Shutter Up / - (for switch)")
+        @DataPointEnumValue(value = 40, description = "Shutter Up / - (for switch)")
         SWITCH_SHUTTER_UP, //
-        @KnxDataPointEnumValue(value = 41, description = "Shutter Down / - (for switch)")
+        @DataPointEnumValue(value = 41, description = "Shutter Down / - (for switch)")
         SWITCH_SHUTTER_DOWN, //
-        @KnxDataPointEnumValue(value = 42, description = "Shutter Up / Down (for switch)")
+        @DataPointEnumValue(value = 42, description = "Shutter Up / Down (for switch)")
         SWITCH_SHUTTER_UP_DOWN, //
-        @KnxDataPointEnumValue(value = 43, description = "Shutter Down / Up (for switch)")
+        @DataPointEnumValue(value = 43, description = "Shutter Down / Up (for switch)")
         SWITCH_SHUTTER_DOWN_UP, //
-        @KnxDataPointEnumValue(value = 44, description = "Light sensor")
+        @DataPointEnumValue(value = 44, description = "Light sensor")
         LIGHT_SENSOR, //
-        @KnxDataPointEnumValue(value = 45, description = "System clock")
+        @DataPointEnumValue(value = 45, description = "System clock")
         SYSTEM_CLOCK, //
-        @KnxDataPointEnumValue(value = 46, description = "Battery status")
+        @DataPointEnumValue(value = 46, description = "Battery status")
         BATTERY_STATUS, //
-        @KnxDataPointEnumValue(value = 47, description = "HVAC Mode Standby / -")
+        @DataPointEnumValue(value = 47, description = "HVAC Mode Standby / -")
         HVAC_MODE_STANDBY, //
-        @KnxDataPointEnumValue(value = 48, description = "HVAC Mode Auto / -")
+        @DataPointEnumValue(value = 48, description = "HVAC Mode Auto / -")
         HVAC_MODE_AUTO, //
-        @KnxDataPointEnumValue(value = 49, description = "HVAC Mode Comfort / Standby")
+        @DataPointEnumValue(value = 49, description = "HVAC Mode Comfort / Standby")
         HVAC_MODE_COMFORT_STANDBY, //
-        @KnxDataPointEnumValue(value = 50, description = "HVAC Mode Building protection / -")
+        @DataPointEnumValue(value = 50, description = "HVAC Mode Building protection / -")
         HVAC_MODE_BUILDING_PROTECTION, //
-        @KnxDataPointEnumValue(value = 51, description = "Timed toggle")
+        @DataPointEnumValue(value = 51, description = "Timed toggle")
         TIMED_TOGGLE, //
-        @KnxDataPointEnumValue(value = 52, description = "Dimming Absolute switch")
+        @DataPointEnumValue(value = 52, description = "Dimming Absolute switch")
         DIMMING_ABSOLUTE_SWITCH, //
-        @KnxDataPointEnumValue(value = 53, description = "Scene switch")
+        @DataPointEnumValue(value = 53, description = "Scene switch")
         SCENE_SWITCH, //
-        @KnxDataPointEnumValue(value = 54, description = "Smoke alarm")
+        @DataPointEnumValue(value = 54, description = "Smoke alarm")
         SMOKE_ALARM, //
-        @KnxDataPointEnumValue(value = 55, description = "Sub detector")
+        @DataPointEnumValue(value = 55, description = "Sub detector")
         SUB_DETECTOR
     }
 
@@ -2156,15 +2158,15 @@ public final class DPT20 {
      *                255 = invalid
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1200", "dpst-20-1200"}, description = "MBus Breaker Valve State")
-    public enum MBusBreakerValveState implements DataPointTypeEnum<MBusBreakerValveState> {
-        @KnxDataPointEnumValue(value = 0, description = "Breaker/Valve is closed")
+    @DataPoint(value = {"20.1200", "dpst-20-1200"}, description = "MBus Breaker Valve State")
+    public enum MBusBreakerValveState implements DataPointEnum<MBusBreakerValveState> {
+        @DataPointEnumValue(value = 0, description = "Breaker/Valve is closed")
         IS_CLOSED, //
-        @KnxDataPointEnumValue(value = 1, description = "Breaker/Valve is open")
+        @DataPointEnumValue(value = 1, description = "Breaker/Valve is open")
         IS_OPEN, //
-        @KnxDataPointEnumValue(value = 2, description = "Breaker/Valve is released")
+        @DataPointEnumValue(value = 2, description = "Breaker/Valve is released")
         IS_RELEASED, //
-        @KnxDataPointEnumValue(value = 255, description = "invalid")
+        @DataPointEnumValue(value = 255, description = "invalid")
         INVALID
     }
 
@@ -2184,15 +2186,15 @@ public final class DPT20 {
      *                  3 = At measurement condition
      * </pre>
      */
-    @KnxDataPointType(value = {"20.1202", "dpst-20-1202"}, description = "Gas Measurement Condition")
-    public enum GasMeasurementCondition implements DataPointTypeEnum<GasMeasurementCondition> {
-        @KnxDataPointEnumValue(value = 0, description = "Unknown")
+    @DataPoint(value = {"20.1202", "dpst-20-1202"}, description = "Gas Measurement Condition")
+    public enum GasMeasurementCondition implements DataPointEnum<GasMeasurementCondition> {
+        @DataPointEnumValue(value = 0, description = "Unknown")
         UNKNOWN, //
-        @KnxDataPointEnumValue(value = 1, description = "Temperature converted")
+        @DataPointEnumValue(value = 1, description = "Temperature converted")
         TEMPERATURE_CONVERTED, //
-        @KnxDataPointEnumValue(value = 2, description = "At base condition")
+        @DataPointEnumValue(value = 2, description = "At base condition")
         AT_BASE_CONDITION, //
-        @KnxDataPointEnumValue(value = 3, description = "At measurement condition")
+        @DataPointEnumValue(value = 3, description = "At measurement condition")
         AT_MEASUREMENT_CONDITION
     }
 }

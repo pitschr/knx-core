@@ -1,6 +1,6 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadResponse;
 import ro.pippo.controller.Consumes;
@@ -65,7 +65,7 @@ public final class ReadRequestController extends AbstractController {
 
         final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
         if (xmlGroupAddress != null) {
-            final var dpt = DataPointTypeRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
+            final var dpt = DataPointRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
             response.setName(xmlGroupAddress.getName());
             response.setDescription(xmlGroupAddress.getDescription());
             response.setDataPointType(dpt);

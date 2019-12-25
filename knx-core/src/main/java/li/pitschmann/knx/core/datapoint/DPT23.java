@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.datapoint.value.DataPointEnumValue;
+
 /**
  * Data Point Type 23 for '2-Bit Boolean' (2 Bit)
  *
@@ -52,15 +54,15 @@ public final class DPT23 {
      *                  3 = On/Off
      * </pre>
      */
-    @KnxDataPointType(value = {"23.001", "dpst-23-1"}, description = "Action On/Off")
-    public enum ActionOnOff implements DataPointTypeEnum<ActionOnOff> {
-        @KnxDataPointEnumValue(value = 0, description = "Off")
+    @DataPoint(value = {"23.001", "dpst-23-1"}, description = "Action On/Off")
+    public enum ActionOnOff implements DataPointEnum<ActionOnOff> {
+        @DataPointEnumValue(value = 0, description = "Off")
         OFF, //
-        @KnxDataPointEnumValue(value = 1, description = "On")
+        @DataPointEnumValue(value = 1, description = "On")
         ON, //
-        @KnxDataPointEnumValue(value = 2, description = "Off/On")
+        @DataPointEnumValue(value = 2, description = "Off/On")
         OFF_ON, //
-        @KnxDataPointEnumValue(value = 3, description = "On/Off")
+        @DataPointEnumValue(value = 3, description = "On/Off")
         ON_OFF
     }
 
@@ -79,13 +81,13 @@ public final class DPT23 {
      *                  2 = Alarm position is DOWN
      * </pre>
      */
-    @KnxDataPointType(value = {"23.002", "dpst-23-2"}, description = "Alarm Reaction")
-    public enum AlarmReaction implements DataPointTypeEnum<AlarmReaction> {
-        @KnxDataPointEnumValue(value = 0, description = "No Alarm")
+    @DataPoint(value = {"23.002", "dpst-23-2"}, description = "Alarm Reaction")
+    public enum AlarmReaction implements DataPointEnum<AlarmReaction> {
+        @DataPointEnumValue(value = 0, description = "No Alarm")
         NO_ALARM, //
-        @KnxDataPointEnumValue(value = 1, description = "Alarm Position UP")
+        @DataPointEnumValue(value = 1, description = "Alarm Position UP")
         ALARM_POSITION_UP, //
-        @KnxDataPointEnumValue(value = 2, description = "Alarm Position DOWN")
+        @DataPointEnumValue(value = 2, description = "Alarm Position DOWN")
         ALARM_POSITION_DOWN
     }
 
@@ -105,15 +107,15 @@ public final class DPT23 {
      *                  3 = Down/Up
      * </pre>
      */
-    @KnxDataPointType(value = {"23.003", "dpst-23-3"}, description = "Action Up/Down")
-    public enum ActionUpDown implements DataPointTypeEnum<ActionUpDown> {
-        @KnxDataPointEnumValue(value = 0, description = "Up")
+    @DataPoint(value = {"23.003", "dpst-23-3"}, description = "Action Up/Down")
+    public enum ActionUpDown implements DataPointEnum<ActionUpDown> {
+        @DataPointEnumValue(value = 0, description = "Up")
         UP, //
-        @KnxDataPointEnumValue(value = 1, description = "Down")
+        @DataPointEnumValue(value = 1, description = "Down")
         DOWN, //
-        @KnxDataPointEnumValue(value = 2, description = "Up/Down")
+        @DataPointEnumValue(value = 2, description = "Up/Down")
         UP_DOWN, //
-        @KnxDataPointEnumValue(value = 3, description = "Down/Up")
+        @DataPointEnumValue(value = 3, description = "Down/Up")
         DOWN_UP
     }
 }

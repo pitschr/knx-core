@@ -49,12 +49,13 @@ public class DPT2Test extends AbstractDataPointTypeTest<DPT2, DPT2Value> {
         // failures
         assertThatThrownBy(() -> dpt.toValue((byte) 0x04)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.toValue("0x05")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> dpt.toValue("false", "true", "false")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
         assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT2Value.class);
         assertThat(dpt.toValue((byte) 0x01)).isInstanceOf(DPT2Value.class);
+        assertThat(dpt.toValue("0x03")).isInstanceOf(DPT2Value.class);
         assertThat(dpt.toValue("false")).isInstanceOf(DPT2Value.class);
         assertThat(dpt.toValue("true")).isInstanceOf(DPT2Value.class);
         assertThat(dpt.toValue("0")).isInstanceOf(DPT2Value.class);

@@ -82,8 +82,8 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
      * Format:     14 octets (A<sub>112</sub>)
      * </pre>
      */
-    @KnxDataPointType({"16.000", "dpst-16-0"})
-    public static final DPT16 ASCII = new DPT16("16.000", "ASCII Characters", StandardCharsets.US_ASCII);
+    @DataPoint({"16.000", "dpst-16-0"})
+    public static final DPT16 ASCII = new DPT16("ASCII Characters", StandardCharsets.US_ASCII);
 
     /**
      * <strong>16.001</strong> ISO 8859-1 / Latin-1
@@ -108,8 +108,8 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
      * Format:     14 octets (A<sub>112</sub>)
      * </pre>
      */
-    @KnxDataPointType({"16.001", "dpt-16", "dpst-16-1"})
-    public static final DPT16 ISO_8859_1 = new DPT16("16.001", "ISO 8859-1 Characters", StandardCharsets.ISO_8859_1);
+    @DataPoint({"16.001", "dpt-16", "dpst-16-1"})
+    public static final DPT16 ISO_8859_1 = new DPT16("ISO 8859-1 Characters", StandardCharsets.ISO_8859_1);
 
     private final Charset charset;
     private final CharsetDecoder charsetDecoder;
@@ -117,14 +117,12 @@ public final class DPT16 extends AbstractDataPointType<DPT16Value> {
     /**
      * Constructor for {@link DPT16}
      *
-     * @param id      identifier for {@link DPT16}
      * @param desc    description for {@link DPT16}
      * @param charset the character encoding set for {@link DPT16}
      */
-    private DPT16(final String id,
-                  final String desc,
+    private DPT16(final String desc,
                   final Charset charset) {
-        super(id, desc);
+        super(desc);
 
         this.charset = Objects.requireNonNull(charset);
         this.charsetDecoder = charset.newDecoder();

@@ -51,6 +51,9 @@ public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
         assertThatThrownBy(() -> DPT_TIME.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue(new byte[4])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_TIME.toValue("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
         assertThatThrownBy(() -> DPT_TIME.toValue("foo", "bar", "far")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
@@ -61,6 +64,8 @@ public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
         // OK
         assertThat(DPT_TIME.toValue((byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT10Value.class);
         assertThat(DPT_TIME.toValue((byte) 0xef, (byte) 0x3b, (byte) 0x3b)).isInstanceOf(DPT10Value.class);
+        assertThat(DPT_TIME.toValue("0x00", "0x00", "0x00")).isInstanceOf(DPT10Value.class);
+        assertThat(DPT_TIME.toValue("0xef", "0x3b", "0x3b")).isInstanceOf(DPT10Value.class);
         assertThat(DPT_TIME.toValue(null, LocalTime.now())).isInstanceOf(DPT10Value.class);
         assertThat(DPT_TIME.toValue(DayOfWeek.MONDAY, LocalTime.now())).isInstanceOf(DPT10Value.class);
         assertThat(DPT_TIME.toValue("14:56:30")).isInstanceOf(DPT10Value.class);

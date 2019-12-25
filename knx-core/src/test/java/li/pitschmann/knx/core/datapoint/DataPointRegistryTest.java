@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.datapoint.value.DataPointEnumValue;
 import li.pitschmann.knx.core.exceptions.KnxDataPointTypeNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxException;
@@ -31,54 +32,54 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Tests for {@link DataPointTypeRegistry}
+ * Tests for {@link DataPointRegistry}
  *
  * @author PITSCHR
  */
-public class DataPointTypeRegistryTest {
+public class DataPointRegistryTest {
 
     /**
-     * Test {@link DataPointTypeRegistry#getDataPointType(String)} for normal/static data point types
+     * Test {@link DataPointRegistry#getDataPointType(String)} for normal/static data point types
      */
     @Test
     public void testGetDataPointType() {
-        final DPT1 dpt1 = DataPointTypeRegistry.getDataPointType("1.001");
+        final DPT1 dpt1 = DataPointRegistry.getDataPointType("1.001");
         assertThat(dpt1).isEqualTo(DPT1.SWITCH);
-        assertThat(DataPointTypeRegistry.<DPT1>getDataPointType("1.001")).isEqualTo(DPT1.SWITCH);
+        assertThat(DataPointRegistry.<DPT1>getDataPointType("1.001")).isEqualTo(DPT1.SWITCH);
 
-        final DPT8 dpt8 = DataPointTypeRegistry.getDataPointType("8.003");
+        final DPT8 dpt8 = DataPointRegistry.getDataPointType("8.003");
         assertThat(dpt8).isEqualTo(DPT8.DELTA_TIME_10MS);
-        assertThat(DataPointTypeRegistry.<DPT8>getDataPointType("8.003")).isEqualTo(DPT8.DELTA_TIME_10MS);
+        assertThat(DataPointRegistry.<DPT8>getDataPointType("8.003")).isEqualTo(DPT8.DELTA_TIME_10MS);
 
-        final DPT14 dpt14 = DataPointTypeRegistry.getDataPointType("14.000");
+        final DPT14 dpt14 = DataPointRegistry.getDataPointType("14.000");
         assertThat(dpt14).isEqualTo(DPT14.ACCELERATION);
-        assertThat(DataPointTypeRegistry.<DPT14>getDataPointType("14.000")).isEqualTo(DPT14.ACCELERATION);
+        assertThat(DataPointRegistry.<DPT14>getDataPointType("14.000")).isEqualTo(DPT14.ACCELERATION);
     }
 
     /**
-     * Test {@link DataPointTypeRegistry#getDataPointType(String)} for enumerated data point types
+     * Test {@link DataPointRegistry#getDataPointType(String)} for enumerated data point types
      * <p>
-     * {@link DPTEnum} is a wrapper class which is created by {@link DataPointTypeRegistry} during class loading based
-     * on {@link KnxDataPointType} and {@link KnxDataPointEnumValue} annotations. Therefore, we have no direct
+     * {@link DPTEnum} is a wrapper class which is created by {@link DataPointRegistry} during class loading based
+     * on {@link DataPoint} and {@link DataPointEnumValue} annotations. Therefore, we have no direct
      * access to the {@link DPTEnum} instance, however, due the nature of enumeration it will be a single instance and
      * therefore it will share same hash code and {@link #equals(Object)} will match.
      */
     @Test
     public void testGetDataPointTypeEnum() {
         // check by assignment
-        final DPTEnum<DPT20.LightApplicationMode> dpt20 = DataPointTypeRegistry.getDataPointType("20.005");
+        final DPTEnum<DPT20.LightApplicationMode> dpt20 = DataPointRegistry.getDataPointType("20.005");
         assertThat(dpt20.getId()).isEqualTo("20.005");
         assertThat(dpt20.getDescription()).isEqualTo("Light Application Mode");
         assertThat(dpt20.toValue(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
         assertThat(dpt20.toValue(2).getOrdinal()).isEqualTo(2);
 
         // direct check
-        assertThat(DataPointTypeRegistry.getDataPointType("20.005").getId()).isEqualTo("20.005");
-        assertThat(DataPointTypeRegistry.getDataPointType("20.005").getDescription()).isEqualTo("Light Application Mode");
-        assertThat(DataPointTypeRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
-        assertThat(DataPointTypeRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getOrdinal()).isEqualTo(2);
-        assertThat(DataPointTypeRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getEnum()).isEqualTo(DPT20.LightApplicationMode.PRESENCE_SIMULATION);
-        assertThat(DataPointTypeRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getOrdinal()).isEqualTo(1);
+        assertThat(DataPointRegistry.getDataPointType("20.005").getId()).isEqualTo("20.005");
+        assertThat(DataPointRegistry.getDataPointType("20.005").getDescription()).isEqualTo("Light Application Mode");
+        assertThat(DataPointRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
+        assertThat(DataPointRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").toValue(2).getOrdinal()).isEqualTo(2);
+        assertThat(DataPointRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getEnum()).isEqualTo(DPT20.LightApplicationMode.PRESENCE_SIMULATION);
+        assertThat(DataPointRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getOrdinal()).isEqualTo(1);
 
         // should match
         final DPTEnum<DPT20.LightApplicationMode> dpt20Created = new DPTEnum<>("20.005", "Light Application Mode");
@@ -87,14 +88,14 @@ public class DataPointTypeRegistryTest {
     }
 
     /**
-     * Tests the non-existing data point type using {@link DataPointTypeRegistry#getDataPointType(String)}
+     * Tests the non-existing data point type using {@link DataPointRegistry#getDataPointType(String)}
      */
     @Test
     public void testGetDataPointTypeFailure() {
-        assertThatThrownBy(() -> DataPointTypeRegistry.getDataPointType(TestEnum.UNKNOWN)).isInstanceOf(KnxEnumNotFoundException.class)
+        assertThatThrownBy(() -> DataPointRegistry.getDataPointType(TestEnum.UNKNOWN)).isInstanceOf(KnxEnumNotFoundException.class)
                 .hasMessage("Could not find enum data point type for: UNKNOWN");
 
-        assertThatThrownBy(() -> DataPointTypeRegistry.getDataPointType("UNKNOWN")).isInstanceOf(KnxDataPointTypeNotFoundException.class)
+        assertThatThrownBy(() -> DataPointRegistry.getDataPointType("UNKNOWN")).isInstanceOf(KnxDataPointTypeNotFoundException.class)
                 .hasMessage("Could not find data point type id: UNKNOWN");
     }
 
@@ -104,31 +105,31 @@ public class DataPointTypeRegistryTest {
     @Test
     public void registerBadClasses() {
         // exception thrown because of clearly a wrong configuration
-        assertThatThrownBy(() -> DataPointTypeRegistry.registerDataPointType(DPTEnumWithDuplicateId.class)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DataPointTypeRegistry.registerDataPointType(DPTEnumWithTwoSameValues.class)).isInstanceOf(KnxException.class);
-        assertThatThrownBy(() -> DataPointTypeRegistry.registerDataPointType(DPTWithWithDuplicatedId.class)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTEnumWithDuplicateId.class)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTEnumWithTwoSameValues.class)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTWithWithDuplicatedId.class)).isInstanceOf(KnxException.class);
 
         // no exception thrown (data point type simply ignored)
-        DataPointTypeRegistry.registerDataPointType(DPTEnumWithoutValue.class);
-        DataPointTypeRegistry.registerDataPointType(DPTEnumWithoutInterface.class);
-        DataPointTypeRegistry.registerDataPointType(DPTEnumWithWrongInterface.class);
-        DataPointTypeRegistry.registerDataPointType(DPTEnumWithoutAnnotation.class);
-        DataPointTypeRegistry.registerDataPointType(DPTWithUnsupportedFields.class);
+        DataPointRegistry.registerDataPointType(DPTEnumWithoutValue.class);
+        DataPointRegistry.registerDataPointType(DPTEnumWithoutInterface.class);
+        DataPointRegistry.registerDataPointType(DPTEnumWithWrongInterface.class);
+        DataPointRegistry.registerDataPointType(DPTEnumWithoutAnnotation.class);
+        DataPointRegistry.registerDataPointType(DPTWithUnsupportedFields.class);
     }
 
     /**
-     * Test constructor of {@link DataPointTypeRegistry}
+     * Test constructor of {@link DataPointRegistry}
      */
     @Test
     @DisplayName("Constructor not instantiable")
     public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(DataPointTypeRegistry.class);
+        TestHelpers.assertThatNotInstantiable(DataPointRegistry.class);
     }
 
     /**
      * Test Enumeration Class for {@link #testGetDataPointTypeFailure()} test method.
      */
-    private enum TestEnum implements DataPointTypeEnum<TestEnum> {
+    private enum TestEnum implements DataPointEnum<TestEnum> {
         UNKNOWN
     }
 
@@ -142,8 +143,8 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithDuplicateId {
-        @KnxDataPointType(value = "20.001", description = "DPT with alraedy existing id.")
-        public enum Empty implements DataPointTypeEnum<Empty> {
+        @DataPoint(value = "20.001", description = "DPT with alraedy existing id.")
+        public enum Empty implements DataPointEnum<Empty> {
             EMPTY
         }
     }
@@ -154,7 +155,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTWithWithDuplicatedId {
-        @KnxDataPointType(value = "1.001", description = "")
+        @DataPoint(value = "1.001", description = "")
         public static final String STRING1 = "";
     }
 
@@ -164,11 +165,11 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithTwoSameValues {
-        @KnxDataPointType(value = "", description = "DPT with two same values")
-        public enum Number implements DataPointTypeEnum<Number> {
-            @KnxDataPointEnumValue(value = 0, description = "foo")
+        @DataPoint(value = "", description = "DPT with two same values")
+        public enum Number implements DataPointEnum<Number> {
+            @DataPointEnumValue(value = 0, description = "foo")
             FOO, //
-            @KnxDataPointEnumValue(value = 0, description = "bar")
+            @DataPointEnumValue(value = 0, description = "bar")
             BAR
         }
     }
@@ -179,8 +180,8 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithoutValue {
-        @KnxDataPointType(value = "9999.000", description = "DPT without value")
-        public enum Empty implements DataPointTypeEnum<Empty> {
+        @DataPoint(value = "9999.000", description = "DPT without value")
+        public enum Empty implements DataPointEnum<Empty> {
             EMPTY
         }
     }
@@ -191,7 +192,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithoutInterface {
-        @KnxDataPointType(value = "9999.001", description = "DPT without interface")
+        @DataPoint(value = "9999.001", description = "DPT without interface")
         public enum Empty {
             EMPTY
         }
@@ -203,7 +204,7 @@ public class DataPointTypeRegistryTest {
      * @author PITSCHR
      */
     private static final class DPTEnumWithWrongInterface {
-        @KnxDataPointType(value = "9999.002", description = "DPT with wrong interface")
+        @DataPoint(value = "9999.002", description = "DPT with wrong interface")
         public enum Empty implements Serializable {
             EMPTY
         }
@@ -216,24 +217,24 @@ public class DataPointTypeRegistryTest {
      */
     private static final class DPTEnumWithoutAnnotation {
         @SuppressWarnings("unused")
-        public enum Empty implements DataPointTypeEnum<Empty> {
+        public enum Empty implements DataPointEnum<Empty> {
             EMPTY
         }
     }
 
     /**
      * Ignored because fields which haves all criteria are subject to be recognized as data point types: public, static,
-     * final and {@link KnxDataPointType} annotation
+     * final and {@link DataPoint} annotation
      *
      * @author PITSCHR
      */
     private static final class DPTWithUnsupportedFields {
         public static final Object NO_ANNOTATION = null; // no annotation
-        @KnxDataPointType(value = "9999.102", description = "")
+        @DataPoint(value = "9999.102", description = "")
         public static Object NO_FINAL = null; // no final
-        @KnxDataPointType(value = "9999.101", description = "")
+        @DataPoint(value = "9999.101", description = "")
         public final Object NO_STATIC = null; // no static
-        @KnxDataPointType(value = "9999.100", description = "")
+        @DataPoint(value = "9999.100", description = "")
         public Object NO_STATIC_FINAL = null; // no static, no final
 
         private DPTWithUnsupportedFields() {

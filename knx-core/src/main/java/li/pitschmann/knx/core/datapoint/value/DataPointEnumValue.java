@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.datapoint;
+package li.pitschmann.knx.core.datapoint.value;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,13 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * KNX Data Point Value to define the value and description for enumerated KNX data point field
+ * Data Point Value to define the value and description
+ * for enumerated KNX data point field
  *
  * @author PITSCHR
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface KnxDataPointEnumValue {
+public @interface DataPointEnumValue {
     /**
      * Value of enumerated KNX data point field (0..255)
      *

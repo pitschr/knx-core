@@ -22,8 +22,8 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT20;
 import li.pitschmann.knx.core.datapoint.DPT23;
 import li.pitschmann.knx.core.datapoint.DPTEnum;
-import li.pitschmann.knx.core.datapoint.DataPointTypeEnum;
-import li.pitschmann.knx.core.datapoint.DataPointTypeRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointEnum;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
@@ -35,7 +35,7 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implements DataPointValue<DPTEnum<T>> {
+public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements DataPointValue<DPTEnum<T>> {
     private final DPTEnum<T> dpt;
     private final T enumField;
     private final int ordinal;
@@ -43,7 +43,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointTypeEnum<T>> implem
     private final byte[] byteArray;
 
     /**
-     * Constructor is visible for package only. It is subject to be called by {@link DataPointTypeRegistry}.
+     * Constructor is visible for package only. It is subject to be called by {@link DataPointRegistry}.
      *
      * @param dpEnum      data point enum type
      * @param enumField   DPT enum value

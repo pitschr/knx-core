@@ -50,8 +50,8 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
      * Range:      A = [0 .. 127]
      * </pre>
      */
-    @KnxDataPointType({"4.001", "dpst-4-1"})
-    public static final DPT4 ASCII = new DPT4("4.001", "ASCII Character", 0, 127, StandardCharsets.US_ASCII);
+    @DataPoint({"4.001", "dpst-4-1"})
+    public static final DPT4 ASCII = new DPT4("ASCII Character", 0, 127, StandardCharsets.US_ASCII);
 
     /**
      * <strong>4.002</strong> ISO 8895-1 Character
@@ -65,8 +65,8 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
      * Range:      A = [0 .. 255]
      * </pre>
      */
-    @KnxDataPointType({"4.002", "dpt-4", "dpst-4-2"})
-    public static final DPT4 ISO_8859_1 = new DPT4("4.002", "ISO 8895-1 Character", 0, 255, StandardCharsets.ISO_8859_1);
+    @DataPoint({"4.002", "dpt-4", "dpst-4-2"})
+    public static final DPT4 ISO_8859_1 = new DPT4("ISO 8895-1 Character", 0, 255, StandardCharsets.ISO_8859_1);
 
     private final Charset charset;
     private final CharsetDecoder charsetDecoder;
@@ -74,18 +74,16 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
     /**
      * Constructor for {@link DPT4}
      *
-     * @param id         identifier for {@link DPT4}
      * @param desc       description for {@link DPT4}
      * @param lowerValue the lower value for {@link DPT4}
      * @param upperValue the upper value for {@link DPT4}
      * @param charset    the character encoding set for {@link DPT4}
      */
-    private DPT4(final String id,
-                 final String desc,
+    private DPT4(final String desc,
                  final int lowerValue,
                  final int upperValue,
                  final Charset charset) {
-        super(id, desc, lowerValue, upperValue, null);
+        super(desc, lowerValue, upperValue, null);
 
         this.charset = charset;
         this.charsetDecoder = charset.newDecoder();

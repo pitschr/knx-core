@@ -46,18 +46,16 @@ public final class DPT17 extends AbstractRangeDataPointType<DPT17Value, Integer>
      * Range:      U = [0 .. 63]
      * </pre>
      */
-    @KnxDataPointType({"17.001", "dpt-17", "dpst-17-1"})
-    public static final DPT17 SCENE_NUMBER = new DPT17("17.001", "Scene Number");
+    @DataPoint({"17.001", "dpt-17", "dpst-17-1"})
+    public static final DPT17 SCENE_NUMBER = new DPT17("Scene Number");
 
     /**
      * Constructor for {@link DPT17}
      *
-     * @param id   identifier for {@link DPT17}
      * @param desc description for {@link DPT17}
      */
-    private DPT17(final String id,
-                  final String desc) {
-        super(id, desc, 0, 63, null);
+    private DPT17(final String desc) {
+        super(desc, 0, 63, null);
     }
 
     @Override

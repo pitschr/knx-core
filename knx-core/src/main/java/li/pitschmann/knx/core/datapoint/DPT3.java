@@ -55,8 +55,8 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType({"3.007", "dpt-3", "dpst-3-7"})
-    public static final DPT3 DPT_CONTROL_DIMMING = new DPT3("3.007", "Control Dimming", DPT1.STEP);
+    @DataPoint({"3.007", "dpt-3", "dpst-3-7"})
+    public static final DPT3 DPT_CONTROL_DIMMING = new DPT3("Control Dimming", DPT1.STEP);
 
     /**
      * <strong>3.008</strong> Control Blinds (%)
@@ -75,22 +75,20 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
      * The amount of intervals into which the range of 0-100% is subdivided, or the break indication.
      * </pre>
      */
-    @KnxDataPointType({"3.008", "dpst-3-8"})
-    public static final DPT3 DPT_CONTROL_BLINDS = new DPT3("3.008", "Control Blinds", DPT1.UP_DOWN);
+    @DataPoint({"3.008", "dpst-3-8"})
+    public static final DPT3 DPT_CONTROL_BLINDS = new DPT3("Control Blinds", DPT1.UP_DOWN);
 
     private final DPT1 dpt1;
 
     /**
      * Constructor for {@link DPT3}
      *
-     * @param id          identifier for {@link DPT3}
      * @param description description for {@link DPT3}
      * @param dpt1        the basis {@link DPT1} for {@link DPT3}
      */
-    private DPT3(final String id,
-                 final String description,
+    private DPT3(final String description,
                  final DPT1 dpt1) {
-        super(id, description);
+        super(description);
         this.dpt1 = dpt1;
     }
 
