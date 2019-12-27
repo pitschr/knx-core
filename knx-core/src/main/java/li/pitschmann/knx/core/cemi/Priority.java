@@ -25,6 +25,12 @@ import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
 
+/**
+ * Enumeration of priorities that shall be used for the transmission
+ * of the KNX frame.
+ *
+ * @author PITSCHR
+ */
 public enum Priority implements KnxByteEnum {
     /**
      * System priority

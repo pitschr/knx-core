@@ -26,8 +26,9 @@ import li.pitschmann.knx.core.utils.Strings;
 import java.util.Arrays;
 
 /**
- * {@link MessageCode} covers the different message type for the communication mode. Each cEMI message starts with the
- * message code octet.
+ * Enumeration of message code that covers the different
+ * message type for the communication mode. Each cEMI
+ * message starts with the message code octet.
  *
  * @author PITSCHR
  */

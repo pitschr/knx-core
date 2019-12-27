@@ -26,6 +26,25 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
+/**
+ * Second Control Field for {@link CEMI}, containing:
+ * <ul>
+ *     <li><strong>Destination Address Type (AT):</strong> This field shall specify if the
+ *     destination address is individual or group address</li>
+ *     <li><strong>Hop Count (HC):</strong> (bit 6-4) The number of hops that was done
+ *     for this frame</li>
+ *     <li><strong>Extended Frame Format (EFF):</strong> (bit 3 to 0) This field indicates
+ *     the format of frame.</li>
+ * </ul>
+ * <pre>
+ * +--7--+--6--+--5--+--4--+--3--+--2--+--1--+--0--+
+ * | AT  |    Hop Count    | Extended Frame Format |
+ * +-----+-----+-----+-----+-----+-----+-----+-----+
+ * </pre>
+ * See: KNX Specification, EMI/IMI
+ *
+ * @author PITSCHR
+ */
 public final class ControlByte2 extends AbstractSingleRawData {
     private static final int DEFAULT_HOP_COUNT = 6;
     private static final int DEFAULT_FRAME_FORMAT = 0;

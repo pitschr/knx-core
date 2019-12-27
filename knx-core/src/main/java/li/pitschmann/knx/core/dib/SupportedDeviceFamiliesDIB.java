@@ -31,7 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Device Supported Service Families DIB to specify DIB for type {@link DescriptionType#SUPPORTED_SERVICE_FAMILIES}
+ * Device Supported Service Families DIB to specify DIB for type
+ * {@link DescriptionType#SUPPORTED_SERVICE_FAMILIES}
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -56,8 +57,9 @@ import java.util.List;
  * The number of Service Family can be calculated using:<br>
  * {@code (Structure Length - 1 octet (Description Type Code)) / 2}
  * <p>
- * whereas the Service Family is a pair of ID and Version. The service family IDs shall be the high octet of the
- * {@link ServiceType}. For example, for KNX/IP Tunneling the ID would be {@code 0x04}.
+ * whereas the Service Family is a pair of ID and Version. The service
+ * family IDs shall be the high octet of the {@link ServiceType}.
+ * For example, for KNX/IP Tunneling the ID would be {@code 0x04}.
  * <p>
  * See: KNX Standard Core
  *

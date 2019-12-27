@@ -37,8 +37,9 @@ import java.util.Arrays;
 /**
  * Common External Message Interface
  * <p>
- * The cEMI message format is a generic structure for medium independent KNX messages, which can be added with
- * information like a timestamp or other.
+ * The cEMI message format is a generic structure for medium
+ * independent KNX messages, which can be added with information
+ * like a timestamp or other.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -52,6 +53,7 @@ import java.util.Arrays;
  * | (variable length)                                             |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * See: KNX Specification, EMI/IMI
  *
  * @author PITSCHR
  */

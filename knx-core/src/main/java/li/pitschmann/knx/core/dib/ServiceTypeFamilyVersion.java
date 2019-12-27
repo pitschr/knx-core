@@ -23,7 +23,8 @@ import li.pitschmann.knx.core.utils.Strings;
 import java.util.Objects;
 
 /**
- * Service Type Family and Version. Designed to be used for {@link SupportedDeviceFamiliesDIB}.
+ * Service Type Family and Version. Designed to be used
+ * for {@link SupportedDeviceFamiliesDIB}.
  *
  * @author PITSCHR
  */

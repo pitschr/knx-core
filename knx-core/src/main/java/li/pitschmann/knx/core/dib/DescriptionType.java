@@ -26,7 +26,7 @@ import li.pitschmann.knx.core.utils.Strings;
 import java.util.Arrays;
 
 /**
- * Description Types
+ * Description Types for DIB frames.
  *
  * @author PITSCHR
  */

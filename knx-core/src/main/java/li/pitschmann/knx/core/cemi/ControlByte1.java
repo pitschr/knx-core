@@ -22,6 +22,34 @@ import li.pitschmann.knx.core.AbstractSingleRawData;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.utils.Strings;
 
+/**
+ * First Control Field for {@link CEMI}, containing:
+ *
+ * <ul>
+ *     <li><strong>Frame Type (FT):</strong> This field shall specify whether the frame is a
+ *     standard frame or an extended frame.</li>
+ *     <li><strong>Repetition (R):</strong> This shall specify whether repetitions shall
+ *     be sent on the medium. This flag is relevant only on media with possibility of
+ *     Data Link Layer controlled frame repetitions (TP1, PL110). Not relevant for
+ *     KNXnet/IP frames.</li>
+ *     <li><strong>Broadcast Type (SB):</strong> This flag shall only be applicable on open media.</li>
+ *     <li><strong>Priority Type (P):</strong> (bit 3 and 2) This shall specify that Priority that shall be used for
+ *     transmission or reception of the frame.</li>
+ *     <li><strong>Acknowledge Request (A):</strong> This shall specify whether a L2-acknowledge
+ *     shall be requested for the L_Data.req frame or not.</li>
+ *     <li><strong>Error Confirmation (C):</strong> In L_Data.con this shall indicate whether
+ *     there has been any error in the transmitted frame.
+ *     </li>
+ * </ul>
+ * <pre>
+ * +--7--+--6--+--5--+--4--+--3--+--2--+--1--+--0--+
+ * | FT  |  /  |  R  |  SB |  Priority |  A  |  C  |
+ * +-----+-----+-----+-----+-----+-----+-----+-----+
+ * </pre>
+ * See: KNX Specification, EMI/IMI
+ *
+ * @author PITSCHR
+ */
 public final class ControlByte1 extends AbstractSingleRawData {
     private static final ControlByte1 DEFAULT = of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
     private final boolean standardFrame;

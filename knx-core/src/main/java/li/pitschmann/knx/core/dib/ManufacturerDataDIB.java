@@ -26,8 +26,9 @@ import java.util.Arrays;
 /**
  * Manufacturer Data DIB to specify DIB for type {@link DescriptionType#MANUFACTURER_DATA}
  * <p>
- * The KNX manufacturer ID shall be added to clearly identify the manufacturer. This information is not necessarily
- * encoded in the KNX device KNX Serial Number (6 octets).
+ * The KNX manufacturer ID shall be added to clearly identify the
+ * manufacturer. This information is not necessarily encoded in the
+ * KNX device KNX Serial Number (6 octets).
  * <p>
  * The manufacturer data DIB may contain any manufacturer specific data.
  * <p>
@@ -46,7 +47,8 @@ import java.util.Arrays;
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
  * <p>
- * The length of manufacturer specific data is the structure length minus 3 octets. Maximum 252 octets.
+ * The length of manufacturer specific data is the structure length
+ * minus 3 octets. Maximum 252 octets.
  * <p>
  * See: KNX Standard Core
  *
