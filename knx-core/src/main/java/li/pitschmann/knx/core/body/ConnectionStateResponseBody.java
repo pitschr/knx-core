@@ -30,8 +30,19 @@ import li.pitschmann.knx.core.utils.Strings;
 /**
  * Body for Connection State Response
  * <p>
- * The {@link ServiceType#CONNECTION_STATE_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a
- * received {@link ServiceType#CONNECTION_STATE_REQUEST} frame.
+ * The {@link ServiceType#CONNECTION_STATE_RESPONSE} frame shall be
+ * sent by the KNXnet/IP Server as an answer to a received
+ * {@link ServiceType#CONNECTION_STATE_REQUEST} frame. It shall be
+ * addressed to the KNXnet/IP Client’s control endpoint using the
+ * HPAI included in the received {@link ServiceType#CONNECTION_STATE_REQUEST}
+ * frame.
+ * <p>
+ * The first octet of the KNXnet/IP body shall contain the communication
+ * channel ID that the KNXnet/IP Client has passed to the KNXnet/IP Server
+ * with the {@link ServiceType#CONNECTION_STATE_REQUEST} frame.
+ * <p>
+ * The second octet of the KNXnet/IP body shall contain the status
+ * information of the connection state request.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -39,6 +50,7 @@ import li.pitschmann.knx.core.utils.Strings;
  * | (1 octet)                     | (1 octet)                     |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

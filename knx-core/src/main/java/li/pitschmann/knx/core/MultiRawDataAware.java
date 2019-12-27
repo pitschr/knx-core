@@ -21,7 +21,9 @@ package li.pitschmann.knx.core;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 
 /**
- * Raw Data Aware interface. Classes which implements this interface are aware of the raw data in byte array format.
+ * Raw Data Aware interface.
+ * <p>
+ * Classes which implements this interface are aware of the raw data in byte array format.
  *
  * @author PITSCHR
  */
@@ -29,14 +31,14 @@ public interface MultiRawDataAware {
     /**
      * Returns the body as raw data in byte array format
      *
-     * @return byte array
+     * @return byte array, defensively copied
      */
     byte[] getRawData();
 
     /**
      * Returns the raw data in hex-decimal string format
      *
-     * @return raw data as a String
+     * @return raw data
      */
     default String getRawDataAsHexString() {
         return ByteFormatter.formatHexAsString(getRawData());

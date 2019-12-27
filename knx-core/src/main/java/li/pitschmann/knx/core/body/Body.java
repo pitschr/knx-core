@@ -24,7 +24,7 @@ import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.Bytes;
 
 /**
- * Marker interface for Body
+ * Marker interface for KNX packet body
  *
  * @author PITSCHR
  */

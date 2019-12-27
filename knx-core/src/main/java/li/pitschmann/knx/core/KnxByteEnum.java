@@ -19,7 +19,8 @@
 package li.pitschmann.knx.core;
 
 /**
- * Interface for {@link KnxEnum} which have a code with size of 1 byte
+ * Interface for {@link KnxEnum} which have a code with a size of
+ * one byte.
  *
  * @author PITSCHR
  */

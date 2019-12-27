@@ -31,11 +31,16 @@ import java.util.Arrays;
 /**
  * Body for Connect Request
  * <p>
- * The {@link ServiceType#CONNECT_REQUEST} frame shall be sent by the KNX client to the control endpoint of the
- * KNX Net/IP device.
+ * The {@link ServiceType#CONNECT_REQUEST} frame shall be sent by the
+ * KNXnet/IP Client to the control endpoint of the KNXnet/IP Server.
+ * As for every request using control communication the KNXnet/IP body
+ * shall begin with the return address information of the KNXnet/IP
+ * Client’s control endpoint.
  * <p>
- * Next follows the CRI, a variable data structure that shall include all additional information that is specific to the
- * requested connection type (and to the underlying host protocol).
+ * Next follows the {@link ConnectionRequestInformation}, a variable
+ * data structure that shall include all additional information that
+ * is specific to the requested connection type (and to the underlying
+ * host protocol).
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -49,6 +54,7 @@ import java.util.Arrays;
  * | Connection request Information                                |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

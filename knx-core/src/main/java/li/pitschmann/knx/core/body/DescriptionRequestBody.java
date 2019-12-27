@@ -28,9 +28,12 @@ import li.pitschmann.knx.core.utils.Strings;
 /**
  * Body for Description Request
  * <p>
- * The {@link ServiceType#DESCRIPTION_REQUEST} frame shall be sent by the KNX client to the control endpoint of
- * the KNX Net/IP device to obtain a self-description of the KNX Net/IP device device. The KNX/IP body shall contain
- * the return address information of the KNX client’s control endpoint.
+ * The {@link ServiceType#DESCRIPTION_REQUEST} frame shall be sent
+ * by the KNXnet/IP Client to the control endpoint of the KNXnet/IP Server
+ * to obtain a self-description of the KNXnet/IP Server device.
+ * <p>
+ * The KNXnet/IP body shall contain the return address information
+ * of the KNXnet/IP Client’s control endpoint.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -38,6 +41,7 @@ import li.pitschmann.knx.core.utils.Strings;
  * | Control endpoint                                              |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

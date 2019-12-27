@@ -22,7 +22,8 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxException;
 
 /**
- * This class represents a raw data of KNX/IP and is immutable.
+ * Abstract class representing raw data of KNX packet with single byte.
+ * The single raw byte data is immutable.
  *
  * @author PITSCHR
  */

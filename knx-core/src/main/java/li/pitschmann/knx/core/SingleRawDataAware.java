@@ -21,7 +21,9 @@ package li.pitschmann.knx.core;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 
 /**
- * Raw Data Aware interface. Classes which implements this interface are aware of the raw data in single byte format.
+ * Raw Data Aware interface.
+ * <p>
+ * Classes which implements this interface are aware of the raw data in single byte format.
  *
  * @author PITSCHR
  */
@@ -36,7 +38,7 @@ public interface SingleRawDataAware {
     /**
      * Returns the raw data in hex-decimal string format
      *
-     * @return raw data as a String
+     * @return raw data
      */
     default String getRawDataAsHexString() {
         return ByteFormatter.formatHex(getRawData());

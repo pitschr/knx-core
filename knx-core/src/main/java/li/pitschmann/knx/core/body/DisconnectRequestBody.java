@@ -42,6 +42,7 @@ import java.util.Arrays;
  * | Control endpoint (8 octets)                                   |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

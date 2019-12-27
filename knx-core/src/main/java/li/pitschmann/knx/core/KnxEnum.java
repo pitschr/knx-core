@@ -19,20 +19,20 @@
 package li.pitschmann.knx.core;
 
 /**
- * Knx Enumeration
+ * Interface for KNX enumeration
  *
  * @author PITSCHR
  */
 public interface KnxEnum {
     /**
-     * Returns the identifier code
+     * Returns the identification code as an integer
      *
      * @return code
      */
     int getCode();
 
     /**
-     * Returns the friendly name
+     * Returns the human-friendly name of KNX enumeration
      *
      * @return friendly name
      */

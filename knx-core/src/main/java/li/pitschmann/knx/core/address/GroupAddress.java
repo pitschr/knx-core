@@ -27,7 +27,23 @@ import li.pitschmann.knx.core.utils.Strings;
 import java.util.Objects;
 
 /**
- * KNX Group Address (e.g. 1/2/100 or 1/330)
+ * KNX Group Address (examples: {@code 1/2/100} or {@code 1/330})
+ * <p>
+ * The Group Address identifies one or several entities in the network
+ * (one Shared Variable or several devices). It is a two octet value.
+ * A device may have/know more than one Group Address.
+ * <p>
+ * Group Addresses are defined globally for the whole network. However
+ * the specification allows local and global Group Addresses by defining
+ * in each frame the maximum number of Routers to be crossed.
+ *
+ * <pre>
+ * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ * | Byte 1                      | Byte 2                          |
+ * | (1 octet)                   | (1 octet)                       |
+ * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ * </pre>
+ * Source: KNX Specification, Glossary
  *
  * @author PITSCHR
  */

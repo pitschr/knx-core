@@ -27,7 +27,20 @@ import li.pitschmann.knx.core.utils.Strings;
 import java.util.Objects;
 
 /**
- * Individual Address (e.g. 1.0.100)
+ * Individual Address in format {@code x.y.z} (example: {@code 1.0.100})
+ * <p>
+ * Address of a given Device in an installation. The Individual Address
+ * is a two octet value that consists of an eight bit Subnetwork Address
+ * and an eight bit Device Address. If the Device Address is unique, then
+ * also the Individual Address will be unique in the installation.
+ *
+ * <pre>
+ * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ * | Byte 1                      | Byte 2                          |
+ * | (1 octet)                   | (1 octet)                       |
+ * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ * </pre>
+ * Source: KNX Specification, Glossary
  *
  * @author PITSCHR
  */

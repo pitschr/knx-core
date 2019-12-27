@@ -19,13 +19,24 @@
 package li.pitschmann.knx.core;
 
 /**
- * Interface for bodies which are aware of channel id.
+ * Interface for KNX packet bodies which are aware of channel id.
+ * <p>
+ * The KNXnet/IP Server shall assign a Communication Channel ID
+ * to each established communication channel and is initially
+ * set in the CONNECT_REQUEST for unique identification.
+ * <p>
+ * KNX Specification, Core
  *
  * @author PITSCHR
  */
 public interface ChannelIdAware {
     /**
-     * Returns the Channel ID
+     * Returns the Channel ID that is set by the KNX/IP Net device.
+     * It is in byte format and channel id is between {@code 0 (0x00)}
+     * and {@code 255 (0xFF)}
+     * <p>
+     * The channel id is required for tunneling communication only to
+     * distinguish the KNX traffic between several clients/endpoints.
      *
      * @return channel id
      */

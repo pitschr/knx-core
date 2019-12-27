@@ -23,7 +23,8 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 
 /**
- * Abstract KNX Address class for {@link IndividualAddress} and {@link GroupAddress} implementations
+ * Abstract KNX Address class for {@link IndividualAddress} and
+ * {@link GroupAddress} implementations.
  *
  * @author PITSCHR
  */

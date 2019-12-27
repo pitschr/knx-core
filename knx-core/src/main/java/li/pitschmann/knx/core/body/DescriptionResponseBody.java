@@ -40,9 +40,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Body for Description Response
  * <p>
- * The {@link ServiceType#DESCRIPTION_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a received
- * {@link ServiceType#DESCRIPTION_REQUEST} frame. It shall be addressed to the KNX client’s control endpoint using
- * the HPAI included in the received {@link ServiceType#DESCRIPTION_REQUEST} frame.
+ * The {@link ServiceType#DESCRIPTION_RESPONSE} frame shall be sent by the KNXnet/IP
+ * Server as an answer to a received {@link ServiceType#DESCRIPTION_REQUEST} frame.
+ * It shall be addressed to the KNXnet/IP Client’s control endpoint using the HPAI
+ * included in the received {@link ServiceType#DESCRIPTION_REQUEST} frame.
+ * <p>
+ * The size of the KNXnet/IP body varies depending on the number of DIB structures
+ * sent by the KNXnet/IP Server in response to the KNXnet/IP Client’s {@link ServiceType#DESCRIPTION_REQUEST}.
  * <p>
  * At least two DIB structures shall be returned with information about the device capabilities on:
  * {@link DeviceHardwareInformationDIB} and {@link SupportedDeviceFamiliesDIB}.
@@ -59,6 +63,7 @@ import org.slf4j.LoggerFactory;
  * | other device information (optional)                           |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

@@ -32,11 +32,16 @@ import java.util.Arrays;
  */
 public enum AddressType implements KnxByteEnum {
     /**
-     * Individual Address
+     * Individual Address used by physical devices
+     * <p>
+     * For further information, see {@link IndividualAddress}
      */
     INDIVIDUAL(0x00, "Individual Address"),
     /**
-     * Group Address
+     * Group Address used as virtual addresses that
+     * is listened by physical/non-physical devices
+     * <p>
+     * For further information, see {@link GroupAddress}
      */
     GROUP(0x01, "Group Address");
 

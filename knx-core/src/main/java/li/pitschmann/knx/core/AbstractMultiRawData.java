@@ -24,7 +24,8 @@ import li.pitschmann.knx.core.exceptions.KnxException;
 import java.util.Arrays;
 
 /**
- * This class represents a raw data of KNX/IP and is immutable.
+ * Abstract class representing raw data of KNX packet with byte array.
+ * The multi raw byte data is immutable.
  *
  * @author PITSCHR
  */

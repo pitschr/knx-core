@@ -33,8 +33,15 @@ import java.util.Arrays;
 /**
  * Body for Connection State Request
  * <p>
- * The {@link ServiceType#CONNECTION_STATE_REQUEST} frame shall be sent by the KNX client to the control endpoint
- * of the KNX Net/IP device.
+ * The {@link ServiceType#CONNECTION_STATE_REQUEST} frame shall be
+ * sent by the  KNXnet/IP Client to the control endpoint of the KNX Net/IP
+ * Server. The first octet of the KNXnet/IP body shall contain the
+ * communication channel ID that the KNXnet/IP Server uses to uniquely
+ * identify the data connection for this connection state request.
+ * The second octet shall be reserved for future use.
+ * <p>
+ * The HPAI with the return address information of the KNXnet/IP Client's
+ * control endpoint shall be added after the communication channel ID.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -45,6 +52,7 @@ import java.util.Arrays;
  * | Control endpoint                                              |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

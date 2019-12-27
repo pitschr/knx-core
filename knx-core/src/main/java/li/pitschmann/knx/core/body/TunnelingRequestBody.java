@@ -46,6 +46,7 @@ import java.util.Arrays;
  * |                                                               |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

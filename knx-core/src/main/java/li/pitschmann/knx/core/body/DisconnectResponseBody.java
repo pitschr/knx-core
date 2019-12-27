@@ -36,6 +36,7 @@ import li.pitschmann.knx.core.utils.Strings;
  * | (1 octet)                     | (1 octet)                     |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */

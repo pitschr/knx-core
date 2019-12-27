@@ -28,7 +28,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * Factory for {@link Body}. The proper body will be picked up based on {@link ServiceType} code.
+ * Factory for KNX {@link Body}.
+ * <p>
+ * The creation of proper {@link Body} implementation will be done
+ * based on {@link ServiceType} code.
  *
  * @author PITSCHR
  */

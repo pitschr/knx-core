@@ -34,9 +34,25 @@ import java.util.Arrays;
 /**
  * Body for Connect Response
  * <p>
- * The {@link ServiceType#CONNECT_RESPONSE} frame shall be sent by the KNX Net/IP device as an answer to a received
- * {@link ServiceType#CONNECT_REQUEST} frame. It shall be addressed to the KNX client’s control endpoint using the
- * HPAI included in the received {@link ServiceType#CONNECT_REQUEST} frame.
+ * The {@link ServiceType#CONNECT_RESPONSE} frame shall be sent by
+ * the KNXnet/IP Server as an answer to a received {@link ServiceType#CONNECT_REQUEST}
+ * frame. It shall be addressed to the KNXnet/IP Client’s control
+ * endpoint using the HPAI included in the received {@link ServiceType#CONNECT_REQUEST}
+ * frame.
+ * <p>
+ * The size of the KNXnet/IP body varies according to the success
+ * or failure of the KNXnet/IP Client’s {@link ServiceType#CONNECT_REQUEST}.
+ * <p>
+ * If the connection request is successfully fulfilled with all the
+ * requested options, the body of the {@link ServiceType#CONNECT_REQUEST}
+ * frame shall contain a communication channel ID that shall uniquely
+ * identify this connection with the KNXnet/IP Server. The communication
+ * channel ID shall be the first octet of the body.
+ * <p>
+ * The second octet of the body shall contain the status information
+ * of the connection request. This status information can contain
+ * error information regarding the request itself or regarding the
+ * connection type specific information.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -50,6 +66,7 @@ import java.util.Arrays;
  * | Connection Response Data Block                                |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * Source: KNX Specification, Core
  *
  * @author PITSCHR
  */
