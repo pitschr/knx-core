@@ -32,16 +32,23 @@ import li.pitschmann.knx.core.utils.Strings;
  * The Connection Request Information structure (CRI) shall be the
  * additional information needed for different types of communication
  * channels to fulfill a connection request.
+ * <p>
+ * As this structure shall contain two substructures including host
+ * protocol independent data as well as host protocol dependent information,
+ * the specific definition of the CRI can be found in the description of
+ * the connection type with consultancy of the host protocol dependent
+ * parts of the KNXnet/IP specification.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
  * | Structure Length              | TUNNEL_CONNECTION             |
  * | (1 octet = 04h)               | (1 octet = 04h)               |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
- * | KNX Layer                     | reserved                      |
+ * | KNX Layer Type                | reserved                      |
  * | (1 octet)                     | (1 octet)                     |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * See: KNX Specification, Core, 7.5.2
  *
  * @author PITSCHR
  */

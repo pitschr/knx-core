@@ -20,13 +20,27 @@ package li.pitschmann.knx.core.net;
 
 import li.pitschmann.knx.core.KnxByteEnum;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
 
 /**
- * Connection types how the connection is established
+ * Connection Management Types how the connection is established
+ * <p>
+ * As for every {@link ServiceType#CONNECT_REQUEST} using control
+ * communication the KNXnet/IP body shall begin with the return
+ * address information of the KNXnet/IP Client’s control endpoint.
+ * <p>
+ * Inside the {@link ConnectionRequestInformation}, a variable
+ * data structure that shall include all additional information
+ * that is specific to the requested connection type (and to the
+ * underlying host protocol). The exact definition of this structure
+ * can be found in the description of the specific connection type.
+ * <p>
+ * See: KNX Specification, Core, 7.8
  *
  * @author PITSCHR
  */

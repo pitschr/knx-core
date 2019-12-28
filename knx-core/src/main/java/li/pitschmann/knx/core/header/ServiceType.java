@@ -29,42 +29,48 @@ import li.pitschmann.knx.core.utils.Strings;
 import java.util.Arrays;
 
 /**
- * Service Type Identifier used in KNX/IP headers to identify the message frames.
+ * Service Type Identifier used in KNX/IP headers to identify
+ * the message frames.
+ * <p>
+ * The KNXnet/IP service type identifier defines the kind of
+ * action to be performed and the type of the data payload
+ * contained in the KNXnet/IP body if applicable. The high octet
+ * of the KNXnet/IP service type identifier denotes the
+ * service type family and the low octet the actual service type
+ * in that family. For a detailed description of the services,
+ * see below.
  *
- * <table border=1>
+ * <table>
  * <tr>
- * <th>Range</th>
- * <th>Type</th>
- * </tr>
- * <tr>
+ * <td><strong>KNX/IP Core:</strong></td>
  * <td>0x0200 ... 0x020F</td>
- * <td>KNX/IP Core</td>
  * </tr>
  * <tr>
+ * <td><strong>KNX device Management:</strong></td>
  * <td>0x0310 ... 0x031F</td>
- * <td>KNX device Management</td>
  * </tr>
  * <tr>
+ * <td><strong>KNX/IP Tunneling:</strong></td>
  * <td>0x0420 ... 0x042F</td>
- * <td>KNX/IP Tunneling</td>
  * </tr>
  * <tr>
+ * <td><strong>KNX/IP Routing:</strong></td>
  * <td>0x0530 ... 0x053F</td>
- * <td>KNX/IP Routing</td>
  * </tr>
  * <tr>
+ * <td><strong>KNX/IP Remote Logging:</strong></td>
  * <td>0x0600 ... 0x06FF</td>
- * <td>KNX/IP Remote Logging</td>
  * </tr>
  * <tr>
+ * <td><strong>KNX/IP Remote Configuration and Diagnosis:</strong></td>
  * <td>0x0740 ... 0x07FF</td>
- * <td>KNX/IP Remote Configuration and Diagnosis</td>
  * </tr>
  * <tr>
+ * <td><strong>KNX/IP Object Server:</strong></td>
  * <td>0x0800 ... 0x08FF</td>
- * <td>KNX/IP Object Server</td>
  * </tr>
  * </table>
+ * See: KNX Specification, Core, 2.3.4 + 7.4
  *
  * @author PITSCHR
  */

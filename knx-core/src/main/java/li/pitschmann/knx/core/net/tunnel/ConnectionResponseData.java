@@ -34,7 +34,12 @@ import li.pitschmann.knx.core.utils.Strings;
  * The Connection Request Data Block structure (CRD) shall be the
  * data block returned with the {@link ServiceType#CONNECT_RESPONSE}
  * frame.
- *
+ * <p>
+ * As this structure shall contain two substructures including host
+ * protocol independent data as well as host protocol dependent
+ * information, the specific definition of the CRD can be found in
+ * the description of the connection type with consultancy of the
+ * host protocol dependent parts of the KNXnet/IP specification.
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
  * | Structure Length              | TUNNEL_CONNECTION             |
@@ -44,6 +49,7 @@ import li.pitschmann.knx.core.utils.Strings;
  * | (2 Octets)                                                    |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * See: KNX Specification, Core, 7.5.3
  *
  * @author PITSCHR
  */

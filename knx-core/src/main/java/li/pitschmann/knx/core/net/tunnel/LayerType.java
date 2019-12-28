@@ -27,6 +27,9 @@ import java.util.Arrays;
 
 /**
  * KNX Layer types
+ * <p>
+ * See: KNX Specification, Tunneling, 2.2.2 - 2.2.4, 4.4.3
+ *
  *
  * @author PITSCHR
  */
@@ -36,7 +39,7 @@ public enum LayerType implements KnxByteEnum {
      */
     TUNNEL_LINKLAYER(0x02, "Tunneling Link Layer"),
     /**
-     * Establish a raw tunnel to the KNX network.
+     * Establish a cEMI Raw Tunnel to the KNX network.
      */
     TUNNEL_RAW(0x04, "Tunneling Raw Layer"),
     /**

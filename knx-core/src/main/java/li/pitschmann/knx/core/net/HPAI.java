@@ -37,10 +37,11 @@ import java.util.Objects;
 /**
  * Host Protocol Address Information
  * <p>
- * The Host Protocol Address Information shall contain the information
- * that is necessary to uniquely identify an Internet Protocol transport
- * connection endpoint. This shall include the Network Layer address
- * and the Transport Layer identifier called Port number.
+ * The Host Protocol Address Information structure (HPAI) shall be the
+ * address information required to uniquely identify a communication
+ * channel on the host protocol. Its size shall vary between different
+ * host protocols. For the specific definition of the HPAI consult the
+ * host protocol dependent addendums of the KNXnet/IP specification.
  * <p>
  * Both, IP address and port number, shall be stored binary in
  * network octet order.
@@ -59,6 +60,7 @@ import java.util.Objects;
  * | (2 Octets)                                                    |
  * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * </pre>
+ * See: KNX Specification, Core, 7.5.1
  *
  * @author PITSCHR
  */
