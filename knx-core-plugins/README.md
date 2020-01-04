@@ -179,7 +179,7 @@ public class MyConfigurablePlugin implements Plugin {
     /**
      * Config for special purposes extended by an inner class, defaults back to "woof!"
      */
-    public static final AnimalLoud LOUD = new AnimalLoud();
+    public static final AnimalSound ANIMAL_SOUND = new AnimalSound();
 
     @Override
     public void onInitialization(final KnxClient client) {
@@ -187,26 +187,24 @@ public class MyConfigurablePlugin implements Plugin {
         System.out.println("Long: " + client.getConfig(LONG));
         System.out.println("Enum: " + client.getConfig(ENUM));
         System.out.println("Animal: " + client.getConfig(ANIMAL));
-        System.out.println("Animal Loud: " + client.getConfig(LOUD));
+        System.out.println("Animal Sound: " + client.getConfig(ANIMAL_SOUND));
     }
 
     public enum MyEnum {
         ZERO, ONE, TWO, THREE
     }
 
-    public static class AnimalLoud extends PluginConfigValue<String> {
-        public AnimalLoud() {
-            super("animal-loud", String.class, String::valueOf, () -> "woof!", null);
+    public static class AnimalSound extends PluginConfigValue<String> {
+        public AnimalSound() {
+            super("animal-sound", String.class, String::valueOf, () -> "woof!", null);
         }
     }
 }
 ````
 
 ```java
-public class MainClass {
-
+public class Main {
     public static void main(final String[] args) {
-
         final var config = ConfigBuilder
                 .tunneling()
                 // register the plugin
@@ -214,17 +212,15 @@ public class MainClass {
                 // define config for plugin
                 .setting(MyConfigurablePlugin.ENUM, MyConfigurablePlugin.MyEnum.TWO)
                 .setting(MyConfigurablePlugin.ANIMAL, "cat")
-                .setting(MyConfigurablePlugin.LOUD, "meow!")
+                .setting(MyConfigurablePlugin.ANIMAL_SOUND, "meow!")
                 .build();
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // NO-OP
         }
-
         // auto-closed and disconnected by KNX client
     }
-
 }
 ```
 
@@ -242,7 +238,7 @@ Based on `MyConfigurablePlugin` example above, the config file would look like:
 ```
 plugin.config.MyConfigurablePlugin.enum=TWO
 plugin.config.MyConfigurablePlugin.animal=cat
-plugin.config.MyConfigurablePlugin.animal-loud=meow!
+plugin.config.MyConfigurablePlugin.animal-sound=meow!
 ```
 
 Console Output from plugin:
@@ -251,5 +247,5 @@ Integer: 0
 Long: 4711
 Enum: TWO
 Animal: cat
-Animal Loud: meow!
+Animal Sound: meow!
 ```

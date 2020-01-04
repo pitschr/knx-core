@@ -32,7 +32,7 @@ public class MyConfigurablePlugin implements Plugin {
     /**
      * Config for special purposes extended by an inner class, defaults back to "woof!"
      */
-    public static final AnimalLoud LOUD = new AnimalLoud();
+    public static final AnimalSound ANIMAL_SOUND = new AnimalSound();
 
     @Override
     public void onInitialization(final KnxClient client) {
@@ -40,16 +40,16 @@ public class MyConfigurablePlugin implements Plugin {
         System.out.println("Long: " + client.getConfig(LONG));
         System.out.println("Enum: " + client.getConfig(ENUM));
         System.out.println("Animal: " + client.getConfig(ANIMAL));
-        System.out.println("Animal Loud: " + client.getConfig(LOUD));
+        System.out.println("Animal Sound: " + client.getConfig(ANIMAL_SOUND));
     }
 
     public enum MyEnum {
         ZERO, ONE, TWO, THREE
     }
 
-    public static class AnimalLoud extends PluginConfigValue<String> {
-        public AnimalLoud() {
-            super("animal-loud", String.class, String::valueOf, () -> "woof!", null);
+    public static class AnimalSound extends PluginConfigValue<String> {
+        public AnimalSound() {
+            super("animal-sound", String.class, String::valueOf, () -> "woof!", null);
         }
     }
 }
