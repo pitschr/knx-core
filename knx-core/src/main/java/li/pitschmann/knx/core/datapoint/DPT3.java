@@ -119,11 +119,11 @@ public final class DPT3 extends AbstractDataPointType<DPT3Value> {
         return new DPT3Value(this, controlled, intValue);
     }
 
-    public DPT3Value toValue(final boolean controlled, final int stepCode) {
+    public DPT3Value of(final boolean controlled, final int stepCode) {
         return new DPT3Value(this, controlled, stepCode);
     }
 
-    public DPT3Value toValue(final boolean controlled, final StepInterval stepInterval) {
+    public DPT3Value of(final boolean controlled, final StepInterval stepInterval) {
         return new DPT3Value(this, controlled, stepInterval);
     }
 

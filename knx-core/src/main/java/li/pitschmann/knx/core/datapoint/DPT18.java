@@ -87,7 +87,7 @@ public final class DPT18 extends AbstractRangeDataPointType<DPT18Value, Integer>
         return new DPT18Value(controlled, Preconditions.checkNonNull(intValue, "The scene number must be present."));
     }
 
-    public DPT18Value toValue(final boolean controlled, final int sceneNumber) {
+    public DPT18Value of(final boolean controlled, final int sceneNumber) {
         return new DPT18Value(controlled, sceneNumber);
     }
 

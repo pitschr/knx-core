@@ -323,7 +323,7 @@ public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer>
         return new DPT13Value(this, Integer.parseInt(args[0]));
     }
 
-    public DPT13Value toValue(final int value) {
+    public DPT13Value of(final int value) {
         return new DPT13Value(this, value);
     }
 

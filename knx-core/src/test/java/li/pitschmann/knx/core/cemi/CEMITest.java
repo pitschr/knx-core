@@ -48,7 +48,7 @@ public final class CEMITest {
     public void testUseDefaultMethods() {
         final var knxAddress = IndividualAddress.of(5, 9, 15);
         final var bytes = new byte[]{(byte) 0xCC, (byte) 0xEE};
-        final var dptValue = DPT7.LENGTH_MM.toValue(bytes);
+        final var dptValue = DPT7.LENGTH_MM.of(bytes);
 
         final var cemiDefaultWithBytes = CEMI.useDefault(MessageCode.L_DATA_IND, knxAddress, APCI.GROUP_VALUE_WRITE, bytes);
         final var cemiDefaultWithDataPoint = CEMI.useDefault(MessageCode.L_DATA_IND, knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
@@ -65,7 +65,7 @@ public final class CEMITest {
     public void testOfMethods() {
         final var knxAddress = GroupAddress.of(2, 4, 230);
         final var bytes = new byte[]{(byte) 0xEE, (byte) 0xFF};
-        final var dptValue = DPT7.LENGTH_MM.toValue(bytes);
+        final var dptValue = DPT7.LENGTH_MM.of(bytes);
 
         final var cemiOfWithBytes = CEMI.of(
                 MessageCode.L_DATA_CON,

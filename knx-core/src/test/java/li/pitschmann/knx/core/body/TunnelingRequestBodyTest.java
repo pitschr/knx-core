@@ -61,7 +61,7 @@ public class TunnelingRequestBodyTest {
         final var destinationAddress = GroupAddress.of(9, 4, 7);
 
         // ACPI data: new byte[]{0x0c, 0x3f}
-        final var dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.toValue(3135);
+        final var dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(3135);
 
         this.channelId = 17;
         this.sequence = 92;

@@ -47,24 +47,24 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
         final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-671088.65")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("670760.97")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-671088.65")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("670760.97")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue(-671088.64)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue(670433.28)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue("0x00", "0x00")).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue("0xFF", "0xFF")).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue("-671088.64")).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.toValue("670433.28")).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of(-671088.64)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of(670433.28)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of("0x00", "0x00")).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of("0xFF", "0xFF")).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of("-671088.64")).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of("670433.28")).isInstanceOf(DPT9Value.class);
     }
 
     @Override
@@ -104,13 +104,13 @@ public class DPT9Test extends AbstractDataPointTypeTest<DPT9, DPT9Value> {
      * @param doubleValue double value
      */
     private void assertInternal(final DPT9 dpt, final byte[] bValueArray, final double doubleValue) {
-        final var dptValue = dpt.toValue(doubleValue);
+        final var dptValue = dpt.of(doubleValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT9
-        assertThat(dpt.toValue(String.valueOf(doubleValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(doubleValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(doubleValue)).containsExactly(bValueArray);
     }
 }

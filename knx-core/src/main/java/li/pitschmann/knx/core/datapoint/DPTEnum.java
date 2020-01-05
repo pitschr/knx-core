@@ -80,7 +80,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends Abstrac
      * @return data point enumeration value
      * @throws KnxEnumNotFoundException if enumeration with given value could not be found
      */
-    public final DPTEnumValue<T> toValue(final int value) {
+    public final DPTEnumValue<T> of(final int value) {
         final var dptEnumValue = this.values.get(value);
         if (dptEnumValue == null) {
             throw new KnxEnumNotFoundException(
@@ -96,7 +96,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends Abstrac
 
     @Override
     protected DPTEnumValue<T> parse(final byte[] bytes) {
-        return this.toValue(Bytes.toUnsignedInt(bytes[0]));
+        return this.of(Bytes.toUnsignedInt(bytes[0]));
     }
 
     @Override
@@ -117,7 +117,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends Abstrac
 
         if (digitsOnly) {
             // digits only
-            return this.toValue(Integer.parseInt(args[0]));
+            return this.of(Integer.parseInt(args[0]));
         } else {
             // not digits only -> try with value name
             for (final var value : this.values.values()) {

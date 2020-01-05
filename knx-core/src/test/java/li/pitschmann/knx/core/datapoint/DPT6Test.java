@@ -47,21 +47,21 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
         final var dpt = DPT6.PERCENT;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-129")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("128")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-129")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("128")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue(-128)).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue(127)).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue("0x00")).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue("0xFF")).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue("-128")).isInstanceOf(DPT6Value.class);
-        assertThat(dpt.toValue("127")).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of(-128)).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of(127)).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of("0x00")).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of("0xFF")).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of("-128")).isInstanceOf(DPT6Value.class);
+        assertThat(dpt.of("127")).isInstanceOf(DPT6Value.class);
     }
 
     @Override
@@ -83,9 +83,9 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT6.PERCENT.toValue((byte) 0x00)).isNotEqualTo(DPT6.STATUS_MODE.toValue((byte) 0x00));
+        assertThat(DPT6.PERCENT.of((byte) 0x00)).isNotEqualTo(DPT6.STATUS_MODE.of((byte) 0x00));
         // wrong value
-        assertThat(DPT6.PERCENT.toValue((byte) 0x00)).isNotEqualTo(DPT6.PERCENT.toValue((byte) 0x01));
+        assertThat(DPT6.PERCENT.of((byte) 0x00)).isNotEqualTo(DPT6.PERCENT.of((byte) 0x01));
     }
 
     /**
@@ -96,13 +96,13 @@ public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
      * @param intValue integer value
      */
     private void assertDPT(final DPT6 dpt, final byte bValue, final int intValue) {
-        final var dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.of(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
 
         // assert specific DPT6
-        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(bValue);
     }
 

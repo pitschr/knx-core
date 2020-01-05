@@ -304,7 +304,7 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
             // value of data
             final String dptValueString;
             if (dpt != null) {
-                final var dptValue = dpt.toValue(cemi.getApciData());
+                final var dptValue = dpt.of(cemi.getApciData());
                 dptValueString = String.format("%s %s", dptValue.toText(), dpt.getUnit());
             } else {
                 dptValueString = ByteFormatter.formatHexAsString(cemi.getApciData());
@@ -374,7 +374,7 @@ public final class MonitorPlugin implements ObserverPlugin, ExtensionPlugin {
                         TPCI.UNNUMBERED_PACKAGE,
                         0,
                         APCI.GROUP_VALUE_WRITE,
-                        DPT8.VALUE_2_OCTET_COUNT.toValue(inc * 127)
+                        DPT8.VALUE_2_OCTET_COUNT.of(inc * 127)
                 );
                 final Body body = TunnelingRequestBody.of(1, inc, cemi);
 

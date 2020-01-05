@@ -103,12 +103,12 @@ public final class DPT11 extends AbstractDataPointType<DPT11Value> {
         return new DPT11Value(LocalDate.parse(args[0]));
     }
 
-    public DPT11Value toValue(final LocalDate date) {
+    public DPT11Value of(final LocalDate date) {
         return new DPT11Value(date);
     }
 
-    public DPT11Value toValue(final int year, final int month, final int dayOfMonth) {
-        return toValue(LocalDate.of(year, month, dayOfMonth));
+    public DPT11Value of(final int year, final int month, final int dayOfMonth) {
+        return of(LocalDate.of(year, month, dayOfMonth));
     }
 
     public byte[] toByteArray(final LocalDate date) {

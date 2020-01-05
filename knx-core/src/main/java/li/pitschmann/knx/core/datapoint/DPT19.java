@@ -160,11 +160,19 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
         return new DPT19Value(dayOfWeek, date, time, flags);
     }
 
-    public DPT19Value toValue(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time) {
-        return toValue(dayOfWeek, date, time, Flags.NO_FLAGS);
+    public DPT19Value of(final LocalDate date, final LocalTime time) {
+        return of(null, date, time, Flags.NO_FLAGS);
     }
 
-    public DPT19Value toValue(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
+    public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time) {
+        return of(dayOfWeek, date, time, Flags.NO_FLAGS);
+    }
+
+    public DPT19Value of(final LocalDate date, final LocalTime time, final Flags flags) {
+        return of(null, date, time, flags);
+    }
+
+    public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
         return new DPT19Value(dayOfWeek, date, time, flags);
     }
 

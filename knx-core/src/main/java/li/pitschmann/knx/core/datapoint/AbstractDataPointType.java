@@ -82,7 +82,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value from raw bytes
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    public final V toValue(final byte[] bytes) {
+    public final V of(final byte[] bytes) {
         if (bytes == null) {
             throw new KnxNullPointerException("bytes");
         }
@@ -125,8 +125,8 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    public final V toValue(final String[] args) {
-        Preconditions.checkArgument(args!=null && args.length > 0,
+    public final V of(final String[] args) {
+        Preconditions.checkArgument(args != null && args.length > 0,
                 "No arguments provided for conversion to data point value object.");
 
         // check if it is a hex string
@@ -177,7 +177,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
     private V tryParseAsHexString(final String[] args) {
         Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string should start with '0x'. Actual: {}", args[0]);
         final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
-        return this.toValue(Bytes.toByteArray(joinedString));
+        return this.of(Bytes.toByteArray(joinedString));
     }
 
     /**

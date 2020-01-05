@@ -117,7 +117,7 @@ public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
         return new DPT4Value(this, bytes[0]);
     }
 
-    public DPT4Value toValue(final char character) {
+    public DPT4Value of(final char character) {
         return new DPT4Value(this, character);
     }
 

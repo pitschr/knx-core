@@ -172,7 +172,7 @@ public class BaseKnxClientTest {
             // async read request
             client.readRequest(groupAddress);
             // async write request with DPT
-            client.writeRequest(groupAddress, DPT1.SWITCH.toValue(false));
+            client.writeRequest(groupAddress, DPT1.SWITCH.of(false));
             // async write request with APCI data
             client.writeRequest(groupAddress, new byte[]{0x00});
             // send via body

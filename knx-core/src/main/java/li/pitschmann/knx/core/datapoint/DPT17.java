@@ -78,7 +78,7 @@ public final class DPT17 extends AbstractRangeDataPointType<DPT17Value, Integer>
         return new DPT17Value(Integer.parseInt(args[0]));
     }
 
-    public DPT17Value toValue(final int sceneNumber) {
+    public DPT17Value of(final int sceneNumber) {
         return new DPT17Value(sceneNumber);
     }
 

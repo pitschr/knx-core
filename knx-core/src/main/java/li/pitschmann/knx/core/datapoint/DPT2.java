@@ -257,7 +257,7 @@ public final class DPT2 extends AbstractDataPointType<DPT2Value> {
         return new DPT2Value(this, controlled, boolValue);
     }
 
-    public DPT2Value toValue(final boolean controlled, final boolean booleanValue) {
+    public DPT2Value of(final boolean controlled, final boolean booleanValue) {
         return new DPT2Value(this, controlled, booleanValue);
     }
 

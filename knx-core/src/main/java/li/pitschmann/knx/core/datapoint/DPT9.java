@@ -457,7 +457,7 @@ public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
         return new DPT9Value(this, Double.parseDouble(args[0]));
     }
 
-    public DPT9Value toValue(final double value) {
+    public DPT9Value of(final double value) {
         return new DPT9Value(this, value);
     }
 

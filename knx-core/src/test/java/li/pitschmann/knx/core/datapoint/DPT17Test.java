@@ -47,21 +47,21 @@ public class DPT17Test extends AbstractDataPointTypeTest<DPT17, DPT17Value> {
         final var dpt = DPT17.SCENE_NUMBER;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue((byte) 0x3F)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue("0x00")).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue("0x3F")).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue(0)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue(63)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue("0")).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.toValue("63")).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of((byte) 0x3F)).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of("0x00")).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of("0x3F")).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of(63)).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of("0")).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.of("63")).isInstanceOf(DPT17Value.class);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DPT17Test extends AbstractDataPointTypeTest<DPT17, DPT17Value> {
     @Test
     public void testOfInvalid() {
         // wrong value
-        assertThat(DPT17.SCENE_NUMBER.toValue((byte) 0x00)).isNotEqualTo(DPT17.SCENE_NUMBER.toValue((byte) 0x01));
+        assertThat(DPT17.SCENE_NUMBER.of((byte) 0x00)).isNotEqualTo(DPT17.SCENE_NUMBER.of((byte) 0x01));
     }
 
     /**
@@ -96,12 +96,12 @@ public class DPT17Test extends AbstractDataPointTypeTest<DPT17, DPT17Value> {
      * @param intValue integer value
      */
     private void assertDPT(final DPT17 dpt, final byte bValue, final int intValue) {
-        final var dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.of(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
         // assert specific DPT17
-        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(bValue);
     }
 }

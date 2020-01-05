@@ -69,7 +69,7 @@ public final class ReadRequestController extends AbstractController {
             response.setName(xmlGroupAddress.getName());
             response.setDescription(xmlGroupAddress.getDescription());
             response.setDataPointType(dpt);
-            response.setValue(dpt.toValue(knxStatusData.getApciData()).toText());
+            response.setValue(dpt.of(knxStatusData.getApciData()).toText());
             response.setUnit(dpt.getUnit());
         } else {
             log.warn("Could not find group address in XML project: {}", groupAddress);

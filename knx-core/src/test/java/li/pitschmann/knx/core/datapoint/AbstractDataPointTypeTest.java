@@ -37,15 +37,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<DV>, DV extends DataPointValue<?>> implements DPTTest {
     /**
-     * General DPT test for {@link AbstractDataPointType#toValue(byte[])}.
+     * General DPT test for {@link AbstractDataPointType#of(byte[])}.
      */
     @Test
     public void testGeneralCompatibility() {
         final var dpt = DPT1.SWITCH;
 
         // general failures
-        assertThatThrownBy(() -> dpt.toValue((byte[]) null)).isInstanceOf(KnxNullPointerException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> dpt.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
     @Test
@@ -53,13 +53,13 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
         final var dpt = new TestDataPointType();
 
         // parse OK
-        assertThat(dpt.toValue(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointValue.class);
-        assertThat(dpt.toValue(new String[]{"0xaa", "0xbb", "0xcc", "0xdd"})).isInstanceOf(DataPointValue.class);
+        assertThat(dpt.of(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointValue.class);
+        assertThat(dpt.of(new String[]{"0xaa", "0xbb", "0xcc", "0xdd"})).isInstanceOf(DataPointValue.class);
 
         // parse failures
-        assertThatThrownBy(() -> dpt.toValue((String[]) null)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[0])).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"xx", "yy"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of((String[]) null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> dpt.of(new String[0])).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> dpt.of(new String[]{"xx", "yy"})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
     }
 
     @Test
@@ -67,7 +67,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
         final var dpt = new TestDataPointTypeNoStringSyntax();
 
         // parse (unsupported!)
-        assertThatThrownBy(() -> dpt.toValue(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new String[]{"0xaa", "0xbb"})).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
      */
     protected void assertBaseDPT(final D dpt, final byte[] bValueArray, final DV dptValue) {
         // create by #of(byte[])
-        final var baseOfValue = dpt.toValue(bValueArray);
+        final var baseOfValue = dpt.of(bValueArray);
         assertThat(baseOfValue).isEqualTo(dptValue);
         assertThat(dptValue.getDPT()).isEqualTo(dpt);
 
@@ -150,10 +150,7 @@ public abstract class AbstractDataPointTypeTest<D extends AbstractDataPointType<
 
         @Override
         protected boolean isCompatible(String[] args) {
-            if (args.length == 2 || args.length == 4) {
-                return false;
-            }
-            return true;
+            return args.length != 2 && args.length != 4;
         }
 
         @Override

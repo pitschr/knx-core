@@ -49,23 +49,23 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
         final var dpt = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("65536")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("65536")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue(0)).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue(65535)).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue("0x00", "0x00")).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue("0xFF", "0xFF")).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue("0")).isInstanceOf(DPT7Value.class);
-        assertThat(dpt.toValue("65535")).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of(65535)).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of("0x00", "0x00")).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of("0xFF", "0xFF")).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of("0")).isInstanceOf(DPT7Value.class);
+        assertThat(dpt.of("65535")).isInstanceOf(DPT7Value.class);
     }
 
     @Test
@@ -80,13 +80,13 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
         final DPT7 dpt10ms = DPT7.TIME_PERIOD_10MS;
         assertThat(dpt10ms.getCalculationFunction()).isInstanceOf(Function.class);
         // value: 0ms
-        assertThat(dpt10ms.toValue(0).getUnsignedValue()).isEqualTo(0d);
+        assertThat(dpt10ms.of(0).getUnsignedValue()).isEqualTo(0d);
         // value: 123.45ms
-        assertThat(dpt10ms.toValue(12345).getUnsignedValue()).isEqualTo(123.45d);
+        assertThat(dpt10ms.of(12345).getUnsignedValue()).isEqualTo(123.45d);
         // value: 467.21ms
-        assertThat(dpt10ms.toValue(46721).getUnsignedValue()).isEqualTo(467.21d);
+        assertThat(dpt10ms.of(46721).getUnsignedValue()).isEqualTo(467.21d);
         // value: 655.35ms
-        assertThat(dpt10ms.toValue(65535).getUnsignedValue()).isEqualTo(655.35d);
+        assertThat(dpt10ms.of(65535).getUnsignedValue()).isEqualTo(655.35d);
 
         /*
          * TIME_PERIOD_100MS
@@ -94,13 +94,13 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
         final DPT7 dpt100ms = DPT7.TIME_PERIOD_100MS;
         assertThat(dpt100ms.getCalculationFunction()).isInstanceOf(Function.class);
         // value: 0ms
-        assertThat(dpt100ms.toValue(0).getUnsignedValue()).isEqualTo(0d);
+        assertThat(dpt100ms.of(0).getUnsignedValue()).isEqualTo(0d);
         // value: 1234.5ms
-        assertThat(dpt100ms.toValue(12345).getUnsignedValue()).isEqualTo(1234.5d);
+        assertThat(dpt100ms.of(12345).getUnsignedValue()).isEqualTo(1234.5d);
         // value: 4672.1ms
-        assertThat(dpt100ms.toValue(46721).getUnsignedValue()).isEqualTo(4672.1d);
+        assertThat(dpt100ms.of(46721).getUnsignedValue()).isEqualTo(4672.1d);
         // value: 6553.5ms
-        assertThat(dpt100ms.toValue(65535).getUnsignedValue()).isEqualTo(6553.5d);
+        assertThat(dpt100ms.of(65535).getUnsignedValue()).isEqualTo(6553.5d);
     }
 
     @Override
@@ -126,13 +126,13 @@ public class DPT7Test extends AbstractDataPointTypeTest<DPT7, DPT7Value> {
      * @param intValue    integer value
      */
     private void assertDPT(final DPT7 dpt, final byte[] bValueArray, final int intValue) {
-        final var dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.of(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT7
-        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(bValueArray);
     }
 }

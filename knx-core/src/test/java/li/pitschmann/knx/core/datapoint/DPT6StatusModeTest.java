@@ -49,14 +49,14 @@ public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMod
         final var dpt = DPT6.STATUS_MODE;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.toValue("0xFF")).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.of("0xFF")).isInstanceOf(DPT6Value.StatusMode.class);
     }
 
     @Override
@@ -85,12 +85,12 @@ public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMod
     private void assertInternal(final byte byteValue, final boolean bool1, final boolean bool2, final boolean bool3, final boolean bool4,
                                 final boolean bool5, final Mode mode) {
         final var dptStatusMode = DPT6.STATUS_MODE;
-        final var dptStatusModeValue = dptStatusMode.toValue(bool1, bool2, bool3, bool4, bool5, mode);
+        final var dptStatusModeValue = dptStatusMode.of(bool1, bool2, bool3, bool4, bool5, mode);
 
         // assert base DPT
         this.assertBaseDPT(dptStatusMode, new byte[]{byteValue}, dptStatusModeValue);
         // assert specific DPT6
-        assertThat(dptStatusMode.toValue(ByteFormatter.formatHex(byteValue))).isEqualTo(dptStatusModeValue);
+        assertThat(dptStatusMode.of(ByteFormatter.formatHex(byteValue))).isEqualTo(dptStatusModeValue);
         assertThat(dptStatusMode.toByteArray(bool1, bool2, bool3, bool4, bool5, mode)).containsExactly(byteValue);
     }
 }

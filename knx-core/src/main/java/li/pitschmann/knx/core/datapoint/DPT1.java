@@ -424,13 +424,13 @@ public final class DPT1 extends AbstractDataPointType<DPT1Value> {
     }
 
     @Override
-    public DPT1Value parse(final String[] args) {
+    protected DPT1Value parse(final String[] args) {
         // true if 'true' or '1' or DPT related true value (e.g. switch => 'on'), otherwise false
         final var boolValue = this.findByString(args, "true", "1", this.getTextForTrue());
         return new DPT1Value(this, boolValue);
     }
 
-    public DPT1Value toValue(final boolean booleanValue) {
+    public DPT1Value of(final boolean booleanValue) {
         return new DPT1Value(this, booleanValue);
     }
 

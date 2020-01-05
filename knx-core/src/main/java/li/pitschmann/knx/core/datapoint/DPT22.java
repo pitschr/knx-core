@@ -154,9 +154,9 @@ public final class DPT22 {
             return new DPT22Value.StatusDHWController(bytes);
         }
 
-        public DPT22Value.StatusDHWController toValue(final boolean fault, final boolean loadActive, final boolean legionellaProtectionActive,
-                                                      final boolean pushActive, final boolean otherEnergySourceActive, final boolean solarEnergyOnly,
-                                                      final boolean solarEnergySupport, final boolean temperatureSetpointInfluenced) {
+        public DPT22Value.StatusDHWController of(final boolean fault, final boolean loadActive, final boolean legionellaProtectionActive,
+                                                 final boolean pushActive, final boolean otherEnergySourceActive, final boolean solarEnergyOnly,
+                                                 final boolean solarEnergySupport, final boolean temperatureSetpointInfluenced) {
             return new DPT22Value.StatusDHWController(fault, loadActive, legionellaProtectionActive, pushActive, otherEnergySourceActive,
                     solarEnergyOnly, solarEnergySupport, temperatureSetpointInfluenced);
         }
@@ -164,7 +164,7 @@ public final class DPT22 {
         public byte[] toByteArray(final boolean fault, final boolean loadActive, final boolean legionellaProtectionActive, final boolean pushActive,
                                   final boolean otherEnergySourceActive, final boolean solarEnergyOnly, final boolean solarEnergySupport,
                                   final boolean temperatureSetpointInfluenced) {
-            return this.toValue(fault, loadActive, legionellaProtectionActive, pushActive, otherEnergySourceActive, solarEnergyOnly,
+            return this.of(fault, loadActive, legionellaProtectionActive, pushActive, otherEnergySourceActive, solarEnergyOnly,
                     solarEnergySupport, temperatureSetpointInfluenced).toByteArray();
         }
     }
@@ -184,11 +184,11 @@ public final class DPT22 {
             return new DPT22Value.StatusRoomHeatingCoolingController(bytes);
         }
 
-        public DPT22Value.StatusRoomHeatingCoolingController toValue(final boolean fault, final boolean statusEcoHeating,
-                                                                     final boolean temperatureFlowLimit, final boolean temperatureReturnLimit, final boolean statusMorningBoost,
-                                                                     final boolean startOptimizationActive, final boolean stopOptimizationActive, final boolean heatingDisabled,
-                                                                     final boolean heatingMode, final boolean statusEcoCooling, final boolean statusPreCooling, final boolean coolingDisabled,
-                                                                     final boolean dewPointAlarm, final boolean frostAlarm, final boolean overheatAlarm) {
+        public DPT22Value.StatusRoomHeatingCoolingController of(final boolean fault, final boolean statusEcoHeating,
+                                                                final boolean temperatureFlowLimit, final boolean temperatureReturnLimit, final boolean statusMorningBoost,
+                                                                final boolean startOptimizationActive, final boolean stopOptimizationActive, final boolean heatingDisabled,
+                                                                final boolean heatingMode, final boolean statusEcoCooling, final boolean statusPreCooling, final boolean coolingDisabled,
+                                                                final boolean dewPointAlarm, final boolean frostAlarm, final boolean overheatAlarm) {
             return new DPT22Value.StatusRoomHeatingCoolingController(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit,
                     statusMorningBoost, startOptimizationActive, stopOptimizationActive, heatingDisabled, heatingMode, statusEcoCooling,
                     statusPreCooling, coolingDisabled, dewPointAlarm, frostAlarm, overheatAlarm);
@@ -199,7 +199,7 @@ public final class DPT22 {
                                   final boolean stopOptimizationActive, final boolean heatingDisabled, final boolean heatingMode,
                                   final boolean statusEcoCooling, final boolean statusPreCooling, final boolean coolingDisabled, final boolean dewPointAlarm,
                                   final boolean frostAlarm, final boolean overheatAlarm) {
-            return this.toValue(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost, startOptimizationActive,
+            return this.of(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost, startOptimizationActive,
                     stopOptimizationActive, heatingDisabled, heatingMode, statusEcoCooling, statusPreCooling, coolingDisabled, dewPointAlarm,
                     frostAlarm, overheatAlarm).toByteArray();
         }
@@ -220,13 +220,13 @@ public final class DPT22 {
             return new DPT22Value.Media(bytes);
         }
 
-        public DPT22Value.Media toValue(final boolean tp1Supported, final boolean pl110Supported, final boolean rfSupported,
-                                        final boolean knxipSupported) {
+        public DPT22Value.Media of(final boolean tp1Supported, final boolean pl110Supported, final boolean rfSupported,
+                                   final boolean knxipSupported) {
             return new DPT22Value.Media(tp1Supported, pl110Supported, rfSupported, knxipSupported);
         }
 
         public byte[] toByteArray(final boolean tp1Supported, final boolean pl110Supported, final boolean rfSupported, final boolean knxipSupported) {
-            return this.toValue(tp1Supported, pl110Supported, rfSupported, knxipSupported).toByteArray();
+            return this.of(tp1Supported, pl110Supported, rfSupported, knxipSupported).toByteArray();
         }
     }
 
@@ -245,10 +245,10 @@ public final class DPT22 {
             return new DPT22Value.ChannelActivation16(bytes);
         }
 
-        public DPT22Value.ChannelActivation16 toValue(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                                      final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
-                                                      final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
-                                                      final boolean channel15, final boolean channel16) {
+        public DPT22Value.ChannelActivation16 of(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
+                                                 final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
+                                                 final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
+                                                 final boolean channel15, final boolean channel16) {
             return new DPT22Value.ChannelActivation16(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9,
                     channel10, channel11, channel12, channel13, channel14, channel15, channel16);
         }
@@ -257,7 +257,7 @@ public final class DPT22 {
                                   final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
                                   final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
                                   final boolean channel15, final boolean channel16) {
-            return this.toValue(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9, channel10, channel11,
+            return this.of(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9, channel10, channel11,
                     channel12, channel13, channel14, channel15, channel16).toByteArray();
         }
     }
