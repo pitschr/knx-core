@@ -1876,7 +1876,7 @@ public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> 
         return new DPT14Value(this, Double.parseDouble(args[0]));
     }
 
-    public DPT14Value toValue(final double value) {
+    public DPT14Value of(final double value) {
         return new DPT14Value(this, value);
     }
 

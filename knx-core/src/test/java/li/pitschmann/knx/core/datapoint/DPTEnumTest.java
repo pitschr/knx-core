@@ -53,25 +53,25 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
     @Test
     public void testCompatibility() {
         // failures
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue("")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(-1)).isInstanceOf(KnxEnumNotFoundException.class);
-        assertThatThrownBy(() -> DPT_ENUM.toValue(256)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of("")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of(-1)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> DPT_ENUM.of(256)).isInstanceOf(KnxEnumNotFoundException.class);
 
         // OK
-        assertThat(DPT_ENUM.toValue("0")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue("255")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue("DATA_LINK_LAYER")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue("NO_LAYER")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(0)).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue(255)).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue("0x00")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.toValue("0xFF")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of("0")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of("255")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of("DATA_LINK_LAYER")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of("NO_LAYER")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of(0)).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of(255)).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of("0x00")).isInstanceOf(DPTEnumValue.class);
+        assertThat(DPT_ENUM.of("0xFF")).isInstanceOf(DPTEnumValue.class);
     }
 
     @Test
@@ -79,10 +79,10 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
     public void testParse() {
         final var enumValueDataLinkLayer = DPT_ENUM.parse(new byte[]{0x00});
         assertThat(DPT_ENUM.parse(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.toValue(0x00)).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.toValue("DATA_LINK_LAYER")).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.toValue(new byte[]{0x00})).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.toValue(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.of(0x00)).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.of("DATA_LINK_LAYER")).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.of(new byte[]{0x00})).isSameAs(enumValueDataLinkLayer);
+        assertThat(DPT_ENUM.of(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
         assertThat(enumValueDataLinkLayer.getDPT()).isSameAs(DPT_ENUM);
         assertThat(enumValueDataLinkLayer.getOrdinal()).isEqualTo(0);
         assertThat(enumValueDataLinkLayer.getDescription()).isEqualTo("DATA_LINK_LAYER");
@@ -91,10 +91,10 @@ public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.Communi
 
         final var enumValueNoLayer = DPT_ENUM.parse(new byte[]{(byte) 0xFF});
         assertThat(DPT_ENUM.parse(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.toValue(0xFF)).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.toValue("NO_LAYER")).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.toValue(new byte[]{(byte) 0xFF})).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.toValue(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.of(0xFF)).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.of("NO_LAYER")).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.of(new byte[]{(byte) 0xFF})).isSameAs(enumValueNoLayer);
+        assertThat(DPT_ENUM.of(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
         assertThat(enumValueNoLayer.getDPT()).isSameAs(DPT_ENUM);
         assertThat(enumValueNoLayer.getOrdinal()).isEqualTo(0xFF);
         assertThat(enumValueNoLayer.getDescription()).isEqualTo("NO_LAYER");

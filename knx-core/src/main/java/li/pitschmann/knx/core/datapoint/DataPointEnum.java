@@ -32,19 +32,18 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
      *
      * @return {@link DPTEnumValue}
      */
-    default DPTEnumValue<T> toValue() {
-        @SuppressWarnings("unchecked")
-        final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
+    default DPTEnumValue<T> of() {
+        @SuppressWarnings("unchecked") final var thisObj = (T) this; // fake assignment to avoid 'unlikely-arg-type' warning
         return DataPointRegistry.getDataPointType(thisObj);
     }
 
     /**
-     * Handy method returning byte array to call {@link #toValue()#toByteArray()}
+     * Handy method returning byte array to call {@link #of()#toByteArray()}
      *
      * @return byte array
      */
     default byte[] toByteArray() {
-        return toValue().toByteArray();
+        return of().toByteArray();
     }
 
     /**
@@ -53,7 +52,7 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
      * @return text
      */
     default String toText() {
-        return toValue().getDescription();
+        return of().getDescription();
     }
 
     /**
@@ -62,7 +61,7 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
      * @return id
      */
     default String getId() {
-        final var value = toValue();
+        final var value = of();
         return value.getDPT().getId() + " - " + value.getEnum();
     }
 
@@ -72,7 +71,7 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
      * @return description
      */
     default String getDescription() {
-        final var value = toValue();
+        final var value = of();
         return value.getDPT().getDescription() + " - " + value.getDescription();
     }
 }

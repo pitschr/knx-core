@@ -87,26 +87,26 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value from raw bytes
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    V toValue(byte[] bytes);
+    V of(byte[] bytes);
 
     /**
      * Returns a {@link DataPointValue} for specified byte variable array.
      * <p>
-     * It is a wrapper caller of {@link #toValue(byte[])}
+     * It is a wrapper caller of {@link #of(byte[])}
      *
      * @param b         first byte to be parsed
      * @param moreBytes more bytes to be parsed
      * @return data point value
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    default V toValue(final byte b, final byte... moreBytes) {
+    default V of(final byte b, final byte... moreBytes) {
         if (moreBytes.length == 0) {
-            return toValue(new byte[]{b});
+            return of(new byte[]{b});
         } else {
             byte[] newArray = new byte[moreBytes.length + 1];
             newArray[0] = b;
             System.arraycopy(moreBytes, 0, newArray, 1, moreBytes.length);
-            return toValue(newArray);
+            return of(newArray);
         }
     }
 
@@ -120,39 +120,39 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value from arguments
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    V toValue(String[] args);
+    V of(String[] args);
 
     /**
      * Returns a {@link DataPointValue} for specified variable string arguments.
      * <p>
-     * It is a wrapper caller of {@link #toValue(String[])}
+     * It is a wrapper caller of {@link #of(String[])}
      *
      * @param arg      first arguments to be parsed
      * @param moreArgs more arguments to be parsed
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    default V toValue(final String arg, final String... moreArgs) {
+    default V of(final String arg, final String... moreArgs) {
         Preconditions.checkNonNull(arg);
         if (moreArgs.length == 0) {
-            return toValue(new String[]{arg});
+            return of(new String[]{arg});
         } else {
             String[] newArray = new String[moreArgs.length + 1];
             newArray[0] = arg;
             System.arraycopy(moreArgs, 0, newArray, 1, moreArgs.length);
-            return toValue(newArray);
+            return of(newArray);
         }
     }
 
     /**
      * Returns byte array based for specified string arguments. This method is handy one
-     * that calls {@link #toValue(String, String...)} to return the byte array.
+     * that calls {@link #of(String, String...)} to return the byte array.
      *
      * @param arg      first argument
      * @param moreArgs more arguments
      * @return byte array from arguments
      */
     default byte[] toByteArray(final String arg, final String... moreArgs) {
-        return toValue(arg, moreArgs).toByteArray();
+        return of(arg, moreArgs).toByteArray();
     }
 }

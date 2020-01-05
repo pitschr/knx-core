@@ -287,7 +287,7 @@ public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
         return new DPT7Value(this, Integer.parseInt(args[0]));
     }
 
-    public DPT7Value toValue(final int value) {
+    public DPT7Value of(final int value) {
         return new DPT7Value(this, value);
     }
 

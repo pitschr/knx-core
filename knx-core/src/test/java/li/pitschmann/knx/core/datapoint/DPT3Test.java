@@ -48,21 +48,21 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
         final var dpt = DPT3.DPT_CONTROL_BLINDS;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue((byte) 0x10)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x11")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("false", "true", "false")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of((byte) 0x10)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x11")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("false", "true", "false")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
         for (var i = 0; i < 0x10; i++) {
-            assertThat(dpt.toValue((byte) i)).isInstanceOf(DPT3Value.class);
+            assertThat(dpt.of((byte) i)).isInstanceOf(DPT3Value.class);
         }
         for (var i = 0; i < 7; i++) {
-            assertThat(dpt.toValue(String.valueOf(i))).isInstanceOf(DPT3Value.class);
-            assertThat(dpt.toValue("controlled", String.valueOf(i))).isInstanceOf(DPT3Value.class);
+            assertThat(dpt.of(String.valueOf(i))).isInstanceOf(DPT3Value.class);
+            assertThat(dpt.of("controlled", String.valueOf(i))).isInstanceOf(DPT3Value.class);
         }
-        assertThat(dpt.toValue("0x0A")).isInstanceOf(DPT3Value.class);
-        assertThat(dpt.toValue("0x0E")).isInstanceOf(DPT3Value.class);
+        assertThat(dpt.of("0x0A")).isInstanceOf(DPT3Value.class);
+        assertThat(dpt.of("0x0E")).isInstanceOf(DPT3Value.class);
     }
 
     @Override
@@ -90,11 +90,11 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT3.DPT_CONTROL_BLINDS.toValue((byte) 0x00))
-                .isNotEqualTo(DPT3.DPT_CONTROL_DIMMING.toValue((byte) 0x00));
+        assertThat(DPT3.DPT_CONTROL_BLINDS.of((byte) 0x00))
+                .isNotEqualTo(DPT3.DPT_CONTROL_DIMMING.of((byte) 0x00));
         // wrong value
-        assertThat(DPT3.DPT_CONTROL_BLINDS.toValue((byte) 0x00))
-                .isNotEqualTo(DPT3.DPT_CONTROL_BLINDS.toValue((byte) 0x01));
+        assertThat(DPT3.DPT_CONTROL_BLINDS.of((byte) 0x00))
+                .isNotEqualTo(DPT3.DPT_CONTROL_BLINDS.of((byte) 0x01));
     }
 
     /**
@@ -111,13 +111,13 @@ public class DPT3Test extends AbstractDataPointTypeTest<DPT3, DPT3Value> {
      */
     private void assertDPT(final DPT3 dpt, final byte byteValue, final boolean controlled, final int stepCode, final StepInterval stepInterval,
                            final String[] strValue) {
-        final var dptValue = dpt.toValue(controlled, stepCode);
+        final var dptValue = dpt.of(controlled, stepCode);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
         // assert specific DPT3
-        assertThat(dpt.toValue(controlled, stepInterval)).isEqualTo(dptValue);
-        assertThat(dpt.toValue(strValue)).isEqualTo(dptValue);
+        assertThat(dpt.of(controlled, stepInterval)).isEqualTo(dptValue);
+        assertThat(dpt.of(strValue)).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(controlled, stepCode)).containsExactly(byteValue);
         assertThat(dpt.toByteArray(controlled, stepInterval)).containsExactly(byteValue);
     }

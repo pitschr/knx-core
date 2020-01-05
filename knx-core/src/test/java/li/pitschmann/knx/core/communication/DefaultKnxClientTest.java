@@ -233,7 +233,7 @@ public class DefaultKnxClientTest {
     public void testRouting(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
             client.readRequest(GroupAddress.of(11, 4, 67));
-            client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.toValue(true));
+            client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.of(true));
             mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION, 2);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

@@ -62,7 +62,7 @@ public final class LampInverseExample {
             final var lampStatusInverted = !lampStatus;
 
             // send a 'write' request to KNX
-            client.writeRequest(writeGroupAddress, DPT1.SWITCH.toValue(lampStatusInverted));
+            client.writeRequest(writeGroupAddress, DPT1.SWITCH.of(lampStatusInverted));
         }
 
         // auto-closed and disconnected by KNX client

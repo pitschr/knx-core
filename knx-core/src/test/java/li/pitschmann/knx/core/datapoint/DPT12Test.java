@@ -47,27 +47,27 @@ public class DPT12Test extends AbstractDataPointTypeTest<DPT12, DPT12Value> {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[5])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("4294967296")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[5])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("4294967296")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue(0)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue(4294967295L)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue("0")).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.toValue("4294967295")).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of(4294967295L)).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of("0")).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.of("4294967295")).isInstanceOf(DPT12Value.class);
     }
 
     @Override
@@ -91,13 +91,13 @@ public class DPT12Test extends AbstractDataPointTypeTest<DPT12, DPT12Value> {
      * @param longValue   long value
      */
     private void assertDPT(final DPT12 dpt, final byte[] bValueArray, final long longValue) {
-        final var dptValue = dpt.toValue(longValue);
+        final var dptValue = dpt.of(longValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT12
-        assertThat(dpt.toValue(String.valueOf(longValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(longValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(longValue)).containsExactly(bValueArray);
     }
 }

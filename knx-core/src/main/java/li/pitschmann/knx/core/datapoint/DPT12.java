@@ -133,7 +133,7 @@ public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
         return new DPT12Value(this, Long.parseLong(args[0]));
     }
 
-    public DPT12Value toValue(final long value) {
+    public DPT12Value of(final long value) {
         return new DPT12Value(this, value);
     }
 

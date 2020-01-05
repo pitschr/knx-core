@@ -48,18 +48,18 @@ public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
         final var dpt = DPT_ACCESS_DATA;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[5])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[5])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT15Value.class);
-        assertThat(dpt.toValue((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT15Value.class);
-        assertThat(dpt.toValue("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT15Value.class);
-        assertThat(dpt.toValue("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT15Value.class);
+        assertThat(dpt.of((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT15Value.class);
+        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT15Value.class);
+        assertThat(dpt.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT15Value.class);
+        assertThat(dpt.of("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT15Value.class);
     }
 
     @Override
@@ -85,12 +85,12 @@ public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
      */
     private void assertDPT(final byte[] bValueArray, final byte[] accessIdData, final Flags flags) {
         final var dpt = DPT_ACCESS_DATA;
-        final var dptValue = dpt.toValue(accessIdData, flags);
+        final var dptValue = dpt.of(accessIdData, flags);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
         // assert specific DPT15
-        assertThat(dpt.toValue(ByteFormatter.formatHexAsString(accessIdData, ""),
+        assertThat(dpt.of(ByteFormatter.formatHexAsString(accessIdData, ""),
                 // get 2nd hex string (remove leading '0x'
                 ByteFormatter.formatHex(flags.getAsByte()).substring(2))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(accessIdData, flags)).containsExactly(bValueArray);

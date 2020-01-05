@@ -49,7 +49,7 @@ public final class WriteRequestController extends AbstractController {
                 return response;
             } else {
                 log.debug("DPT and DPT values received for write request: {}", writeRequest);
-                rawToWrite = dpt.toValue(dptValues).toByteArray();
+                rawToWrite = dpt.of(dptValues).toByteArray();
             }
         }
         if (log.isDebugEnabled()) {

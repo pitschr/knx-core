@@ -71,7 +71,7 @@ public final class Main extends AbstractKnxMain {
         try (final var client = DefaultKnxClient.createStarted(config)) {
             Sleeper.seconds(1);
             for (final String value : values) {
-                final var dpValue = DataPointRegistry.getDataPointType(dpt).toValue(new String[]{value});
+                final var dpValue = DataPointRegistry.getDataPointType(dpt).of(new String[]{value});
                 client.writeRequest(groupAddress, dpValue);
                 log.debug("=> WRITE: {} - {}", value, dpValue);
                 Sleeper.seconds(2);

@@ -50,21 +50,21 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         final var dpt = DPT4.ASCII;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x80")).isInstanceOf(KnxException.class)
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("0x80")).isInstanceOf(KnxException.class)
                 .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0x80");
 
         // OK
-        assertThat(dpt.toValue((byte) 'a')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue((byte) 'z')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue('a')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue('z')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue("a")).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue("z")).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue("0x50")).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.toValue("0x5F")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of((byte) 'a')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of((byte) 'z')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of('a')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of('z')).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of("a")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of("z")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of("0x50")).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.of("0x5F")).isInstanceOf(DPT4Value.class);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
         this.assertDPT(dptAscii, (byte) 0x39, '9');
 
         // character: 'ä' (not supported by ASCII)
-        assertThatThrownBy(() -> dptAscii.toValue((byte) 0xE4)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> dptAscii.of((byte) 0xE4)).isInstanceOf(KnxException.class);
 
         /*
          * ISO_8859_1
@@ -116,14 +116,14 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
     }
 
     /**
-     * Invalid Test {@link DPT4#toValue(byte[])}
+     * Invalid Test {@link DPT4#of(byte[])}
      */
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT4.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT4.ISO_8859_1.toValue((byte) 0x00));
+        assertThat(DPT4.ASCII.of((byte) 0x00)).isNotEqualTo(DPT4.ISO_8859_1.of((byte) 0x00));
         // wrong value
-        assertThat(DPT4.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT4.ASCII.toValue((byte) 0x01));
+        assertThat(DPT4.ASCII.of((byte) 0x00)).isNotEqualTo(DPT4.ASCII.of((byte) 0x01));
     }
 
     /**
@@ -134,12 +134,12 @@ public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
      * @param charValue character value
      */
     private void assertDPT(final DPT4 dpt, final byte byteValue, final char charValue) {
-        final var dptValue = dpt.toValue(charValue);
+        final var dptValue = dpt.of(charValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
         // assert specific DPT4
-        assertThat(dpt.toValue(String.valueOf(charValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(charValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(charValue)).containsExactly(byteValue);
     }
 }

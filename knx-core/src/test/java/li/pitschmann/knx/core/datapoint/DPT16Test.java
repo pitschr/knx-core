@@ -52,16 +52,21 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
         final var dpt = DPT16.ASCII;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[15])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new String[] {"",""})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("Hello World Overflow!")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[15])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new String[]{"", ""})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("Hello World Overflow!")).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("The length of characters is too long");
+        assertThatThrownBy(() -> dpt.of("Hello World Overflow!", "More Overflow"))
+                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("Hello World!", "More Overflow"))
+                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue(new byte[]{'H','a','l','l','o'})).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue(Bytes.fillByteArray(new byte[14], new byte[]{'a'}, FillDirection.LEFT_TO_RIGHT))).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue("Hello World!!!")).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.toValue("0x48", "0x61", "0x6C", "0x6C", "0x6F")).isInstanceOf(DPT16Value.class);
+        assertThat(dpt.of(new byte[]{'H', 'a', 'l', 'l', 'o'})).isInstanceOf(DPT16Value.class);
+        assertThat(dpt.of(Bytes.fillByteArray(new byte[14], new byte[]{'a'}, FillDirection.LEFT_TO_RIGHT))).isInstanceOf(DPT16Value.class);
+        assertThat(dpt.of(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
+        assertThat(dpt.of("Hello World!!!")).isInstanceOf(DPT16Value.class);
+        assertThat(dpt.of("0x48", "0x61", "0x6C", "0x6C", "0x6F")).isInstanceOf(DPT16Value.class);
     }
 
     /**
@@ -96,7 +101,7 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
                 (byte) 0x49, (byte) 0x4a, (byte) 0x4b, (byte) 0x4c, (byte) 0x4d}, "ABCDEFGHIJKLM");
 
         // character: 'ä' (not supported by ASCII)
-        assertThatThrownBy(() -> dptAscii.toValue((byte) 0xe4)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> dptAscii.of((byte) 0xe4)).isInstanceOf(KnxException.class);
 
         // --------
         // ISO_8859_1
@@ -120,9 +125,9 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT16.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT16.ISO_8859_1.toValue((byte) 0x00));
+        assertThat(DPT16.ASCII.of((byte) 0x00)).isNotEqualTo(DPT16.ISO_8859_1.of((byte) 0x00));
         // wrong value
-        assertThat(DPT16.ASCII.toValue((byte) 0x00)).isNotEqualTo(DPT16.ASCII.toValue((byte) 0x01));
+        assertThat(DPT16.ASCII.of((byte) 0x00)).isNotEqualTo(DPT16.ASCII.of((byte) 0x01));
     }
 
     /**
@@ -133,13 +138,13 @@ public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
      * @param strValue    string value
      */
     private void assertDPT(final DPT16 dpt, final byte[] bValueArray, final String strValue) {
-        final var dptValue = dpt.toValue(strValue);
+        final var dptValue = dpt.of(strValue);
         final var bValueArrayPadded = Bytes.padRight(bValueArray, (byte) 0x00, 14);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArrayPadded, dptValue);
         // assert specific DPT16
-        assertThat(dpt.toValue(strValue)).isEqualTo(dptValue);
+        assertThat(dpt.of(strValue)).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(strValue)).containsExactly(bValueArrayPadded);
     }
 }

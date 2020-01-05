@@ -129,7 +129,7 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
         return new DPT6Value(this, Integer.parseInt(args[0]));
     }
 
-    public DPT6Value toValue(final int value) {
+    public DPT6Value of(final int value) {
         return new DPT6Value(this, value);
     }
 
@@ -172,7 +172,7 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
             return new DPT6Value.StatusMode(Bytes.toByteArray(args[0])[0]);
         }
 
-        public DPT6Value.StatusMode toValue(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
+        public DPT6Value.StatusMode of(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
             return new DPT6Value.StatusMode(a, b, c, d, e, mode);
         }
 

@@ -47,20 +47,20 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
         final var dpt = DPT1.SWITCH;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue((byte) 0x02)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x02")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("false", "true")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of((byte) 0x02)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x02")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("false", "true")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue((byte) 0x01)).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue("0x00")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue("0x01")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue("false")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue("true")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue("0")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.toValue("1")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of((byte) 0x01)).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of("0x00")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of("0x01")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of("false")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of("true")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of("0")).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.of("1")).isInstanceOf(DPT1Value.class);
     }
 
     /**
@@ -97,11 +97,11 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT1.SWITCH.toValue((byte) 0x00)).isNotEqualTo(DPT1.ACK.toValue((byte) 0x00));
-        assertThat(DPT1.SWITCH.toValue((byte) 0x01)).isNotEqualTo(DPT1.ACK.toValue((byte) 0x01));
+        assertThat(DPT1.SWITCH.of((byte) 0x00)).isNotEqualTo(DPT1.ACK.of((byte) 0x00));
+        assertThat(DPT1.SWITCH.of((byte) 0x01)).isNotEqualTo(DPT1.ACK.of((byte) 0x01));
         // wrong value
-        assertThat(DPT1.SWITCH.toValue((byte) 0x00)).isNotEqualTo(DPT1.SWITCH.toValue((byte) 0x01));
-        assertThat(DPT1.SWITCH.toValue((byte) 0x01)).isNotEqualTo(DPT1.SWITCH.toValue((byte) 0x00));
+        assertThat(DPT1.SWITCH.of((byte) 0x00)).isNotEqualTo(DPT1.SWITCH.of((byte) 0x01));
+        assertThat(DPT1.SWITCH.of((byte) 0x01)).isNotEqualTo(DPT1.SWITCH.of((byte) 0x00));
     }
 
     /**
@@ -116,13 +116,13 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
      * @param strIntValue integer value as string representation
      */
     private void assertDPT(final DPT1 dpt, final byte byteValue, final boolean boolValue, final String strValue, final String strIntValue) {
-        final var dptValue = dpt.toValue(boolValue);
+        final var dptValue = dpt.of(boolValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
         // assert specific DPT1
-        assertThat(dpt.toValue(strValue)).isEqualTo(dptValue);
-        assertThat(dpt.toValue(strIntValue)).isEqualTo(dptValue);
+        assertThat(dpt.of(strValue)).isEqualTo(dptValue);
+        assertThat(dpt.of(strIntValue)).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(boolValue)).containsExactly(byteValue);
     }
 }

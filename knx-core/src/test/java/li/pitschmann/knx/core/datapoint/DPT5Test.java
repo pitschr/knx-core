@@ -50,18 +50,18 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
         final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue(0)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue(255)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue("0")).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.toValue("255")).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.of(255)).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.of("0")).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.of("255")).isInstanceOf(DPT5Value.class);
     }
 
     @Test
@@ -76,30 +76,30 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
         final var dptScaling = DPT5.SCALING;
         assertThat(dptScaling.getCalculationFunction()).isInstanceOf(Function.class);
         // value: 0%
-        assertThat(dptScaling.toValue(0).getUnsignedValue()).isEqualTo(0d);
+        assertThat(dptScaling.of(0).getUnsignedValue()).isEqualTo(0d);
         // value: ~25%
-        assertThat(dptScaling.toValue((byte) 0x40).getUnsignedValue()).isCloseTo(25.0f, Percentage.withPercentage(0.4));
+        assertThat(dptScaling.of((byte) 0x40).getUnsignedValue()).isCloseTo(25.0f, Percentage.withPercentage(0.4));
         // value: ~50%
-        assertThat(dptScaling.toValue((byte) 0x7F).getUnsignedValue()).isCloseTo(50.0f, Percentage.withPercentage(0.4));
+        assertThat(dptScaling.of((byte) 0x7F).getUnsignedValue()).isCloseTo(50.0f, Percentage.withPercentage(0.4));
         // value: ~75%
-        assertThat(dptScaling.toValue((byte) 0xC0).getUnsignedValue()).isCloseTo(75.0f, Percentage.withPercentage(0.4));
+        assertThat(dptScaling.of((byte) 0xC0).getUnsignedValue()).isCloseTo(75.0f, Percentage.withPercentage(0.4));
         // value: 100%
-        assertThat(dptScaling.toValue((byte) 0xFF).getUnsignedValue()).isEqualTo(100d);
+        assertThat(dptScaling.of((byte) 0xFF).getUnsignedValue()).isEqualTo(100d);
 
         /*
          * ANGLE
          */
         final var dptAngle = DPT5.ANGLE;
         // value: 0%
-        assertThat(dptAngle.toValue(0).getUnsignedValue()).isEqualTo(0d);
+        assertThat(dptAngle.of(0).getUnsignedValue()).isEqualTo(0d);
         // value: ~90°
-        assertThat(dptAngle.toValue(64).getUnsignedValue()).isCloseTo(90.0f, Percentage.withPercentage(1.4));
+        assertThat(dptAngle.of(64).getUnsignedValue()).isCloseTo(90.0f, Percentage.withPercentage(1.4));
         // value: ~180°
-        assertThat(dptAngle.toValue(127).getUnsignedValue()).isCloseTo(180.0f, Percentage.withPercentage(1.4));
+        assertThat(dptAngle.of(127).getUnsignedValue()).isCloseTo(180.0f, Percentage.withPercentage(1.4));
         // value: ~270°
-        assertThat(dptAngle.toValue(192).getUnsignedValue()).isCloseTo(270.0f, Percentage.withPercentage(1.4));
+        assertThat(dptAngle.of(192).getUnsignedValue()).isCloseTo(270.0f, Percentage.withPercentage(1.4));
         // value: 360°
-        assertThat(dptAngle.toValue(255).getUnsignedValue()).isEqualTo(360d);
+        assertThat(dptAngle.of(255).getUnsignedValue()).isEqualTo(360d);
     }
 
     @Override
@@ -119,9 +119,9 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
     @Test
     public void testOfInvalid() {
         // wrong dpt
-        assertThat(DPT5.ANGLE.toValue((byte) 0x00)).isNotEqualTo(DPT5.SCALING.toValue((byte) 0x00));
+        assertThat(DPT5.ANGLE.of((byte) 0x00)).isNotEqualTo(DPT5.SCALING.of((byte) 0x00));
         // wrong value
-        assertThat(DPT5.ANGLE.toValue((byte) 0x00)).isNotEqualTo(DPT5.ANGLE.toValue((byte) 0x01));
+        assertThat(DPT5.ANGLE.of((byte) 0x00)).isNotEqualTo(DPT5.ANGLE.of((byte) 0x01));
     }
 
     /**
@@ -132,12 +132,12 @@ public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
      * @param intValue  integer value
      */
     private void assertDPT(final DPT5 dpt, final byte byteValue, final int intValue) {
-        final var dptValue = dpt.toValue(intValue);
+        final var dptValue = dpt.of(intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
         // assert specific DPT5
-        assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
+        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(intValue)).containsExactly(byteValue);
     }
 }

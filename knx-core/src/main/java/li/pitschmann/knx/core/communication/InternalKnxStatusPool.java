@@ -175,7 +175,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
             @SuppressWarnings("unchecked")
-            final V dataPointValue = (V) DataPointRegistry.getDataPointType(dptId).toValue(statusData.getApciData());
+            final V dataPointValue = (V) DataPointRegistry.getDataPointType(dptId).of(statusData.getApciData());
             return dataPointValue;
         }
         return null;
@@ -192,7 +192,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
     public <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt, final boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
-            return dpt.toValue(statusData.getApciData());
+            return dpt.of(statusData.getApciData());
         }
         return null;
     }

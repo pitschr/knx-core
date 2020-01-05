@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT11Value;
 import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -47,20 +46,20 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
     @Test
     public void testCompatibility() {
         // failures
-        assertThatThrownBy(() -> DPT_DATE.toValue(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.toValue(new byte[4])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.toValue("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.toValue("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_DATE.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_DATE.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_DATE.of(new byte[4])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_DATE.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_DATE.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> DPT_DATE.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
 
         // OK
-        assertThat(DPT_DATE.toValue(new byte[]{0x01, 0x01, 0x00})).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue(new byte[]{0x1f, 0x0c, 0x63})).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue("0x01", "0x01", "0x00")).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue("0x1f", "0x0c", "0x63")).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue(LocalDate.now())).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.toValue("2000-01-02")).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.of(new byte[]{0x01, 0x01, 0x00})).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.of(new byte[]{0x1f, 0x0c, 0x63})).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.of("0x01", "0x01", "0x00")).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.of("0x1f", "0x0c", "0x63")).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.of(LocalDate.now())).isInstanceOf(DPT11Value.class);
+        assertThat(DPT_DATE.of("2000-01-02")).isInstanceOf(DPT11Value.class);
     }
 
     @Override
@@ -86,14 +85,14 @@ public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
      */
     private void assertDPT(final byte[] bValueArray, final LocalDate localDate) {
         final var dpt = DPT_DATE;
-        final var dptValue = dpt.toValue(localDate);
+        final var dptValue = dpt.of(localDate);
 
         // assert base DPT
         this.assertBaseDPT(dpt, bValueArray, dptValue);
 
         // assert specific DPT11
-        assertThat(dpt.toValue(localDate.toString())).isEqualTo(dptValue);
-        assertThat(dpt.toValue(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth())).isEqualTo(dptValue);
+        assertThat(dpt.of(localDate.toString())).isEqualTo(dptValue);
+        assertThat(dpt.of(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth())).isEqualTo(dptValue);
         assertThat(dpt.toByteArray(localDate)).containsExactly(bValueArray);
         assertThat(dptValue.getDate()).isEqualTo(localDate);
     }

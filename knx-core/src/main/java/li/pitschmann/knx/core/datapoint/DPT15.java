@@ -96,7 +96,7 @@ public final class DPT15 extends AbstractDataPointType<DPT15Value> {
         return new DPT15Value(bytes);
     }
 
-    public DPT15Value toValue(final byte[] accessIdentificationData, final Flags flags) {
+    public DPT15Value of(final byte[] accessIdentificationData, final Flags flags) {
         return new DPT15Value(accessIdentificationData, flags);
     }
 

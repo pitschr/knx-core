@@ -34,7 +34,7 @@ public class DataPointEnumTest {
     @Test
     @DisplayName("Test the methods of enum value")
     public void testEnum() {
-        final var priorityValue = Priority.HIGH.toValue();
+        final var priorityValue = Priority.HIGH.of();
         assertThat(priorityValue).isNotNull();
         assertThat(priorityValue.getDPT().getId()).isEqualTo("20.004");
         assertThat(priorityValue.getDPT().getDescription()).isEqualTo("Priority");

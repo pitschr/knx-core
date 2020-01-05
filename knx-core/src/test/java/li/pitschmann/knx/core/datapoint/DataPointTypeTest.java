@@ -42,84 +42,84 @@ import static org.mockito.Mockito.when;
 public class DataPointTypeTest {
 
     /**
-     * Test {@link DataPointType#toValue(byte, byte...)} with one parameter
+     * Test {@link DataPointType#of(byte, byte...)} with one parameter
      */
     @Test
-    @DisplayName("Tests the DataPointType#toValue(byte, byte...) with one parameter")
-    public void testToValueByteVararg() {
+    @DisplayName("Tests the DataPointType#of(byte, byte...) with one parameter")
+    public void testByteVararg() {
         final var dpt = mock(DataPointType.class);
         final var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(anyByte())).thenCallRealMethod();
+        when(dpt.of(anyByte())).thenCallRealMethod();
 
-        dpt.toValue((byte) 0x01);
-        verify(dpt).toValue(captor.capture());
+        dpt.of((byte) 0x01);
+        verify(dpt).of(captor.capture());
         assertThat(captor.getValue()).containsExactly(0x01);
     }
 
     /**
-     * Test {@link DataPointType#toValue(byte, byte...)} with three parameters
+     * Test {@link DataPointType#of(byte, byte...)} with three parameters
      */
     @Test
-    @DisplayName("Tests the DataPointType#toValue(byte, byte...) with three parameters")
-    public void testToValueByteVarargWithThreeParameters() {
+    @DisplayName("Tests the DataPointType#of(byte, byte...) with three parameters")
+    public void testByteVarargWithThreeParameters() {
         final var dpt = mock(DataPointType.class);
         final var captor = ArgumentCaptor.forClass(byte[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(anyByte(), anyByte(), anyByte())).thenCallRealMethod();
+        when(dpt.of(anyByte(), anyByte(), anyByte())).thenCallRealMethod();
 
-        dpt.toValue((byte) 0x03, (byte) 0x04, (byte) 0x05);
-        verify(dpt).toValue(captor.capture());
+        dpt.of((byte) 0x03, (byte) 0x04, (byte) 0x05);
+        verify(dpt).of(captor.capture());
         assertThat(captor.getValue()).containsExactly(0x03, 0x04, 0x05);
     }
 
     /**
-     * Test {@link DataPointType#toValue(String, String...)} with one parameter
+     * Test {@link DataPointType#of(String, String...)} with one parameter
      */
     @Test
-    @DisplayName("Tests the DataPointType#toValue(String, String...) with one parameter")
-    public void testToValueStringVararg() {
+    @DisplayName("Tests the DataPointType#of(String, String...) with one parameter")
+    public void testStringVararg() {
         final var dpt = mock(DataPointType.class);
         final var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(anyString())).thenCallRealMethod();
+        when(dpt.of(anyString())).thenCallRealMethod();
 
-        dpt.toValue("Foobar");
-        verify(dpt).toValue(captor.capture());
+        dpt.of("Foobar");
+        verify(dpt).of(captor.capture());
         assertThat(captor.getValue()).containsExactly("Foobar");
     }
 
     /**
-     * Test {@link DataPointType#toValue(String, String...)} with {@code null} as 1st parameter
+     * Test {@link DataPointType#of(String, String...)} with {@code null} as 1st parameter
      */
     @Test
-    @DisplayName("Tests the DataPointType#toValue(String, String...) with null as 1st parameter")
-    public void testToValueStringVarargWithNull() {
+    @DisplayName("Tests the DataPointType#of(String, String...) with null as 1st parameter")
+    public void testStringVarargWithNull() {
         final var dpt = mock(DataPointType.class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue((String) null)).thenCallRealMethod();
+        when(dpt.of((String) null)).thenCallRealMethod();
 
-        assertThatThrownBy(() -> dpt.toValue((String) null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> dpt.of((String) null)).isInstanceOf(NullPointerException.class);
     }
 
     /**
-     * Test {@link DataPointType#toValue(String, String...)} with three parameters
+     * Test {@link DataPointType#of(String, String...)} with three parameters
      */
     @Test
-    @DisplayName("Tests the DataPointType#toValue(String, String...) with three parameters")
-    public void testToValueStringVarargWithThreeParameters() {
+    @DisplayName("Tests the DataPointType#of(String, String...) with three parameters")
+    public void testStringVarargWithThreeParameters() {
         final var dpt = mock(DataPointType.class);
         final var captor = ArgumentCaptor.forClass(String[].class);
 
         // do real call because we want to test the implementation
-        when(dpt.toValue(anyString(), anyString(), anyString())).thenCallRealMethod();
+        when(dpt.of(anyString(), anyString(), anyString())).thenCallRealMethod();
 
-        dpt.toValue("Hello", "World", "!");
-        verify(dpt).toValue(captor.capture());
+        dpt.of("Hello", "World", "!");
+        verify(dpt).of(captor.capture());
         assertThat(captor.getValue()).containsExactly("Hello", "World", "!");
     }
 

@@ -47,23 +47,23 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
         final var dpt = DPT18.SCENE_CONTROL;
 
         // failures
-        assertThatThrownBy(() -> dpt.toValue(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.toValue("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.toValue("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+        assertThatThrownBy(() -> dpt.of("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
 
         // OK
-        assertThat(dpt.toValue((byte) 0x00)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue((byte) 0xFF)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue("0x00")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue("0xFF")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(false, 0)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue(true, 63)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue("0")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue("controlled", "1")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue("62")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.toValue("controlled", "63")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of("0x00")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of("0xFF")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of(false, 0)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of(true, 63)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of("0")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of("controlled", "1")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of("62")).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of("controlled", "63")).isInstanceOf(DPT18Value.class);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
     @Test
     public void testOfInvalid() {
         // wrong value
-        assertThat(DPT18.SCENE_CONTROL.toValue((byte) 0x00)).isNotEqualTo(DPT18.SCENE_CONTROL.toValue((byte) 0x01));
+        assertThat(DPT18.SCENE_CONTROL.of((byte) 0x00)).isNotEqualTo(DPT18.SCENE_CONTROL.of((byte) 0x01));
     }
 
     /**
@@ -99,15 +99,15 @@ public class DPT18Test extends AbstractDataPointTypeTest<DPT18, DPT18Value> {
      * @param intValue   integer value
      */
     private void assertDPT(final DPT18 dpt, final byte bValue, final boolean controlled, final int intValue) {
-        final var dptValue = dpt.toValue(controlled, intValue);
+        final var dptValue = dpt.of(controlled, intValue);
 
         // assert base DPT
         this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
         // assert specific DPT18
         if (controlled) {
-            assertThat(dpt.toValue("controlled", String.valueOf(intValue))).isEqualTo(dptValue);
+            assertThat(dpt.of("controlled", String.valueOf(intValue))).isEqualTo(dptValue);
         } else {
-            assertThat(dpt.toValue(String.valueOf(intValue))).isEqualTo(dptValue);
+            assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
         }
         assertThat(dpt.toByteArray(controlled, intValue)).containsExactly(bValue);
     }
