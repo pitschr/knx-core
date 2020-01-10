@@ -12,6 +12,8 @@ import li.pitschmann.knx.core.body.DescriptionResponseBody;
 import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
 import li.pitschmann.knx.core.body.RoutingIndicationBody;
+import li.pitschmann.knx.core.body.SearchRequestBody;
+import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.communication.KnxClient;
@@ -128,34 +130,39 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
         final var statisticsFormatted = String.format( //
                 format.getTemplate(),
 
-                statistics.getNumberOfBodyReceived(), // %1
-                statistics.getNumberOfBytesReceived(), // %2
-                statistics.getNumberOfBodySent(), // %3
-                statistics.getNumberOfBytesSent(), // %4
-                statistics.getNumberOfErrors(), // %5
-                statistics.getErrorRate(), // %6
+                statistics.getNumberOfBodyReceived(),                              // %1
+                statistics.getNumberOfBytesReceived(),                             // %2
+                statistics.getNumberOfBodySent(),                                  // %3
+                statistics.getNumberOfBytesSent(),                                 // %4
+                statistics.getNumberOfErrors(),                                    // %5
+                statistics.getErrorRate(),                                         // %6
+                // Search
+                statistics.getNumberOfBodyReceived(SearchRequestBody.class),       // %7
+                statistics.getNumberOfBodyReceived(SearchResponseBody.class),      // %8
+                statistics.getNumberOfBodySent(SearchRequestBody.class),           // %9
+                statistics.getNumberOfBodySent(SearchResponseBody.class),          // %10
                 // Description
-                statistics.getNumberOfBodyReceived(DescriptionResponseBody.class), // %7
-                statistics.getNumberOfBodySent(DescriptionRequestBody.class), // %8
+                statistics.getNumberOfBodyReceived(DescriptionResponseBody.class), // %7 // %11
+                statistics.getNumberOfBodySent(DescriptionRequestBody.class),      // %8 // %12
                 // Connect
-                statistics.getNumberOfBodyReceived(ConnectResponseBody.class), // %9
-                statistics.getNumberOfBodySent(ConnectRequestBody.class), // %10
+                statistics.getNumberOfBodyReceived(ConnectResponseBody.class),     // %9  // %13
+                statistics.getNumberOfBodySent(ConnectRequestBody.class),          // %10 // %14
                 // Connection State
-                statistics.getNumberOfBodyReceived(ConnectionStateResponseBody.class), // %11
-                statistics.getNumberOfBodySent(ConnectionStateRequestBody.class), // %12
+                statistics.getNumberOfBodyReceived(ConnectionStateResponseBody.class), // %11  // %15
+                statistics.getNumberOfBodySent(ConnectionStateRequestBody.class),      // %12  // %16
                 // Tunneling
-                statistics.getNumberOfBodyReceived(TunnelingRequestBody.class), // %13
-                statistics.getNumberOfBodySent(TunnelingRequestBody.class), // %14
-                statistics.getNumberOfBodyReceived(TunnelingAckBody.class), // %15
-                statistics.getNumberOfBodySent(TunnelingAckBody.class), // %16
+                statistics.getNumberOfBodyReceived(TunnelingRequestBody.class), // %13 // %17
+                statistics.getNumberOfBodyReceived(TunnelingAckBody.class),     // %15 // %18
+                statistics.getNumberOfBodySent(TunnelingRequestBody.class),     // %14 // %19
+                statistics.getNumberOfBodySent(TunnelingAckBody.class),         // %16 // %20
                 // Disconnect
-                statistics.getNumberOfBodyReceived(DisconnectRequestBody.class), // %17
-                statistics.getNumberOfBodySent(DisconnectRequestBody.class), // %18
-                statistics.getNumberOfBodyReceived(DisconnectResponseBody.class), // %19
-                statistics.getNumberOfBodySent(DisconnectResponseBody.class), // %20
+                statistics.getNumberOfBodyReceived(DisconnectRequestBody.class),  // %17 // %21
+                statistics.getNumberOfBodyReceived(DisconnectResponseBody.class), // %19 // %22
+                statistics.getNumberOfBodySent(DisconnectRequestBody.class),      // %18 // %23
+                statistics.getNumberOfBodySent(DisconnectResponseBody.class),     // %20 // %24
                 // Indication
-                statistics.getNumberOfBodyReceived(RoutingIndicationBody.class), // %21
-                statistics.getNumberOfBodySent(RoutingIndicationBody.class) // %22
+                statistics.getNumberOfBodyReceived(RoutingIndicationBody.class), // %21 // %25
+                statistics.getNumberOfBodySent(RoutingIndicationBody.class)      // %22 // %26
         );
         // @formatter:on
 

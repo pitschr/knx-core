@@ -15,6 +15,8 @@ For examples, to get a quick start see examples below. It contains few _main cla
 to get a quick basic understanding how the communication with KNX can be done in 
 programmatically way; see [knx-core](knx-core) and [knx-core-plugins](knx-core-plugins).
 
+For a demo application see [knx-demo-tty-monitor](https://github.com/pitschr/knx-demo-tty-monitor).
+
 ### Known limitations
 
 * No KNX Secure which are offered by newest generation of KNX Net/IP devices 
@@ -91,33 +93,6 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 | 10.xxx | Time                     | 20.xxx | 8-Bit Enumeration                |
 
 ## Quick Start Guides
-
-### KNX Monitoring
-
-**Class:** [`li.pitschmann.knx.examples.tty.Main`](knx-examples/src/main/java/li/pitschmann/knx/examples/tty/Main.java)
-
-**Arguments:**
-* `-t`, `--time` the time in seconds how long the monitoring should run (default: _"infinity"_)
-* `-p`, `--knxproj` KNX project file (default: _latest *.knxproj in the folder_)
-
-**Monitoring between KNX Net/IP device and KNX client**
-
-Start monitoring for one hour (`3600` seconds). After one hour a disconnect request
-frame will be sent by the KNX client to the KNX Net/IP device to close the communication
-gracefully and the application will exit.
-
-```shell
-# Tunneling (auto-discovery)
-java -cp <file>.jar li.pitschmann.knx.examples.tty.Main -t 3600
-# Tunneling (auto-discovery with NAT)
-java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --nat -t 3600
-# Tunneling (IP Address)
-java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --ip 192.168.1.16 -t 3600
-# Tunneling (IP Address with NAT)
-java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --ip 192.168.1.16 --nat -t 3600
-# Routing
-java -cp <file>.jar li.pitschmann.knx.examples.tty.Main --routing -t 3600
-```
 
 ### Send a WRITE request frame to KNX
 

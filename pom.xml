@@ -212,8 +212,7 @@
                         <target>${project.build.java.target}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <compilerArgs>
-                            <arg>-Xlint:unchecked</arg>
-                            <arg>-parameters</arg>
+                            <arg>-Xlint</arg>
                         </compilerArgs>
                     </configuration>
                 </plugin>
