@@ -5,31 +5,33 @@ The format of statistic file can be either in: JSON, TSV (tab-separated) and pla
 
 JSON:
 ```
-{"inbound":{"total":{"packets":10,"bytes":11},"description":{"request":0,"response":21},"connect":{"request":0,"response":31},"connectionState":{"request":0,"response":41},"tunneling":{"request":50,"acknowledge":51},"indication":{"request":0,"response":60},"disconnect":{"request":70,"response":71}},"outbound":{"total":{"packets":12,"bytes":13},"description":{"request":22,"response":0},"connect":{"request":32,"response":0},"connectionState":{"request":42,"response":0},"tunneling":{"request":52,"acknowledge":53},"indication":{"request":61,"response":0},"disconnect":{"request":72,"response":73}},"error":{"total":{"packets":14,"rate":1.50}}}
+{"inbound":{"total":{"packets":10,"bytes":11},"search":{"request":100,"response":110},"description":{"request":0,"response":210},"connect":{"request":0,"response":310},"connectionState":{"request":0,"response":410},"tunneling":{"request":500,"acknowledge":510},"indication":{"request":0,"response":600},"disconnect":{"request":700,"response":710}},"outbound":{"total":{"packets":12,"bytes":13},"search":{"request":120,"response":130},"description":{"request":220,"response":0},"connect":{"request":320,"response":0},"connectionState":{"request":420,"response":0},"tunneling":{"request":520,"acknowledge":530},"indication":{"request":610,"response":0},"disconnect":{"request":720,"response":730}},"error":{"total":{"packets":14,"rate":1.50}}}
 ```
 
 TSV (tab-separated):
 ```
-Inbound Packets	Inbound Bytes	Outbound Packets	Outbound Bytes	Error Packets	Error Rate (%)	Inbound Description Requests	Inbound Description Responses	Inbound Connect Requests	Inbound Connect Responses	Inbound Connection State Requests	Inbound Connection State Responses	Inbound Disconnect Requests	Inbound Disconnect Responses	Inbound Tunneling Requests	Inbound Tunneling Acknowledges	Inbound Indication Requests	Inbound Indication Responses	Outbound Description Requests	Outbound Description Responses	Outbound Connect Requests	Outbound Connect Responses	Outbound Connection State Requests	Outbound Connection State Responses	Outbound Disconnect Requests	Outbound Disconnect Responses	Outbound Tunneling Requests	Outbound Tunneling Acknowledges	Outbound Indication Requests	Outbound Indication Responses
-10	11	12	13	14	1.50	0	21	0	31	0	41	70	71	50	51	0	60	22	0	32	0	42	0	72	73	52	53	61	0
+Inbound Packets	Inbound Bytes	Outbound Packets	Outbound Bytes	Error Packets	Error Rate (%)	Inbound Search Requests	Inbound Search Responses	Inbound Description Requests	Inbound Description Responses	Inbound Connect Requests	Inbound Connect Responses	Inbound Connection State Requests	Inbound Connection State Responses	Inbound Disconnect Requests	Inbound Disconnect Responses	Inbound Tunneling Requests	Inbound Tunneling Acknowledges	Inbound Indication Requests	Inbound Indication Responses	Outbound Search Requests	Outbound Search Responses	Outbound Description Requests	Outbound Description Responses	Outbound Connect Requests	Outbound Connect Responses	Outbound Connection State Requests	Outbound Connection State Responses	Outbound Disconnect Requests	Outbound Disconnect Responses	Outbound Tunneling Requests	Outbound Tunneling Acknowledges	Outbound Indication Requests	Outbound Indication Responses
+10	11	12	13	14	1.50	100	110	0	210	0	310	0	410	700	710	500	510	0	600	120	130	220	0	320	0	420	0	720	730	520	530	610	0
 ```
 
 Plain text:
 ```
 10 packets received (11 bytes)
-	[Description     ] Request: 0, Response: 21
-	[Connect         ] Request: 0, Response: 31
-	[Connection State] Request: 0, Response: 41
-	[Tunneling       ] Request: 50, Acknowledge: 51
-	[Indication      ] Request: 0, Response: 60
-	[Disconnect      ] Request: 70, Response: 71
+	[Search          ] Request: 100, Response: 110
+	[Description     ] Request: 0, Response: 210
+	[Connect         ] Request: 0, Response: 310
+	[Connection State] Request: 0, Response: 410
+	[Tunneling       ] Request: 500, Acknowledge: 510
+	[Indication      ] Request: 0, Response: 600
+	[Disconnect      ] Request: 700, Response: 710
 12 packets sent (13 bytes)
-	[Description     ] Request: 22, Response: 0
-	[Connect         ] Request: 32, Response: 0
-	[Connection State] Request: 42, Response: 0
-	[Tunneling       ] Request: 52, Acknowledge: 53
-	[Indication      ] Request: 61, Response: 0
-	[Disconnect      ] Request: 72, Response: 73
+	[Search          ] Request: 120, Response: 130
+	[Description     ] Request: 220, Response: 0
+	[Connect         ] Request: 320, Response: 0
+	[Connection State] Request: 420, Response: 0
+	[Tunneling       ] Request: 520, Acknowledge: 530
+	[Indication      ] Request: 610, Response: 0
+	[Disconnect      ] Request: 720, Response: 730
 14 errors (1.50%)
 ```
 
