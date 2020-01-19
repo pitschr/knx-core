@@ -21,14 +21,14 @@
     <parent>
         <groupId>li.pitschmann</groupId>
         <artifactId>knx-link</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>knx-core</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>KNX Core</name>
     <description>KNX Core (Client, DPTs, ...)</description>
 
