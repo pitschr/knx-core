@@ -95,7 +95,7 @@
         <version.junit-platform-runner>1.5.2</version.junit-platform-runner> <!-- EPL 2.0 -->
         <version.logback-classic>1.2.3</version.logback-classic> <!-- EPL 1.0, LGPL 2.1 -->
         <version.mockito-inline>3.2.0</version.mockito-inline> <!-- MIT -->
-        <version.rotating-fos>0.9.1</version.rotating-fos> <!-- Apache 2.0 -->
+        <version.rotating-fos>0.9.2</version.rotating-fos> <!-- Apache 2.0 -->
         <version.slf4j>1.7.29</version.slf4j> <!-- MIT -->
         <!-- Default Argument Line for Surefire for test stability -->
         <setting.surefire.default.argLine>
