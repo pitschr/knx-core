@@ -47,18 +47,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>li.pitschmann</groupId>
-            <artifactId>knx-core-plugin-audit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>li.pitschmann</groupId>
-            <artifactId>knx-core-plugin-statistic</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -96,15 +84,11 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>li.pitschmann.knx.examples.tty.Main</mainClass>
-                                </manifest>
-                            </archive>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
+                            <finalName>${project.artifactId}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
