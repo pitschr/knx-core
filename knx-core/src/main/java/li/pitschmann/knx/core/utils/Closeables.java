@@ -44,14 +44,14 @@ public final class Closeables {
      * @return {@code true} if the close was gracefully, otherwise {@code false}
      */
     public static boolean closeQuietly(final @Nullable Channel channel) {
-        log.trace("Call 'closeQuietly(DatagramChannel)' method");
+        log.trace("Call 'closeQuietly(Channel)' method");
 
         var isOk = true;
         if (channel instanceof DatagramChannel) {
             try {
                 ((DatagramChannel) channel).disconnect();
-            } catch (final Exception ex) {
-                log.warn("Exception caught during disconnect: {}", channel, ex);
+            } catch (final Throwable t) {
+                log.warn("Throwable caught during disconnect: {}", channel, t);
                 isOk = false;
             }
         }
@@ -71,8 +71,8 @@ public final class Closeables {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (final Exception ex) {
-                log.warn("Exception caught during closing: {}", closeable, ex);
+            } catch (final Throwable t) {
+                log.warn("Throwable caught during closing: {}", closeable, t);
                 isOk = false;
             }
         }
