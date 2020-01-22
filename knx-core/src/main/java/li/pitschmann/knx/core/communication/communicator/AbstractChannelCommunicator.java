@@ -139,7 +139,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                 final var body = this.inboxQueue.next();
                 // accepted body
                 if (this.isCompatible(body)) {
-                    if (this.isClosed()) {
+                    if (isClosed()) {
                         log.warn("Body not sent to subscribers because submission publisher is closed: {}", body);
                     } else {
                         log.debug("Body from channel to be sent to subscribers: {}", body);
@@ -153,6 +153,12 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
             } catch (final InterruptedException ex) {
                 log.debug("Channel receiver is cancelled.");
                 Thread.currentThread().interrupt();
+            } catch (final Throwable t) {
+                // race condition: log issue only when it is not closed
+                if (!isClosed()) {
+                    log.error("Throwable caught during 'run()'", t);
+                }
+                break;
             }
         }
 
