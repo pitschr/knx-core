@@ -133,7 +133,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
     public void run() {
         log.trace("*** START ***");
 
-        while (!Thread.interrupted()) {
+        while (!Thread.interrupted() && !isClosed()) {
             try {
                 log.debug("Waiting for next packet from channel");
                 final var body = this.inboxQueue.next();
@@ -151,14 +151,14 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                     log.warn("Body is not expected for this channel and therefore ignored: {}", body);
                 }
             } catch (final InterruptedException ex) {
-                log.debug("Channel receiver is cancelled.");
+                log.debug("Channel receiver is cancelled");
                 Thread.currentThread().interrupt();
             } catch (final Throwable t) {
                 // race condition: log issue only when it is not closed
                 if (!isClosed()) {
-                    log.error("Throwable caught during 'run()'", t);
+                    log.error("Throwable caught during running communicator", t);
+                    throw t;
                 }
-                break;
             }
         }
 
