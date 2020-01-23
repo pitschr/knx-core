@@ -97,7 +97,7 @@ public final class InternalKnxClient implements AutoCloseable {
      * @param config an instance of {@link Config}
      */
     InternalKnxClient(final Config config) {
-        log.trace("Abstract KNX Client constructor");
+        log.trace("Internal KNX Client constructor");
         this.config = Objects.requireNonNull(config);
         this.pluginManager = new PluginManager(config);
 

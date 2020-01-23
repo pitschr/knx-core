@@ -57,8 +57,16 @@ public final class MulticastChannelCommunicator extends AbstractChannelCommunica
 
     @Override
     protected final void cleanUp() {
-        membershipKeys.forEach(MembershipKey::drop);
-        log.debug("Membership of all multicast groups dropped.");
+        boolean success = true;
+        for (final var membershipKey : membershipKeys) {
+            try {
+                membershipKey.drop();
+            } catch (final Throwable t) {
+                success = false;
+                log.warn("Throwable caught during membership key drop", t);
+            }
+        }
+        log.debug("Membership of all multicast groups dropped: {}", success);
     }
 
     @Override
