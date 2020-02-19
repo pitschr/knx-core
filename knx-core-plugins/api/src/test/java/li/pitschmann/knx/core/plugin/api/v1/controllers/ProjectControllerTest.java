@@ -39,6 +39,19 @@ public class ProjectControllerTest {
     private static final String FILE_KNXPROJ_THREE_LEVEL = "src/test/resources/Project (3-Level, v20).knxproj";
     private static final String FILE_KNXPROJ_TWO_LEVEL = "src/test/resources/Project (2-Level, v20).knxproj";
 
+    @ControllerTest(value = ProjectController.class, mockIfProjectPathIsEmpty = false)
+    @DisplayName("ERROR: Try to get data about XML project structure although there is no XML project available")
+    public void testNoProjectStructure(final Controller controller) {
+        var projectController = (ProjectController) controller;
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.projectStructure();
+        assertThat(response).isNull();
+    }
+
     /**
      * Tests the project structure endpoint that contains project structure metadata
      * <p>

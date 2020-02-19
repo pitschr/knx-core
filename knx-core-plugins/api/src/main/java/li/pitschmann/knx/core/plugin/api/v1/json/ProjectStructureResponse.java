@@ -3,7 +3,7 @@ package li.pitschmann.knx.core.plugin.api.v1.json;
 /**
  * JSON response about *.knxproj Project structure
  */
-public final class ProjectStructureRequest {
+public final class ProjectStructureResponse {
     private String id;
     private String name;
     private int version;

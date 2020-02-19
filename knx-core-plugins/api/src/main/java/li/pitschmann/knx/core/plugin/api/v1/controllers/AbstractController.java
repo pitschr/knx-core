@@ -24,6 +24,7 @@ abstract class AbstractController extends Controller {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
+    @javax.annotation.Nullable   // required if the field may be nullable otherwise Google Guice will throw an exception
     private XmlProject xmlProject;
 
     @Inject

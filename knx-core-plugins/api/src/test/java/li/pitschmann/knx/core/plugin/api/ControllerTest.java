@@ -54,4 +54,12 @@ public @interface ControllerTest {
      * @return path of project if defined, otherwise empty
      */
     String projectPath() default "";
+
+    /**
+     * Returns if the project should be mocked if project path
+     * is empty.
+     *
+     * @return returns {@code true} if project should be mocked if project path is empty, otherwise {@code false}
+     */
+    boolean mockIfProjectPathIsEmpty() default true;
 }

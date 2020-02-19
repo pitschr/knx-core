@@ -20,6 +20,8 @@ package li.pitschmann.knx.core.plugin.api;
 
 import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.config.Config;
+import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
+import li.pitschmann.knx.core.knxproj.XmlProject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
@@ -27,6 +29,7 @@ import ro.pippo.core.HttpConstants;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -48,8 +51,13 @@ public class ApiPluginTest {
 
         final var knxClientMock = mock(KnxClient.class);
         final var configMock = mock(Config.class);
+        final var projectMock = mock(XmlProject.class);
         when(knxClientMock.getConfig()).thenReturn(configMock);
         when(knxClientMock.getConfig(ApiPlugin.PORT)).thenReturn(4711);
+        when(projectMock.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
+        when(projectMock.getGroupRanges()).thenReturn(List.of());
+        when(projectMock.getGroupAddresses()).thenReturn(List.of());
+        when(configMock.getProject()).thenReturn(projectMock);
 
         //
         // Verification
@@ -68,6 +76,12 @@ public class ApiPluginTest {
             assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
             assertThat(httpResponse.body()).isEqualTo("OK");
             assertThat(httpResponse.headers().firstValue("Content-Type").get()).isEqualTo("text/plain; charset=UTF-8");
+
+            // verify if request for project overview returns something
+            final var httpRequest2 = mockApiPlugin.newRequestBuilder("/api/v1/project").build();
+            final var httpResponse2 = HttpClient.newHttpClient().send(httpRequest2, HttpResponse.BodyHandlers.ofString());
+            assertThat(httpResponse2.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
+            assertThat(httpResponse2.body()).isNotEmpty();
         } finally {
             mockApiPlugin.onShutdown();
         }
