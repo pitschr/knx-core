@@ -39,6 +39,19 @@ public class ProjectControllerTest {
     private static final String FILE_KNXPROJ_THREE_LEVEL = "src/test/resources/Project (3-Level, v20).knxproj";
     private static final String FILE_KNXPROJ_TWO_LEVEL = "src/test/resources/Project (2-Level, v20).knxproj";
 
+    @ControllerTest(value = ProjectController.class, mockIfProjectPathIsEmpty = false)
+    @DisplayName("ERROR: Try to get data about XML project structure although there is no XML project available")
+    public void testNoProjectStructure(final Controller controller) {
+        var projectController = (ProjectController) controller;
+
+        //
+        // Verification
+        //
+
+        final var response = projectController.projectStructure();
+        assertThat(response).isNull();
+    }
+
     /**
      * Tests the project structure endpoint that contains project structure metadata
      * <p>
@@ -57,6 +70,7 @@ public class ProjectControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(response.getId()).isEqualTo("P-0503");
         assertThat(response.getName()).isEqualTo("Project (3-Level)");
+        assertThat(response.getVersion()).isEqualTo(20);
         assertThat(response.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(response.getNumberOfGroupAddresses()).isEqualTo(189);
         assertThat(response.getNumberOfGroupRanges()).isEqualTo(18);

@@ -3,7 +3,7 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
 import li.pitschmann.knx.core.knxproj.XmlGroupRange;
-import li.pitschmann.knx.core.plugin.api.v1.json.ProjectStructureRequest;
+import li.pitschmann.knx.core.plugin.api.v1.json.ProjectStructureResponse;
 import li.pitschmann.knx.core.utils.Preconditions;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
@@ -24,13 +24,18 @@ public final class ProjectController extends AbstractController {
      */
     @GET("/project")
     @Produces(Produces.JSON)
-    public ProjectStructureRequest projectStructure() {
+    public ProjectStructureResponse projectStructure() {
         log.trace("Request for project overview");
 
         final var xmlProject = getXmlProject();
+        if (xmlProject == null) {
+            log.error("No project file found.");
+            getResponse().notFound();
+            return null;
+        }
 
         // get project data
-        final var response = new ProjectStructureRequest();
+        final var response = new ProjectStructureResponse();
         response.setId(xmlProject.getId());
         response.setName(xmlProject.getName());
         response.setGroupAddressStyle(xmlProject.getGroupAddressStyle().getCode());

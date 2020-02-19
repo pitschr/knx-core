@@ -136,6 +136,12 @@ public final class XmlProject {
         this.groupAddressStyle = groupAddressStyle;
     }
 
+    /**
+     * <p>The version of XML project namespace</p>
+     * <p>Example: http://knx.org/xml/project/20 --> Version: 20</p>
+     *
+     * @return version
+     */
     public int getVersion() {
         return version;
     }
