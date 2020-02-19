@@ -70,6 +70,7 @@ public class ProjectControllerTest {
         assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
         assertThat(response.getId()).isEqualTo("P-0503");
         assertThat(response.getName()).isEqualTo("Project (3-Level)");
+        assertThat(response.getVersion()).isEqualTo(20);
         assertThat(response.getGroupAddressStyle()).isEqualTo("ThreeLevel");
         assertThat(response.getNumberOfGroupAddresses()).isEqualTo(189);
         assertThat(response.getNumberOfGroupRanges()).isEqualTo(18);
