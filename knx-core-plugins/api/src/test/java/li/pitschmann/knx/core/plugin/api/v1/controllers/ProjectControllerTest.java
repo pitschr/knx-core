@@ -108,7 +108,7 @@ public class ProjectControllerTest {
         // Mocking
         //
 
-        final var xmlProject = projectController.getXmlProject();
+        final var xmlProject = projectController.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
 
         //
@@ -149,7 +149,7 @@ public class ProjectControllerTest {
         // Mocking
         //
 
-        final var xmlProject = projectController.getXmlProject();
+        final var xmlProject = projectController.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
 
         //
@@ -170,7 +170,7 @@ public class ProjectControllerTest {
         // Mocking
         //
 
-        final var xmlProject = projectController.getXmlProject();
+        final var xmlProject = projectController.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.TWO_LEVEL);
 
         //
@@ -194,7 +194,7 @@ public class ProjectControllerTest {
         // Mocking
         //
 
-        final var xmlProject = projectController.getXmlProject();
+        final var xmlProject = projectController.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
 
         //
@@ -262,7 +262,7 @@ public class ProjectControllerTest {
         // Mocking
         //
 
-        final var xmlProject = projectController.getXmlProject();
+        final var xmlProject = projectController.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddressStyle()).thenReturn(XmlGroupAddressStyle.FREE_LEVEL);
 
         //

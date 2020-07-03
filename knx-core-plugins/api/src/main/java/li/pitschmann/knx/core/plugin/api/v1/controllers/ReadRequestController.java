@@ -1,5 +1,6 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.ReadResponse;
@@ -13,6 +14,10 @@ import ro.pippo.controller.extractor.Body;
  */
 public final class ReadRequestController extends AbstractController {
     private static final ReadResponse EMPTY_RESPONSE = new ReadResponse();
+
+    public ReadRequestController(final KnxClient knxClient) {
+        super(knxClient);
+    }
 
     /**
      * Endpoint for read request to be forwarded to KNX Net/IP device
@@ -63,7 +68,7 @@ public final class ReadRequestController extends AbstractController {
         response.setGroupAddress(groupAddress);
         response.setRaw(knxStatusData.getApciData());
 
-        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+        final var xmlGroupAddress = getKnxClient().getConfig().getProject().getGroupAddress(groupAddress);
         if (xmlGroupAddress != null) {
             final var dpt = DataPointRegistry.getDataPointType(xmlGroupAddress.getDataPointType());
             response.setName(xmlGroupAddress.getName());

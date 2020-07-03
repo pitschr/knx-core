@@ -1,5 +1,6 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.communication.KnxStatistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,10 @@ import ro.pippo.controller.Produces;
  */
 public final class StatisticController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(StatisticController.class);
+
+    public StatisticController(final KnxClient knxClient) {
+        super(knxClient);
+    }
 
     /**
      * Endpoint for status request to return the current statistic of KNX client

@@ -17,7 +17,7 @@ public class ApiGsonEngineTest {
     @Test
     @DisplayName("Test conversion of Instant object to a JSON representation")
     public void testToJson() {
-        final var instant = LocalDateTime.of(2020, 1,2, 3, 4, 5, 6)
+        final var instant = LocalDateTime.of(2020, 1, 2, 3, 4, 5, 6)
                 .toInstant(ZoneOffset.UTC);
 
         final var instantJson = ApiGsonEngine.INSTANCE.toString(instant);

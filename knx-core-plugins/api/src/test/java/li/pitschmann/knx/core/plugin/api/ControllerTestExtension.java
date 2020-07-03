@@ -18,9 +18,6 @@
 
 package li.pitschmann.knx.core.plugin.api;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Provides;
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
@@ -34,6 +31,7 @@ import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlGroupRange;
 import li.pitschmann.knx.core.knxproj.XmlProject;
+import li.pitschmann.knx.core.plugin.api.v1.controllers.AbstractController;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -83,13 +81,13 @@ public final class ControllerTestExtension
     }
 
     /**
-     * Creates a new instance of {@link Controller}
+     * Creates a new instance of {@link AbstractController}
      *
      * @param annotation annotation of {@link ControllerTest} that contains test related configuration
-     * @param <T>        an instance that extends {@link Controller}
-     * @return new instance of {@link Controller}
+     * @param <T>        an instance that extends {@link AbstractController}
+     * @return new instance of controller that extends {@link AbstractController}
      */
-    private final <T extends Controller> T newController(final ControllerTest annotation) {
+    private <T extends AbstractController> T newController(final ControllerTest annotation) {
         // Create XML Project
         final XmlProject xmlProjectMock;
         if (!Strings.isNullOrEmpty(annotation.projectPath())) {
@@ -102,27 +100,12 @@ public final class ControllerTestExtension
         }
 
         try {
-            // Create a new instance of controller
-            @SuppressWarnings("unchecked")
-            final T obj = ((Class<T>) annotation.value()).getDeclaredConstructor().newInstance();
-
             final var knxClientMock = getKnxClientMock(xmlProjectMock);
 
-            // create guice injector
-            final var injector = Guice.createInjector(new AbstractModule() {
-                @Provides
-                private final KnxClient providesKnxClient() {
-                    return knxClientMock;
-                }
-
-                @Provides
-                private final XmlProject providesXmlProject() {
-                    return xmlProjectMock;
-                }
-            });
-
-            // inject the members to controller
-            injector.injectMembers(obj);
+            // Create a new instance of controller
+            @SuppressWarnings("unchecked") final T obj = ((Class<T>) annotation.value())
+                    .getDeclaredConstructor(KnxClient.class)
+                    .newInstance(knxClientMock);
 
             // apply the route context to the controller instance as RouteContext won't
             // be injected by Pippo Framework

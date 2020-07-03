@@ -18,9 +18,9 @@
 
 package li.pitschmann.knx.core.plugin.api;
 
+import li.pitschmann.knx.core.plugin.api.v1.controllers.AbstractController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import ro.pippo.controller.Controller;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -42,11 +42,11 @@ import java.lang.annotation.Target;
 public @interface ControllerTest {
     /**
      * /**
-     * Class of {@link Controller} that should be called
+     * Class of {@link AbstractController} that should be called
      *
      * @return an instance of controller
      */
-    Class<? extends Controller> value();
+    Class<? extends AbstractController> value();
 
     /**
      * Returns the path of KNX project path (*.knxproj)

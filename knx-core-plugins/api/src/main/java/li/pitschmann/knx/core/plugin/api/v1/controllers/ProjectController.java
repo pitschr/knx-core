@@ -1,5 +1,6 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
 import li.pitschmann.knx.core.knxproj.XmlGroupRange;
@@ -17,6 +18,10 @@ import java.util.List;
  */
 public final class ProjectController extends AbstractController {
 
+    public ProjectController(final KnxClient knxClient) {
+        super(knxClient);
+    }
+
     /**
      * Returns the project structure containing metadata from *.knxproj file
      *
@@ -27,7 +32,7 @@ public final class ProjectController extends AbstractController {
     public ProjectStructureResponse projectStructure() {
         log.trace("Request for project overview");
 
-        final var xmlProject = getXmlProject();
+        final var xmlProject = getKnxClient().getConfig().getProject();
         if (xmlProject == null) {
             log.error("No project file found.");
             getResponse().notFound();
@@ -60,7 +65,7 @@ public final class ProjectController extends AbstractController {
     public List<XmlGroupRange> getGroupRanges() {
         log.trace("Request for all main group ranges in project");
 
-        final var xmlProject = getXmlProject();
+        final var xmlProject = getKnxClient().getConfig().getProject();
         final var groupAddressStyle = xmlProject.getGroupAddressStyle();
 
         if (groupAddressStyle == XmlGroupAddressStyle.THREE_LEVEL ||
@@ -93,7 +98,7 @@ public final class ProjectController extends AbstractController {
         log.trace("Request for middle group ranges of main group range: {}", main);
         checkArgumentMainGroupRange(main);
 
-        final var xmlProject = getXmlProject();
+        final var xmlProject = getKnxClient().getConfig().getProject();
         if (xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL) {
             // only three-level
             final var mainRange = xmlProject.getGroupRange(main);
@@ -121,7 +126,7 @@ public final class ProjectController extends AbstractController {
         log.trace("Request all group addresses");
 
         getResponse().ok();
-        return limitAndGetAsList(getXmlProject().getGroupAddresses());
+        return limitAndGetAsList(getKnxClient().getConfig().getProject().getGroupAddresses());
     }
 
     /**
@@ -139,7 +144,7 @@ public final class ProjectController extends AbstractController {
         log.trace("Request addresses for main group range: {}", main);
         checkArgumentMainGroupRange(main);
 
-        final var xmlProject = getXmlProject();
+        final var xmlProject = getKnxClient().getConfig().getProject();
         if (xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.TWO_LEVEL) {
             final var middleGroup = xmlProject.getGroupRange(main);
             log.debug("Middle Group Range for main group range '{}' found: {}", main, middleGroup);
@@ -170,7 +175,7 @@ public final class ProjectController extends AbstractController {
         checkArgumentMainGroupRange(main);
         checkArgumentMiddleGroupRange(middle);
 
-        final var xmlProject = getXmlProject();
+        final var xmlProject = getKnxClient().getConfig().getProject();
         if (xmlProject.getGroupAddressStyle() == XmlGroupAddressStyle.THREE_LEVEL) {
             final var middleGroup = xmlProject.getGroupRange(main, middle);
             log.debug("Middle Group Range for main group range '{}/{}' found: {}", main, middle, middleGroup);

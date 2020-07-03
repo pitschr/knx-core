@@ -64,11 +64,6 @@
             <artifactId>pippo-controller</artifactId>
             <version>${version.pippo}</version>
         </dependency>
-        <dependency>
-            <groupId>ro.pippo</groupId>
-            <artifactId>pippo-guice</artifactId>
-            <version>${version.pippo}</version>
-        </dependency>
 
         <!-- Test -->
         <dependency>
