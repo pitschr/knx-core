@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import ro.pippo.controller.Controller;
@@ -41,7 +42,7 @@ public class AbstractControllerTest {
     @ControllerTest(value = TestController.class)
     @DisplayName("Test the limitation of result using 'start' request parameter")
     public void testStart(final Controller controller) {
-        var testController = (TestController) controller;
+        final var testController = (TestController) controller;
 
         final var testList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
@@ -79,7 +80,7 @@ public class AbstractControllerTest {
     @ControllerTest(value = TestController.class)
     @DisplayName("Test the limitation of result using 'limit' request parameter")
     public void testLimit(final Controller controller) {
-        var testController = (TestController) controller;
+        final var testController = (TestController) controller;
 
         final var testList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
@@ -115,7 +116,7 @@ public class AbstractControllerTest {
     @ControllerTest(value = TestController.class)
     @DisplayName("Test the limitation of result using 'start' and 'limit' request parameters")
     public void testStartAndLimit(final Controller controller) {
-        var testController = (TestController) controller;
+        final var testController = (TestController) controller;
 
         final var testList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
@@ -140,6 +141,8 @@ public class AbstractControllerTest {
      * Dummy Controller for testing purposes only
      */
     public static class TestController extends AbstractController {
-        // empty
+        public TestController(final KnxClient knxClient) {
+            super(knxClient);
+        }
     }
 }

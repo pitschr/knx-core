@@ -141,7 +141,8 @@ public class WriteRequestControllerTest {
         //
 
         // mock an non-existing xml group address
-        when(writeRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+        final var xmlProject = writeRequestController.getKnxClient().getConfig().getProject();
+        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
         //
         // Verification

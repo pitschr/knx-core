@@ -2,6 +2,7 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
@@ -20,6 +21,10 @@ import java.util.List;
 public final class StatusController extends AbstractController {
     private static final StatusResponse EMPTY_RESPONSE = new StatusResponse();
 
+    public StatusController(final KnxClient knxClient) {
+        super(knxClient);
+    }
+
     /**
      * Endpoint to get all KNX status
      *
@@ -30,13 +35,14 @@ public final class StatusController extends AbstractController {
     public List<StatusResponse> statusAll() {
         log.trace("Http Status request for all available group addresses received");
 
+        final var xmlProject = getKnxClient().getConfig().getProject();
         final var statusMap = getKnxClient().getStatusPool().copyStatusMap();
         final var responses = new ArrayList<StatusResponse>(statusMap.size());
         for (final var entry : statusMap.entrySet()) {
             // Group Address? If not, skip it!
             if (entry.getKey() instanceof GroupAddress) {
                 final var groupAddress = (GroupAddress) entry.getKey();
-                final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+                final var xmlGroupAddress = xmlProject.getGroupAddress(groupAddress);
                 final var response = new StatusResponse();
                 if (xmlGroupAddress != null) {
                     log.debug("Found group address in XML project: {}", groupAddress);
@@ -72,7 +78,7 @@ public final class StatusController extends AbstractController {
         // group address is known in XML project and there is status data available
         // fill all relevant properties
         final var response = new StatusResponse();
-        final var xmlGroupAddress = getXmlProject().getGroupAddress(groupAddress);
+        final var xmlGroupAddress = getKnxClient().getConfig().getProject().getGroupAddress(groupAddress);
         fill(response, groupAddress, xmlGroupAddress, knxStatusData);
         getResponse().ok();
         return response;

@@ -3,8 +3,8 @@ package li.pitschmann.knx.core.plugin.api.gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.DataPointRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.lang.reflect.Type;

@@ -1,5 +1,6 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteResponse;
 import li.pitschmann.knx.core.utils.ByteFormatter;
@@ -13,6 +14,10 @@ import ro.pippo.controller.extractor.Body;
  */
 public final class WriteRequestController extends AbstractController {
     private static final WriteResponse EMPTY_RESPONSE = new WriteResponse();
+
+    public WriteRequestController(final KnxClient knxClient) {
+        super(knxClient);
+    }
 
     /**
      * Endpoint for write request to be forwarded to KNX Net/IP device

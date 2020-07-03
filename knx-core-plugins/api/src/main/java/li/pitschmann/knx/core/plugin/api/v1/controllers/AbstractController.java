@@ -1,9 +1,6 @@
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
-import com.google.inject.Inject;
-import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,7 @@ import ro.pippo.controller.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -20,22 +18,15 @@ import java.util.stream.Collectors;
  * implementations.
  */
 @Path("/api/v1")
-abstract class AbstractController extends Controller {
+public abstract class AbstractController extends Controller {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-
-    @Inject
-    @javax.annotation.Nullable   // required if the field may be nullable otherwise Google Guice will throw an exception
-    private XmlProject xmlProject;
-
-    @Inject
     private KnxClient knxClient;
 
-    @Nullable
-    public final XmlProject getXmlProject() {
-        return xmlProject;
+    public AbstractController(final KnxClient knxClient) {
+        this.knxClient = Objects.requireNonNull(knxClient);
     }
 
-    public final KnxClient getKnxClient() {
+    protected final KnxClient getKnxClient() {
         return knxClient;
     }
 

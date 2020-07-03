@@ -89,7 +89,7 @@ public class ReadRequestControllerTest {
         //
 
         // mock an non-existing xml group address, but status available in status pool
-        final var xmlProject = readRequestController.getXmlProject();
+        final var xmlProject = readRequestController.getKnxClient().getConfig().getProject();
         doReturn(null).when(xmlProject).getGroupAddress(eq(groupAddress));
 
         //
@@ -192,7 +192,8 @@ public class ReadRequestControllerTest {
         //
 
         // mock an non-existing xml group address, but status available in status pool
-        when(readRequestController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+        final var xmlProject = readRequestController.getKnxClient().getConfig().getProject();
+        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
         //
         // Verification

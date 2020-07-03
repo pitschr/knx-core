@@ -58,10 +58,7 @@ public class ApiPlugin implements ExtensionPlugin {
 
     @Override
     public void onStart() {
-        final var xmlProject = client.getConfig().getProject();
-        final var app = new ApiApplication();
-        app.setXmlProject(xmlProject);
-        app.setKnxClient(client);
+        final var app = new ApiApplication(client);
         app.getContentTypeEngine(HttpConstants.ContentType.APPLICATION_JSON);
 
         pippo = new Pippo(app);

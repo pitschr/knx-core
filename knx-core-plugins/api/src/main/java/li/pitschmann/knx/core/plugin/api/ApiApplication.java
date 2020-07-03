@@ -18,17 +18,19 @@
 
 package li.pitschmann.knx.core.plugin.api;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Provides;
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.knxproj.XmlProject;
 import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
+import li.pitschmann.knx.core.plugin.api.v1.controllers.ProjectController;
+import li.pitschmann.knx.core.plugin.api.v1.controllers.ReadRequestController;
+import li.pitschmann.knx.core.plugin.api.v1.controllers.StatisticController;
+import li.pitschmann.knx.core.plugin.api.v1.controllers.StatusController;
+import li.pitschmann.knx.core.plugin.api.v1.controllers.WriteRequestController;
 import ro.pippo.controller.Controller;
 import ro.pippo.controller.ControllerApplication;
 import ro.pippo.controller.GET;
 import ro.pippo.controller.Produces;
-import ro.pippo.guice.GuiceControllerFactory;
+
+import java.util.Objects;
 
 /**
  * API Application for web server to serve KNX requests over HTTP
@@ -37,45 +39,25 @@ import ro.pippo.guice.GuiceControllerFactory;
  */
 public class ApiApplication extends ControllerApplication {
     private KnxClient knxClient;
-    private XmlProject xmlProject;
 
-    public void setKnxClient(KnxClient knxClient) {
-        this.knxClient = knxClient;
-    }
-
-    public void setXmlProject(XmlProject xmlProject) {
-        this.xmlProject = xmlProject;
+    public ApiApplication(final KnxClient knxClient) {
+        this.knxClient = Objects.requireNonNull(knxClient);
     }
 
     @SuppressWarnings("unchecked") // unchecked because of addControllers(..)
     @Override
     protected void onInit() {
-        // create guice injector
-        final var injector = Guice.createInjector(new AbstractModule() {
-            @Provides
-            private final KnxClient providesKnxClient() {
-                return knxClient;
-            }
-
-            @Provides
-            private final XmlProject providesXmlProject() {
-                return xmlProject;
-            }
-        });
-        setControllerFactory(new GuiceControllerFactory(injector));
-
         // sets the customized Gson engine
         getContentTypeEngines().setContentTypeEngine(ApiGsonEngine.INSTANCE);
 
-        // adds controller for endpoints
+        // adds controller for
         addControllers(
-                HeartbeatController.class, //
-                // V1 Controllers
-                li.pitschmann.knx.core.plugin.api.v1.controllers.ReadRequestController.class, //
-                li.pitschmann.knx.core.plugin.api.v1.controllers.WriteRequestController.class, //
-                li.pitschmann.knx.core.plugin.api.v1.controllers.StatusController.class, //
-                li.pitschmann.knx.core.plugin.api.v1.controllers.StatisticController.class, //
-                li.pitschmann.knx.core.plugin.api.v1.controllers.ProjectController.class
+                new HeartbeatController(),
+                new ReadRequestController(knxClient), //
+                new WriteRequestController(knxClient), //
+                new StatusController(knxClient), //
+                new StatisticController(knxClient), //
+                new ProjectController(knxClient) //
         );
     }
 

@@ -75,6 +75,7 @@ public class StatusControllerTest {
     @DisplayName("OK: Get list of status (non-empty)")
     public void testMultiStatus(final Controller controller) {
         final var statusController = (StatusController) controller;
+        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
 
         //
         // Mocking
@@ -124,22 +125,22 @@ public class StatusControllerTest {
         xmlGroupAddress0.setDataPointType("1.001");
         xmlGroupAddress0.setName("DPT1.Switch Name");
         xmlGroupAddress0.setDescription("DPT1.Switch Description");
-        when(statusController.getXmlProject().getGroupAddress(knxAddress0)).thenReturn(xmlGroupAddress0);
+        when(xmlProject.getGroupAddress(knxAddress0)).thenReturn(xmlGroupAddress0);
 
         final var xmlGroupAddress1 = new XmlGroupAddress();
         xmlGroupAddress1.setDataPointType("5.010");
         xmlGroupAddress1.setName("DPT5.1-Octet Unsigned Name");
         xmlGroupAddress1.setDescription("DPT5.1-Octet Unsigned Description");
-        when(statusController.getXmlProject().getGroupAddress(knxAddress1)).thenReturn(xmlGroupAddress1);
+        when(xmlProject.getGroupAddress(knxAddress1)).thenReturn(xmlGroupAddress1);
 
         final var xmlGroupAddress2 = new XmlGroupAddress();
         xmlGroupAddress2.setDataPointType("7.001");
         xmlGroupAddress2.setName("DPT7.2-Octet Unsigned Name");
         xmlGroupAddress2.setDescription("DPT7.2-Octet Unsigned Description");
-        when(statusController.getXmlProject().getGroupAddress(knxAddress2)).thenReturn(xmlGroupAddress2);
+        when(xmlProject.getGroupAddress(knxAddress2)).thenReturn(xmlGroupAddress2);
 
         // simulate an unknown group address in XML project
-        when(statusController.getXmlProject().getGroupAddress(knxAddress3)).thenReturn(null);
+        when(xmlProject.getGroupAddress(knxAddress3)).thenReturn(null);
 
         //
         // Verification
@@ -172,7 +173,9 @@ public class StatusControllerTest {
         xmlGroupAddress.setDataPointType("1.001");
         xmlGroupAddress.setName("DPT1.Switch Name");
         xmlGroupAddress.setDescription("DPT1.Switch Description");
-        when(statusController.getXmlProject().getGroupAddress(groupAddress)).thenReturn(xmlGroupAddress);
+
+        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
+        when(xmlProject.getGroupAddress(groupAddress)).thenReturn(xmlGroupAddress);
 
         // mock an existing KNX status data in status pool
         final var knxStatusData = mock(KnxStatusData.class);
@@ -209,7 +212,8 @@ public class StatusControllerTest {
         // Mocking
         //
 
-        when(statusController.getXmlProject().getGroupAddress(groupAddress)).thenReturn(null);
+        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
+        when(xmlProject.getGroupAddress(groupAddress)).thenReturn(null);
 
         // mock an existing KNX status data in status pool
         final var knxStatusData = mock(KnxStatusData.class);
@@ -270,7 +274,8 @@ public class StatusControllerTest {
         //
 
         // mock an non-existing xml group address
-        when(statusController.getXmlProject().getGroupAddress(any(GroupAddress.class))).thenReturn(null);
+        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
+        when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
         //
         // Verification
@@ -287,25 +292,4 @@ public class StatusControllerTest {
         final var responseJson = asJson(response);
         assertThatJson(responseJson).isEqualTo("{}");
     }
-//
-//    @ControllerTest(StatusController.class)
-//    @DisplayName("ERROR: Status Request with no group address")
-//    public void testStatusNoGroupAddress(final Controller controller) {
-//        final var statusController = (StatusController) controller;
-//
-//        //
-//        // Verification
-//        //
-//
-//        final var response = statusController.statusOne("");
-//        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
-//        assertThat(response.getStatus()).isNull();
-//        assertThat(response.getTimestamp()).isNull();
-//        assertThat(response.getSourceAddress()).isNull();
-//        assertThat(response.getApci()).isNull();
-//        assertThat(response.isDirty()).isNull();
-//
-//        final var responseJson = asJson(response);
-//        assertThatJson(responseJson).isEqualTo("{}");
-//    }
 }
