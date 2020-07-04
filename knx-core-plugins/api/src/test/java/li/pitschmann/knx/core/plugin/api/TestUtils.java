@@ -48,7 +48,7 @@ public final class TestUtils {
      * @param object object to be converted
      * @return json string representation from object
      */
-    public static final String asJson(final Object object) {
+    public static String asJson(final Object object) {
         return ApiGsonEngine.INSTANCE.toString(object);
     }
 
