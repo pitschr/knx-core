@@ -22,12 +22,16 @@ import li.pitschmann.knx.core.communication.KnxClient;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddressStyle;
 import li.pitschmann.knx.core.knxproj.XmlProject;
+import li.pitschmann.knx.core.utils.Preconditions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ro.pippo.core.HttpConstants;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
@@ -43,7 +47,7 @@ public class ApiPluginTest {
     @Test
     @DisplayName("Test the API Plugin life-cycle (with health check)")
     public void testApiPluginDefault() throws IOException, InterruptedException {
-        final var mockApiPlugin = new TestApiPlugin();
+        final var mockApiPlugin = new ApiPlugin();
 
         //
         // Mocking
@@ -71,14 +75,14 @@ public class ApiPluginTest {
             assertThat(mockApiPlugin.getPort()).isNotZero();
 
             // verify if health check works
-            final var httpRequest = mockApiPlugin.newRequestBuilder("/api/ping").build();
+            final var httpRequest = newRequestBuilder(mockApiPlugin, "/api/ping").build();
             final var httpResponse = HttpClient.newHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
             assertThat(httpResponse.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
             assertThat(httpResponse.body()).isEqualTo("OK");
             assertThat(httpResponse.headers().firstValue("Content-Type").get()).isEqualTo("text/plain; charset=UTF-8");
 
             // verify if request for project overview returns something
-            final var httpRequest2 = mockApiPlugin.newRequestBuilder("/api/v1/project").build();
+            final var httpRequest2 = newRequestBuilder(mockApiPlugin, "/api/v1/project").build();
             final var httpResponse2 = HttpClient.newHttpClient().send(httpRequest2, HttpResponse.BodyHandlers.ofString());
             assertThat(httpResponse2.statusCode()).isEqualTo(HttpConstants.StatusCode.OK);
             assertThat(httpResponse2.body()).isNotEmpty();
@@ -87,5 +91,26 @@ public class ApiPluginTest {
         }
 
         assertThat(mockApiPlugin.isReady()).isFalse();
+    }
+
+    /**
+     * Creates a new {@link HttpRequest.Builder} for test requests to API
+     * <p>
+     * As we are using communicating via JSON only, the headers
+     * {@link HttpConstants.Header#ACCEPT} and {@link HttpConstants.Header#CONTENT_TYPE}
+     * are pre-defined with {@link HttpConstants.ContentType#APPLICATION_JSON}.
+     *
+     * @param path the path to be requested to API
+     * @return Builder for HttpRequest
+     */
+    private HttpRequest.Builder newRequestBuilder(final ApiPlugin apiPlugin, final String path) {
+        Preconditions.checkArgument(path.startsWith("/"), "Path must start with /");
+        try {
+            return HttpRequest.newBuilder(new URI("http://localhost:" + apiPlugin.getPort() + path))
+                    .header(HttpConstants.Header.ACCEPT, HttpConstants.ContentType.APPLICATION_JSON)
+                    .header(HttpConstants.Header.CONTENT_TYPE, HttpConstants.ContentType.APPLICATION_JSON);
+        } catch (final URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid path provided: " + path, e);
+        }
     }
 }
