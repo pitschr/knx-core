@@ -46,7 +46,19 @@ public enum ServiceTypeFamily implements KnxByteEnum {
     /**
      * KNX/IP Routing
      */
-    ROUTING(0x05, "KNX/IP Routing");
+    ROUTING(0x05, "KNX/IP Routing"),
+    /**
+     * KNX/IP Remote Logging
+     */
+    REMOTE_LOGGING(0x06, "KNX/IP Remote Logging"),
+    /**
+     * KNX/IP Remote Configuration and Diagnosis
+     */
+    REMOTE_CONFIGURATION_AND_DIAGNOSIS(0x07, "KNX/IP Remote Configuration and Diagnosis"),
+    /**
+     * KNX/IP Object Server
+     */
+    OBJECT_SERVER(0x08, "KNX/IP Object Server");
 
     private final int code;
     private final String friendlyName;
