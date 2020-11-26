@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<ServiceTypeFamily> {
     @Override
     protected int numberOfElements() {
-        return 4;
+        return 7;
     }
 
     @Test
@@ -41,6 +41,9 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
         assertThat(ServiceTypeFamily.valueOf(0x03)).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(ServiceTypeFamily.valueOf(0x04)).isEqualTo(ServiceTypeFamily.TUNNELING);
         assertThat(ServiceTypeFamily.valueOf(0x05)).isEqualTo(ServiceTypeFamily.ROUTING);
+        assertThat(ServiceTypeFamily.valueOf(0x06)).isEqualTo(ServiceTypeFamily.REMOTE_LOGGING);
+        assertThat(ServiceTypeFamily.valueOf(0x07)).isEqualTo(ServiceTypeFamily.REMOTE_CONFIGURATION_AND_DIAGNOSIS);
+        assertThat(ServiceTypeFamily.valueOf(0x08)).isEqualTo(ServiceTypeFamily.OBJECT_SERVER);
     }
 
     @Test
@@ -50,6 +53,9 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
         assertThat(ServiceTypeFamily.DEVICE_MANAGEMENT.getFriendlyName()).isEqualTo("KNX device Management");
         assertThat(ServiceTypeFamily.TUNNELING.getFriendlyName()).isEqualTo("KNX/IP Tunneling");
         assertThat(ServiceTypeFamily.ROUTING.getFriendlyName()).isEqualTo("KNX/IP Routing");
+        assertThat(ServiceTypeFamily.REMOTE_LOGGING.getFriendlyName()).isEqualTo("KNX/IP Remote Logging");
+        assertThat(ServiceTypeFamily.REMOTE_CONFIGURATION_AND_DIAGNOSIS.getFriendlyName()).isEqualTo("KNX/IP Remote Configuration and Diagnosis");
+        assertThat(ServiceTypeFamily.OBJECT_SERVER.getFriendlyName()).isEqualTo("KNX/IP Object Server");
     }
 
     @Test
