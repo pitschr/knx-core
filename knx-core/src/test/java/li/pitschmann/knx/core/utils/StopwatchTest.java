@@ -90,13 +90,14 @@ public class StopwatchTest {
         // elapsed #1
         Sleeper.milliseconds(100);
         final var tick1 = sw.elapsed().toMillis();
-        assertThat(tick1).isBetween(100L, 1000L);
+        assertThat(tick1).isBetween(95L, 500L);
 
         // elapsed #2
         Sleeper.milliseconds(100);
         final var tick2 = sw.elapsed().toMillis();
-        assertThat(tick2).isGreaterThan(tick1);
-        assertThat(tick2).isBetween(tick1 + 100L, tick1 + 1000L);
+        assertThat(tick2)
+                .isGreaterThan(tick1)
+                .isBetween(tick1 + 95L, tick1 + 500L);
     }
 
     @Test

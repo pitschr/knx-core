@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.communication.queue;
 
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.test.KnxBody;
+import li.pitschmann.knx.core.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -102,6 +103,9 @@ public class DefaultOutboxQueueTest {
 
         // execute (this will pick up the body from outbox queue and write to remote channel)
         queue.action(selectionKeyMock);
+
+        // wait bit - due non-blocking it could be happen that verification is faster before the bytes were sent
+        Sleeper.milliseconds(100);
 
         // verify if remote channel got those bytes
         final var bb = ByteBuffer.allocate(body.getRawData(true).length);

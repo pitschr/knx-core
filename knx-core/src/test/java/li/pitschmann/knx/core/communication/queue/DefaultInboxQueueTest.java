@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.communication.queue;
 
 import li.pitschmann.knx.core.communication.InternalKnxClient;
 import li.pitschmann.knx.core.test.KnxBody;
+import li.pitschmann.knx.core.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -105,6 +106,10 @@ public class DefaultInboxQueueTest {
         // execute (this will pick up the body from outbox queue and write to channel)
         final var selectionKeyMock = mock(SelectionKey.class);
         when(selectionKeyMock.channel()).thenReturn(localChannel);
+
+        // wait bit - due non-blocking it could be happen that verification is faster before the bytes were sent
+        Sleeper.milliseconds(100);
+
         queue.action(selectionKeyMock);
 
         // verify
