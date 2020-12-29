@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT6Test extends AbstractDataPointTypeTest<DPT6, DPT6Value> {
+public class DPT6Test implements DPTTest {
     @Override
     @Test
     public void testIdAndDescription() {

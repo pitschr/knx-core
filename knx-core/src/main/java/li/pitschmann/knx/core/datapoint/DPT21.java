@@ -287,7 +287,7 @@ public final class DPT21 {
         throw new AssertionError("Do not touch me!");
     }
 
-    public static final class GeneralStatus extends AbstractDataPointType<DPT21Value.GeneralStatus> {
+    public static final class GeneralStatus extends BaseDataPointType<DPT21Value.GeneralStatus> {
         private GeneralStatus() {
             super("General Status");
         }
@@ -313,7 +313,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class DeviceControl extends AbstractDataPointType<DPT21Value.DeviceControl> {
+    public static final class DeviceControl extends BaseDataPointType<DPT21Value.DeviceControl> {
         private DeviceControl() {
             super("Device Control");
         }
@@ -338,7 +338,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class ForcingSignal extends AbstractDataPointType<DPT21Value.ForcingSignal> {
+    public static final class ForcingSignal extends BaseDataPointType<DPT21Value.ForcingSignal> {
         private ForcingSignal() {
             super("Forcing Signal");
         }
@@ -368,7 +368,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class ForcingSignalCooling extends AbstractDataPointType<DPT21Value.ForcingSignalCooling> {
+    public static final class ForcingSignalCooling extends BaseDataPointType<DPT21Value.ForcingSignalCooling> {
         private ForcingSignalCooling() {
             super("Forcing Signal Cooling");
         }
@@ -392,7 +392,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusRoomHeatingController extends AbstractDataPointType<DPT21Value.StatusRoomHeatingController> {
+    public static final class StatusRoomHeatingController extends BaseDataPointType<DPT21Value.StatusRoomHeatingController> {
         private StatusRoomHeatingController() {
             super("Room Heating Controller Status");
         }
@@ -422,7 +422,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusSolarDHWController extends AbstractDataPointType<DPT21Value.StatusSolarDHWController> {
+    public static final class StatusSolarDHWController extends BaseDataPointType<DPT21Value.StatusSolarDHWController> {
         private StatusSolarDHWController() {
             super("Solar DHW Controller Status");
         }
@@ -447,7 +447,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class FuelTypeSet extends AbstractDataPointType<DPT21Value.FuelTypeSet> {
+    public static final class FuelTypeSet extends BaseDataPointType<DPT21Value.FuelTypeSet> {
         private FuelTypeSet() {
             super("Fuel Type Set");
         }
@@ -471,7 +471,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusRoomCoolingController extends AbstractDataPointType<DPT21Value.StatusRoomCoolingController> {
+    public static final class StatusRoomCoolingController extends BaseDataPointType<DPT21Value.StatusRoomCoolingController> {
         private StatusRoomCoolingController() {
             super("Room Cooling Controller Status");
         }
@@ -495,7 +495,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusVentilationController extends AbstractDataPointType<DPT21Value.StatusVentilationController> {
+    public static final class StatusVentilationController extends BaseDataPointType<DPT21Value.StatusVentilationController> {
         private StatusVentilationController() {
             super("Ventilation Controller Status");
         }
@@ -520,7 +520,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class LightingActuatorErrorInfo extends AbstractDataPointType<DPT21Value.LightingActuatorErrorInfo> {
+    public static final class LightingActuatorErrorInfo extends BaseDataPointType<DPT21Value.LightingActuatorErrorInfo> {
         private LightingActuatorErrorInfo() {
             super("Lighting Actuator Error Information");
         }
@@ -546,7 +546,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class RadioFrequencyCommunicationModeInfo extends AbstractDataPointType<DPT21Value.RadioFrequencyCommunicationModeInfo> {
+    public static final class RadioFrequencyCommunicationModeInfo extends BaseDataPointType<DPT21Value.RadioFrequencyCommunicationModeInfo> {
         private RadioFrequencyCommunicationModeInfo() {
             super("Radio Frequency Communication Mode Info");
         }
@@ -570,7 +570,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class CEMIServerSupportedFilteringMode extends AbstractDataPointType<DPT21Value.CEMIServerSupportedFilteringMode> {
+    public static final class CEMIServerSupportedFilteringMode extends BaseDataPointType<DPT21Value.CEMIServerSupportedFilteringMode> {
         private CEMIServerSupportedFilteringMode() {
             super("cEMI Server Supported Filtering Mode");
         }
@@ -595,7 +595,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class SecurityReport extends AbstractDataPointType<DPT21Value.SecurityReport> {
+    public static final class SecurityReport extends BaseDataPointType<DPT21Value.SecurityReport> {
         private SecurityReport() {
             super("Security Report");
         }
@@ -619,7 +619,7 @@ public final class DPT21 {
         }
     }
 
-    public static final class ChannelActivation8 extends AbstractDataPointType<DPT21Value.ChannelActivation8> {
+    public static final class ChannelActivation8 extends BaseDataPointType<DPT21Value.ChannelActivation8> {
         private ChannelActivation8() {
             super("Channel Activation for 8 channels");
         }

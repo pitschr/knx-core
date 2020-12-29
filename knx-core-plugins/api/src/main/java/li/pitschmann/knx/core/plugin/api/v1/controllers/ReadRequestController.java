@@ -66,7 +66,7 @@ public final class ReadRequestController extends AbstractController {
 
         // we add group address, dpt, name and description only if requested
         response.setGroupAddress(groupAddress);
-        response.setRaw(knxStatusData.getApciData());
+        response.setRaw(knxStatusData.getData());
 
         final var xmlGroupAddress = getKnxClient().getConfig().getProject().getGroupAddress(groupAddress);
         if (xmlGroupAddress != null) {
@@ -74,7 +74,7 @@ public final class ReadRequestController extends AbstractController {
             response.setName(xmlGroupAddress.getName());
             response.setDescription(xmlGroupAddress.getDescription());
             response.setDataPointType(dpt);
-            response.setValue(dpt.of(knxStatusData.getApciData()).toText());
+            response.setValue(dpt.of(knxStatusData.getData()).toText());
             response.setUnit(dpt.getUnit());
         } else {
             log.warn("Could not find group address in XML project: {}", groupAddress);

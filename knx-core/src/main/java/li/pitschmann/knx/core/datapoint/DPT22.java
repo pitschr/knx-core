@@ -139,7 +139,7 @@ public final class DPT22 {
         throw new AssertionError("Do not touch me!");
     }
 
-    public static final class StatusDHWController extends AbstractDataPointType<DPT22Value.StatusDHWController> {
+    public static final class StatusDHWController extends BaseDataPointType<DPT22Value.StatusDHWController> {
         private StatusDHWController() {
             super("DHW Controller Status");
         }
@@ -169,7 +169,7 @@ public final class DPT22 {
         }
     }
 
-    public static final class StatusRoomHeatinCoolingController extends AbstractDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
+    public static final class StatusRoomHeatinCoolingController extends BaseDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
         private StatusRoomHeatinCoolingController() {
             super("Room Heating / Cooling Controller Status");
         }
@@ -205,7 +205,7 @@ public final class DPT22 {
         }
     }
 
-    public static final class Media extends AbstractDataPointType<DPT22Value.Media> {
+    public static final class Media extends BaseDataPointType<DPT22Value.Media> {
         private Media() {
             super("Media");
         }
@@ -230,7 +230,7 @@ public final class DPT22 {
         }
     }
 
-    public static final class ChannelActivation16 extends AbstractDataPointType<DPT22Value.ChannelActivation16> {
+    public static final class ChannelActivation16 extends BaseDataPointType<DPT22Value.ChannelActivation16> {
         private ChannelActivation16() {
             super("Channel Activation for 16 channels");
         }
@@ -246,17 +246,17 @@ public final class DPT22 {
         }
 
         public DPT22Value.ChannelActivation16 of(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                                 final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
-                                                 final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
-                                                 final boolean channel15, final boolean channel16) {
+                                                 final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8,
+                                                 final boolean channel9, final boolean channel10, final boolean channel11, final boolean channel12,
+                                                 final boolean channel13, final boolean channel14, final boolean channel15, final boolean channel16) {
             return new DPT22Value.ChannelActivation16(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9,
                     channel10, channel11, channel12, channel13, channel14, channel15, channel16);
         }
 
         public byte[] toByteArray(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                  final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
-                                  final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
-                                  final boolean channel15, final boolean channel16) {
+                                  final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8,
+                                  final boolean channel9, final boolean channel10, final boolean channel11, final boolean channel12,
+                                  final boolean channel13, final boolean channel14, final boolean channel15, final boolean channel16) {
             return this.of(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9, channel10, channel11,
                     channel12, channel13, channel14, channel15, channel16).toByteArray();
         }

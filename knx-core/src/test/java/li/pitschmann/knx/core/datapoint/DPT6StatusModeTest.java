@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMode, DPT6Value.StatusMode> {
+public class DPT6StatusModeTest implements DPTTest {
     @Override
     @Test
     public void testIdAndDescription() {

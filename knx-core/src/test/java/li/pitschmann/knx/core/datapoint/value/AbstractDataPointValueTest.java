@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint.value;
 
-import li.pitschmann.knx.core.datapoint.AbstractDataPointType;
+import li.pitschmann.knx.core.datapoint.BaseDataPointType;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import org.junit.jupiter.api.Test;
 
@@ -80,8 +80,8 @@ public class AbstractDataPointValueTest {
      *
      * @author PITSCHR
      */
-    private static class TestDataPointValue extends AbstractDataPointValue<AbstractDataPointType<?>> {
-        public TestDataPointValue(AbstractDataPointType<?> dpt) {
+    private static class TestDataPointValue extends AbstractDataPointValue<BaseDataPointType<?>> {
+        public TestDataPointValue(final BaseDataPointType<?> dpt) {
             super(dpt);
         }
 

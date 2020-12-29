@@ -59,16 +59,16 @@ public final class RoutingIndicationTask implements Subscriber<Body> {
             final var reqBody = (RoutingIndicationBody) body;
             final var cemi = reqBody.getCEMI();
             final var messageCode = cemi.getMessageCode();
-            final var apci = cemi.getApci();
+            final var apci = cemi.getAPCI();
             if (cemi.getMessageCode() == MessageCode.L_DATA_IND) {
-                if (cemi.getApci() == APCI.GROUP_VALUE_WRITE) {
+                if (cemi.getAPCI() == APCI.GROUP_VALUE_WRITE) {
                     if (log.isDebugEnabled()) {
-                        log.debug("RoutingIndication frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                        log.debug("RoutingIndication frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
-                } else if (cemi.getApci() == APCI.GROUP_VALUE_RESPONSE) {
+                } else if (cemi.getAPCI() == APCI.GROUP_VALUE_RESPONSE) {
                     if (log.isDebugEnabled()) {
-                        log.debug("RoutingIndication frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                        log.debug("RoutingIndication frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
                 } else {

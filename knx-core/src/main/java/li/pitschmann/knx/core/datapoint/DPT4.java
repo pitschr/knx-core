@@ -37,7 +37,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author PITSCHR
  */
-public final class DPT4 extends AbstractRangeDataPointType<DPT4Value, Integer> {
+public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
     /**
      * <strong>4.001</strong> ASCII Character
      *

@@ -23,27 +23,27 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link AbstractRangeDataPointType}
+ * Tests for {@link BaseRangeDataPointType}
  *
  * @author PITSCHR
  */
-public class AbstractRangeDataPointTypeTest {
+public class BaseRangeDataPointTypeTest {
 
     /**
-     * Tests {@link AbstractRangeDataPointType#getLowerValue()},
-     * {@link AbstractRangeDataPointType#getUpperValue()} and
-     * {@link AbstractRangeDataPointType#isRangeClosed(Comparable)}
+     * Tests {@link BaseRangeDataPointType#getLowerValue()},
+     * {@link BaseRangeDataPointType#getUpperValue()} and
+     * {@link BaseRangeDataPointType#isRangeClosed(Comparable)}
      */
     @Test
     public void testLowerAndUpperValues() {
-        // 0 .. 360
+        // 0 = 0° .. 255 = 360°
         assertThat(DPT5.ANGLE.getLowerValue()).isEqualTo(0);
-        assertThat(DPT5.ANGLE.getUpperValue()).isEqualTo(360);
+        assertThat(DPT5.ANGLE.getUpperValue()).isEqualTo(255);
 
         assertThat(DPT5.ANGLE.isRangeClosed(-1)).isFalse();
         assertThat(DPT5.ANGLE.isRangeClosed(0)).isTrue();
-        assertThat(DPT5.ANGLE.isRangeClosed(180)).isTrue();
-        assertThat(DPT5.ANGLE.isRangeClosed(360)).isTrue();
-        assertThat(DPT5.ANGLE.isRangeClosed(361)).isFalse();
+        assertThat(DPT5.ANGLE.isRangeClosed(254)).isTrue();
+        assertThat(DPT5.ANGLE.isRangeClosed(255)).isTrue();
+        assertThat(DPT5.ANGLE.isRangeClosed(256)).isFalse();
     }
 }

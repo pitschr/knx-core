@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.core.utils.Preconditions;
 
 /**
  * Data Point Types according to KNX Specification
@@ -58,7 +57,7 @@ import li.pitschmann.knx.core.utils.Preconditions;
  *
  * @author PITSCHR
  */
-public interface DataPointType<V extends DataPointValue<?>> {
+public interface DataPointType {
     /**
      * Returns the id
      *
@@ -87,7 +86,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value from raw bytes
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    V of(byte[] bytes);
+    DataPointValue of(byte[] bytes);
 
     /**
      * Returns a {@link DataPointValue} for specified byte variable array.
@@ -99,16 +98,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value
      * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
      */
-    default V of(final byte b, final byte... moreBytes) {
-        if (moreBytes.length == 0) {
-            return of(new byte[]{b});
-        } else {
-            byte[] newArray = new byte[moreBytes.length + 1];
-            newArray[0] = b;
-            System.arraycopy(moreBytes, 0, newArray, 1, moreBytes.length);
-            return of(newArray);
-        }
-    }
+    DataPointValue of(final byte b, final byte... moreBytes);
 
     /**
      * Returns a {@link DataPointValue} for specified string arguments.
@@ -120,7 +110,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value from arguments
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    V of(String[] args);
+    DataPointValue of(String[] args);
 
     /**
      * Returns a {@link DataPointValue} for specified variable string arguments.
@@ -132,17 +122,7 @@ public interface DataPointType<V extends DataPointValue<?>> {
      * @return data point value
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
-    default V of(final String arg, final String... moreArgs) {
-        Preconditions.checkNonNull(arg);
-        if (moreArgs.length == 0) {
-            return of(new String[]{arg});
-        } else {
-            String[] newArray = new String[moreArgs.length + 1];
-            newArray[0] = arg;
-            System.arraycopy(moreArgs, 0, newArray, 1, moreArgs.length);
-            return of(newArray);
-        }
-    }
+    DataPointValue of(final String arg, final String... moreArgs);
 
     /**
      * Returns byte array based for specified string arguments. This method is handy one

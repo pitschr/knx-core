@@ -8,7 +8,7 @@ import li.pitschmann.knx.core.datapoint.DataPointType;
  */
 public final class WriteRequest {
     private GroupAddress groupAddress;
-    private DataPointType<?> dataPointType;
+    private DataPointType dataPointType;
     private String[] values;
     private byte[] raw;
 
@@ -20,11 +20,11 @@ public final class WriteRequest {
         this.groupAddress = groupAddress;
     }
 
-    public DataPointType<?> getDataPointType() {
+    public DataPointType getDataPointType() {
         return dataPointType;
     }
 
-    public void setDataPointType(final DataPointType<?> dataPointType) {
+    public void setDataPointType(final DataPointType dataPointType) {
         this.dataPointType = dataPointType;
     }
 

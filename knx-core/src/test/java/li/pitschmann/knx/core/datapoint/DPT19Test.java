@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT19Test extends AbstractDataPointTypeTest<DPT19, DPT19Value> {
+public class DPT19Test implements DPTTest {
     private static final DPT19 DPT_DATE_TIME = DPT19.DATE_TIME;
 
     @Override

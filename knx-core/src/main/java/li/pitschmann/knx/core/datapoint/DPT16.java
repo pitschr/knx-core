@@ -58,7 +58,7 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPT16 extends AbstractDataPointType<DPT16Value> {
+public final class DPT16 extends BaseDataPointType<DPT16Value> {
     /**
      * <strong>16.000</strong> ASCII
      *

@@ -60,8 +60,8 @@ public final class InternalKnxStatusPoolTest {
         // verify
         final var statusData = pool.getStatusFor(ADDRESS);
         assertThat(statusData).isNotNull();
-        assertThat(statusData.getApci()).isSameAs(APCI.GROUP_VALUE_WRITE);
-        assertThat(statusData.getApciData()).containsExactly(0x44, 0x22, 0x33);
+        assertThat(statusData.getAPCI()).isSameAs(APCI.GROUP_VALUE_WRITE);
+        assertThat(statusData.getData()).containsExactly(0x44, 0x22, 0x33);
     }
 
     /**

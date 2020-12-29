@@ -19,7 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.AbstractDataPointType;
+import li.pitschmann.knx.core.datapoint.BaseDataPointType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
@@ -32,7 +32,7 @@ import java.util.Objects;
  * @param <T>
  * @author PITSCHR
  */
-abstract class AbstractDataPointFlag<T extends AbstractDataPointType<?>> extends AbstractDataPointValue<T> {
+abstract class AbstractDataPointFlag<T extends BaseDataPointType<?>> extends AbstractDataPointValue<T> {
     private final byte b;
 
     protected AbstractDataPointFlag(final T dpt, final byte b) {

@@ -450,15 +450,15 @@ public final class CEMITest {
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, -1, APCI.GROUP_VALUE_READ, new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("tpciPacketNumber");
+                .hasMessageContaining("packetNumber");
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0xFF + 1, APCI.GROUP_VALUE_READ, new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("tpciPacketNumber");
+                .hasMessageContaining("packetNumber");
 
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, new byte[15])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("apciData");
+                .hasMessageContaining("data");
 
         // illegal state
         assertThatThrownBy(() -> CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
@@ -512,11 +512,11 @@ public final class CEMITest {
      * @param controlByte2       expected second control byte
      * @param sourceAddress      expected source individual address
      * @param destinationAddress expected destination KNX address
-     * @param npduLength         expected NDPU length
+     * @param length             expected NDPU length
      * @param tpci               expected TPCI
-     * @param tpciPacketNumber   expected packet number for TCPI
+     * @param packetNumber       expected TPCI packet number
      * @param apci               expected APCI
-     * @param apciData           expected data for APCI
+     * @param data               expected APCI data
      */
     private void assertCEMI(final CEMI cemi,
                             final MessageCode messageCode,
@@ -525,22 +525,22 @@ public final class CEMITest {
                             final ControlByte2 controlByte2,
                             final IndividualAddress sourceAddress,
                             final KnxAddress destinationAddress,
-                            final int npduLength,
+                            final int length,
                             final TPCI tpci,
-                            final int tpciPacketNumber,
+                            final int packetNumber,
                             final APCI apci,
-                            final byte[] apciData) {
+                            final byte[] data) {
         assertThat(cemi.getMessageCode()).isEqualTo(messageCode);
         assertThat(cemi.getAdditionalInfo()).isEqualTo(additionalInfo);
         assertThat(cemi.getControlByte1()).isEqualTo(controlByte1);
         assertThat(cemi.getControlByte2()).isEqualTo(controlByte2);
         assertThat(cemi.getSourceAddress()).isEqualTo(sourceAddress);
         assertThat(cemi.getDestinationAddress()).isEqualTo(destinationAddress);
-        assertThat(cemi.getNpduLength()).isEqualTo(npduLength);
-        assertThat(cemi.getTpci()).isEqualTo(tpci);
-        assertThat(cemi.getTpciPacketNumber()).isEqualTo(tpciPacketNumber);
-        assertThat(cemi.getApci()).isEqualTo(apci);
-        assertThat(cemi.getApciData()).containsExactly(apciData);
+        assertThat(cemi.getLength()).isEqualTo(length);
+        assertThat(cemi.getTPCI()).isSameAs(tpci);
+        assertThat(cemi.getPacketNumber()).isEqualTo(packetNumber);
+        assertThat(cemi.getAPCI()).isSameAs(apci);
+        assertThat(cemi.getData()).containsExactly(data);
     }
 
     /**
@@ -562,16 +562,16 @@ public final class CEMITest {
         // with raw data
         assertThat(cemi).hasToString(String.format(
                 "CEMI{messageCode=%s, additionalInfo=%s, controlByte1=%s, controlByte2=%s, sourceAddress=%s, "
-                        + "destinationAddress=%s, npduLength=1 (0x01), tpci=%s, tpciPacketNumber=0 (0x00), apci=%s, "
-                        + "apciData=[] (), rawData=0x2E 00 BC E0 10 FF 0A 96 01 00 00}",
+                        + "destinationAddress=%s, length=1 (0x01), tpci=%s, packetNumber=0 (0x00), apci=%s, "
+                        + "data=[] (), rawData=0x2E 00 BC E0 10 FF 0A 96 01 00 00}",
                 MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_READ));
 
         // without raw data
         assertThat(cemi.toString(false)).isEqualTo(String.format(
                 "CEMI{messageCode=%s, additionalInfo=%s, controlByte1=%s, controlByte2=%s, sourceAddress=%s, "
-                        + "destinationAddress=%s, npduLength=1 (0x01), tpci=%s, tpciPacketNumber=0 (0x00), apci=%s, "
-                        + "apciData=[] ()}",
+                        + "destinationAddress=%s, length=1 (0x01), tpci=%s, packetNumber=0 (0x00), apci=%s, "
+                        + "data=[] ()}",
                 MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_READ));
     }
@@ -594,8 +594,8 @@ public final class CEMITest {
 
         assertThat(cemi).hasToString(String.format(
                 "CEMI{messageCode=%s, additionalInfo=%s, controlByte1=%s, controlByte2=%s, sourceAddress=%s, "
-                        + "destinationAddress=%s, npduLength=3 (0x03), tpci=%s, tpciPacketNumber=0 (0x00), apci=%s, "
-                        + "apciData=[12, 9] (0x0C 09), rawData=0x29 00 BC 60 10 82 63 43 03 00 80 0C 09}",
+                        + "destinationAddress=%s, length=3 (0x03), tpci=%s, packetNumber=0 (0x00), apci=%s, "
+                        + "data=[12, 9] (0x0C 09), rawData=0x29 00 BC 60 10 82 63 43 03 00 80 0C 09}",
                 MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_WRITE));
     }

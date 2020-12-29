@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  *
  * @author PITSCHR
  */
-public final class DPT3 extends AbstractDataPointType<DPT3Value> {
+public final class DPT3 extends BaseDataPointType<DPT3Value> {
 
     /**
      * <strong>3.007</strong> Control Dimming (%)

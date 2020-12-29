@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  *
  * @author PITSCHR
  */
-public final class DPT10 extends AbstractDataPointType<DPT10Value> {
+public final class DPT10 extends BaseDataPointType<DPT10Value> {
     /**
      * <strong>10.001</strong> Time Of Day
      *

@@ -38,7 +38,7 @@ public final class KnxStatusData {
     private Instant timestamp;
     private KnxAddress sourceAddress;
     private APCI apci;
-    private byte[] apciData;
+    private byte[] data;
     private boolean dirty;
 
     /**
@@ -47,7 +47,7 @@ public final class KnxStatusData {
      * @param cemi an instance of CEMI
      */
     public KnxStatusData(final CEMI cemi) {
-        this(cemi.getSourceAddress(), cemi.getApci(), cemi.getApciData());
+        this(cemi.getSourceAddress(), cemi.getAPCI(), cemi.getData());
     }
 
     /**
@@ -55,12 +55,12 @@ public final class KnxStatusData {
      *
      * @param sourceAddress the initiator who updated the status
      * @param apci          the purpose why it was set
-     * @param apciData      the value in byte array
+     * @param data          the value in byte array
      */
-    public KnxStatusData(final KnxAddress sourceAddress, final APCI apci, final @Nullable byte[] apciData) {
+    public KnxStatusData(final KnxAddress sourceAddress, final APCI apci, final @Nullable byte[] data) {
         this.timestamp = Instant.now();
         this.apci = apci;
-        this.apciData = apciData == null ? new byte[0] : apciData.clone(); // defensive copy
+        this.data = data == null ? new byte[0] : data.clone(); // defensive copy
         this.sourceAddress = sourceAddress;
         this.dirty = false; // reset the dirty flag
     }
@@ -84,11 +84,11 @@ public final class KnxStatusData {
     }
 
     /**
-     * Returns the type for APCI data
+     * Returns the APCI type
      *
      * @return An {@link APCI}
      */
-    public APCI getApci() {
+    public APCI getAPCI() {
         return this.apci;
     }
 
@@ -97,8 +97,8 @@ public final class KnxStatusData {
      *
      * @return byte array with APCI data
      */
-    public byte[] getApciData() {
-        return this.apciData.clone(); // defensive copy
+    public byte[] getData() {
+        return this.data.clone(); // defensive copy
     }
 
     /**
@@ -130,7 +130,7 @@ public final class KnxStatusData {
                 .add("timestamp", this.timestamp)
                 .add("sourceAddress", this.sourceAddress)
                 .add("apci", this.apci)
-                .add("apciData", Arrays.toString(this.apciData) + " (" + ByteFormatter.formatHexAsString(this.apciData) + ")")
+                .add("data", Arrays.toString(this.data) + " (" + ByteFormatter.formatHexAsString(this.data) + ")")
                 .toString();
         // @formatter:on
     }

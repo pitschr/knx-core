@@ -112,16 +112,16 @@ public interface KnxClient extends AutoCloseable {
      * @param dataPointValue value to be sent to KNX group address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue);
+    boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue);
 
     /**
-     * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
+     * Sends a WRITE request to {@link GroupAddress} with {@code data} <strong>asynchronously</strong>.
      *
-     * @param address  the recipient which is an KNX group address
-     * @param apciData value in byte array form to be sent to KNX group address
+     * @param address the recipient which is an KNX group address
+     * @param data    value in byte array form to be sent to KNX group address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean writeRequest(final GroupAddress address, final byte[] apciData);
+    boolean writeRequest(final GroupAddress address, final byte[] data);
 
     /**
      * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>

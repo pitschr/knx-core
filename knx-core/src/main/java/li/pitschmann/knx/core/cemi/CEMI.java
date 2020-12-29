@@ -64,11 +64,11 @@ public final class CEMI extends AbstractMultiRawData {
     private final ControlByte2 controlByte2;
     private final IndividualAddress sourceAddress;
     private final KnxAddress destinationAddress;
-    private final int npduLength;
+    private final int length;
     private final TPCI tpci;
-    private final int tpciPacketNumber;
+    private final int packetNumber;
     private final APCI apci;
-    private final byte[] apciData;
+    private final byte[] data;
 
     private CEMI(final byte[] cemiRawData) {
         super(cemiRawData);
@@ -124,15 +124,15 @@ public final class CEMI extends AbstractMultiRawData {
         // ------------------------------------------
         final var npduIndex = addrIndex + 4;
         // data bytes without TCPI/APCI bits
-        this.npduLength = Bytes.toUnsignedInt(cemiRawData[npduIndex]);
+        this.length = Bytes.toUnsignedInt(cemiRawData[npduIndex]);
 
         // 00.. .... UDT unnumbered package
         // 01.. .... NDT numbered package
         // 10.. .... UCD unnumbered control data
         // 11.. .... NCD numbered control data
         this.tpci = TPCI.valueOf(cemiRawData[npduIndex + 1] & 0xC0);
-        // ..xx xx.. package number
-        this.tpciPacketNumber = (cemiRawData[npduIndex + 1] & 0x3C) >>> 2;
+        // ..xx xx.. packet number
+        this.packetNumber = (cemiRawData[npduIndex + 1] & 0x3C) >>> 2;
         // .... ..xx xx.. .... APCI code
         // .... ..00 0000 0000 group value request
         // .... ..00 01nn nnnn group value response
@@ -145,18 +145,18 @@ public final class CEMI extends AbstractMultiRawData {
         // APCI data
         if (this.apci == APCI.GROUP_VALUE_READ) {
             // no data when APCI code is a read command
-            this.apciData = new byte[0];
-        } else if (this.npduLength == 1) {
+            this.data = new byte[0];
+        } else if (this.length == 1) {
             // in case data is up to 6 bits, then it is a part of APCI
-            this.apciData = new byte[]{(byte) (cemiRawData[npduIndex + 2] & 0x3F)};
+            this.data = new byte[]{(byte) (cemiRawData[npduIndex + 2] & 0x3F)};
         } else {
             // in case data is more than 6 bits then bytes are appended
-            final var npduIndexEnd = npduIndex + 3 + this.npduLength - 1;
+            final var npduIndexEnd = npduIndex + 3 + this.length - 1;
             if (npduIndexEnd > cemiRawData.length) {
                 // should never happen NPDU length is correct!
                 throw new KnxNumberOutOfRangeException("cemiRawData/npdu", npduIndex + 3, cemiRawData.length, npduIndexEnd);
             }
-            this.apciData = Arrays.copyOfRange(cemiRawData, npduIndex + 3, npduIndexEnd);
+            this.data = Arrays.copyOfRange(cemiRawData, npduIndex + 3, npduIndexEnd);
         }
     }
 
@@ -182,7 +182,7 @@ public final class CEMI extends AbstractMultiRawData {
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode,} {@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI} taken from {@link DataPointValue}.
      */
-    public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final DataPointValue<?> dataPointValue) {
+    public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final DataPointValue dataPointValue) {
         return useDefault(messageCode, destinationAddress, apci, dataPointValue.toByteArray());
     }
 
@@ -201,11 +201,11 @@ public final class CEMI extends AbstractMultiRawData {
      * @param messageCode        message code
      * @param destinationAddress destination address
      * @param apci               APCI for application layer control information
-     * @param apciData           data for APCI (optional)
+     * @param data               data for APCI (optional)
      * @return a new immutable {@link CEMI} with default settings and {@link MessageCode, }{@link KnxAddress},
      * {@link APCI} and byte array with data for {@link APCI}.
      */
-    public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final byte[] apciData) {
+    public static CEMI useDefault(final MessageCode messageCode, final KnxAddress destinationAddress, final APCI apci, final byte[] data) {
         // no validation required here
 
         // default settings
@@ -214,11 +214,11 @@ public final class CEMI extends AbstractMultiRawData {
         final var controlByte2 = ControlByte2.of(destinationAddress);
         final var sourceAddress = IndividualAddress.useDefault();
         final var tpci = TPCI.UNNUMBERED_PACKAGE;
-        final var tpciPacketNumber = 0;
+        final var packetNumber = 0;
 
         // create new instance
-        return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, tpciPacketNumber, apci,
-                apciData);
+        return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, packetNumber, apci,
+                data);
     }
 
     /**
@@ -231,7 +231,7 @@ public final class CEMI extends AbstractMultiRawData {
      * @param sourceAddress      source address (physical address of KNX device)
      * @param destinationAddress destination address
      * @param tpci               TCPI for transport information
-     * @param tpciPacketNumber   packet number for TCPI (optional)
+     * @param packetNumber       packet number for TCPI (optional)
      * @param apci               APCI for application layer control information
      * @param dataPointValue     the data point type value that contains value to be sent to KNX Net/IP device
      * @return a new immutable {@link CEMI}
@@ -243,10 +243,10 @@ public final class CEMI extends AbstractMultiRawData {
                           final IndividualAddress sourceAddress,
                           final KnxAddress destinationAddress,
                           final TPCI tpci,
-                          final int tpciPacketNumber,
+                          final int packetNumber,
                           final APCI apci,
-                          final DataPointValue<?> dataPointValue) {
-        return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, tpciPacketNumber, apci,
+                          final DataPointValue dataPointValue) {
+        return of(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, packetNumber, apci,
                 dataPointValue.toByteArray());
     }
 
@@ -260,9 +260,9 @@ public final class CEMI extends AbstractMultiRawData {
      * @param sourceAddress      source address (physical address of KNX device)
      * @param destinationAddress destination address
      * @param tpci               TCPI for transport information
-     * @param tpciPacketNumber   packet number for TCPI (optional)
+     * @param packetNumber       packet number for TCPI (optional)
      * @param apci               APCI for application layer control information
-     * @param apciData           data for APCI (optional)
+     * @param data               data for APCI (optional)
      * @return a new immutable {@link CEMI}
      */
     public static CEMI of(final MessageCode messageCode,
@@ -272,9 +272,9 @@ public final class CEMI extends AbstractMultiRawData {
                           final IndividualAddress sourceAddress,
                           final KnxAddress destinationAddress,
                           final TPCI tpci,
-                          final int tpciPacketNumber,
+                          final int packetNumber,
                           final APCI apci,
-                          final byte[] apciData) {
+                          final byte[] data) {
         // validate
         if (messageCode == null) {
             throw new KnxNullPointerException("messageCode");
@@ -292,26 +292,26 @@ public final class CEMI extends AbstractMultiRawData {
             throw new KnxNullPointerException("tpci");
         } else if (apci == null) {
             throw new KnxNullPointerException("apci");
-        } else if (apciData == null) {
-            throw new KnxNullPointerException("apciData");
-        } else if (apciData.length > 14) {
-            throw new KnxNumberOutOfRangeException("apciData", 0, 14, apciData.length);
-        } else if (tpciPacketNumber < 0 || tpciPacketNumber > 0xFF) {
-            throw new KnxNumberOutOfRangeException("tpciPacketNumber", 0, 0xFF, tpciPacketNumber);
-        } else if ((tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) && tpciPacketNumber != 0) {
+        } else if (data == null) {
+            throw new KnxNullPointerException("data");
+        } else if (data.length > 14) {
+            throw new KnxNumberOutOfRangeException("data", 0, 14, data.length);
+        } else if (packetNumber < 0 || packetNumber > 0xFF) {
+            throw new KnxNumberOutOfRangeException("packetNumber", 0, 0xFF, packetNumber);
+        } else if ((tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) && packetNumber != 0) {
             throw new KnxIllegalArgumentException(
-                    "TPCI packet number should not be set when TCPI is unnumbered: tpci={}, tpciPacketNumber={}",
-                    tpci, tpciPacketNumber
+                    "TPCI packet number should not be set when TCPI is unnumbered: tpci={}, packetNumber={}",
+                    tpci, packetNumber
             );
-        } else if (apci == APCI.GROUP_VALUE_READ && apciData.length > 0) {
+        } else if (apci == APCI.GROUP_VALUE_READ && data.length > 0) {
             throw new KnxIllegalArgumentException(
-                    "APCI data should not be set when APCI#READ is used: apci={}, apciData={}",
-                    apci, apciData
+                    "APCI data should not be set when APCI#READ is used: apci={}, data={}",
+                    apci, data
             );
-        } else if ((apci == APCI.GROUP_VALUE_WRITE || apci == APCI.GROUP_VALUE_RESPONSE) && apciData.length == 0) {
+        } else if ((apci == APCI.GROUP_VALUE_WRITE || apci == APCI.GROUP_VALUE_RESPONSE) && data.length == 0) {
             throw new KnxIllegalArgumentException(
-                    "APCI data should be set when APCI write or response is used: apci={}, apciData={}",
-                    apci, apciData
+                    "APCI data should be set when APCI write or response is used: apci={}, ata={}",
+                    apci, data
             );
         } else if ((destinationAddress instanceof GroupAddress && controlByte2.getAddressType() != AddressType.GROUP)
                 || (destinationAddress instanceof IndividualAddress && controlByte2.getAddressType() != AddressType.INDIVIDUAL)) {
@@ -331,7 +331,7 @@ public final class CEMI extends AbstractMultiRawData {
         // 11.. .... NCD numbered control data
         final var tpciPaketTypeAsByte = tpci.getCodeAsByte();
         // ..xx xx.. package number
-        final var tpciPacketNumberAsByte = (byte) ((tpciPacketNumber & 0x0F) << 2);
+        final var tpciPacketNumberAsByte = (byte) ((packetNumber & 0x0F) << 2);
 
         // .... ..xx xx.. .... APCI code
         // .... ..00 0000 0000 group value request
@@ -343,24 +343,24 @@ public final class CEMI extends AbstractMultiRawData {
         final var acpiCodeAsByte = apci.getCodeAsBytes();
         final byte apciDataAsByte;
         final boolean apciDataSeparate;
-        final int npduLengthNew;
+        final int lengthCalculated;
         if (apci == APCI.GROUP_VALUE_READ) {
             // request only
             apciDataAsByte = 0x00;
             apciDataSeparate = false;
-            npduLengthNew = 1;
+            lengthCalculated = 1;
         } else if (apci == APCI.GROUP_VALUE_RESPONSE || apci == APCI.GROUP_VALUE_WRITE) {
-            if (apciData.length == 1 && Byte.toUnsignedInt(apciData[0]) < 0x40) {
+            if (data.length == 1 && Byte.toUnsignedInt(data[0]) < 0x40) {
                 // optimized version available only for group value write and response
                 // data is within 6 bits
-                apciDataAsByte = (byte) (apciData[0] & 0x3F);
+                apciDataAsByte = (byte) (data[0] & 0x3F);
                 apciDataSeparate = false;
-                npduLengthNew = 1;
+                lengthCalculated = 1;
             } else {
                 // data are as separate bytes
                 apciDataAsByte = 0x00;
                 apciDataSeparate = true;
-                npduLengthNew = 1 + apciData.length;
+                lengthCalculated = 1 + data.length;
             }
         } else {
             throw new KnxException("Current APCI is not supported: " + apci.name());
@@ -383,13 +383,13 @@ public final class CEMI extends AbstractMultiRawData {
         // destination address
         System.arraycopy(destinationAddressAsBytes, 0, bytes, byteCount, destinationAddressAsBytes.length);
         byteCount += destinationAddressAsBytes.length;
-        // npdu
-        bytes[byteCount++] = (byte) npduLengthNew;
+        // NDPU (incl. TCPI and APCI and its data)
+        bytes[byteCount++] = (byte) lengthCalculated;
         bytes[byteCount++] = (byte) (tpciPaketTypeAsByte | tpciPacketNumberAsByte | acpiCodeAsByte[0]);
         bytes[byteCount++] = (byte) (acpiCodeAsByte[1] | apciDataAsByte);
         if (apciDataSeparate) {
-            System.arraycopy(apciData, 0, bytes, byteCount, apciData.length);
-            byteCount += apciData.length;
+            System.arraycopy(data, 0, bytes, byteCount, data.length);
+            byteCount += data.length;
         }
         return of(Arrays.copyOf(bytes, byteCount));
     }
@@ -432,24 +432,24 @@ public final class CEMI extends AbstractMultiRawData {
         return this.destinationAddress;
     }
 
-    public int getNpduLength() {
-        return this.npduLength;
+    public int getLength() {
+        return this.length;
     }
 
-    public TPCI getTpci() {
+    public TPCI getTPCI() {
         return this.tpci;
     }
 
-    public int getTpciPacketNumber() {
-        return this.tpciPacketNumber;
+    public int getPacketNumber() {
+        return this.packetNumber;
     }
 
-    public APCI getApci() {
+    public APCI getAPCI() {
         return this.apci;
     }
 
-    public byte[] getApciData() {
-        return this.apciData;
+    public byte[] getData() {
+        return this.data.clone();
     }
 
     @Override
@@ -462,11 +462,11 @@ public final class CEMI extends AbstractMultiRawData {
                 .add("controlByte2", this.controlByte2)
                 .add("sourceAddress", this.sourceAddress)
                 .add("destinationAddress", this.destinationAddress)
-                .add("npduLength", this.npduLength + " (" + ByteFormatter.formatHex(this.npduLength) + ")")
+                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
                 .add("tpci", this.tpci)
-                .add("tpciPacketNumber", this.tpciPacketNumber + " (" + ByteFormatter.formatHex(this.tpciPacketNumber) + ")")
+                .add("packetNumber", this.packetNumber + " (" + ByteFormatter.formatHex(this.packetNumber) + ")")
                 .add("apci", this.apci)
-                .add("apciData", Arrays.toString(this.apciData) + " (" + ByteFormatter.formatHexAsString(this.apciData) + ")");
+                .add("data", Arrays.toString(this.data) + " (" + ByteFormatter.formatHexAsString(this.data) + ")");
         // @formatter:on
         if (inclRawData) {
             h.add("rawData", this.getRawDataAsHexString());

@@ -26,13 +26,13 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
  *
  * @author PITSCHR
  */
-public interface DataPointValue<T extends DataPointType<?>> {
+public interface DataPointValue {
     /**
      * Returns the current Data Point Type instance
      *
      * @return {@link DataPointType}
      */
-    T getDPT();
+    DataPointType getDPT();
 
     /**
      * Returns the current Data Point Value as a byte array.

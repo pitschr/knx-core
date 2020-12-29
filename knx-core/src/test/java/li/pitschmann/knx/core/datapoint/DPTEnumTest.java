@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.CommunicationMode>, DPTEnumValue<DPT20.CommunicationMode>> {
+public class DPTEnumTest implements DPTTest {
     private static final DPTEnum<DPT20.CommunicationMode> DPT_ENUM = new DPTEnum<>("123.456", "foobar");
 
     static {

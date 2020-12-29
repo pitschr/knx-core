@@ -42,7 +42,7 @@ import java.util.Map;
  * @param <T> type of DPT enumeration
  * @author PITSCHR
  */
-public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends AbstractDataPointType<DPTEnumValue<T>> {
+public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends BaseDataPointType<DPTEnumValue<T>> {
     private final Map<Integer, DPTEnumValue<T>> values = Maps.newHashMap(255);
     private final String id;
 

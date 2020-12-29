@@ -33,7 +33,7 @@ public final class DataPointTypeIncompatibleSyntaxException extends KnxException
      * @param dpt      data point type
      * @param commands incompatible commands / syntax
      */
-    public DataPointTypeIncompatibleSyntaxException(final DataPointType<?> dpt,
+    public DataPointTypeIncompatibleSyntaxException(final DataPointType dpt,
                                                     final String[] commands) {
         super("Looks like you chose a wrong DPT. Given syntax is not compatible or not sufficient for '{}': {}",
                 dpt.getClass().getSimpleName(), commands);

@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  *
  * @author PITSCHR
  */
-public final class DPT19 extends AbstractDataPointType<DPT19Value> {
+public final class DPT19 extends BaseDataPointType<DPT19Value> {
     /**
      * <strong>19.001</strong> Date & Time
      *

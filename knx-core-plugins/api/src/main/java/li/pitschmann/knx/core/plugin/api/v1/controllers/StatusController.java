@@ -99,8 +99,8 @@ public final class StatusController extends AbstractController {
         if (knxStatusData != null) {
             response.setTimestamp(knxStatusData.getTimestamp());
             response.setSourceAddress(knxStatusData.getSourceAddress());
-            response.setApci(knxStatusData.getApci());
-            response.setRaw(knxStatusData.getApciData());
+            response.setApci(knxStatusData.getAPCI());
+            response.setRaw(knxStatusData.getData());
             response.setDirty(knxStatusData.isDirty());
         } else {
             log.warn("No status data found for group address: {}", groupAddress);

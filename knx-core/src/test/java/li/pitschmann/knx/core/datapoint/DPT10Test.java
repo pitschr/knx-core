@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
+public class DPT10Test implements DPTTest {
     private static final DPT10 DPT_TIME = DPT10.TIME_OF_DAY;
 
     @Override

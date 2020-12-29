@@ -34,7 +34,7 @@ public final class DataPointTypeIncompatibleBytesException extends KnxException 
      * @param dpt   data point type
      * @param bytes incompatible byte array
      */
-    public DataPointTypeIncompatibleBytesException(final DataPointType<?> dpt,
+    public DataPointTypeIncompatibleBytesException(final DataPointType dpt,
                                                    final byte[] bytes) {
         super("Looks like you chose a wrong DPT. Given bytes is not compatible for '{}': {}",
                 dpt.getClass().getSimpleName(), bytes);

@@ -22,18 +22,18 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
 /**
- * {@link AbstractDataPointType} extended class with range
+ * {@link BaseDataPointType} extended class with range capability
  *
  * @author PITSCHR
  */
-public abstract class AbstractRangeDataPointType<V extends DataPointValue<?>, R extends Comparable<R>> extends AbstractDataPointType<V> {
+public abstract class BaseRangeDataPointType<V extends DataPointValue, R extends Comparable<R>> extends BaseDataPointType<V> {
     private final R lowerValue;
     private final R upperValue;
 
-    public AbstractRangeDataPointType(final String description,
-                                      final R lowerValue,
-                                      final R upperValue,
-                                      final @Nullable String unit) {
+    public BaseRangeDataPointType(final String description,
+                                  final R lowerValue,
+                                  final R upperValue,
+                                  final @Nullable String unit) {
         super(description, unit);
         this.lowerValue = lowerValue;
         this.upperValue = upperValue;

@@ -33,7 +33,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT17Value;
  *
  * @author PITSCHR
  */
-public final class DPT17 extends AbstractRangeDataPointType<DPT17Value, Integer> {
+public final class DPT17 extends BaseRangeDataPointType<DPT17Value, Integer> {
     /**
      * <strong>17.001</strong> Scene Number
      *

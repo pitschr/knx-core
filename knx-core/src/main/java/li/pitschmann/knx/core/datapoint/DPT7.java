@@ -36,7 +36,7 @@ import java.util.function.Function;
  *
  * @author PITSCHR
  */
-public final class DPT7 extends AbstractRangeDataPointType<DPT7Value, Integer> {
+public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
     /**
      * <strong>7.001</strong> Value 2-octet unsigned count
      *

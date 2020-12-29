@@ -45,7 +45,7 @@ public final class DataPointRegistry {
     private static final Logger log = LoggerFactory.getLogger(DataPointRegistry.class);
     private static final Map<String, DataPointType> dataPointTypeMap = Maps.newHashMap(1024);
     private static final Map<Object, String[]> dataPointIdentifierMap = Maps.newHashMap(1024);
-    private static final Map<Enum, DPTEnumValue> dataPointEnumMap = Maps.newHashMap(1024);
+    private static final Map<Enum<?>, DPTEnumValue<?>> dataPointEnumMap = Maps.newHashMap(1024);
 
     static {
         // add DPT fields
@@ -165,7 +165,7 @@ public final class DataPointRegistry {
                 .toArray(Field[]::new)) {
             final var fieldAnnotation = field.getAnnotation(DataPoint.class);
             try {
-                final var fieldInstance = (DataPointType<?>) field.get(null);
+                final var fieldInstance = (DataPointType) field.get(null);
                 for (final var id : fieldAnnotation.value()) {
                     Preconditions.checkArgument(!dataPointTypeMap.containsKey(id), String.format(
                             "Data Point Type key '{}' is already registered. Please check your DPT implementation!", id));
@@ -187,7 +187,7 @@ public final class DataPointRegistry {
      * @return {@link DPTEnumValue}
      */
     public static <T extends Enum<T> & DataPointEnum<T>> DPTEnumValue<T> getDataPointType(final Enum<T> e) {
-        @SuppressWarnings("unchecked") final DPTEnumValue<T> dpt = dataPointEnumMap.get(Objects.requireNonNull(e));
+        @SuppressWarnings("unchecked") final var dpt = (DPTEnumValue<T>) dataPointEnumMap.get(Objects.requireNonNull(e));
         if (dpt == null) {
             throw new KnxEnumNotFoundException("Could not find enum data point type for: " + e);
         }
@@ -214,7 +214,7 @@ public final class DataPointRegistry {
         return Preconditions.checkNonNull(identifiers, "Could not find Data Point Enum '{}' in identifier map.", e);
     }
 
-    public static String[] getDataPointIdentifiers(final DataPointType<?> dpt) {
+    public static String[] getDataPointIdentifiers(final DataPointType dpt) {
         final String[] identifiers = dataPointIdentifierMap.get(dpt);
         return Preconditions.checkNonNull(identifiers, "Could not find Data Point Type '{}' in identifier map.", dpt);
     }

@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  *
  * @author PITSCHR
  */
-public final class DPT18 extends AbstractRangeDataPointType<DPT18Value, Integer> {
+public final class DPT18 extends BaseRangeDataPointType<DPT18Value, Integer> {
     /**
      * <strong>18.001</strong> Scene Control
      *

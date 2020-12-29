@@ -44,7 +44,7 @@ import java.time.LocalDate;
  *
  * @author PITSCHR
  */
-public final class DPT11 extends AbstractDataPointType<DPT11Value> {
+public final class DPT11 extends BaseDataPointType<DPT11Value> {
     /**
      * <strong>11.001</strong> Date
      *

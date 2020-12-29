@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT15Test extends AbstractDataPointTypeTest<DPT15, DPT15Value> {
+public class DPT15Test implements DPTTest {
     private static final DPT15 DPT_ACCESS_DATA = DPT15.ACCESS_DATA;
 
     @Override

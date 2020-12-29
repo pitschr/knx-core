@@ -35,7 +35,7 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements DataPointValue<DPTEnum<T>> {
+public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements DataPointValue {
     private final DPTEnum<T> dpt;
     private final T enumField;
     private final int ordinal;
@@ -62,7 +62,7 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
     }
 
     @Override
-    public DPTEnum<T> getDPT() {
+    public final DPTEnum<T> getDPT() {
         return this.dpt;
     }
 

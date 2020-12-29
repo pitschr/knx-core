@@ -19,7 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.AbstractDataPointType;
+import li.pitschmann.knx.core.datapoint.DataPointType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,10 +28,9 @@ import java.util.Objects;
 /**
  * Abstract implementation of {@link DataPointValue}
  *
- * @param <T>
  * @author PITSCHR
  */
-abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implements DataPointValue<T> {
+abstract class AbstractDataPointValue<T extends DataPointType> implements DataPointValue {
     private final T dpt;
 
     public AbstractDataPointValue(final T dpt) {
@@ -63,8 +62,7 @@ abstract class AbstractDataPointValue<T extends AbstractDataPointType<?>> implem
      *
      * @return data point type
      */
-    @Override
-    public T getDPT() {
+    public final T getDPT() {
         return this.dpt;
     }
 }

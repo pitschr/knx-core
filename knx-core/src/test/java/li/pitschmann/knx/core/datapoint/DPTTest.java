@@ -18,7 +18,10 @@
 
 package li.pitschmann.knx.core.datapoint;
 
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link DataPointType}
@@ -43,4 +46,22 @@ public interface DPTTest {
      */
     @Test
     void testOf();
+
+    /**
+     * Asserts the {@link DataPointType} for given arguments {@code dpt}, {@code bValueArray} and
+     * {@code dptValue}
+     *
+     * @param dpt         data point type
+     * @param bValueArray byte array with byte value
+     * @param dptValue    data point type value
+     */
+    default void assertBaseDPT(final DataPointType dpt, final byte[] bValueArray, final DataPointValue dptValue) {
+        // create by #of(byte[])
+        final var baseOfValue = dpt.of(bValueArray);
+        assertThat(baseOfValue).isEqualTo(dptValue);
+        assertThat(dptValue.getDPT()).isEqualTo(dpt);
+
+        // create by #toByteArray(..)
+        assertThat(baseOfValue.toByteArray()).containsExactly(bValueArray);
+    }
 }

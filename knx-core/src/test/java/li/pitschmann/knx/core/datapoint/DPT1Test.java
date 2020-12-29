@@ -31,7 +31,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
+public class DPT1Test implements DPTTest {
+
     @Override
     @Test
     public void testIdAndDescription() {
@@ -102,6 +103,30 @@ public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
         // wrong value
         assertThat(DPT1.SWITCH.of((byte) 0x00)).isNotEqualTo(DPT1.SWITCH.of((byte) 0x01));
         assertThat(DPT1.SWITCH.of((byte) 0x01)).isNotEqualTo(DPT1.SWITCH.of((byte) 0x00));
+    }
+
+
+    /**
+     * Tests {@link DPT1#equals(Object)} and {@link DPT1#hashCode()}
+     */
+    @Test
+    public void testEqualsAndHashCode() {
+        // test equals
+        assertThat(DPT1.ACK).isEqualTo(DPT1.ACK);
+        assertThat(DPT1.ACK).isNotEqualTo(DPT1.ALARM);
+        assertThat(DPT1.ACK).isNotEqualTo(null);
+
+        // test hash code
+        assertThat(DPT1.ACK.hashCode()).isEqualTo(DPT1.ACK.hashCode());
+        assertThat(DPT1.ACK.hashCode()).isNotEqualTo(DPT1.ALARM.hashCode());
+    }
+
+    /**
+     * Tests {@link DPT1#toString()}
+     */
+    @Test
+    public void testToString() {
+        assertThat(DPT1.ACK.toString()).hasToString("DPT1{id=1.016, description=Acknowledge}");
     }
 
     /**
