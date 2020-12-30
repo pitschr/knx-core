@@ -103,6 +103,7 @@ public final class DPT15 extends BaseDataPointType<DPT15Value> {
 
     @Override
     protected DPT15Value parse(String[] args) {
+        // should not happen, because isCompatible(String[]) always returns false
         throw new UnsupportedOperationException();
     }
 

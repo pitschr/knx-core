@@ -20,8 +20,7 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT15Value;
 import li.pitschmann.knx.core.datapoint.value.DPT15Value.Flags;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,67 +31,95 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT15Test implements DPTTest {
-    private static final DPT15 DPT_ACCESS_DATA = DPT15.ACCESS_DATA;
-
-    @Override
+class DPT15Test {
     @Test
-    public void testIdAndDescription() {
-        assertThat(DPT_ACCESS_DATA.getId()).isEqualTo("15.000");
-        assertThat(DPT_ACCESS_DATA.getDescription()).isEqualTo("Access Data");
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
+        final var dpt = DPT15.ACCESS_DATA;
+        assertThat(dpt.getId()).isEqualTo("15.000");
+        assertThat(dpt.getDescription()).isEqualTo("Access Data");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        final var dpt = DPT_ACCESS_DATA;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[5])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT15Value.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT15Value.class);
-        assertThat(dpt.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT15Value.class);
-        assertThat(dpt.of("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT15Value.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        final var dpt = DPT15.ACCESS_DATA;
+        // byte is supported for length == 4 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
+        assertThat(dpt.isCompatible(new byte[4])).isTrue();
+        assertThat(dpt.isCompatible(new byte[5])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
-        this.assertDPT(new byte[]{0x00, 0x00, 0x00, 0x00}, new byte[3], new Flags(false, false, false, false, 0));
-
-        this.assertDPT(new byte[]{0x11, 0x22, 0x33, 0x0F}, new byte[]{0x11, 0x22, 0x33}, new Flags(false, false, false, false, 0x0F));
-
-        this.assertDPT(new byte[]{0x44, 0x55, 0x66, (byte) 0xff}, new byte[]{0x44, 0x55, 0x66}, new Flags(true, true, true, true, 0x0F));
-
-        this.assertDPT(new byte[]{0x22, 0x44, 0x11, (byte) 0xA3}, new byte[]{0x22, 0x44, 0x11}, new Flags(true, false, true, false, 0x03));
-
-        this.assertDPT(new byte[]{0x33, 0x77, 0x00, (byte) 0x5C}, new byte[]{0x33, 0x77, 0x00}, new Flags(false, true, false, true, 0x0C));
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT15.ACCESS_DATA;
+        // String is not supported -> always false
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isFalse();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+        assertThat(dpt.isCompatible(new String[3])).isFalse();
+        assertThat(dpt.isCompatible(new String[4])).isFalse();
+        assertThat(dpt.isCompatible(new String[5])).isFalse();
     }
 
-    /**
-     * Asserts the DPT for given arguments {@code bValueArray} and {@code dptValue}
-     *
-     * @param bValueArray  byte array with values
-     * @param accessIdData access identification data
-     * @param flags        flags for access identification data
-     */
-    private void assertDPT(final byte[] bValueArray, final byte[] accessIdData, final Flags flags) {
-        final var dpt = DPT_ACCESS_DATA;
-        final var dptValue = dpt.of(accessIdData, flags);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT15.ACCESS_DATA;
+        // parse with only 4-bytes supported
+        assertThat(dpt.parse(new byte[4])).isInstanceOf(DPT15Value.class);
+        assertThatThrownBy(() -> dpt.parse(new byte[0]));
+    }
 
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-        // assert specific DPT15
-        assertThat(dpt.of(ByteFormatter.formatHexAsString(accessIdData, ""),
-                // get 2nd hex string (remove leading '0x'
-                ByteFormatter.formatHex(flags.getAsByte()).substring(2))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(accessIdData, flags)).containsExactly(bValueArray);
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT15.ACCESS_DATA;
+        // parse for string not supported
+        assertThatThrownBy(() -> dpt.parse(new String[0])).isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[], Flags)")
+    void testOf() {
+        final var dpt = DPT15.ACCESS_DATA;
+        // access id data, flags set (1010), index=3
+        assertThat(
+                dpt.of(
+                        new byte[]{0x22, 0x44, 0x11},
+                        new Flags(true, false, true, false, 0x03)
+                )
+        ).isInstanceOf(DPT15Value.class);
+        // access id data, flags set (0101), index=12
+        assertThat(
+                dpt.of(
+                        new byte[]{0x33, 0x77, 0x00},
+                        new Flags(false, true, false, true, 0x0C)
+                )
+        ).isInstanceOf(DPT15Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(byte[], Flags)")
+    void testToByteArray() {
+        final var dpt = DPT15.ACCESS_DATA;
+        // access id data, flags set (1010), index=3
+        assertThat(
+                dpt.toByteArray(
+                        new byte[]{0x22, 0x44, 0x11},
+                        new Flags(true, false, true, false, 0x03)
+                )
+        ).containsExactly(0x22, 0x44, 0x11, (byte) 0xA3);
+        // access id data, flags set (0101), index=12
+        assertThat(
+                dpt.toByteArray(
+                        new byte[]{0x33, 0x77, 0x00},
+                        new Flags(false, true, false, true, 0x0C)
+                )
+        ).containsExactly(0x33, 0x77, 0x00, 0x5C);
     }
 }
