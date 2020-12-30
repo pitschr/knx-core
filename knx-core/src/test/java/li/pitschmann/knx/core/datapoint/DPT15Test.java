@@ -72,7 +72,6 @@ class DPT15Test {
         final var dpt = DPT15.ACCESS_DATA;
         // parse with only 4-bytes supported
         assertThat(dpt.parse(new byte[4])).isInstanceOf(DPT15Value.class);
-        assertThatThrownBy(() -> dpt.parse(new byte[0]));
     }
 
     @Test

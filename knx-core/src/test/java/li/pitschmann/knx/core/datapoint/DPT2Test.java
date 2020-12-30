@@ -73,10 +73,6 @@ class DPT2Test {
     @DisplayName("Test #parse(String[])")
     public void testStringParse() {
         final var dpt = DPT2.SWITCH_CONTROL;
-        assertThat(dpt.parse(new String[]{"0x00"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.parse(new String[]{"0x01"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.parse(new String[]{"0x02"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.parse(new String[]{"0x03"})).isInstanceOf(DPT2Value.class);
         assertThat(dpt.parse(new String[]{"false"})).isInstanceOf(DPT2Value.class);
         assertThat(dpt.parse(new String[]{"true"})).isInstanceOf(DPT2Value.class);
         assertThat(dpt.parse(new String[]{"controlled", "false"})).isInstanceOf(DPT2Value.class);

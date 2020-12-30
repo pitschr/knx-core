@@ -104,7 +104,7 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
 
     @Override
     protected boolean isCompatible(final String[] args) {
-        return args.length == 1 && args[0].length() == 1;
+        return args.length == 1 && args[0] != null && args[0].length() == 1;
     }
 
     @Override

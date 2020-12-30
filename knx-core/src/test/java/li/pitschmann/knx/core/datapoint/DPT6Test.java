@@ -23,7 +23,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT6}
@@ -65,7 +64,6 @@ class DPT6Test {
         final var dpt = DPT6.VALUE_1_OCTET_COUNT;
         assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT6Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xFF})).isInstanceOf(DPT6Value.class);
-        assertThatThrownBy(() -> dpt.parse(new byte[0]));
     }
 
     @Test
