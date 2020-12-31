@@ -197,10 +197,6 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
         return new DPT5Value(this, Integer.parseInt(args[0]));
     }
 
-    public DPT5Value of(final byte value) {
-        return of(new byte[]{value});
-    }
-
     public DPT5Value of(final int value) {
         return new DPT5Value(this, value);
     }
