@@ -63,7 +63,7 @@ class DPT14Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT14.TEMPERATURE;
         assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00, 0x00, 0x00})).isInstanceOf(DPT14Value.class);
         assertThat(dpt.parse(new byte[]{0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT14Value.class);
@@ -71,7 +71,7 @@ class DPT14Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT14.TEMPERATURE;
         assertThat(dpt.parse(new String[]{"-3.40282347e+38f"})).isInstanceOf(DPT14Value.class);
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT14Value.class);

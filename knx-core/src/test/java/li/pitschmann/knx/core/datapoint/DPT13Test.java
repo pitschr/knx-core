@@ -63,7 +63,7 @@ class DPT13Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT13.VALUE_4_OCTET_COUNT;
         assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00, 0x00, 0x00})).isInstanceOf(DPT13Value.class);
         assertThat(dpt.parse(new byte[]{0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT13Value.class);
@@ -71,7 +71,7 @@ class DPT13Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT13.VALUE_4_OCTET_COUNT;
         assertThat(dpt.parse(new String[]{"-2147483648"})).isInstanceOf(DPT13Value.class);
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT13Value.class);

@@ -63,7 +63,7 @@ class DPT12Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.parse(new byte[]{0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT12Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xFF, (byte) 0xFF,(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT12Value.class);
@@ -71,7 +71,7 @@ class DPT12Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT12Value.class);
         assertThat(dpt.parse(new String[]{"4294967295"})).isInstanceOf(DPT12Value.class);

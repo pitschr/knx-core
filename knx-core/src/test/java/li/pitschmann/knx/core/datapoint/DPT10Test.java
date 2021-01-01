@@ -66,7 +66,7 @@ class DPT10Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT10.TIME_OF_DAY;
         assertThat(dpt.parse(new byte[]{0x00, 0x00, 0x00})).isInstanceOf(DPT10Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xEF, 0x3B, 0x3B})).isInstanceOf(DPT10Value.class);
@@ -74,7 +74,7 @@ class DPT10Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT10.TIME_OF_DAY;
         assertThat(dpt.parse(new String[]{"14:56:30"})).isInstanceOf(DPT10Value.class);
         assertThat(dpt.parse(new String[]{"FrIDaY", "14:56:30"})).isInstanceOf(DPT10Value.class);

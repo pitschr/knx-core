@@ -61,7 +61,7 @@ class DPT9Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT9.TEMPERATURE;
         assertThat(dpt.parse(new byte[]{0x44, 0x55})).isInstanceOf(DPT9Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xE6, (byte) 0xBB})).isInstanceOf(DPT9Value.class);
@@ -69,7 +69,7 @@ class DPT9Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
         assertThat(dpt.parse(new String[]{"-671088.64"})).isInstanceOf(DPT9Value.class);
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT9Value.class);

@@ -61,7 +61,7 @@ class DPT3Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT3.CONTROL_BLINDS;
         assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT3Value.class);
         assertThat(dpt.parse(new byte[]{0x03})).isInstanceOf(DPT3Value.class);
@@ -70,7 +70,7 @@ class DPT3Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT3.CONTROL_BLINDS;
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT3Value.class);
         assertThat(dpt.parse(new String[]{"2"})).isInstanceOf(DPT3Value.class);

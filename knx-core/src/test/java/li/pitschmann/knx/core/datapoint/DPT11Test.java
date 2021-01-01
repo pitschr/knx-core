@@ -65,7 +65,7 @@ class DPT11Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT11.DATE;
         assertThat(dpt.parse(new byte[]{0x01, 0x01, 0x00})).isInstanceOf(DPT11Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0x1F, 0x0C, 0x63})).isInstanceOf(DPT11Value.class);
@@ -73,7 +73,7 @@ class DPT11Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT11.DATE;
         assertThat(dpt.parse(new String[]{"1990-01-01"})).isInstanceOf(DPT11Value.class);
         assertThat(dpt.parse(new String[]{"2089-12-31"})).isInstanceOf(DPT11Value.class);

@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT22Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT22Test implements DPTTest {
+class DPT22Test {
+    private static final BaseDataPointType<?>[] DATAPOINT_TYPES = new BaseDataPointType<?>[]{
+            DPT22.STATUS_DHW_CONTROLLER,
+            DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER,
+            DPT22.MEDIA,
+            DPT22.CHANNEL_ACTIVATION_16
+    };
 
-    @Override
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("DPT22 Constructor not instantiable")
+    void testConstructorNonInstantiable() {
+        TestHelpers.assertThatNotInstantiable(DPT22.class);
+    }
+
+    @Test
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         assertThat(DPT22.CHANNEL_ACTIVATION_16.getId()).isEqualTo("22.1010");
         assertThat(DPT22.CHANNEL_ACTIVATION_16.getDescription()).isEqualTo("Channel Activation for 16 channels");
 
@@ -44,78 +55,85 @@ public class DPT22Test implements DPTTest {
         assertThat(DPT22.MEDIA.getDescription()).isEqualTo("Media");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        final var dpt = DPT22.CHANNEL_ACTIVATION_16;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT22Value.ChannelActivation16.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT22Value.ChannelActivation16.class);
-        assertThat(dpt.of("0x00", "0x00")).isInstanceOf(DPT22Value.ChannelActivation16.class);
-        assertThat(dpt.of("0xFF", "0xFF")).isInstanceOf(DPT22Value.ChannelActivation16.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            // byte is supported for length == 2 only
+            assertThat(dpt.isCompatible(new byte[0])).isFalse();
+            assertThat(dpt.isCompatible(new byte[1])).isFalse();
+            assertThat(dpt.isCompatible(new byte[2])).isTrue();
+            assertThat(dpt.isCompatible(new byte[3])).isFalse();
+        }
     }
 
-    @Override
     @Test
-    public void testOf() {
-        // DHW Controller Status (1010 1001 = 0xA9)
-        DPT22.StatusDHWController statusDHWControllerDPT = DPT22.STATUS_DHW_CONTROLLER;
-        DPT22Value.StatusDHWController statusDHWControllerDPV = statusDHWControllerDPT.of(true, false, false, true, false, true, false, true);
-        assertThat(statusDHWControllerDPT.of((byte) 0x00, (byte) 0xA9)).isEqualTo(statusDHWControllerDPV);
-        assertThat(statusDHWControllerDPT.of(true, false, false, true, false, true, false, true)).isEqualTo(statusDHWControllerDPV);
-        assertThat(statusDHWControllerDPT.toByteArray(true, false, false, true, false, true, false, true)).containsExactly(0x00, 0xA9);
-        assertThat(statusDHWControllerDPV.toByteArray()).containsExactly(0x00, 0xA9);
-        assertThatThrownBy(() -> statusDHWControllerDPT.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            // String is not supported -> always false
+            for (int i = 0; i < 10; i++) {
+                assertThat(dpt.isCompatible(new String[i])).isFalse();
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            final var dataPointValue = dpt.parse(new byte[]{0x00});
+            assertThat(dataPointValue).isNotNull();
+            assertThat(dataPointValue.getClass().getName()).startsWith(DPT22Value.class.getName());
+        }
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            // parse for string not supported
+            assertThatThrownBy(() -> dpt.parse(new String[0])).isInstanceOf(UnsupportedOperationException.class);
+        }
+    }
+
+    @Test
+    @DisplayName("Test #of(..)")
+    void testOf() {
+        // DHW Controller Status (0000 0000 1010 1001 = 0x00 0xA9)
+        assertThat(DPT22.STATUS_DHW_CONTROLLER.of(true, false, false, true, false, true, false, true))
+                .isInstanceOf(DPT22Value.StatusDHWController.class);
 
         // Room Heating / Cooling Controller Status (0100 1001 1011 0011 = 0x49 0xB3)
-        DPT22.StatusRoomHeatinCoolingController statusRoomHeatingCoolingControllerDPT = DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER;
-        DPT22Value.StatusRoomHeatingCoolingController statusRoomHeatingCoolingControllerDPV = statusRoomHeatingCoolingControllerDPT.of(true, true,
-                false, false, true, true, false, true, true, false, false, true, false, false, true);
-        assertThat(statusRoomHeatingCoolingControllerDPT.of((byte) 0x49, (byte) 0xB3)).isEqualTo(statusRoomHeatingCoolingControllerDPV);
-        assertThat(statusRoomHeatingCoolingControllerDPT.of(true, true, false, false, true, true, false, true, true, false, false, true, false,
-                false, true)).isEqualTo(statusRoomHeatingCoolingControllerDPV);
-        assertThat(statusRoomHeatingCoolingControllerDPT.toByteArray(true, true, false, false, true, true, false, true, true, false, false, true,
-                false, false, true)).containsExactly(0x49, 0xB3);
-        assertThat(statusRoomHeatingCoolingControllerDPV.toByteArray()).containsExactly(0x49, 0xB3);
-        assertThatThrownBy(() -> statusRoomHeatingCoolingControllerDPT.of(new byte[1]))
-                .isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER.of(true, true, false, false, true, true, false, true, true, false, false, true, false, false, true))
+                .isInstanceOf(DPT22Value.StatusRoomHeatingCoolingController.class);
 
-        // Media (0000 0110 = 0x06)
-        DPT22.Media mediaDPT = DPT22.MEDIA;
-        DPT22Value.Media mediaDPV = mediaDPT.of(true, true, false, false);
-        assertThat(mediaDPT.of((byte) 0x00, (byte) 0x06)).isEqualTo(mediaDPV);
-        assertThat(mediaDPT.of(true, true, false, false)).isEqualTo(mediaDPV);
-        assertThat(mediaDPT.toByteArray(true, true, false, false)).containsExactly(0x00, 0x06);
-        assertThat(mediaDPV.toByteArray()).containsExactly(0x00, 0x06);
-        assertThatThrownBy(() -> mediaDPT.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        // Media (0000 0000 0000 0110 = 0x00 0x06)
+        assertThat(DPT22.MEDIA.of(true, true, false, false))
+                .isInstanceOf(DPT22Value.Media.class);
 
         // 16 Channel Activation (1001 1010 0100 0010 = 0x9A 0x42)
-        DPT22.ChannelActivation16 channel16DPT = DPT22.CHANNEL_ACTIVATION_16;
-        DPT22Value.ChannelActivation16 channel16DPV = channel16DPT.of(false, true, false, false, false, false, true, false, false, true, false,
-                true, true, false, false, true);
-        assertThat(channel16DPT.of((byte) 0x9A, (byte) 0x42)).isEqualTo(channel16DPV);
-        assertThat(channel16DPT.of(false, true, false, false, false, false, true, false, false, true, false, true, true, false, false, true))
-                .isEqualTo(channel16DPV);
-        assertThat(channel16DPT.toByteArray(false, true, false, false, false, false, true, false, false, true, false, true, true, false, false, true))
-                .containsExactly(0x9A, 0x42);
-        assertThat(channel16DPV.toByteArray()).containsExactly(0x9A, 0x42);
-        assertThatThrownBy(() -> channel16DPT.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT22.CHANNEL_ACTIVATION_16.of(false, true, false, false, false, false, true, false, false, true, false, true, true, false, false, true))
+                .isInstanceOf(DPT22Value.ChannelActivation16.class);
     }
 
-    /**
-     * Test constructor of {@link DPT22}
-     */
     @Test
-    @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(DPT22.class);
+    @DisplayName("Test #toByteArray(..)")
+    void testToByteArray() {
+        // DHW Controller Status (0000 0000 1010 1001 = 0x00 0xA9)
+        assertThat(DPT22.STATUS_DHW_CONTROLLER.toByteArray(true, false, false, true, false, true, false, true))
+                .containsExactly(0x00, 0xA9);
+
+        // Room Heating / Cooling Controller Status (0100 1001 1011 0011 = 0x49 0xB3)
+        assertThat(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER.toByteArray(true, true, false, false, true, true, false, true, true, false, false, true, false, false, true))
+                .containsExactly(0x49, 0xB3);
+
+        // Media (0000 0000 0000 0110 = 0x00 0x06)
+        assertThat(DPT22.MEDIA.toByteArray(true, true, false, false))
+                .containsExactly(0x00, 0x06);
+
+        // 16 Channel Activation (1001 1010 0100 0010 = 0x9A 0x42)
+        assertThat(DPT22.CHANNEL_ACTIVATION_16.toByteArray(false, true, false, false, false, false, true, false, false, true, false, true, true, false, false, true))
+                .containsExactly(0x9A, 0x42);
     }
 }

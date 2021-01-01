@@ -74,7 +74,7 @@ class DPT19Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT19.DATE_TIME;
         // no day, 1900-01-01 00:00:00
         assertThat(dpt.parse(new byte[]{0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT19Value.class);
@@ -88,7 +88,7 @@ class DPT19Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT19.DATE_TIME;
         // no day, 1900-01-01 00:00:00
         assertThat(dpt.of("1900-01-01", "00:00:00")).isInstanceOf(DPT19Value.class);

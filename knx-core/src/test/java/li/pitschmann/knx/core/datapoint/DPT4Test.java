@@ -66,7 +66,7 @@ class DPT4Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT4.ASCII;
         assertThat(dpt.parse(new byte[]{0x61})).isInstanceOf(DPT4Value.class);
         assertThat(dpt.parse(new byte[]{0x62})).isInstanceOf(DPT4Value.class);
@@ -74,7 +74,7 @@ class DPT4Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT4.ASCII;
         assertThat(dpt.parse(new String[]{"a"})).isInstanceOf(DPT4Value.class);
         assertThat(dpt.parse(new String[]{"z"})).isInstanceOf(DPT4Value.class);

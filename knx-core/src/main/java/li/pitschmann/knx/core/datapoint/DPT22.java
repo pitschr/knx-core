@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT22Value;
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
 /**
  * Data Point Type 22 for 16-Bits flagged messages
@@ -139,14 +140,25 @@ public final class DPT22 {
         throw new AssertionError("Do not touch me!");
     }
 
-    public static final class StatusDHWController extends BaseDataPointType<DPT22Value.StatusDHWController> {
-        private StatusDHWController() {
-            super("DHW Controller Status");
+    /**
+     * Internal Data Point Type for {@link DPT22}
+     *
+     * @param <V>
+     */
+    private static abstract class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
+        private InternalDataPointType(final String description) {
+            super(description);
         }
 
         @Override
-        protected boolean isCompatible(final byte[] bytes) {
+        protected final boolean isCompatible(byte[] bytes) {
             return bytes.length == 2;
+        }
+    }
+
+    public static final class StatusDHWController extends InternalDataPointType<DPT22Value.StatusDHWController> {
+        private StatusDHWController() {
+            super("DHW Controller Status");
         }
 
         @Override
@@ -169,14 +181,9 @@ public final class DPT22 {
         }
     }
 
-    public static final class StatusRoomHeatinCoolingController extends BaseDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
+    public static final class StatusRoomHeatinCoolingController extends InternalDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
         private StatusRoomHeatinCoolingController() {
             super("Room Heating / Cooling Controller Status");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 2;
         }
 
         @Override
@@ -205,14 +212,9 @@ public final class DPT22 {
         }
     }
 
-    public static final class Media extends BaseDataPointType<DPT22Value.Media> {
+    public static final class Media extends InternalDataPointType<DPT22Value.Media> {
         private Media() {
             super("Media");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 2;
         }
 
         @Override
@@ -230,14 +232,9 @@ public final class DPT22 {
         }
     }
 
-    public static final class ChannelActivation16 extends BaseDataPointType<DPT22Value.ChannelActivation16> {
+    public static final class ChannelActivation16 extends InternalDataPointType<DPT22Value.ChannelActivation16> {
         private ChannelActivation16() {
             super("Channel Activation for 16 channels");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 2;
         }
 
         @Override

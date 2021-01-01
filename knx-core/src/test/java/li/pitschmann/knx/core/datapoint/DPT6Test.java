@@ -60,7 +60,7 @@ class DPT6Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT6.VALUE_1_OCTET_COUNT;
         assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT6Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xFF})).isInstanceOf(DPT6Value.class);
@@ -68,7 +68,7 @@ class DPT6Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT6.VALUE_1_OCTET_COUNT;
         assertThat(dpt.parse(new String[]{"45"})).isInstanceOf(DPT6Value.class);
         assertThat(dpt.parse(new String[]{"-128"})).isInstanceOf(DPT6Value.class);

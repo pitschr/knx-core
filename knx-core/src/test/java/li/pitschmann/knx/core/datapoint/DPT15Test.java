@@ -65,7 +65,7 @@ class DPT15Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         final var dpt = DPT15.ACCESS_DATA;
         // parse with only 4-bytes supported
         assertThat(dpt.parse(new byte[4])).isInstanceOf(DPT15Value.class);
@@ -73,7 +73,7 @@ class DPT15Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         final var dpt = DPT15.ACCESS_DATA;
         // parse for string not supported
         assertThatThrownBy(() -> dpt.parse(new String[0])).isInstanceOf(UnsupportedOperationException.class);

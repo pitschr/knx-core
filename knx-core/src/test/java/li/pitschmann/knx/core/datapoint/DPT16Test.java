@@ -61,7 +61,7 @@ class DPT16Test {
 
     @Test
     @DisplayName("Test #parse(byte[])")
-    public void testByteParse() {
+    void testByteParse() {
         // ASCII characters only
         assertThat(DPT16.ASCII.parse(new byte[]{'H', 'a', 'l', 'l', 'o'})).isInstanceOf(DPT16Value.class);
         assertThat(DPT16.ASCII.parse(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
@@ -74,7 +74,7 @@ class DPT16Test {
 
     @Test
     @DisplayName("Test #parse(String[])")
-    public void testStringParse() {
+    void testStringParse() {
         // ASCII characters only
         assertThat(DPT16.ASCII.parse(new String[]{"Hallo"})).isInstanceOf(DPT16Value.class);
         assertThat(DPT16.ASCII.parse(new String[]{"Hello World!!!"})).isInstanceOf(DPT16Value.class);

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT21Value;
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
 /**
  * Data Point Type 21 for 8-Bits flagged messages
@@ -287,14 +288,25 @@ public final class DPT21 {
         throw new AssertionError("Do not touch me!");
     }
 
-    public static final class GeneralStatus extends BaseDataPointType<DPT21Value.GeneralStatus> {
-        private GeneralStatus() {
-            super("General Status");
+    /**
+     * Internal Data Point Type for {@link DPT21}
+     *
+     * @param <V>
+     */
+    private static abstract class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
+        private InternalDataPointType(final String description) {
+            super(description);
         }
 
         @Override
-        protected boolean isCompatible(final byte[] bytes) {
+        protected final boolean isCompatible(byte[] bytes) {
             return bytes.length == 1;
+        }
+    }
+
+    public static final class GeneralStatus extends InternalDataPointType<DPT21Value.GeneralStatus> {
+        private GeneralStatus() {
+            super("General Status");
         }
 
         @Override
@@ -313,14 +325,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class DeviceControl extends BaseDataPointType<DPT21Value.DeviceControl> {
+    public static final class DeviceControl extends InternalDataPointType<DPT21Value.DeviceControl> {
         private DeviceControl() {
             super("Device Control");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -338,14 +345,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class ForcingSignal extends BaseDataPointType<DPT21Value.ForcingSignal> {
+    public static final class ForcingSignal extends InternalDataPointType<DPT21Value.ForcingSignal> {
         private ForcingSignal() {
             super("Forcing Signal");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -368,14 +370,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class ForcingSignalCooling extends BaseDataPointType<DPT21Value.ForcingSignalCooling> {
+    public static final class ForcingSignalCooling extends InternalDataPointType<DPT21Value.ForcingSignalCooling> {
         private ForcingSignalCooling() {
             super("Forcing Signal Cooling");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -392,14 +389,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusRoomHeatingController extends BaseDataPointType<DPT21Value.StatusRoomHeatingController> {
+    public static final class StatusRoomHeatingController extends InternalDataPointType<DPT21Value.StatusRoomHeatingController> {
         private StatusRoomHeatingController() {
             super("Room Heating Controller Status");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -422,14 +414,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusSolarDHWController extends BaseDataPointType<DPT21Value.StatusSolarDHWController> {
+    public static final class StatusSolarDHWController extends InternalDataPointType<DPT21Value.StatusSolarDHWController> {
         private StatusSolarDHWController() {
             super("Solar DHW Controller Status");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -447,14 +434,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class FuelTypeSet extends BaseDataPointType<DPT21Value.FuelTypeSet> {
+    public static final class FuelTypeSet extends InternalDataPointType<DPT21Value.FuelTypeSet> {
         private FuelTypeSet() {
             super("Fuel Type Set");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -471,14 +453,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusRoomCoolingController extends BaseDataPointType<DPT21Value.StatusRoomCoolingController> {
+    public static final class StatusRoomCoolingController extends InternalDataPointType<DPT21Value.StatusRoomCoolingController> {
         private StatusRoomCoolingController() {
             super("Room Cooling Controller Status");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -495,14 +472,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusVentilationController extends BaseDataPointType<DPT21Value.StatusVentilationController> {
+    public static final class StatusVentilationController extends InternalDataPointType<DPT21Value.StatusVentilationController> {
         private StatusVentilationController() {
             super("Ventilation Controller Status");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -520,14 +492,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class LightingActuatorErrorInfo extends BaseDataPointType<DPT21Value.LightingActuatorErrorInfo> {
+    public static final class LightingActuatorErrorInfo extends InternalDataPointType<DPT21Value.LightingActuatorErrorInfo> {
         private LightingActuatorErrorInfo() {
             super("Lighting Actuator Error Information");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -546,14 +513,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class RadioFrequencyCommunicationModeInfo extends BaseDataPointType<DPT21Value.RadioFrequencyCommunicationModeInfo> {
+    public static final class RadioFrequencyCommunicationModeInfo extends InternalDataPointType<DPT21Value.RadioFrequencyCommunicationModeInfo> {
         private RadioFrequencyCommunicationModeInfo() {
             super("Radio Frequency Communication Mode Info");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -595,14 +557,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class SecurityReport extends BaseDataPointType<DPT21Value.SecurityReport> {
+    public static final class SecurityReport extends InternalDataPointType<DPT21Value.SecurityReport> {
         private SecurityReport() {
             super("Security Report");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
@@ -619,14 +576,9 @@ public final class DPT21 {
         }
     }
 
-    public static final class ChannelActivation8 extends BaseDataPointType<DPT21Value.ChannelActivation8> {
+    public static final class ChannelActivation8 extends InternalDataPointType<DPT21Value.ChannelActivation8> {
         private ChannelActivation8() {
             super("Channel Activation for 8 channels");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 1;
         }
 
         @Override
