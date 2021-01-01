@@ -58,12 +58,9 @@ class DPT15Test {
     void testStringCompatibility() {
         final var dpt = DPT15.ACCESS_DATA;
         // String is not supported -> always false
-        assertThat(dpt.isCompatible(new String[0])).isFalse();
-        assertThat(dpt.isCompatible(new String[1])).isFalse();
-        assertThat(dpt.isCompatible(new String[2])).isFalse();
-        assertThat(dpt.isCompatible(new String[3])).isFalse();
-        assertThat(dpt.isCompatible(new String[4])).isFalse();
-        assertThat(dpt.isCompatible(new String[5])).isFalse();
+        for (int i = 0; i < 10; i++) {
+            assertThat(dpt.isCompatible(new String[i])).isFalse();
+        }
     }
 
     @Test

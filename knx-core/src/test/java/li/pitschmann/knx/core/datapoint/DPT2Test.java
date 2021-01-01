@@ -52,7 +52,7 @@ class DPT2Test {
     @DisplayName("Test #of(String[])")
     void testStringCompatibility() {
         final var dpt = DPT2.SWITCH_CONTROL;
-        // String is supported for length == 1 or 2 only
+        // String is supported for length == [1, 2] only
         assertThat(dpt.isCompatible(new String[0])).isFalse();
         assertThat(dpt.isCompatible(new String[1])).isTrue();
         assertThat(dpt.isCompatible(new String[2])).isTrue();

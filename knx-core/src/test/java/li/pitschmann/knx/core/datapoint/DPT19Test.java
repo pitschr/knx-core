@@ -19,10 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT19Value;
-import li.pitschmann.knx.core.datapoint.value.DPT19Value.Flags;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,111 +27,114 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT19}
  *
  * @author PITSCHR
  */
-public class DPT19Test implements DPTTest {
-    private static final DPT19 DPT_DATE_TIME = DPT19.DATE_TIME;
-
-    @Override
+class DPT19Test {
     @Test
-    public void testIdAndDescription() {
-        assertThat(DPT_DATE_TIME.getId()).isEqualTo("19.001");
-        assertThat(DPT_DATE_TIME.getDescription()).isEqualTo("Date & Time");
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
+        final var dpt = DPT19.DATE_TIME;
+        assertThat(dpt.getId()).isEqualTo("19.001");
+        assertThat(dpt.getDescription()).isEqualTo("Date & Time");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        final var dpt = DPT_DATE_TIME;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[7])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[9])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("a", "b", "c", "d", "e"))
-                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("9999-99-99", "99:99:99"))
-                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of((byte) 0xff, (byte) 0x0c, (byte) 0x1f, (byte) 0xf7, (byte) 0x3b, (byte) 0x3b, (byte) 0xff, (byte) 0x80)).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of("0x00", "0x01", "0x01", "0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of("0xff", "0x0c", "0x1f", "0xf7", "0x3b", "0x3b", "0xff", "0x80")).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of(LocalDate.now(), LocalTime.now())).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of(LocalDate.now(), LocalTime.now(), null)).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of(DayOfWeek.WEDNESDAY, LocalDate.now(), LocalTime.now(),
-                new Flags(true, true, true, true, false, false, false, false, false))).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of("2010-03-04", "14:56:30")).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of("FrIDaY", "14:56:30", "2010-03-04")).isInstanceOf(DPT19Value.class);
-        assertThat(dpt.of("FrIDaY", "14:56:30", "2010-03-04", "0x33 44")).isInstanceOf(DPT19Value.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        final var dpt = DPT19.DATE_TIME;
+        // byte is supported for length == 8 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
+        assertThat(dpt.isCompatible(new byte[4])).isFalse();
+        assertThat(dpt.isCompatible(new byte[5])).isFalse();
+        assertThat(dpt.isCompatible(new byte[6])).isFalse();
+        assertThat(dpt.isCompatible(new byte[7])).isFalse();
+        assertThat(dpt.isCompatible(new byte[8])).isTrue();
+        assertThat(dpt.isCompatible(new byte[9])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT19.DATE_TIME;
+        // String is supported for length == [1, 4] only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue(); // HH:MM:SS
+        assertThat(dpt.isCompatible(new String[2])).isTrue(); // DDD, HH:MM:SS
+        assertThat(dpt.isCompatible(new String[3])).isTrue(); // DDD, YYYY-MM-DD HH:MM:SS
+        assertThat(dpt.isCompatible(new String[4])).isTrue(); // DDD, YYYY-MM-DD HH:MM:SS Flags
+        assertThat(dpt.isCompatible(new String[5])).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT19.DATE_TIME;
         // no day, 1900-01-01 00:00:00
-        this.assertDPT(new byte[]{0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00}, null, LocalDate.of(1900, 1, 1), LocalTime.of(0, 0, 0),
-                new Flags(false, false, false, false, false, false, false, false, false));
+        assertThat(dpt.parse(new byte[]{0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT19Value.class);
+        // monday, 1950-02-03 6:15:20
+        assertThat(dpt.parse(new byte[]{0x32, 0x02, 0x03, 0x26, 0x0F, 0x14, (byte) 0xAA, (byte) 0x80})).isInstanceOf(DPT19Value.class);
+        // wednesday, 2000-04-05 12:30:45
+        assertThat(dpt.parse(new byte[]{0x64, 0x04, 0x05, 0x6C, 0x1E, 0x2D, 0x55, 0x00})).isInstanceOf(DPT19Value.class);
+        // sunday, 2155-12-31 23:59:59
+        assertThat(dpt.parse(new byte[]{(byte) 0xFF, 0x0C, 0x1F, (byte) 0xF7, 0x3B, 0x3B, (byte) 0xFF, (byte) 0x80})).isInstanceOf(DPT19Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT19.DATE_TIME;
+        // no day, 1900-01-01 00:00:00
+        assertThat(dpt.of("1900-01-01", "00:00:00")).isInstanceOf(DPT19Value.class);
+        // monday, 1950-02-03 6:15:20
+        assertThat(dpt.of("Monday", "1950-02-03", "06:15:20")).isInstanceOf(DPT19Value.class);
+        // wednesday, 2000-04-05 12:30:45
+        assertThat(dpt.of("Wednesday", "2000-04-05", "12:30:45")).isInstanceOf(DPT19Value.class);
+        // sunday, 2155-12-31 23:59:59
+        assertThat(dpt.of("Sunday", "2155-12-31", "23:59:59")).isInstanceOf(DPT19Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(DayOfWeek, LocalDate, LocalTime)")
+    void testOf() {
+        final var dpt = DPT19.DATE_TIME;
+        // no day, 1900-01-01 00:00:00
+        assertThat(dpt.of(null, LocalDate.of(1900, 1, 1), LocalTime.of(0, 0, 0))).isInstanceOf(DPT19Value.class);
+        // monday, 1950-02-03 6:15:20
+        assertThat(dpt.of(DayOfWeek.MONDAY, LocalDate.of(1950, 2, 3), LocalTime.of(6, 15, 20))).isInstanceOf(DPT19Value.class);
+        // wednesday, 2000-04-05 12:30:45
+        assertThat(dpt.of(DayOfWeek.WEDNESDAY, LocalDate.of(2000, 4, 5), LocalTime.of(12, 30, 45))).isInstanceOf(DPT19Value.class);
+        // sunday, 2155-12-31 23:59:59
+        assertThat(dpt.of(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 31), LocalTime.of(23, 59, 59))).isInstanceOf(DPT19Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(DayOfWeek, LocalDate, LocalTime)")
+    void testToByteArray() {
+        final var dpt = DPT19.DATE_TIME;
+        // no day, 1900-01-01 00:00:00
+        assertThat(dpt.toByteArray(null, LocalDate.of(1900, 1, 1), LocalTime.of(0, 0, 0)))
+                .containsExactly(0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00);
         // monday, 1950-02-03 6:15:20
         // monday => 001. ....
         // hour 6 => ...0 0110
-        this.assertDPT(new byte[]{0x32, 0x02, 0x03, 0x26, 0x0f, 0x14, (byte) 0xAA, (byte) 0x80}, DayOfWeek.MONDAY, LocalDate.of(1950, 2, 3),
-                LocalTime.of(6, 15, 20), new Flags(true, false, true, false, true, false, true, false, true));
+        assertThat(dpt.toByteArray(DayOfWeek.MONDAY, LocalDate.of(1950, 2, 3), LocalTime.of(6, 15, 20)))
+                .containsExactly(0x32, 0x02, 0x03, 0x26, 0x0F, 0x14, 0x00, 0x00);
         // wednesday, 2000-04-05 12:30:45
         // wednesday => 011. ....
         // hour 12 ===> ...0 1100
-        this.assertDPT(new byte[]{0x64, 0x04, 0x05, 0x6c, 0x1e, 0x2d, 0x55, 0x00}, DayOfWeek.WEDNESDAY, LocalDate.of(2000, 4, 5),
-                LocalTime.of(12, 30, 45), new Flags(false, true, false, true, false, true, false, true, false));
+        assertThat(dpt.toByteArray(DayOfWeek.WEDNESDAY, LocalDate.of(2000, 4, 5), LocalTime.of(12, 30, 45)))
+                .containsExactly(0x64, 0x04, 0x05, 0x6C, 0x1E, 0x2D, 0x00, 0x00);
         // sunday, 2155-12-31 23:59:59
         // sunday ==> 111. ....
         // hour 23 => ...1 0111
-        this.assertDPT(new byte[]{(byte) 0xff, 0x0c, 0x1f, (byte) 0xf7, 0x3b, 0x3b, (byte) 0xff, (byte) 0x80}, DayOfWeek.SUNDAY,
-                LocalDate.of(2155, 12, 31), LocalTime.of(23, 59, 59), new Flags(true, true, true, true, true, true, true, true, true));
-    }
-
-    @Test
-    @DisplayName("Test #of(..) and #toByteArray(..) without flags, no-flags")
-    public void testToOfAndByteArrayWithNoFlags() {
-        // reference value
-        final var dayOfWeek = DayOfWeek.WEDNESDAY;
-        final var date = LocalDate.of(2019, 10, 21);
-        final var time = LocalTime.of(13, 45, 47);
-        final var flags = new Flags(false, false, false, false, false, false, false, false, false);
-        final var dptValue = DPT_DATE_TIME.of(dayOfWeek, date, time, flags);
-
-        // verify
-        assertThat(DPT_DATE_TIME.of(dayOfWeek, date, time, Flags.NO_FLAGS)).isEqualTo(dptValue);
-        assertThat(DPT_DATE_TIME.toByteArray(dayOfWeek, date, time, Flags.NO_FLAGS)).isEqualTo(dptValue.toByteArray());
-
-        assertThat(DPT_DATE_TIME.of(dayOfWeek, date, time)).isEqualTo(dptValue);
-        assertThat(DPT_DATE_TIME.toByteArray(dayOfWeek, date, time)).isEqualTo(dptValue.toByteArray());
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code bValueArray}, {@code dayOfWeek} and {@code localTime}
-     *
-     * @param bValueArray byte array with values
-     * @param dayOfWeek   day of week
-     * @param date        local date
-     * @param time        local time
-     */
-    private void assertDPT(final byte[] bValueArray, final DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
-        final var dpt = DPT_DATE_TIME;
-        final var dptValue = dpt.of(dayOfWeek, date, time, flags);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-        // assert specific DPT19
-        assertThat(dpt.of(new String[]{String.valueOf(dayOfWeek), String.valueOf(date), String.valueOf(time),
-                ByteFormatter.formatHexAsString(flags.getAsBytes())})).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(dayOfWeek, date, time, flags)).containsExactly(bValueArray);
+        assertThat(dpt.toByteArray(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 31), LocalTime.of(23, 59, 59)))
+                .containsExactly(0xFF, 0x0C, 0x1F, 0xF7, 0x3B, 0x3B, 0x00, 0x00);
     }
 }

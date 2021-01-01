@@ -19,89 +19,74 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT17Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT17}
  *
  * @author PITSCHR
  */
-public class DPT17Test implements DPTTest {
-    @Override
+class DPT17Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT17.SCENE_NUMBER;
-
         assertThat(dpt.getId()).isEqualTo("17.001");
         assertThat(dpt.getDescription()).isEqualTo("Scene Number");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT17.SCENE_NUMBER;
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+    }
 
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+    @Test
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT17.SCENE_NUMBER;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
 
-        // OK
-        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.of((byte) 0x3F)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.of("0x00")).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.of("0x3F")).isInstanceOf(DPT17Value.class);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT17.SCENE_NUMBER;
+        assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.parse(new byte[]{0x3F})).isInstanceOf(DPT17Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT17.SCENE_NUMBER;
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT17Value.class);
+        assertThat(dpt.parse(new String[]{"63"})).isInstanceOf(DPT17Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(int)")
+    void testOf() {
+        final var dpt = DPT17.SCENE_NUMBER;
         assertThat(dpt.of(0)).isInstanceOf(DPT17Value.class);
         assertThat(dpt.of(63)).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.of("0")).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.of("63")).isInstanceOf(DPT17Value.class);
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #toByteArray(int)")
+    void testToByteArray() {
         final var dpt = DPT17.SCENE_NUMBER;
-
-        // Scene Number: 0
-        this.assertDPT(dpt, (byte) 0x00, 0);
-        // Scene Number: 21
-        this.assertDPT(dpt, (byte) 0x15, 21);
-        // Scene Number: 42
-        this.assertDPT(dpt, (byte) 0x2A, 42);
-        // Scene Number: 63
-        this.assertDPT(dpt, (byte) 0x3F, 63);
-    }
-
-    /**
-     * Invalid Test {@link DPT17}
-     */
-    @Test
-    public void testOfInvalid() {
-        // wrong value
-        assertThat(DPT17.SCENE_NUMBER.of((byte) 0x00)).isNotEqualTo(DPT17.SCENE_NUMBER.of((byte) 0x01));
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValue} and {@code intValue}
-     *
-     * @param dpt      data point type
-     * @param bValue   byte value
-     * @param intValue integer value
-     */
-    private void assertDPT(final DPT17 dpt, final byte bValue, final int intValue) {
-        final var dptValue = dpt.of(intValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
-        // assert specific DPT17
-        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(intValue)).containsExactly(bValue);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00);
+        assertThat(dpt.toByteArray(63)).containsExactly(0x3F);
     }
 }

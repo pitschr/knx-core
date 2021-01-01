@@ -19,96 +19,83 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT18Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT18}
  *
  * @author PITSCHR
  */
-public class DPT18Test implements DPTTest {
-    @Override
+class DPT18Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT18.SCENE_CONTROL;
-
         assertThat(dpt.getId()).isEqualTo("18.001");
         assertThat(dpt.getDescription()).isEqualTo("Scene Control");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT18.SCENE_CONTROL;
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+    }
 
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("64")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+    @Test
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT18.SCENE_CONTROL;
+        // String is supported for length == [1, 2] only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isTrue();
+        assertThat(dpt.isCompatible(new String[3])).isFalse();
+    }
 
-        // OK
-        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of("0x00")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of("0xFF")).isInstanceOf(DPT18Value.class);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT18.SCENE_CONTROL;
+        assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.parse(new byte[]{0x3F})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0x80})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xBF})).isInstanceOf(DPT18Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT18.SCENE_CONTROL;
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.parse(new String[]{"63"})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.parse(new String[]{"controlled", "0"})).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.parse(new String[]{"controlled", "63"})).isInstanceOf(DPT18Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(boolean, int)")
+    void testOf() {
+        final var dpt = DPT18.SCENE_CONTROL;
         assertThat(dpt.of(false, 0)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of(false, 63)).isInstanceOf(DPT18Value.class);
+        assertThat(dpt.of(true, 0)).isInstanceOf(DPT18Value.class);
         assertThat(dpt.of(true, 63)).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of("0")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of("controlled", "1")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of("62")).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.of("controlled", "63")).isInstanceOf(DPT18Value.class);
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #toByteArray(boolean, int)")
+    void testToByteArray() {
         final var dpt = DPT18.SCENE_CONTROL;
-
-        // No Control, Scene Number: 0
-        this.assertDPT(dpt, (byte) 0x00, false, 0);
-        // Control, Scene Number: 21
-        this.assertDPT(dpt, (byte) 0x95, true, 21);
-        // No Control, Scene Number: 42
-        this.assertDPT(dpt, (byte) 0x2A, false, 42);
-        // Control, Scene Number: 63
-        this.assertDPT(dpt, (byte) 0xBF, true, 63);
-    }
-
-    /**
-     * Invalid Test {@link DPT18}
-     */
-    @Test
-    public void testOfInvalid() {
-        // wrong value
-        assertThat(DPT18.SCENE_CONTROL.of((byte) 0x00)).isNotEqualTo(DPT18.SCENE_CONTROL.of((byte) 0x01));
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValue}, {@code controlled} and {@code intValue}
-     *
-     * @param dpt        data point type
-     * @param bValue     byte value
-     * @param controlled controlled
-     * @param intValue   integer value
-     */
-    private void assertDPT(final DPT18 dpt, final byte bValue, final boolean controlled, final int intValue) {
-        final var dptValue = dpt.of(controlled, intValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, new byte[]{bValue}, dptValue);
-        // assert specific DPT18
-        if (controlled) {
-            assertThat(dpt.of("controlled", String.valueOf(intValue))).isEqualTo(dptValue);
-        } else {
-            assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
-        }
-        assertThat(dpt.toByteArray(controlled, intValue)).containsExactly(bValue);
+        assertThat(dpt.toByteArray(false, 0)).containsExactly(0x00);
+        assertThat(dpt.toByteArray(false, 63)).containsExactly(0x3F);
+        assertThat(dpt.toByteArray(true, 0)).containsExactly(0x80);
+        assertThat(dpt.toByteArray(true, 63)).containsExactly(0xBF);
     }
 }
