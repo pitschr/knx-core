@@ -23,7 +23,7 @@
     <packaging>pom</packaging>
     <groupId>li.pitschmann</groupId>
     <artifactId>knx-link</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>KNX Link</name>
     <description>Project for KNX Link</description>
     <url>https://github.pitschmann.li</url>
@@ -60,7 +60,7 @@
         <url>https://github.com/pitschr/knx-link</url>
         <connection>scm:git:https://github.com/pitschr/knx-link</connection>
         <developerConnection>scm:git:https://github.com/pitschr/knx-link</developerConnection>
-        <tag>HEAD</tag>
+        <tag>knx-link-0.1.0</tag>
     </scm>
 
     <!-- Distribution (Maven Repository by Sonatype) -->
