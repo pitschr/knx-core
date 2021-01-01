@@ -107,10 +107,6 @@ public final class DPT11 extends BaseDataPointType<DPT11Value> {
         return new DPT11Value(date);
     }
 
-    public DPT11Value of(final int year, final int month, final int dayOfMonth) {
-        return of(LocalDate.of(year, month, dayOfMonth));
-    }
-
     public byte[] toByteArray(final LocalDate date) {
         return DPT11Value.toByteArray(date);
     }

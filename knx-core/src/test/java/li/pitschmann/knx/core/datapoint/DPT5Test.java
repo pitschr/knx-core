@@ -64,7 +64,7 @@ class DPT5Test {
     public void testByteParse() {
         final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.parse(new byte[]{0x78})).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.parse(new byte[]{(byte)0xEA})).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xEA})).isInstanceOf(DPT5Value.class);
     }
 
     @Test
@@ -72,8 +72,6 @@ class DPT5Test {
     public void testStringParse() {
         final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.parse(new String[]{"17"})).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.parse(new String[]{"43"})).isInstanceOf(DPT5Value.class);
         assertThat(dpt.parse(new String[]{"255"})).isInstanceOf(DPT5Value.class);
     }
 

@@ -19,98 +19,78 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT9Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT9}
  *
  * @author PITSCHR
  */
-public class DPT9Test implements DPTTest {
-    @Override
+class DPT9Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT9.TEMPERATURE;
-
         assertThat(dpt.getId()).isEqualTo("9.001");
         assertThat(dpt.getDescription()).isEqualTo("Temperature (°C)");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        final var dpt = DPT9.TEMPERATURE;
+        // byte is supported for length == 2 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isTrue();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT9.TEMPERATURE;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT9.TEMPERATURE;
+        assertThat(dpt.parse(new byte[]{0x44, 0x55})).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xE6, (byte) 0xBB})).isInstanceOf(DPT9Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
         final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-671088.65")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("670760.97")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of(-671088.64)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of(670433.28)).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of("0x00", "0x00")).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of("0xFF", "0xFF")).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of("-671088.64")).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.of("670433.28")).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.parse(new String[]{"-671088.64"})).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.parse(new String[]{"670760.96"})).isInstanceOf(DPT9Value.class);
     }
 
-    @Override
     @Test
-    public void testOf() {
-        /*
-         * TEMPERATURE
-         */
-        final var dptTemperature = DPT9.TEMPERATURE;
-        // value: 0°C
-        this.assertInternal(dptTemperature, new byte[]{0x00, 0x00}, 0d);
-        // value: -273 (-272.96 because the precision is not so accurate)
-        // 0xa1 55 = -273.12
-        // 0xa1 56 = -272.96 <== most accurate one
-        // 0xa1 57 = -272.80
-        this.assertInternal(dptTemperature, new byte[]{(byte) 0xa1, (byte) 0x56}, -272.96d);
-        // value: 670433.28
-        this.assertInternal(dptTemperature, new byte[]{(byte) 0x7f, (byte) 0xfe}, 670433.28d);
-
-        /*
-         * POWER
-         */
-        final var dptPower = DPT9.POWER;
-        // value: 0 kW
-        this.assertInternal(dptPower, new byte[]{0x00, 0x00}, 0d);
-        // value: -671088.64 kW
-        this.assertInternal(dptPower, new byte[]{(byte) 0xf8, (byte) 0x00}, -671088.64d);
-        // value: 670433.28 kW
-        this.assertInternal(dptPower, new byte[]{(byte) 0x7f, (byte) 0xfe}, 670433.28d);
+    @DisplayName("Test #of(double)")
+    void testOf() {
+        final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
+        assertThat(dpt.of(-671088.64)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT9Value.class);
+        assertThat(dpt.of(670760.96)).isInstanceOf(DPT9Value.class);
     }
 
-    /**
-     * Asserts the DPT for given arguments {@code bValueArray} and {@code doubleValue}
-     *
-     * @param dpt         data point type
-     * @param bValueArray byte array with values
-     * @param doubleValue double value
-     */
-    private void assertInternal(final DPT9 dpt, final byte[] bValueArray, final double doubleValue) {
-        final var dptValue = dpt.of(doubleValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-
-        // assert specific DPT9
-        assertThat(dpt.of(String.valueOf(doubleValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(doubleValue)).containsExactly(bValueArray);
+    @Test
+    @DisplayName("Test #toByteArray(double)")
+    void testToByteArray() {
+        final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
+        assertThat(dpt.toByteArray(-671088.64)).containsExactly(0xF8, 0x00);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00);
+        assertThat(dpt.toByteArray(670760.96)).containsExactly(0x7F, 0xFF);
     }
 }

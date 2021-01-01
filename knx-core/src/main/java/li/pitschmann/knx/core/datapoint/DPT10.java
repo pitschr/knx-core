@@ -107,10 +107,6 @@ public final class DPT10 extends BaseDataPointType<DPT10Value> {
         return new DPT10Value(dayOfWeek, time);
     }
 
-    public DPT10Value of(final LocalTime time) {
-        return of(null, time);
-    }
-
     public DPT10Value of(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
         return new DPT10Value(dayOfWeek, time);
     }

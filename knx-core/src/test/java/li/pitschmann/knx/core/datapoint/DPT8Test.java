@@ -19,116 +19,94 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT8Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Function;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT8}
  *
  * @author PITSCHR
  */
-public class DPT8Test implements DPTTest {
-
-    @Override
+class DPT8Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-
         assertThat(dpt.getId()).isEqualTo("8.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 2-Octet Signed Count (pulses)");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-32769")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("32768")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00)).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of(-32768)).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of(32767)).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of("0x00", "0x00")).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of("0xFF", "0xFF")).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of("-32768")).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of("32767")).isInstanceOf(DPT8Value.class);
+        // byte is supported for length == 2 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isTrue();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
     }
 
-    /**
-     * Tests the {@link DPT8#getCalculationFunction()}
-     */
     @Test
-    public void testCalculation() {
-        // without calculation functions
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
+        assertThat(dpt.parse(new byte[]{0x22, 0x33})).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xF6, (byte) 0xCA})).isInstanceOf(DPT8Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
+        assertThat(dpt.parse(new String[]{"-32768"})).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.parse(new String[]{"32767"})).isInstanceOf(DPT8Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(int)")
+    void testOf() {
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
+        assertThat(dpt.of(-32768)).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.of(32767)).isInstanceOf(DPT8Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(int)")
+    void testToByteArray() {
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
+        assertThat(dpt.toByteArray(-32768)).containsExactly(0x80, 0x00);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00);
+        assertThat(dpt.toByteArray(32767)).containsExactly(0x7F, 0xFF);
+    }
+
+    @Test
+    @DisplayName("Test #getCalculationFunction()")
+    void testCalculationFunction() {
         assertThat(DPT8.VALUE_2_OCTET_COUNT.getCalculationFunction()).isNull();
 
-        // with calculation functions
-        /*
-         * PERCENT
-         */
-        final var dpt = DPT8.PERCENT;
-        assertThat(dpt.getCalculationFunction()).isInstanceOf(Function.class);
-        // value: 0%
-        assertThat(dpt.of(0).getSignedValue()).isEqualTo(0d);
-        // value: 327,67%
-        assertThat(dpt.of(32767).getSignedValue()).isEqualTo(327.67d);
-        // value: -327,68%
-        assertThat(dpt.of(-32768).getSignedValue()).isEqualTo(-327.68d);
-
-        /*
-         * DELTA_TIME_10MS / DELTA_TIME_100MS
-         */
-        // value: 327,67ms
-        assertThat(DPT8.DELTA_TIME_10MS.of(32767).getSignedValue()).isEqualTo(327.67d);
-        // value: 3276,7ms
-        assertThat(DPT8.DELTA_TIME_100MS.of(32767).getSignedValue()).isEqualTo(3276.7d);
-    }
-
-    @Override
-    @Test
-    public void testOf() {
-        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-
-        // value: 0
-        this.assertDPT(dpt, new byte[]{0x00, 0x00}, 0);
-        // value: 32767
-        this.assertDPT(dpt, new byte[]{(byte) 0x7f, (byte) 0xff}, 32767);
-        // value: -32768
-        this.assertDPT(dpt, new byte[]{(byte) 0x80, (byte) 0x00}, -32768);
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code intValue}
-     *
-     * @param dpt         data point type
-     * @param bValueArray byte array with values
-     * @param intValue    integer value
-     */
-    private void assertDPT(final DPT8 dpt, final byte[] bValueArray, final int intValue) {
-        final var dptValue = dpt.of(intValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-
-        // assert specific DPT8
-        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(intValue)).containsExactly(bValueArray);
-        assertThat(dptValue.getRawSignedValue()).isEqualTo(intValue);
+        // Delta Time Period in 10ms (-32768 = -327.68ms, 0 = 0ms, 32767 = 327.67ms)
+        final var dpt = DPT8.DELTA_TIME_10MS;
+        assertThat(dpt.getCalculationFunction()).isNotNull();
+        assertThat(dpt.of(-32768).getRawSignedValue()).isEqualTo(-32768);
+        assertThat(dpt.of(-32768).getSignedValue()).isEqualTo(-327.68);
+        assertThat(dpt.of(0).getRawSignedValue()).isZero();
+        assertThat(dpt.of(0).getSignedValue()).isZero();
+        assertThat(dpt.of(32767).getRawSignedValue()).isEqualTo(32767);
+        assertThat(dpt.of(32767).getSignedValue()).isEqualTo(327.67);
     }
 }
