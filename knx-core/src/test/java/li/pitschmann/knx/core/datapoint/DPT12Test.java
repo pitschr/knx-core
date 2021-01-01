@@ -19,85 +19,77 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT12Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT12}
  *
  * @author PITSCHR
  */
-public class DPT12Test implements DPTTest {
-    @Override
+class DPT12Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
-
         assertThat(dpt.getId()).isEqualTo("12.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 4-Octet Unsigned Count (pulses)");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        // byte is supported for length == 4 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
+        assertThat(dpt.isCompatible(new byte[4])).isTrue();
+        assertThat(dpt.isCompatible(new byte[5])).isFalse();
+    }
 
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[5])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("4294967296")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+    @Test
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
 
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.of("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT12Value.class);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        assertThat(dpt.parse(new byte[]{0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xFF, (byte) 0xFF,(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT12Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.parse(new String[]{"4294967295"})).isInstanceOf(DPT12Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(long)")
+    void testOf() {
+        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.of(0)).isInstanceOf(DPT12Value.class);
         assertThat(dpt.of(4294967295L)).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.of("0")).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.of("4294967295")).isInstanceOf(DPT12Value.class);
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #toByteArray(long)")
+    void testToByteArray() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
-
-        // value: 0
-        this.assertDPT(dpt, new byte[]{0x00, 0x00, 0x00, 0x00}, 0L);
-        // value: 305419896
-        this.assertDPT(dpt, new byte[]{0x12, 0x34, 0x56, 0x78}, 305419896L);
-        // value: 4294967295
-        this.assertDPT(dpt, new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF}, 4294967295L);
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code longValue}
-     *
-     * @param dpt         data point type
-     * @param bValueArray byte array with values
-     * @param longValue   long value
-     */
-    private void assertDPT(final DPT12 dpt, final byte[] bValueArray, final long longValue) {
-        final var dptValue = dpt.of(longValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-
-        // assert specific DPT12
-        assertThat(dpt.of(String.valueOf(longValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(longValue)).containsExactly(bValueArray);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00, 0x00, 0x00);
+        assertThat(dpt.toByteArray(4294967295L)).containsExactly(0xFF, 0xFF, 0xFF, 0xFF);
     }
 }

@@ -63,7 +63,7 @@ class DPT8Test {
     @DisplayName("Test #parse(byte[])")
     public void testByteParse() {
         final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-        assertThat(dpt.parse(new byte[]{0x22, 0x33})).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00})).isInstanceOf(DPT8Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xF6, (byte) 0xCA})).isInstanceOf(DPT8Value.class);
     }
 
