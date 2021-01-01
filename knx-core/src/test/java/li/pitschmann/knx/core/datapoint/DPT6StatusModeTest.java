@@ -19,10 +19,7 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT6Value;
-import li.pitschmann.knx.core.datapoint.value.DPT6Value.StatusMode.Mode;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,64 +30,85 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT6StatusModeTest extends AbstractDataPointTypeTest<DPT6.StatusMode, DPT6Value.StatusMode> {
-    @Override
+class DPT6StatusModeTest {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT6.STATUS_MODE;
-
         assertThat(dpt.getId()).isEqualTo("6.020");
         assertThat(dpt.getDescription()).isEqualTo("Status Mode");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT6.STATUS_MODE;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.of("0xFF")).isInstanceOf(DPT6Value.StatusMode.class);
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
-        // mode: 0, no flags set
-        this.assertInternal((byte) 0x01, false, false, false, false, false, Mode.MODE_0);
-        // mode: 1, no flags set
-        this.assertInternal((byte) 0x02, false, false, false, false, false, Mode.MODE_1);
-        // mode: 2, no flags set
-        this.assertInternal((byte) 0x04, false, false, false, false, false, Mode.MODE_2);
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT6.STATUS_MODE;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
     }
 
-    /**
-     * Asserts the {@link DPT6Value} for given arguments {@link DPT6.StatusMode}, {@code byteValue} and status mode
-     * value relevant parameters
-     *
-     * @param byteValue byte value
-     * @param bool1     first boolean / bit
-     * @param bool2     second boolean / bit
-     * @param bool3     third boolean / bit
-     * @param bool4     forth boolean / bit
-     * @param bool5     fifth boolean / bit
-     * @param mode      the status mode
-     */
-    private void assertInternal(final byte byteValue, final boolean bool1, final boolean bool2, final boolean bool3, final boolean bool4,
-                                final boolean bool5, final Mode mode) {
-        final var dptStatusMode = DPT6.STATUS_MODE;
-        final var dptStatusModeValue = dptStatusMode.of(bool1, bool2, bool3, bool4, bool5, mode);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT6.STATUS_MODE;
+        assertThat(dpt.parse(new byte[]{0x01})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new byte[]{0x02})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThatThrownBy(() -> dpt.parse(new byte[0]));
+    }
 
-        // assert base DPT
-        this.assertBaseDPT(dptStatusMode, new byte[]{byteValue}, dptStatusModeValue);
-        // assert specific DPT6
-        assertThat(dptStatusMode.of(ByteFormatter.formatHex(byteValue))).isEqualTo(dptStatusModeValue);
-        assertThat(dptStatusMode.toByteArray(bool1, bool2, bool3, bool4, bool5, mode)).containsExactly(byteValue);
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT6.STATUS_MODE;
+        assertThat(dpt.parse(new String[]{"0x11"})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new String[]{"0xFF"})).isInstanceOf(DPT6Value.StatusMode.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(boolean.., Mode)")
+    void testOf() {
+        final var dpt = DPT6.STATUS_MODE;
+        // mode: 0, no flags set
+        assertThat(dpt.of(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0))
+                .isInstanceOf(DPT6Value.StatusMode.class);
+        // mode: 1, no flags set
+        assertThat(dpt.of(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_1))
+                .isInstanceOf(DPT6Value.StatusMode.class);
+        // mode: 2, no flags set
+        assertThat(dpt.of(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_2))
+                .isInstanceOf(DPT6Value.StatusMode.class);
+        // mode: 1, flags set (abcd ennn = 0110 1010)
+        assertThat(dpt.of(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_1))
+                .isInstanceOf(DPT6Value.StatusMode.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(boolean.., Mode)")
+    void testToByteArray() {
+        final var dpt = DPT6.STATUS_MODE;
+        // mode: 0, no flags set
+        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0))
+                .containsExactly(0b0000_0001); // 0x01
+        // mode: 1, no flags set
+        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_1))
+                .containsExactly(0b0000_0010); // 0x02
+        // mode: 2, no flags set
+        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_2))
+                .containsExactly(0b0000_0100); // 0x04
+        // mode: 1, flags set (abcd ennn = 0110 1010)
+        assertThat(dpt.toByteArray(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_1))
+                .containsExactly(0b0110_1010); // 0x6A
     }
 }

@@ -19,81 +19,80 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT14Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT14}
  *
  * @author PITSCHR
  */
-public class DPT14Test extends AbstractDataPointTypeTest<DPT14, DPT14Value> {
-    @Override
+class DPT14Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT14.TEMPERATURE;
-
         assertThat(dpt.getId()).isEqualTo("14.068");
         assertThat(dpt.getDescription()).isEqualTo("Temperature (°C)");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT14.TEMPERATURE;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-3.40282348e+38")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("3.40282348e+38")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of(-3.40282347e+38)).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of(3.40282347e+38)).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of("-3.40282347e+38")).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.of("3.40282347e+38")).isInstanceOf(DPT14Value.class);
+        // byte is supported for length == 4 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
+        assertThat(dpt.isCompatible(new byte[4])).isTrue();
+        assertThat(dpt.isCompatible(new byte[5])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
         final var dpt = DPT14.TEMPERATURE;
-
-        // value: 0°C
-        this.assertDPT(dpt, new byte[]{0x00, 0x00, 0x00, 0x00}, 0f);
-        // value: -3.40282347e+38f
-        this.assertDPT(dpt, new byte[]{(byte) 0xff, (byte) 0x7f, (byte) 0xff, (byte) 0xff}, -3.40282347e+38f);
-        // value: 3.40282347e+38f
-        this.assertDPT(dpt, new byte[]{(byte) 0x7f, (byte) 0x7f, (byte) 0xff, (byte) 0xff}, 3.40282347e+38f);
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
     }
 
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code doubleValue}
-     *
-     * @param dpt         data point type
-     * @param bValueArray byte array with values
-     * @param doubleValue double value
-     */
-    private void assertDPT(final DPT14 dpt, final byte[] bValueArray, final double doubleValue) {
-        final var dptValue = dpt.of(doubleValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-        // assert specific DPT14
-        assertThat(dpt.of(String.valueOf(doubleValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(doubleValue)).containsExactly(bValueArray);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT14.TEMPERATURE;
+        assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00, 0x00, 0x00})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new byte[]{0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT14Value.class);
     }
 
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT14.TEMPERATURE;
+        assertThat(dpt.parse(new String[]{"-3.40282347e+38f"})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new String[]{"3.40282347e+38f"})).isInstanceOf(DPT14Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(double)")
+    void testOf() {
+        final var dpt = DPT14.TEMPERATURE;
+        assertThat(dpt.of(-3.40282347e+38f)).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.of(3.40282347e+38f)).isInstanceOf(DPT14Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(double)")
+    void testToByteArray() {
+        final var dpt = DPT14.TEMPERATURE;
+        assertThat(dpt.toByteArray(-3.40282347e+38f)).containsExactly(0xFF, 0x7F, 0xFF, 0xFF);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00, 0x00, 0x00);
+        assertThat(dpt.toByteArray(3.40282347e+38f)).containsExactly(0x7F, 0x7F, 0xFF, 0xFF);
+    }
 }

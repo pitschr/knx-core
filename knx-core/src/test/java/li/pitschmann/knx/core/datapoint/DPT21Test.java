@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT21Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,33 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPT21Test implements DPTTest {
+class DPT21Test {
+    private static final BaseDataPointType<?>[] DATAPOINT_TYPES = new BaseDataPointType<?>[]{
+            DPT21.GENERAL_STATUS,
+            DPT21.DEVICE_CONTROL,
+            DPT21.FORCING_SIGNAL,
+            DPT21.FORCING_SIGNAL_COOLING,
+            DPT21.STATUS_ROOM_HEATING_CONTROLLER,
+            DPT21.STATUS_SOLAR_DHW_CONTROLLER,
+            DPT21.FUEL_TYPE_SET,
+            DPT21.STATUS_ROOM_COOLING_CONTROLLER,
+            DPT21.STATUS_VENTILATION_CONTROLLER,
+            DPT21.LIGHTING_ACTUATOR_ERROR_INFO,
+            DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO,
+            DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE,
+            DPT21.SECURITY_REPORT,
+            DPT21.CHANNEL_ACTIVATION_8
+    };
 
-    @Override
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("DPT21 Constructor not instantiable")
+    void testConstructorNonInstantiable() {
+        TestHelpers.assertThatNotInstantiable(DPT21.class);
+    }
+
+    @Test
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         assertThat(DPT21.CHANNEL_ACTIVATION_8.getId()).isEqualTo("21.1010");
         assertThat(DPT21.CHANNEL_ACTIVATION_8.getDescription()).isEqualTo("Channel Activation for 8 channels");
 
@@ -44,159 +65,166 @@ public class DPT21Test implements DPTTest {
         assertThat(DPT21.FORCING_SIGNAL_COOLING.getDescription()).isEqualTo("Forcing Signal Cooling");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        // failures
-        assertThatThrownBy(() -> DPT21.CHANNEL_ACTIVATION_8.of(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT21.CHANNEL_ACTIVATION_8.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT21.CHANNEL_ACTIVATION_8.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-
-        // OK
-        assertThat(DPT21.CHANNEL_ACTIVATION_8.of((byte) 0x00)).isInstanceOf(DPT21Value.ChannelActivation8.class);
-        assertThat(DPT21.FORCING_SIGNAL_COOLING.of((byte) 0xFF)).isInstanceOf(DPT21Value.ForcingSignalCooling.class);
-        assertThat(DPT21.CHANNEL_ACTIVATION_8.of("0x00")).isInstanceOf(DPT21Value.ChannelActivation8.class);
-        assertThat(DPT21.FORCING_SIGNAL_COOLING.of("0xFF")).isInstanceOf(DPT21Value.ForcingSignalCooling.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            // byte is supported for length == 1 only
+            assertThat(dpt.isCompatible(new byte[0])).isFalse();
+            assertThat(dpt.isCompatible(new byte[1])).isTrue();
+            assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        }
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            // String is not supported -> always false
+            for (int i = 0; i < 10; i++) {
+                assertThat(dpt.isCompatible(new String[i])).isFalse();
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            final var dataPointValue = dpt.parse(new byte[]{0x00});
+            assertThat(dataPointValue).isNotNull();
+            assertThat(dataPointValue.getClass().getName()).startsWith(DPT21Value.class.getName());
+        }
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        for (final var dpt : DATAPOINT_TYPES) {
+            // parse for string not supported
+            assertThatThrownBy(() -> dpt.parse(new String[0])).isInstanceOf(UnsupportedOperationException.class);
+        }
+    }
+
+    @Test
+    @DisplayName("Test #of(..)")
+    void testOf() {
         // General Status (0000 1001 = 0x09)
-        DPT21.GeneralStatus generalStatusDPT = DPT21.GENERAL_STATUS;
-        DPT21Value.GeneralStatus generalStatusDPV = generalStatusDPT.of(true, false, false, true, false);
-        assertThat(generalStatusDPT.of((byte) 0x09)).isEqualTo(generalStatusDPV);
-        assertThat(generalStatusDPT.of(true, false, false, true, false)).isEqualTo(generalStatusDPV);
-        assertThat(generalStatusDPT.toByteArray(true, false, false, true, false)).containsExactly(0x09);
-        assertThat(generalStatusDPV.toByteArray()).containsExactly(0x09);
-        assertThatThrownBy(() -> generalStatusDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.GENERAL_STATUS.of(true, false, false, true, false))
+                .isInstanceOf(DPT21Value.GeneralStatus.class);
 
         // Device Control (0000 0101 = 0x05)
-        DPT21.DeviceControl deviceControlDPT = DPT21.DEVICE_CONTROL;
-        DPT21Value.DeviceControl deviceControlDPV = deviceControlDPT.of(true, false, true);
-        assertThat(deviceControlDPT.of((byte) 0x05)).isEqualTo(deviceControlDPV);
-        assertThat(deviceControlDPT.of(true, false, true)).isEqualTo(deviceControlDPV);
-        assertThat(deviceControlDPT.toByteArray(true, false, true)).containsExactly(0x05);
-        assertThat(deviceControlDPV.toByteArray()).containsExactly(0x05);
-        assertThatThrownBy(() -> deviceControlDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.DEVICE_CONTROL.of(true, false, true))
+                .isInstanceOf(DPT21Value.DeviceControl.class);
 
         // Forcing Signal (1100 0110 = 0xC6)
-        DPT21.ForcingSignal forcingSignalDPT = DPT21.FORCING_SIGNAL;
-        DPT21Value.ForcingSignal forcingSignalDPV = forcingSignalDPT.of(false, true, true, false, false, false, true, true);
-        assertThat(forcingSignalDPT.of((byte) 0xC6)).isEqualTo(forcingSignalDPV);
-        assertThat(forcingSignalDPT.of(false, true, true, false, false, false, true, true)).isEqualTo(forcingSignalDPV);
-        assertThat(forcingSignalDPT.toByteArray(false, true, true, false, false, false, true, true)).containsExactly(0xC6);
-        assertThat(forcingSignalDPV.toByteArray()).containsExactly(0xC6);
-        assertThatThrownBy(() -> forcingSignalDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.FORCING_SIGNAL.of(false, true, true, false, false, false, true, true))
+                .isInstanceOf(DPT21Value.ForcingSignal.class);
 
         // Forcing Signal Cooling (0000 0001 = 0x01)
-        DPT21.ForcingSignalCooling forcingSignalCoolingDPT = DPT21.FORCING_SIGNAL_COOLING;
-        DPT21Value.ForcingSignalCooling forcingSignalCoolingDPV = forcingSignalCoolingDPT.of(true);
-        assertThat(forcingSignalCoolingDPT.of((byte) 0x01)).isEqualTo(forcingSignalCoolingDPV);
-        assertThat(forcingSignalCoolingDPT.of(true)).isEqualTo(forcingSignalCoolingDPV);
-        assertThat(forcingSignalCoolingDPT.toByteArray(true)).containsExactly(0x01);
-        assertThat(forcingSignalCoolingDPV.toByteArray()).containsExactly(0x01);
-        assertThatThrownBy(() -> forcingSignalCoolingDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.FORCING_SIGNAL_COOLING.of(true))
+                .isInstanceOf(DPT21Value.ForcingSignalCooling.class);
 
         // Status Room Heating Controller (0011 1100 = 0x3C)
-        DPT21.StatusRoomHeatingController statusRoomHeatingControllerDPT = DPT21.STATUS_ROOM_HEATING_CONTROLLER;
-        DPT21Value.StatusRoomHeatingController statusRoomHeatingControllerDPV = statusRoomHeatingControllerDPT.of(false, false, true, true, true,
-                true, false, false);
-        assertThat(statusRoomHeatingControllerDPT.of((byte) 0x3C)).isEqualTo(statusRoomHeatingControllerDPV);
-        assertThat(statusRoomHeatingControllerDPT.of(false, false, true, true, true, true, false, false))
-                .isEqualTo(statusRoomHeatingControllerDPV);
-        assertThat(statusRoomHeatingControllerDPT.toByteArray(false, false, true, true, true, true, false, false)).containsExactly(0x3C);
-        assertThat(statusRoomHeatingControllerDPV.toByteArray()).containsExactly(0x3C);
-        assertThatThrownBy(() -> statusRoomHeatingControllerDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.STATUS_ROOM_HEATING_CONTROLLER.of(false, false, true, true, true,
+                true, false, false))
+                .isInstanceOf(DPT21Value.StatusRoomHeatingController.class);
 
         // Status Solar DHW Controller (0000 0010 = 0x02)
-        DPT21.StatusSolarDHWController statusSolarDHWControllerDPT = DPT21.STATUS_SOLAR_DHW_CONTROLLER;
-        DPT21Value.StatusSolarDHWController statusSolarDHWControllerDPV = statusSolarDHWControllerDPT.of(false, true, false);
-        assertThat(statusSolarDHWControllerDPT.of((byte) 0x02)).isEqualTo(statusSolarDHWControllerDPV);
-        assertThat(statusSolarDHWControllerDPT.of(false, true, false)).isEqualTo(statusSolarDHWControllerDPV);
-        assertThat(statusSolarDHWControllerDPT.toByteArray(false, true, false)).containsExactly(0x02);
-        assertThat(statusSolarDHWControllerDPV.toByteArray()).containsExactly(0x02);
-        assertThatThrownBy(() -> statusSolarDHWControllerDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.STATUS_SOLAR_DHW_CONTROLLER.of(false, true, false))
+                .isInstanceOf(DPT21Value.StatusSolarDHWController.class);
 
         // Fuel Type Set (0000 0100 = 0x04)
-        DPT21.FuelTypeSet fuelTypeSetDPT = DPT21.FUEL_TYPE_SET;
-        DPT21Value.FuelTypeSet fuelTypeSetDPV = fuelTypeSetDPT.of(false, false, true);
-        assertThat(fuelTypeSetDPT.of((byte) 0x04)).isEqualTo(fuelTypeSetDPV);
-        assertThat(fuelTypeSetDPT.of(false, false, true)).isEqualTo(fuelTypeSetDPV);
-        assertThat(fuelTypeSetDPT.toByteArray(false, false, true)).containsExactly(0x04);
-        assertThat(fuelTypeSetDPV.toByteArray()).containsExactly(0x04);
-        assertThatThrownBy(() -> fuelTypeSetDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.FUEL_TYPE_SET.of(false, false, true))
+                .isInstanceOf(DPT21Value.FuelTypeSet.class);
 
         // Room Cooling Controller Status (0000 0001 = 0x01)
-        DPT21.StatusRoomCoolingController statusRoomCoolingControllerDPT = DPT21.STATUS_ROOM_COOLING_CONTROLLER;
-        DPT21Value.StatusRoomCoolingController statusRoomCoolingControllerDPV = statusRoomCoolingControllerDPT.of(true);
-        assertThat(statusRoomCoolingControllerDPT.of((byte) 0x01)).isEqualTo(statusRoomCoolingControllerDPV);
-        assertThat(statusRoomCoolingControllerDPT.of(true)).isEqualTo(statusRoomCoolingControllerDPV);
-        assertThat(statusRoomCoolingControllerDPT.toByteArray(true)).containsExactly(0x01);
-        assertThat(statusRoomCoolingControllerDPV.toByteArray()).containsExactly(0x01);
-        assertThatThrownBy(() -> statusRoomCoolingControllerDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.STATUS_ROOM_COOLING_CONTROLLER.of(true))
+                .isInstanceOf(DPT21Value.StatusRoomCoolingController.class);
 
         // Status Ventilation Controller (0000 0011 = 0x03)
-        DPT21.StatusVentilationController statusVentilationControllerDPT = DPT21.STATUS_VENTILATION_CONTROLLER;
-        DPT21Value.StatusVentilationController statusVentilationControllerDPV = statusVentilationControllerDPT.of(true, true, false, false);
-        assertThat(statusVentilationControllerDPT.of((byte) 0x03)).isEqualTo(statusVentilationControllerDPV);
-        assertThat(statusVentilationControllerDPT.of(true, true, false, false)).isEqualTo(statusVentilationControllerDPV);
-        assertThat(statusVentilationControllerDPT.toByteArray(true, true, false, false)).containsExactly(0x03);
-        assertThat(statusVentilationControllerDPV.toByteArray()).containsExactly(0x03);
-        assertThatThrownBy(() -> statusVentilationControllerDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.STATUS_VENTILATION_CONTROLLER.of(true, true, false, false))
+                .isInstanceOf(DPT21Value.StatusVentilationController.class);
 
         // Lighting Actuator Error Information (0110 1111 = 0x6F)
-        DPT21.LightingActuatorErrorInfo lightActErrorInfoDPT = DPT21.LIGHTING_ACTUATOR_ERROR_INFO;
-        DPT21Value.LightingActuatorErrorInfo lightingActuatorErrorInfoDPV = lightActErrorInfoDPT.of(true, true, true, true, false, true, true);
-        assertThat(lightActErrorInfoDPT.of((byte) 0x6F)).isEqualTo(lightingActuatorErrorInfoDPV);
-        assertThat(lightActErrorInfoDPT.of(true, true, true, true, false, true, true)).isEqualTo(lightingActuatorErrorInfoDPV);
-        assertThat(lightActErrorInfoDPT.toByteArray(true, true, true, true, false, true, true)).containsExactly(0x6F);
-        assertThat(lightingActuatorErrorInfoDPV.toByteArray()).containsExactly(0x6F);
-        assertThatThrownBy(() -> lightActErrorInfoDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.LIGHTING_ACTUATOR_ERROR_INFO.of(true, true, true, true, false, true, true))
+                .isInstanceOf(DPT21Value.LightingActuatorErrorInfo.class);
 
         // Radio Frequency Communication Mode Info (0000 0111 = 0x07)
-        DPT21.RadioFrequencyCommunicationModeInfo rfCommInfoDPT = DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO;
-        DPT21Value.RadioFrequencyCommunicationModeInfo rfCommInfoDPV = rfCommInfoDPT.of(true, true, true);
-        assertThat(rfCommInfoDPT.of((byte) 0x07)).isEqualTo(rfCommInfoDPV);
-        assertThat(rfCommInfoDPT.of(true, true, true)).isEqualTo(rfCommInfoDPV);
-        assertThat(rfCommInfoDPT.toByteArray(true, true, true)).containsExactly(0x07);
-        assertThat(rfCommInfoDPV.toByteArray()).containsExactly(0x07);
-        assertThatThrownBy(() -> rfCommInfoDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO.of(true, true, true))
+                .isInstanceOf(DPT21Value.RadioFrequencyCommunicationModeInfo.class);
 
         // cEMI Server Supported Filtering Mode (0000 0000 = 0x00)
-        DPT21.CEMIServerSupportedFilteringMode cemiSrvSupFilterModesDPT = DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE;
-        DPT21Value.CEMIServerSupportedFilteringMode cemiSrvSupFilterModesDPV = cemiSrvSupFilterModesDPT.of(false, false, false);
-        assertThat(cemiSrvSupFilterModesDPT.of((byte) 0x00)).isEqualTo(cemiSrvSupFilterModesDPV);
-        assertThat(cemiSrvSupFilterModesDPT.of(false, false, false)).isEqualTo(cemiSrvSupFilterModesDPV);
-        assertThat(cemiSrvSupFilterModesDPT.toByteArray(false, false, false)).containsExactly(0x00);
-        assertThat(cemiSrvSupFilterModesDPV.toByteArray()).containsExactly(0x00);
-        assertThatThrownBy(() -> cemiSrvSupFilterModesDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE.of(false, false, false))
+                .isInstanceOf(DPT21Value.CEMIServerSupportedFilteringMode.class);
 
-        // Security Report
-        DPT21.SecurityReport securityReportDPT = DPT21.SECURITY_REPORT;
-        DPT21Value.SecurityReport securityReportDPV = securityReportDPT.of(false);
-        assertThat(securityReportDPT.of((byte) 0x00)).isEqualTo(securityReportDPV);
-        assertThat(securityReportDPT.of(false)).isEqualTo(securityReportDPV);
-        assertThat(securityReportDPT.toByteArray(false)).containsExactly(0x00);
-        assertThat(securityReportDPV.toByteArray()).containsExactly(0x00);
-        assertThatThrownBy(() -> securityReportDPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        // Security Report (0000 0001 = 0x01)
+        assertThat(DPT21.SECURITY_REPORT.of(true))
+                .isInstanceOf(DPT21Value.SecurityReport.class);
 
         // 8 Channel Activation (1001 1100 = 0x9C)
-        DPT21.ChannelActivation8 channel8DPT = DPT21.CHANNEL_ACTIVATION_8;
-        DPT21Value.ChannelActivation8 channel8DPV = channel8DPT.of(false, false, true, true, true, false, false, true);
-        assertThat(channel8DPT.of((byte) 0x9C)).isEqualTo(channel8DPV);
-        assertThat(channel8DPT.of(false, false, true, true, true, false, false, true)).isEqualTo(channel8DPV);
-        assertThat(channel8DPT.toByteArray(false, false, true, true, true, false, false, true)).containsExactly(0x9C);
-        assertThat(channel8DPV.toByteArray()).containsExactly(0x9C);
-        assertThatThrownBy(() -> channel8DPT.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
+        assertThat(DPT21.CHANNEL_ACTIVATION_8.of(false, false, true, true, true, false, false, true))
+                .isInstanceOf(DPT21Value.ChannelActivation8.class);
     }
 
-    /**
-     * Test constructor of {@link DPT21}
-     */
     @Test
-    @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
-        TestHelpers.assertThatNotInstantiable(DPT21.class);
+    @DisplayName("Test #toByteArray(..)")
+    void testToByteArray() {
+        // General Status (0000 1001 = 0x09)
+        assertThat(DPT21.GENERAL_STATUS.toByteArray(true, false, false, true, false))
+                .containsExactly(0x09);
+
+        // Device Control (0000 0101 = 0x05)
+        assertThat(DPT21.DEVICE_CONTROL.toByteArray(true, false, true))
+                .containsExactly(0x05);
+
+        // Forcing Signal (1100 0110 = 0xC6)
+        assertThat(DPT21.FORCING_SIGNAL.toByteArray(false, true, true, false, false, false, true, true))
+                .containsExactly(0xC6);
+
+        // Forcing Signal Cooling (0000 0001 = 0x01)
+        assertThat(DPT21.FORCING_SIGNAL_COOLING.toByteArray(true))
+                .containsExactly(0x01);
+
+        // Status Room Heating Controller (0011 1100 = 0x3C)
+        assertThat(DPT21.STATUS_ROOM_HEATING_CONTROLLER.toByteArray(false, false, true, true, true,
+                true, false, false))
+                .containsExactly(0x3C);
+
+        // Status Solar DHW Controller (0000 0010 = 0x02)
+        assertThat(DPT21.STATUS_SOLAR_DHW_CONTROLLER.toByteArray(false, true, false))
+                .containsExactly(0x02);
+
+        // Fuel Type Set (0000 0100 = 0x04)
+        assertThat(DPT21.FUEL_TYPE_SET.toByteArray(false, false, true))
+                .containsExactly(0x04);
+
+        // Room Cooling Controller Status (0000 0001 = 0x01)
+        assertThat(DPT21.STATUS_ROOM_COOLING_CONTROLLER.toByteArray(true))
+                .containsExactly(0x01);
+
+        // Status Ventilation Controller (0000 0011 = 0x03)
+        assertThat(DPT21.STATUS_VENTILATION_CONTROLLER.toByteArray(true, true, false, false))
+                .containsExactly(0x03);
+
+        // Lighting Actuator Error Information (0110 1111 = 0x6F)
+        assertThat(DPT21.LIGHTING_ACTUATOR_ERROR_INFO.toByteArray(true, true, true, true, false, true, true))
+                .containsExactly(0x6F);
+
+        // Radio Frequency Communication Mode Info (0000 0111 = 0x07)
+        assertThat(DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO.toByteArray(true, true, true))
+                .containsExactly(0x07);
+
+        // cEMI Server Supported Filtering Mode (0000 0000 = 0x00)
+        assertThat(DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE.toByteArray(false, false, false))
+                .containsExactly(0x00);
+
+        // Security Report (0000 0001 = 0x01)
+        assertThat(DPT21.SECURITY_REPORT.toByteArray(true))
+                .containsExactly(0x01);
+
+        // 8 Channel Activation (1001 1100 = 0x9C)
+        assertThat(DPT21.CHANNEL_ACTIVATION_8.toByteArray(false, false, true, true, true, false, false, true))
+                .containsExactly(0x9C);
     }
 }

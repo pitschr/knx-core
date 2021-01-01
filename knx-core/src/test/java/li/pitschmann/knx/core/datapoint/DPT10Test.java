@@ -19,98 +19,96 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT10Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT10}
  *
  * @author PITSCHR
  */
-public class DPT10Test extends AbstractDataPointTypeTest<DPT10, DPT10Value> {
-    private static final DPT10 DPT_TIME = DPT10.TIME_OF_DAY;
-
-    @Override
+class DPT10Test {
     @Test
-    public void testIdAndDescription() {
-        assertThat(DPT_TIME.getId()).isEqualTo("10.001");
-        assertThat(DPT_TIME.getDescription()).isEqualTo("Time Of Day");
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
+        final var dpt = DPT10.TIME_OF_DAY;
+        assertThat(dpt.getId()).isEqualTo("10.001");
+        assertThat(dpt.getDescription()).isEqualTo("Time Of Day");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        // failures
-        assertThatThrownBy(() -> DPT_TIME.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.of(new byte[4])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("foo", "bar", "far")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("99:99:99")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_TIME.of("FRIDAY", "99:99:99"))
-                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(DPT_TIME.of((byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of((byte) 0xef, (byte) 0x3b, (byte) 0x3b)).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of("0x00", "0x00", "0x00")).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of("0xef", "0x3b", "0x3b")).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of(LocalTime.now())).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of(DayOfWeek.MONDAY, LocalTime.now())).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of("14:56:30")).isInstanceOf(DPT10Value.class);
-        assertThat(DPT_TIME.of("FrIDaY", "14:56:30")).isInstanceOf(DPT10Value.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        final var dpt = DPT10.TIME_OF_DAY;
+        // byte is supported for length == 3 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isTrue();
+        assertThat(dpt.isCompatible(new byte[4])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT10.TIME_OF_DAY;
+        // String is supported for length == [1, 2] only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue(); // HH:MM:SS
+        assertThat(dpt.isCompatible(new String[2])).isTrue(); // DDD, HH:MM:SS
+        assertThat(dpt.isCompatible(new String[3])).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT10.TIME_OF_DAY;
+        assertThat(dpt.parse(new byte[]{0x00, 0x00, 0x00})).isInstanceOf(DPT10Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xEF, 0x3B, 0x3B})).isInstanceOf(DPT10Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT10.TIME_OF_DAY;
+        assertThat(dpt.parse(new String[]{"14:56:30"})).isInstanceOf(DPT10Value.class);
+        assertThat(dpt.parse(new String[]{"FrIDaY", "14:56:30"})).isInstanceOf(DPT10Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(DayOfWeek, LocalTime)")
+    void testOf() {
+        final var dpt = DPT10.TIME_OF_DAY;
+        assertThat(dpt.of(null, LocalTime.now())).isInstanceOf(DPT10Value.class);
+        assertThat(dpt.of(DayOfWeek.MONDAY, LocalTime.now())).isInstanceOf(DPT10Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(DayOfWeek, LocalTime)")
+    void testToByteArray() {
+        final var dpt = DPT10.TIME_OF_DAY;
         // no day, 00:00:00
-        this.assertDPT(new byte[]{0x00, 0x00, 0x00}, null, LocalTime.of(0, 0, 0));
+        assertThat(dpt.toByteArray(null, LocalTime.of(0, 0, 0)))
+                .containsExactly(0x00, 0x00, 0x00);
         // monday, 6:15:20
         // monday => 001. ....
         // hour 6 => ...0 0110
-        this.assertDPT(new byte[]{(byte) 0x26, (byte) 0x0f, (byte) 0x14}, DayOfWeek.MONDAY, LocalTime.of(6, 15, 20));
+        assertThat(dpt.toByteArray(DayOfWeek.MONDAY, LocalTime.of(6, 15, 20)))
+                .containsExactly(0x26, 0x0F, 0x14);
         // wednesday, 12:30:45
         // wednesday => 011. ....
         // hour 12 ===> ...0 1100
-        this.assertDPT(new byte[]{(byte) 0x6c, (byte) 0x1e, (byte) 0x2d}, DayOfWeek.WEDNESDAY, LocalTime.of(12, 30, 45));
+        assertThat(dpt.toByteArray(DayOfWeek.WEDNESDAY, LocalTime.of(12, 30, 45)))
+                .containsExactly(0x6C, 0x1E, 0x2D);
         // sunday, 23:59:59
         // sunday ==> 111. ....
         // hour 23 => ...1 0111
-        this.assertDPT(new byte[]{(byte) 0xf7, (byte) 0x3b, (byte) 0x3b}, DayOfWeek.SUNDAY, LocalTime.of(23, 59, 59));
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code bValueArray}, {@code dayOfWeek} and {@code localTime}
-     *
-     * @param bValueArray byte array with values
-     * @param dayOfWeek   day of week
-     * @param localTime   local time
-     */
-    private void assertDPT(final byte[] bValueArray, final DayOfWeek dayOfWeek, final LocalTime localTime) {
-        final var dpt = DPT_TIME;
-        final var dptValue = dpt.of(dayOfWeek, localTime);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-
-        // assert specific DPT10
-        if (dayOfWeek == null) {
-            assertThat(dpt.of(localTime.toString())).isEqualTo(dptValue);
-        } else {
-            assertThat(dpt.of(dayOfWeek.toString(), localTime.toString())).isEqualTo(dptValue);
-        }
-        assertThat(dpt.toByteArray(dayOfWeek, localTime)).containsExactly(bValueArray);
+        assertThat(dpt.toByteArray(DayOfWeek.SUNDAY, LocalTime.of(23, 59, 59)))
+                .containsExactly(0xF7, 0x3B, 0x3B);
     }
 }

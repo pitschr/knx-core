@@ -42,8 +42,8 @@ public final class DPT3ValueTest {
         for (var stepCode = 0; stepCode < 7; stepCode++) {
             final var stepInterval = StepInterval.ofCode(stepCode);
             final var stepIntervalText = stepInterval.toText();
-            this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) stepCode, false, stepCode, stepInterval, stepIntervalText);
-            this.assertValue(DPT3.DPT_CONTROL_BLINDS, (byte) (0x08 | stepCode), true, stepCode, stepInterval, "controlled '" + stepIntervalText + "'");
+            this.assertValue(DPT3.CONTROL_BLINDS, (byte) stepCode, false, stepCode, stepInterval, stepIntervalText);
+            this.assertValue(DPT3.CONTROL_BLINDS, (byte) (0x08 | stepCode), true, stepCode, stepInterval, "controlled '" + stepIntervalText + "'");
         }
     }
 
@@ -53,11 +53,11 @@ public final class DPT3ValueTest {
     @Test
     public void testFailures() {
         // step code must be between 0..7
-        assertThatThrownBy(() -> new DPT3Value(DPT3.DPT_CONTROL_BLINDS, false, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> new DPT3Value(DPT3.DPT_CONTROL_BLINDS, false, 8)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, 8)).isInstanceOf(KnxNumberOutOfRangeException.class);
 
         // step interval must be defined
-        assertThatThrownBy(() -> new DPT3Value(DPT3.DPT_CONTROL_BLINDS, false, null)).isInstanceOf(KnxNullPointerException.class);
+        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, null)).isInstanceOf(KnxNullPointerException.class);
 
     }
 
@@ -86,7 +86,7 @@ public final class DPT3ValueTest {
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT3Value(DPT3.DPT_CONTROL_DIMMING, controlled, stepCode));
+        assertThat(dptValue).isNotEqualTo(new DPT3Value(DPT3.CONTROL_DIMMING, controlled, stepCode));
         assertThat(dptValue).isNotEqualTo(new DPT3Value(dpt, controlled, stepCode + 1));
         assertThat(dptValue).isNotEqualTo(new DPT3Value(dpt, !controlled, stepCode));
 

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT22Value;
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
 /**
  * Data Point Type 22 for 16-Bits flagged messages
@@ -139,14 +140,25 @@ public final class DPT22 {
         throw new AssertionError("Do not touch me!");
     }
 
-    public static final class StatusDHWController extends AbstractDataPointType<DPT22Value.StatusDHWController> {
-        private StatusDHWController() {
-            super("DHW Controller Status");
+    /**
+     * Internal Data Point Type for {@link DPT22}
+     *
+     * @param <V>
+     */
+    private static abstract class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
+        private InternalDataPointType(final String description) {
+            super(description);
         }
 
         @Override
-        protected boolean isCompatible(final byte[] bytes) {
+        protected final boolean isCompatible(byte[] bytes) {
             return bytes.length == 2;
+        }
+    }
+
+    public static final class StatusDHWController extends InternalDataPointType<DPT22Value.StatusDHWController> {
+        private StatusDHWController() {
+            super("DHW Controller Status");
         }
 
         @Override
@@ -169,14 +181,9 @@ public final class DPT22 {
         }
     }
 
-    public static final class StatusRoomHeatinCoolingController extends AbstractDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
+    public static final class StatusRoomHeatinCoolingController extends InternalDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
         private StatusRoomHeatinCoolingController() {
             super("Room Heating / Cooling Controller Status");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 2;
         }
 
         @Override
@@ -205,14 +212,9 @@ public final class DPT22 {
         }
     }
 
-    public static final class Media extends AbstractDataPointType<DPT22Value.Media> {
+    public static final class Media extends InternalDataPointType<DPT22Value.Media> {
         private Media() {
             super("Media");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 2;
         }
 
         @Override
@@ -230,14 +232,9 @@ public final class DPT22 {
         }
     }
 
-    public static final class ChannelActivation16 extends AbstractDataPointType<DPT22Value.ChannelActivation16> {
+    public static final class ChannelActivation16 extends InternalDataPointType<DPT22Value.ChannelActivation16> {
         private ChannelActivation16() {
             super("Channel Activation for 16 channels");
-        }
-
-        @Override
-        protected boolean isCompatible(final byte[] bytes) {
-            return bytes.length == 2;
         }
 
         @Override
@@ -246,17 +243,17 @@ public final class DPT22 {
         }
 
         public DPT22Value.ChannelActivation16 of(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                                 final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
-                                                 final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
-                                                 final boolean channel15, final boolean channel16) {
+                                                 final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8,
+                                                 final boolean channel9, final boolean channel10, final boolean channel11, final boolean channel12,
+                                                 final boolean channel13, final boolean channel14, final boolean channel15, final boolean channel16) {
             return new DPT22Value.ChannelActivation16(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9,
                     channel10, channel11, channel12, channel13, channel14, channel15, channel16);
         }
 
         public byte[] toByteArray(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                  final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8, final boolean channel9,
-                                  final boolean channel10, final boolean channel11, final boolean channel12, final boolean channel13, final boolean channel14,
-                                  final boolean channel15, final boolean channel16) {
+                                  final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8,
+                                  final boolean channel9, final boolean channel10, final boolean channel11, final boolean channel12,
+                                  final boolean channel13, final boolean channel14, final boolean channel15, final boolean channel16) {
             return this.of(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8, channel9, channel10, channel11,
                     channel12, channel13, channel14, channel15, channel16).toByteArray();
         }

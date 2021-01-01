@@ -19,110 +19,107 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT1Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT1}
  *
  * @author PITSCHR
  */
-public class DPT1Test extends AbstractDataPointTypeTest<DPT1, DPT1Value> {
-    @Override
+class DPT1Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT1.SWITCH;
-
         assertThat(dpt.getId()).isEqualTo("1.001");
         assertThat(dpt.getDescription()).isEqualTo("Switch");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT1.SWITCH;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of((byte) 0x02)).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x02")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("false", "true")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of((byte) 0x01)).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of("0x00")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of("0x01")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of("false")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of("true")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of("0")).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.of("1")).isInstanceOf(DPT1Value.class);
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
     }
 
-    /**
-     * Test {@link DPT1}
-     */
-    @Override
     @Test
-    public void testOf() {
-        // value: false
-        this.assertDPT(DPT1.SWITCH, (byte) 0x00, false, "false", "0");
-        // value: true
-        this.assertDPT(DPT1.SWITCH, (byte) 0x01, true, "true", "1");
-    }
-
-    /**
-     * Tests the {@link DPT1#getTextForFalse()}, {@link DPT1#getTextForTrue()} and {@link DPT1#getTextFor(boolean)}
-     */
-    @Test
-    public void testText() {
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
         final var dpt = DPT1.SWITCH;
-
-        // direct methods
-        assertThat(dpt.getTextForFalse()).isEqualTo("off");
-        assertThat(dpt.getTextForTrue()).isEqualTo("on");
-
-        // method controlled by argument
-        assertThat(dpt.getTextFor(false)).isEqualTo("off");
-        assertThat(dpt.getTextFor(true)).isEqualTo("on");
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
     }
 
-    /**
-     * Invalid Test {@link DPT1}
-     */
     @Test
-    public void testOfInvalid() {
-        // wrong dpt
-        assertThat(DPT1.SWITCH.of((byte) 0x00)).isNotEqualTo(DPT1.ACK.of((byte) 0x00));
-        assertThat(DPT1.SWITCH.of((byte) 0x01)).isNotEqualTo(DPT1.ACK.of((byte) 0x01));
-        // wrong value
-        assertThat(DPT1.SWITCH.of((byte) 0x00)).isNotEqualTo(DPT1.SWITCH.of((byte) 0x01));
-        assertThat(DPT1.SWITCH.of((byte) 0x01)).isNotEqualTo(DPT1.SWITCH.of((byte) 0x00));
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT1.SWITCH;
+        assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.parse(new byte[]{0x01})).isInstanceOf(DPT1Value.class);
     }
 
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code byteValue} and {@code boolValue}. The {@code strValue} is
-     * the human-friendly text for given arguments, while {@code strIntValue} uses the binary character for true/false
-     * evaluation (true=1, false=0).
-     *
-     * @param dpt         data point type
-     * @param byteValue   byte value
-     * @param boolValue   boolean value
-     * @param strValue    string value
-     * @param strIntValue integer value as string representation
-     */
-    private void assertDPT(final DPT1 dpt, final byte byteValue, final boolean boolValue, final String strValue, final String strIntValue) {
-        final var dptValue = dpt.of(boolValue);
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT1.SWITCH;
+        assertThat(dpt.parse(new String[]{"false"})).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.parse(new String[]{"true"})).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT1Value.class);
+        assertThat(dpt.parse(new String[]{"1"})).isInstanceOf(DPT1Value.class);
+    }
 
-        // assert base DPT
-        this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
-        // assert specific DPT1
-        assertThat(dpt.of(strValue)).isEqualTo(dptValue);
-        assertThat(dpt.of(strIntValue)).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(boolValue)).containsExactly(byteValue);
+    @Test
+    @DisplayName("Test #getTextFor()")
+    void testTextFor() {
+        // Switch
+        assertThat(DPT1.SWITCH.getTextFor(true)).isEqualTo("on");
+        assertThat(DPT1.SWITCH.getTextFor(false)).isEqualTo("off");
+        // Alaram
+        assertThat(DPT1.ALARM.getTextFor(true)).isEqualTo("Alarm");
+        assertThat(DPT1.ALARM.getTextFor(false)).isEqualTo("No Alarm");
+    }
+
+    @Test
+    @DisplayName("Test #getTextForTrue()")
+    void testTextForTrue() {
+        assertThat(DPT1.SWITCH.getTextForTrue()).isEqualTo("on");
+        assertThat(DPT1.ALARM.getTextForTrue()).isEqualTo("Alarm");
+    }
+
+    @Test
+    @DisplayName("Test #getTextForFalse()")
+    void testTextForFalse() {
+        assertThat(DPT1.SWITCH.getTextForFalse()).isEqualTo("off");
+        assertThat(DPT1.ALARM.getTextForFalse()).isEqualTo("No Alarm");
+    }
+
+    @Test
+    @DisplayName("Test #of(boolean)")
+    void testOf() {
+        // false
+        assertThat(DPT1.SWITCH.of(false)).isInstanceOf(DPT1Value.class);
+        assertThat(DPT1.UP_DOWN.of(false)).isInstanceOf(DPT1Value.class);
+        // true
+        assertThat(DPT1.SWITCH.of(true)).isInstanceOf(DPT1Value.class);
+        assertThat(DPT1.UP_DOWN.of(true)).isInstanceOf(DPT1Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(boolean)")
+    void testToByteArray() {
+        // false
+        assertThat(DPT1.SWITCH.toByteArray(false)).containsExactly(0x00);
+        assertThat(DPT1.UP_DOWN.toByteArray(false)).containsExactly(0x00);
+        // true
+        assertThat(DPT1.SWITCH.toByteArray(true)).containsExactly(0x01);
+        assertThat(DPT1.UP_DOWN.toByteArray(true)).containsExactly(0x01);
     }
 }

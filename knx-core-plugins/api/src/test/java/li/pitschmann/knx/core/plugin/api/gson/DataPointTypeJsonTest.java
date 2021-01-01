@@ -58,7 +58,7 @@ public class DataPointTypeJsonTest {
         // DPT3 Test
         final var dpt3JsonObject = new JsonPrimitive("3.008");
         final DataPointType dpt3 = DataPointTypeJsonDeserializer.INSTANCE.deserialize(dpt3JsonObject, null, null);
-        assertThat(dpt3).isEqualTo(DPT3.DPT_CONTROL_BLINDS);
+        assertThat(dpt3).isEqualTo(DPT3.CONTROL_BLINDS);
 
         // DPT18 Test
         final var dpt18JsonObject = new JsonPrimitive("18.001");

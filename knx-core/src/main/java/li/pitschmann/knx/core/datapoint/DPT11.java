@@ -44,7 +44,7 @@ import java.time.LocalDate;
  *
  * @author PITSCHR
  */
-public final class DPT11 extends AbstractDataPointType<DPT11Value> {
+public final class DPT11 extends BaseDataPointType<DPT11Value> {
     /**
      * <strong>11.001</strong> Date
      *
@@ -105,10 +105,6 @@ public final class DPT11 extends AbstractDataPointType<DPT11Value> {
 
     public DPT11Value of(final LocalDate date) {
         return new DPT11Value(date);
-    }
-
-    public DPT11Value of(final int year, final int month, final int dayOfMonth) {
-        return of(LocalDate.of(year, month, dayOfMonth));
     }
 
     public byte[] toByteArray(final LocalDate date) {

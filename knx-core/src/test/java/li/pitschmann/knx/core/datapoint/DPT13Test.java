@@ -19,105 +19,96 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT13Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Function;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT13}
  *
  * @author PITSCHR
  */
-public class DPT13Test extends AbstractDataPointTypeTest<DPT13, DPT13Value> {
-    @Override
+class DPT13Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT13.VALUE_4_OCTET_COUNT;
-
         assertThat(dpt.getId()).isEqualTo("13.001");
         assertThat(dpt.getDescription()).isEqualTo("Value 4-Octet Signed Count (pulses)");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT13.VALUE_4_OCTET_COUNT;
+        // byte is supported for length == 4 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isFalse();
+        assertThat(dpt.isCompatible(new byte[4])).isTrue();
+        assertThat(dpt.isCompatible(new byte[5])).isFalse();
+    }
 
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new byte[3])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-2147483649")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("2147483648")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+    @Test
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
 
-        // OK
-        assertThat(dpt.of((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.of((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF)).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.of("0xFF", "0xFF", "0xFF", "0xFF")).isInstanceOf(DPT13Value.class);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
+        assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00, 0x00, 0x00})).isInstanceOf(DPT13Value.class);
+        assertThat(dpt.parse(new byte[]{0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT13Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
+        assertThat(dpt.parse(new String[]{"-2147483648"})).isInstanceOf(DPT13Value.class);
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT13Value.class);
+        assertThat(dpt.parse(new String[]{"2147483647"})).isInstanceOf(DPT13Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(int)")
+    void testOf() {
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
         assertThat(dpt.of(-2147483648)).isInstanceOf(DPT13Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT13Value.class);
         assertThat(dpt.of(2147483647)).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.of("-2147483648")).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.of("2147483647")).isInstanceOf(DPT13Value.class);
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #toByteArray(int)")
+    void testToByteArray() {
         final var dpt = DPT13.VALUE_4_OCTET_COUNT;
-
-        // value: 0
-        this.assertDPT(dpt, new byte[]{0x00, 0x00, 0x00, 0x00}, 0);
-        // value: 305419896
-        this.assertDPT(dpt, new byte[]{(byte) 0x12, (byte) 0x34, (byte) 0x56, (byte) 0x78}, 305419896);
-        // value: 2147483647
-        this.assertDPT(dpt, new byte[]{(byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff}, Integer.MAX_VALUE);
-        // value: 305419896
-        this.assertDPT(dpt, new byte[]{(byte) 0xED, (byte) 0xCB, (byte) 0xA9, (byte) 0x87}, -305419897);
-        // value: -2147483648
-        this.assertDPT(dpt, new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00}, Integer.MIN_VALUE);
+        assertThat(dpt.toByteArray(-2147483648)).containsExactly(0x80, 0x00, 0x00, 0x00);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00, 0x00, 0x00);
+        assertThat(dpt.toByteArray(2147483647)).containsExactly(0x7F, 0xFF, 0xFF, 0xFF);
     }
 
     @Test
-    public void testCalculation() {
-        // with calculation functions
-        assertThat(DPT13.FLOW_RATE.getCalculationFunction()).isInstanceOf(Function.class);
-
-        // without calculation functions
+    @DisplayName("Test #getCalculationFunction()")
+    void testCalculationFunction() {
         assertThat(DPT13.VALUE_4_OCTET_COUNT.getCalculationFunction()).isNull();
 
-        // value: 214748.3647 m³/h
-        final var valueMax = DPT13.FLOW_RATE.of(Integer.MAX_VALUE);
-        assertThat(valueMax.getSignedValue()).isEqualTo(214748.3647);
-        assertThat(valueMax.getRawSignedValue()).isEqualTo(Integer.MAX_VALUE);
-        // value: -214748.3648 m³/h
-        final var valueMin = DPT13.FLOW_RATE.of(Integer.MIN_VALUE);
-        assertThat(valueMin.getSignedValue()).isEqualTo(-214748.3648);
-        assertThat(valueMin.getRawSignedValue()).isEqualTo(Integer.MIN_VALUE);
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code intValue}
-     *
-     * @param dpt         data point type
-     * @param bValueArray byte array with values
-     * @param intValue    integer value
-     */
-    private void assertDPT(final DPT13 dpt, final byte[] bValueArray, final int intValue) {
-        final var dptValue = dpt.of(intValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-
-        // assert specific DPT13
-        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(intValue)).containsExactly(bValueArray);
+        // Flow Rate in 0.0001m^3 resolution (-2147483648 = -214748.3648m^3, 0 = 0ms, 2147483647 = 214748.3647m^3)
+        final var dpt = DPT13.FLOW_RATE;
+        assertThat(dpt.getCalculationFunction()).isNotNull();
+        assertThat(dpt.of(-2147483648).getRawSignedValue()).isEqualTo(-2147483648);
+        assertThat(dpt.of(-2147483648).getSignedValue()).isEqualTo(-214748.3648);
+        assertThat(dpt.of(0).getRawSignedValue()).isZero();
+        assertThat(dpt.of(0).getSignedValue()).isZero();
+        assertThat(dpt.of(2147483647).getRawSignedValue()).isEqualTo(2147483647);
+        assertThat(dpt.of(2147483647).getSignedValue()).isEqualTo(214748.3647);
     }
 }

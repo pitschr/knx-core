@@ -27,13 +27,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author PITSCHR
  */
-public class DPT20Test {
-    /**
-     * Test constructor of {@link DPT20}
-     */
+class DPT20Test {
     @Test
-    @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
+    @DisplayName("DPT20 Constructor not instantiable")
+    void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DPT20.class);
     }
 }

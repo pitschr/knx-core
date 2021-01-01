@@ -36,7 +36,7 @@ import li.pitschmann.knx.core.utils.Bytes;
  *
  * @author PITSCHR
  */
-public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
+public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
     /**
      * <strong>6.001</strong> Percent (%)
      *
@@ -142,7 +142,7 @@ public final class DPT6 extends AbstractRangeDataPointType<DPT6Value, Integer> {
      *
      * @author PITSCHR
      */
-    public static class StatusMode extends AbstractDataPointType<DPT6Value.StatusMode> {
+    public static class StatusMode extends BaseDataPointType<DPT6Value.StatusMode> {
         /**
          * Constructor for {@link DPT6.StatusMode}
          *

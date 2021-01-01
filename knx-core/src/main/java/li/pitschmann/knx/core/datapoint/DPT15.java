@@ -39,7 +39,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT15Value.Flags;
  *
  * @author PITSCHR
  */
-public final class DPT15 extends AbstractDataPointType<DPT15Value> {
+public final class DPT15 extends BaseDataPointType<DPT15Value> {
     /**
      * <strong>15.000</strong> Access Data
      *
@@ -94,6 +94,17 @@ public final class DPT15 extends AbstractDataPointType<DPT15Value> {
     @Override
     protected DPT15Value parse(final byte[] bytes) {
         return new DPT15Value(bytes);
+    }
+
+    @Override
+    protected boolean isCompatible(String[] args) {
+        return false;
+    }
+
+    @Override
+    protected DPT15Value parse(String[] args) {
+        // should not happen, because isCompatible(String[]) always returns false
+        throw new UnsupportedOperationException();
     }
 
     public DPT15Value of(final byte[] accessIdentificationData, final Flags flags) {

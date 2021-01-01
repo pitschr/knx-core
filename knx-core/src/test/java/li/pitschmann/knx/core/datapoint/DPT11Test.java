@@ -19,81 +19,91 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT11Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT11}
  *
  * @author PITSCHR
  */
-public class DPT11Test extends AbstractDataPointTypeTest<DPT11, DPT11Value> {
-    private static final DPT11 DPT_DATE = DPT11.DATE;
-
-    @Override
+class DPT11Test {
     @Test
-    public void testIdAndDescription() {
-        assertThat(DPT_DATE.getId()).isEqualTo("11.001");
-        assertThat(DPT_DATE.getDescription()).isEqualTo("Date");
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
+        final var dpt = DPT11.DATE;
+        assertThat(dpt.getId()).isEqualTo("11.001");
+        assertThat(dpt.getDescription()).isEqualTo("Date");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        // failures
-        assertThatThrownBy(() -> DPT_DATE.of(new byte[1])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.of(new byte[4])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.of("0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_DATE.of("0x00", "0x00", "0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-
-        // OK
-        assertThat(DPT_DATE.of(new byte[]{0x01, 0x01, 0x00})).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.of(new byte[]{0x1f, 0x0c, 0x63})).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.of("0x01", "0x01", "0x00")).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.of("0x1f", "0x0c", "0x63")).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.of(LocalDate.now())).isInstanceOf(DPT11Value.class);
-        assertThat(DPT_DATE.of("2000-01-02")).isInstanceOf(DPT11Value.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        final var dpt = DPT11.DATE;
+        // byte is supported for length == 3 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isFalse();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+        assertThat(dpt.isCompatible(new byte[3])).isTrue();
+        assertThat(dpt.isCompatible(new byte[4])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT11.DATE;
+        // String is supported for length == 1 only
+        // YYYY-MM-DD
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue(); // HH:MM:SS
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT11.DATE;
+        assertThat(dpt.parse(new byte[]{0x01, 0x01, 0x00})).isInstanceOf(DPT11Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0x1F, 0x0C, 0x63})).isInstanceOf(DPT11Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT11.DATE;
+        assertThat(dpt.parse(new String[]{"1990-01-01"})).isInstanceOf(DPT11Value.class);
+        assertThat(dpt.parse(new String[]{"2089-12-31"})).isInstanceOf(DPT11Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(LocalDate)")
+    void testOf() {
+        final var dpt = DPT11.DATE;
+        assertThat(dpt.of(LocalDate.now())).isInstanceOf(DPT11Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(LocalDate)")
+    void testToByteArray() {
+        final var dpt = DPT11.DATE;
         // day = 1, month = 1, year = 90 (=1990)
-        this.assertDPT(new byte[]{0x01, 0x01, 0x5a}, LocalDate.of(1990, 1, 1));
+        assertThat(dpt.toByteArray(LocalDate.of(1990, 1, 1)))
+                .containsExactly(0x01, 0x01, 0x5A);
         // day = 9, month = 3, year = 91 (=1991)
-        this.assertDPT(new byte[]{0x09, 0x03, 0x5b}, LocalDate.of(1991, 3, 9));
+        assertThat(dpt.toByteArray(LocalDate.of(1991, 3, 9)))
+                .containsExactly(0x09, 0x03, 0x5B);
         // day = 18, month = 6, year = 99 (=1999)
-        this.assertDPT(new byte[]{0x12, 0x06, 0x63}, LocalDate.of(1999, 6, 18));
+        assertThat(dpt.toByteArray(LocalDate.of(1999, 6, 18)))
+                .containsExactly(0x12, 0x06, 0x63);
         // day = 27, month = 9, year = 50 (=2050)
-        this.assertDPT(new byte[]{0x1b, 0x09, 0x32}, LocalDate.of(2050, 9, 27));
+        assertThat(dpt.toByteArray(LocalDate.of(2050, 9, 27)))
+                .containsExactly(0x1B, 0x09, 0x32);
         // day = 31, month = 12, year = 89 (=2089)
-        this.assertDPT(new byte[]{0x1f, 0x0c, 0x59}, LocalDate.of(2089, 12, 31));
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code bValueArray} and {@code localDate}
-     *
-     * @param bValueArray byte array with values
-     * @param localDate   local date
-     */
-    private void assertDPT(final byte[] bValueArray, final LocalDate localDate) {
-        final var dpt = DPT_DATE;
-        final var dptValue = dpt.of(localDate);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArray, dptValue);
-
-        // assert specific DPT11
-        assertThat(dpt.of(localDate.toString())).isEqualTo(dptValue);
-        assertThat(dpt.of(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth())).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(localDate)).containsExactly(bValueArray);
-        assertThat(dptValue.getDate()).isEqualTo(localDate);
+        assertThat(dpt.toByteArray(LocalDate.of(2089, 12, 31)))
+                .containsExactly(0x1F, 0x0C, 0x59);
     }
 }

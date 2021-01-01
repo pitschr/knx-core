@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  *
  * @author PITSCHR
  */
-public final class DPT19 extends AbstractDataPointType<DPT19Value> {
+public final class DPT19 extends BaseDataPointType<DPT19Value> {
     /**
      * <strong>19.001</strong> Date & Time
      *
@@ -160,16 +160,8 @@ public final class DPT19 extends AbstractDataPointType<DPT19Value> {
         return new DPT19Value(dayOfWeek, date, time, flags);
     }
 
-    public DPT19Value of(final LocalDate date, final LocalTime time) {
-        return of(null, date, time, Flags.NO_FLAGS);
-    }
-
     public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time) {
         return of(dayOfWeek, date, time, Flags.NO_FLAGS);
-    }
-
-    public DPT19Value of(final LocalDate date, final LocalTime time, final Flags flags) {
-        return of(null, date, time, flags);
     }
 
     public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {

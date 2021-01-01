@@ -37,7 +37,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT12Value;
  *
  * @author PITSCHR
  */
-public final class DPT12 extends AbstractRangeDataPointType<DPT12Value, Long> {
+public final class DPT12 extends BaseRangeDataPointType<DPT12Value, Long> {
     /**
      * <strong>12.001</strong> Value 4-Octet Unsigned Count
      *

@@ -36,7 +36,7 @@ import java.util.function.Function;
  *
  * @author PITSCHR
  */
-public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
+public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
     /**
      * <strong>5.001</strong> Scaling (%)
      *
@@ -54,7 +54,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.001", "dpst-5-1"})
-    public static final DPT5 SCALING = new DPT5("Scaling", 0, 100, "%", v -> v * 100d / 255d);
+    public static final DPT5 SCALING = new DPT5("Scaling", 0, 255, "%", v -> v * 100d / 255d);
     /**
      * <strong>5.003</strong> Angle (°)
      *
@@ -72,7 +72,7 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.003", "dpst-5-3"})
-    public static final DPT5 ANGLE = new DPT5("Angle", 0, 360, "°", v -> v * 360d / 255d);
+    public static final DPT5 ANGLE = new DPT5("Angle", 0, 255, "°", v -> v * 360d / 255d);
     /**
      * <strong>5.004</strong> Percent 8-bit (%)
      *
@@ -195,10 +195,6 @@ public final class DPT5 extends AbstractRangeDataPointType<DPT5Value, Integer> {
     @Override
     protected DPT5Value parse(final String[] args) {
         return new DPT5Value(this, Integer.parseInt(args[0]));
-    }
-
-    public DPT5Value of(final byte value) {
-        return of(new byte[]{value});
     }
 
     public DPT5Value of(final int value) {

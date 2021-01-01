@@ -20,27 +20,30 @@ package li.pitschmann.knx.core.datapoint;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
- * Tests for {@link DataPointType}
+ * Tests for {@link BaseRangeDataPointType}
  *
  * @author PITSCHR
  */
-public interface DPTTest {
-    /**
-     * General DPT test for id and description
-     */
-    @Test
-    void testIdAndDescription();
+public class BaseRangeDataPointTypeTest {
 
     /**
-     * General DPT test for byte array compatibility.
+     * Tests {@link BaseRangeDataPointType#getLowerValue()},
+     * {@link BaseRangeDataPointType#getUpperValue()} and
+     * {@link BaseRangeDataPointType#isRangeClosed(Comparable)}
      */
     @Test
-    void testCompatibility();
+    public void testLowerAndUpperValues() {
+        // 0 = 0° .. 255 = 360°
+        assertThat(DPT5.ANGLE.getLowerValue()).isEqualTo(0);
+        assertThat(DPT5.ANGLE.getUpperValue()).isEqualTo(255);
 
-    /**
-     * Test the given Data Point Type.
-     */
-    @Test
-    void testOf();
+        assertThat(DPT5.ANGLE.isRangeClosed(-1)).isFalse();
+        assertThat(DPT5.ANGLE.isRangeClosed(0)).isTrue();
+        assertThat(DPT5.ANGLE.isRangeClosed(254)).isTrue();
+        assertThat(DPT5.ANGLE.isRangeClosed(255)).isTrue();
+        assertThat(DPT5.ANGLE.isRangeClosed(256)).isFalse();
+    }
 }

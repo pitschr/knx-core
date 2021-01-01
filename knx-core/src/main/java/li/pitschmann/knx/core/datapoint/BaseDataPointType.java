@@ -42,16 +42,16 @@ import java.util.stream.Stream;
  *
  * @author PITSCHR
  */
-public abstract class AbstractDataPointType<V extends DataPointValue<?>> implements DataPointType<V> {
+public abstract class BaseDataPointType<V extends DataPointValue> implements DataPointType {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final String description;
     private final String unit;
 
-    public AbstractDataPointType(final String description) {
+    public BaseDataPointType(final String description) {
         this(description, null);
     }
 
-    public AbstractDataPointType(final String description, final @Nullable String unit) {
+    public BaseDataPointType(final String description, final @Nullable String unit) {
         this.description = Objects.requireNonNull(description);
         this.unit = unit;
     }
@@ -75,13 +75,7 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         return Objects.toString(this.unit, "");
     }
 
-    /**
-     * Returns a {@link DataPointValue} for specified byte array.
-     *
-     * @param bytes raw bytes
-     * @return data point value from raw bytes
-     * @throws DataPointTypeIncompatibleBytesException to be thrown if wrong byte array structure was provided
-     */
+    @Override
     public final V of(final byte[] bytes) {
         if (bytes == null) {
             throw new KnxNullPointerException("bytes");
@@ -99,32 +93,20 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         return this.parse(bytes);
     }
 
-    /**
-     * Checks if the given {@code bytes} is compatible with the current DPT
-     *
-     * @param bytes raw bytes
-     * @return {@code true} if raw bytes are compatible, otherwise {@code false}
-     */
-    protected abstract boolean isCompatible(final byte[] bytes);
+    @Override
+    public final V of(final byte b, final byte... moreBytes) {
+        if (moreBytes.length == 0) {
+            return of(new byte[]{b});
+        } else {
+            byte[] newArray = new byte[moreBytes.length + 1];
+            newArray[0] = b;
+            System.arraycopy(moreBytes, 0, newArray, 1, moreBytes.length);
+            return of(newArray);
+        }
+    }
 
-    /**
-     * Parses the {@code bytes} to an instance of {@code <V>}
-     *
-     * @param bytes raw bytes to be parsed
-     * @return {@link DataPointValue} from raw bytes
-     */
-    protected abstract V parse(final byte[] bytes);
 
-    /**
-     * Returns a {@link DataPointValue} for specified string arguments.
-     * <p>
-     * Per default it just parses the string arguments as hex string.
-     * This behavior can differ for the specific DPT class.
-     *
-     * @param args arguments to be parsed
-     * @return data point value
-     * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
-     */
+    @Override
     public final V of(final String[] args) {
         Preconditions.checkArgument(args != null && args.length > 0,
                 "No arguments provided for conversion to data point value object.");
@@ -145,6 +127,35 @@ public abstract class AbstractDataPointType<V extends DataPointValue<?>> impleme
         }
         throw new DataPointTypeIncompatibleSyntaxException(this, args);
     }
+
+    @Override
+    public final V of(final String arg, final String... moreArgs) {
+        Preconditions.checkNonNull(arg);
+        if (moreArgs.length == 0) {
+            return of(new String[]{arg});
+        } else {
+            String[] newArray = new String[moreArgs.length + 1];
+            newArray[0] = arg;
+            System.arraycopy(moreArgs, 0, newArray, 1, moreArgs.length);
+            return of(newArray);
+        }
+    }
+
+    /**
+     * Checks if the given {@code bytes} is compatible with the current DPT
+     *
+     * @param bytes raw bytes
+     * @return {@code true} if raw bytes are compatible, otherwise {@code false}
+     */
+    protected abstract boolean isCompatible(final byte[] bytes);
+
+    /**
+     * Parses the {@code bytes} to an instance of {@code <V>}
+     *
+     * @param bytes raw bytes to be parsed
+     * @return {@link DataPointValue} from raw bytes
+     */
+    protected abstract V parse(final byte[] bytes);
 
     /**
      * Checks if the given {@code args} is compatible with the current DPT

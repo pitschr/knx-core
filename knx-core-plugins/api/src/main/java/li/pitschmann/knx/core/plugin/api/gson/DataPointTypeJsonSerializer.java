@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 /**
  * Serializes the {@link DataPointType} to a JSON format using Gson
  */
-public final class DataPointTypeJsonSerializer implements JsonSerializer<DataPointType<?>> {
+public final class DataPointTypeJsonSerializer implements JsonSerializer<DataPointType> {
     public static final DataPointTypeJsonSerializer INSTANCE = new DataPointTypeJsonSerializer();
 
     private DataPointTypeJsonSerializer() {
@@ -19,7 +19,7 @@ public final class DataPointTypeJsonSerializer implements JsonSerializer<DataPoi
     }
 
     @Override
-    public JsonElement serialize(final DataPointType<?> dataPointType, final Type type, final JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(final DataPointType dataPointType, final Type type, final JsonSerializationContext jsonSerializationContext) {
         return new JsonPrimitive(dataPointType.getId());
     }
 }

@@ -45,9 +45,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     private int rawUnsignedValue;
 
     public DPT5Value(final DPT5 dpt, final byte b) {
-        super(dpt);
-        // unsigned value
-        this.rawUnsignedValue = Bytes.toUnsignedInt(b);
+        this(dpt, Bytes.toUnsignedInt(b));
     }
 
     public DPT5Value(final DPT5 dpt, final int value) {

@@ -19,127 +19,99 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT4Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.core.exceptions.KnxException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT4}
  *
  * @author PITSCHR
  */
-public class DPT4Test extends AbstractDataPointTypeTest<DPT4, DPT4Value> {
-    @Override
+class DPT4Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT4.ASCII;
-
         assertThat(dpt.getId()).isEqualTo("4.001");
         assertThat(dpt.getDescription()).isEqualTo("ASCII Character");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT4.ASCII;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("a", "b")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("0x80")).isInstanceOf(KnxException.class)
-                .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0x80");
-
-        // OK
-        assertThat(dpt.of((byte) 'a')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of((byte) 'z')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of('a')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of('z')).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of("a")).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of("z")).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of("0x50")).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.of("0x5F")).isInstanceOf(DPT4Value.class);
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
     }
 
     @Test
-    public void testCharset() {
-        assertThat(DPT4.ASCII.getCharset()).isEqualTo(StandardCharsets.US_ASCII);
-        assertThat(DPT4.ISO_8859_1.getCharset()).isEqualTo(StandardCharsets.ISO_8859_1);
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT4.ASCII;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
 
-        assertThat(DPT4.ASCII.getCharsetDecoder()).isInstanceOf(StandardCharsets.US_ASCII.newDecoder().getClass());
-        assertThat(DPT4.ISO_8859_1.getCharsetDecoder()).isInstanceOf(StandardCharsets.ISO_8859_1.newDecoder().getClass());
+        // String is supported only when content of 1st String is a single character
+        assertThat(dpt.isCompatible(new String[1])).isFalse();
+        assertThat(dpt.isCompatible(new String[]{"a"})).isTrue();
+        assertThat(dpt.isCompatible(new String[]{"abc"})).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
-        /*
-         * ASCII
-         */
-        final var dptAscii = DPT4.ASCII;
-        // character: NULL
-        this.assertDPT(dptAscii, (byte) 0x00, '\u0000');
-        // character: DEL
-        this.assertDPT(dptAscii, (byte) 0x7F, '\u007F');
-        // character: A
-        this.assertDPT(dptAscii, (byte) 0x41, 'A');
-        // character: z
-        this.assertDPT(dptAscii, (byte) 0x7A, 'z');
-        // character: '9'
-        this.assertDPT(dptAscii, (byte) 0x39, '9');
-
-        // character: 'ä' (not supported by ASCII)
-        assertThatThrownBy(() -> dptAscii.of((byte) 0xE4)).isInstanceOf(KnxException.class);
-
-        /*
-         * ISO_8859_1
-         */
-        final var dptIso = DPT4.ISO_8859_1;
-        // character: NULL
-        this.assertDPT(dptIso, (byte) 0x00, '\u0000');
-        // character: DEL
-        this.assertDPT(dptIso, (byte) 0x7F, '\u007F');
-        // character: A
-        this.assertDPT(dptIso, (byte) 0x41, 'A');
-        // character: z
-        this.assertDPT(dptIso, (byte) 0x7A, 'z');
-        // character: '9'
-        this.assertDPT(dptIso, (byte) 0x39, '9');
-        // character: 'ä'
-        this.assertDPT(dptIso, (byte) 0xE4, 'ä');
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT4.ASCII;
+        assertThat(dpt.parse(new byte[]{0x61})).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.parse(new byte[]{0x62})).isInstanceOf(DPT4Value.class);
     }
 
-    /**
-     * Invalid Test {@link DPT4#of(byte[])}
-     */
     @Test
-    public void testOfInvalid() {
-        // wrong dpt
-        assertThat(DPT4.ASCII.of((byte) 0x00)).isNotEqualTo(DPT4.ISO_8859_1.of((byte) 0x00));
-        // wrong value
-        assertThat(DPT4.ASCII.of((byte) 0x00)).isNotEqualTo(DPT4.ASCII.of((byte) 0x01));
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT4.ASCII;
+        assertThat(dpt.parse(new String[]{"a"})).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.parse(new String[]{"z"})).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.parse(new String[]{"ä"})).isInstanceOf(DPT4Value.class);
+        assertThat(dpt.parse(new String[]{"ö"})).isInstanceOf(DPT4Value.class);
     }
 
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code byteValue} and {@code charValue}
-     *
-     * @param dpt       data point type
-     * @param byteValue byte value
-     * @param charValue character value
-     */
-    private void assertDPT(final DPT4 dpt, final byte byteValue, final char charValue) {
-        final var dptValue = dpt.of(charValue);
+    @Test
+    @DisplayName("Test #getCharset() and #getCharsetDecoder()")
+    void testCharset() {
+        // ASCII
+        assertThat(DPT4.ASCII.getCharset()).isSameAs(StandardCharsets.US_ASCII);
+        assertThat(DPT4.ASCII.getCharsetDecoder().charset()).isSameAs(StandardCharsets.US_ASCII);
+        // ISO-8859-1
+        assertThat(DPT4.ISO_8859_1.getCharset()).isSameAs(StandardCharsets.ISO_8859_1);
+        assertThat(DPT4.ISO_8859_1.getCharsetDecoder().charset()).isSameAs(StandardCharsets.ISO_8859_1);
+    }
 
-        // assert base DPT
-        this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
-        // assert specific DPT4
-        assertThat(dpt.of(String.valueOf(charValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(charValue)).containsExactly(byteValue);
+    @Test
+    @DisplayName("Test #of(char)")
+    void testOf() {
+        // ASCII
+        assertThat(DPT4.ASCII.of('a')).isInstanceOf(DPT4Value.class);
+        assertThat(DPT4.ASCII.of('z')).isInstanceOf(DPT4Value.class);
+        // ISO-8859-1
+        assertThat(DPT4.ISO_8859_1.of('ä')).isInstanceOf(DPT4Value.class);
+        assertThat(DPT4.ISO_8859_1.of('Ö')).isInstanceOf(DPT4Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #toByteArray(char)")
+    void testToByteArray() {
+        // ASCII
+        assertThat(DPT4.ASCII.toByteArray('a')).containsExactly(0x61);
+        assertThat(DPT4.ASCII.toByteArray('Z')).containsExactly(0x5A);
+        // ISO-8859-1
+        assertThat(DPT4.ISO_8859_1.toByteArray('ä')).containsExactly(0xE4);
+        assertThat(DPT4.ISO_8859_1.toByteArray('Ö')).containsExactly(0xD6);
     }
 }

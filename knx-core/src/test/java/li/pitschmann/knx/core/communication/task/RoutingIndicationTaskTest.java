@@ -57,17 +57,17 @@ public class RoutingIndicationTaskTest {
 
         // correct body #1 - Indication + Response
         when(cemi.getMessageCode()).thenReturn(MessageCode.L_DATA_IND);
-        when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_RESPONSE);
+        when(cemi.getAPCI()).thenReturn(APCI.GROUP_VALUE_RESPONSE);
         task.onNext(correctBody);
 
         // correct body #2 - Indication + Write
         when(cemi.getMessageCode()).thenReturn(MessageCode.L_DATA_IND);
-        when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
+        when(cemi.getAPCI()).thenReturn(APCI.GROUP_VALUE_WRITE);
         task.onNext(correctBody);
 
         // correct body #3 - Connection + Write
         when(cemi.getMessageCode()).thenReturn(MessageCode.L_DATA_CON);
-        when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
+        when(cemi.getAPCI()).thenReturn(APCI.GROUP_VALUE_WRITE);
         task.onNext(correctBody);
     }
 
@@ -94,7 +94,7 @@ public class RoutingIndicationTaskTest {
         final var bodyWithWrongApciCode = mock(RoutingIndicationBody.class);
         final var cemiMock2 = mock(CEMI.class);
         when(cemiMock2.getMessageCode()).thenReturn(MessageCode.L_DATA_IND);
-        when(cemiMock2.getApci()).thenReturn(APCI.INDIVIDUAL_ADDRESS_WRITE);
+        when(cemiMock2.getAPCI()).thenReturn(APCI.INDIVIDUAL_ADDRESS_WRITE);
         when(bodyWithWrongApciCode.getCEMI()).thenReturn(cemiMock2);
         task.onNext(bodyWithWrongApciCode);
     }

@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.datapoint.value;
 
-import li.pitschmann.knx.core.datapoint.AbstractDataPointType;
+import li.pitschmann.knx.core.datapoint.BaseDataPointType;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
@@ -78,8 +78,8 @@ public class AbstractDataPointFlagsTest {
      *
      * @author PITSCHR
      */
-    private static class TestDataPointFlags extends AbstractDataPointFlags<AbstractDataPointType<?>> {
-        protected TestDataPointFlags(AbstractDataPointType<?> dpt, byte[] bytes) {
+    private static class TestDataPointFlags extends AbstractDataPointFlags<BaseDataPointType<?>> {
+        protected TestDataPointFlags(final BaseDataPointType<?> dpt, final byte[] bytes) {
             super(dpt, bytes);
         }
     }

@@ -45,19 +45,29 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     private final char character;
 
     public DPT4Value(final DPT4 dpt, final byte b) {
-        super(dpt);
-        // character
-        try {
-            this.character = dpt.getCharsetDecoder().decode(ByteBuffer.wrap(new byte[]{b})).get();
-        } catch (CharacterCodingException e) {
-            throw new KnxException(String.format("Issue during decoding charset '%s' with value: %s", dpt.getCharset(), ByteFormatter.formatHex(b)),
-                    e);
-        }
+        this(dpt, toCharacter(dpt, b));
     }
 
     public DPT4Value(final DPT4 dpt, final char character) {
         super(dpt);
         this.character = character;
+    }
+
+    /**
+     * Private class to convert from byte to a character using a charset decoder
+     * that is defined in the {@link DPT4}
+     *
+     * @param dpt the data point type with corresponding {@link java.nio.charset.CharsetDecoder}
+     * @param b   byte to be decoded
+     * @return a character
+     */
+    private static char toCharacter(final DPT4 dpt, final byte b) {
+        try {
+            return dpt.getCharsetDecoder().decode(ByteBuffer.wrap(new byte[]{b})).get();
+        } catch (CharacterCodingException e) {
+            throw new KnxException(String.format("Issue during decoding charset '%s' with value: %s", dpt.getCharset(), ByteFormatter.formatHex(b)),
+                    e);
+        }
     }
 
     /**

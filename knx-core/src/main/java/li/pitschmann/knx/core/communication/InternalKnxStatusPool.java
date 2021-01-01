@@ -25,7 +25,7 @@ import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.config.CoreConfigs;
-import li.pitschmann.knx.core.datapoint.DataPointType;
+import li.pitschmann.knx.core.datapoint.BaseDataPointType;
 import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.utils.Maps;
@@ -165,17 +165,16 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Nullable
     @Override
-    public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId) {
+    public <V extends DataPointValue> V getValue(final KnxAddress address, final String dptId) {
         return getValue(address, dptId, true);
     }
 
     @Nullable
     @Override
-    public <V extends DataPointValue<?>> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
+    public <V extends DataPointValue> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
-            @SuppressWarnings("unchecked")
-            final V dataPointValue = (V) DataPointRegistry.getDataPointType(dptId).of(statusData.getApciData());
+            @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointRegistry.getDataPointType(dptId).of(statusData.getData());
             return dataPointValue;
         }
         return null;
@@ -183,16 +182,16 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Nullable
     @Override
-    public <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt) {
+    public <V extends DataPointValue> V getValue(final KnxAddress address, final BaseDataPointType<V> dpt) {
         return getValue(address, dpt, true);
     }
 
     @Nullable
     @Override
-    public <T extends DataPointType<V>, V extends DataPointValue<T>> V getValue(final KnxAddress address, final T dpt, final boolean mustUpToDate) {
+    public <V extends DataPointValue> V getValue(final KnxAddress address, final BaseDataPointType<V> dpt, final boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
-            return dpt.of(statusData.getApciData());
+            return dpt.of(statusData.getData());
         }
         return null;
     }

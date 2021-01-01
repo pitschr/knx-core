@@ -92,32 +92,32 @@ public class StatusControllerTest {
         final var knxStatusData0 = mock(KnxStatusData.class);
         when(knxStatusData0.getTimestamp()).thenReturn(Instant.ofEpochMilli(123456));
         when(knxStatusData0.getSourceAddress()).thenReturn(sourceGroupAddress);
-        when(knxStatusData0.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(knxStatusData0.getApciData()).thenReturn(new byte[]{0x01});
+        when(knxStatusData0.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData0.getData()).thenReturn(new byte[]{0x01});
         statusMap.put(knxAddress0, knxStatusData0);
 
         final var knxAddress1 = GroupAddress.of(1, 2, 3);
         final var knxStatusData1 = mock(KnxStatusData.class);
         when(knxStatusData1.getTimestamp()).thenReturn(Instant.ofEpochMilli(234567));
         when(knxStatusData1.getSourceAddress()).thenReturn(sourceGroupAddress);
-        when(knxStatusData1.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
-        when(knxStatusData1.getApciData()).thenReturn(new byte[]{0x23});
+        when(knxStatusData1.getAPCI()).thenReturn(APCI.GROUP_VALUE_WRITE);
+        when(knxStatusData1.getData()).thenReturn(new byte[]{0x23});
         statusMap.put(knxAddress1, knxStatusData1);
 
         final var knxAddress2 = GroupAddress.of(2, 3, 4);
         final var knxStatusData2 = mock(KnxStatusData.class);
         when(knxStatusData2.getTimestamp()).thenReturn(Instant.ofEpochMilli(345678));
         when(knxStatusData2.getSourceAddress()).thenReturn(sourceGroupAddress);
-        when(knxStatusData2.getApci()).thenReturn(APCI.GROUP_VALUE_RESPONSE);
-        when(knxStatusData2.getApciData()).thenReturn(new byte[]{0x56, 0x7E});
+        when(knxStatusData2.getAPCI()).thenReturn(APCI.GROUP_VALUE_RESPONSE);
+        when(knxStatusData2.getData()).thenReturn(new byte[]{0x56, 0x7E});
         statusMap.put(knxAddress2, knxStatusData2);
 
         final var knxAddress3 = GroupAddress.of(3, 4, 5);
         final var knxStatusData3 = mock(KnxStatusData.class);
         when(knxStatusData3.getTimestamp()).thenReturn(Instant.ofEpochMilli(456789));
         when(knxStatusData3.getSourceAddress()).thenReturn(sourceGroupAddress);
-        when(knxStatusData3.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(knxStatusData3.getApciData()).thenReturn(new byte[]{0x69, 0x0A, 0x4E});
+        when(knxStatusData3.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData3.getData()).thenReturn(new byte[]{0x69, 0x0A, 0x4E});
         statusMap.put(knxAddress3, knxStatusData3);
         when(statusController.getKnxClient().getStatusPool().copyStatusMap()).thenReturn(statusMap);
 
@@ -181,8 +181,8 @@ public class StatusControllerTest {
         final var knxStatusData = mock(KnxStatusData.class);
         when(knxStatusData.getTimestamp()).thenReturn(Instant.ofEpochMilli(9876543));
         when(knxStatusData.getSourceAddress()).thenReturn(sourceAddress);
-        when(knxStatusData.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(knxStatusData.getApciData()).thenReturn(new byte[]{0x77, 0x43, 0x21});
+        when(knxStatusData.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData.getData()).thenReturn(new byte[]{0x77, 0x43, 0x21});
         when(statusController.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
 
         //
@@ -219,8 +219,8 @@ public class StatusControllerTest {
         final var knxStatusData = mock(KnxStatusData.class);
         when(knxStatusData.getTimestamp()).thenReturn(Instant.ofEpochMilli(19876543));
         when(knxStatusData.getSourceAddress()).thenReturn(sourceAddress);
-        when(knxStatusData.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(knxStatusData.getApciData()).thenReturn(new byte[]{0x38, 0x55});
+        when(knxStatusData.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(knxStatusData.getData()).thenReturn(new byte[]{0x38, 0x55});
         when(statusController.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
 
         //

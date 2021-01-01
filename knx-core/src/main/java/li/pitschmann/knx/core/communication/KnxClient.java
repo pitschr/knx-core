@@ -106,25 +106,40 @@ public interface KnxClient extends AutoCloseable {
     <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout);
 
     /**
-     * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} <strong>asynchronously</strong>.
+     * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue}
+     * <p>
+     * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.
+     * If you want to use a non-blocking operation, use {@link #send(Body)} or {@link #send(RequestBody, long)}
+     * instead.
+     * </p>
      *
      * @param address        the recipient which is an KNX group address
      * @param dataPointValue value to be sent to KNX group address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean writeRequest(final GroupAddress address, final DataPointValue<?> dataPointValue);
+    boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue);
 
     /**
-     * Sends a WRITE request to {@link GroupAddress} with {@code apciData} <strong>asynchronously</strong>.
+     * Sends a WRITE request to {@link GroupAddress} with {@code data}
+     * <p>
+     * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.
+     * If you want to use a non-blocking operation, use {@link #send(Body)} or {@link #send(RequestBody, long)}
+     * instead.
+     * </p>
      *
-     * @param address  the recipient which is an KNX group address
-     * @param apciData value in byte array form to be sent to KNX group address
+     * @param address the recipient which is an KNX group address
+     * @param data    value in byte array form to be sent to KNX group address
      * @return {@code true} if the write request was successful, otherwise {@code false}
      */
-    boolean writeRequest(final GroupAddress address, final byte[] apciData);
+    boolean writeRequest(final GroupAddress address, final byte[] data);
 
     /**
-     * Sends a READ request to {@link GroupAddress} <strong>asynchronously</strong>
+     * Sends a READ request to {@link GroupAddress}
+     * <p>
+     * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.
+     * If you want to use a non-blocking operation, use {@link #send(Body)} or {@link #send(RequestBody, long)}
+     * instead.
+     * </p>
      *
      * @param address this is the KNX group address we want to send the read request to obtain the current value
      * @return {@code true} if the write request was successful, otherwise {@code false}

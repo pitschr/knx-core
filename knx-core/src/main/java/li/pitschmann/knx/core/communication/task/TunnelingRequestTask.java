@@ -67,16 +67,16 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
             // rest are ignored
             final var cemi = reqBody.getCEMI();
             final var messageCode = cemi.getMessageCode();
-            final var apci = cemi.getApci();
+            final var apci = cemi.getAPCI();
             if (messageCode == MessageCode.L_DATA_IND) {
                 if (apci == APCI.GROUP_VALUE_WRITE) {
                     if (log.isDebugEnabled()) {
-                        log.debug("TunnelingRequest frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                        log.debug("TunnelingRequest frame received from KNX after WRITE request from a remote KNX device: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
                 } else if (apci == APCI.GROUP_VALUE_RESPONSE) {
                     if (log.isDebugEnabled()) {
-                        log.debug("TunnelingRequest frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                        log.debug("TunnelingRequest frame received from KNX after READ request: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getData()));
                     }
                     this.client.getStatusPool().updateStatus(cemi);
                 } else {
@@ -84,7 +84,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
                 }
             } else if (messageCode == MessageCode.L_DATA_CON && apci == APCI.GROUP_VALUE_WRITE) {
                 if (log.isDebugEnabled()) {
-                    log.debug("TunnelingRequest frame received from KNX after WRITE request from KNX client: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getApciData()));
+                    log.debug("TunnelingRequest frame received from KNX after WRITE request from KNX client: Source={}, Destination={}, Data={}", cemi.getSourceAddress().getAddress(), cemi.getDestinationAddress().getAddress(), ByteFormatter.formatHexAsString(cemi.getData()));
                 }
                 this.client.getStatusPool().updateStatus(cemi);
             } else {

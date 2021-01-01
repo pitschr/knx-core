@@ -39,7 +39,7 @@ import java.util.function.Function;
  *
  * @author PITSCHR
  */
-public final class DPT13 extends AbstractRangeDataPointType<DPT13Value, Integer> {
+public final class DPT13 extends BaseRangeDataPointType<DPT13Value, Integer> {
     /**
      * <strong>13.001</strong> Value 4-Octet Signed Count
      *

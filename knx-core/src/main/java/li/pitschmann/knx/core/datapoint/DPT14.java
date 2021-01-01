@@ -40,7 +40,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT14Value;
  *
  * @author PITSCHR
  */
-public final class DPT14 extends AbstractRangeDataPointType<DPT14Value, Double> {
+public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
     /**
      * <strong>14.000</strong> Acceleration (m/s<sup>2</sup>)
      *

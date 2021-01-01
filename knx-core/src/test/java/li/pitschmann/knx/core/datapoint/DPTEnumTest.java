@@ -19,8 +19,6 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPTEnumValue;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,81 +31,133 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class DPTEnumTest extends AbstractDataPointTypeTest<DPTEnum<DPT20.CommunicationMode>, DPTEnumValue<DPT20.CommunicationMode>> {
+class DPTEnumTest {
     private static final DPTEnum<DPT20.CommunicationMode> DPT_ENUM = new DPTEnum<>("123.456", "foobar");
+    private static final DPTEnumValue<DPT20.CommunicationMode> VALUE_LINK_LAYER = new DPTEnumValue<>(DPT_ENUM, DPT20.CommunicationMode.DATA_LINK_LAYER, 0, "DATA_LINK_LAYER");
+    private static final DPTEnumValue<DPT20.CommunicationMode> VALUE_NO_LAYER = new DPTEnumValue<>(DPT_ENUM, DPT20.CommunicationMode.NO_LAYER, 255, "NO_LAYER");
 
     static {
-        DPT_ENUM.addValue(new DPTEnumValue<>(DPT_ENUM, DPT20.CommunicationMode.DATA_LINK_LAYER, 0, "DATA_LINK_LAYER"));
-        DPT_ENUM.addValue(new DPTEnumValue<>(DPT_ENUM, DPT20.CommunicationMode.NO_LAYER, 255, "NO_LAYER"));
+        // register enumeration values
+        DPT_ENUM.addValue(VALUE_LINK_LAYER);
+        DPT_ENUM.addValue(VALUE_NO_LAYER);
     }
 
-    @Override
     @Test
-    public void testIdAndDescription() {
-        // instance methods
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         assertThat(DPT_ENUM.getId()).isEqualTo("123.456");
         assertThat(DPT_ENUM.getDescription()).isEqualTo("foobar");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
-        // failures
-        assertThatThrownBy(() -> DPT_ENUM.of(new byte[0])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of("0x00", "0x00")).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of("")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of("foo", "bar")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of(-1)).isInstanceOf(KnxEnumNotFoundException.class);
-        assertThatThrownBy(() -> DPT_ENUM.of(256)).isInstanceOf(KnxEnumNotFoundException.class);
-
-        // OK
-        assertThat(DPT_ENUM.of("0")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of("255")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of("DATA_LINK_LAYER")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of("NO_LAYER")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of(0)).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of(255)).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of("0x00")).isInstanceOf(DPTEnumValue.class);
-        assertThat(DPT_ENUM.of("0xFF")).isInstanceOf(DPTEnumValue.class);
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
+        final var dpt = DPT_ENUM;
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
     }
 
     @Test
-    @DisplayName("Try to parse and test methods of DPTEnumValue")
-    public void testParse() {
-        final var enumValueDataLinkLayer = DPT_ENUM.parse(new byte[]{0x00});
-        assertThat(DPT_ENUM.parse(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.of(0x00)).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.of("DATA_LINK_LAYER")).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.of(new byte[]{0x00})).isSameAs(enumValueDataLinkLayer);
-        assertThat(DPT_ENUM.of(new String[]{"DATA_LINK_LAYER"})).isSameAs(enumValueDataLinkLayer);
-        assertThat(enumValueDataLinkLayer.getDPT()).isSameAs(DPT_ENUM);
-        assertThat(enumValueDataLinkLayer.getOrdinal()).isEqualTo(0);
-        assertThat(enumValueDataLinkLayer.getDescription()).isEqualTo("DATA_LINK_LAYER");
-        assertThat(enumValueDataLinkLayer.toText()).isEqualTo("DATA_LINK_LAYER");
-        assertThat(enumValueDataLinkLayer.getEnum()).isSameAs(DPT20.CommunicationMode.DATA_LINK_LAYER);
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT_ENUM;
+        // String is supported for length == 1 only
+        // First String may not be null nor empty
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isFalse();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
 
-        final var enumValueNoLayer = DPT_ENUM.parse(new byte[]{(byte) 0xFF});
-        assertThat(DPT_ENUM.parse(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.of(0xFF)).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.of("NO_LAYER")).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.of(new byte[]{(byte) 0xFF})).isSameAs(enumValueNoLayer);
-        assertThat(DPT_ENUM.of(new String[]{"NO_LAYER"})).isSameAs(enumValueNoLayer);
-        assertThat(enumValueNoLayer.getDPT()).isSameAs(DPT_ENUM);
-        assertThat(enumValueNoLayer.getOrdinal()).isEqualTo(0xFF);
-        assertThat(enumValueNoLayer.getDescription()).isEqualTo("NO_LAYER");
-        assertThat(enumValueNoLayer.toText()).isEqualTo("NO_LAYER");
-        assertThat(enumValueNoLayer.getEnum()).isSameAs(DPT20.CommunicationMode.NO_LAYER);
+        assertThat(dpt.isCompatible(new String[]{null})).isFalse();
+        assertThat(dpt.isCompatible(new String[]{""})).isFalse();
+        assertThat(dpt.isCompatible(new String[]{"something"})).isTrue();
     }
 
-    @Override
     @Test
-    public void testOf() {
-        // re-adding with same value = 0 should cause an exception
-        assertThatThrownBy(() -> DPT_ENUM.addValue(new DPTEnumValue<>(DPT_ENUM, DPT20.CommunicationMode.DATA_LINK_LAYER, 0, "DATA_LINK_LAYER")))
-                .isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("Test #parse(byte[])")
+    public void testByteParse() {
+        final var dpt = DPT_ENUM;
+        assertThat(dpt.parse(new byte[]{0x00})).isSameAs(VALUE_LINK_LAYER);
+        assertThat(dpt.parse(new byte[]{(byte) 0xFF})).isSameAs(VALUE_NO_LAYER);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    public void testStringParse() {
+        final var dpt = DPT_ENUM;
+
+        // try parse by ordinal value
+        assertThat(dpt.parse(new String[]{"0"})).isSameAs(VALUE_LINK_LAYER);
+        assertThat(dpt.parse(new String[]{"255"})).isSameAs(VALUE_NO_LAYER);
+
+        // try parse by non-existing ordinal value
+        assertThatThrownBy(() -> dpt.parse(new String[]{"999"}))
+                .isInstanceOf(KnxEnumNotFoundException.class)
+                .hasMessage("Could not find data point enum value for dpt '123.456' and value '999'.");
+
+        // try parse by description
+        assertThat(dpt.parse(new String[]{"DATA_LINK_LAYER"})).isSameAs(VALUE_LINK_LAYER);
+        assertThat(dpt.parse(new String[]{"NO_LAYER"})).isSameAs(VALUE_NO_LAYER);
+
+        // try parse by non-existing description
+        assertThatThrownBy(() -> dpt.parse(new String[]{"LOREM_IPSUM"}))
+                .isInstanceOf(KnxEnumNotFoundException.class)
+                .hasMessage("Could not find data point enum value for dpt '123.456' and value 'LOREM_IPSUM'.");
+    }
+
+    @Test
+    @DisplayName("Test #of(int)")
+    void testOf() {
+        final var dpt = DPT_ENUM;
+        // existing enumeration value
+        assertThat(dpt.of(0)).isSameAs(VALUE_LINK_LAYER);
+        assertThat(dpt.of(255)).isSameAs(VALUE_NO_LAYER);
+
+        // non-existing enumeration value
+        assertThatThrownBy(() -> dpt.of(999)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #addValue(DPTEnumValue)")
+    void testAddValue() {
+        final var enumValue = new DPTEnumValue<>(DPT_ENUM, DPT20.CommunicationMode.DATA_LINK_LAYER, 100, "SOMETHING");
+
+        // adding first time should be fine
+        DPT_ENUM.addValue(enumValue);
+
+        // adding second time should fail, as the ordinal = 100 is added already
+        assertThatThrownBy(() -> DPT_ENUM.addValue(enumValue)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Test #equals(Object)")
+    void testEquals() {
+        // should be equal - same reference
+        assertThat(DPT_ENUM.equals(DPT_ENUM)).isTrue();
+
+        // should be equal - same id
+        final var enumWithSameId = new DPTEnum<>("123.456", "");
+        assertThat(DPT_ENUM.equals(enumWithSameId)).isTrue();
+
+        // should not be equal
+        assertThat(DPT_ENUM.equals(null)).isFalse();
+        assertThat(DPT_ENUM.equals(new Object())).isFalse();
+
+        // should not be equal - different id
+        final var enumWithDifferentId = new DPTEnum<>("123.999", "");
+        assertThat(DPT_ENUM.equals(enumWithDifferentId)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #hashCode()")
+    void testHashCode() {
+        // hash code should be same
+        final var enumWithSameId = new DPTEnum<>("123.456", "");
+        assertThat(DPT_ENUM.hashCode()).isEqualTo(enumWithSameId.hashCode());
+
+        // hash code should not be same
+        final var enumWithDifferentId = new DPTEnum<>("123.999", "");
+        assertThat(DPT_ENUM.hashCode()).isNotEqualTo(enumWithDifferentId.hashCode());
     }
 }
-

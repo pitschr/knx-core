@@ -19,132 +19,95 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT16Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
-import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Bytes.FillDirection;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT16}
  *
  * @author PITSCHR
  */
-public class DPT16Test extends AbstractDataPointTypeTest<DPT16, DPT16Value> {
-    @Override
+class DPT16Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT16.ASCII;
-
         assertThat(dpt.getId()).isEqualTo("16.000");
         assertThat(dpt.getDescription()).isEqualTo("ASCII Characters");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT16.ASCII;
-
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[15])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of(new String[]{"", ""})).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("Hello World Overflow!")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("The length of characters is too long");
-        assertThatThrownBy(() -> dpt.of("Hello World Overflow!", "More Overflow"))
-                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("Hello World!", "More Overflow"))
-                .isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-
-        // OK
-        assertThat(dpt.of(new byte[]{'H', 'a', 'l', 'l', 'o'})).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.of(Bytes.fillByteArray(new byte[14], new byte[]{'a'}, FillDirection.LEFT_TO_RIGHT))).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.of(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.of("Hello World!!!")).isInstanceOf(DPT16Value.class);
-        assertThat(dpt.of("0x48", "0x61", "0x6C", "0x6C", "0x6F")).isInstanceOf(DPT16Value.class);
+        // byte is supported for length <= 14 only
+        assertThat(dpt.isCompatible(new byte[0])).isTrue();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[14])).isTrue();
+        assertThat(dpt.isCompatible(new byte[15])).isFalse();
     }
 
-    /**
-     * Tests the {@link DPT16#getCharset()} and {@link DPT16#getCharsetDecoder()}
-     */
     @Test
-    public void testCharset() {
-        assertThat(DPT16.ASCII.getCharset()).isEqualTo(StandardCharsets.US_ASCII);
-        assertThat(DPT16.ISO_8859_1.getCharset()).isEqualTo(StandardCharsets.ISO_8859_1);
-
-        assertThat(DPT16.ASCII.getCharsetDecoder()).isInstanceOf(StandardCharsets.US_ASCII.newDecoder().getClass());
-        assertThat(DPT16.ISO_8859_1.getCharsetDecoder()).isInstanceOf(StandardCharsets.ISO_8859_1.newDecoder().getClass());
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT16.ASCII;
+        // String is supported for length == 1
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
     }
 
-    @Override
     @Test
-    public void testOf() {
-        // --------
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        // ASCII characters only
+        assertThat(DPT16.ASCII.parse(new byte[]{'H', 'a', 'l', 'l', 'o'})).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ASCII.parse(new byte[]{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '!', '!'})).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ASCII.parse(new byte[]{0x48 /*H*/, 0x61 /*a*/, 0x6C /*l*/, 0x6C /*l*/, 0x6F /*o*/})).isInstanceOf(DPT16Value.class);
+
+        // ISO-8859-1 characters (umlauts)
+        assertThat(DPT16.ISO_8859_1.parse(new byte[]{'H', (byte) 'ä', 'l', 'l', (byte) 'ö'})).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ISO_8859_1.parse(new byte[]{0x48 /*H*/, (byte) 0xE4 /*ä*/, 0x6C /*l*/, 0x6C /*l*/, (byte) 0xF6 /*ö*/})).isInstanceOf(DPT16Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        // ASCII characters only
+        assertThat(DPT16.ASCII.parse(new String[]{"Hallo"})).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ASCII.parse(new String[]{"Hello World!!!"})).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ASCII.parse(new String[]{"0x48" /*H*/, "0x61" /*a*/, "0x6C" /*l*/, "0x6C" /*l*/, "0x6F" /*o*/})).isInstanceOf(DPT16Value.class);
+
+        // ISO-8859-1 characters (umlauts)
+        assertThat(DPT16.ISO_8859_1.parse(new String[]{"Hällö"})).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ISO_8859_1.parse(new String[]{"0x48" /*H*/, "0xE4" /*ä*/, "0x6C" /*l*/, "0x6C" /*l*/, "0xF6" /*ö*/})).isInstanceOf(DPT16Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(String)")
+    void testOf() {
         // ASCII
-        // --------
-        final var dptAscii = DPT16.ASCII;
-        // 0 characters
-        this.assertDPT(dptAscii, new byte[0], "");
-        // 5 characters
-        this.assertDPT(dptAscii, new byte[]{(byte) 0x30, (byte) 0x31, (byte) 0x32, (byte) 0x33, (byte) 0x34}, "01234");
-        // 9 characters
-        this.assertDPT(dptAscii,
-                new byte[]{(byte) 0x61, (byte) 0x62, (byte) 0x63, (byte) 0x20, (byte) 0x31, (byte) 0x32, (byte) 0x33, (byte) 0x3f},
-                "abc 123?");
-        // 14 characters
-        this.assertDPT(dptAscii, new byte[]{(byte) 0x41, (byte) 0x42, (byte) 0x43, (byte) 0x44, (byte) 0x45, (byte) 0x46, (byte) 0x47, (byte) 0x48,
-                (byte) 0x49, (byte) 0x4a, (byte) 0x4b, (byte) 0x4c, (byte) 0x4d}, "ABCDEFGHIJKLM");
-
-        // character: 'ä' (not supported by ASCII)
-        assertThatThrownBy(() -> dptAscii.of((byte) 0xe4)).isInstanceOf(KnxException.class);
-
-        // --------
-        // ISO_8859_1
-        // --------
-        final var dpt = DPT16.ISO_8859_1;
-        // 0 characters
-        this.assertDPT(dpt, new byte[0], "");
-        // 5 characters
-        this.assertDPT(dpt, new byte[]{(byte) 0x30, (byte) 0x31, (byte) 0x32, (byte) 0x33, (byte) 0x34}, "01234");
-        // 9 characters
-        this.assertDPT(dpt, new byte[]{(byte) 0xe4, (byte) 0xf6, (byte) 0xfc, (byte) 0x20, (byte) 0x31, (byte) 0x32, (byte) 0x33, (byte) 0x3f},
-                "äöü 123?");
-        // 14 characters
-        this.assertDPT(dpt, new byte[]{(byte) 0xc4, (byte) 0xd6, (byte) 0xdc, (byte) 0x44, (byte) 0x45, (byte) 0x46, (byte) 0x47, (byte) 0x48,
-                (byte) 0x49, (byte) 0x4a, (byte) 0x4b, (byte) 0x4c, (byte) 0x4d}, "ÄÖÜDEFGHIJKLM");
+        assertThat(DPT16.ASCII.of("Lorem Ipsum")).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ASCII.of("Dolor Sit Amet")).isInstanceOf(DPT16Value.class);
+        // ISO-8859-1
+        assertThat(DPT16.ISO_8859_1.of("äöü")).isInstanceOf(DPT16Value.class);
+        assertThat(DPT16.ISO_8859_1.of("ÜÖÄ")).isInstanceOf(DPT16Value.class);
     }
 
-    /**
-     * Invalid Test {@link DPT16}
-     */
     @Test
-    public void testOfInvalid() {
-        // wrong dpt
-        assertThat(DPT16.ASCII.of((byte) 0x00)).isNotEqualTo(DPT16.ISO_8859_1.of((byte) 0x00));
-        // wrong value
-        assertThat(DPT16.ASCII.of((byte) 0x00)).isNotEqualTo(DPT16.ASCII.of((byte) 0x01));
-    }
-
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code bValueArray} and {@code strValue}
-     *
-     * @param dpt         data point type
-     * @param bValueArray byte array with values
-     * @param strValue    string value
-     */
-    private void assertDPT(final DPT16 dpt, final byte[] bValueArray, final String strValue) {
-        final var dptValue = dpt.of(strValue);
-        final var bValueArrayPadded = Bytes.padRight(bValueArray, (byte) 0x00, 14);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, bValueArrayPadded, dptValue);
-        // assert specific DPT16
-        assertThat(dpt.of(strValue)).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(strValue)).containsExactly(bValueArrayPadded);
+    @DisplayName("Test #toByteArray(String)")
+    void testToByteArray() {
+        // ASCII
+        assertThat(DPT16.ASCII.toByteArray("Lorem Ipsum"))
+                .containsExactly(0x4c, 0x6f, 0x72, 0x65, 0x6d, 0x20, 0x49, 0x70, 0x73, 0x75, 0x6d, 0x00, 0x00, 0x00);
+        assertThat(DPT16.ASCII.toByteArray("Dolor Sit Amet"))
+                .containsExactly(0x44, 0x6F, 0x6C, 0x6F, 0x72, 0x20, 0x53, 0x69, 0x74, 0x20, 0x41, 0x6D, 0x65, 0x74);
+        // ISO-8859-1
+        assertThat(DPT16.ISO_8859_1.toByteArray("äöü"))
+                .containsExactly(0xE4, 0xF6, 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+        assertThat(DPT16.ISO_8859_1.toByteArray("ÜÖÄ"))
+                .containsExactly(0xDC, 0xD6, 0xC4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     }
 }

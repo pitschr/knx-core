@@ -65,6 +65,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Disconnect by KNX client")
     public void testSuccessDisconnectByClient(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning()).isTrue();
             // after connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
@@ -95,6 +96,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Disconnect by KNX client after 3 disconnect request attempts")
     public void testSuccessDisconnectByClientNoDisconnectResponse(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning()).isTrue();
             // after connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
@@ -127,6 +129,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Disconnect by remote")
     public void testSuccessDisconnectByRemote(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning()).isTrue();
             // just wait until mock server closes the connection
             mockServer.waitDone();
         } catch (final Throwable t) {
@@ -156,6 +159,7 @@ public class DefaultKnxClientTest {
         when(mockServerSpy.getPort()).thenReturn(4711);
 
         try (final var client = mockServerSpy.createTestClient()) {
+            assertThat(client.isRunning()).isTrue();
             // keep client alive until it is closed
             mockServer.waitDone();
             fail("Unexpected test state");
@@ -177,6 +181,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Test KNX client instantiation using host address as string")
     public void testHostAddressString(final MockServer mockServer) {
         try (final var client = DefaultKnxClient.createStarted("localhost:" + mockServer.getPort())) {
+            assertThat(client.isRunning()).isTrue();
             // ok
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
@@ -204,6 +209,7 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Test KNX client instantiation using discovery service and default KNX port")
     public void testDiscovery(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning()).isTrue();
             // ok
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
@@ -246,9 +252,9 @@ public class DefaultKnxClientTest {
         );
 
         final var readPacket = (RoutingIndicationBody) mockServer.getReceivedBodies().get(0);
-        assertThat(readPacket.getCEMI().getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
+        assertThat(readPacket.getCEMI().getAPCI()).isEqualTo(APCI.GROUP_VALUE_READ);
 
         final var writePacket = (RoutingIndicationBody) mockServer.getReceivedBodies().get(1);
-        assertThat(writePacket.getCEMI().getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
+        assertThat(writePacket.getCEMI().getAPCI()).isEqualTo(APCI.GROUP_VALUE_WRITE);
     }
 }

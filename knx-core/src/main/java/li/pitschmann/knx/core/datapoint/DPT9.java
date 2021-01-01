@@ -37,7 +37,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT9Value;
  *
  * @author PITSCHR
  */
-public final class DPT9 extends AbstractRangeDataPointType<DPT9Value, Double> {
+public final class DPT9 extends BaseRangeDataPointType<DPT9Value, Double> {
     /**
      * <strong>9.001</strong> Temperature (°C)
      *

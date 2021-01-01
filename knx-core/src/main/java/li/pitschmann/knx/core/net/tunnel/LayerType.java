@@ -30,7 +30,6 @@ import java.util.Arrays;
  * <p>
  * See: KNX Specification, Tunneling, 2.2.2 - 2.2.4, 4.4.3
  *
- *
  * @author PITSCHR
  */
 public enum LayerType implements KnxByteEnum {

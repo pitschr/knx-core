@@ -150,15 +150,15 @@ public final class ControllerTestExtension
                 final var groupAddress = GroupAddress.of(xmlGroupAddress.getAddress());
                 final var groupAddressName = xmlGroupAddress.getName();
 
-                final byte[] apciData;
+                final byte[] data;
                 if (groupAddressName.contains("DPT")) {
-                    final var apciDataAsHexStream = xmlGroupAddress.getName().substring(xmlGroupAddress.getName().lastIndexOf('(') + 1, xmlGroupAddress.getName().lastIndexOf(')'));
-                    apciData = Bytes.toByteArray(apciDataAsHexStream);
+                    final var dataAsHexStream = xmlGroupAddress.getName().substring(xmlGroupAddress.getName().lastIndexOf('(') + 1, xmlGroupAddress.getName().lastIndexOf(')'));
+                    data = Bytes.toByteArray(dataAsHexStream);
                 } else {
-                    apciData = new byte[1];
+                    data = new byte[1];
                 }
 
-                final var knxStatusData = spy(new KnxStatusData(groupAddress, APCI.GROUP_VALUE_WRITE, apciData));
+                final var knxStatusData = spy(new KnxStatusData(groupAddress, APCI.GROUP_VALUE_WRITE, data));
                 when(knxClientMock.getStatusPool().getStatusFor(eq(groupAddress))).thenReturn(knxStatusData);
             }
         }

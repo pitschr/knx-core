@@ -45,16 +45,16 @@ public class KnxStatusDataTest {
     public void testInit() {
         final var cemi = mock(CEMI.class);
         when(cemi.getSourceAddress()).thenReturn(ADDRESS);
-        when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(cemi.getApciData()).thenReturn(new byte[0]);
+        when(cemi.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(cemi.getData()).thenReturn(new byte[0]);
 
         final var beforeInit = Instant.now();
         final var statusData = new KnxStatusData(cemi);
         final var afterInit = Instant.now();
 
         assertThat(statusData.getTimestamp()).isBetween(beforeInit, afterInit);
-        assertThat(statusData.getApci()).isSameAs(APCI.GROUP_VALUE_READ);
-        assertThat(statusData.getApciData()).isEmpty();
+        assertThat(statusData.getAPCI()).isSameAs(APCI.GROUP_VALUE_READ);
+        assertThat(statusData.getData()).isEmpty();
         assertThat(statusData.getSourceAddress()).isSameAs(ADDRESS);
     }
 
@@ -66,25 +66,25 @@ public class KnxStatusDataTest {
      */
     @Test
     public void testImmutability() {
-        byte[] apciData = new byte[]{0x11, 0x22};
+        byte[] data = new byte[]{0x11, 0x22};
 
         final var cemi = mock(CEMI.class);
         when(cemi.getSourceAddress()).thenReturn(ADDRESS);
-        when(cemi.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(cemi.getApciData()).thenReturn(apciData);
+        when(cemi.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(cemi.getData()).thenReturn(data);
 
         // create status data instance
         final var statusData = new KnxStatusData(cemi);
 
         // try to change outside of status data instance
-        apciData[1] = 0x33;
+        data[1] = 0x33;
 
         // expected to be unchanged!
-        assertThat(statusData.getApciData()).containsExactly(0x11, 0x22);
+        assertThat(statusData.getData()).containsExactly(0x11, 0x22);
 
         // try to change the reference - expected to be unchanged
-        statusData.getApciData()[1] = 0x44;
-        assertThat(statusData.getApciData()).containsExactly(0x11, 0x22);
+        statusData.getData()[1] = 0x44;
+        assertThat(statusData.getData()).containsExactly(0x11, 0x22);
     }
 
     /**
@@ -95,8 +95,8 @@ public class KnxStatusDataTest {
         // Test #1
         final var cemi1 = mock(CEMI.class);
         when(cemi1.getSourceAddress()).thenReturn(ADDRESS);
-        when(cemi1.getApci()).thenReturn(APCI.GROUP_VALUE_READ);
-        when(cemi1.getApciData()).thenReturn(new byte[0]);
+        when(cemi1.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
+        when(cemi1.getData()).thenReturn(new byte[0]);
 
         final var statusData1 = new KnxStatusData(cemi1);
         assertThat(statusData1).hasToString(String.format(
@@ -105,14 +105,14 @@ public class KnxStatusDataTest {
                         "timestamp=%s, " +
                         "sourceAddress=%s, " +
                         "apci=%s, " +
-                        "apciData=[] ()" +
-                        "}", statusData1.getTimestamp(), cemi1.getSourceAddress(), cemi1.getApci()));
+                        "data=[] ()" +
+                        "}", statusData1.getTimestamp(), cemi1.getSourceAddress(), cemi1.getAPCI()));
 
         // Test #2
         final var cemi2 = mock(CEMI.class);
         when(cemi2.getSourceAddress()).thenReturn(ADDRESS_2);
-        when(cemi2.getApci()).thenReturn(APCI.GROUP_VALUE_WRITE);
-        when(cemi2.getApciData()).thenReturn(new byte[]{0x44, 0x22, 0x33});
+        when(cemi2.getAPCI()).thenReturn(APCI.GROUP_VALUE_WRITE);
+        when(cemi2.getData()).thenReturn(new byte[]{0x44, 0x22, 0x33});
 
         final var statusData2 = new KnxStatusData(cemi2);
         assertThat(statusData2).hasToString(String.format(
@@ -121,7 +121,7 @@ public class KnxStatusDataTest {
                         "timestamp=%s, " +
                         "sourceAddress=%s, " +
                         "apci=%s, " +
-                        "apciData=[68, 34, 51] (0x44 22 33)" +
-                        "}", statusData2.getTimestamp(), cemi2.getSourceAddress(), cemi2.getApci()));
+                        "data=[68, 34, 51] (0x44 22 33)" +
+                        "}", statusData2.getTimestamp(), cemi2.getSourceAddress(), cemi2.getAPCI()));
     }
 }

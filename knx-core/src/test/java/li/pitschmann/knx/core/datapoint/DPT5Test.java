@@ -19,125 +19,91 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT5Value;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleBytesException;
-import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxException;
-import org.assertj.core.data.Percentage;
+import org.assertj.core.data.Offset;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Function;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT5}
  *
  * @author PITSCHR
  */
-public class DPT5Test extends AbstractDataPointTypeTest<DPT5, DPT5Value> {
-    @Override
+class DPT5Test {
     @Test
-    public void testIdAndDescription() {
+    @DisplayName("Test #getId() and #getDescription()")
+    void testIdAndDescription() {
         final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
-
         assertThat(dpt.getId()).isEqualTo("5.010");
         assertThat(dpt.getDescription()).isEqualTo("Value 1-Octet Unsigned Count (pulses)");
     }
 
-    @Override
     @Test
-    public void testCompatibility() {
+    @DisplayName("Test #of(byte[])")
+    void testByteCompatibility() {
         final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        // byte is supported for length == 1 only
+        assertThat(dpt.isCompatible(new byte[0])).isFalse();
+        assertThat(dpt.isCompatible(new byte[1])).isTrue();
+        assertThat(dpt.isCompatible(new byte[2])).isFalse();
+    }
 
-        // failures
-        assertThatThrownBy(() -> dpt.of(new byte[2])).isInstanceOf(DataPointTypeIncompatibleBytesException.class);
-        assertThatThrownBy(() -> dpt.of("foo")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("-1")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
-        assertThatThrownBy(() -> dpt.of("256")).isInstanceOf(DataPointTypeIncompatibleSyntaxException.class);
+    @Test
+    @DisplayName("Test #of(String[])")
+    void testStringCompatibility() {
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        // String is supported for length == 1 only
+        assertThat(dpt.isCompatible(new String[0])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[2])).isFalse();
+    }
 
-        // OK
-        assertThat(dpt.of((byte) 0x00)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.of((byte) 0xFF)).isInstanceOf(DPT5Value.class);
+    @Test
+    @DisplayName("Test #parse(byte[])")
+    void testByteParse() {
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        assertThat(dpt.parse(new byte[]{0x78})).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xEA})).isInstanceOf(DPT5Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[])")
+    void testStringParse() {
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
+        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT5Value.class);
+        assertThat(dpt.parse(new String[]{"255"})).isInstanceOf(DPT5Value.class);
+    }
+
+    @Test
+    @DisplayName("Test #of(int)")
+    void testOf() {
+        final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.of(0)).isInstanceOf(DPT5Value.class);
         assertThat(dpt.of(255)).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.of("0")).isInstanceOf(DPT5Value.class);
-        assertThat(dpt.of("255")).isInstanceOf(DPT5Value.class);
     }
 
     @Test
-    public void testCalculation() {
-        // without calculation functions
-        assertThat(DPT5.PERCENT_U8.getCalculationFunction()).isNull();
-
-        /*
-         * SCALING
-         */
-        // with calculation functions
-        final var dptScaling = DPT5.SCALING;
-        assertThat(dptScaling.getCalculationFunction()).isInstanceOf(Function.class);
-        // value: 0%
-        assertThat(dptScaling.of(0).getUnsignedValue()).isEqualTo(0d);
-        // value: ~25%
-        assertThat(dptScaling.of((byte) 0x40).getUnsignedValue()).isCloseTo(25.0f, Percentage.withPercentage(0.4));
-        // value: ~50%
-        assertThat(dptScaling.of((byte) 0x7F).getUnsignedValue()).isCloseTo(50.0f, Percentage.withPercentage(0.4));
-        // value: ~75%
-        assertThat(dptScaling.of((byte) 0xC0).getUnsignedValue()).isCloseTo(75.0f, Percentage.withPercentage(0.4));
-        // value: 100%
-        assertThat(dptScaling.of((byte) 0xFF).getUnsignedValue()).isEqualTo(100d);
-
-        /*
-         * ANGLE
-         */
-        final var dptAngle = DPT5.ANGLE;
-        // value: 0%
-        assertThat(dptAngle.of(0).getUnsignedValue()).isEqualTo(0d);
-        // value: ~90°
-        assertThat(dptAngle.of(64).getUnsignedValue()).isCloseTo(90.0f, Percentage.withPercentage(1.4));
-        // value: ~180°
-        assertThat(dptAngle.of(127).getUnsignedValue()).isCloseTo(180.0f, Percentage.withPercentage(1.4));
-        // value: ~270°
-        assertThat(dptAngle.of(192).getUnsignedValue()).isCloseTo(270.0f, Percentage.withPercentage(1.4));
-        // value: 360°
-        assertThat(dptAngle.of(255).getUnsignedValue()).isEqualTo(360d);
-    }
-
-    @Override
-    @Test
-    public void testOf() {
+    @DisplayName("Test #toByteArray(int)")
+    void testToByteArray() {
         final var dpt = DPT5.VALUE_1_OCTET_UNSIGNED_COUNT;
-        this.assertDPT(dpt, (byte) 0x00, 0);
-        this.assertDPT(dpt, (byte) 0x40, 64);
-        this.assertDPT(dpt, (byte) 0x7f, 127);
-        this.assertDPT(dpt, (byte) 0xC0, 192);
-        this.assertDPT(dpt, (byte) 0xFF, 255);
+        assertThat(dpt.toByteArray(0)).containsExactly(0x00);
+        assertThat(dpt.toByteArray(255)).containsExactly(0xFF);
     }
 
-    /**
-     * Invalid Test {@link DPT5}
-     */
     @Test
-    public void testOfInvalid() {
-        // wrong dpt
-        assertThat(DPT5.ANGLE.of((byte) 0x00)).isNotEqualTo(DPT5.SCALING.of((byte) 0x00));
-        // wrong value
-        assertThat(DPT5.ANGLE.of((byte) 0x00)).isNotEqualTo(DPT5.ANGLE.of((byte) 0x01));
-    }
+    @DisplayName("Test #getCalculationFunction()")
+    void testCalculationFunction() {
+        assertThat(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT.getCalculationFunction()).isNull();
 
-    /**
-     * Asserts the DPT for given arguments {@code dpt}, {@code byteValue} and {@code intValue}
-     *
-     * @param dpt       data point type
-     * @param byteValue byte value
-     * @param intValue  integer value
-     */
-    private void assertDPT(final DPT5 dpt, final byte byteValue, final int intValue) {
-        final var dptValue = dpt.of(intValue);
-
-        // assert base DPT
-        this.assertBaseDPT(dpt, new byte[]{byteValue}, dptValue);
-        // assert specific DPT5
-        assertThat(dpt.of(String.valueOf(intValue))).isEqualTo(dptValue);
-        assertThat(dpt.toByteArray(intValue)).containsExactly(byteValue);
+        // Scaling (0 = 0%, 100 = ~39%, 255 = 100%)
+        final var dpt = DPT5.SCALING;
+        assertThat(dpt.getCalculationFunction()).isNotNull();
+        assertThat(dpt.of(0).getRawUnsignedValue()).isZero();
+        assertThat(dpt.of(0).getUnsignedValue()).isZero();
+        assertThat(dpt.of(100).getRawUnsignedValue()).isEqualTo(100);
+        assertThat(dpt.of(100).getUnsignedValue()).isCloseTo(39.2157, Offset.offset(0.0001));
+        assertThat(dpt.of(255).getRawUnsignedValue()).isEqualTo(255);
+        assertThat(dpt.of(255).getUnsignedValue()).isEqualTo(100.0);
     }
 }

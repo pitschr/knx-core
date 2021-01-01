@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  *
  * @author PITSCHR
  */
-public final class DPT10 extends AbstractDataPointType<DPT10Value> {
+public final class DPT10 extends BaseDataPointType<DPT10Value> {
     /**
      * <strong>10.001</strong> Time Of Day
      *
@@ -105,10 +105,6 @@ public final class DPT10 extends AbstractDataPointType<DPT10Value> {
         final var time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
 
         return new DPT10Value(dayOfWeek, time);
-    }
-
-    public DPT10Value of(final LocalTime time) {
-        return of(null, time);
     }
 
     public DPT10Value of(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {

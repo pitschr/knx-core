@@ -33,7 +33,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT2Value;
  *
  * @author PITSCHR
  */
-public final class DPT2 extends AbstractDataPointType<DPT2Value> {
+public final class DPT2 extends BaseDataPointType<DPT2Value> {
     /**
      * <strong>2.001</strong> Switch Controlled
      *
