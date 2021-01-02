@@ -26,8 +26,6 @@ import java.nio.channels.SelectionKey;
 
 /**
  * Interface for KNX Mock Server Channel (UDP, TCP)
- *
- * @param <T>
  */
 public interface MockServerChannel<T extends SelectableChannel> extends AutoCloseable {
 
@@ -50,7 +48,7 @@ public interface MockServerChannel<T extends SelectableChannel> extends AutoClos
      *
      * @param key contains channel for incoming traffic
      * @return An instance of {@link Body}
-     * @throws IOException
+     * @throws IOException If an I/O error occurs
      */
     Body read(SelectionKey key) throws IOException;
 
@@ -59,8 +57,10 @@ public interface MockServerChannel<T extends SelectableChannel> extends AutoClos
      *
      * @param key  contains channel for outgoing traffic
      * @param body body to be sent
-     * @throws IOException
+     * @throws IOException If an I/O error occurs
      */
     void send(SelectionKey key, Body body) throws IOException;
 
+    @Override
+    void close() throws IOException;
 }

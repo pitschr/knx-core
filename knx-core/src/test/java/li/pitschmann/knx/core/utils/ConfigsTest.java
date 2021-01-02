@@ -55,7 +55,7 @@ public class ConfigsTest {
                 "ok-integer", () -> 4711, null
         );
         // INTERNAL_CONFIG
-        public static final InternalConfigValue INTERNAL_BOOLEAN = mock(InternalConfigValue.class);
+        public static final InternalConfigValue<?> INTERNAL_BOOLEAN = mock(InternalConfigValue.class);
         // MISSING_PUBLIC
         static final BooleanConfigValue MISSING_PUBLIC = new BooleanConfigValue(
                 "missing-public", () -> Boolean.TRUE

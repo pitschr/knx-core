@@ -49,6 +49,7 @@ public class ConnectionStateRequestTest {
     @DisplayName("Successful Connection State Request communication")
     public void testSuccessful(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             // after 2-nd connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST, 2);
         } catch (final Throwable t) {
@@ -100,7 +101,7 @@ public class ConnectionStateRequestTest {
      * @param expectedNumber expected number of connection state request bodies to be generated
      * @return list of body classes
      */
-    private final List<Class<? extends Body>> generateExpectedReceivedBodies(final int expectedNumber) {
+    private List<Class<? extends Body>> generateExpectedReceivedBodies(final int expectedNumber) {
         final var list = new ArrayList<Class<? extends Body>>(expectedNumber + 3);
         list.add(DescriptionRequestBody.class); // first request
         list.add(ConnectRequestBody.class); // second request

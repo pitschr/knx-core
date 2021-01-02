@@ -51,6 +51,7 @@ public class DiscoveryRequestTest {
     @DisplayName("Test a successful discovery request")
     public void testSuccessDiscovery(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             // after connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
@@ -77,6 +78,7 @@ public class DiscoveryRequestTest {
     @DisplayName("Test a failed discovery request (mock server not responding on search request)")
     public void testFailedDiscovery(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             // keep client alive until it is closed
             mockServer.waitDone();
             fail("Unexpected test state");

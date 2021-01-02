@@ -38,6 +38,7 @@ import li.pitschmann.knx.core.test.strategy.impl.DescriptionInvalidServiceStrate
 import li.pitschmann.knx.core.test.strategy.impl.DescriptionNoTunnelingStrategy;
 import org.junit.jupiter.api.DisplayName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -57,6 +58,7 @@ public class DescriptionRequestTest {
     @DisplayName("Partial: Success description response on third attempt")
     public void testSuccessDescriptionOnThirdAttempt(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             // after connection state request sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
         } catch (final Throwable t) {
@@ -84,6 +86,7 @@ public class DescriptionRequestTest {
     @DisplayName("Error: Test KNX connection without tunneling service offer on remote side")
     public void testDescriptionWithoutTunneling(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxNoTunnelingException noTunnelingException) {
@@ -103,6 +106,7 @@ public class DescriptionRequestTest {
     @DisplayName("Error: Invalid Description responses from remote")
     public void testDescriptionCorrupted(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             mockServer.waitDone();
             fail("Unexpected test state");
         } catch (final KnxDescriptionNotReceivedException e) {
