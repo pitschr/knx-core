@@ -23,17 +23,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test cases for {@link Exceptions} utility class
  *
  * @author PITSCHR
  */
-public class ExceptionsTest {
+class ExceptionsTest {
 
     @Test
     @DisplayName("Test format using #toErrorMessage(..)")
-    public void testToErrorMessage() {
+    void testToErrorMessage() {
         assertThat(Exceptions.toErrorMessage("Null: {}", (Object) null)).isEqualTo("Null: <null>");
         assertThat(Exceptions.toErrorMessage("Null: {}", (Object[]) null)).isEqualTo("Null: <null>");
         assertThat(Exceptions.toErrorMessage("Null: {} {}", null, null)).isEqualTo("Null: <null> <null>");
@@ -48,8 +49,18 @@ public class ExceptionsTest {
     }
 
     @Test
+    @DisplayName("Test #toErrorMessage(String, Object..) with wrong number of arguments")
+    void testToErrorMessageWrongArguments() {
+        assertThatThrownBy(() -> Exceptions.toErrorMessage("Null-Arg Error Message", "dummy"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Difference detected between error message and number of arguments" +
+                        " [errorMessage: Null-Arg Error Message, args: [dummy]]");
+    }
+
+
+    @Test
     @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
+    void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Exceptions.class);
     }
 }

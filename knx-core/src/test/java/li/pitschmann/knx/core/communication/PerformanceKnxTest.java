@@ -73,6 +73,7 @@ public class PerformanceKnxTest {
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
+            assertThat(client.isRunning());
             // after N-times tunneling acknowledge sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK, TIMES);
         } catch (final Throwable t) {

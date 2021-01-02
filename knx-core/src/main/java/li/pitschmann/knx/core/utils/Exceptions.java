@@ -44,7 +44,7 @@ public final class Exceptions {
 
             throw new IllegalArgumentException(
                     String.format("Difference detected between error message and number of arguments " +
-                            "[errorMessage:%s, args:%s]", errorMessage, Arrays.toString(args))
+                            "[errorMessage: %s, args: %s]", errorMessage, Arrays.toString(args))
             );
 
         }

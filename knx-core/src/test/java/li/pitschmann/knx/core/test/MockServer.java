@@ -69,7 +69,7 @@ public final class MockServer implements Runnable, Closeable {
     private final BlockingQueue<Body> outbox = new LinkedBlockingDeque<>();
     private final List<Body> receivedBodies = Collections.synchronizedList(new LinkedList<>());
     private final List<Body> sentBodies = Collections.synchronizedList(new LinkedList<>());
-    private final MockServerChannel serverChannel;
+    private final MockServerDatagramChannel serverChannel;
     private final MockServerTest mockServerAnnotation;
     private final ExecutorService executorService;
     private InetAddress multicastAddress;
@@ -116,7 +116,7 @@ public final class MockServer implements Runnable, Closeable {
         // join multicast (used for e.g. discovery, routing, ...)
         multicastAddress = Networker.getByAddress(224, 0, 1, channelId);
         log.debug("Multicast Address: {}", multicastAddress);
-        this.membershipKeys = Networker.joinChannels((MulticastChannel) this.serverChannel.getChannel(), multicastAddress);
+        this.membershipKeys = Networker.joinChannels(this.serverChannel.getChannel(), multicastAddress);
         log.debug("Membership Keys: {}", membershipKeys);
 
         // Start executor service heartbeat monitor
@@ -178,7 +178,7 @@ public final class MockServer implements Runnable, Closeable {
                                     // wait until answer from client
                                     .runAsync(() -> this.waitForReceivedServiceType(ServiceType.DISCONNECT_RESPONSE))
                                     // then cancel it
-                                    .thenRun(() -> this.cancel());
+                                    .thenRun(this::cancel);
                         } else if (body instanceof DisconnectResponseBody) {
                             log.debug("Stopping KNX mock server, because disconnect response packet was sent: {}", body);
                             this.cancel();
@@ -193,7 +193,7 @@ public final class MockServer implements Runnable, Closeable {
         } finally {
             // drop membership keys if it exists
             if (this.membershipKeys != null) {
-                membershipKeys.stream().forEach(key -> key.drop());
+                membershipKeys.forEach(MembershipKey::drop);
             }
 
             Closeables.shutdownQuietly(executorService);
@@ -271,7 +271,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return {@code true} if mock server was completed gracefully, otherwise {@code false}
      */
     public boolean waitDone() {
-        final var notInterrupted = Sleeper.milliseconds(100, () -> this.executorService.isTerminated(), 30000);
+        final var notInterrupted = Sleeper.milliseconds(100, executorService::isTerminated, 30000);
 
         if (!notInterrupted) {
             log.error("It took too long for waitDone(), here are bodies which were received/sent:\n" +
@@ -336,6 +336,7 @@ public final class MockServer implements Runnable, Closeable {
      * @param bodyClasses array of body classes
      */
     @SafeVarargs
+    @SuppressWarnings("varargs")
     public final void assertReceivedPackets(final Class<? extends Body>... bodyClasses) {
         assertReceivedPackets(List.of(bodyClasses));
     }
@@ -384,7 +385,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return unmodifiable list of received bodies
      */
     public List<Body> getReceivedBodies() {
-        return Collections.unmodifiableList(new ArrayList<>(this.receivedBodies));
+        return List.copyOf(this.receivedBodies);
     }
 
     /**
@@ -402,7 +403,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return unmodifiable list of sent bodies
      */
     public List<Body> getSentBodies() {
-        return Collections.unmodifiableList(new ArrayList<>(this.sentBodies));
+        return List.copyOf(this.sentBodies);
     }
 
     /**

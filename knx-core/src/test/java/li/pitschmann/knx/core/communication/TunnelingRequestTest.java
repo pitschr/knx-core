@@ -84,6 +84,7 @@ public class TunnelingRequestTest {
     @DisplayName("Packet sent to wrong channel. Ignore.")
     public void testWrongChannel(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             // wait until mock server closes the connection
             mockServer.waitDone();
         } catch (final Throwable t) {

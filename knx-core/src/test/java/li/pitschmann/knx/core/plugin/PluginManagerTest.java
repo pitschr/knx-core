@@ -35,6 +35,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -250,12 +251,15 @@ public final class PluginManagerTest {
      * @return mocked KNX client
      */
     @SafeVarargs
+    @SuppressWarnings({"unchecked", "varargs"})
     private KnxClient newKnxClientMockWithPlugins(Class<? extends Plugin>... plugins) {
-        @SuppressWarnings("unchecked")
-        final var castedList = (List<Class<Plugin>>) (Object) Arrays.asList(plugins);
+        final var pluginList = new ArrayList<Class<Plugin>>(plugins.length);
+        for (final var plugin : plugins) {
+            pluginList.add((Class<Plugin>)plugin);
+        }
 
         final var mockConfig = TestHelpers.mockConfig(
-                config -> when(config.getPlugins()).thenReturn(castedList)
+                config -> when(config.getPlugins()).thenReturn(pluginList)
         );
 
         final var knxClientMock = TestHelpers.mockKnxClient(/*dummy*/

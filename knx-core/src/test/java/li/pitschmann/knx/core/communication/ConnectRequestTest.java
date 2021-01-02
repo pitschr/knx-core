@@ -50,6 +50,7 @@ public class ConnectRequestTest {
     @DisplayName("Error: No Channel ID because of no response")
     public void testFailureNoResponse(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
@@ -76,6 +77,7 @@ public class ConnectRequestTest {
     @DisplayName("Error: No Channel ID because of no more connections")
     public void testFailureNoMoreConnections(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             mockServer.waitDone();
             fail("Not the expected state");
         } catch (final KnxChannelIdNotReceivedException e) {
@@ -101,6 +103,7 @@ public class ConnectRequestTest {
     @DisplayName("Error: Corrupted Connect Response and then OK")
     public void testConnectionCorruptedAndThenOK(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
+            assertThat(client.isRunning());
             mockServer.waitForReceivedServiceType(ServiceType.CONNECTION_STATE_REQUEST);
             // OK
         } catch (final Throwable t) {
