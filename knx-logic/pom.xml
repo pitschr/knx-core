@@ -29,7 +29,7 @@
     <packaging>jar</packaging>
     <artifactId>knx-logic</artifactId>
     <version>0.1.1-SNAPSHOT</version>
-    <name>KNX Logic Engine</name>
+    <name>KNX Logic</name>
     <description>Logic Engine for KNX</description>
 
     <!-- Dependencies -->
