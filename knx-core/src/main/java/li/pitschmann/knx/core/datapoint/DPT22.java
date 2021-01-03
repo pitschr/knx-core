@@ -145,7 +145,7 @@ public final class DPT22 {
      *
      * @param <V>
      */
-    private static abstract class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
+    private abstract static class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
         private InternalDataPointType(final String description) {
             super(description);
         }

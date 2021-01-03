@@ -30,10 +30,10 @@ public abstract class BaseRangeDataPointType<V extends DataPointValue, R extends
     private final R lowerValue;
     private final R upperValue;
 
-    public BaseRangeDataPointType(final String description,
-                                  final R lowerValue,
-                                  final R upperValue,
-                                  final @Nullable String unit) {
+    protected BaseRangeDataPointType(final String description,
+                                     final R lowerValue,
+                                     final R upperValue,
+                                     final @Nullable String unit) {
         super(description, unit);
         this.lowerValue = lowerValue;
         this.upperValue = upperValue;

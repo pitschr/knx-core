@@ -33,7 +33,7 @@ import java.util.Objects;
 abstract class AbstractDataPointValue<T extends DataPointType> implements DataPointValue {
     private final T dpt;
 
-    public AbstractDataPointValue(final T dpt) {
+    protected AbstractDataPointValue(final T dpt) {
         this.dpt = Objects.requireNonNull(dpt);
     }
 

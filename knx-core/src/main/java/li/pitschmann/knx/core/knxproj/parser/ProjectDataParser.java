@@ -36,7 +36,6 @@ import java.util.zip.ZipFile;
  * @PITSCHR
  */
 final class ProjectDataParser extends AbstractParser implements ParserStrategy {
-    private static final Logger log = LoggerFactory.getLogger(ProjectDataParser.class);
 
     @Override
     public void load(final XmlProject xmlProject, final ZipFile zipFile) throws XMLStreamException {

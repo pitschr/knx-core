@@ -18,7 +18,7 @@ public class PluginConfigValue<T> extends ConfigValue<T> {
      * Key is the name of {@code "plugin.config.<pluginName>.<configName>"}
      * (in lower-case, to be done in parent class)
      */
-    private final static String KEY_PATTERN = "plugin.config.%s.%s";
+    private static final String KEY_PATTERN = "plugin.config.%s.%s";
     private final String key;
 
     public PluginConfigValue(

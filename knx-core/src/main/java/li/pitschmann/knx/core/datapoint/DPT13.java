@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT13Value;
 
-import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
 
 /**
  * Data Point Type 13 for '4-Octet Signed Value' (4 Octets)
@@ -278,7 +278,7 @@ public final class DPT13 extends BaseRangeDataPointType<DPT13Value, Integer> {
      * <p>
      * Calculates from {@link Integer} to {@link Double} using a formula
      */
-    private final Function<Integer, Double> calculationFunction;
+    private final IntToDoubleFunction calculationFunction;
 
     /**
      * Constructor for {@link DPT13}
@@ -293,13 +293,13 @@ public final class DPT13 extends BaseRangeDataPointType<DPT13Value, Integer> {
                   final int lowerValue,
                   final int upperValue,
                   final @Nullable String unit,
-                  final @Nullable Function<Integer, Double> calculationFunction) {
+                  final @Nullable IntToDoubleFunction calculationFunction) {
         super(desc, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public Function<Integer, Double> getCalculationFunction() {
+    public IntToDoubleFunction getCalculationFunction() {
         return this.calculationFunction;
     }
 

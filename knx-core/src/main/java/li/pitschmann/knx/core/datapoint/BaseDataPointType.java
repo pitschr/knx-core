@@ -47,11 +47,11 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
     private final String description;
     private final String unit;
 
-    public BaseDataPointType(final String description) {
+    protected BaseDataPointType(final String description) {
         this(description, null);
     }
 
-    public BaseDataPointType(final String description, final @Nullable String unit) {
+    protected BaseDataPointType(final String description, final @Nullable String unit) {
         this.description = Objects.requireNonNull(description);
         this.unit = unit;
     }
@@ -108,7 +108,7 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
 
     @Override
     public final V of(final String[] args) {
-        Preconditions.checkArgument(args != null && args.length > 0,
+        Preconditions.checkArgument(args!=null && args.length > 0,
                 "No arguments provided for conversion to data point value object.");
 
         // check if it is a hex string

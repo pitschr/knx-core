@@ -223,9 +223,9 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     @Override
     public String toText() {
         final var sb = new StringBuilder(50);
-        final var dayOfWeek = getDayOfWeek();
-        if (dayOfWeek != null) {
-            sb.append(dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())).append(", ");
+        final var dow = getDayOfWeek();
+        if (dow != null) {
+            sb.append(dow.getDisplayName(TextStyle.FULL, Locale.getDefault())).append(", ");
         }
         sb.append(getDate().format(DateTimeFormatter.ISO_DATE))
                 .append(' ')
@@ -292,7 +292,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          * @return new instance of {@link Flags}
          */
         public Flags(final byte[] bytes) {
-            Preconditions.checkArgument(bytes != null && bytes.length == 2, "The length of bytes must be 2 (actual: " + (bytes == null ? 0 : bytes.length) + ")");
+            Preconditions.checkArgument(bytes != null && bytes.length == 2,
+                    "The length of bytes must be 2 (actual: " + (bytes == null ? 0 : bytes.length) + ")");
 
             // byte 6
             this.fault = (bytes[0] & 0x80) != 0x00;

@@ -96,7 +96,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         }
     }
 
-    public DPT16Value(final DPT16 dpt, final String characters) {
+    public DPT16Value(final DPT16 dpt, final @Nullable String characters) {
         super(dpt);
         Preconditions.checkArgument(characters == null || characters.length() <= 14,
                 "The length of characters is too long (expected up to 14 characters): {}", characters);
@@ -111,7 +111,7 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
      * @param charset    used to encode the characters
      * @return byte array
      */
-    public static byte[] toByteArray(final String characters, final Charset charset) {
+    public static byte[] toByteArray(final @Nullable String characters, final Charset charset) {
         if (Strings.isNullOrEmpty(characters)) {
             return new byte[14];
         } else if (characters.length() > 14) {

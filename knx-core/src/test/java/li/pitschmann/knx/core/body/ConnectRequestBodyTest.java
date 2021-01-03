@@ -36,14 +36,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class ConnectRequestBodyTest {
+class ConnectRequestBodyTest {
     // prepare
     private HPAI controlEndpoint;
     private HPAI dataEndpoint;
     private ConnectionRequestInformation cri;
 
     @BeforeEach
-    public void before() {
+    void before() {
         this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(1, 1, 1, 1), 58702);
         this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(2, 2, 2, 2), 58703);
         this.cri = ConnectionRequestInformation.useDefault();
@@ -79,7 +79,7 @@ public class ConnectRequestBodyTest {
      * </pre>
      */
     @Test
-    public void validCases() {
+    void validCases() {
         // create
         final var body = ConnectRequestBody.of(this.controlEndpoint, this.dataEndpoint, this.cri);
         assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
@@ -102,7 +102,7 @@ public class ConnectRequestBodyTest {
      * Tests {@link ConnectRequestBody} with invalid arguments
      */
     @Test
-    public void invalidCases() {
+    void invalidCases() {
         // null
         assertThatThrownBy(() -> ConnectRequestBody.of(null, this.dataEndpoint, this.cri)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("controlEndpoint");
@@ -115,13 +115,5 @@ public class ConnectRequestBodyTest {
         assertThatThrownBy(() -> ConnectRequestBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
         assertThatThrownBy(() -> ConnectRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-    }
-
-    /**
-     * Test {@link ConnectRequestBody#toString()}
-     */
-    @Test
-    public void testToString() {
-
     }
 }

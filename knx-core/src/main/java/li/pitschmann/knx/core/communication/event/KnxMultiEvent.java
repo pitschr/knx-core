@@ -85,7 +85,7 @@ public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends R
     }
 
     public void addResponse(final RESPONSE response) {
-        this.responseEvents.add(new ResponseEvent<RESPONSE>(response));
+        this.responseEvents.add(new ResponseEvent<>(response));
     }
 
     @Nullable

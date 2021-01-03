@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.utils.Strings;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Data Point Value for {@link DPT13} (13.xxx)
@@ -79,11 +78,11 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
     }
 
     public double getSignedValue() {
-        final Function<Integer, Double> calcFunction = this.getDPT().getCalculationFunction();
+        final var calcFunction = this.getDPT().getCalculationFunction();
         if (calcFunction == null) {
             return this.rawSignedValue;
         } else {
-            return calcFunction.apply(this.rawSignedValue);
+            return calcFunction.applyAsDouble(this.rawSignedValue);
         }
     }
 

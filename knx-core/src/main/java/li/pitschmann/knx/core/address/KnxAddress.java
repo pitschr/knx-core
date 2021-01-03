@@ -31,7 +31,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 public abstract class KnxAddress extends AbstractMultiRawData {
     public static final int STRUCTURE_LENGTH = 2;
 
-    public KnxAddress(final byte[] addressRawData) {
+    protected KnxAddress(final byte[] addressRawData) {
         super(addressRawData);
     }
 
