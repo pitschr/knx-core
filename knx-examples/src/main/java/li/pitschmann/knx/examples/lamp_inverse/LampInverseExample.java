@@ -56,7 +56,7 @@ public final class LampInverseExample {
 
             // wait a bit (usually few milliseconds, but up to 1 second maximum)
             // KNX actuator will send a response to the KNX client with actual lamp status
-            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getBooleanValue();
+            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getValue();
 
             // lamp status will be inverted (on -> off / off -> on)
             final var lampStatusInverted = !lampStatus;
