@@ -415,7 +415,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
 
     @Override
     protected DPT1Value parse(final byte[] bytes) {
-        return new DPT1Value(this, bytes[0]);
+        return of(bytes[0] == 0x01);
     }
 
     @Override
@@ -430,11 +430,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
         return new DPT1Value(this, boolValue);
     }
 
-    public DPT1Value of(final boolean booleanValue) {
-        return new DPT1Value(this, booleanValue);
-    }
-
-    public byte[] toByteArray(final boolean booleanValue) {
-        return DPT1Value.toByteArray(booleanValue);
+    public DPT1Value of(final boolean value) {
+        return new DPT1Value(this, value);
     }
 }

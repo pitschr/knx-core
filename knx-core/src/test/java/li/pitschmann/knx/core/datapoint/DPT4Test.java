@@ -19,12 +19,14 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT4Value;
+import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT4}
@@ -73,6 +75,15 @@ class DPT4Test {
     }
 
     @Test
+    @DisplayName("Test #parse(byte[]) with character encoding issue")
+    void testByteParseFailure() {
+        final var dpt = DPT4.ASCII;
+        assertThatThrownBy(() -> dpt.parse(new byte[]{(byte) 0xE4})) // ä = 0xE4
+                .isInstanceOf(KnxIllegalArgumentException.class)
+                .hasMessage("Issue during decoding charset 'US-ASCII' with value: [0xE4]");
+    }
+
+    @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT4.ASCII;
@@ -102,16 +113,5 @@ class DPT4Test {
         // ISO-8859-1
         assertThat(DPT4.ISO_8859_1.of('ä')).isInstanceOf(DPT4Value.class);
         assertThat(DPT4.ISO_8859_1.of('Ö')).isInstanceOf(DPT4Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(char)")
-    void testToByteArray() {
-        // ASCII
-        assertThat(DPT4.ASCII.toByteArray('a')).containsExactly(0x61);
-        assertThat(DPT4.ASCII.toByteArray('Z')).containsExactly(0x5A);
-        // ISO-8859-1
-        assertThat(DPT4.ISO_8859_1.toByteArray('ä')).containsExactly(0xE4);
-        assertThat(DPT4.ISO_8859_1.toByteArray('Ö')).containsExactly(0xD6);
     }
 }

@@ -103,21 +103,4 @@ class DPT2Test {
         assertThat(DPT2.SWITCH_CONTROL.of(true, true)).isInstanceOf(DPT2Value.class);
         assertThat(DPT2.UP_DOWN_CONTROL.of(true, true)).isInstanceOf(DPT2Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean, boolean)")
-    void testToByteArray() {
-        // false, not controlled
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray(false, false)).containsExactly(0x00);
-        assertThat(DPT2.UP_DOWN_CONTROL.toByteArray(false, false)).containsExactly(0x00);
-        // true, not controlled
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray(false, true)).containsExactly(0x01);
-        assertThat(DPT2.UP_DOWN_CONTROL.toByteArray(false, true)).containsExactly(0x01);
-        // false, controlled
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray(true, false)).containsExactly(0x02);
-        assertThat(DPT2.UP_DOWN_CONTROL.toByteArray(true, false)).containsExactly(0x02);
-        // true, controlled
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray(true, true)).containsExactly(0x03);
-        assertThat(DPT2.UP_DOWN_CONTROL.toByteArray(true, true)).containsExactly(0x03);
-    }
 }

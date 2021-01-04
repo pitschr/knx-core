@@ -26,6 +26,7 @@ import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DPT1;
+import li.pitschmann.knx.core.datapoint.DPT5;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.test.KnxBody;
@@ -120,7 +121,7 @@ public class BaseKnxClientTest {
         // throwing ExecutionException
         doThrow(new ExecutionException(new Throwable())).when(completableFutureMock).get();
         assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
-        assertThat(baseKnxClient.writeRequest(groupAddress, new byte[1])).isFalse();
+        assertThat(baseKnxClient.writeRequest(groupAddress, DPT1.SWITCH.of(true))).isFalse();
 
         // throwing InterruptedException
         // run this test in a sub-thread because it may interrupt parallel JUnit test cases otherwise
@@ -128,7 +129,7 @@ public class BaseKnxClientTest {
         final var executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
-            assertThat(baseKnxClient.writeRequest(groupAddress, new byte[1])).isFalse();
+            assertThat(baseKnxClient.writeRequest(groupAddress, DPT1.SWITCH.of(true))).isFalse();
         });
         executor.shutdown();
     }
@@ -169,12 +170,12 @@ public class BaseKnxClientTest {
 
         final var config = configFunction.apply(mockServer);
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            // async read request
+            // read request
             client.readRequest(groupAddress);
-            // async write request with DPT
+            // write request
             client.writeRequest(groupAddress, DPT1.SWITCH.of(false));
-            // async write request with APCI data
-            client.writeRequest(groupAddress, new byte[]{0x00});
+            // 2nd write request
+            client.writeRequest(groupAddress, DPT5.SCALING.of(100));
             // send via body
             client.send(KnxBody.TUNNELING_REQUEST_BODY);
             // send via body and timeout

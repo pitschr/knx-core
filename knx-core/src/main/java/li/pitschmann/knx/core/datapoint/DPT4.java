@@ -19,7 +19,12 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT4Value;
+import li.pitschmann.knx.core.exceptions.KnxException;
+import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
+import li.pitschmann.knx.core.utils.ByteFormatter;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
@@ -103,6 +108,17 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
     }
 
     @Override
+    protected DPT4Value parse(final byte[] bytes) {
+        try {
+            final var character = getCharsetDecoder().decode(ByteBuffer.wrap(new byte[]{bytes[0]})).get();
+            return new DPT4Value(this, character);
+        } catch (final CharacterCodingException e) {
+            throw new KnxIllegalArgumentException("Issue during decoding charset '{}' with value: {}",
+                    getCharset(), ByteFormatter.formatHex(bytes));
+        }
+    }
+
+    @Override
     protected boolean isCompatible(final String[] args) {
         return args.length == 1 && args[0] != null && args[0].length() == 1;
     }
@@ -112,16 +128,7 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
         return new DPT4Value(this, args[0].charAt(0));
     }
 
-    @Override
-    protected DPT4Value parse(final byte[] bytes) {
-        return new DPT4Value(this, bytes[0]);
-    }
-
     public DPT4Value of(final char character) {
         return new DPT4Value(this, character);
-    }
-
-    public byte[] toByteArray(final char character) {
-        return DPT4Value.toByteArray(character);
     }
 }

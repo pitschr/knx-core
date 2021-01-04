@@ -48,22 +48,22 @@ public final class DPT2ValueTest {
 
     private void assertValue(final DPT2 dpt, final byte b, final boolean controlled, final boolean booleanValue, final String booleanText, final String text) {
         final var dptValue = new DPT2Value(dpt, controlled, booleanValue);
-        final var dptValueByByte = new DPT2Value(dpt, b);
+        final var dptValue2 = new DPT2Value(dpt, controlled, booleanValue);
 
         // instance methods
         assertThat(dptValue.isControlled()).isEqualTo(controlled);
-        assertThat(dptValue.getBooleanValue()).isEqualTo(booleanValue);
-        assertThat(dptValue.getBooleanText()).isEqualTo(booleanText);
+        assertThat(dptValue.getValue()).isEqualTo(booleanValue);
+        assertThat(dptValue.getText()).isEqualTo(booleanText);
         assertThat(dptValue.toByteArray()).containsExactly(b);
         assertThat(dptValue.toText()).isEqualTo(text);
 
-        // class methods
-        assertThat(DPT2Value.toByteArray(controlled, booleanValue)).containsExactly(b);
+        // payload can be optimized?
+        assertThat(dptValue).isInstanceOf(PayloadOptimizable.class);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(dptValue2).isEqualTo(dptValue);
+        assertThat(dptValue2).hasSameHashCodeAs(dptValue);
 
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
@@ -73,9 +73,8 @@ public final class DPT2ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT2Value(dpt, !controlled, booleanValue));
 
         // toString
-        final var toString = String.format("DPT2Value{dpt=%s, controlled=%s, booleanValue=%s, booleanText=%s, byteArray=%s}", dpt, controlled,
+        final var toString = String.format("DPT2Value{dpt=%s, controlled=%s, value=%s, text=%s, byteArray=%s}", dpt, controlled,
                 booleanValue, booleanText, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
     }
 }

@@ -20,8 +20,10 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT5Value;
+import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 
-import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
 
 /**
  * Data Point Type 5 for 'Unsigned Value' (8 Bits)
@@ -54,7 +56,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.001", "dpst-5-1"})
-    public static final DPT5 SCALING = new DPT5("Scaling", 0, 255, "%", v -> v * 100d / 255d);
+    public static final DPT5 SCALING = new DPT5("Scaling", 0, 100, "%", v -> v * 255d / 100d);
     /**
      * <strong>5.003</strong> Angle (°)
      *
@@ -72,7 +74,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.003", "dpst-5-3"})
-    public static final DPT5 ANGLE = new DPT5("Angle", 0, 255, "°", v -> v * 360d / 255d);
+    public static final DPT5 ANGLE = new DPT5("Angle", 0, 360, "°", v -> v * 255d / 360d);
     /**
      * <strong>5.004</strong> Percent 8-bit (%)
      *
@@ -152,7 +154,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      * <p>
      * Calculates from {@link Integer} to {@link Float} using a formula
      */
-    private final Function<Integer, Double> calculationFunction;
+    private final IntToDoubleFunction calculationFunction;
 
     /**
      * Constructor for {@link DPT5}
@@ -167,14 +169,14 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
-                 final @Nullable Function<Integer, Double> calculationFunction) {
+                 final @Nullable IntToDoubleFunction calculationFunction) {
         super(desc, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public Function<Integer, Double> getCalculationFunction() {
-        return this.calculationFunction;
+    public IntToDoubleFunction getCalculationFunction() {
+        return calculationFunction;
     }
 
     @Override
@@ -184,7 +186,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
 
     @Override
     protected DPT5Value parse(final byte[] bytes) {
-        return new DPT5Value(this, bytes[0]);
+        return of(Bytes.toUnsignedInt(bytes[0]));
     }
 
     @Override
@@ -199,9 +201,5 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
 
     public DPT5Value of(final int value) {
         return new DPT5Value(this, value);
-    }
-
-    public byte[] toByteArray(final int value) {
-        return DPT5Value.toByteArray(value);
     }
 }

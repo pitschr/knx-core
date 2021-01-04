@@ -30,6 +30,7 @@ import li.pitschmann.knx.core.cemi.ControlByte2;
 import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.cemi.Priority;
 import li.pitschmann.knx.core.cemi.TPCI;
+import li.pitschmann.knx.core.datapoint.DPT12;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
@@ -99,7 +100,7 @@ public class RoutingIndicationBodyTest {
                 TPCI.UNNUMBERED_PACKAGE,
                 0,
                 APCI.GROUP_VALUE_WRITE,
-                new byte[]{0x0C, 0x35});
+                DPT12.VALUE_4_OCTET_UNSIGNED_COUNT.of(722821273));
 
         // create
         final var body = RoutingIndicationBody.of(cemi);
@@ -114,10 +115,10 @@ public class RoutingIndicationBodyTest {
                 (byte) 0xd0, // Control Byte 2
                 0x10, 0x6e, // Source Address
                 0x4c, 0x01, // Destination Address
-                0x03, // NPDU Length
+                0x05, // NPDU Length
                 0x00, // TPCI + Packet Number
                 (byte) 0x80, // APCI
-                0x0c, 0x35 // Data
+                0x2B, 0x15, 0x60, (byte)0x99 // Data
         });
 
         // compare raw data of 'create' and 'create by bytes'
@@ -125,7 +126,7 @@ public class RoutingIndicationBodyTest {
 
         // toString
         assertThat(body).hasToString(String.format(
-                "RoutingIndicationBody{cemi=%s, rawData=0x29 00 BC D0 10 6E 4C 01 03 00 80 0C 35}",
+                "RoutingIndicationBody{cemi=%s, rawData=0x29 00 BC D0 10 6E 4C 01 05 00 80 2B 15 60 99}",
                 cemi.toString(false)));
     }
 

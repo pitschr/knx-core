@@ -108,7 +108,7 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
 
     @Override
     public final V of(final String[] args) {
-        Preconditions.checkArgument(args!=null && args.length > 0,
+        Preconditions.checkArgument(args != null && args.length > 0,
                 "No arguments provided for conversion to data point value object.");
 
         // check if it is a hex string

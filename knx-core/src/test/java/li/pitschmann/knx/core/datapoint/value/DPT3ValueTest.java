@@ -20,9 +20,9 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT3;
 import li.pitschmann.knx.core.datapoint.value.DPT3Value.StepInterval;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,10 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author PITSCHR
  */
 public final class DPT3ValueTest {
-    /**
-     * Test {@link DPT3Value}
-     */
+
     @Test
+    @DisplayName("Test DPT3Value")
     public void test() {
         for (var stepCode = 0; stepCode < 7; stepCode++) {
             final var stepInterval = StepInterval.ofCode(stepCode);
@@ -47,24 +46,25 @@ public final class DPT3ValueTest {
         }
     }
 
-    /**
-     * Test {@link DPT3Value} failures
-     */
     @Test
-    public void testFailures() {
-        // step code must be between 0..7
-        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, 8)).isInstanceOf(KnxNumberOutOfRangeException.class);
+    @DisplayName("Test #(DPT3, boolean, StepInterval) with null for StepInterval")
+    public void testNoStepInterval() {
+        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, null))
+                .isInstanceOf(NullPointerException.class);
+    }
 
-        // step interval must be defined
-        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, null)).isInstanceOf(KnxNullPointerException.class);
-
+    @Test
+    @DisplayName("Test #(DPT3, boolean, int) with values out of range")
+    void testConstructorOutOfRange() {
+        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, -1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, 8))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
     private void assertValue(final DPT3 dpt, final byte b, final boolean controlled, final int stepCode, final StepInterval stepInterval, final String text) {
         final var dptValue = new DPT3Value(dpt, controlled, stepCode);
-        final var dptValueByByte = new DPT3Value(dpt, b);
-        final var dptvalueByStepInterval = new DPT3Value(dpt, controlled, stepInterval);
+        final var dptValueByStepInterval = new DPT3Value(dpt, controlled, stepInterval);
 
         // instance methods
         assertThat(dptValue.isControlled()).isEqualTo(controlled);
@@ -73,15 +73,13 @@ public final class DPT3ValueTest {
         assertThat(dptValue.toByteArray()).containsExactly(b);
         assertThat(dptValue.toText()).isEqualTo(text);
 
-        // class methods
-        assertThat(DPT3Value.toByteArray(controlled, stepCode)).containsExactly(b);
+        // payload can be optimized?
+        assertThat(dptValue).isInstanceOf(PayloadOptimizable.class);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
-        assertThat(dptvalueByStepInterval).isEqualTo(dptValue);
-        assertThat(dptvalueByStepInterval).hasSameHashCodeAs(dptValue);
+        assertThat(dptValueByStepInterval).isEqualTo(dptValue);
+        assertThat(dptValueByStepInterval).hasSameHashCodeAs(dptValue);
 
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
@@ -94,8 +92,7 @@ public final class DPT3ValueTest {
         final var toString = String.format("DPT3Value{dpt=%s, controlled=%s, stepCode=%s, stepInterval=%s, byteArray=%s}", dpt, controlled, stepCode,
                 stepInterval, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
-        assertThat(dptvalueByStepInterval).hasToString(toString);
+        assertThat(dptValueByStepInterval).hasToString(toString);
     }
 
     /**

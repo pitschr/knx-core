@@ -110,30 +110,4 @@ class DPT3Test {
         // controlled, step =  7 (PERCENT_1)
         assertThat(DPT3.CONTROL_BLINDS.of(true, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean, int)")
-    void testToByteArray() {
-        // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, 0)).containsExactly(0x00);
-        // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, 2)).containsExactly(0x0A);
-        // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, 7)).containsExactly(0x07);
-        // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, 7)).containsExactly(0x0F);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean, StepInterval)")
-    void testToByteArrayStepInterval() {
-        // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, DPT3Value.StepInterval.STOP)).containsExactly(0x00);
-        // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, DPT3Value.StepInterval.PERCENT_50)).containsExactly(0x0A);
-        // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, DPT3Value.StepInterval.PERCENT_1)).containsExactly(0x07);
-        // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, DPT3Value.StepInterval.PERCENT_1)).containsExactly(0x0F);
-    }
 }

@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.datapoint.DPT2;
 import li.pitschmann.knx.core.datapoint.DPT3;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
@@ -46,23 +46,14 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPT3Value extends AbstractDataPointValue<DPT3> {
+public final class DPT3Value extends AbstractDataPointValue<DPT3> implements PayloadOptimizable {
     private final boolean controlled;
     private final int stepCode;
 
-    public DPT3Value(final DPT3 dpt, final byte b) {
-        super(dpt);
-        // bit 4 = controlled
-        this.controlled = (b & 0x08) != 0x00;
-        // bit 0 .. 3 = stepCode
-        this.stepCode = b & 0x07;
-    }
-
     public DPT3Value(final DPT3 dpt, final boolean controlled, final int stepCode) {
         super(dpt);
-        // validate
         if (stepCode < 0 || stepCode > 7) {
-            throw new KnxNumberOutOfRangeException("stepCode", 0, 7, stepCode);
+            throw new KnxNumberOutOfRangeException("value", 0, 7, stepCode);
         }
 
         this.controlled = controlled;
@@ -71,23 +62,39 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
 
     public DPT3Value(final DPT3 dpt, final boolean controlled, final StepInterval stepInterval) {
         super(dpt);
-        // validate
-        if (stepInterval == null) {
-            throw new KnxNullPointerException("stepInterval");
-        }
-
         this.controlled = controlled;
         this.stepCode = stepInterval.getStepCode();
     }
 
     /**
-     * Converts {@code controlled} and {@code booleanValue} to byte array
+     * Returns if the controlled flag is set
      *
-     * @param controlled if controlled
-     * @param stepCode   the step code [0..7]
-     * @return byte array
+     * @return boolean
      */
-    public static byte[] toByteArray(final boolean controlled, final int stepCode) {
+    public boolean isControlled() {
+        return this.controlled;
+    }
+
+    /**
+     * Returns the step code
+     *
+     * @return int, between 0 and 7
+     */
+    public int getStepCode() {
+        return this.stepCode;
+    }
+
+    /**
+     * Returns the step interval which is an enumeration based on step code
+     *
+     * @return StepInterval
+     */
+    public StepInterval getStepInterval() {
+        return StepInterval.ofCode(this.stepCode);
+    }
+
+    @Override
+    public byte[] toByteArray() {
         var b = (byte) stepCode;
         if (controlled) {
             b |= 0x08;
@@ -95,30 +102,13 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         return new byte[]{b};
     }
 
-    public boolean isControlled() {
-        return this.controlled;
-    }
-
-    public int getStepCode() {
-        return this.stepCode;
-    }
-
-    public StepInterval getStepInterval() {
-        return StepInterval.ofCode(this.stepCode);
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return toByteArray(this.controlled, this.stepCode);
-    }
-
     @Override
     public String toText() {
-        final var stepIntervalText = getStepInterval().toText();
+        final var text = getStepInterval().toText();
         if (isControlled()) {
-            return String.format("controlled '%s'", stepIntervalText);
+            return "controlled '" + text + "'";
         } else {
-            return stepIntervalText;
+            return text;
         }
     }
 
@@ -126,11 +116,11 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("controlled", this.controlled)
-                .add("stepCode", this.stepCode)
-                .add("stepInterval", this.getStepInterval())
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT())
+                .add("controlled", controlled)
+                .add("stepCode", stepCode)
+                .add("stepInterval", getStepInterval())
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -150,7 +140,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.controlled, this.stepCode);
+        return Objects.hash(getDPT(), controlled, stepCode);
     }
 
     /**

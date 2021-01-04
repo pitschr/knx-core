@@ -103,7 +103,11 @@ public final class DPT3 extends BaseDataPointType<DPT3Value> {
 
     @Override
     protected DPT3Value parse(final byte[] bytes) {
-        return new DPT3Value(this, bytes[0]);
+        // bit 4 = controlled
+        final var controlled = (bytes[0] & 0x08) != 0x00;
+        // bit 0 .. 3 = stepCode
+        final var stepCode = bytes[0] & 0x07;
+        return of(controlled, stepCode);
     }
 
     @Override
@@ -126,13 +130,4 @@ public final class DPT3 extends BaseDataPointType<DPT3Value> {
     public DPT3Value of(final boolean controlled, final StepInterval stepInterval) {
         return new DPT3Value(this, controlled, stepInterval);
     }
-
-    public byte[] toByteArray(final boolean controlled, final int stepCode) {
-        return DPT3Value.toByteArray(controlled, stepCode);
-    }
-
-    public byte[] toByteArray(final boolean controlled, final StepInterval stepInterval) {
-        return DPT3Value.toByteArray(controlled, stepInterval.getStepCode());
-    }
-
 }

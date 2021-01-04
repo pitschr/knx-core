@@ -111,15 +111,4 @@ class DPT1Test {
         assertThat(DPT1.SWITCH.of(true)).isInstanceOf(DPT1Value.class);
         assertThat(DPT1.UP_DOWN.of(true)).isInstanceOf(DPT1Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean)")
-    void testToByteArray() {
-        // false
-        assertThat(DPT1.SWITCH.toByteArray(false)).containsExactly(0x00);
-        assertThat(DPT1.UP_DOWN.toByteArray(false)).containsExactly(0x00);
-        // true
-        assertThat(DPT1.SWITCH.toByteArray(true)).containsExactly(0x01);
-        assertThat(DPT1.UP_DOWN.toByteArray(true)).containsExactly(0x01);
-    }
 }

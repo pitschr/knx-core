@@ -44,21 +44,21 @@ public final class DPT1ValueTest {
 
     private void assertValue(final DPT1 dpt, final byte b, final boolean booleanValue, final String booleanText) {
         final var dptValue = new DPT1Value(dpt, booleanValue);
-        final var dptValueByByte = new DPT1Value(dpt, b);
+        final var dptValue2 = new DPT1Value(dpt, booleanValue);
 
         // instance methods
-        assertThat(dptValue.getBooleanValue()).isEqualTo(booleanValue);
-        assertThat(dptValue.getBooleanText()).isEqualTo(booleanText);
+        assertThat(dptValue.getValue()).isEqualTo(booleanValue);
+        assertThat(dptValue.getText()).isEqualTo(booleanText);
         assertThat(dptValue.toByteArray()).containsExactly(b);
         assertThat(dptValue.toText()).isEqualTo(booleanText);
 
-        // class methods
-        assertThat(DPT1Value.toByteArray(booleanValue)).containsExactly(b);
+        // payload can be optimized?
+        assertThat(dptValue).isInstanceOf(PayloadOptimizable.class);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(dptValue2).isEqualTo(dptValue);
+        assertThat(dptValue2).hasSameHashCodeAs(dptValue);
 
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
@@ -67,9 +67,8 @@ public final class DPT1ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT1Value(dpt, !booleanValue));
 
         // toString
-        final var toString = String.format("DPT1Value{dpt=%s, booleanValue=%s, booleanText=%s, byteArray=%s}", dpt, booleanValue, booleanText,
+        final var toString = String.format("DPT1Value{dpt=%s, value=%s, text=%s, byteArray=%s}", dpt, booleanValue, booleanText,
                 ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
     }
 }

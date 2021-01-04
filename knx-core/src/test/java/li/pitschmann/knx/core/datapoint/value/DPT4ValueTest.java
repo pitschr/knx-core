@@ -19,12 +19,10 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT4;
-import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPT4Value}
@@ -43,32 +41,22 @@ public final class DPT4ValueTest {
         this.assertValue(DPT4.ISO_8859_1, (byte) 0xF6, 'ö', "char 'ö'");
     }
 
-    /**
-     * Test {@link DPT4Value} failures
-     */
-    @Test
-    public void testFailures() {
-        // step code must be between 0..7
-        assertThatThrownBy(() -> this.assertValue(DPT4.ASCII, (byte) 0xE4, 'ä', "char 'ä'")).isInstanceOf(KnxException.class)
-                .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0xE4");
-    }
-
     private void assertValue(final DPT4 dpt, final byte b, final char character, final String text) {
         final var dptValue = new DPT4Value(dpt, character);
-        final var dptValueByByte = new DPT4Value(dpt, b);
+        final var dptValue2 = new DPT4Value(dpt, character);
 
         // instance methods
         assertThat(dptValue.getCharacter()).isEqualTo(character);
         assertThat(dptValue.toByteArray()).containsExactly(b);
         assertThat(dptValue.toText()).isEqualTo(text);
 
-        // class methods
-        assertThat(DPT4Value.toByteArray(character)).containsExactly(b);
+        // payload can be optimized?
+        assertThat(dptValue).isNotInstanceOf(PayloadOptimizable.class);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(dptValue2).isEqualTo(dptValue);
+        assertThat(dptValue2).hasSameHashCodeAs(dptValue);
 
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
@@ -79,6 +67,5 @@ public final class DPT4ValueTest {
         // toString
         final var toString = String.format("DPT4Value{dpt=%s, character=%s, byteArray=%s}", dpt, character, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
     }
 }
