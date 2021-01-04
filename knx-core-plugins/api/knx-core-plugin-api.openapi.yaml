@@ -140,6 +140,7 @@ paths:
                       example: [15, 4, 66]
                   required:
                     - groupAddress
+                    - dataPointType
                     - raw
 
                 # Group Address, DataPointType and Values
@@ -160,11 +161,11 @@ paths:
 
             examples:
               Group Address (Integer) and Raw Data:
-                value: {"groupAddress":5401, raw: [0]}
+                value: {"groupAddress":5401, "dataPointType": "1.001", raw: [0]}
               Group Address (String) and Raw Data:
-                value: {"groupAddress":"1/2/100", raw: [0]}
+                value: {"groupAddress":"1/2/100", "dataPointType": "1.001", raw: [0]}
               Group Address (Byte Array) and Raw Data:
-                value: {"groupAddress": [15, 19], raw: [0]}
+                value: {"groupAddress": [15, 19], "dataPointType": "1.001", raw: [0]}
               Group Address (Integer), DataPointType and Values:
                 value: {"groupAddress":5401, "dataPointType": "1.001", "values": ["on"]}
               Group Address (String), DataPointType and Values:

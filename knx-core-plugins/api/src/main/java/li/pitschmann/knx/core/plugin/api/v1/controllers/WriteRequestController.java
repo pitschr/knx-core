@@ -42,12 +42,18 @@ public final class WriteRequestController extends AbstractController {
             return EMPTY_RESPONSE;
         }
 
+        final var dpt = writeRequest.getDataPointType();
+        if (dpt == null) {
+            log.error("Could not find suitable data point type in request.");
+            getResponse().badRequest();
+            return EMPTY_RESPONSE;
+        }
+
         // found - group address is known, resolve the raw data for write request to KNX Net/IP device
         byte[] rawToWrite = writeRequest.getRaw();
         if (rawToWrite == null || rawToWrite.length == 0) {
-            final var dpt = writeRequest.getDataPointType();
             final var dptValues = writeRequest.getValues();
-            if (dpt == null || dptValues == null || dptValues.length == 0) {
+            if (dptValues == null || dptValues.length == 0) {
                 log.error("No DPT or/and DPT values defined for write request: {}", writeRequest);
                 final var response = new WriteResponse();
                 getResponse().badRequest();
@@ -62,7 +68,7 @@ public final class WriteRequestController extends AbstractController {
         }
 
         // send write request
-        if (getKnxClient().writeRequest(groupAddress, rawToWrite)) {
+        if (getKnxClient().writeRequest(groupAddress, dpt.of(rawToWrite))) {
             log.debug("Acknowledge received for write request: {}", writeRequest);
             getResponse().accepted();
         }
