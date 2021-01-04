@@ -116,7 +116,7 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
 
     @Override
     protected DPT6Value parse(final byte[] bytes) {
-        return new DPT6Value(this, bytes[0]);
+        return of(bytes[0]);
     }
 
     @Override
@@ -126,15 +126,11 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
 
     @Override
     protected DPT6Value parse(final String[] args) {
-        return new DPT6Value(this, Integer.parseInt(args[0]));
+        return of(Integer.parseInt(args[0]));
     }
 
     public DPT6Value of(final int value) {
         return new DPT6Value(this, value);
-    }
-
-    public byte[] toByteArray(final int value) {
-        return new DPT6Value(this, value).toByteArray();
     }
 
     /**
@@ -174,10 +170,6 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
 
         public DPT6Value.StatusMode of(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
             return new DPT6Value.StatusMode(a, b, c, d, e, mode);
-        }
-
-        public byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
-            return DPT6Value.StatusMode.toByteArray(a, b, c, d, e, mode);
         }
     }
 }

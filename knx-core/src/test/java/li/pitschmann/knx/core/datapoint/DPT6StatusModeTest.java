@@ -93,22 +93,4 @@ class DPT6StatusModeTest {
         assertThat(dpt.of(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_1))
                 .isInstanceOf(DPT6Value.StatusMode.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean.., Mode)")
-    void testToByteArray() {
-        final var dpt = DPT6.STATUS_MODE;
-        // mode: 0, no flags set
-        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0))
-                .containsExactly(0b0000_0001); // 0x01
-        // mode: 1, no flags set
-        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_1))
-                .containsExactly(0b0000_0010); // 0x02
-        // mode: 2, no flags set
-        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_2))
-                .containsExactly(0b0000_0100); // 0x04
-        // mode: 1, flags set (abcd ennn = 0110 1010)
-        assertThat(dpt.toByteArray(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_1))
-                .containsExactly(0b0110_1010); // 0x6A
-    }
 }

@@ -24,6 +24,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT6Value.StatusMode.Mode;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,17 +47,27 @@ public final class DPT6ValueTest {
         this.assertValue(DPT6.PERCENT, (byte) 0x45, 69, "69");
     }
 
-    private void assertValue(final DPT6 dpt, final byte b, final int relativeSignedValue, final String text) {
-        final var dptValue = new DPT6Value(dpt, relativeSignedValue);
+    @Test
+    @DisplayName("Test #(DPT6, int) with values out of range")
+    void testConstructorOutOfRange() {
+        // values out of range
+        assertThatThrownBy(() -> new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, -129))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 128))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+    }
+
+    private void assertValue(final DPT6 dpt, final byte b, final int value, final String text) {
+        final var dptValue = new DPT6Value(dpt, value);
         final var dptValueByByte = new DPT6Value(dpt, b);
 
         // instance methods
-        assertThat(dptValue.getRelativeSignedValue()).isEqualTo(relativeSignedValue);
+        assertThat(dptValue.getValue()).isEqualTo(value);
         assertThat(dptValue.toByteArray()).containsExactly(b);
         assertThat(dptValue.toText()).isEqualTo(text);
 
-        // class methods
-        assertThat(DPT6Value.toByteArray(relativeSignedValue)).containsExactly(b);
+        // payload can be optimized?
+        assertThat(dptValue).isNotInstanceOf(PayloadOptimizable.class);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
@@ -66,12 +77,12 @@ public final class DPT6ValueTest {
         // not equals
         assertThat(dptValue).isNotEqualTo(null);
         assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT6Value(dpt, relativeSignedValue + 1));
+        assertThat(dptValue).isNotEqualTo(new DPT6Value(dpt, value + 1));
         final var anotherDpt = DPT6.PERCENT.equals(dptValue.getDPT()) ? DPT6.VALUE_1_OCTET_COUNT : DPT6.PERCENT;
-        assertThat(dptValue).isNotEqualTo(new DPT6Value(anotherDpt, relativeSignedValue));
+        assertThat(dptValue).isNotEqualTo(new DPT6Value(anotherDpt, value));
 
         // toString
-        final var toString = String.format("DPT6Value{dpt=%s, relativeSignedValue=%s, byteArray=%s}", dpt, relativeSignedValue,
+        final var toString = String.format("DPT6Value{dpt=%s, value=%s, byteArray=%s}", dpt, value,
                 ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
@@ -96,8 +107,8 @@ public final class DPT6ValueTest {
 
     private void assertStatusMode(final byte b, final boolean bool1, final boolean bool2, final boolean bool3, final boolean bool4,
                                   final boolean bool5, final Mode mode) {
-        DPT6Value.StatusMode dptValue = new DPT6Value.StatusMode(bool1, bool2, bool3, bool4, bool5, mode);
-        DPT6Value.StatusMode dptValueByByte = new DPT6Value.StatusMode(b);
+        final var dptValue = new DPT6Value.StatusMode(bool1, bool2, bool3, bool4, bool5, mode);
+        final var dptValueByByte = new DPT6Value.StatusMode(b);
 
         // instance methods
         assertThat(dptValue.getMode()).isEqualTo(mode);
@@ -108,9 +119,8 @@ public final class DPT6ValueTest {
         assertThat(dptValue.isSet(4)).isEqualTo(bool5);
         assertThat(dptValue.toByteArray()).containsExactly(b);
 
-        // class methods
-        assertThat(DPT6Value.StatusMode.toByte(bool1, bool2, bool3, bool4, bool5, mode)).isEqualTo(b);
-        assertThat(DPT6Value.StatusMode.toByteArray(bool1, bool2, bool3, bool4, bool5, mode)).containsExactly(b);
+        // payload can be optimized?
+        assertThat(dptValue).isNotInstanceOf(PayloadOptimizable.class);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
@@ -138,7 +148,7 @@ public final class DPT6ValueTest {
     public void testStatusModeFailure() {
         assertThatThrownBy(() -> new DPT6Value.StatusMode((byte) 0x03).getMode()).isInstanceOf(KnxEnumNotFoundException.class);
 
-        DPT6Value.StatusMode statusModeValue = new DPT6Value.StatusMode((byte) 0x01);
+        final var statusModeValue = new DPT6Value.StatusMode((byte) 0x01);
         assertThatThrownBy(() -> statusModeValue.isSet(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
         assertThatThrownBy(() -> statusModeValue.isSet(5)).isInstanceOf(KnxNumberOutOfRangeException.class);
     }

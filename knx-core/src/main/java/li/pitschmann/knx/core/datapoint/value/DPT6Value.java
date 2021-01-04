@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.datapoint.DPT6;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -43,51 +42,43 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT6Value extends AbstractDataPointValue<DPT6> {
-    private final int relativeSignedValue;
+    private final int value;
 
     public DPT6Value(final DPT6 dpt, final byte b) {
         super(dpt);
-        // relative signed value
-        this.relativeSignedValue = b;
+        this.value = b;
     }
 
     public DPT6Value(final DPT6 dpt, final int value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.relativeSignedValue = value;
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
+        }
+
+        this.value = value;
     }
 
-    /**
-     * Converts relative signed value to byte array
-     *
-     * @param value relatively signed integer value [-128 .. 127]
-     * @return one byte array
-     */
-    public static byte[] toByteArray(final int value) {
-        return new byte[]{(byte) value};
-    }
-
-    public int getRelativeSignedValue() {
-        return this.relativeSignedValue;
+    public int getValue() {
+        return value;
     }
 
     @Override
     public byte[] toByteArray() {
-        return toByteArray(this.relativeSignedValue);
+        return new byte[]{(byte) value};
     }
 
     @Override
     public String toText() {
-        return getValueAsText(getRelativeSignedValue());
+        return getValueAsText(value);
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("relativeSignedValue", this.relativeSignedValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT())
+                .add("value", value)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -99,14 +90,14 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         } else if (obj instanceof DPT6Value) {
             final var other = (DPT6Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.relativeSignedValue, other.relativeSignedValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.relativeSignedValue);
+        return Objects.hash(getDPT(), value);
     }
 
     /**
@@ -141,7 +132,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
             this(toByte(a, b, c, d, e, mode));
         }
 
-        public static byte toByte(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
+        private static byte toByte(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
             var status = (byte) mode.value;
             status |= a ? 0x80 : 0x00;
             status |= b ? 0x40 : 0x00;
@@ -151,35 +142,20 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
             return status;
         }
 
-        /**
-         * Returns given params as byte array
-         *
-         * @param a    first status bit (0x80)
-         * @param b    second status bit (0x40)
-         * @param c    third status bit (0x20)
-         * @param d    fourth status bit (0x10)
-         * @param e    fifth status bit (0x08)
-         * @param mode which mode is active [0, 1, 2]
-         * @return byte array
-         */
-        public static byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
-            return new byte[]{toByte(a, b, c, d, e, mode)};
-        }
-
         public boolean isSet(final int bit) {
             if (bit < 0 || bit > 4) {
                 throw new KnxNumberOutOfRangeException("bit", 0, 4, bit);
             }
-            return (this.b & (0x80 >> bit)) != 0;
+            return (b & (0x80 >> bit)) != 0;
         }
 
         public Mode getMode() {
-            return Mode.of(this.b & 0x07);
+            return Mode.of(b & 0x07);
         }
 
         @Override
         public byte[] toByteArray() {
-            return new byte[]{this.b};
+            return new byte[]{b};
         }
 
         @Override
@@ -195,7 +171,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
 
         @Override
         public int hashCode() {
-            return Objects.hash(this.getMode(), this.b);
+            return Objects.hash(getMode(), b);
         }
 
         /**
