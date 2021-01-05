@@ -44,6 +44,14 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> implements Pay
     private final boolean controlled;
     private final boolean value;
 
+    public DPT2Value(final DPT2 dpt, final byte b) {
+        super(dpt);
+        // bit 1 = controlled
+        controlled = (b & 0x02) != 0x00;
+        // bit 0 = value
+        value = (b & 0x01) != 0x00;
+    }
+
     public DPT2Value(final DPT2 dpt, final boolean controlled, final boolean booleanValue) {
         super(dpt);
         this.controlled = controlled;
@@ -107,7 +115,7 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> implements Pay
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", getDPT())
+                .add("dpt", getDPT().getId())
                 .add("controlled", controlled)
                 .add("value", value)
                 .add("text", getText())

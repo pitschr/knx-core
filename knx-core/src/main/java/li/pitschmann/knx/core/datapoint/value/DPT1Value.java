@@ -42,6 +42,11 @@ import java.util.Objects;
 public final class DPT1Value extends AbstractDataPointValue<DPT1> implements PayloadOptimizable {
     private final boolean value;
 
+    public DPT1Value(final DPT1 dpt, final byte b) {
+        super(dpt);
+        value = (b & 0x01) != 0x00;
+    }
+
     public DPT1Value(final DPT1 dpt, final boolean value) {
         super(dpt);
         this.value = value;
@@ -84,7 +89,7 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> implements Pay
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", getDPT())
+                .add("dpt", getDPT().getId())
                 .add("value", value)
                 .add("text", getText())
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))

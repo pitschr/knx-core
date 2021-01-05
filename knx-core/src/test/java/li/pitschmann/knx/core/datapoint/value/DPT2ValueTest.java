@@ -19,7 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT2;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,51 +30,86 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author PITSCHR
  */
 public final class DPT2ValueTest {
-    /**
-     * Test {@link DPT2Value}
-     */
-    @Test
-    public void test() {
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x00, false, false, "false", "false");
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x01, false, true, "true", "true");
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x02, true, false, "false", "controlled 'false'");
-        this.assertValue(DPT2.BOOL_CONTROL, (byte) 0x03, true, true, "true", "controlled 'true'");
 
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x00, false, false, "off", "off");
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x01, false, true, "on", "on");
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x02, true, false, "off", "controlled 'off'");
-        this.assertValue(DPT2.SWITCH_CONTROL, (byte) 0x03, true, true, "on", "controlled 'on'");
+    @Test
+    @DisplayName("#(DPT2.SWITCH_CONTROL, byte) with: no control, false")
+    void testSwitchByteNotControlledFalse() {
+        final var value = new DPT2Value(DPT2.SWITCH_CONTROL, (byte) 0x00);
+        assertThat(value.getValue()).isFalse();
+        assertThat(value.isControlled()).isFalse();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.getText()).isEqualTo("Off");
+        assertThat(value.toText()).isEqualTo("Off");
     }
 
-    private void assertValue(final DPT2 dpt, final byte b, final boolean controlled, final boolean booleanValue, final String booleanText, final String text) {
-        final var dptValue = new DPT2Value(dpt, controlled, booleanValue);
-        final var dptValue2 = new DPT2Value(dpt, controlled, booleanValue);
+    @Test
+    @DisplayName("#(DPT2.SWITCH_CONTROL, byte) with: no control, true")
+    void testSwitchByteNotControlledTrue() {
+        final var value = new DPT2Value(DPT2.SWITCH_CONTROL, (byte) 0x01);
+        assertThat(value.getValue()).isTrue();
+        assertThat(value.isControlled()).isFalse();
+        assertThat(value.toByteArray()).containsExactly(0x01);
 
-        // instance methods
-        assertThat(dptValue.isControlled()).isEqualTo(controlled);
-        assertThat(dptValue.getValue()).isEqualTo(booleanValue);
-        assertThat(dptValue.getText()).isEqualTo(booleanText);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.getText()).isEqualTo("On");
+        assertThat(value.toText()).isEqualTo("On");
+    }
 
-        // payload can be optimized?
-        assertThat(dptValue).isInstanceOf(PayloadOptimizable.class);
+    @Test
+    @DisplayName("#(DPT2.SWITCH_CONTROL, byte) with: control, false")
+    void testSwitchByteControlledFalse() {
+        final var value = new DPT2Value(DPT2.SWITCH_CONTROL, (byte) 0x02);
+        assertThat(value.getValue()).isFalse();
+        assertThat(value.isControlled()).isTrue();
+        assertThat(value.toByteArray()).containsExactly(0x02);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValue2).isEqualTo(dptValue);
-        assertThat(dptValue2).hasSameHashCodeAs(dptValue);
+        assertThat(value.getText()).isEqualTo("Off");
+        assertThat(value.toText()).isEqualTo("controlled 'Off'");
+    }
+
+    @Test
+    @DisplayName("#(DPT2.SWITCH_CONTROL, byte) with: control, true")
+    void testSwitchByteControlledTrue() {
+        final var value = new DPT2Value(DPT2.SWITCH_CONTROL, (byte) 0x03);
+        assertThat(value.getValue()).isTrue();
+        assertThat(value.isControlled()).isTrue();
+        assertThat(value.toByteArray()).containsExactly(0x03);
+
+        assertThat(value.getText()).isEqualTo("On");
+        assertThat(value.toText()).isEqualTo("controlled 'On'");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueSwitch = new DPT2Value(DPT2.SWITCH_CONTROL, false,true);
+        assertThat(valueSwitch).hasToString(
+                "DPT2Value{dpt=2.001, controlled=false, value=true, text=On, byteArray=0x01}"
+        );
+
+        final var valueEnable = new DPT2Value(DPT2.ENABLE_CONTROL, true,false);
+        assertThat(valueEnable).hasToString(
+                "DPT2Value{dpt=2.003, controlled=true, value=false, text=Disable, byteArray=0x02}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT2Value(DPT2.SWITCH_CONTROL, true, true);
+        final var value2 = new DPT2Value(DPT2.SWITCH_CONTROL, true, true);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(value2).isEqualTo(value);
+        assertThat(value2).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT2Value(DPT2.ALARM_CONTROL, controlled, booleanValue));
-        assertThat(dptValue).isNotEqualTo(new DPT2Value(dpt, controlled, !booleanValue));
-        assertThat(dptValue).isNotEqualTo(new DPT2Value(dpt, !controlled, booleanValue));
-
-        // toString
-        final var toString = String.format("DPT2Value{dpt=%s, controlled=%s, value=%s, text=%s, byteArray=%s}", dpt, controlled,
-                booleanValue, booleanText, ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT2Value(DPT2.STEP_CONTROL, true, true));
+        assertThat(value).isNotEqualTo(new DPT2Value(DPT2.SWITCH_CONTROL, false, false));
+        assertThat(value).isNotEqualTo(new DPT2Value(DPT2.SWITCH_CONTROL, true, false));
+        assertThat(value).isNotEqualTo(new DPT2Value(DPT2.SWITCH_CONTROL, false, true));
     }
 }

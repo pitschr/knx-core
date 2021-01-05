@@ -86,19 +86,6 @@ class DPT3Test {
     }
 
     @Test
-    @DisplayName("Test #of(boolean, int)")
-    void testOf() {
-        // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.of(false, 0)).isInstanceOf(DPT3Value.class);
-        // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.of(true, 2)).isInstanceOf(DPT3Value.class);
-        // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.of(false, 7)).isInstanceOf(DPT3Value.class);
-        // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.of(true, 7)).isInstanceOf(DPT3Value.class);
-    }
-
-    @Test
     @DisplayName("Test #of(boolean, StepInterval)")
     void testOfStepInterval() {
         // not controlled, step = 0 (STOP)

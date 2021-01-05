@@ -80,8 +80,8 @@ class DPT1Test {
     @DisplayName("Test #getTextFor()")
     void testTextFor() {
         // Switch
-        assertThat(DPT1.SWITCH.getTextFor(true)).isEqualTo("on");
-        assertThat(DPT1.SWITCH.getTextFor(false)).isEqualTo("off");
+        assertThat(DPT1.SWITCH.getTextFor(true)).isEqualTo("On");
+        assertThat(DPT1.SWITCH.getTextFor(false)).isEqualTo("Off");
         // Alaram
         assertThat(DPT1.ALARM.getTextFor(true)).isEqualTo("Alarm");
         assertThat(DPT1.ALARM.getTextFor(false)).isEqualTo("No Alarm");
@@ -90,14 +90,14 @@ class DPT1Test {
     @Test
     @DisplayName("Test #getTextForTrue()")
     void testTextForTrue() {
-        assertThat(DPT1.SWITCH.getTextForTrue()).isEqualTo("on");
+        assertThat(DPT1.SWITCH.getTextForTrue()).isEqualTo("On");
         assertThat(DPT1.ALARM.getTextForTrue()).isEqualTo("Alarm");
     }
 
     @Test
     @DisplayName("Test #getTextForFalse()")
     void testTextForFalse() {
-        assertThat(DPT1.SWITCH.getTextForFalse()).isEqualTo("off");
+        assertThat(DPT1.SWITCH.getTextForFalse()).isEqualTo("Off");
         assertThat(DPT1.ALARM.getTextForFalse()).isEqualTo("No Alarm");
     }
 

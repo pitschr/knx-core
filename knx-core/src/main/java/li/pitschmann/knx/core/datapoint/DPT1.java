@@ -47,7 +47,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.001", "dpt-1", "dpst-1-1"})
-    public static final DPT1 SWITCH = new DPT1("Switch", "off", "on");
+    public static final DPT1 SWITCH = new DPT1("Switch", "Off", "On");
     /**
      * <strong>1.002</strong> Boolean
      *
@@ -61,7 +61,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.002", "dpst-1-2"})
-    public static final DPT1 BOOL = new DPT1("Boolean", "false", "true");
+    public static final DPT1 BOOL = new DPT1("Boolean", "False", "True");
     /**
      * <strong>1.003</strong> Enable
      *
@@ -415,7 +415,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
 
     @Override
     protected DPT1Value parse(final byte[] bytes) {
-        return of(bytes[0] == 0x01);
+        return new DPT1Value(this, bytes[0]);
     }
 
     @Override

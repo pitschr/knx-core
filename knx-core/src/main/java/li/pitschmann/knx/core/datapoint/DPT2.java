@@ -240,11 +240,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
 
     @Override
     protected DPT2Value parse(final byte[] bytes) {
-        // bit 1 = controlled
-        final var controlled = (bytes[0] & 0x02) != 0x00;
-        // bit 0 = value
-        final var value = (bytes[0] & 0x01) != 0x00;
-        return of(controlled, value);
+        return new DPT2Value(this, bytes[0]);
     }
 
     @Override

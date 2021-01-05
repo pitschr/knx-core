@@ -19,7 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT1;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,45 +30,86 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author PITSCHR
  */
 public final class DPT1ValueTest {
-    /**
-     * Test {@link DPT1Value}
-     */
-    @Test
-    public void test() {
-        this.assertValue(DPT1.BOOL, (byte) 0x00, false, "false");
-        this.assertValue(DPT1.BOOL, (byte) 0x01, true, "true");
 
-        this.assertValue(DPT1.SWITCH, (byte) 0x00, false, "off");
-        this.assertValue(DPT1.SWITCH, (byte) 0x01, true, "on");
+    @Test
+    @DisplayName("#(DPT1.SWITCH, byte) with: false")
+    void testSwitchByteFalse() {
+        final var value = new DPT1Value(DPT1.SWITCH, (byte) 0x00);
+        assertThat(value.getValue()).isFalse();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.getText()).isEqualTo("Off");
+        assertThat(value.toText()).isEqualTo("Off");
     }
 
-    private void assertValue(final DPT1 dpt, final byte b, final boolean booleanValue, final String booleanText) {
-        final var dptValue = new DPT1Value(dpt, booleanValue);
-        final var dptValue2 = new DPT1Value(dpt, booleanValue);
+    @Test
+    @DisplayName("#(DPT1.SWITCH, byte) with: true")
+    void testSwitchByteTrue() {
+        final var value = new DPT1Value(DPT1.SWITCH, (byte) 0x01);
+        assertThat(value.getValue()).isTrue();
+        assertThat(value.toByteArray()).containsExactly(0x01);
 
-        // instance methods
-        assertThat(dptValue.getValue()).isEqualTo(booleanValue);
-        assertThat(dptValue.getText()).isEqualTo(booleanText);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(booleanText);
+        assertThat(value.getText()).isEqualTo("On");
+        assertThat(value.toText()).isEqualTo("On");
+    }
 
-        // payload can be optimized?
-        assertThat(dptValue).isInstanceOf(PayloadOptimizable.class);
+    @Test
+    @DisplayName("#(DPT1.SWITCH, boolean) with: false")
+    void testSwitchFalse() {
+        final var value = new DPT1Value(DPT1.SWITCH, false);
+        assertThat(value.getValue()).isFalse();
+        assertThat(value.toByteArray()).containsExactly(0x00);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValue2).isEqualTo(dptValue);
-        assertThat(dptValue2).hasSameHashCodeAs(dptValue);
+        assertThat(value.getText()).isEqualTo("Off");
+        assertThat(value.toText()).isEqualTo("Off");
+    }
+
+    @Test
+    @DisplayName("#(DPT1.SWITCH, boolean) with: true")
+    void testSwitchTrue() {
+        final var value = new DPT1Value(DPT1.SWITCH, true);
+        assertThat(value.getValue()).isTrue();
+        assertThat(value.toByteArray()).containsExactly(0x01);
+
+        assertThat(value.getText()).isEqualTo("On");
+        assertThat(value.toText()).isEqualTo("On");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueSwitch = new DPT1Value(DPT1.SWITCH, true);
+        assertThat(valueSwitch).hasToString(
+                "DPT1Value{dpt=1.001, value=true, text=On, byteArray=0x01}"
+        );
+
+        final var valueEnable = new DPT1Value(DPT1.ENABLE, false);
+        assertThat(valueEnable).hasToString(
+                "DPT1Value{dpt=1.003, value=false, text=Disable, byteArray=0x00}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT1Value(DPT1.SWITCH, true);
+        final var value2 = new DPT1Value(DPT1.SWITCH, true);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(value2).isEqualTo(value);
+        assertThat(value2).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT1Value(DPT1.ACK, booleanValue));
-        assertThat(dptValue).isNotEqualTo(new DPT1Value(dpt, !booleanValue));
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT1Value(DPT1.ACK, true));
+        assertThat(value).isNotEqualTo(new DPT1Value(DPT1.SWITCH, false));
+    }
 
-        // toString
-        final var toString = String.format("DPT1Value{dpt=%s, value=%s, text=%s, byteArray=%s}", dpt, booleanValue, booleanText,
-                ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
+    @Test
+    @DisplayName("Implements 'PayloadOptimizable' interface")
+    void testPayloadOptimizable() {
+        assertThat(PayloadOptimizable.class).isAssignableFrom(DPT1Value.class);
     }
 }
