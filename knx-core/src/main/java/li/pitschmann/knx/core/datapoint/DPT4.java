@@ -109,13 +109,7 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
 
     @Override
     protected DPT4Value parse(final byte[] bytes) {
-        try {
-            final var character = getCharsetDecoder().decode(ByteBuffer.wrap(new byte[]{bytes[0]})).get();
-            return new DPT4Value(this, character);
-        } catch (final CharacterCodingException e) {
-            throw new KnxIllegalArgumentException("Issue during decoding charset '{}' with value: {}",
-                    getCharset(), ByteFormatter.formatHex(bytes));
-        }
+        return new DPT4Value(this, bytes[0]);
     }
 
     @Override

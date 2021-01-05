@@ -19,8 +19,10 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.datapoint.DPT3;
 import li.pitschmann.knx.core.datapoint.DPT4;
 import li.pitschmann.knx.core.exceptions.KnxException;
+import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
@@ -44,9 +46,31 @@ import java.util.Objects;
 public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     private final char character;
 
+    public DPT4Value(final DPT4 dpt, final byte b) {
+        this(dpt, toCharacter(dpt, b));
+    }
+
     public DPT4Value(final DPT4 dpt, final char character) {
         super(dpt);
         this.character = character;
+    }
+
+    /**
+     * Private class to convert from byte to a character using a charset decoder
+     * that is defined in the {@link DPT4}
+     *
+     * @param dpt the data point type with corresponding {@link java.nio.charset.CharsetDecoder}
+     * @param b   byte to be decoded
+     * @return a character
+     */
+    private static char toCharacter(final DPT4 dpt, final byte b) {
+        try {
+            return dpt.getCharsetDecoder().decode(ByteBuffer.wrap(new byte[]{b})).get();
+        } catch (CharacterCodingException e) {
+            throw new KnxIllegalArgumentException(
+                    String.format("Issue during decoding charset '%s' with value: %s",
+                            dpt.getCharset(), ByteFormatter.formatHex(b)), e);
+        }
     }
 
     /**
@@ -72,7 +96,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", getDPT())
+                .add("dpt", getDPT().getId())
                 .add("character", character)
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();

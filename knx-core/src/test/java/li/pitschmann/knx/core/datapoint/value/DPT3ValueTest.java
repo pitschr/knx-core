@@ -35,7 +35,7 @@ public final class DPT3ValueTest {
 
     @Test
     @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: no control, stop/0%")
-    void testSwitchByteNotControlledFalse() {
+    void testByteNotControlledPercent0() {
         final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte) 0b0000_0000);
         assertThat(value.isControlled()).isFalse();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.STOP);
@@ -46,7 +46,7 @@ public final class DPT3ValueTest {
 
     @Test
     @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: no control, 12%")
-    void testSwitchByteNotControlledTrue() {
+    void testByteNotControlledPercent12() {
         final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte) 0b0000_0100);
         assertThat(value.isControlled()).isFalse();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_12);
@@ -57,7 +57,7 @@ public final class DPT3ValueTest {
 
     @Test
     @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: control, 25%")
-    void testSwitchByteControlledFalse() {
+    void testByteControlledPercent25() {
         final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte) 0b0000_1011);
         assertThat(value.isControlled()).isTrue();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_25);
@@ -68,7 +68,7 @@ public final class DPT3ValueTest {
 
     @Test
     @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: control, 100%")
-    void testSwitchByteControlledTrue() {
+    void testByteControlledPercent100() {
         final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte)0b0000_1001);
         assertThat(value.isControlled()).isTrue();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_100);

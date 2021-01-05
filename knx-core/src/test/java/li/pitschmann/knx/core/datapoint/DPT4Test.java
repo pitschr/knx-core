@@ -19,14 +19,12 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT4Value;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT4}
@@ -72,15 +70,6 @@ class DPT4Test {
         final var dpt = DPT4.ASCII;
         assertThat(dpt.parse(new byte[]{0x61})).isInstanceOf(DPT4Value.class);
         assertThat(dpt.parse(new byte[]{0x62})).isInstanceOf(DPT4Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #parse(byte[]) with character encoding issue")
-    void testByteParseFailure() {
-        final var dpt = DPT4.ASCII;
-        assertThatThrownBy(() -> dpt.parse(new byte[]{(byte) 0xE4})) // ä = 0xE4
-                .isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessage("Issue during decoding charset 'US-ASCII' with value: [0xE4]");
     }
 
     @Test
