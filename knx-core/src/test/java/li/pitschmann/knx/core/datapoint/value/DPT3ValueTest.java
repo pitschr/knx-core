@@ -34,9 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public final class DPT3ValueTest {
 
     @Test
-    @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: no control, stop/0%")
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: no control, stop/0%")
     void testByteNotControlledPercent0() {
-        final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte) 0b0000_0000);
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b0000_0000);
         assertThat(value.isControlled()).isFalse();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.STOP);
         assertThat(value.toByteArray()).containsExactly(0x00);
@@ -45,9 +45,9 @@ public final class DPT3ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: no control, 12%")
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: no control, 12%")
     void testByteNotControlledPercent12() {
-        final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte) 0b0000_0100);
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b0000_0100);
         assertThat(value.isControlled()).isFalse();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_12);
         assertThat(value.toByteArray()).containsExactly(0x04);
@@ -56,9 +56,9 @@ public final class DPT3ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: control, 25%")
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: control, 25%")
     void testByteControlledPercent25() {
-        final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte) 0b0000_1011);
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b0000_1011);
         assertThat(value.isControlled()).isTrue();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_25);
         assertThat(value.toByteArray()).containsExactly(0x0B);
@@ -67,9 +67,9 @@ public final class DPT3ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT3.CONTROL_BLINDS, byte) with: control, 100%")
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: control, 100%")
     void testByteControlledPercent100() {
-        final var value = new DPT3Value(DPT3.CONTROL_BLINDS, (byte)0b0000_1001);
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte)0b0000_1001);
         assertThat(value.isControlled()).isTrue();
         assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_100);
         assertThat(value.toByteArray()).containsExactly(0x09);
@@ -80,12 +80,12 @@ public final class DPT3ValueTest {
     @Test
     @DisplayName("#toString()")
     void testToString() {
-        final var valueBlinds = new DPT3Value(DPT3.CONTROL_BLINDS, false, DPT3Value.StepInterval.PERCENT_100);
+        final var valueBlinds = new DPT3Value(DPT3.BLINDS_CONTROL, false, DPT3Value.StepInterval.PERCENT_100);
         assertThat(valueBlinds).hasToString(
                 "DPT3Value{dpt=3.008, controlled=false, stepInterval=PERCENT_100, byteArray=0x01}"
         );
 
-        final var valueDimming = new DPT3Value(DPT3.CONTROL_DIMMING, true, DPT3Value.StepInterval.PERCENT_6);
+        final var valueDimming = new DPT3Value(DPT3.DIMMING_CONTROL, true, DPT3Value.StepInterval.PERCENT_6);
         assertThat(valueDimming).hasToString(
                 "DPT3Value{dpt=3.007, controlled=true, stepInterval=PERCENT_6, byteArray=0x0D}"
         );
@@ -94,8 +94,8 @@ public final class DPT3ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT3Value(DPT3.CONTROL_BLINDS, true, DPT3Value.StepInterval.PERCENT_3);
-        final var value2 = new DPT3Value(DPT3.CONTROL_BLINDS, true, DPT3Value.StepInterval.PERCENT_3);
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_3);
+        final var value2 = new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_3);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
@@ -105,9 +105,9 @@ public final class DPT3ValueTest {
         // not equals
         assertThat(value).isNotEqualTo(null);
         assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.CONTROL_DIMMING, true, DPT3Value.StepInterval.PERCENT_3));
-        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.CONTROL_BLINDS, false, DPT3Value.StepInterval.PERCENT_3));
-        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.CONTROL_BLINDS, true, DPT3Value.StepInterval.PERCENT_1));
+        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.DIMMING_CONTROL, true, DPT3Value.StepInterval.PERCENT_3));
+        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.BLINDS_CONTROL, false, DPT3Value.StepInterval.PERCENT_3));
+        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_1));
     }
 
     @Test

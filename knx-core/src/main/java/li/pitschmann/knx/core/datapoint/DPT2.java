@@ -49,6 +49,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.001", "dpt-2", "dpst-2-1"})
     public static final DPT2 SWITCH_CONTROL = new DPT2("Switch Controlled", DPT1.SWITCH);
+
     /**
      * <strong>2.002</strong> Boolean Controlled
      *
@@ -64,6 +65,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.002", "dpst-2-2"})
     public static final DPT2 BOOL_CONTROL = new DPT2("Boolean Controlled", DPT1.BOOL);
+
     /**
      * <strong>2.003</strong> Enable Controlled
      *
@@ -79,6 +81,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.003", "dpst-2-3"})
     public static final DPT2 ENABLE_CONTROL = new DPT2("Enable Controlled", DPT1.ENABLE);
+
     /**
      * <strong>2.004</strong> Ramp Controlled
      *
@@ -94,6 +97,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.004", "dpst-2-4"})
     public static final DPT2 RAMP_CONTROL = new DPT2("Ramp Controlled", DPT1.RAMP);
+
     /**
      * <strong>2.005</strong> Alarm Controlled
      *
@@ -109,6 +113,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.005", "dpst-2-5"})
     public static final DPT2 ALARM_CONTROL = new DPT2("Alarm Controlled", DPT1.ALARM);
+
     /**
      * <strong>2.006</strong> Binary Value Controlled
      *
@@ -124,6 +129,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.006", "dpst-2-6"})
     public static final DPT2 BINARY_VALUE_CONTROL = new DPT2("Binary Value Controlled", DPT1.BINARY_VALUE);
+
     /**
      * <strong>2.007</strong> Step Controlled
      *
@@ -139,6 +145,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.007", "dpst-2-7"})
     public static final DPT2 STEP_CONTROL = new DPT2("Step Controlled", DPT1.STEP);
+
     /**
      * <strong>2.008</strong> Up & Down Controlled
      *
@@ -154,6 +161,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.008", "dpst-2-8"})
     public static final DPT2 UP_DOWN_CONTROL = new DPT2("Up & Down Controlled", DPT1.UP_DOWN);
+
     /**
      * <strong>2.009</strong> Open & Close Controlled
      *
@@ -169,6 +177,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.009", "dpst-2-9"})
     public static final DPT2 OPEN_CLOSE_CONTROL = new DPT2("Open & Close Controlled", DPT1.OPEN_CLOSE);
+
     /**
      * <strong>2.010</strong> Start Controlled
      *
@@ -184,6 +193,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.010", "dpst-2-10"})
     public static final DPT2 START_CONTROL = new DPT2("Start Controlled", DPT1.START);
+
     /**
      * <strong>2.011</strong> State Controlled
      *
@@ -199,6 +209,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
      */
     @DataPoint({"2.011", "dpst-2-11"})
     public static final DPT2 STATE_CONTROL = new DPT2("State Controlled", DPT1.STATE);
+
     /**
      * <strong>2.012</strong> Invert Controlled
      *

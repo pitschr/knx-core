@@ -56,7 +56,7 @@ public final class DPT3 extends BaseDataPointType<DPT3Value> {
      * </pre>
      */
     @DataPoint({"3.007", "dpt-3", "dpst-3-7"})
-    public static final DPT3 CONTROL_DIMMING = new DPT3("Control Dimming", DPT1.STEP);
+    public static final DPT3 DIMMING_CONTROL = new DPT3("Dimming Controlled", DPT1.STEP);
 
     /**
      * <strong>3.008</strong> Control Blinds (%)
@@ -76,7 +76,7 @@ public final class DPT3 extends BaseDataPointType<DPT3Value> {
      * </pre>
      */
     @DataPoint({"3.008", "dpst-3-8"})
-    public static final DPT3 CONTROL_BLINDS = new DPT3("Control Blinds", DPT1.UP_DOWN);
+    public static final DPT3 BLINDS_CONTROL = new DPT3("Blinds Controlled", DPT1.UP_DOWN);
 
     private final DPT1 dpt1;
 

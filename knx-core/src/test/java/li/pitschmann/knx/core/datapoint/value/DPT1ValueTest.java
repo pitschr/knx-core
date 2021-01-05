@@ -103,7 +103,7 @@ public final class DPT1ValueTest {
         // not equals
         assertThat(value).isNotEqualTo(null);
         assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT1Value(DPT1.ACK, true));
+        assertThat(value).isNotEqualTo(new DPT1Value(DPT1.ACKNOWLEDGE, true));
         assertThat(value).isNotEqualTo(new DPT1Value(DPT1.SWITCH, false));
     }
 

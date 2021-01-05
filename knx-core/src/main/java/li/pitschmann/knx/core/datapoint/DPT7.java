@@ -53,6 +53,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      */
     @DataPoint({"7.001", "dpt-7", "dpst-7-1"})
     public static final DPT7 VALUE_2_OCTET_UNSIGNED_COUNT = new DPT7("Value 2-Octet Unsigned Count", 0, 65535, "pulses", null);
+
     /**
      * <strong>7.002</strong> Time Period (milliseconds)
      *
@@ -70,6 +71,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      */
     @DataPoint({"7.002", "dpst-7-2"})
     public static final DPT7 TIME_PERIOD_MS = new DPT7("Time Period", 0, 65535, "ms", null);
+
     /**
      * <strong>7.003</strong> Time Period (milliseconds, resolution 10ms)
      *
@@ -80,13 +82,14 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     2 octets (U<sub>16</sub>)
      * Range:      U = [0 .. 65535]
-     *                  0ms .. 655.35ms
+     *                  0ms .. 655350ms
      * Unit:       ms
      * Resolution: 10 ms
      * </pre>
      */
     @DataPoint({"7.003", "dpst-7-3"})
     public static final DPT7 TIME_PERIOD_10MS = new DPT7("Time Period (10ms)", 0, 655350, "ms", v -> v / 10d);
+
     /**
      * <strong>7.004</strong> Time Period (milliseconds, resolution 100ms)
      *
@@ -97,13 +100,14 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     2 octets (U<sub>16</sub>)
      * Range:      U = [0 .. 65535]
-     *                  0ms .. 6553.5ms
+     *                  0ms .. 6553500ms
      * Unit:       ms
      * Resolution: 100 ms
      * </pre>
      */
     @DataPoint({"7.004", "dpst-7-4"})
     public static final DPT7 TIME_PERIOD_100MS = new DPT7("Time Period (100ms)", 0, 6553500, "ms", v -> v / 100d);
+
     /**
      * <strong>7.005</strong> Time Period (seconds)
      *
@@ -120,6 +124,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      */
     @DataPoint({"7.005", "dpst-7-5"})
     public static final DPT7 TIME_PERIOD_SECONDS = new DPT7("Time Period (sec)", 0, 65535, "s", null);
+
     /**
      * <strong>7.006</strong> Time Period (minutes)
      *
@@ -136,6 +141,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      */
     @DataPoint({"7.006", "dpst-7-6"})
     public static final DPT7 TIME_PERIOD_MINUTES = new DPT7("Time Period (min)", 0, 65535, "min", null);
+
     /**
      * <strong>7.007</strong> Time Period (hours)
      *
@@ -152,6 +158,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      */
     @DataPoint({"7.007", "dpst-7-7"})
     public static final DPT7 TIME_PERIOD_HOURS = new DPT7("Time Period (h)", 0, 65535, "h", null);
+
     /**
      * <strong>7.010</strong> Identifier Interface Object Property Data Type
      *
@@ -169,7 +176,8 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.010", "dpst-7-10"})
-    public static final DPT7 PROP_DATA_TYPE = new DPT7("Interface Object Property ID", 0, 65535, null, null);
+    public static final DPT7 PROPERTY_DATA_TYPE = new DPT7("Interface Object Property ID", 0, 65535, null, null);
+
     /**
      * <strong>7.011</strong> Length (mm)
      *
@@ -185,7 +193,8 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.011", "dpst-7-11"})
-    public static final DPT7 LENGTH_MM = new DPT7("Length", 0, 65535, "mm", null);
+    public static final DPT7 LENGTH = new DPT7("Length", 0, 65535, "mm", null);
+
     /**
      * <strong>7.012</strong> Electric current (mA)
      *
@@ -203,7 +212,8 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.012", "dpst-7-12"})
-    public static final DPT7 ELECTRIC_CURRENT_MILLIAMPERES = new DPT7("Electrical Power", 0, 65535, "mA", null);
+    public static final DPT7 ELECTRIC_CURRENT = new DPT7("Electrical Current", 0, 65535, "mA", null);
+
     /**
      * <strong>7.013</strong> Brightness (lux)
      *
@@ -237,6 +247,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      */
     @DataPoint({"7.600", "dpst-7-600"})
     public static final DPT7 ABSOLUTE_COLOR_TEMPERATURE = new DPT7("Absolute Color Temperature", 0, 65535, "K", null);
+
     /**
      * Calculation function
      * <p>

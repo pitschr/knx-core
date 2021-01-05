@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT5;
 import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.datapoint.DPT8;
-import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
@@ -49,7 +48,7 @@ final class CEMITest {
     void testUseDefaultMethods() {
         final var knxAddress = IndividualAddress.of(5, 9, 15);
         final var bytes = new byte[]{(byte) 0xCC, (byte) 0xEE};
-        final var dptValue = DPT7.LENGTH_MM.of(bytes);
+        final var dptValue = DPT7.LENGTH.of(bytes);
 
         final var cemiDefault = CEMI.useDefault(MessageCode.L_DATA_IND, knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
 
@@ -76,7 +75,7 @@ final class CEMITest {
     void testOfMethods() {
         final var knxAddress = GroupAddress.of(2, 4, 230);
         final var bytes = new byte[]{(byte) 0xEE, (byte) 0xFF};
-        final var dptValue = DPT7.LENGTH_MM.of(bytes);
+        final var dptValue = DPT7.LENGTH.of(bytes);
 
         final var cemi = CEMI.of(
                 MessageCode.L_DATA_CON,
