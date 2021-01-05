@@ -186,7 +186,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
 
     @Override
     protected DPT5Value parse(final byte[] bytes) {
-        return of(Bytes.toUnsignedInt(bytes[0]));
+        return new DPT5Value(this, bytes[0]);
     }
 
     @Override

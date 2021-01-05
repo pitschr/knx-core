@@ -84,13 +84,13 @@ class DPT4ValueTest {
     @Test
     @DisplayName("#toString()")
     void testToString() {
-        final var valueSwitch = new DPT4Value(DPT4.ASCII, 'A');
-        assertThat(valueSwitch).hasToString(
+        final var valueAscii = new DPT4Value(DPT4.ASCII, 'A');
+        assertThat(valueAscii).hasToString(
                 "DPT4Value{dpt=4.001, character=A, byteArray=0x41}"
         );
 
-        final var valueEnable = new DPT4Value(DPT4.ISO_8859_1, 'ß');
-        assertThat(valueEnable).hasToString(
+        final var valueIso = new DPT4Value(DPT4.ISO_8859_1, 'ß');
+        assertThat(valueIso).hasToString(
                 "DPT4Value{dpt=4.002, character=ß, byteArray=0xDF}"
         );
     }

@@ -22,6 +22,7 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT5;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -43,6 +44,10 @@ import java.util.Objects;
 public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     private int value;
 
+    public DPT5Value(final DPT5 dpt, final byte b) {
+        this(dpt, Bytes.toUnsignedInt(b));
+    }
+
     public DPT5Value(final DPT5 dpt, final int value) {
         super(dpt);
         if (!getDPT().isRangeClosed(value)) {
@@ -55,7 +60,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     /**
      * Returns the value
      *
-     * @return double
+     * @return int
      */
     public int getValue() {
         return value;
@@ -82,7 +87,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", getDPT())
+                .add("dpt", getDPT().getId())
                 .add("value", value)
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
