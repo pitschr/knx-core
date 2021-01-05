@@ -64,7 +64,7 @@ class DPT6StatusModeTest {
     void testByteParse() {
         final var dpt = DPT6.STATUS_MODE;
         assertThat(dpt.parse(new byte[]{0x01})).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.parse(new byte[]{0x02})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new byte[]{0x7C})).isInstanceOf(DPT6Value.StatusMode.class);
         assertThatThrownBy(() -> dpt.parse(new byte[0]));
     }
 
@@ -72,8 +72,8 @@ class DPT6StatusModeTest {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT6.STATUS_MODE;
-        assertThat(dpt.parse(new String[]{"0x11"})).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.parse(new String[]{"0xFF"})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new String[]{"0x01"})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new String[]{"0x7C"})).isInstanceOf(DPT6Value.StatusMode.class);
     }
 
     @Test
