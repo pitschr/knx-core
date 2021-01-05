@@ -111,6 +111,12 @@ public final class DPT3ValueTest {
     }
 
     @Test
+    @DisplayName("Implements 'PayloadOptimizable' interface")
+    void testPayloadOptimizable() {
+        assertThat(PayloadOptimizable.class).isAssignableFrom(DPT3Value.class);
+    }
+
+    @Test
     @DisplayName("StepInterval#ofCode(int)")
     public void testStepByOfCode() {
         // 0 .. 7

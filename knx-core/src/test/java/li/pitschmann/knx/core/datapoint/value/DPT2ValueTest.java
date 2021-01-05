@@ -112,4 +112,10 @@ public final class DPT2ValueTest {
         assertThat(value).isNotEqualTo(new DPT2Value(DPT2.SWITCH_CONTROL, true, false));
         assertThat(value).isNotEqualTo(new DPT2Value(DPT2.SWITCH_CONTROL, false, true));
     }
+
+    @Test
+    @DisplayName("Implements 'PayloadOptimizable' interface")
+    void testPayloadOptimizable() {
+        assertThat(PayloadOptimizable.class).isAssignableFrom(DPT2Value.class);
+    }
 }
