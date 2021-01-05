@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT7Value;
 
-import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
 
 /**
  * Data Point Type 7 for '2-Octets Unsigned Value' (2 Octets)
@@ -86,7 +86,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.003", "dpst-7-3"})
-    public static final DPT7 TIME_PERIOD_10MS = new DPT7("Time Period 1/10", 0, 65535, "ms", v -> v / 100d);
+    public static final DPT7 TIME_PERIOD_10MS = new DPT7("Time Period 1/10", 0, 655350, "ms", v -> v / 10d);
     /**
      * <strong>7.004</strong> Time Period (milliseconds, resolution 100ms)
      *
@@ -103,7 +103,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.004", "dpst-7-4"})
-    public static final DPT7 TIME_PERIOD_100MS = new DPT7("Time Period 1/100", 0, 65535, "ms", v -> v / 10d);
+    public static final DPT7 TIME_PERIOD_100MS = new DPT7("Time Period 1/100", 0, 6553500, "ms", v -> v / 100d);
     /**
      * <strong>7.005</strong> Time Period (seconds)
      *
@@ -240,9 +240,9 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
     /**
      * Calculation function
      * <p>
-     * Calculates from {@link Integer} to {@link Float} using a formula
+     * Calculates from {@link Integer} to {@link Double} using a formula
      */
-    private final Function<Integer, Double> calculationFunction;
+    private final IntToDoubleFunction calculationFunction;
 
     /**
      * Constructor for {@link DPT7}
@@ -257,13 +257,13 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
-                 final @Nullable Function<Integer, Double> calculationFunction) {
+                 final @Nullable IntToDoubleFunction calculationFunction) {
         super(desc, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public Function<Integer, Double> getCalculationFunction() {
+    public IntToDoubleFunction getCalculationFunction() {
         return this.calculationFunction;
     }
 
@@ -284,14 +284,10 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
 
     @Override
     protected DPT7Value parse(final String[] args) {
-        return new DPT7Value(this, Integer.parseInt(args[0]));
+        return of(Integer.parseInt(args[0]));
     }
 
     public DPT7Value of(final int value) {
         return new DPT7Value(this, value);
-    }
-
-    public byte[] toByteArray(final int value) {
-        return DPT7Value.toByteArray(value);
     }
 }
