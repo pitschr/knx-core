@@ -356,7 +356,7 @@ public final class DPT20 {
      *                  4 = Other Fault
      * </pre>
      */
-    @DataPoint(value = {"20.012", "dpst-20-12"}, description = "Error Class HVAC")
+    @DataPoint(value = {"20.012", "dpst-20-12"}, description = "HVAC Error Class Type")
     public enum ErrorClassHVAC implements DataPointEnum<ErrorClassHVAC> {
         @DataPointEnumValue(value = 0, description = "No Fault")
         NO_FAULT, //
@@ -489,7 +489,7 @@ public final class DPT20 {
      *                  12 = hurricane
      * </pre>
      */
-    @DataPoint(value = {"20.014", "dpst-20-14"}, description = "Beaufort Wind Force Scale")
+    @DataPoint(value = {"20.014", "dpst-20-14"}, description = "Wind Force Scale")
     public enum BeaufortWindForceScale implements DataPointEnum<BeaufortWindForceScale> {
         @DataPointEnumValue(value = 0, description = "no wind")
         NO_WIND, //
@@ -520,7 +520,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.017</strong> Sensor Select
+     * <strong>20.017</strong> Sensor Select/Mode
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -536,7 +536,7 @@ public final class DPT20 {
      *                  4 = temperature sensor input
      * </pre>
      */
-    @DataPoint(value = {"20.017", "dpst-20-17"}, description = "Sensor Select")
+    @DataPoint(value = {"20.017", "dpst-20-17"}, description = "Sensor Mode")
     public enum SensorSelect implements DataPointEnum<SensorSelect> {
         @DataPointEnumValue(value = 0, description = "Inactive")
         INACTIVE, //
@@ -1131,6 +1131,8 @@ public final class DPT20 {
         DEHUMIDIFICATION
     }
 
+    // TODO: ETS 20.116 Enable A/C Stage ???
+
     /**
      * <strong>20.120</strong> ADA Type
      *
@@ -1380,7 +1382,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.605</strong> Switch PB Model
+     * <strong>20.605</strong> PB Switch Mode
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1393,7 +1395,7 @@ public final class DPT20 {
      *                  2 = Two PBs/binary inputs mode
      * </pre>
      */
-    @DataPoint(value = {"20.605", "dpst-20-605"}, description = "Switch PB Model")
+    @DataPoint(value = {"20.605", "dpst-20-605"}, description = "PB Switch Mode")
     public enum SwitchPBModel implements DataPointEnum<SwitchPBModel> {
         @DataPointEnumValue(value = 1, description = "One PB/binary input mode")
         ONE_INPUT, //
@@ -1402,7 +1404,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.606</strong> PB Action
+     * <strong>20.606</strong> PB Action Mode
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1417,7 +1419,7 @@ public final class DPT20 {
      *                  3 = inverse
      * </pre>
      */
-    @DataPoint(value = {"20.606", "dpst-20-606"}, description = "PB Action")
+    @DataPoint(value = {"20.606", "dpst-20-606"}, description = "PB Action Mode")
     public enum PBAction implements DataPointEnum<PBAction> {
         @DataPointEnumValue(value = 0, description = "inactive (no message sent)")
         INACTIVE, //
@@ -1430,7 +1432,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.607</strong> Dimm PB Model
+     * <strong>20.607</strong> PB Dimming Mode
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1445,7 +1447,7 @@ public final class DPT20 {
      *                  4 = two PBs/binary inputs mode
      * </pre>
      */
-    @DataPoint(value = {"20.607", "dpst-20-607"}, description = "Dimm PB Model")
+    @DataPoint(value = {"20.607", "dpst-20-607"}, description = "PB Dimming Mode")
     public enum DimmingPBModel implements DataPointEnum<DimmingPBModel> {
         @DataPointEnumValue(value = 1, description = "one PB/binary input; SwitchOnOff inverts on each transmission")
         ONE_BINARY_INPUT_SWITCHONOFF_INVERTS_ON_EACH_TRANSMISSION, //
@@ -1503,7 +1505,7 @@ public final class DPT20 {
      *                  8 = LED, trailing
      * </pre>
      */
-    @DataPoint(value = {"20.609", "dpst-20-609"}, description = "Load Type Set")
+    @DataPoint(value = {"20.609", "dpst-20-609"}, description = "Load Type")
     public enum LoadTypeSet implements DataPointEnum<LoadTypeSet> {
         @DataPointEnumValue(value = 0, description = "automatic (resistive, capacitive or inductive)")
         AUTOMATIC, //
@@ -1711,7 +1713,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.802</strong> SAB Behavior Lock/Unlock
+     * <strong>20.802</strong> SAB Behavior On Lock/Unlock
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1729,7 +1731,7 @@ public final class DPT20 {
      *                  6 = value before locking
      * </pre>
      */
-    @DataPoint(value = {"20.802", "dpst-20-802"}, description = "SAB Behavior Lock/Unlock")
+    @DataPoint(value = {"20.802", "dpst-20-802"}, description = "SAB Behavior On Lock/Unlock")
     public enum SABBehaviorLockUnlock implements DataPointEnum<SABBehaviorLockUnlock> {
         @DataPointEnumValue(value = 0, description = "up")
         UP, //
@@ -1841,7 +1843,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.1001</strong> Additional Info Types
+     * <strong>20.1001</strong> Additional Info Type
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1860,7 +1862,7 @@ public final class DPT20 {
      *                255 = reserved for future system extensions (ESC code)
      * </pre>
      */
-    @DataPoint(value = {"20.1001", "dpst-20-1001"}, description = "Additional Info Types")
+    @DataPoint(value = {"20.1001", "dpst-20-1001"}, description = "Additional Info Type")
     public enum AdditionalInfoTypes implements DataPointEnum<AdditionalInfoTypes> {
         @DataPointEnumValue(value = 1, description = "PL medium Domain Address")
         PL_MEDIUM_DOMAIN_ADDRESS, //
@@ -1881,7 +1883,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.1002</strong> RF Mode Select
+     * <strong>20.1002</strong> RF Mode Selection
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1895,7 +1897,7 @@ public final class DPT20 {
      *                  2 = asynchronous + BiBat Slave
      * </pre>
      */
-    @DataPoint(value = {"20.1002", "dpst-20-1002"}, description = "RF Mode Select")
+    @DataPoint(value = {"20.1002", "dpst-20-1002"}, description = "RF Mode Selection")
     public enum RFModeSelect implements DataPointEnum<RFModeSelect> {
         @DataPointEnumValue(value = 0, description = "asynchronous")
         ASYNCHRONOUS, //
@@ -1906,7 +1908,7 @@ public final class DPT20 {
     }
 
     /**
-     * <strong>20.1003</strong> RF Filter Select
+     * <strong>20.1003</strong> RF Filter Mode Selection
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1921,7 +1923,7 @@ public final class DPT20 {
      *                  3 = filtering by Domain Address and by Serial number table
      * </pre>
      */
-    @DataPoint(value = {"20.1003", "dpst-20-1003"}, description = "RF Filter Select")
+    @DataPoint(value = {"20.1003", "dpst-20-1003"}, description = "RF Filter Mode Selection")
     public enum RFFilterSelect implements DataPointEnum<RFFilterSelect> {
         @DataPointEnumValue(value = 0, description = "no filtering, all supported received frames shall be passed to the cEMI clientusing L_Data.ind")
         NO_FILTERING, //

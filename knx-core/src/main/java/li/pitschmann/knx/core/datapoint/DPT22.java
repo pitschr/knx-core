@@ -62,7 +62,8 @@ public final class DPT22 {
      * </pre>
      */
     @DataPoint({"22.100", "dpst-22-100"})
-    public static final StatusDHWController STATUS_DHW_CONTROLLER = new StatusDHWController();
+    public static final DHWControllerStatus DHW_CONTROLLER_STATUS = new DHWControllerStatus();
+
     /**
      * <strong>22.101</strong> Room Heating / Cooling Controller Status
      *
@@ -94,7 +95,11 @@ public final class DPT22 {
      * </pre>
      */
     @DataPoint({"22.101", "dpst-22-101"})
-    public static final StatusRoomHeatinCoolingController STATUS_ROOM_HEATING_COOLING_CONTROLLER = new StatusRoomHeatinCoolingController();
+    public static final RoomHeatinCoolingControllerStatus ROOM_HEATING_COOLING_CONTROLLER_STATUS = new RoomHeatinCoolingControllerStatus();
+
+    // TODO: ETS 22.102 Combined Status HVA?
+    // TODO: ETS 22.103 Combined Status RTC?
+
     /**
      * <strong>22.1000</strong> Media
      *
@@ -116,6 +121,7 @@ public final class DPT22 {
      */
     @DataPoint({"22.1000", "dpst-22-1000"})
     public static final Media MEDIA = new Media();
+
     /**
      * <strong>22.1010</strong> Channel Activation for 16 channels
      *
@@ -156,8 +162,8 @@ public final class DPT22 {
         }
     }
 
-    public static final class StatusDHWController extends InternalDataPointType<DPT22Value.StatusDHWController> {
-        private StatusDHWController() {
+    public static final class DHWControllerStatus extends InternalDataPointType<DPT22Value.StatusDHWController> {
+        private DHWControllerStatus() {
             super("DHW Controller Status");
         }
 
@@ -181,8 +187,8 @@ public final class DPT22 {
         }
     }
 
-    public static final class StatusRoomHeatinCoolingController extends InternalDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
-        private StatusRoomHeatinCoolingController() {
+    public static final class RoomHeatinCoolingControllerStatus extends InternalDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
+        private RoomHeatinCoolingControllerStatus() {
             super("Room Heating / Cooling Controller Status");
         }
 

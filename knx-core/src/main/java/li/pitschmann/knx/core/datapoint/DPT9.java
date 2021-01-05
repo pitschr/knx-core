@@ -298,7 +298,7 @@ public final class DPT9 extends BaseRangeDataPointType<DPT9Value, Double> {
      * </pre>
      */
     @DataPoint({"9.021", "dpst-9-21"})
-    public static final DPT9 CURRENT = new DPT9("Current", -671088.64, 670760.96, "mA");
+    public static final DPT9 ELECTRIC_CURRENT = new DPT9("Current", -671088.64, 670760.96, "mA");
 
     /**
      * <strong>9.022</strong> Power Density (W/m<sup>2</sup>)
