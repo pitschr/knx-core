@@ -19,12 +19,7 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT4Value;
-import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
@@ -79,16 +74,16 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
     /**
      * Constructor for {@link DPT4}
      *
-     * @param desc       description for {@link DPT4}
-     * @param lowerValue the lower value for {@link DPT4}
-     * @param upperValue the upper value for {@link DPT4}
-     * @param charset    the character encoding set for {@link DPT4}
+     * @param description description for {@link DPT4}
+     * @param lowerValue  the lower value for {@link DPT4}
+     * @param upperValue  the upper value for {@link DPT4}
+     * @param charset     the character encoding set for {@link DPT4}
      */
-    private DPT4(final String desc,
+    private DPT4(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final Charset charset) {
-        super(desc, lowerValue, upperValue, null);
+        super(description, lowerValue, upperValue, null);
 
         this.charset = charset;
         this.charsetDecoder = charset.newDecoder();

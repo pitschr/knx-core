@@ -86,7 +86,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.003", "dpst-7-3"})
-    public static final DPT7 TIME_PERIOD_10MS = new DPT7("Time Period 1/10", 0, 655350, "ms", v -> v / 10d);
+    public static final DPT7 TIME_PERIOD_10MS = new DPT7("Time Period (10ms)", 0, 655350, "ms", v -> v / 10d);
     /**
      * <strong>7.004</strong> Time Period (milliseconds, resolution 100ms)
      *
@@ -103,7 +103,7 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
      * </pre>
      */
     @DataPoint({"7.004", "dpst-7-4"})
-    public static final DPT7 TIME_PERIOD_100MS = new DPT7("Time Period 1/100", 0, 6553500, "ms", v -> v / 100d);
+    public static final DPT7 TIME_PERIOD_100MS = new DPT7("Time Period (100ms)", 0, 6553500, "ms", v -> v / 100d);
     /**
      * <strong>7.005</strong> Time Period (seconds)
      *
@@ -247,18 +247,18 @@ public final class DPT7 extends BaseRangeDataPointType<DPT7Value, Integer> {
     /**
      * Constructor for {@link DPT7}
      *
-     * @param desc                description for {@link DPT7}
+     * @param description         description for {@link DPT7}
      * @param lowerValue          the lower value for {@link DPT7}
      * @param upperValue          the upper value for {@link DPT7
      * @param unit                the unit representation for {@link DPT7}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT7(final String desc,
+    private DPT7(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
                  final @Nullable IntToDoubleFunction calculationFunction) {
-        super(desc, lowerValue, upperValue, unit);
+        super(description, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 

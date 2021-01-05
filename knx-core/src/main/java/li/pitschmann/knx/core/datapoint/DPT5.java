@@ -20,8 +20,6 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT5Value;
-import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.util.function.IntToDoubleFunction;
 
@@ -159,18 +157,18 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
     /**
      * Constructor for {@link DPT5}
      *
-     * @param desc                description for {@link DPT5}
+     * @param description         description for {@link DPT5}
      * @param lowerValue          the lower value for {@link DPT5}
      * @param upperValue          the upper value for {@link DPT5}
      * @param unit                the unit representation for {@link DPT5}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT5(final String desc,
+    private DPT5(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
                  final @Nullable IntToDoubleFunction calculationFunction) {
-        super(desc, lowerValue, upperValue, unit);
+        super(description, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 

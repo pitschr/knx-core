@@ -97,16 +97,16 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
     /**
      * Constructor for {@link DPT6}
      *
-     * @param desc       description for {@link DPT6}
-     * @param lowerValue the lower value for {@link DPT6}
-     * @param upperValue the upper value for {@link DPT6}
-     * @param unit       the unit representation for {@link DPT6}
+     * @param description description for {@link DPT6}
+     * @param lowerValue  the lower value for {@link DPT6}
+     * @param upperValue  the upper value for {@link DPT6}
+     * @param unit        the unit representation for {@link DPT6}
      */
-    private DPT6(final String desc,
+    private DPT6(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit) {
-        super(desc, lowerValue, upperValue, unit);
+        super(description, lowerValue, upperValue, unit);
     }
 
     @Override
@@ -142,10 +142,10 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
         /**
          * Constructor for {@link DPT6.StatusMode}
          *
-         * @param desc description of {@link StatusMode}
+         * @param description description of {@link StatusMode}
          */
-        private StatusMode(final String desc) {
-            super(desc);
+        private StatusMode(final String description) {
+            super(description);
         }
 
         @Override
