@@ -116,7 +116,7 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
 
     @Override
     protected DPT6Value parse(final byte[] bytes) {
-        return of(bytes[0]);
+        return new DPT6Value(this, bytes[0]);
     }
 
     @Override

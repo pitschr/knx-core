@@ -45,8 +45,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     private final int value;
 
     public DPT6Value(final DPT6 dpt, final byte b) {
-        super(dpt);
-        this.value = b;
+        this(dpt, (int)b);
     }
 
     public DPT6Value(final DPT6 dpt, final int value) {
@@ -76,7 +75,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", getDPT())
+                .add("dpt", getDPT().getId())
                 .add("value", value)
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
@@ -121,41 +120,76 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
      * </pre>
      */
     public static class StatusMode extends AbstractDataPointValue<DPT6.StatusMode> {
-        private final byte b;
+        private final boolean a;
+        private final boolean b;
+        private final boolean c;
+        private final boolean d;
+        private final boolean e;
+        private final Mode mode;
 
         public StatusMode(final byte b) {
             super(DPT6.STATUS_MODE); // hardcoded
-            this.b = b;
+
+            this.a = (b & 0x80) != 0x00;
+            this.b = (b & 0x40) != 0x00;
+            this.c = (b & 0x20) != 0x00;
+            this.d = (b & 0x10) != 0x00;
+            this.e = (b & 0x08) != 0x00;
+            this.mode = Mode.of(b & 0x07);
         }
 
         public StatusMode(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
-            this(toByte(a, b, c, d, e, mode));
+            super(DPT6.STATUS_MODE); // hardcoded
+
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.d = d;
+            this.e = e;
+            this.mode = Objects.requireNonNull(mode);
         }
 
-        private static byte toByte(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
+        public boolean isSet(final int bit) {
+            switch(bit) {
+                case 0: return a;
+                case 1: return b;
+                case 2: return c;
+                case 3: return d;
+                case 4: return e;
+                default:
+                    throw new KnxNumberOutOfRangeException("bit", 0, 4, bit);
+            }
+        }
+
+        public Mode getMode() {
+            return mode;
+        }
+
+        @Override
+        public byte[] toByteArray() {
             var status = (byte) mode.value;
             status |= a ? 0x80 : 0x00;
             status |= b ? 0x40 : 0x00;
             status |= c ? 0x20 : 0x00;
             status |= d ? 0x10 : 0x00;
             status |= e ? 0x08 : 0x00;
-            return status;
-        }
-
-        public boolean isSet(final int bit) {
-            if (bit < 0 || bit > 4) {
-                throw new KnxNumberOutOfRangeException("bit", 0, 4, bit);
-            }
-            return (b & (0x80 >> bit)) != 0;
-        }
-
-        public Mode getMode() {
-            return Mode.of(b & 0x07);
+            return new byte[]{status};
         }
 
         @Override
-        public byte[] toByteArray() {
-            return new byte[]{b};
+        public String toString() {
+            // @formatter:off
+            return Strings.toStringHelper(this)
+                    .add("dpt", getDPT().getId())
+                    .add("a", a)
+                    .add("b", b)
+                    .add("c", c)
+                    .add("d", d)
+                    .add("e", e)
+                    .add("mode", getMode().name())
+                    .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
+                    .toString();
+            // @formatter:on
         }
 
         @Override
@@ -164,14 +198,19 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
                 return true;
             } else if (obj instanceof StatusMode) {
                 final var other = (StatusMode) obj;
-                return Objects.equals(this.getMode(), other.getMode()) && this.b == other.b;
+                return Objects.equals(this.getMode(), other.getMode())
+                        && this.a == other.a
+                        && this.b == other.b
+                        && this.c == other.c
+                        && this.d == other.d
+                        && this.e == other.e;
             }
             return false;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(getMode(), b);
+            return Objects.hash(getMode(), a, b, c, d, e);
         }
 
         /**
