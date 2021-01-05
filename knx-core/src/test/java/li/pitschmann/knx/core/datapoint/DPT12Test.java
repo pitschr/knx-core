@@ -66,7 +66,7 @@ class DPT12Test {
     void testByteParse() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.parse(new byte[]{0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.parse(new byte[]{(byte) 0xFF, (byte) 0xFF,(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT12Value.class);
     }
 
     @Test

@@ -59,6 +59,66 @@ public final class DPT12 extends BaseRangeDataPointType<DPT12Value, Long> {
     public static final DPT12 VALUE_4_OCTET_UNSIGNED_COUNT = new DPT12("Value 4-Octet Unsigned Count", 0L, 4294967295L, "pulses");
 
     /**
+     * <strong>12.100</strong> Time in Seconds (s)
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Unsigned Value)                                              |
+     * Encoding    | U   U   U   U   U   U   U   U   U   U   U   U   U   U   U   U |
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     *             | (Unsigned Value)                                              |
+     *             | U   U   U   U   U   U   U   U   U   U   U   U   U   U   U   U |
+     *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+     * Format:     4 octets (U<sub>32</sub>)
+     * Range:      U = [0 .. 4294967295]
+     * Unit:       s
+     * Resolution: 1 s
+     * </pre>
+     */
+    @DataPoint({"12.100", "dpst-12-100"})
+    public static final DPT12 TIME_SECONDS = new DPT12("Time (s)", 0L, 4294967295L, "s");
+
+    /**
+     * <strong>12.101</strong> Time in Minutes (min)
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Unsigned Value)                                              |
+     * Encoding    | U   U   U   U   U   U   U   U   U   U   U   U   U   U   U   U |
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     *             | (Unsigned Value)                                              |
+     *             | U   U   U   U   U   U   U   U   U   U   U   U   U   U   U   U |
+     *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+     * Format:     4 octets (U<sub>32</sub>)
+     * Range:      U = [0 .. 4294967295]
+     * Unit:       min
+     * Resolution: 1 min
+     * </pre>
+     */
+    @DataPoint({"12.101", "dpst-12-101"})
+    public static final DPT12 TIME_MINUTES = new DPT12("Time (min)", 0L, 4294967295L, "min");
+
+    /**
+     * <strong>12.102</strong> Time in Hours (h)
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Unsigned Value)                                              |
+     * Encoding    | U   U   U   U   U   U   U   U   U   U   U   U   U   U   U   U |
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     *             | (Unsigned Value)                                              |
+     *             | U   U   U   U   U   U   U   U   U   U   U   U   U   U   U   U |
+     *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+     * Format:     4 octets (U<sub>32</sub>)
+     * Range:      U = [0 .. 4294967295]
+     * Unit:       h
+     * Resolution: 1 h
+     * </pre>
+     */
+    @DataPoint({"12.102", "dpst-12-102"})
+    public static final DPT12 TIME_HOURS = new DPT12("Time (h)", 0L, 4294967295L, "h");
+
+    /**
      * <strong>12.1200</strong> Volume (l)
      *
      * <pre>

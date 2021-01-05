@@ -231,7 +231,7 @@ public final class DPT13 extends BaseRangeDataPointType<DPT13Value, Integer> {
      * </pre>
      */
     @DataPoint({"13.100", "dpst-13-100"})
-    public static final DPT13 LONG_DELTA_TIME_SEC = new DPT13("Long Delta Time", -2147483648, 2147483647, "s", null);
+    public static final DPT13 DELTA_TIME_SECONDS = new DPT13("Long Delta Time", -2147483648, 2147483647, "s", null);
 
     /**
      * <strong>13.1200</strong> Delta Volume (l)
