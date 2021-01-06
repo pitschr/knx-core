@@ -178,37 +178,6 @@ public class BaseDataPointTypeTest {
         assertThat(captor.getValue()).containsExactly("Hello", "World", "!");
     }
 
-
-    /**
-     * Test {@link BaseDataPointType#toByteArray(String, String...)}
-     */
-    @Test
-    @DisplayName("Test #toByteArray(String, String...)")
-    public void testToByteArrayStringVararg() {
-        // invalid cases - null as 1st parameter
-        assertThatThrownBy(() -> DPT1.SWITCH.toByteArray(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> DPT2.SWITCH_CONTROL.toByteArray(null, "true")).isInstanceOf(NullPointerException.class);
-
-        // valid cases
-        // 1 parameter
-        assertThat(DPT1.SWITCH.toByteArray("false")).containsExactly(0x00);
-        assertThat(DPT1.SWITCH.toByteArray("true")).containsExactly(0x01);
-
-        // 2 parameters
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray("false")).containsExactly(0x00);
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray("true")).containsExactly(0x01);
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray("controlled", "false")).containsExactly(0x02);
-        assertThat(DPT2.SWITCH_CONTROL.toByteArray("controlled", "true")).containsExactly(0x03);
-
-        // 3 parameters
-        // Saturday, 2013-08-17 04:10:45
-        final var dayOfWeek = DayOfWeek.SATURDAY;
-        final var date = LocalDate.of(2013, 8, 17);
-        final var time = LocalTime.of(04, 10, 45);
-        final var dateTimeBytes = DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
-        assertThat(DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45")).containsExactly(dateTimeBytes);
-    }
-
     /**
      * Completely implemented Test Data Point Type
      */

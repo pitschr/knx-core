@@ -169,12 +169,12 @@ class DPT7ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 4711);
-        final var value2 = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 4711);
+        final var valueBytes = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x12, 0x67});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

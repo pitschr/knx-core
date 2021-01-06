@@ -93,12 +93,12 @@ class DPT1ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT1Value(DPT1.SWITCH, true);
-        final var value2 = new DPT1Value(DPT1.SWITCH, true);
+        final var valueByte = new DPT1Value(DPT1.SWITCH, (byte)0b0000_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

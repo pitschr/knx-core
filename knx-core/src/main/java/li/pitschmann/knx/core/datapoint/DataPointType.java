@@ -123,16 +123,4 @@ public interface DataPointType {
      * @throws DataPointTypeIncompatibleSyntaxException to be thrown if the arguments could not be interpreted
      */
     DataPointValue of(final String arg, final String... moreArgs);
-
-    /**
-     * Returns byte array based for specified string arguments. This method is handy one
-     * that calls {@link #of(String, String...)} to return the byte array.
-     *
-     * @param arg      first argument
-     * @param moreArgs more arguments
-     * @return byte array from arguments
-     */
-    default byte[] toByteArray(final String arg, final String... moreArgs) {
-        return of(arg, moreArgs).toByteArray();
-    }
 }

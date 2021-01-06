@@ -123,12 +123,12 @@ class DPT6ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 111);
-        final var value2 = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 111);
+        final var valueByte = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte)0b0110_1111);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);
@@ -263,12 +263,12 @@ class DPT6ValueTest {
     @DisplayName("StatusMode#equals() and StatusMode#hashCode()")
     void testStatusModeEqualsAndHashCode() {
         final var value = new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0);
-        final var value2 = new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0);
+        final var valueBytes = new DPT6Value.StatusMode((byte)0b0000_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

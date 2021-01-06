@@ -96,18 +96,18 @@ class DPT9ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT9Value(DPT9.TEMPERATURE, 4711.0);
-        final var value2 = new DPT9Value(DPT9.TEMPERATURE, 4711.0);
+        final var value = new DPT9Value(DPT9.TEMPERATURE, 471.04);
+        final var valueBytes = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x2D, (byte)0xC0});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);
         assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE_DIFFERENCE, 4711.0));
-        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE, 11.47));
+        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE_DIFFERENCE, 471.04));
+        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE, 174.40));
     }
 }

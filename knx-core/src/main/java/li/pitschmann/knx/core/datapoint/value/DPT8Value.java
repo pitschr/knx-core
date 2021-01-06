@@ -90,7 +90,7 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
         // @formatter:off
         return Strings.toStringHelper(this)
                 .add("dpt", this.getDPT().getId())
-                .add("value", value)
+                .add("value", getValueAsText(value))
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on

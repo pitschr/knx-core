@@ -128,12 +128,12 @@ class DPT10ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT10Value(DayOfWeek.MONDAY, LocalTime.of(1, 2, 3));
-        final var value2 = new DPT10Value(DayOfWeek.MONDAY, LocalTime.of(1, 2, 3));
+        final var valueBytes = new DPT10Value(new byte[]{0b0010_0001, 0b0000_0010, 0b000_0011});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

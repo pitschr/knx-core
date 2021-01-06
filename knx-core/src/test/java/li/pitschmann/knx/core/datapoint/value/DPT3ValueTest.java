@@ -95,12 +95,12 @@ class DPT3ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_3);
-        final var value2 = new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_3);
+        final var valueByte = new DPT3Value(DPT3.BLINDS_CONTROL, (byte)0b000_1110);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

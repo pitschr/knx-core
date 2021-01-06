@@ -101,7 +101,7 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
         // @formatter:off
         return Strings.toStringHelper(this)
                 .add("dpt", getDPT().getId())
-                .add("value", value)
+                .add("value", getValueAsText(value))
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on

@@ -97,12 +97,12 @@ class DPT2ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT2Value(DPT2.SWITCH_CONTROL, true, true);
-        final var value2 = new DPT2Value(DPT2.SWITCH_CONTROL, true, true);
+        final var valueByte = new DPT2Value(DPT2.SWITCH_CONTROL, (byte)0b0000_0011);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

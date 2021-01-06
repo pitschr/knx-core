@@ -150,7 +150,7 @@ class DPT8ValueTest {
     void testToString() {
         final var valueSigned = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, -8382);
         assertThat(valueSigned).hasToString(
-                "DPT8Value{dpt=8.001, value=-8382.0, byteArray=0xDF 42}"
+                "DPT8Value{dpt=8.001, value=-8382, byteArray=0xDF 42}"
         );
 
         final var valuePercent = new DPT8Value(DPT8.PERCENT, 134.23);
@@ -160,7 +160,7 @@ class DPT8ValueTest {
 
         final var valueDeltaTime = new DPT8Value(DPT8.DELTA_TIME_100MS, 2733200);
         assertThat(valueDeltaTime).hasToString(
-                "DPT8Value{dpt=8.004, value=2733200.0, byteArray=0x6A C4}"
+                "DPT8Value{dpt=8.004, value=2733200, byteArray=0x6A C4}"
         );
     }
 
@@ -168,12 +168,12 @@ class DPT8ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, 4711);
-        final var value2 = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, 4711);
+        final var valueBytes = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x12, 0x67});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

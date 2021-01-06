@@ -99,12 +99,12 @@ class DPT4ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT4Value(DPT4.ASCII, 'a');
-        final var value2 = new DPT4Value(DPT4.ASCII, 'a');
+        final var valueByte = new DPT4Value(DPT4.ASCII, (byte)0b0110_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
         assertThat(value).isNotEqualTo(null);

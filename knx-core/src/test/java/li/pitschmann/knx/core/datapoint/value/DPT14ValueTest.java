@@ -92,7 +92,7 @@ class DPT14ValueTest {
 
         final var valueEnergy = new DPT14Value(DPT14.ENERGY, 7.33266933E11);
         assertThat(valueEnergy).hasToString(
-                "DPT14Value{dpt=14.031, value=7.33266933E11, byteArray=0x53 2A BA 1D}"
+                "DPT14Value{dpt=14.031, value=733266933000, byteArray=0x53 2A BA 1D}"
         );
     }
 
@@ -100,7 +100,7 @@ class DPT14ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT14Value(DPT14.ACCELERATION, 4711.0);
-        final var value2 = new DPT14Value(DPT14.ACCELERATION, 4711.0);
+        final var value2 = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x45, (byte)0x93, 0x38, 0x00});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);
