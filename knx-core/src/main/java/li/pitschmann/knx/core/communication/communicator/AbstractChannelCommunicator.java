@@ -221,7 +221,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                                                                     final long msTimeout) {
         return CompletableFuture
                 .supplyAsync(() -> sendAndWaitInternal(requestBody, predicate, msTimeout), this.communicationExecutor)
-                .exceptionally((throwable) -> {
+                .exceptionally(throwable -> {
                     this.client.notifyError(throwable);
                     return null;
                 });

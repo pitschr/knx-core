@@ -54,6 +54,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.001", "dpst-21-1"})
     public static final GeneralStatus GENERAL_STATUS = new GeneralStatus();
+
     /**
      * <strong>21.002</strong> Device Control
      *
@@ -71,6 +72,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.002", "dpst-21-2"})
     public static final DeviceControl DEVICE_CONTROL = new DeviceControl();
+
     /**
      * <strong>21.100</strong> Forcing Signal
      *
@@ -93,6 +95,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.100", "dpst-21-100"})
     public static final ForcingSignal FORCING_SIGNAL = new ForcingSignal();
+
     /**
      * <strong>21.101</strong> Forcing Signal Cooling
      *
@@ -108,6 +111,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.101", "dpst-21-101"})
     public static final ForcingSignalCooling FORCING_SIGNAL_COOLING = new ForcingSignalCooling();
+
     /**
      * <strong>21.102</strong> Room Heating Controller Status
      *
@@ -129,7 +133,8 @@ public final class DPT21 {
      * </pre>
      */
     @DataPoint({"21.102", "dpst-21-102"})
-    public static final StatusRoomHeatingController STATUS_ROOM_HEATING_CONTROLLER = new StatusRoomHeatingController();
+    public static final RoomHeatingControllerStatus ROOM_HEATING_CONTROLLER_STATUS = new RoomHeatingControllerStatus();
+
     /**
      * <strong>21.103</strong> Solar DHW Controller Status
      *
@@ -146,7 +151,8 @@ public final class DPT21 {
      * </pre>
      */
     @DataPoint({"21.103", "dpst-21-103"})
-    public static final StatusSolarDHWController STATUS_SOLAR_DHW_CONTROLLER = new StatusSolarDHWController();
+    public static final SolarDHWControllerStatus SOLAR_DHW_CONTROLLER_STATUS = new SolarDHWControllerStatus();
+
     /**
      * <strong>21.104</strong> Fuel Type Set
      *
@@ -164,6 +170,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.104", "dpst-21-104"})
     public static final FuelTypeSet FUEL_TYPE_SET = new FuelTypeSet();
+
     /**
      * <strong>21.105</strong> Room Cooling Controller Status
      *
@@ -178,7 +185,8 @@ public final class DPT21 {
      * </pre>
      */
     @DataPoint({"21.105", "dpst-21-105"})
-    public static final StatusRoomCoolingController STATUS_ROOM_COOLING_CONTROLLER = new StatusRoomCoolingController();
+    public static final RoomCoolingControllerStatus ROOM_COOLING_CONTROLLER_STATUS = new RoomCoolingControllerStatus();
+
     /**
      * <strong>21.106</strong> Ventilation Controller Status
      *
@@ -196,7 +204,10 @@ public final class DPT21 {
      * </pre>
      */
     @DataPoint({"21.106", "dpst-21-106"})
-    public static final StatusVentilationController STATUS_VENTILATION_CONTROLLER = new StatusVentilationController();
+    public static final VentilationControllerStatus VENTILATION_CONTROLLER_STATUS = new VentilationControllerStatus();
+
+    // TODO: ETS 21.107 -> Combined Status RTSM?
+
     /**
      * <strong>21.601</strong> Lighting Actuator Error Information
      *
@@ -218,6 +229,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.601", "dpst-21-601"})
     public static final LightingActuatorErrorInfo LIGHTING_ACTUATOR_ERROR_INFO = new LightingActuatorErrorInfo();
+
     /**
      * <strong>21.1000</strong> Radio Frequency Communication Mode Info
      *
@@ -235,6 +247,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.1000", "dpst-21-1000"})
     public static final RadioFrequencyCommunicationModeInfo RADIO_FREQUENCY_COMMUNICATION_MODE_INFO = new RadioFrequencyCommunicationModeInfo();
+
     /**
      * <strong>21.1001</strong> cEMI Server Supported Filtering Mode
      *
@@ -252,6 +265,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.1001", "dpst-21-1001"})
     public static final CEMIServerSupportedFilteringMode CEMI_SERVER_SUPPORTED_FILTERING_MODE = new CEMIServerSupportedFilteringMode();
+
     /**
      * <strong>21.1002</strong> Security Report
      *
@@ -267,6 +281,7 @@ public final class DPT21 {
      */
     @DataPoint({"21.1002", "dpst-21-1002"})
     public static final SecurityReport SECURITY_REPORT = new SecurityReport();
+
     /**
      * <strong>21.1010</strong> Channel Activation for 8 channels
      *
@@ -293,7 +308,7 @@ public final class DPT21 {
      *
      * @param <V>
      */
-    private static abstract class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
+    private abstract static class InternalDataPointType<V extends DataPointValue> extends BaseDataPointType<V> {
         private InternalDataPointType(final String description) {
             super(description);
         }
@@ -389,20 +404,20 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusRoomHeatingController extends InternalDataPointType<DPT21Value.StatusRoomHeatingController> {
-        private StatusRoomHeatingController() {
+    public static final class RoomHeatingControllerStatus extends InternalDataPointType<DPT21Value.RoomHeatingControllerStatus> {
+        private RoomHeatingControllerStatus() {
             super("Room Heating Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusRoomHeatingController parse(final byte[] bytes) {
-            return new DPT21Value.StatusRoomHeatingController(bytes[0]);
+        protected DPT21Value.RoomHeatingControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.RoomHeatingControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusRoomHeatingController of(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
+        public DPT21Value.RoomHeatingControllerStatus of(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
                                                          final boolean temperatureReturnLimit, final boolean statusMorningBoost, final boolean statusStartOptimizationActive,
                                                          final boolean statusStopOptimizationActive, final boolean summerMode) {
-            return new DPT21Value.StatusRoomHeatingController(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost,
+            return new DPT21Value.RoomHeatingControllerStatus(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost,
                     statusStartOptimizationActive, statusStopOptimizationActive, summerMode);
         }
 
@@ -414,19 +429,19 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusSolarDHWController extends InternalDataPointType<DPT21Value.StatusSolarDHWController> {
-        private StatusSolarDHWController() {
+    public static final class SolarDHWControllerStatus extends InternalDataPointType<DPT21Value.SolarDHWControllerStatus> {
+        private SolarDHWControllerStatus() {
             super("Solar DHW Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusSolarDHWController parse(final byte[] bytes) {
-            return new DPT21Value.StatusSolarDHWController(bytes[0]);
+        protected DPT21Value.SolarDHWControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.SolarDHWControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusSolarDHWController of(final boolean fault, final boolean statusDHWLoadActive,
+        public DPT21Value.SolarDHWControllerStatus of(final boolean fault, final boolean statusDHWLoadActive,
                                                       final boolean solarLoadSufficient) {
-            return new DPT21Value.StatusSolarDHWController(fault, statusDHWLoadActive, solarLoadSufficient);
+            return new DPT21Value.SolarDHWControllerStatus(fault, statusDHWLoadActive, solarLoadSufficient);
         }
 
         public byte[] toByteArray(final boolean fault, final boolean statusDHWLoadActive, final boolean solarLoadSufficient) {
@@ -453,18 +468,18 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusRoomCoolingController extends InternalDataPointType<DPT21Value.StatusRoomCoolingController> {
-        private StatusRoomCoolingController() {
+    public static final class RoomCoolingControllerStatus extends InternalDataPointType<DPT21Value.RoomCoolingControllerStatus> {
+        private RoomCoolingControllerStatus() {
             super("Room Cooling Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusRoomCoolingController parse(final byte[] bytes) {
-            return new DPT21Value.StatusRoomCoolingController(bytes[0]);
+        protected DPT21Value.RoomCoolingControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.RoomCoolingControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusRoomCoolingController of(final boolean fault) {
-            return new DPT21Value.StatusRoomCoolingController(fault);
+        public DPT21Value.RoomCoolingControllerStatus of(final boolean fault) {
+            return new DPT21Value.RoomCoolingControllerStatus(fault);
         }
 
         public byte[] toByteArray(final boolean fault) {
@@ -472,19 +487,19 @@ public final class DPT21 {
         }
     }
 
-    public static final class StatusVentilationController extends InternalDataPointType<DPT21Value.StatusVentilationController> {
-        private StatusVentilationController() {
+    public static final class VentilationControllerStatus extends InternalDataPointType<DPT21Value.VentilationControllerStatus> {
+        private VentilationControllerStatus() {
             super("Ventilation Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusVentilationController parse(final byte[] bytes) {
-            return new DPT21Value.StatusVentilationController(bytes[0]);
+        protected DPT21Value.VentilationControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.VentilationControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusVentilationController of(final boolean fault, final boolean fanActive, final boolean heatingModeActive,
+        public DPT21Value.VentilationControllerStatus of(final boolean fault, final boolean fanActive, final boolean heatingModeActive,
                                                          final boolean coolingModeActive) {
-            return new DPT21Value.StatusVentilationController(fault, fanActive, heatingModeActive, coolingModeActive);
+            return new DPT21Value.VentilationControllerStatus(fault, fanActive, heatingModeActive, coolingModeActive);
         }
 
         public byte[] toByteArray(final boolean fault, final boolean fanActive, final boolean heatingModeActive, final boolean coolingModeActive) {

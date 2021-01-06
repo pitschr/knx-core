@@ -20,9 +20,9 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT5;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -42,7 +42,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT5Value extends AbstractDataPointValue<DPT5> {
-    private int rawUnsignedValue;
+    private int value;
 
     public DPT5Value(final DPT5 dpt, final byte b) {
         this(dpt, Bytes.toUnsignedInt(b));
@@ -50,51 +50,46 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
 
     public DPT5Value(final DPT5 dpt, final int value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.rawUnsignedValue = value;
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
+        }
+
+        this.value = value;
     }
 
     /**
-     * Converts unsigned int value to byte array
+     * Returns the value
      *
-     * @param value unsigned integer value [0 .. 255]
-     * @return one byte array
+     * @return int
      */
-    public static byte[] toByteArray(final int value) {
-        return new byte[]{(byte) value};
-    }
-
-    public double getUnsignedValue() {
-        final var calcFunction = this.getDPT().getCalculationFunction();
-        if (calcFunction == null) {
-            return this.rawUnsignedValue;
-        } else {
-            return calcFunction.apply(this.rawUnsignedValue);
-        }
-    }
-
-    public int getRawUnsignedValue() {
-        return this.rawUnsignedValue;
+    public int getValue() {
+        return value;
     }
 
     @Override
     public byte[] toByteArray() {
-        return toByteArray(this.rawUnsignedValue);
+        final var calcFunction = this.getDPT().getCalculationFunction();
+        final byte b;
+        if (calcFunction == null) {
+            b = (byte) value;
+        } else {
+            b = (byte) Math.round(calcFunction.applyAsDouble(value));
+        }
+        return new byte[]{b};
     }
 
     @Override
     public String toText() {
-        return getValueAsText(getUnsignedValue());
+        return getValueAsText(value);
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("unsignedValue", this.getUnsignedValue())
-                .add("rawUnsignedValue", this.rawUnsignedValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("value", value)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -106,14 +101,14 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
         } else if (obj instanceof DPT5Value) {
             final var other = (DPT5Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.rawUnsignedValue, other.rawUnsignedValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.rawUnsignedValue);
+        return Objects.hash(getDPT(), value);
     }
 
 }

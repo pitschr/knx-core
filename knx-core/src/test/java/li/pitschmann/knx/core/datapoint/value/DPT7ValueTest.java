@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT7;
-import li.pitschmann.knx.core.utils.ByteFormatter;
-import org.assertj.core.data.Offset;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,55 +31,155 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT7ValueTest {
-    /**
-     * Test {@link DPT7Value}
-     */
-    @Test
-    public void test() {
-        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x29, 0x23}, 10531, 10531, "10531");
-        this.assertValue(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xC9, (byte) 0xD4}, 51668, 51668, "51668");
+class DPT7ValueTest {
 
-        this.assertValue(DPT7.TIME_PERIOD_10MS, new byte[]{0x58, (byte) 0xF3}, 22771, 227.71d, "227.71");
-        this.assertValue(DPT7.TIME_PERIOD_100MS, new byte[]{(byte) 0xEA, 0x32}, 59954, 5995.4d, "5995.4");
+    @Test
+    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 0")
+    void testByte_0() {
+        final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x00, 0x00});
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
     }
 
-    /**
-     * Test {@link DPT7Value} with invalid arguments
-     */
     @Test
-    public void testInvalid() {
-        assertThatThrownBy(() -> new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[0])).isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 7323")
+    void testByte_7323() {
+        final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x1C, (byte)0x9B});
+        assertThat(value.getValue()).isEqualTo(7323);
+        assertThat(value.toByteArray()).containsExactly(0x1C, 0x9B);
+
+        assertThat(value.toText()).isEqualTo("7323");
     }
 
-    private void assertValue(final DPT7 dpt, final byte[] bytes, final int rawUnsignedValue, final double unsignedValue, final String text) {
-        final var dptValue = new DPT7Value(dpt, rawUnsignedValue);
-        final var dptValueByByte = new DPT7Value(dpt, bytes);
+    @Test
+    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 65535")
+    void testByte_65535() {
+        final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xFF, (byte)0xFF});
+        assertThat(value.getValue()).isEqualTo(65535);
+        assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
 
-        // instance methods
-        assertThat(dptValue.getUnsignedValue()).isCloseTo(unsignedValue, Offset.offset(0.000001));
-        assertThat(dptValue.getRawUnsignedValue()).isEqualTo(rawUnsignedValue);
-        assertThat(dptValue.toByteArray()).containsExactly(bytes);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("65535");
+    }
 
-        // class methods
-        assertThat(DPT7Value.toByteArray(rawUnsignedValue)).containsExactly(bytes);
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with: 0")
+    void testTimePeriod10ms_0() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, 0);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with: 22771")
+    void testTimePeriod10ms_22771() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, 22771);
+        assertThat(value.getValue()).isEqualTo(22771);
+        assertThat(value.toByteArray()).containsExactly(0x08, 0xE5);
+
+        assertThat(value.toText()).isEqualTo("22771");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with: 655350")
+    void testTimePeriod10ms_655350() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, 655350);
+        assertThat(value.getValue()).isEqualTo(655350);
+        assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
+
+        assertThat(value.toText()).isEqualTo("655350");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 0")
+    void testTimePeriod100ms_0() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, 0);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 1334455")
+    void testTimePeriod100ms_22771() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, 1334400);
+        assertThat(value.getValue()).isEqualTo(1334400);
+        assertThat(value.toByteArray()).containsExactly(0x34, 0x20);
+
+        assertThat(value.toText()).isEqualTo("1334400");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 6553500")
+    void testTimePeriod100ms_6553500() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, 6553500);
+        assertThat(value.getValue()).isEqualTo(6553500);
+        assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
+
+        assertThat(value.toText()).isEqualTo("6553500");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with numbers out of range")
+    void testScalingOutOfRange() {
+        assertThatThrownBy(() -> new DPT7Value(DPT7.TIME_PERIOD_10MS, -1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-1' for argument 'value' is out of range '0'..'655350'.");
+        assertThatThrownBy(() -> new DPT7Value(DPT7.TIME_PERIOD_10MS, 655351))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '655351' for argument 'value' is out of range '0'..'655350'.");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with numbers out of range")
+    void testAngleOutOfRange() {
+        assertThatThrownBy(() -> new DPT7Value(DPT7.TIME_PERIOD_100MS, -1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-1' for argument 'value' is out of range '0'..'6553500'.");
+        assertThatThrownBy(() -> new DPT7Value(DPT7.TIME_PERIOD_100MS, 6553501))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '6553501' for argument 'value' is out of range '0'..'6553500'.");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueUnsigned = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 4634);
+        assertThat(valueUnsigned).hasToString(
+                "DPT7Value{dpt=7.001, value=4634, byteArray=0x12 1A}"
+        );
+
+        final var valueScaling = new DPT7Value(DPT7.TIME_PERIOD_10MS, 8300);
+        assertThat(valueScaling).hasToString(
+                "DPT7Value{dpt=7.003, value=8300, byteArray=0x03 3E}"
+        );
+
+        final var valueAngle = new DPT7Value(DPT7.TIME_PERIOD_100MS, 932200);
+        assertThat(valueAngle).hasToString(
+                "DPT7Value{dpt=7.004, value=932200, byteArray=0x24 6A}"
+        );
+
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 4711);
+        final var valueBytes = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x12, 0x67});
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT7Value(DPT7.LENGTH_MM, rawUnsignedValue));
-        assertThat(dptValue).isNotEqualTo(new DPT7Value(dpt, rawUnsignedValue + 1));
-
-        // toString
-        final var toString = String.format("DPT7Value{dpt=%s, unsignedValue=%s, rawUnsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
-                rawUnsignedValue, ByteFormatter.formatHexAsString(bytes));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT7Value(DPT7.TIME_PERIOD_10MS, 4711));
+        assertThat(value).isNotEqualTo(new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 1147));
     }
 }

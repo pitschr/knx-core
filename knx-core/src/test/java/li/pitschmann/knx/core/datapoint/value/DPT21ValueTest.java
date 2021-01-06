@@ -28,10 +28,10 @@ import li.pitschmann.knx.core.datapoint.value.DPT21Value.GeneralStatus;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.LightingActuatorErrorInfo;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.RadioFrequencyCommunicationModeInfo;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.SecurityReport;
-import li.pitschmann.knx.core.datapoint.value.DPT21Value.StatusRoomCoolingController;
-import li.pitschmann.knx.core.datapoint.value.DPT21Value.StatusRoomHeatingController;
-import li.pitschmann.knx.core.datapoint.value.DPT21Value.StatusSolarDHWController;
-import li.pitschmann.knx.core.datapoint.value.DPT21Value.StatusVentilationController;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.RoomCoolingControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.RoomHeatingControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.SolarDHWControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.VentilationControllerStatus;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -137,7 +137,7 @@ public final class DPT21ValueTest {
     }
 
     /**
-     * Test {@link StatusRoomHeatingController}
+     * Test {@link RoomHeatingControllerStatus}
      */
     @Test
     public void testStatusRoomHeatingController() {
@@ -153,8 +153,8 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusRoomHeatingController(final byte b, final boolean[] bool) {
-        final var dptValue = new StatusRoomHeatingController(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
-        assertThat(new StatusRoomHeatingController(b)).isEqualTo(dptValue);
+        final var dptValue = new RoomHeatingControllerStatus(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
+        assertThat(new RoomHeatingControllerStatus(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
         assertThat(dptValue.isStatusEco()).isEqualTo(bool[1]);
@@ -167,7 +167,7 @@ public final class DPT21ValueTest {
     }
 
     /**
-     * Test {@link StatusSolarDHWController}
+     * Test {@link SolarDHWControllerStatus}
      */
     @Test
     public void testStatusSolarDHWController() {
@@ -178,8 +178,8 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusSolarDHWController(final byte b, final boolean[] bool) {
-        final var dptValue = new StatusSolarDHWController(bool[0], bool[1], bool[2]);
-        assertThat(new StatusSolarDHWController(b)).isEqualTo(dptValue);
+        final var dptValue = new SolarDHWControllerStatus(bool[0], bool[1], bool[2]);
+        assertThat(new SolarDHWControllerStatus(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
         assertThat(dptValue.isStatusDHWLoadActive()).isEqualTo(bool[1]);
@@ -207,7 +207,7 @@ public final class DPT21ValueTest {
     }
 
     /**
-     * Test {@link StatusRoomCoolingController}
+     * Test {@link RoomCoolingControllerStatus}
      */
     @Test
     public void testStatusRoomCoolingController() {
@@ -216,15 +216,15 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusRoomCoolingController(final byte b, final boolean bool, final String text) {
-        final var dptValue = new StatusRoomCoolingController(bool);
-        assertThat(new StatusRoomCoolingController(b)).isEqualTo(dptValue);
+        final var dptValue = new RoomCoolingControllerStatus(bool);
+        assertThat(new RoomCoolingControllerStatus(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool);
         assertThat(dptValue.toText()).isEqualTo(text);
     }
 
     /**
-     * Test {@link StatusVentilationController}
+     * Test {@link VentilationControllerStatus}
      */
     @Test
     public void testStatusVentilationController() {
@@ -236,8 +236,8 @@ public final class DPT21ValueTest {
     }
 
     private void assertStatusVentilationController(final byte b, final boolean[] bool) {
-        final var dptValue = new StatusVentilationController(bool[0], bool[1], bool[2], bool[3]);
-        assertThat(new StatusVentilationController(b)).isEqualTo(dptValue);
+        final var dptValue = new VentilationControllerStatus(bool[0], bool[1], bool[2], bool[3]);
+        assertThat(new VentilationControllerStatus(b)).isEqualTo(dptValue);
 
         assertThat(dptValue.isFault()).isEqualTo(bool[0]);
         assertThat(dptValue.isFanActive()).isEqualTo(bool[1]);

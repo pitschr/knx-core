@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.datapoint.DPT2;
 import li.pitschmann.knx.core.datapoint.DPT3;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
@@ -46,79 +46,59 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPT3Value extends AbstractDataPointValue<DPT3> {
+public final class DPT3Value extends AbstractDataPointValue<DPT3> implements PayloadOptimizable {
     private final boolean controlled;
-    private final int stepCode;
+    private final StepInterval stepInterval;
 
     public DPT3Value(final DPT3 dpt, final byte b) {
-        super(dpt);
-        // bit 4 = controlled
-        this.controlled = (b & 0x08) != 0x00;
-        // bit 0 .. 3 = stepCode
-        this.stepCode = b & 0x07;
-    }
-
-    public DPT3Value(final DPT3 dpt, final boolean controlled, final int stepCode) {
-        super(dpt);
-        // validate
-        if (stepCode < 0 || stepCode > 7) {
-            throw new KnxNumberOutOfRangeException("stepCode", 0, 7, stepCode);
-        }
-
-        this.controlled = controlled;
-        this.stepCode = stepCode;
+        this(dpt,
+            // bit 4 = controlled
+            (b & 0x08) != 0x00,
+            // bit 0 .. 3 = stepCode
+                StepInterval.ofCode(b & 0x07)
+        );
     }
 
     public DPT3Value(final DPT3 dpt, final boolean controlled, final StepInterval stepInterval) {
         super(dpt);
-        // validate
-        if (stepInterval == null) {
-            throw new KnxNullPointerException("stepInterval");
-        }
-
         this.controlled = controlled;
-        this.stepCode = stepInterval.getStepCode();
+        this.stepInterval = Objects.requireNonNull(stepInterval);
     }
 
     /**
-     * Converts {@code controlled} and {@code booleanValue} to byte array
+     * Returns if the controlled flag is set
      *
-     * @param controlled if controlled
-     * @param stepCode   the step code [0..7]
-     * @return byte array
+     * @return boolean
      */
-    public static byte[] toByteArray(final boolean controlled, final int stepCode) {
-        var b = (byte) stepCode;
+    public boolean isControlled() {
+        return this.controlled;
+    }
+
+    /**
+     * Returns the step interval which is an enumeration based on step code
+     *
+     * @return StepInterval
+     */
+    public StepInterval getStepInterval() {
+        return stepInterval;
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        var b = (byte) stepInterval.getStepCode();
         if (controlled) {
             b |= 0x08;
         }
         return new byte[]{b};
     }
 
-    public boolean isControlled() {
-        return this.controlled;
-    }
-
-    public int getStepCode() {
-        return this.stepCode;
-    }
-
-    public StepInterval getStepInterval() {
-        return StepInterval.ofCode(this.stepCode);
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return toByteArray(this.controlled, this.stepCode);
-    }
-
     @Override
     public String toText() {
-        final var stepIntervalText = getStepInterval().toText();
+        final var text = getStepInterval().getText();
         if (isControlled()) {
-            return String.format("controlled '%s'", stepIntervalText);
+            return "controlled '" + text + "'";
         } else {
-            return stepIntervalText;
+            return text;
         }
     }
 
@@ -126,11 +106,10 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("controlled", this.controlled)
-                .add("stepCode", this.stepCode)
-                .add("stepInterval", this.getStepInterval())
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("controlled", controlled)
+                .add("stepInterval", stepInterval.name())
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -143,14 +122,14 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
             final var other = (DPT3Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.controlled, other.controlled) //
-                    && Objects.equals(this.stepCode, other.stepCode);
+                    && Objects.equals(this.stepInterval, other.stepInterval);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.controlled, this.stepCode);
+        return Objects.hash(getDPT(), controlled, stepInterval);
     }
 
     /**
@@ -162,35 +141,35 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         /**
          * Step 000b: STOP
          */
-        STOP(0x00, "0 (stop)"),
+        STOP(0x00, "Stop"),
         /**
          * Step 001b: 100%
          */
-        PERCENT_100(0x01, "1 (100%)"),
+        PERCENT_100(0x01, "100%"),
         /**
          * Step 010b: 50%
          */
-        PERCENT_50(0x02, "2 (50%)"),
+        PERCENT_50(0x02, "50%"),
         /**
          * Step 011b: 25%
          */
-        PERCENT_25(0x03, "3 (25%)"),
+        PERCENT_25(0x03, "25%"),
         /**
          * Step 100b: 12%
          */
-        PERCENT_12(0x04, "4 (12%)"),
+        PERCENT_12(0x04, "12%"),
         /**
          * Step 101b: 6%
          */
-        PERCENT_6(0x05, "5 (6%)"),
+        PERCENT_6(0x05, "6%"),
         /**
          * Step 110b: 3%
          */
-        PERCENT_3(0x06, "6 (3%)"),
+        PERCENT_3(0x06, "3%"),
         /**
          * Step 111b: 1%
          */
-        PERCENT_1(0x07, "7 (1%)");
+        PERCENT_1(0x07, "1%");
 
         private final int stepCode;
         private final String text;
@@ -267,42 +246,42 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         /**
          * Returns the {@link StepInterval} by {@code percent}.
          *
-         * @param percent number of percent in range of [1f .. 100f]
+         * @param percent number of percent in range of [0% .. 100.00%]
          * @return {@link StepInterval}
          */
-        public static StepInterval ofPercent(final float percent) {
+        public static StepInterval ofPercent(final double percent) {
             // validate
-            if (percent < 0f || percent > 100f) {
-                throw new KnxNumberOutOfRangeException("percent", 0f, 100f, percent);
+            if (percent < 0 || percent > 100) {
+                throw new KnxNumberOutOfRangeException("percent", 0.0, 100.0, percent);
             }
 
             // return by percent
             // 100% => 75 .. 100
-            if (percent >= 75f) {
+            if (percent >= 75.0) {
                 return PERCENT_100;
             }
             // 50% => 37.5 .. 74.9
-            else if (percent >= 37.5f) {
+            else if (percent >= 37.5) {
                 return PERCENT_50;
             }
             // 25% => 18.5 .. 37.4
-            else if (percent >= 18.5f) {
+            else if (percent >= 18.5) {
                 return PERCENT_25;
             }
             // 12% => 9 .. 18.4
-            else if (percent >= 9f) {
+            else if (percent >= 9) {
                 return PERCENT_12;
             }
             // 6% => 4.5 .. 8.9
-            else if (percent >= 4.5f) {
+            else if (percent >= 4.5) {
                 return PERCENT_6;
             }
             // 3% => 2.2 .. 4.4
-            else if (percent >= 2.2f) {
+            else if (percent >= 2.2) {
                 return PERCENT_3;
             }
             // 1% => 0.01 .. 2.1
-            else if (percent >= 0.01f) {
+            else if (percent >= 0.01) {
                 return PERCENT_1;
             }
             // stop if lower than 0.01
@@ -312,7 +291,7 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
         }
 
         public int getStepCode() {
-            return this.stepCode;
+            return stepCode;
         }
 
         /**
@@ -322,8 +301,8 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> {
          *
          * @return human-friendy representation of Step Interval
          */
-        public String toText() {
-            return this.text;
+        public String getText() {
+            return text;
         }
     }
 }

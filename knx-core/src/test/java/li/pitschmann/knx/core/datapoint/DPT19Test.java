@@ -113,28 +113,4 @@ class DPT19Test {
         // sunday, 2155-12-31 23:59:59
         assertThat(dpt.of(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 31), LocalTime.of(23, 59, 59))).isInstanceOf(DPT19Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(DayOfWeek, LocalDate, LocalTime)")
-    void testToByteArray() {
-        final var dpt = DPT19.DATE_TIME;
-        // no day, 1900-01-01 00:00:00
-        assertThat(dpt.toByteArray(null, LocalDate.of(1900, 1, 1), LocalTime.of(0, 0, 0)))
-                .containsExactly(0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00);
-        // monday, 1950-02-03 6:15:20
-        // monday => 001. ....
-        // hour 6 => ...0 0110
-        assertThat(dpt.toByteArray(DayOfWeek.MONDAY, LocalDate.of(1950, 2, 3), LocalTime.of(6, 15, 20)))
-                .containsExactly(0x32, 0x02, 0x03, 0x26, 0x0F, 0x14, 0x00, 0x00);
-        // wednesday, 2000-04-05 12:30:45
-        // wednesday => 011. ....
-        // hour 12 ===> ...0 1100
-        assertThat(dpt.toByteArray(DayOfWeek.WEDNESDAY, LocalDate.of(2000, 4, 5), LocalTime.of(12, 30, 45)))
-                .containsExactly(0x64, 0x04, 0x05, 0x6C, 0x1E, 0x2D, 0x00, 0x00);
-        // sunday, 2155-12-31 23:59:59
-        // sunday ==> 111. ....
-        // hour 23 => ...1 0111
-        assertThat(dpt.toByteArray(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 31), LocalTime.of(23, 59, 59)))
-                .containsExactly(0xFF, 0x0C, 0x1F, 0xF7, 0x3B, 0x3B, 0x00, 0x00);
-    }
 }

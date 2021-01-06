@@ -62,7 +62,7 @@ class DPT9Test {
     @Test
     @DisplayName("Test #parse(byte[])")
     void testByteParse() {
-        final var dpt = DPT9.TEMPERATURE;
+        final var dpt = DPT9.AIR_FLOW;
         assertThat(dpt.parse(new byte[]{0x44, 0x55})).isInstanceOf(DPT9Value.class);
         assertThat(dpt.parse(new byte[]{(byte) 0xE6, (byte) 0xBB})).isInstanceOf(DPT9Value.class);
     }
@@ -83,14 +83,5 @@ class DPT9Test {
         assertThat(dpt.of(-671088.64)).isInstanceOf(DPT9Value.class);
         assertThat(dpt.of(0)).isInstanceOf(DPT9Value.class);
         assertThat(dpt.of(670760.96)).isInstanceOf(DPT9Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(double)")
-    void testToByteArray() {
-        final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
-        assertThat(dpt.toByteArray(-671088.64)).containsExactly(0xF8, 0x00);
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00);
-        assertThat(dpt.toByteArray(670760.96)).containsExactly(0x7F, 0xFF);
     }
 }

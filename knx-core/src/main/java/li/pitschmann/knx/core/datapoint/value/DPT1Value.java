@@ -39,54 +39,63 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPT1Value extends AbstractDataPointValue<DPT1> {
-    private final boolean booleanValue;
+public final class DPT1Value extends AbstractDataPointValue<DPT1> implements PayloadOptimizable {
+    private final boolean value;
 
     public DPT1Value(final DPT1 dpt, final byte b) {
-        this(dpt, (b & 0x01) != 0x00);
+        this(
+                dpt,
+                // boolean
+                (b & 0x01) != 0x00
+        );
     }
 
-    public DPT1Value(final DPT1 dpt, final boolean booleanValue) {
+    public DPT1Value(final DPT1 dpt, final boolean value) {
         super(dpt);
-        this.booleanValue = booleanValue;
+        this.value = value;
     }
 
     /**
-     * Converts {@code booleanValue} to byte array
+     * Returns the boolean value
      *
-     * @param booleanValue boolean to be converted
-     * @return one byte array from boolean
+     * @return boolean
      */
-    public static byte[] toByteArray(final boolean booleanValue) {
-        return new byte[]{booleanValue ? (byte) 0x01 : 0x00};
+    public boolean getValue() {
+        return value;
     }
 
-    public boolean getBooleanValue() {
-        return this.booleanValue;
-    }
-
-    public String getBooleanText() {
-        return this.getDPT().getTextFor(this.booleanValue);
+    /**
+     * Returns the human-friendly text of actual boolean value.
+     * <p>
+     * For {@link DPT1#SWITCH} it would be {@code on} if boolean value is {@code true},
+     * otherwise it would be {@code off} for boolean value {@code false}.
+     * <p>
+     * The text is pre-defined by the {@link DPT1}
+     *
+     * @return human-friendly text
+     */
+    public String getText() {
+        return this.getDPT().getTextFor(value);
     }
 
     @Override
     public byte[] toByteArray() {
-        return toByteArray(this.booleanValue);
+        return new byte[]{value ? (byte) 0x01 : 0x00};
     }
 
     @Override
     public String toText() {
-        return getBooleanText();
+        return getText();
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("booleanValue", this.booleanValue)
-                .add("booleanText", this.getBooleanText())
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("value", value)
+                .add("text", getText())
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -98,14 +107,14 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> {
         } else if (obj instanceof DPT1Value) {
             final var other = (DPT1Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.booleanValue, other.booleanValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.booleanValue);
+        return Objects.hash(getDPT(), value);
     }
 
 }

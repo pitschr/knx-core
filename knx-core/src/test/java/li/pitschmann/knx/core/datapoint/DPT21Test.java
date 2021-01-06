@@ -37,11 +37,11 @@ class DPT21Test {
             DPT21.DEVICE_CONTROL,
             DPT21.FORCING_SIGNAL,
             DPT21.FORCING_SIGNAL_COOLING,
-            DPT21.STATUS_ROOM_HEATING_CONTROLLER,
-            DPT21.STATUS_SOLAR_DHW_CONTROLLER,
+            DPT21.ROOM_HEATING_CONTROLLER_STATUS,
+            DPT21.SOLAR_DHW_CONTROLLER_STATUS,
             DPT21.FUEL_TYPE_SET,
-            DPT21.STATUS_ROOM_COOLING_CONTROLLER,
-            DPT21.STATUS_VENTILATION_CONTROLLER,
+            DPT21.ROOM_COOLING_CONTROLLER_STATUS,
+            DPT21.VENTILATION_CONTROLLER_STATUS,
             DPT21.LIGHTING_ACTUATOR_ERROR_INFO,
             DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO,
             DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE,
@@ -126,25 +126,25 @@ class DPT21Test {
                 .isInstanceOf(DPT21Value.ForcingSignalCooling.class);
 
         // Status Room Heating Controller (0011 1100 = 0x3C)
-        assertThat(DPT21.STATUS_ROOM_HEATING_CONTROLLER.of(false, false, true, true, true,
+        assertThat(DPT21.ROOM_HEATING_CONTROLLER_STATUS.of(false, false, true, true, true,
                 true, false, false))
-                .isInstanceOf(DPT21Value.StatusRoomHeatingController.class);
+                .isInstanceOf(DPT21Value.RoomHeatingControllerStatus.class);
 
         // Status Solar DHW Controller (0000 0010 = 0x02)
-        assertThat(DPT21.STATUS_SOLAR_DHW_CONTROLLER.of(false, true, false))
-                .isInstanceOf(DPT21Value.StatusSolarDHWController.class);
+        assertThat(DPT21.SOLAR_DHW_CONTROLLER_STATUS.of(false, true, false))
+                .isInstanceOf(DPT21Value.SolarDHWControllerStatus.class);
 
         // Fuel Type Set (0000 0100 = 0x04)
         assertThat(DPT21.FUEL_TYPE_SET.of(false, false, true))
                 .isInstanceOf(DPT21Value.FuelTypeSet.class);
 
         // Room Cooling Controller Status (0000 0001 = 0x01)
-        assertThat(DPT21.STATUS_ROOM_COOLING_CONTROLLER.of(true))
-                .isInstanceOf(DPT21Value.StatusRoomCoolingController.class);
+        assertThat(DPT21.ROOM_COOLING_CONTROLLER_STATUS.of(true))
+                .isInstanceOf(DPT21Value.RoomCoolingControllerStatus.class);
 
         // Status Ventilation Controller (0000 0011 = 0x03)
-        assertThat(DPT21.STATUS_VENTILATION_CONTROLLER.of(true, true, false, false))
-                .isInstanceOf(DPT21Value.StatusVentilationController.class);
+        assertThat(DPT21.VENTILATION_CONTROLLER_STATUS.of(true, true, false, false))
+                .isInstanceOf(DPT21Value.VentilationControllerStatus.class);
 
         // Lighting Actuator Error Information (0110 1111 = 0x6F)
         assertThat(DPT21.LIGHTING_ACTUATOR_ERROR_INFO.of(true, true, true, true, false, true, true))
@@ -187,12 +187,12 @@ class DPT21Test {
                 .containsExactly(0x01);
 
         // Status Room Heating Controller (0011 1100 = 0x3C)
-        assertThat(DPT21.STATUS_ROOM_HEATING_CONTROLLER.toByteArray(false, false, true, true, true,
+        assertThat(DPT21.ROOM_HEATING_CONTROLLER_STATUS.toByteArray(false, false, true, true, true,
                 true, false, false))
                 .containsExactly(0x3C);
 
         // Status Solar DHW Controller (0000 0010 = 0x02)
-        assertThat(DPT21.STATUS_SOLAR_DHW_CONTROLLER.toByteArray(false, true, false))
+        assertThat(DPT21.SOLAR_DHW_CONTROLLER_STATUS.toByteArray(false, true, false))
                 .containsExactly(0x02);
 
         // Fuel Type Set (0000 0100 = 0x04)
@@ -200,11 +200,11 @@ class DPT21Test {
                 .containsExactly(0x04);
 
         // Room Cooling Controller Status (0000 0001 = 0x01)
-        assertThat(DPT21.STATUS_ROOM_COOLING_CONTROLLER.toByteArray(true))
+        assertThat(DPT21.ROOM_COOLING_CONTROLLER_STATUS.toByteArray(true))
                 .containsExactly(0x01);
 
         // Status Ventilation Controller (0000 0011 = 0x03)
-        assertThat(DPT21.STATUS_VENTILATION_CONTROLLER.toByteArray(true, true, false, false))
+        assertThat(DPT21.VENTILATION_CONTROLLER_STATUS.toByteArray(true, true, false, false))
                 .containsExactly(0x03);
 
         // Lighting Actuator Error Information (0110 1111 = 0x6F)

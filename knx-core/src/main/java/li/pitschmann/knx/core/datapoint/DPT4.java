@@ -74,16 +74,16 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
     /**
      * Constructor for {@link DPT4}
      *
-     * @param desc       description for {@link DPT4}
-     * @param lowerValue the lower value for {@link DPT4}
-     * @param upperValue the upper value for {@link DPT4}
-     * @param charset    the character encoding set for {@link DPT4}
+     * @param description description for {@link DPT4}
+     * @param lowerValue  the lower value for {@link DPT4}
+     * @param upperValue  the upper value for {@link DPT4}
+     * @param charset     the character encoding set for {@link DPT4}
      */
-    private DPT4(final String desc,
+    private DPT4(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final Charset charset) {
-        super(desc, lowerValue, upperValue, null);
+        super(description, lowerValue, upperValue, null);
 
         this.charset = charset;
         this.charsetDecoder = charset.newDecoder();
@@ -103,6 +103,11 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
     }
 
     @Override
+    protected DPT4Value parse(final byte[] bytes) {
+        return new DPT4Value(this, bytes[0]);
+    }
+
+    @Override
     protected boolean isCompatible(final String[] args) {
         return args.length == 1 && args[0] != null && args[0].length() == 1;
     }
@@ -112,16 +117,7 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
         return new DPT4Value(this, args[0].charAt(0));
     }
 
-    @Override
-    protected DPT4Value parse(final byte[] bytes) {
-        return new DPT4Value(this, bytes[0]);
-    }
-
     public DPT4Value of(final char character) {
         return new DPT4Value(this, character);
-    }
-
-    public byte[] toByteArray(final char character) {
-        return DPT4Value.toByteArray(character);
     }
 }

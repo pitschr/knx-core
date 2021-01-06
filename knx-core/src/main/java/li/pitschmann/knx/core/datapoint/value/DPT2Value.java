@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT2;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
@@ -39,65 +40,75 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class DPT2Value extends AbstractDataPointValue<DPT2> {
+public final class DPT2Value extends AbstractDataPointValue<DPT2> implements PayloadOptimizable {
     private final boolean controlled;
-    private final boolean booleanValue;
+    private final boolean value;
 
     public DPT2Value(final DPT2 dpt, final byte b) {
-        super(dpt);
-        // bit 1 = controlled
-        this.controlled = (b & 0x02) != 0x00;
-        // bit 0 = value
-        this.booleanValue = (b & 0x01) != 0x00;
+        this(dpt,
+                // bit 1 = controlled
+                (b & 0x02) != 0x00,
+                // bit 0 = value
+            (b & 0x01) != 0x00
+        );
     }
 
     public DPT2Value(final DPT2 dpt, final boolean controlled, final boolean booleanValue) {
         super(dpt);
         this.controlled = controlled;
-        this.booleanValue = booleanValue;
+        this.value = booleanValue;
     }
 
     /**
-     * Converts {@code controlled} and {@code booleanValue} to byte array
+     * Returns if the controlled flag is set
      *
-     * @param controlled   if controlled
-     * @param booleanValue boolean value to be converted
-     * @return one byte array
+     * @return boolean
      */
-    public static byte[] toByteArray(final boolean controlled, final boolean booleanValue) {
+    public boolean isControlled() {
+        return controlled;
+    }
+
+    /**
+     * Returns the boolean value
+     *
+     * @return boolean
+     */
+    public boolean getValue() {
+        return value;
+    }
+
+    /**
+     * Returns the human-friendly text of actual boolean value.
+     * <p>
+     * For {@link DPT2#SWITCH_CONTROL} it would be {@code on} if boolean value is {@code true},
+     * otherwise it would be {@code off} for boolean value {@code false}.
+     * <p>
+     * The text is pre-defined by the {@link DPT1} which is linked by the {@link DPT2}
+     *
+     * @return human-friendly text
+     */
+    public String getText() {
+        return this.getDPT().getDPT1().getTextFor(value);
+    }
+
+    @Override
+    public byte[] toByteArray() {
         var b = (byte) 0x00;
         if (controlled) {
             b |= 0x02;
         }
-        if (booleanValue) {
+        if (value) {
             b |= 0x01;
         }
         return new byte[]{b};
     }
 
-    public boolean isControlled() {
-        return this.controlled;
-    }
-
-    public boolean getBooleanValue() {
-        return this.booleanValue;
-    }
-
-    public String getBooleanText() {
-        return this.getDPT().getDPT1().getTextFor(this.booleanValue);
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return toByteArray(this.controlled, this.booleanValue);
-    }
-
     @Override
     public String toText() {
         if (isControlled()) {
-            return String.format("controlled '%s'", getBooleanText());
+            return "controlled '" + getText() + "'";
         } else {
-            return getBooleanText();
+            return getText();
         }
     }
 
@@ -105,11 +116,11 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("controlled", this.controlled)
-                .add("booleanValue", this.booleanValue)
-                .add("booleanText", this.getBooleanText())
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("controlled", controlled)
+                .add("value", value)
+                .add("text", getText())
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -122,13 +133,13 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> {
             final var other = (DPT2Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.controlled, other.controlled) //
-                    && Objects.equals(this.booleanValue, other.booleanValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.controlled, this.booleanValue);
+        return Objects.hash(getDPT(), controlled, value);
     }
 }

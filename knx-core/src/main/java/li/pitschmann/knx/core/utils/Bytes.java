@@ -37,94 +37,6 @@ public final class Bytes {
     }
 
     /**
-     * Converts given bytes to a signed short
-     *
-     * @param b         byte to be converted
-     * @param moreBytes more bytes to be converted
-     * @return signed short, between {@link Short#MIN_VALUE} and {@link Short#MAX_VALUE}
-     */
-    public static short toSignedShort(final byte b, final byte... moreBytes) {
-        if (moreBytes.length == 0) {
-            return b;
-        } else {
-            return toSignedShort(concatByteToByteArray(b, moreBytes));
-        }
-    }
-
-    /**
-     * Converts two byte array to a signed short
-     *
-     * @param bytes byte array to be converted
-     * @return signed short, between {@link Short#MIN_VALUE} and {@link Short#MAX_VALUE}
-     */
-    public static short toSignedShort(final @Nullable byte[] bytes) {
-        final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
-        return (short) (adjustedBytes[0] << 8 | adjustedBytes[1] & 0xFF);
-    }
-
-    /**
-     * Converts given bytes to an unsigned short
-     *
-     * @param b         byte to be converted
-     * @param moreBytes more bytes to be converted
-     * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
-     */
-    public static short toUnsignedShort(final byte b, final byte... moreBytes) {
-        if (moreBytes.length == 0) {
-            return b;
-        } else {
-            return toUnsignedShort(concatByteToByteArray(b, moreBytes));
-        }
-    }
-
-    /**
-     * Converts two byte array to an unsigned short
-     *
-     * @param bytes bytes to be converted
-     * @return unsigned short, between {@code 0} and {@link Short#MAX_VALUE}
-     */
-    public static short toUnsignedShort(final @Nullable byte[] bytes) {
-        if (bytes == null) {
-            return 0;
-        }
-        final var adjustedBytes = toByteArrayWithCapacity(bytes, 2);
-        // max size of short is Short#MAX_VALUE
-        Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
-                "Byte array cannot be converted to unsigned short because it exceeds Short#MAX_VALUE: {}", adjustedBytes);
-        return (short) (adjustedBytes[0] << 8 | adjustedBytes[1] & 0xFF);
-    }
-
-    /**
-     * Converts given bytes to a signed int
-     *
-     * @param b         byte to be converted
-     * @param moreBytes more bytes to be converted
-     * @return signed int, between {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE}
-     */
-    public static int toSignedInt(final byte b, final byte... moreBytes) {
-        if (moreBytes.length == 0) {
-            return b;
-        } else {
-            return toSignedInt(concatByteToByteArray(b, moreBytes));
-        }
-    }
-
-    /**
-     * Converts four byte array to a signed int
-     *
-     * @param bytes to be converted
-     * @return signed int, between {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE}
-     */
-    public static int toSignedInt(byte[] bytes) {
-        final var adjustedBytes = toByteArrayWithCapacity(bytes, 4);
-
-        return ((adjustedBytes[0] & 0xFF) << 24) //
-                | ((adjustedBytes[1] & 0xFF) << 16) //
-                | ((adjustedBytes[2] & 0xFF) << 8) //
-                | (adjustedBytes[3] & 0xFF);
-    }
-
-    /**
      * Converts given bytes to an unsigned int
      *
      * @param b         byte to be converted
@@ -171,94 +83,6 @@ public final class Bytes {
                 | (b0 & 0xFF);
     }
 
-    /**
-     * Converts given bytes to an unsigned long
-     *
-     * @param b         first byte to be converted
-     * @param moreBytes more bytes to be converted
-     * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
-     */
-    public static long toSignedLong(final byte b, final byte... moreBytes) {
-        if (moreBytes.length == 0) {
-            return b;
-        } else {
-            return toSignedLong(concatByteToByteArray(b, moreBytes));
-        }
-    }
-
-    /**
-     * Converts eight bytes to a signed long
-     *
-     * @param b7 bit 7 [x... ....]
-     * @param b6 bit 6 [.x.. ....]
-     * @param b5 bit 5 [..x. ....]
-     * @param b4 bit 4 [...x ....]
-     * @param b3 bit 3 [.... x...]
-     * @param b2 bit 2 [.... .x..]
-     * @param b1 bit 1 [.... ..x.]
-     * @param b0 bit 0 [.... ...x]
-     * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
-     */
-    public static long toSignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) { // NOSONAR
-        return toSignedLong(new byte[]{b7, b6, b5, b4, b3, b2, b1, b0});
-    }
-
-    /**
-     * Converts eight byte array to a signed long
-     *
-     * @param bytes bytes to be converted
-     * @return signed long, between {@link Long#MIN_VALUE} and {@link Long#MAX_VALUE}
-     */
-    public static long toSignedLong(byte[] bytes) {
-        return ByteBuffer.wrap(toByteArrayWithCapacity(bytes, 8)).getLong();
-    }
-
-    /**
-     * Converts given bytes to an unsigned long
-     *
-     * @param b         first byte to be converted
-     * @param moreBytes more bytes to be converted
-     * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
-     */
-    public static long toUnsignedLong(final byte b, final byte... moreBytes) {
-        if (moreBytes.length == 0) {
-            return Byte.toUnsignedLong(b);
-        } else {
-            return toUnsignedLong(concatByteToByteArray(b, moreBytes));
-        }
-    }
-
-    /**
-     * Converts eight bytes to a signed long
-     *
-     * @param b7 bit 7 [x... ....]
-     * @param b6 bit 6 [.x.. ....]
-     * @param b5 bit 5 [..x. ....]
-     * @param b4 bit 4 [...x ....]
-     * @param b3 bit 3 [.... x...]
-     * @param b2 bit 2 [.... .x..]
-     * @param b1 bit 1 [.... ..x.]
-     * @param b0 bit 0 [.... ...x]
-     * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
-     */
-    public static long toUnsignedLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) { // NOSONAR
-        return toUnsignedLong(new byte[]{b7, b6, b5, b4, b3, b2, b1, b0});
-    }
-
-    /**
-     * Converts eight byte array to a signed long
-     *
-     * @param bytes byte array to be converted
-     * @return unsigned long, between {@code 0} and {@link Long#MAX_VALUE}
-     */
-    public static long toUnsignedLong(final @Nullable byte[] bytes) {
-        final var adjustedBytes = toByteArrayWithCapacity(bytes, 8);
-        // max size of long is Long#MAX_VALUE
-        Preconditions.checkArgument(Byte.toUnsignedInt(adjustedBytes[0]) <= 0x7f,
-                "Byte array cannot be converted to unsigned long because it exceeds Long#MAX_VALUE: {} (original: {})"
-                , adjustedBytes, bytes);
-        return ByteBuffer.wrap(adjustedBytes).getLong();
-    }
 
     /**
      * Concatenates the {@code b} and {@code moreBytes} into one byte array
@@ -330,16 +154,6 @@ public final class Bytes {
         } else {
             throw new UnsupportedOperationException("Unknown FillDirection");
         }
-    }
-
-    /**
-     * Trims {@code 0x00} from {@code bytes} array on right side
-     *
-     * @param bytes the byte array to be right-trimmed
-     * @return trimmed byte array
-     */
-    public static byte[] trimRight(final byte[] bytes) {
-        return trimRight(bytes, (byte) 0x00);
     }
 
     /**

@@ -19,11 +19,9 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT6;
-import li.pitschmann.knx.core.datapoint.value.DPT6Value.StatusMode;
-import li.pitschmann.knx.core.datapoint.value.DPT6Value.StatusMode.Mode;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,112 +32,271 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT6ValueTest {
-    /**
-     * Test {@link DPT6Value}
-     */
-    @Test
-    public void test() {
-        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x29, 41, "41");
-        this.assertValue(DPT6.VALUE_1_OCTET_COUNT, (byte) 0xEA, -22, "-22");
+class DPT6ValueTest {
 
-        this.assertValue(DPT6.PERCENT, (byte) 0x45, 69, "69");
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, byte) with: 0")
+    void testByteZero() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x00);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
     }
 
-    private void assertValue(final DPT6 dpt, final byte b, final int relativeSignedValue, final String text) {
-        final var dptValue = new DPT6Value(dpt, relativeSignedValue);
-        final var dptValueByByte = new DPT6Value(dpt, b);
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, byte) with: -128")
+    void testByteNegative() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x80);
+        assertThat(value.getValue()).isEqualTo(-128);
+        assertThat(value.toByteArray()).containsExactly(0x80);
 
-        // instance methods
-        assertThat(dptValue.getRelativeSignedValue()).isEqualTo(relativeSignedValue);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("-128");
+    }
 
-        // class methods
-        assertThat(DPT6Value.toByteArray(relativeSignedValue)).containsExactly(b);
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, byte) with: 127")
+    void testBytePositive() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte) 0x7F);
+        assertThat(value.getValue()).isEqualTo(127);
+        assertThat(value.toByteArray()).containsExactly(0x7F);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("127");
+    }
+
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, int) with: 0")
+    void testZero() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 0);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, int) with: -128")
+    void testNegative() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, -128);
+        assertThat(value.getValue()).isEqualTo(-128);
+        assertThat(value.toByteArray()).containsExactly(0x80);
+
+        assertThat(value.toText()).isEqualTo("-128");
+    }
+
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, int) with: 127")
+    void testPositive() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 127);
+        assertThat(value.getValue()).isEqualTo(127);
+        assertThat(value.toByteArray()).containsExactly(0x7F);
+
+        assertThat(value.toText()).isEqualTo("127");
+    }
+
+    @Test
+    @DisplayName("#(DPT6.VALUE_1_OCTET_COUNT, int) with numbers out of range")
+    void testScalingOutOfRange() {
+        assertThatThrownBy(() -> new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, -129))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-129' for argument 'value' is out of range '-128'..'127'.");
+        assertThatThrownBy(() -> new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 128))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '128' for argument 'value' is out of range '-128'..'127'.");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueUnsigned = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, -87);
+        assertThat(valueUnsigned).hasToString(
+                "DPT6Value{dpt=6.010, value=-87, byteArray=0xA9}"
+        );
+
+        final var valueScaling = new DPT6Value(DPT6.PERCENT, 123);
+        assertThat(valueScaling).hasToString(
+                "DPT6Value{dpt=6.001, value=123, byteArray=0x7B}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 111);
+        final var valueByte = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte)0b0110_1111);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT6Value(dpt, relativeSignedValue + 1));
-        final var anotherDpt = DPT6.PERCENT.equals(dptValue.getDPT()) ? DPT6.VALUE_1_OCTET_COUNT : DPT6.PERCENT;
-        assertThat(dptValue).isNotEqualTo(new DPT6Value(anotherDpt, relativeSignedValue));
-
-        // toString
-        final var toString = String.format("DPT6Value{dpt=%s, relativeSignedValue=%s, byteArray=%s}", dpt, relativeSignedValue,
-                ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT6Value(DPT6.PERCENT, 111));
+        assertThat(value).isNotEqualTo(new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 123));
     }
 
-    /**
-     * Test {@link DPT6Value.StatusMode}
-     */
     @Test
-    public void testStatusMode() {
-        this.assertStatusMode((byte) 0x01, false, false, false, false, false, Mode.MODE_0);
-        this.assertStatusMode((byte) 0x02, false, false, false, false, false, Mode.MODE_1);
-        this.assertStatusMode((byte) 0x04, false, false, false, false, false, Mode.MODE_2);
+    @DisplayName("StatusMode#(byte): bits set: 0000 0... and Mode.MODE_0")
+    void testByteMode0() {
+        final var value = new DPT6Value.StatusMode((byte) 0b0000_0001);
+        assertThat(value.isSet(0)).isFalse(); // 0... ....
+        assertThat(value.isSet(1)).isFalse(); // .0.. ....
+        assertThat(value.isSet(2)).isFalse(); // ..0. ....
+        assertThat(value.isSet(3)).isFalse(); // ...0 ....
+        assertThat(value.isSet(4)).isFalse(); // .... 0...
+        assertThat(value.getMode()).isEqualTo(DPT6Value.StatusMode.Mode.MODE_0); // .... .001
+        assertThat(value.toByteArray()).containsExactly(0x01);
 
-        this.assertStatusMode((byte) 0x81, true, false, false, false, false, Mode.MODE_0);
-        this.assertStatusMode((byte) 0x41, false, true, false, false, false, Mode.MODE_0);
-        this.assertStatusMode((byte) 0x21, false, false, true, false, false, Mode.MODE_0);
-        this.assertStatusMode((byte) 0x11, false, false, false, true, false, Mode.MODE_0);
-        this.assertStatusMode((byte) 0x09, false, false, false, false, true, Mode.MODE_0);
-
+        assertThat(value.toText()).isEqualTo("0x01");
     }
 
-    private void assertStatusMode(final byte b, final boolean bool1, final boolean bool2, final boolean bool3, final boolean bool4,
-                                  final boolean bool5, final Mode mode) {
-        DPT6Value.StatusMode dptValue = new DPT6Value.StatusMode(bool1, bool2, bool3, bool4, bool5, mode);
-        DPT6Value.StatusMode dptValueByByte = new DPT6Value.StatusMode(b);
+    @Test
+    @DisplayName("StatusMode#(byte): bits set: 1001 1... and Mode.MODE_1")
+    void testByteMode1() {
+        final var value = new DPT6Value.StatusMode((byte) 0b1001_1010);
+        assertThat(value.isSet(0)).isTrue();  // 1... ....
+        assertThat(value.isSet(1)).isFalse(); // .0.. ....
+        assertThat(value.isSet(2)).isFalse(); // ..0. ....
+        assertThat(value.isSet(3)).isTrue();  // ...1 ....
+        assertThat(value.isSet(4)).isTrue();  // .... 1...
+        assertThat(value.getMode()).isEqualTo(DPT6Value.StatusMode.Mode.MODE_1); // .... .010
+        assertThat(value.toByteArray()).containsExactly(0x9A);
 
-        // instance methods
-        assertThat(dptValue.getMode()).isEqualTo(mode);
-        assertThat(dptValue.isSet(0)).isEqualTo(bool1);
-        assertThat(dptValue.isSet(1)).isEqualTo(bool2);
-        assertThat(dptValue.isSet(2)).isEqualTo(bool3);
-        assertThat(dptValue.isSet(3)).isEqualTo(bool4);
-        assertThat(dptValue.isSet(4)).isEqualTo(bool5);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
+        assertThat(value.toText()).isEqualTo("0x9A");
+    }
 
-        // class methods
-        assertThat(DPT6Value.StatusMode.toByte(bool1, bool2, bool3, bool4, bool5, mode)).isEqualTo(b);
-        assertThat(DPT6Value.StatusMode.toByteArray(bool1, bool2, bool3, bool4, bool5, mode)).containsExactly(b);
+    @Test
+    @DisplayName("StatusMode#(byte): bits set: 0110 0... and Mode.MODE_2")
+    void testByteMode2() {
+        final var value = new DPT6Value.StatusMode((byte) 0b0110_0100);
+        assertThat(value.isSet(0)).isFalse(); // 0... ....
+        assertThat(value.isSet(1)).isTrue();  // .1.. ....
+        assertThat(value.isSet(2)).isTrue();  // ..1. ....
+        assertThat(value.isSet(3)).isFalse(); // ...0 ....
+        assertThat(value.isSet(4)).isFalse(); // .... 0...
+        assertThat(value.getMode()).isEqualTo(DPT6Value.StatusMode.Mode.MODE_2); // .... .100
+        assertThat(value.toByteArray()).containsExactly(0x64);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("0x64");
+    }
+
+    @Test
+    @DisplayName("StatusMode#(boolean, .. , Mode): bits set: 0000 0... and Mode.MODE_0")
+    void testMode0() {
+        final var value = new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0);
+        assertThat(value.isSet(0)).isFalse(); // 0... ....
+        assertThat(value.isSet(1)).isFalse(); // .0.. ....
+        assertThat(value.isSet(2)).isFalse(); // ..0. ....
+        assertThat(value.isSet(3)).isFalse(); // ...0 ....
+        assertThat(value.isSet(4)).isFalse(); // .... 0...
+        assertThat(value.getMode()).isEqualTo(DPT6Value.StatusMode.Mode.MODE_0); // .... .001
+        assertThat(value.toByteArray()).containsExactly(0x01);
+
+        assertThat(value.toText()).isEqualTo("0x01");
+    }
+
+    @Test
+    @DisplayName("StatusMode#(boolean, .. , Mode): bits set: 1001 1... and Mode.MODE_1")
+    void testMode1() {
+        final var value = new DPT6Value.StatusMode(true, false, false, true, true, DPT6Value.StatusMode.Mode.MODE_1);
+        assertThat(value.isSet(0)).isTrue();  // 1... ....
+        assertThat(value.isSet(1)).isFalse(); // .0.. ....
+        assertThat(value.isSet(2)).isFalse(); // ..0. ....
+        assertThat(value.isSet(3)).isTrue();  // ...1 ....
+        assertThat(value.isSet(4)).isTrue();  // .... 1...
+        assertThat(value.getMode()).isEqualTo(DPT6Value.StatusMode.Mode.MODE_1); // .... .010
+        assertThat(value.toByteArray()).containsExactly(0x9A);
+
+        assertThat(value.toText()).isEqualTo("0x9A");
+    }
+
+    @Test
+    @DisplayName("StatusMode#(boolean, .. , Mode): bits set: 0110 0... and Mode.MODE_2")
+    void testMode2() {
+        final var value = new DPT6Value.StatusMode(false, true, true, false, false, DPT6Value.StatusMode.Mode.MODE_2);
+        assertThat(value.isSet(0)).isFalse(); // 0... ....
+        assertThat(value.isSet(1)).isTrue();  // .1.. ....
+        assertThat(value.isSet(2)).isTrue();  // ..1. ....
+        assertThat(value.isSet(3)).isFalse(); // ...0 ....
+        assertThat(value.isSet(4)).isFalse(); // .... 0...
+        assertThat(value.getMode()).isEqualTo(DPT6Value.StatusMode.Mode.MODE_2); // .... .100
+        assertThat(value.toByteArray()).containsExactly(0x64);
+
+        assertThat(value.toText()).isEqualTo("0x64");
+    }
+
+    @Test
+    @DisplayName("StatusMode#isSet(..) call with bit number out of range")
+    void testIsSetOutOfRange() {
+        final var value = new DPT6Value.StatusMode((byte) 0x01);
+        assertThatThrownBy(() -> value.isSet(-1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-1' for argument 'bit' is out of range '0'..'4'.");
+
+        assertThatThrownBy(() -> value.isSet(5))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '5' for argument 'bit' is out of range '0'..'4'.");
+    }
+
+    @Test
+    @DisplayName("StatusMode#toString()")
+    void testStatusModeToString() {
+        final var valueMode0 = new DPT6Value.StatusMode(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_0);
+        assertThat(valueMode0).hasToString(
+                "StatusMode{dpt=6.020, a=false, b=true, c=true, d=false, e=true, mode=MODE_0, byteArray=0x69}"
+        );
+
+        final var valueMode1 = new DPT6Value.StatusMode(false, false, true, true, false, DPT6Value.StatusMode.Mode.MODE_1);
+        assertThat(valueMode1).hasToString(
+                "StatusMode{dpt=6.020, a=false, b=false, c=true, d=true, e=false, mode=MODE_1, byteArray=0x32}"
+        );
+
+        final var valueMode2 = new DPT6Value.StatusMode(true, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_2);
+        assertThat(valueMode2).hasToString(
+                "StatusMode{dpt=6.020, a=true, b=true, c=true, d=false, e=true, mode=MODE_2, byteArray=0xEC}"
+        );
+    }
+
+    @Test
+    @DisplayName("StatusMode#equals() and StatusMode#hashCode()")
+    void testStatusModeEqualsAndHashCode() {
+        final var value = new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0);
+        final var valueBytes = new DPT6Value.StatusMode((byte)0b0000_0001);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
-        final var anotherByte = (byte) ((b & 0x80) == 0 ? b | 0x80 : b & 0x7F);
-        final var anotherMode = (mode == Mode.MODE_0) ? Mode.MODE_1 : Mode.MODE_0;
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(anotherByte));
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(!bool1, bool2, bool3, bool4, bool5, mode));
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(bool1, !bool2, bool3, bool4, bool5, mode));
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(bool1, bool2, !bool3, bool4, bool5, mode));
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(bool1, bool2, bool3, !bool4, bool5, mode));
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(bool1, bool2, bool3, bool4, !bool5, mode));
-        assertThat(dptValue).isNotEqualTo(new DPT6Value.StatusMode(bool1, bool2, bool3, bool4, bool5, anotherMode));
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(
+                new DPT6Value.StatusMode(true, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0)
+        );
+        assertThat(value).isNotEqualTo(
+                new DPT6Value.StatusMode(false, true, false, false, false, DPT6Value.StatusMode.Mode.MODE_0)
+        );
+        assertThat(value).isNotEqualTo(
+                new DPT6Value.StatusMode(false, false, true, false, false, DPT6Value.StatusMode.Mode.MODE_0)
+        );
+        assertThat(value).isNotEqualTo(
+                new DPT6Value.StatusMode(false, false, false, true, false, DPT6Value.StatusMode.Mode.MODE_0)
+        );
+        assertThat(value).isNotEqualTo(
+                new DPT6Value.StatusMode(false, false, false, false, true, DPT6Value.StatusMode.Mode.MODE_0)
+        );
+        assertThat(value).isNotEqualTo(
+                new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_1)
+        );
     }
 
-    /**
-     * Tests the failures of {@link StatusMode}
-     */
     @Test
-    public void testStatusModeFailure() {
-        assertThatThrownBy(() -> new DPT6Value.StatusMode((byte) 0x03).getMode()).isInstanceOf(KnxEnumNotFoundException.class);
-
-        DPT6Value.StatusMode statusModeValue = new DPT6Value.StatusMode((byte) 0x01);
-        assertThatThrownBy(() -> statusModeValue.isSet(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> statusModeValue.isSet(5)).isInstanceOf(KnxNumberOutOfRangeException.class);
+    @DisplayName("StatusMode#(byte): bits set: 0000 0... and invalid 0x00 for Mode")
+    void testModeWithInvalidCode() {
+        assertThatThrownBy(() -> new DPT6Value.StatusMode((byte) 0x00))
+                .isInstanceOf(KnxEnumNotFoundException.class);
     }
 }

@@ -127,10 +127,10 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
      * </pre>
      */
     @DataPoint({"14.003", "dpst-14-3"})
-    public static final DPT14 ACTIVITY = new DPT14("Activity", "s⁻¹");
+    public static final DPT14 RADIOACTIVE_ACTIVITY = new DPT14("Activity", "s⁻¹");
 
     /**
-     * <strong>14.004</strong> Mol (mol)
+     * <strong>14.004</strong> Amount of Substance (mol)
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -149,7 +149,7 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
      * </pre>
      */
     @DataPoint({"14.004", "dpst-14-4"})
-    public static final DPT14 MOL = new DPT14("Mol", "mol");
+    public static final DPT14 AMOUNT_OF_SUBSTANCE = new DPT14("Mol", "mol");
 
     /**
      * <strong>14.005</strong> Amplitude
@@ -1689,7 +1689,7 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
      * </pre>
      */
     @DataPoint({"14.074", "dpst-14-74"})
-    public static final DPT14 TIME = new DPT14("Time", "s");
+    public static final DPT14 TIME_SECONDS = new DPT14("Time", "s");
 
     /**
      * <strong>14.075</strong> Torque (Nm)
@@ -1824,7 +1824,7 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
     public static final DPT14 VOLUME_FLUX_METER = new DPT14("Volume Flux For Meters", "m³/h");
 
     /**
-     * <strong>14.1201</strong> Volume Flux Meter (l/s)
+     * <strong>14.1201</strong> Volume Flux Liter per Seconds (l/s)
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1843,7 +1843,7 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
      * </pre>
      */
     @DataPoint({"14.1201", "dpst-14-1201"})
-    public static final DPT14 VOLUME_FLUX_LITER_PER_SECONDS = new DPT14("Volume Flux For Meters", "l/s");
+    public static final DPT14 VOLUME_FLUX_LITER_PER_SECONDS = new DPT14("Volume Flux For Liter Per Seconds", "l/s");
 
     /**
      * Constructor for {@link DPT14}
@@ -1873,14 +1873,10 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
 
     @Override
     protected DPT14Value parse(final String[] args) {
-        return new DPT14Value(this, Double.parseDouble(args[0]));
+        return of(Double.parseDouble(args[0]));
     }
 
     public DPT14Value of(final double value) {
         return new DPT14Value(this, value);
-    }
-
-    public byte[] toByteArray(final double value) {
-        return DPT14Value.toByteArray(value);
     }
 }

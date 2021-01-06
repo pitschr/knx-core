@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT15;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
@@ -70,55 +71,49 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
 
     public DPT15Value(final byte[] bytes) {
         super(DPT15.ACCESS_DATA);
-        Preconditions.checkArgument(bytes.length == 4);
-        // access identification data (byte 0 + byte 1 + byte 2)
-        this.accessIdentificationData = new byte[3];
-        System.arraycopy(bytes, 0, this.accessIdentificationData, 0, 3);
-        // flags
-        this.flags = new Flags(bytes[3]);
+        // minimum 1 byte for access data and 1 byte for flags
+        // maximum 4 bytes, 3 bytes for access data, 1 byte for flags
+        if (bytes.length < 2 || bytes.length > 4) {
+            throw new KnxNumberOutOfRangeException("bytes", 2, 4, bytes.length, bytes);
+        }
+
+        // access identification data (byte 0) + byte 1 for flag
+        // access identification data (byte 0 + byte 1) + byte 2 for flag
+        // access identification data (byte 0 + byte 1 + byte 2) + byte 3 for flag
+        this.accessIdentificationData = validateAndWrapAccessIdentificationData(Arrays.copyOfRange(bytes, 0, bytes.length - 1));
+        // flags (last byte)
+        this.flags = new Flags(bytes[bytes.length - 1]);
     }
 
     public DPT15Value(final byte[] accessIdentificationData, final Flags flags) {
         super(DPT15.ACCESS_DATA);
-        Preconditions.checkArgument(accessIdentificationData.length == 3);
-        // access identification data
-        this.accessIdentificationData = getAccessIdentificationData(accessIdentificationData);
-        // flags
+
+        this.accessIdentificationData = validateAndWrapAccessIdentificationData(accessIdentificationData);
         this.flags = Objects.requireNonNull(flags);
     }
 
     /**
-     * Provide Access Identification Data with padding zeros in case the access identification data is smaller than 24
-     * bits.
+     * Validates and provides Access Identification Data with padding zeros
+     * in case the access identification data is smaller than 24 bits.
      *
      * @param accessIdentificationData byte array with access identification data
      * @return 3 byte array / 24 bits array
+     * @throws IllegalArgumentException if the structure of access identification is not as expected
      */
-    private static byte[] getAccessIdentificationData(final byte[] accessIdentificationData) {
-        Preconditions.checkArgument(accessIdentificationData.length <= 3, "Access Identification Data must be 3 bytes or less.");
+    private static byte[] validateAndWrapAccessIdentificationData(final byte[] accessIdentificationData) {
+        Preconditions.checkArgument(accessIdentificationData.length > 0 && accessIdentificationData.length <= 3,
+                "Access Identification Data must be 3 bytes or less: {}", Arrays.toString(accessIdentificationData));
+
         byte[] newData = new byte[3];
         System.arraycopy(accessIdentificationData, 0, newData, newData.length - accessIdentificationData.length, accessIdentificationData.length);
         return newData;
     }
 
     /**
-     * Converts 'Access Identification Data' data to 4-byte array
+     * Returns byte-array of access identification data
      *
-     * @param accessIdentificationData byte array with access identification data
-     * @param flags                    flags for access identification data
-     * @return byte array
+     * @return a new array of access identification data
      */
-    public static byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
-        // ensure that access identification data is 24bits
-        byte[] accessIdentificationDataEnsured = getAccessIdentificationData(accessIdentificationData);
-
-        return new byte[]{ //
-                accessIdentificationDataEnsured[0], //
-                accessIdentificationDataEnsured[1], //
-                accessIdentificationDataEnsured[2], //
-                flags.getAsByte()};
-    }
-
     public byte[] getAccessIdentificationData() {
         return this.accessIdentificationData.clone();
     }
@@ -129,21 +124,26 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @return flags
      */
     public Flags getFlags() {
-        return this.flags;
+        return flags;
     }
 
     @Override
     public byte[] toByteArray() {
-        return toByteArray(this.accessIdentificationData, this.flags);
+        return new byte[]{ //
+                accessIdentificationData[0], //
+                accessIdentificationData[1], //
+                accessIdentificationData[2], //
+                flags.getAsByte() //
+        };
     }
 
     @Override
     public String toText() {
         final var sb = new StringBuilder(30);
         sb.append("data: ")
-                .append(ByteFormatter.formatHexAsString(this.accessIdentificationData))
+                .append(ByteFormatter.formatHexAsString(accessIdentificationData))
                 .append(", flags: ")
-                .append(this.flags.toText());
+                .append(flags.toText());
         return sb.toString();
     }
 
@@ -151,10 +151,10 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("accessIdentificationData", ByteFormatter.formatHexAsString(this.accessIdentificationData))
-                .add("flags", this.flags)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("accessIdentificationData", ByteFormatter.formatHexAsString(accessIdentificationData))
+                .add("flags", flags)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -173,7 +173,7 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(this.accessIdentificationData), this.flags);
+        return Objects.hash(Arrays.hashCode(accessIdentificationData), flags);
     }
 
     /**
@@ -192,16 +192,20 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
          * Create {@link Flags} given byte parameter
          *
          * @param b byte
-         * @return new instance of {@link Flags}
          */
         public Flags(final byte b) {
-            // flags
-            this.error = (b & 0x80) != 0x00;
-            this.permissionAccepted = (b & 0x40) != 0x00;
-            this.readDirectionRightToLeft = (b & 0x20) != 0x00;
-            this.encryptionEnabled = (b & 0x10) != 0x00;
-            // index
-            this.index = b & 0x0F;
+            this(
+                    // error
+                    (b & 0x80) != 0x00,
+                    // permission accepted
+                    (b & 0x40) != 0x00,
+                    // read direction right-to-left
+                    (b & 0x20) != 0x00,
+                    // encryption enabled
+                    (b & 0x10) != 0x00,
+                    // index
+                    b & 0x0F
+            );
         }
 
         /**
@@ -212,17 +216,18 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
          * @param readDirectionRightToLeft read from right to left (e.g. from badge)
          * @param encryptionEnabled        if encryption is enabled
          * @param index                    the index
-         * @return new instance of {@link Flags}
          */
         public Flags(final boolean error,
                      final boolean permissionAccepted,
                      final boolean readDirectionRightToLeft,
                      final boolean encryptionEnabled,
                      final int index) {
+            // flags
             this.error = error;
             this.permissionAccepted = permissionAccepted;
             this.readDirectionRightToLeft = readDirectionRightToLeft;
             this.encryptionEnabled = encryptionEnabled;
+            // index
             this.index = index;
         }
 

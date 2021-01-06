@@ -19,59 +19,157 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT5;
-import li.pitschmann.knx.core.utils.ByteFormatter;
-import org.assertj.core.data.Offset;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPT5Value}
  *
  * @author PITSCHR
  */
-public final class DPT5ValueTest {
-    /**
-     * Test {@link DPT5Value}
-     */
-    @Test
-    public void test() {
-        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x29, 41, 41, "41");
-        this.assertValue(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85, 133, 133, "133");
-        this.assertValue(DPT5.TARIFF_INFORMATION, (byte) 0x73, 115, 115, "115");
+class DPT5ValueTest {
 
-        this.assertValue(DPT5.ANGLE, (byte) 0x29, 41, 57.88235294117647d, "57.882353");
-        this.assertValue(DPT5.SCALING, (byte) 0x2D, 45, 17.647058823529413d, "17.647059");
+    @Test
+    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 0")
+    void testByte0() {
+        final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x00);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
     }
 
-    private void assertValue(final DPT5 dpt, final byte b, final int rawUnsignedValue, final double unsignedValue, final String text) {
-        final var dptValue = new DPT5Value(dpt, rawUnsignedValue);
-        final var dptValueByByte = new DPT5Value(dpt, b);
+    @Test
+    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 133")
+    void testByte133() {
+        final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85);
+        assertThat(value.getValue()).isEqualTo(133);
+        assertThat(value.toByteArray()).containsExactly(0x85);
 
-        // instance methods
-        assertThat(dptValue.getUnsignedValue()).isCloseTo(unsignedValue, Offset.offset(0.000001));
-        assertThat(dptValue.getRawUnsignedValue()).isEqualTo(rawUnsignedValue);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("133");
+    }
 
-        // class methods
-        assertThat(DPT5Value.toByteArray(rawUnsignedValue)).containsExactly(b);
+    @Test
+    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 255")
+    void testByte1() {
+        final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0xFF);
+        assertThat(value.getValue()).isEqualTo(255);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("255");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.SCALING, int) with: 0")
+    void testScaling0() {
+        final var value = new DPT5Value(DPT5.SCALING, 0);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.SCALING, int) with: 18")
+    void testScaling18() {
+        final var value = new DPT5Value(DPT5.SCALING, 18);
+        assertThat(value.getValue()).isEqualTo(18);
+        assertThat(value.toByteArray()).containsExactly(0x2E);
+
+        assertThat(value.toText()).isEqualTo("18");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.SCALING, int) with: 100")
+    void testScaling100() {
+        final var value = new DPT5Value(DPT5.SCALING, 100);
+        assertThat(value.getValue()).isEqualTo(100);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
+
+        assertThat(value.toText()).isEqualTo("100");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.ANGLE, int) with: 40")
+    void testAngle40() {
+        final var value = new DPT5Value(DPT5.ANGLE, 40);
+        assertThat(value.getValue()).isEqualTo(40);
+        assertThat(value.toByteArray()).containsExactly(0x1C);
+
+        assertThat(value.toText()).isEqualTo("40");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.ANGLE, int) with: 255")
+    void testAngle360() {
+        final var value = new DPT5Value(DPT5.ANGLE, 360);
+        assertThat(value.getValue()).isEqualTo(360);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
+
+        assertThat(value.toText()).isEqualTo("360");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.SCALING, int) with numbers out of range")
+    void testScalingOutOfRange() {
+        assertThatThrownBy(() -> new DPT5Value(DPT5.SCALING, -1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-1' for argument 'value' is out of range '0'..'100'.");
+        assertThatThrownBy(() -> new DPT5Value(DPT5.SCALING, 101))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '101' for argument 'value' is out of range '0'..'100'.");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.ANGLE, int) with numbers out of range")
+    void testAngleOutOfRange() {
+        assertThatThrownBy(() -> new DPT5Value(DPT5.ANGLE, -1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-1' for argument 'value' is out of range '0'..'360'.");
+        assertThatThrownBy(() -> new DPT5Value(DPT5.ANGLE, 361))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '361' for argument 'value' is out of range '0'..'360'.");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueUnsigned = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, 47);
+        assertThat(valueUnsigned).hasToString(
+                "DPT5Value{dpt=5.010, value=47, byteArray=0x2F}"
+        );
+
+        final var valueScaling = new DPT5Value(DPT5.SCALING, 83);
+        assertThat(valueScaling).hasToString(
+                "DPT5Value{dpt=5.001, value=83, byteArray=0xD4}"
+        );
+
+        final var valueAngle = new DPT5Value(DPT5.ANGLE, 180);
+        assertThat(valueAngle).hasToString(
+                "DPT5Value{dpt=5.003, value=180, byteArray=0x80}"
+        );
+
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, 33);
+        final var valueByte = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte)0b0010_0001);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT5Value(DPT5.PERCENT_U8, rawUnsignedValue));
-        assertThat(dptValue).isNotEqualTo(new DPT5Value(dpt, rawUnsignedValue + 1));
-
-        // toString
-        final var toString = String.format("DPT5Value{dpt=%s, unsignedValue=%s, rawUnsignedValue=%s, byteArray=%s}", dpt, unsignedValue,
-                rawUnsignedValue, ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT5Value(DPT5.SCALING, 33));
+        assertThat(value).isNotEqualTo(new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, 44));
     }
 }

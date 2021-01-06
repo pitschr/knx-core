@@ -64,7 +64,7 @@ class DPT6StatusModeTest {
     void testByteParse() {
         final var dpt = DPT6.STATUS_MODE;
         assertThat(dpt.parse(new byte[]{0x01})).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.parse(new byte[]{0x02})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new byte[]{0x7C})).isInstanceOf(DPT6Value.StatusMode.class);
         assertThatThrownBy(() -> dpt.parse(new byte[0]));
     }
 
@@ -72,8 +72,8 @@ class DPT6StatusModeTest {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT6.STATUS_MODE;
-        assertThat(dpt.parse(new String[]{"0x11"})).isInstanceOf(DPT6Value.StatusMode.class);
-        assertThat(dpt.parse(new String[]{"0xFF"})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new String[]{"0x01"})).isInstanceOf(DPT6Value.StatusMode.class);
+        assertThat(dpt.parse(new String[]{"0x7C"})).isInstanceOf(DPT6Value.StatusMode.class);
     }
 
     @Test
@@ -92,23 +92,5 @@ class DPT6StatusModeTest {
         // mode: 1, flags set (abcd ennn = 0110 1010)
         assertThat(dpt.of(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_1))
                 .isInstanceOf(DPT6Value.StatusMode.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean.., Mode)")
-    void testToByteArray() {
-        final var dpt = DPT6.STATUS_MODE;
-        // mode: 0, no flags set
-        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0))
-                .containsExactly(0b0000_0001); // 0x01
-        // mode: 1, no flags set
-        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_1))
-                .containsExactly(0b0000_0010); // 0x02
-        // mode: 2, no flags set
-        assertThat(dpt.toByteArray(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_2))
-                .containsExactly(0b0000_0100); // 0x04
-        // mode: 1, flags set (abcd ennn = 0110 1010)
-        assertThat(dpt.toByteArray(false, true, true, false, true, DPT6Value.StatusMode.Mode.MODE_1))
-                .containsExactly(0b0110_1010); // 0x6A
     }
 }

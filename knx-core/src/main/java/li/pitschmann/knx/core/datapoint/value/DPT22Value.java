@@ -46,14 +46,14 @@ public final class DPT22Value {
     /**
      * <strong>22.100</strong> DHW Controller Status
      *
-     * @see DPT22#STATUS_DHW_CONTROLLER
+     * @see DPT22#DHW_CONTROLLER_STATUS
      */
-    public static final class StatusDHWController extends AbstractDataPointFlags<DPT22.StatusDHWController> {
-        public StatusDHWController(final byte[] bytes) {
-            super(DPT22.STATUS_DHW_CONTROLLER, bytes);
+    public static final class DHWControllerStatus extends AbstractDataPointFlags<DPT22.DHWControllerStatus> {
+        public DHWControllerStatus(final byte[] bytes) {
+            super(DPT22.DHW_CONTROLLER_STATUS, bytes);
         }
 
-        public StatusDHWController(final boolean fault,
+        public DHWControllerStatus(final boolean fault,
                                    final boolean loadActive,
                                    final boolean legionellaProtectionActive,
                                    final boolean pushActive,
@@ -102,14 +102,14 @@ public final class DPT22Value {
     /**
      * <strong>22.101</strong> Room Heating / Cooling Controller Status
      *
-     * @see DPT22#STATUS_ROOM_HEATING_COOLING_CONTROLLER
+     * @see DPT22#ROOM_HEATING_COOLING_CONTROLLER_STATUS
      */
-    public static final class StatusRoomHeatingCoolingController extends AbstractDataPointFlags<DPT22.StatusRoomHeatinCoolingController> {
-        public StatusRoomHeatingCoolingController(final byte[] bytes) {
-            super(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER, bytes);
+    public static final class RoomHeatingCoolingControllerStatus extends AbstractDataPointFlags<DPT22.RoomHeatinCoolingControllerStatus> {
+        public RoomHeatingCoolingControllerStatus(final byte[] bytes) {
+            super(DPT22.ROOM_HEATING_COOLING_CONTROLLER_STATUS, bytes);
         }
 
-        public StatusRoomHeatingCoolingController(final boolean fault,
+        public RoomHeatingCoolingControllerStatus(final boolean fault,
                                                   final boolean statusEcoHeating,
                                                   final boolean temperatureFlowLimit,
                                                   final boolean temperatureReturnLimit,

@@ -85,25 +85,4 @@ class DPT11Test {
         final var dpt = DPT11.DATE;
         assertThat(dpt.of(LocalDate.now())).isInstanceOf(DPT11Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(LocalDate)")
-    void testToByteArray() {
-        final var dpt = DPT11.DATE;
-        // day = 1, month = 1, year = 90 (=1990)
-        assertThat(dpt.toByteArray(LocalDate.of(1990, 1, 1)))
-                .containsExactly(0x01, 0x01, 0x5A);
-        // day = 9, month = 3, year = 91 (=1991)
-        assertThat(dpt.toByteArray(LocalDate.of(1991, 3, 9)))
-                .containsExactly(0x09, 0x03, 0x5B);
-        // day = 18, month = 6, year = 99 (=1999)
-        assertThat(dpt.toByteArray(LocalDate.of(1999, 6, 18)))
-                .containsExactly(0x12, 0x06, 0x63);
-        // day = 27, month = 9, year = 50 (=2050)
-        assertThat(dpt.toByteArray(LocalDate.of(2050, 9, 27)))
-                .containsExactly(0x1B, 0x09, 0x32);
-        // day = 31, month = 12, year = 89 (=2089)
-        assertThat(dpt.toByteArray(LocalDate.of(2089, 12, 31)))
-                .containsExactly(0x1F, 0x0C, 0x59);
-    }
 }

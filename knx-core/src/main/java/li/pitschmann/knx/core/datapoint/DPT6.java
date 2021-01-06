@@ -97,16 +97,16 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
     /**
      * Constructor for {@link DPT6}
      *
-     * @param desc       description for {@link DPT6}
-     * @param lowerValue the lower value for {@link DPT6}
-     * @param upperValue the upper value for {@link DPT6}
-     * @param unit       the unit representation for {@link DPT6}
+     * @param description description for {@link DPT6}
+     * @param lowerValue  the lower value for {@link DPT6}
+     * @param upperValue  the upper value for {@link DPT6}
+     * @param unit        the unit representation for {@link DPT6}
      */
-    private DPT6(final String desc,
+    private DPT6(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit) {
-        super(desc, lowerValue, upperValue, unit);
+        super(description, lowerValue, upperValue, unit);
     }
 
     @Override
@@ -126,15 +126,11 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
 
     @Override
     protected DPT6Value parse(final String[] args) {
-        return new DPT6Value(this, Integer.parseInt(args[0]));
+        return of(Integer.parseInt(args[0]));
     }
 
     public DPT6Value of(final int value) {
         return new DPT6Value(this, value);
-    }
-
-    public byte[] toByteArray(final int value) {
-        return new DPT6Value(this, value).toByteArray();
     }
 
     /**
@@ -146,10 +142,10 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
         /**
          * Constructor for {@link DPT6.StatusMode}
          *
-         * @param desc description of {@link StatusMode}
+         * @param description description of {@link StatusMode}
          */
-        private StatusMode(final String desc) {
-            super(desc);
+        private StatusMode(final String description) {
+            super(description);
         }
 
         @Override
@@ -174,10 +170,6 @@ public final class DPT6 extends BaseRangeDataPointType<DPT6Value, Integer> {
 
         public DPT6Value.StatusMode of(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
             return new DPT6Value.StatusMode(a, b, c, d, e, mode);
-        }
-
-        public byte[] toByteArray(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {
-            return DPT6Value.StatusMode.toByteArray(a, b, c, d, e, mode);
         }
     }
 }

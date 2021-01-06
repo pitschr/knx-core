@@ -98,24 +98,4 @@ class DPT15Test {
                 )
         ).isInstanceOf(DPT15Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(byte[], Flags)")
-    void testToByteArray() {
-        final var dpt = DPT15.ACCESS_DATA;
-        // access id data, flags set (1010), index=3
-        assertThat(
-                dpt.toByteArray(
-                        new byte[]{0x22, 0x44, 0x11},
-                        new Flags(true, false, true, false, 0x03)
-                )
-        ).containsExactly(0x22, 0x44, 0x11, (byte) 0xA3);
-        // access id data, flags set (0101), index=12
-        assertThat(
-                dpt.toByteArray(
-                        new byte[]{0x33, 0x77, 0x00},
-                        new Flags(false, true, false, true, 0x0C)
-                )
-        ).containsExactly(0x33, 0x77, 0x00, 0x5C);
-    }
 }

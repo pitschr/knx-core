@@ -33,15 +33,15 @@ class DPT3Test {
     @Test
     @DisplayName("Test #getId() and #getDescription()")
     void testIdAndDescription() {
-        final var dpt = DPT3.CONTROL_BLINDS;
+        final var dpt = DPT3.BLINDS_CONTROL;
         assertThat(dpt.getId()).isEqualTo("3.008");
-        assertThat(dpt.getDescription()).isEqualTo("Control Blinds");
+        assertThat(dpt.getDescription()).isEqualTo("Blinds Controlled");
     }
 
     @Test
     @DisplayName("Test #of(byte[])")
     void testByteCompatibility() {
-        final var dpt = DPT3.CONTROL_BLINDS;
+        final var dpt = DPT3.BLINDS_CONTROL;
         // byte is supported for length == 1 only
         assertThat(dpt.isCompatible(new byte[0])).isFalse();
         assertThat(dpt.isCompatible(new byte[1])).isTrue();
@@ -51,7 +51,7 @@ class DPT3Test {
     @Test
     @DisplayName("Test #of(String[])")
     void testStringCompatibility() {
-        final var dpt = DPT3.CONTROL_BLINDS;
+        final var dpt = DPT3.BLINDS_CONTROL;
         // String is supported for length == 1 or 2 only
         assertThat(dpt.isCompatible(new String[0])).isFalse();
         assertThat(dpt.isCompatible(new String[1])).isTrue();
@@ -62,7 +62,7 @@ class DPT3Test {
     @Test
     @DisplayName("Test #parse(byte[])")
     void testByteParse() {
-        final var dpt = DPT3.CONTROL_BLINDS;
+        final var dpt = DPT3.BLINDS_CONTROL;
         assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT3Value.class);
         assertThat(dpt.parse(new byte[]{0x03})).isInstanceOf(DPT3Value.class);
         assertThat(dpt.parse(new byte[]{0x08})).isInstanceOf(DPT3Value.class);
@@ -71,7 +71,7 @@ class DPT3Test {
     @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
-        final var dpt = DPT3.CONTROL_BLINDS;
+        final var dpt = DPT3.BLINDS_CONTROL;
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT3Value.class);
         assertThat(dpt.parse(new String[]{"2"})).isInstanceOf(DPT3Value.class);
         assertThat(dpt.parse(new String[]{"controlled", "2"})).isInstanceOf(DPT3Value.class);
@@ -81,59 +81,20 @@ class DPT3Test {
     @Test
     @DisplayName("Test #getDPT1()")
     void testGetDPT1() {
-        assertThat(DPT3.CONTROL_BLINDS.getDPT1()).isSameAs(DPT1.UP_DOWN);
-        assertThat(DPT3.CONTROL_DIMMING.getDPT1()).isSameAs(DPT1.STEP);
-    }
-
-    @Test
-    @DisplayName("Test #of(boolean, int)")
-    void testOf() {
-        // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.of(false, 0)).isInstanceOf(DPT3Value.class);
-        // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.of(true, 2)).isInstanceOf(DPT3Value.class);
-        // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.of(false, 7)).isInstanceOf(DPT3Value.class);
-        // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.of(true, 7)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.getDPT1()).isSameAs(DPT1.UP_DOWN);
+        assertThat(DPT3.DIMMING_CONTROL.getDPT1()).isSameAs(DPT1.STEP);
     }
 
     @Test
     @DisplayName("Test #of(boolean, StepInterval)")
     void testOfStepInterval() {
         // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.of(false, DPT3Value.StepInterval.STOP)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(false, DPT3Value.StepInterval.STOP)).isInstanceOf(DPT3Value.class);
         // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.of(true, DPT3Value.StepInterval.PERCENT_50)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(true, DPT3Value.StepInterval.PERCENT_50)).isInstanceOf(DPT3Value.class);
         // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.of(false, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(false, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
         // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.of(true, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean, int)")
-    void testToByteArray() {
-        // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, 0)).containsExactly(0x00);
-        // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, 2)).containsExactly(0x0A);
-        // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, 7)).containsExactly(0x07);
-        // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, 7)).containsExactly(0x0F);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean, StepInterval)")
-    void testToByteArrayStepInterval() {
-        // not controlled, step = 0 (STOP)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, DPT3Value.StepInterval.STOP)).containsExactly(0x00);
-        // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, DPT3Value.StepInterval.PERCENT_50)).containsExactly(0x0A);
-        // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(false, DPT3Value.StepInterval.PERCENT_1)).containsExactly(0x07);
-        // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.CONTROL_BLINDS.toByteArray(true, DPT3Value.StepInterval.PERCENT_1)).containsExactly(0x0F);
+        assertThat(DPT3.BLINDS_CONTROL.of(true, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
     }
 }

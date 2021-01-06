@@ -19,8 +19,9 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT14;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import org.assertj.core.data.Offset;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,52 +32,85 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT14ValueTest {
-    /**
-     * Test {@link DPT14Value}
-     */
+class DPT14ValueTest {
     @Test
-    public void test() {
-        this.assertValue(DPT14.ANGLE_DEGREE, new byte[]{0x53, 0x38, 0x67, 0x44}, 7.9200649216E11, "792006492160");
-        this.assertValue(DPT14.ANGLE_DEGREE, new byte[]{(byte) 0xC7, (byte) 0x7F, (byte) 0x9A, (byte) 0xED}, -65434.92578125, "-65434.925781");
+    @DisplayName("#(DPT14.ACCELERATION, byte[]) with: 0")
+    void testByteZero() {
+        final var value = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x00, 0x00, 0x00, 0x00});
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
     }
 
-    /**
-     * Test {@link DPT14Value} with invalid arguments
-     */
     @Test
-    public void testInvalid() {
-        assertThatThrownBy(() -> new DPT14Value(DPT14.ANGLE_DEGREE, new byte[0])).isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("#(DPT14.ACCELERATION, byte[]) with: -65434.925781")
+    void testByteNegative() {
+        final var value = new DPT14Value(DPT14.ACCELERATION, new byte[]{(byte) 0xC7, 0x7F, (byte) 0x9A, (byte) 0xED});
+        assertThat(value.getValue()).isCloseTo(-65434.925781, Offset.offset(0.00001));
+        assertThat(value.toByteArray()).containsExactly(0xC7, 0x7F, 0x9A, 0xED);
+
+        assertThat(value.toText()).isEqualTo("-65434.925781");
     }
 
-    private void assertValue(final DPT14 dpt, final byte[] bytes, final double floatingValue, final String text) {
-        final var dptValue = new DPT14Value(dpt, floatingValue);
-        final var dptValueByByte = new DPT14Value(dpt, bytes);
+    @Test
+    @DisplayName("#(DPT14.ACCELERATION, byte[]) with: 792006492160")
+    void testBytePositive() {
+        final var value = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x53, 0x38, 0x67, 0x44});
+        assertThat(value.getValue()).isEqualTo(7.9200649216E11);
+        assertThat(value.toByteArray()).containsExactly(0x53, 0x38, 0x67, 0x44);
 
-        // instance methods
-        assertThat(dptValue.getFloatingValue()).isCloseTo(floatingValue, Offset.offset(0.000001));
-        assertThat(dptValue.toByteArray()).containsExactly(bytes);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("792006492160");
+    }
 
-        // class methods
-        assertThat(DPT14Value.toFloatingValue(bytes)).isEqualTo(floatingValue);
-        assertThat(DPT14Value.toByteArray(floatingValue)).containsExactly(bytes);
+    @Test
+    @DisplayName("#(DPT14.ACCELERATION, double) with numbers out of range")
+    void testValueOutOfRange() {
+        assertThatThrownBy(() -> new DPT14Value(DPT14.ACCELERATION, -3.40282348E38))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-3.40282348E38' for argument 'value' is out of range '-3.40282347E38'..'3.40282347E38'.");
+        assertThatThrownBy(() -> new DPT14Value(DPT14.ACCELERATION, 3.40282348E38))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '3.40282348E38' for argument 'value' is out of range '-3.40282347E38'..'3.40282347E38'.");
+    }
+    
+    @Test
+    @DisplayName("#(byte[]) with invalid byte length")
+    void testBytesOutOfRange() {
+        // expected: 4 bytes, provided 8 bytes
+        assertThatThrownBy(() -> new DPT14Value(DPT14.ACCELERATION, new byte[8]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+    }
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueAcceleration = new DPT14Value(DPT14.ACCELERATION, -33444.32);
+        assertThat(valueAcceleration).hasToString(
+                "DPT14Value{dpt=14.000, value=-33444.32, byteArray=0xC7 02 A4 52}"
+        );
+
+        final var valueEnergy = new DPT14Value(DPT14.ENERGY, 7.33266933E11);
+        assertThat(valueEnergy).hasToString(
+                "DPT14Value{dpt=14.031, value=733266933000, byteArray=0x53 2A BA 1D}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT14Value(DPT14.ACCELERATION, 4711.0);
+        final var value2 = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x45, (byte)0x93, 0x38, 0x00});
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(value2).isEqualTo(value);
+        assertThat(value2).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT14Value(DPT14.ACTIVITY, floatingValue));
-        assertThat(dptValue).isNotEqualTo(new DPT14Value(dpt, floatingValue + 0.1));
-
-        // toString
-        final var toString = String.format("DPT14Value{dpt=%s, floatingValue=%s, byteArray=%s}", dpt, floatingValue,
-                ByteFormatter.formatHexAsString(bytes));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT14Value(DPT14.SPEED, 4711.0));
+        assertThat(value).isNotEqualTo(new DPT14Value(DPT14.ACCELERATION, 11.47));
     }
 }

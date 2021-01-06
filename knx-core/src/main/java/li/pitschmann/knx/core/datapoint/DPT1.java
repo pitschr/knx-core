@@ -47,7 +47,8 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.001", "dpt-1", "dpst-1-1"})
-    public static final DPT1 SWITCH = new DPT1("Switch", "off", "on");
+    public static final DPT1 SWITCH = new DPT1("Switch", "Off", "On");
+
     /**
      * <strong>1.002</strong> Boolean
      *
@@ -61,7 +62,8 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.002", "dpst-1-2"})
-    public static final DPT1 BOOL = new DPT1("Boolean", "false", "true");
+    public static final DPT1 BOOL = new DPT1("Boolean", "False", "True");
+
     /**
      * <strong>1.003</strong> Enable
      *
@@ -76,6 +78,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.003", "dpst-1-3"})
     public static final DPT1 ENABLE = new DPT1("Enable", "Disable", "Enable");
+
     /**
      * <strong>1.004</strong> Ramp
      *
@@ -90,6 +93,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.004", "dpst-1-4"})
     public static final DPT1 RAMP = new DPT1("Ramp", "No Ramp", "Ramp");
+
     /**
      * <strong>1.005</strong> Alarm
      *
@@ -104,6 +108,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.005", "dpst-1-5"})
     public static final DPT1 ALARM = new DPT1("Alarm", "No Alarm", "Alarm");
+
     /**
      * <strong>1.006</strong> Binary Value
      *
@@ -118,6 +123,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.006", "dpst-1-6"})
     public static final DPT1 BINARY_VALUE = new DPT1("Binary Value", "Low", "High");
+
     /**
      * <strong>1.007</strong> Step
      *
@@ -132,6 +138,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.007", "dpst-1-7"})
     public static final DPT1 STEP = new DPT1("Step", "Decrease", "Increase");
+
     /**
      * <strong>1.008</strong> Up & Down
      *
@@ -146,6 +153,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.008", "dpst-1-8"})
     public static final DPT1 UP_DOWN = new DPT1("Up & Down", "Up", "Down");
+
     /**
      * <strong>1.009</strong> Open & Close
      *
@@ -160,6 +168,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.009", "dpst-1-9"})
     public static final DPT1 OPEN_CLOSE = new DPT1("Open & Close", "Open", "Close");
+
     /**
      * <strong>1.010</strong> Start
      *
@@ -174,6 +183,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.010", "dpst-1-10"})
     public static final DPT1 START = new DPT1("Start", "Stop", "Start");
+
     /**
      * <strong>1.011</strong> State
      *
@@ -188,6 +198,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.011", "dpst-1-11"})
     public static final DPT1 STATE = new DPT1("State", "Inactive", "Active");
+
     /**
      * <strong>1.012</strong> Invert
      *
@@ -202,6 +213,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.012", "dpst-1-12"})
     public static final DPT1 INVERT = new DPT1("Invert", "Not Inverted", "Inverted");
+
     /**
      * <strong>1.013</strong> Dim Send Style
      *
@@ -216,6 +228,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.013", "dpst-1-13"})
     public static final DPT1 DIM_SEND_STYLE = new DPT1("Dim Send Style", "Start/Stop", "Cyclically");
+
     /**
      * <strong>1.014</strong> Input Source
      *
@@ -230,6 +243,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.014", "dpst-1-14"})
     public static final DPT1 INPUT_SOURCE = new DPT1("Input Source", "Fixed", "Calculated");
+
     /**
      * <strong>1.015</strong> Reset
      *
@@ -244,6 +258,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.015", "dpst-1-15"})
     public static final DPT1 RESET = new DPT1("Reset", "No Action", "Reset");
+
     /**
      * <strong>1.016</strong> Acknowledge
      *
@@ -257,7 +272,8 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.016", "dpst-1-16"})
-    public static final DPT1 ACK = new DPT1("Acknowledge", "No Action", "Acknowledge");
+    public static final DPT1 ACKNOWLEDGE = new DPT1("Acknowledge", "No Action", "Acknowledge");
+
     /**
      * <strong>1.017</strong> Trigger
      *
@@ -274,6 +290,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.017", "dpst-1-17"})
     public static final DPT1 TRIGGER = new DPT1("Trigger", "Trigger (0)", "Trigger (1)");
+
     /**
      * <strong>1.018</strong> Occupancy
      *
@@ -288,6 +305,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.018", "dpst-1-18"})
     public static final DPT1 OCCUPANCY = new DPT1("Occupancy", "Not Occupied", "Occupied");
+
     /**
      * <strong>1.019</strong> Window & Door
      *
@@ -302,6 +320,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.019", "dpst-1-19"})
     public static final DPT1 WINDOW_DOOR = new DPT1("Window & Door", "Closed", "Open");
+
     /**
      * <strong>1.021</strong> Logical Function
      *
@@ -316,6 +335,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.021", "dpst-1-21"})
     public static final DPT1 LOGICAL_FUNCTION = new DPT1("Logical Function", "OR", "AND");
+
     /**
      * <strong>1.022</strong> Scene
      *
@@ -332,6 +352,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      */
     @DataPoint({"1.022", "dpst-1-22"})
     public static final DPT1 SCENE_AB = new DPT1("Scene", "Scene (A)", "Scene (B)");
+
     /**
      * <strong>1.023</strong> Shutter & Blinds Mode
      *
@@ -345,8 +366,8 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.023", "dpst-1-23"})
-    public static final DPT1 SHUTTER_BLINDS_MODE = new DPT1("Shutter & Blinds Mode", "Only Move Up/Down (shutter)",
-            "Move Up/Down + Step/Stop (blind)");
+    public static final DPT1 SHUTTER_BLINDS_MODE = new DPT1("Shutter & Blinds Mode",
+            "Only Move Up/Down (shutter)", "Move Up/Down + Step/Stop (blind)");
 
     /**
      * <strong>1.024</strong> Day & Night
@@ -376,7 +397,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
      * </pre>
      */
     @DataPoint({"1.100", "dpst-1-100"})
-    public static final DPT1 HEAT_COOL = new DPT1("Heating & Cooling", "Cooling", "Heating");
+    public static final DPT1 HEATING_COOLING = new DPT1("Heating & Cooling", "Cooling", "Heating");
 
     private final String textForFalse;
     private final String textForTrue;
@@ -430,11 +451,7 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
         return new DPT1Value(this, boolValue);
     }
 
-    public DPT1Value of(final boolean booleanValue) {
-        return new DPT1Value(this, booleanValue);
-    }
-
-    public byte[] toByteArray(final boolean booleanValue) {
-        return DPT1Value.toByteArray(booleanValue);
+    public DPT1Value of(final boolean value) {
+        return new DPT1Value(this, value);
     }
 }

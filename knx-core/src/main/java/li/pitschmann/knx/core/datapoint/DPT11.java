@@ -100,14 +100,10 @@ public final class DPT11 extends BaseDataPointType<DPT11Value> {
 
     @Override
     protected DPT11Value parse(final String[] args) {
-        return new DPT11Value(LocalDate.parse(args[0]));
+        return of(LocalDate.parse(args[0]));
     }
 
     public DPT11Value of(final LocalDate date) {
         return new DPT11Value(date);
-    }
-
-    public byte[] toByteArray(final LocalDate date) {
-        return DPT11Value.toByteArray(date);
     }
 }

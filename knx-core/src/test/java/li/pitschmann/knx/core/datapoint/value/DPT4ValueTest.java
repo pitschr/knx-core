@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT4;
-import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,54 +31,85 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT4ValueTest {
-    /**
-     * Test {@link DPT4Value}
-     */
+class DPT4ValueTest {
+
     @Test
-    public void test() {
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0x41, 'A', "char 'A'");
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0x5A, 'Z', "char 'Z'");
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0xE4, 'ä', "char 'ä'");
-        this.assertValue(DPT4.ISO_8859_1, (byte) 0xF6, 'ö', "char 'ö'");
+    @DisplayName("#(DPT4.ASCII, byte) with: character 'a'")
+    void testByteA() {
+        final var value = new DPT4Value(DPT4.ASCII, (byte) 0x61);
+        assertThat(value.getCharacter()).isEqualTo('a');
+        assertThat(value.toByteArray()).containsExactly(0x61);
+
+        assertThat(value.toText()).isEqualTo("char 'a'");
     }
 
-    /**
-     * Test {@link DPT4Value} failures
-     */
     @Test
-    public void testFailures() {
-        // step code must be between 0..7
-        assertThatThrownBy(() -> this.assertValue(DPT4.ASCII, (byte) 0xE4, 'ä', "char 'ä'")).isInstanceOf(KnxException.class)
+    @DisplayName("#(DPT4.ASCII, byte) with: character 'Z'")
+    void testByteZ() {
+        final var value = new DPT4Value(DPT4.ASCII, (byte) 0x5A);
+        assertThat(value.getCharacter()).isEqualTo('Z');
+        assertThat(value.toByteArray()).containsExactly(0x5A);
+
+        assertThat(value.toText()).isEqualTo("char 'Z'");
+    }
+
+    @Test
+    @DisplayName("#(DPT4.ISO_8859_1, char) with: character 'ä'")
+    void testCharacterAE() {
+        final var value = new DPT4Value(DPT4.ISO_8859_1, 'ä');
+        assertThat(value.getCharacter()).isEqualTo('ä');
+        assertThat(value.toByteArray()).containsExactly(0xE4);
+
+        assertThat(value.toText()).isEqualTo("char 'ä'");
+    }
+
+    @Test
+    @DisplayName("#(DPT4.ISO_8859_1, char) with: character 'Ö'")
+    void testCharacterOE() {
+        final var value = new DPT4Value(DPT4.ISO_8859_1, 'Ö');
+        assertThat(value.getCharacter()).isEqualTo('Ö');
+        assertThat(value.toByteArray()).containsExactly(0xD6);
+
+        assertThat(value.toText()).isEqualTo("char 'Ö'");
+    }
+
+    @Test
+    @DisplayName("#(DPT4.ASCII, char) with unsupported character 'ä' (0xE4)")
+    void testUnsupportedCharacter() {
+        assertThatThrownBy(() -> new DPT4Value(DPT4.ASCII, (byte)0xE4))
+                .isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0xE4");
     }
 
-    private void assertValue(final DPT4 dpt, final byte b, final char character, final String text) {
-        final var dptValue = new DPT4Value(dpt, character);
-        final var dptValueByByte = new DPT4Value(dpt, b);
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueAscii = new DPT4Value(DPT4.ASCII, 'A');
+        assertThat(valueAscii).hasToString(
+                "DPT4Value{dpt=4.001, character=A, byteArray=0x41}"
+        );
 
-        // instance methods
-        assertThat(dptValue.getCharacter()).isEqualTo(character);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        final var valueIso = new DPT4Value(DPT4.ISO_8859_1, 'ß');
+        assertThat(valueIso).hasToString(
+                "DPT4Value{dpt=4.002, character=ß, byteArray=0xDF}"
+        );
+    }
 
-        // class methods
-        assertThat(DPT4Value.toByteArray(character)).containsExactly(b);
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT4Value(DPT4.ASCII, 'a');
+        final var valueByte = new DPT4Value(DPT4.ASCII, (byte)0b0110_0001);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT4Value(DPT4.ASCII, character));
-        assertThat(dptValue).isNotEqualTo(new DPT4Value(dpt, (char) (character + 1))); // next char
-
-        // toString
-        final var toString = String.format("DPT4Value{dpt=%s, character=%s, byteArray=%s}", dpt, character, ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT4Value(DPT4.ISO_8859_1, 'a'));
+        assertThat(value).isNotEqualTo(new DPT4Value(DPT4.ASCII, 'b'));
     }
 }

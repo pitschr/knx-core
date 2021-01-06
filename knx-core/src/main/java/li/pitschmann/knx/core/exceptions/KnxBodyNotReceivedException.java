@@ -34,6 +34,6 @@ public final class KnxBodyNotReceivedException extends KnxCommunicationException
      * @param bodyClass body class that could not be received
      */
     public KnxBodyNotReceivedException(final Class<? extends Body> bodyClass) {
-        super(String.format("Body not received with class: {}", bodyClass.getName()));
+        super("Body not received with class: " + bodyClass.getName());
     }
 }

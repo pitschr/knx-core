@@ -80,8 +80,8 @@ class DPT1Test {
     @DisplayName("Test #getTextFor()")
     void testTextFor() {
         // Switch
-        assertThat(DPT1.SWITCH.getTextFor(true)).isEqualTo("on");
-        assertThat(DPT1.SWITCH.getTextFor(false)).isEqualTo("off");
+        assertThat(DPT1.SWITCH.getTextFor(true)).isEqualTo("On");
+        assertThat(DPT1.SWITCH.getTextFor(false)).isEqualTo("Off");
         // Alaram
         assertThat(DPT1.ALARM.getTextFor(true)).isEqualTo("Alarm");
         assertThat(DPT1.ALARM.getTextFor(false)).isEqualTo("No Alarm");
@@ -90,14 +90,14 @@ class DPT1Test {
     @Test
     @DisplayName("Test #getTextForTrue()")
     void testTextForTrue() {
-        assertThat(DPT1.SWITCH.getTextForTrue()).isEqualTo("on");
+        assertThat(DPT1.SWITCH.getTextForTrue()).isEqualTo("On");
         assertThat(DPT1.ALARM.getTextForTrue()).isEqualTo("Alarm");
     }
 
     @Test
     @DisplayName("Test #getTextForFalse()")
     void testTextForFalse() {
-        assertThat(DPT1.SWITCH.getTextForFalse()).isEqualTo("off");
+        assertThat(DPT1.SWITCH.getTextForFalse()).isEqualTo("Off");
         assertThat(DPT1.ALARM.getTextForFalse()).isEqualTo("No Alarm");
     }
 
@@ -110,16 +110,5 @@ class DPT1Test {
         // true
         assertThat(DPT1.SWITCH.of(true)).isInstanceOf(DPT1Value.class);
         assertThat(DPT1.UP_DOWN.of(true)).isInstanceOf(DPT1Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean)")
-    void testToByteArray() {
-        // false
-        assertThat(DPT1.SWITCH.toByteArray(false)).containsExactly(0x00);
-        assertThat(DPT1.UP_DOWN.toByteArray(false)).containsExactly(0x00);
-        // true
-        assertThat(DPT1.SWITCH.toByteArray(true)).containsExactly(0x01);
-        assertThat(DPT1.UP_DOWN.toByteArray(true)).containsExactly(0x01);
     }
 }

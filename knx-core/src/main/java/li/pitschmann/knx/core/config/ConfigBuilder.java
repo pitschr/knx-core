@@ -41,7 +41,7 @@ import java.util.Map;
  * @author PITSCHR
  */
 public final class ConfigBuilder {
-    private final static Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
     private final List<Class<Plugin>> pluginClasses = new LinkedList<>();
     private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
     private InetAddress remoteControlAddress;

@@ -88,14 +88,4 @@ class DPT18Test {
         assertThat(dpt.of(true, 0)).isInstanceOf(DPT18Value.class);
         assertThat(dpt.of(true, 63)).isInstanceOf(DPT18Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(boolean, int)")
-    void testToByteArray() {
-        final var dpt = DPT18.SCENE_CONTROL;
-        assertThat(dpt.toByteArray(false, 0)).containsExactly(0x00);
-        assertThat(dpt.toByteArray(false, 63)).containsExactly(0x3F);
-        assertThat(dpt.toByteArray(true, 0)).containsExactly(0x80);
-        assertThat(dpt.toByteArray(true, 63)).containsExactly(0xBF);
-    }
 }

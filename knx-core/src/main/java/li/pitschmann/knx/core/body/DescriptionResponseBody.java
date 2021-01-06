@@ -193,6 +193,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @param rawData         byte array to be scanned
      * @return byte array if found, otherwise {@code null}
      */
+    @Nullable
     private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {
         Preconditions.checkNonNull(descriptionType);
         final var index = this.indexOfDIB(descriptionType, rawData);

@@ -48,7 +48,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
      * @param client  internal KNX client for internal actions like informing plug-ins
      * @param channel channel of communication
      */
-    public AbstractOutboxQueue(final InternalKnxClient client, final SelectableChannel channel) {
+    protected AbstractOutboxQueue(final InternalKnxClient client, final SelectableChannel channel) {
         super(client, channel);
     }
 

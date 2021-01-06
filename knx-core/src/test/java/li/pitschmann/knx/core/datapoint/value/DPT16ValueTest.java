@@ -20,11 +20,8 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT16;
 import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.CharacterCodingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,152 +31,137 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT16ValueTest {
-    /**
-     * Test {@link DPT16Value}
-     */
+class DPT16ValueTest {
+
     @Test
-    public void test() {
-        // Space:  12345678901234
-        // Text : "              "
-        this.assertValue(
-                DPT16.ASCII,
-                Bytes.padRight(new byte[0], (byte) 0x20, 14),
-                "              "
+    @DisplayName("#(DPT16.ASCII, byte[]) with characters: abcXYZ")
+    void testByteASCII() {
+        final var value = new DPT16Value(DPT16.ASCII, new byte[] {0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
+        assertThat(value.getCharacters()).isEqualTo("abcXYZ");
+        assertThat(value.toByteArray()).containsExactly(
+                // padded with 8 empty 0x00 as the byte array must be a 14-byte array
+                0x61, 0x62, 0x63, // abc
+                0x58, 0x59, 0x5A, // XYZ
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         );
-        // Space: 12345678901234
-        // Text : Hello World!
-        this.assertValue(
-                DPT16.ASCII,
-                new byte[]{
-                        0x48, 0x65, 0x6C, 0x6C,
-                        0x6F, 0x20, 0x57, 0x6F,
-                        0x72, 0x6C, 0x64, 0x21
-                },
-                "Hello World!"
+
+        assertThat(value.toText()).isEqualTo("abcXYZ");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ISO_8859_1, byte[]) with characters: äöüÄÖÜ123")
+    void testByteISO() {
+        final var value = new DPT16Value(DPT16.ISO_8859_1, new byte[] {
+                (byte)0xE4, (byte)0xF6, (byte)0xFC, // äöü
+                (byte)0xC4, (byte)0xD6, (byte)0xDC, // ÄÖÜ
+                0x31, 0x32, 0x33 // 123
+        });
+        assertThat(value.getCharacters()).isEqualTo("äöüÄÖÜ123");
+        assertThat(value.toByteArray()).containsExactly(
+                // padded with 5 empty 0x00 as the byte array must be a 14-byte array
+                0xE4, 0xF6, 0xFC, // äöü
+                0xC4, 0xD6, 0xDC, // ÄÖÜ
+                0x31, 0x32, 0x33, // 123
+                0x00, 0x00, 0x00, 0x00, 0x00
         );
-        // Space: 12345678901234
-        // Text : @
-        this.assertValue(
-                DPT16.ASCII,
-                new byte[]{0x40},
-                "@"
+
+        assertThat(value.toText()).isEqualTo("äöüÄÖÜ123");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ASCII, byte[]) with null bytes")
+    void testNullBytes() {
+        final var value = new DPT16Value(DPT16.ASCII, (byte[])null);
+        assertThat(value.getCharacters()).isEqualTo("");
+        assertThat(value.toByteArray()).containsExactly(new byte[14]);
+
+        assertThat(value.toText()).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ASCII, byte[]) with empty byte array")
+    void testEmptyBytes() {
+        final var value = new DPT16Value(DPT16.ASCII, new byte[0]);
+        assertThat(value.getCharacters()).isEqualTo("");
+        assertThat(value.toByteArray()).containsExactly(new byte[14]);
+
+        assertThat(value.toText()).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ASCII, String) with null string")
+    void testNullString() {
+        final var value = new DPT16Value(DPT16.ASCII, (String)null);
+        assertThat(value.getCharacters()).isEqualTo("");
+        assertThat(value.toByteArray()).containsExactly(new byte[14]);
+
+        assertThat(value.toText()).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ASCII, String) with empty string")
+    void testEmptyString() {
+        final var value = new DPT16Value(DPT16.ASCII, "");
+        assertThat(value.getCharacters()).isEqualTo("");
+        assertThat(value.toByteArray()).containsExactly(new byte[14]);
+
+        assertThat(value.toText()).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ASCII, byte[]) with unsupported character 'ä' (0xE4)")
+    void testBytesUnsupportedCharacter() {
+        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, new byte[]{(byte)0xE4}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Issue during decoding charset 'US-ASCII' with: 0xE4");
+    }
+
+    @Test
+    @DisplayName("#(DPT16.ASCII, String) with unsupported character 'ä' (0xE4)")
+    void testStringUnsupportedCharacter() {
+        // this is OK, because we only store as string
+        // the issue will happen on encoding to byte array then
+        final var value = new DPT16Value(DPT16.ASCII, "ä");
+
+        assertThatThrownBy(value::toByteArray)
+                .isInstanceOf(KnxException.class)
+                .hasMessage("Issue during decoding charset 'US-ASCII' with: ä");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueAscii = new DPT16Value(DPT16.ASCII, "abcABC123");
+        assertThat(valueAscii).hasToString(
+                "DPT16Value{dpt=16.000, characters=abcABC123, " +
+                        "byteArray=0x61 62 63 41 42 43 31 32 33 00 00 00 00 00}"
         );
-        // Space: 12345678901234
-        // Text : ÄÖÜäöü¡¿«»ßØ÷¤
-        this.assertValue(
-                DPT16.ISO_8859_1,
-                new byte[]{
-                        (byte) 0xC4, (byte) 0xD6, (byte) 0xDC, (byte) 0xE4,
-                        (byte) 0xF6, (byte) 0xFC, (byte) 0xA1, (byte) 0xBF,
-                        (byte) 0xAB, (byte) 0xBB, (byte) 0xDF, (byte) 0xD8,
-                        (byte) 0xF7, (byte) 0xA4
-                },
-                "ÄÖÜäöü¡¿«»ßØ÷¤"
+
+        final var valueIso = new DPT16Value(DPT16.ISO_8859_1, "abcäöüÄÖÜ123");
+        assertThat(valueIso).hasToString(
+                "DPT16Value{dpt=16.001, characters=abcäöüÄÖÜ123, " +
+                        "byteArray=0x61 62 63 E4 F6 FC C4 D6 DC 31 32 33 00 00}"
         );
     }
 
-    private void assertValue(final DPT16 dpt, final byte[] textAsBytes, final String characters) {
-        final var dptValue = new DPT16Value(dpt, characters);
-        final var dptValueByByte = new DPT16Value(dpt, textAsBytes);
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT16Value(DPT16.ASCII, "abcXYZ");
+        final var valueBytes = new DPT16Value(DPT16.ASCII, new byte[] {0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
+        final var valueBytesTrailing = new DPT16Value(DPT16.ASCII, new byte[] {0x61, 0x62, 0x63, 0x58, 0x59, 0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
 
-        // fills out the right padding with zero bytes (0x00)
-        final var bytesWith14Length = Bytes.padRight(textAsBytes, (byte) 0x00, 14);
-
-        // instance methods
-        assertThat(dptValue.getCharacters()).isEqualTo(characters);
-        assertThat(dptValue.toByteArray()).containsExactly(bytesWith14Length);
-        assertThat(dptValue.toText()).isEqualTo(characters);
-
-        // class methods
-        assertThat(DPT16Value.toByteArray(characters, dpt.getCharset())).containsExactly(bytesWith14Length);
-
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
+        assertThat(valueBytesTrailing).isEqualTo(value);
+        assertThat(valueBytesTrailing).hasSameHashCodeAs(value);
 
         // not equals
-        final var anotherDPT = dpt == DPT16.ASCII ? DPT16.ISO_8859_1 : DPT16.ASCII;
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        if (dpt == DPT16.ISO_8859_1) {
-            assertThat(dptValue).isNotEqualTo(new DPT16Value(anotherDPT, "abc"));
-        } else {
-            assertThat(dptValue).isNotEqualTo(new DPT16Value(anotherDPT, characters));
-        }
-        assertThat(dptValue).isNotEqualTo(new DPT16Value(dpt, characters.substring(1)));
-
-        // toString
-        final var toString = String.format("DPT16Value{dpt=%s, characters=%s, byteArray=%s}", dpt, characters, ByteFormatter.formatHexAsString(bytesWith14Length));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
-    }
-
-    /**
-     * Special test with {@code null} and empty text/bytes. Those are valid as well.
-     */
-    @Test
-    public void testWithNullAndEmpty() {
-        final var dpt = DPT16.ASCII;
-        final var emptyBytes = new byte[14];
-
-        final var dptValueNull = new DPT16Value(dpt, (String) null);
-        final var dptValueNullByByte = new DPT16Value(dpt, (byte[]) null);
-        final var dptValueEmpty = new DPT16Value(dpt, "");
-        final var dptValueEmptyByByte = new DPT16Value(dpt, new byte[0]);
-
-        // instance methods
-        assertThat(dptValueNull.getCharacters()).isEmpty();
-        assertThat(dptValueNull.toByteArray()).containsExactly(emptyBytes);
-
-        // class methods
-        assertThat(DPT16Value.toByteArray(null, dpt.getCharset())).containsExactly(emptyBytes);
-        assertThat(DPT16Value.toByteArray("", dpt.getCharset())).containsExactly(emptyBytes);
-
-        // equals
-        assertThat(dptValueNull).isEqualTo(dptValueNull);
-        assertThat(dptValueNullByByte).isEqualTo(dptValueNull);
-        assertThat(dptValueNullByByte).hasSameHashCodeAs(dptValueNull);
-        assertThat(dptValueEmpty).isEqualTo(dptValueNull);
-        assertThat(dptValueEmpty).hasSameHashCodeAs(dptValueNull);
-        assertThat(dptValueEmptyByByte).isEqualTo(dptValueNull);
-        assertThat(dptValueEmptyByByte).hasSameHashCodeAs(dptValueNull);
-
-        // not equals
-        final var anotherDPT = dpt == DPT16.ASCII ? DPT16.ISO_8859_1 : DPT16.ASCII;
-        assertThat(dptValueNull).isNotEqualTo(null);
-        assertThat(dptValueNull).isNotEqualTo(new Object());
-        assertThat(dptValueNull).isNotEqualTo(new DPT16Value(anotherDPT, (byte[]) null));
-        assertThat(dptValueNull).isNotEqualTo(new DPT16Value(anotherDPT, (String) null));
-        assertThat(dptValueNull).isNotEqualTo(new DPT16Value(dpt, " "));
-
-        // toString
-        final var toString = String.format("DPT16Value{dpt=%s, characters=, byteArray=0x00 00 00 00 00 00 00 00 00 00 00 00 00 00}", dpt);
-        assertThat(dptValueNull).hasToString(toString);
-        assertThat(dptValueNullByByte).hasToString(toString);
-        assertThat(dptValueEmpty).hasToString(toString);
-        assertThat(dptValueEmptyByByte).hasToString(toString);
-    }
-
-    /**
-     * Test failures
-     */
-    @Test
-    public void testFailures() {
-        // ASCII and 'ä' as byte are not compatible
-        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, new byte[]{(byte) 'ä'})).isInstanceOf(KnxException.class)
-                .hasCauseInstanceOf(CharacterCodingException.class);
-        // ASCII and 'ä' as text are not compatible
-        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, "ä")).isInstanceOf(KnxException.class)
-                .hasCauseInstanceOf(CharacterCodingException.class);
-        // longer than 14 bytes are not accepted
-        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, new byte[15])).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("The length of bytes is too long");
-        // text longer than 14 characters are not accepted
-        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, "123456789012345")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("The length of characters is too long");
-        assertThatThrownBy(() -> DPT16.ASCII.toByteArray("123456789012345")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("The length of characters is too long");
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT16Value(DPT16.ISO_8859_1, "abcXYZ"));
+        assertThat(value).isNotEqualTo(new DPT16Value(DPT16.ASCII, "XYZabc"));
     }
 }

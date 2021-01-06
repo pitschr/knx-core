@@ -167,12 +167,4 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
     public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
         return new DPT19Value(dayOfWeek, date, time, flags);
     }
-
-    public byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time) {
-        return toByteArray(dayOfWeek, date, time, Flags.NO_FLAGS);
-    }
-
-    public byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time, final Flags flags) {
-        return DPT19Value.toByteArray(dayOfWeek, date, time, flags);
-    }
 }

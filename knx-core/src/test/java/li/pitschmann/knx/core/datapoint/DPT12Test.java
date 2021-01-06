@@ -66,7 +66,7 @@ class DPT12Test {
     void testByteParse() {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.parse(new byte[]{0x00, 0x00, 0x00, 0x00})).isInstanceOf(DPT12Value.class);
-        assertThat(dpt.parse(new byte[]{(byte) 0xFF, (byte) 0xFF,(byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT12Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT12Value.class);
     }
 
     @Test
@@ -83,13 +83,5 @@ class DPT12Test {
         final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
         assertThat(dpt.of(0)).isInstanceOf(DPT12Value.class);
         assertThat(dpt.of(4294967295L)).isInstanceOf(DPT12Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(long)")
-    void testToByteArray() {
-        final var dpt = DPT12.VALUE_4_OCTET_UNSIGNED_COUNT;
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00, 0x00, 0x00);
-        assertThat(dpt.toByteArray(4294967295L)).containsExactly(0xFF, 0xFF, 0xFF, 0xFF);
     }
 }

@@ -22,6 +22,8 @@ import li.pitschmann.knx.core.datapoint.value.DPT16Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -97,17 +99,11 @@ class DPT16Test {
     }
 
     @Test
-    @DisplayName("Test #toByteArray(String)")
-    void testToByteArray() {
+    @DisplayName("Test #getCharset()")
+    void testCharset() {
         // ASCII
-        assertThat(DPT16.ASCII.toByteArray("Lorem Ipsum"))
-                .containsExactly(0x4c, 0x6f, 0x72, 0x65, 0x6d, 0x20, 0x49, 0x70, 0x73, 0x75, 0x6d, 0x00, 0x00, 0x00);
-        assertThat(DPT16.ASCII.toByteArray("Dolor Sit Amet"))
-                .containsExactly(0x44, 0x6F, 0x6C, 0x6F, 0x72, 0x20, 0x53, 0x69, 0x74, 0x20, 0x41, 0x6D, 0x65, 0x74);
+        assertThat(DPT16.ASCII.getCharset()).isEqualTo(StandardCharsets.US_ASCII);
         // ISO-8859-1
-        assertThat(DPT16.ISO_8859_1.toByteArray("äöü"))
-                .containsExactly(0xE4, 0xF6, 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        assertThat(DPT16.ISO_8859_1.toByteArray("ÜÖÄ"))
-                .containsExactly(0xDC, 0xD6, 0xC4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+        assertThat(DPT16.ISO_8859_1.getCharset()).isEqualTo(StandardCharsets.ISO_8859_1);
     }
 }

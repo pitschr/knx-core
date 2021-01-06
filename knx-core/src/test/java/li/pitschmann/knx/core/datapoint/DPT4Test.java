@@ -103,15 +103,4 @@ class DPT4Test {
         assertThat(DPT4.ISO_8859_1.of('ä')).isInstanceOf(DPT4Value.class);
         assertThat(DPT4.ISO_8859_1.of('Ö')).isInstanceOf(DPT4Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(char)")
-    void testToByteArray() {
-        // ASCII
-        assertThat(DPT4.ASCII.toByteArray('a')).containsExactly(0x61);
-        assertThat(DPT4.ASCII.toByteArray('Z')).containsExactly(0x5A);
-        // ISO-8859-1
-        assertThat(DPT4.ISO_8859_1.toByteArray('ä')).containsExactly(0xE4);
-        assertThat(DPT4.ISO_8859_1.toByteArray('Ö')).containsExactly(0xD6);
-    }
 }

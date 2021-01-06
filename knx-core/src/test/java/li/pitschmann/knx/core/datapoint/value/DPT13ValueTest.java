@@ -19,7 +19,9 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT13;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,55 +32,109 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT13ValueTest {
-    /**
-     * Test {@link DPT13Value}
-     */
-    @Test
-    public void test() {
-        this.assertValue(DPT13.VALUE_4_OCTET_COUNT, new byte[]{0x68, 0x09, (byte) 0xC6, (byte) 0x9E}, 1745471134, 1745471134, "1745471134");
-        this.assertValue(DPT13.VALUE_4_OCTET_COUNT, new byte[]{(byte) 0xFB, 0x02, 0x54, (byte) 0xB7}, -83733321, -83733321, "-83733321");
+class DPT13ValueTest {
 
-        this.assertValue(DPT13.FLOW_RATE, new byte[]{0x36, 0x61, 0x4A, 0x4E}, 912345678, 91234.5678d, "91234.5678");
-        this.assertValue(DPT13.FLOW_RATE, new byte[]{(byte) 0xFD, 0x17, (byte) 0xE6, 0x08}, -48765432, -4876.5432d, "-4876.5432");
+    @Test
+    @DisplayName("#(DPT13.VALUE_4_OCTET_COUNT, byte[]) with: 0")
+    void testByteZero() {
+        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{0x00, 0x00, 0x00, 0x00});
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
     }
 
-    /**
-     * Test {@link DPT13Value} with invalid arguments
-     */
     @Test
-    public void testInvalid() {
-        assertThatThrownBy(() -> new DPT13Value(DPT13.ACTIVE_ENERGY, new byte[0])).isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("#(DPT13.VALUE_4_OCTET_COUNT, byte[]) with: -2147483648")
+    void testByteNegative() {
+        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00});
+        assertThat(value.getValue()).isEqualTo(-2147483648);
+        assertThat(value.toByteArray()).containsExactly(0x80, 0x00, 0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("-2147483648");
     }
 
-    private void assertValue(final DPT13 dpt, final byte[] bytes, final int rawSignedValue, final double signedValue, final String text) {
-        final var dptValue = new DPT13Value(dpt, rawSignedValue);
-        final var dptValueByByte = new DPT13Value(dpt, bytes);
+    @Test
+    @DisplayName("#(DPT13.VALUE_4_OCTET_COUNT, byte[]) with: 2147483647")
+    void testBytePositive() {
+        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF});
+        assertThat(value.getValue()).isEqualTo(2147483647);
+        assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF, 0xFF, 0xFF);
 
-        // instance methods
-        assertThat(dptValue.getRawSignedValue()).isEqualTo(rawSignedValue);
-        assertThat(dptValue.getSignedValue()).isEqualTo(signedValue);
-        assertThat(dptValue.toByteArray()).containsExactly(bytes);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("2147483647");
+    }
 
-        // class methods
-        assertThat(DPT13Value.toByteArray(rawSignedValue)).containsExactly(bytes);
+    @Test
+    @DisplayName("#(DPT13.FLOW_RATE, int) with: 0")
+    void testIntegerZero() {
+        final var value = new DPT13Value(DPT13.FLOW_RATE, 0);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x00, 0x00);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT13.FLOW_RATE, int) with: -2147483648")
+    void testIntegerNegative() {
+        final var value = new DPT13Value(DPT13.FLOW_RATE, -2147483648);
+        assertThat(value.getValue()).isEqualTo(-2147483648);
+        assertThat(value.toByteArray()).containsExactly(0x80, 0x00, 0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("-2147483648");
+    }
+
+    @Test
+    @DisplayName("#(DPT13.FLOW_RATE, int) with: 2147483647")
+    void testIntegerPositive() {
+        final var value = new DPT13Value(DPT13.FLOW_RATE, 2147483647);
+        assertThat(value.getValue()).isEqualTo(2147483647);
+        assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF, 0xFF, 0xFF);
+
+        assertThat(value.toText()).isEqualTo("2147483647");
+    }
+
+    @Disabled // cannot be tested yet as there is no DPT13 type available with a smaller number range
+    @Test
+    @DisplayName("#(DPT13.VALUE_4_OCTET_COUNT, int) with numbers out of range")
+    void testValueOutOfRange() {
+        assertThatThrownBy(() -> new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, -214748364))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-214748364' for argument 'value' is out of range '-2147483648'..'2147483647'.");
+        assertThatThrownBy(() -> new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, 2147483647))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '2147483647' for argument 'value' is out of range '-2147483648'..'2147483647'.");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueSigned = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, -9529462);
+        assertThat(valueSigned).hasToString(
+                "DPT13Value{dpt=13.001, value=-9529462, byteArray=0xFF 6E 97 8A}"
+        );
+
+        final var valuePercent = new DPT13Value(DPT13.FLOW_RATE, 32934237);
+        assertThat(valuePercent).hasToString(
+                "DPT13Value{dpt=13.002, value=32934237, byteArray=0x01 F6 89 5D}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, 4711);
+        final var value2 = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{0x12, 0x67});
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(value2).isEqualTo(value);
+        assertThat(value2).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT13Value(DPT13.ACTIVE_ENERGY, rawSignedValue));
-        assertThat(dptValue).isNotEqualTo(new DPT13Value(dpt, rawSignedValue + 1));
-
-        // toString
-        final var toString = String.format("DPT13Value{dpt=%s, signedValue=%s, rawSignedValue=%s, byteArray=%s}", dpt, signedValue, rawSignedValue,
-                ByteFormatter.formatHexAsString(bytes));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT13Value(DPT13.FLOW_RATE, 4711));
+        assertThat(value).isNotEqualTo(new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, 1147));
     }
 }

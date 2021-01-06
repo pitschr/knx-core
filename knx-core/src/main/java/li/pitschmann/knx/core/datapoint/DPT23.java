@@ -118,4 +118,6 @@ public final class DPT23 {
         @DataPointEnumValue(value = 3, description = "Down/Up")
         DOWN_UP
     }
+
+    // TODO: ETS 23.102 HVAC Push Button Action?
 }

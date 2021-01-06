@@ -110,8 +110,4 @@ public final class DPT15 extends BaseDataPointType<DPT15Value> {
     public DPT15Value of(final byte[] accessIdentificationData, final Flags flags) {
         return new DPT15Value(accessIdentificationData, flags);
     }
-
-    public byte[] toByteArray(final byte[] accessIdentificationData, final Flags flags) {
-        return DPT15Value.toByteArray(accessIdentificationData, flags);
-    }
 }

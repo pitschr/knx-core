@@ -26,6 +26,7 @@ import li.pitschmann.knx.core.cemi.APCI;
 import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.datapoint.DPT1;
+import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.datapoint.DPT9;
 import li.pitschmann.knx.core.datapoint.value.DPT1Value;
 import li.pitschmann.knx.core.datapoint.value.DPT9Value;
@@ -55,13 +56,13 @@ public final class InternalKnxStatusPoolTest {
     @DisplayName("Test updateStatus(CEMI) and getStatusFor(KnxAddress)")
     public void testUpdateStatus() {
         final var pool = new InternalKnxStatusPool();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x44, 0x22, 0x33}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(53623)));
 
         // verify
         final var statusData = pool.getStatusFor(ADDRESS);
         assertThat(statusData).isNotNull();
         assertThat(statusData.getAPCI()).isSameAs(APCI.GROUP_VALUE_WRITE);
-        assertThat(statusData.getData()).containsExactly(0x44, 0x22, 0x33);
+        assertThat(statusData.getData()).containsExactly(0xD1, 0x77);
     }
 
     /**
@@ -76,7 +77,7 @@ public final class InternalKnxStatusPoolTest {
         assertThat(pool.existsStatusFor(ADDRESS)).isFalse();
 
         // now add status
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x77, 0x66, 0x55}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
 
         // verify it it exist now
         assertThat(pool.existsStatusFor(ADDRESS)).isTrue();
@@ -95,7 +96,7 @@ public final class InternalKnxStatusPoolTest {
         assertThat(pool.getStatusFor(ADDRESS, false)).isNull();
         assertThat(pool.getStatusFor(ADDRESS, true)).isNull();
 
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x00}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
 
         // found as it is known in status pool
         assertThat(pool.getStatusFor(ADDRESS)).isNotNull();
@@ -118,7 +119,7 @@ public final class InternalKnxStatusPoolTest {
     @DisplayName("Test getStatusFor(KnxAddress) for unknown group address")
     public void testGetStatusForUnknown() {
         final var pool = new InternalKnxStatusPool();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x00}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
 
         // not found because not known to status pool (IndividualAddress != GroupAddress)
         assertThat(pool.getStatusFor(GroupAddress.of(1, 2, 3))).isNull();
@@ -131,26 +132,26 @@ public final class InternalKnxStatusPoolTest {
     @DisplayName("Test getValue(..) with DPT1 Switch")
     public void testGetValueSwitch() {
         final var pool = new InternalKnxStatusPool();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x00}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
 
         // Scenario 1: Init (false)
         final var boolValue = pool.<DPT1Value>getValue(ADDRESS, DPT1.SWITCH.getId());
-        assertThat(boolValue.getBooleanValue()).isFalse();
+        assertThat(boolValue.getValue()).isFalse();
         final var boolValue2 = pool.getValue(ADDRESS, DPT1.SWITCH);
-        assertThat(boolValue2.getBooleanValue()).isFalse();
+        assertThat(boolValue2.getValue()).isFalse();
 
         // Scenario 2: Update (false -> true)
         // update status pool
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, new byte[]{0x00}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
 
         // 1) pre-verify (before adding to status pool)
         // 2) update status pool
         // 3) post-verify (after adding to status pool)
-        assertThat(pool.<DPT1Value>getValue(ADDRESS_2, DPT1.SWITCH.getId()).getBooleanValue()).isFalse();
-        assertThat(pool.getValue(ADDRESS_2, DPT1.SWITCH).getBooleanValue()).isFalse();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, new byte[]{0x01}));
-        assertThat(pool.<DPT1Value>getValue(ADDRESS_2, DPT1.SWITCH.getId()).getBooleanValue()).isTrue();
-        assertThat(pool.getValue(ADDRESS_2, DPT1.SWITCH).getBooleanValue()).isTrue();
+        assertThat(pool.<DPT1Value>getValue(ADDRESS_2, DPT1.SWITCH.getId()).getValue()).isFalse();
+        assertThat(pool.getValue(ADDRESS_2, DPT1.SWITCH).getValue()).isFalse();
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(true)));
+        assertThat(pool.<DPT1Value>getValue(ADDRESS_2, DPT1.SWITCH.getId()).getValue()).isTrue();
+        assertThat(pool.getValue(ADDRESS_2, DPT1.SWITCH).getValue()).isTrue();
 
         // Scenario 3: unknown address
         assertThat(pool.<DPT1Value>getValue(ADDRESS_UNKNOWN, DPT1.SWITCH.getId())).isNull();
@@ -168,18 +169,18 @@ public final class InternalKnxStatusPoolTest {
     @DisplayName("Test #getValue(..) with DPT9 Temperature")
     public void testGetValueTemperature() {
         final var pool = new InternalKnxStatusPool();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x07, (byte) 0xA0}));
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, new byte[]{0x0C, 0x0F}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT9.TEMPERATURE.of(19.52d)));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, DPT9.TEMPERATURE.of(20.78d)));
 
         // Scenario 1: Init (19.52 °C)
         final var tempValue = pool.<DPT9Value>getValue(ADDRESS, DPT9.TEMPERATURE.getId());
-        assertThat(tempValue.getFloatingValue()).isEqualTo(19.52d);
+        assertThat(tempValue.getValue()).isEqualTo(19.52d);
         final var tempValue2 = pool.getValue(ADDRESS, DPT9.TEMPERATURE);
-        assertThat(tempValue2.getFloatingValue()).isEqualTo(19.52d);
+        assertThat(tempValue2.getValue()).isEqualTo(19.52d);
 
         // Scenario 2: Update (20.78 °C)
-        assertThat(pool.<DPT9Value>getValue(ADDRESS_2, DPT9.TEMPERATURE.getId()).getFloatingValue()).isEqualTo(20.78d);
-        assertThat(pool.getValue(ADDRESS_2, DPT9.TEMPERATURE).getFloatingValue()).isEqualTo(20.78d);
+        assertThat(pool.<DPT9Value>getValue(ADDRESS_2, DPT9.TEMPERATURE.getId()).getValue()).isEqualTo(20.78d);
+        assertThat(pool.getValue(ADDRESS_2, DPT9.TEMPERATURE).getValue()).isEqualTo(20.78d);
 
         // Scenario 3: unknown address
         assertThat(pool.<DPT9Value>getValue(ADDRESS_UNKNOWN, DPT9.TEMPERATURE.getId())).isNull();
@@ -198,7 +199,7 @@ public final class InternalKnxStatusPoolTest {
     @DisplayName("Test #isUpdated(..) with unknown, known and illegal parameters")
     public void testIsUpdated() {
         final var pool = new InternalKnxStatusPool();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_READ, null));
 
         // Scenario 1: test with unknown status
         assertThat(pool.isUpdated(ADDRESS_UNKNOWN)).isFalse();
@@ -218,7 +219,7 @@ public final class InternalKnxStatusPoolTest {
     @DisplayName("Test #setDirty(..) with known, unknown and illegal parameter")
     public void testSetDirty() {
         final var pool = new InternalKnxStatusPool();
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_READ, null));
 
         // test with known and unknown KNX address
         pool.setDirty(ADDRESS);
@@ -243,7 +244,7 @@ public final class InternalKnxStatusPoolTest {
     public void testCopyStatusMap() {
         final var pool = new InternalKnxStatusPool();
 
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_IND, ADDRESS, APCI.GROUP_VALUE_READ, new byte[0]));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_IND, ADDRESS, APCI.GROUP_VALUE_READ, null));
 
         // call this method twice times
         final var map1 = pool.copyStatusMap();
@@ -265,7 +266,7 @@ public final class InternalKnxStatusPoolTest {
         assertThat(pool).hasToString("InternalKnxStatusPool{statusMap={}}");
 
         // with 1 element in status map
-        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, new byte[]{0x12}));
+        pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
         assertThat(pool).hasToString(String.format("InternalKnxStatusPool{statusMap={%s=%s}}", ADDRESS, pool.getStatusFor(ADDRESS)));
     }
 }

@@ -84,26 +84,28 @@ class DPT7Test {
     }
 
     @Test
-    @DisplayName("Test #toByteArray(int)")
-    void testToByteArray() {
-        final var dpt = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT;
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00);
-        assertThat(dpt.toByteArray(65535)).containsExactly(0xFF, 0xFF);
-    }
-
-    @Test
     @DisplayName("Test #getCalculationFunction()")
     void testCalculationFunction() {
         assertThat(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.getCalculationFunction()).isNull();
 
-        // Time Period in 10ms (0 = 0ms, 32145 = 321.45ms, 65535 = 655.35ms)
-        final var dpt = DPT7.TIME_PERIOD_10MS;
-        assertThat(dpt.getCalculationFunction()).isNotNull();
-        assertThat(dpt.of(0).getRawUnsignedValue()).isZero();
-        assertThat(dpt.of(0).getUnsignedValue()).isZero();
-        assertThat(dpt.of(32145).getRawUnsignedValue()).isEqualTo(32145);
-        assertThat(dpt.of(32145).getUnsignedValue()).isEqualTo(321.45);
-        assertThat(dpt.of(65535).getRawUnsignedValue()).isEqualTo(65535);
-        assertThat(dpt.of(65535).getUnsignedValue()).isEqualTo(655.35);
+        // Time Period in 10ms (0 = 0ms, 32145 = 321450ms, 65535 = 655350ms)
+        final var dpt10ms = DPT7.TIME_PERIOD_10MS;
+        assertThat(dpt10ms.getCalculationFunction()).isNotNull();
+        assertThat(dpt10ms.of(0).getValue()).isZero();
+        assertThat(dpt10ms.of(0).toByteArray()).containsExactly(0x00, 0x00);
+        assertThat(dpt10ms.of(321450).getValue()).isEqualTo(321450);
+        assertThat(dpt10ms.of(321450).toByteArray()).containsExactly(0x7D, 0x91);
+        assertThat(dpt10ms.of(655350).getValue()).isEqualTo(655350);
+        assertThat(dpt10ms.of(655350).toByteArray()).containsExactly(0xFF, 0xFF);
+
+        // Time Period in 100ms (0 = 0ms, 23443 = 2344300ms, 65535 = 6553500ms)
+        final var dpt100ms = DPT7.TIME_PERIOD_100MS;
+        assertThat(dpt100ms.getCalculationFunction()).isNotNull();
+        assertThat(dpt100ms.of(0).getValue()).isZero();
+        assertThat(dpt100ms.of(0).toByteArray()).containsExactly(0x00, 0x00);
+        assertThat(dpt100ms.of(2344300).getValue()).isEqualTo(2344300);
+        assertThat(dpt100ms.of(2344300).toByteArray()).containsExactly(0x5B, 0x93);
+        assertThat(dpt100ms.of(6553500).getValue()).isEqualTo(6553500);
+        assertThat(dpt100ms.of(6553500).toByteArray()).containsExactly(0xFF, 0xFF);
     }
 }

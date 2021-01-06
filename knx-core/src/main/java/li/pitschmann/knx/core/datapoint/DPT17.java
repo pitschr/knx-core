@@ -75,14 +75,10 @@ public final class DPT17 extends BaseRangeDataPointType<DPT17Value, Integer> {
 
     @Override
     protected DPT17Value parse(final String[] args) {
-        return new DPT17Value(Integer.parseInt(args[0]));
+        return of(Integer.parseInt(args[0]));
     }
 
     public DPT17Value of(final int sceneNumber) {
         return new DPT17Value(sceneNumber);
-    }
-
-    public byte[] toByteArray(final int sceneNumber) {
-        return DPT17Value.toByteArray(sceneNumber);
     }
 }

@@ -65,24 +65,19 @@ public class BaseKnxClient implements KnxClient {
 
     @Override
     public boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue) {
-        return writeRequest(address, dataPointValue.toByteArray());
-    }
-
-    @Override
-    public boolean writeRequest(final GroupAddress address, final byte[] data) {
         Preconditions.checkNonNull(address);
-        Preconditions.checkNonNull(data);
+        Preconditions.checkNonNull(dataPointValue);
         Preconditions.checkState(isRunning());
 
         if (getConfig().isRoutingEnabled()) {
             // routing request
-            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, data);
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
             getInternalClient().send(RoutingIndicationBody.of(cemi));
             return true; // unconfirmed
         } else {
             // tunneling request
             try {
-                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, data);
+                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
                 final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {
@@ -100,12 +95,12 @@ public class BaseKnxClient implements KnxClient {
         Preconditions.checkState(isRunning());
 
         if (getConfig().isRoutingEnabled()) {
-            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, new byte[0]);
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, null);
             getInternalClient().send(RoutingIndicationBody.of(cemi));
             return true; // unconfirmed
         } else {
             try {
-                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, new byte[0]);
+                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, null);
                 final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)).get();
                 return ackBody.getStatus() == Status.E_NO_ERROR;
             } catch (final ExecutionException ex) {

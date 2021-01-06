@@ -19,7 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT9;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,53 +31,83 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT9ValueTest {
-    /**
-     * Test {@link DPT9Value}
-     */
+class DPT9ValueTest {
+
     @Test
-    public void test() {
-        this.assertValue(DPT9.TEMPERATURE, new byte[]{0x67, 0x44}, 76185.6, "76185.6");
-        this.assertValue(DPT9.TIME_DIFFERENCE_SECONDS, new byte[]{0x0C, 0x5C}, 22.32, "22.32");
-        this.assertValue(DPT9.VOLTAGE, new byte[]{(byte) 0xE1, (byte) 0xA5}, -66641.92, "-66641.92");
+    @DisplayName("#(DPT9.TEMPERATURE, byte[]) with: 0")
+    void testByteZero() {
+        final var value = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x00, 0x00});
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
     }
 
-    /**
-     * Test {@link DPT9Value} with invalid arguments
-     */
     @Test
-    public void testInvalid() {
-        assertThatThrownBy(() -> new DPT9Value(DPT9.AIR_FLOW, new byte[0])).isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("#(DPT9.AIR_FLOW, byte[]) with: -66641.92")
+    void testByteNegative() {
+        final var value = new DPT9Value(DPT9.AIR_FLOW, new byte[]{(byte) 0xE1, (byte) 0xA5});
+        assertThat(value.getValue()).isEqualTo(-66641.92);
+        assertThat(value.toByteArray()).containsExactly(0xE1, 0xA5);
+
+        assertThat(value.toText()).isEqualTo("-66641.92");
     }
 
-    private void assertValue(final DPT9 dpt, final byte[] bytes, final double floatingValue, final String text) {
-        final var dptValue = new DPT9Value(dpt, floatingValue);
-        final var dptValueByByte = new DPT9Value(dpt, bytes);
+    @Test
+    @DisplayName("#(DPT9.TEMPERATURE, byte[]) with: 76185.6")
+    void testBytePositive() {
+        final var value = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x67, 0x44});
+        assertThat(value.getValue()).isEqualTo(76185.6);
+        assertThat(value.toByteArray()).containsExactly(0x67, 0x44);
 
-        // instance methods
-        assertThat(dptValue.getFloatingValue()).isEqualTo(floatingValue);
-        assertThat(dptValue.toByteArray()).containsExactly(bytes);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("76185.6");
+    }
 
-        // class methods
-        assertThat(DPT9Value.toFloatingValue(bytes)).isEqualTo(floatingValue);
-        assertThat(DPT9Value.toByteArray(floatingValue)).containsExactly(bytes);
+    @Test
+    @DisplayName("#(DPT9.TEMPERATURE, double) with numbers out of range")
+    void testPercentRange() {
+        assertThatThrownBy(() -> new DPT9Value(DPT9.TEMPERATURE, -327.681))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-327.681' for argument 'value' is out of range '-273.0'..'670760.96'.");
+    }
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+    @Test
+    @DisplayName("#(byte[]) with invalid byte length")
+    void testBytesOutOfRange() {
+        // expected: 2 bytes, provided 8 bytes
+        assertThatThrownBy(() -> new DPT9Value(DPT9.TEMPERATURE, new byte[8]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueTemperature = new DPT9Value(DPT9.TEMPERATURE, -249.34);
+        assertThat(valueTemperature).hasToString(
+                "DPT9Value{dpt=9.001, value=-249.34, byteArray=0xA1 EA}"
+        );
+
+        final var valueAirFlow = new DPT9Value(DPT9.AIR_FLOW, 538331.1245);
+        assertThat(valueAirFlow).hasToString(
+                "DPT9Value{dpt=9.009, value=538331.1245, byteArray=0x7E 6B}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT9Value(DPT9.TEMPERATURE, 471.04);
+        final var valueBytes = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x2D, (byte)0xC0});
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT9Value(DPT9.AIR_FLOW, floatingValue));
-        assertThat(dptValue).isNotEqualTo(new DPT9Value(dpt, floatingValue + 0.1));
-
-        // toString
-        final var toString = String.format("DPT9Value{dpt=%s, floatingValue=%s, byteArray=%s}", dpt, floatingValue,
-                ByteFormatter.formatHexAsString(bytes));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE_DIFFERENCE, 471.04));
+        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE, 174.40));
     }
 }

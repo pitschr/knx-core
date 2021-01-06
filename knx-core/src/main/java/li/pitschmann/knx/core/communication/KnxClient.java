@@ -120,20 +120,6 @@ public interface KnxClient extends AutoCloseable {
     boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue);
 
     /**
-     * Sends a WRITE request to {@link GroupAddress} with {@code data}
-     * <p>
-     * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.
-     * If you want to use a non-blocking operation, use {@link #send(Body)} or {@link #send(RequestBody, long)}
-     * instead.
-     * </p>
-     *
-     * @param address the recipient which is an KNX group address
-     * @param data    value in byte array form to be sent to KNX group address
-     * @return {@code true} if the write request was successful, otherwise {@code false}
-     */
-    boolean writeRequest(final GroupAddress address, final byte[] data);
-
-    /**
      * Sends a READ request to {@link GroupAddress}
      * <p>
      * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.

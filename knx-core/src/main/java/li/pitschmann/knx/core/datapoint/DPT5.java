@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT5Value;
 
-import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
 
 /**
  * Data Point Type 5 for 'Unsigned Value' (8 Bits)
@@ -54,7 +54,8 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.001", "dpst-5-1"})
-    public static final DPT5 SCALING = new DPT5("Scaling", 0, 255, "%", v -> v * 100d / 255d);
+    public static final DPT5 SCALING = new DPT5("Scaling", 0, 100, "%", v -> v * 255d / 100d);
+
     /**
      * <strong>5.003</strong> Angle (°)
      *
@@ -72,7 +73,8 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.003", "dpst-5-3"})
-    public static final DPT5 ANGLE = new DPT5("Angle", 0, 255, "°", v -> v * 360d / 255d);
+    public static final DPT5 ANGLE = new DPT5("Angle", 0, 360, "°", v -> v * 255d / 360d);
+
     /**
      * <strong>5.004</strong> Percent 8-bit (%)
      *
@@ -90,7 +92,8 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      * </pre>
      */
     @DataPoint({"5.004", "dpst-5-4"})
-    public static final DPT5 PERCENT_U8 = new DPT5("Percent 8-bit", 0, 255, "%", null);
+    public static final DPT5 PERCENT = new DPT5("Percent 8-bit", 0, 255, "%", null);
+
     /**
      * <strong>5.005</strong> Decimal Factor (%)
      *
@@ -110,6 +113,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      */
     @DataPoint({"5.005", "dpst-5-5"})
     public static final DPT5 DECIMAL_FACTOR = new DPT5("Decimal Factor", 0, 255, "ratio", null);
+
     /**
      * <strong>5.006</strong> Tariff Information
      *
@@ -131,6 +135,7 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      */
     @DataPoint({"5.006", "dpst-5-6"})
     public static final DPT5 TARIFF_INFORMATION = new DPT5("Tariff Information", 0, 254, null, null);
+
     /**
      * <strong>5.010</strong> Value 1-octet unsigned count
      *
@@ -147,34 +152,52 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
      */
     @DataPoint({"5.010", "dpt-5", "dpst-5-10"})
     public static final DPT5 VALUE_1_OCTET_UNSIGNED_COUNT = new DPT5("Value 1-Octet Unsigned Count", 0, 255, "pulses", null);
+
+    /**
+     * <strong>5.100</strong> Fan Stage
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Unsigned Value)              |
+     * Encoding    | U   U   U   U   U   U   U   U |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (U<sub>8</sub>)
+     * Range:      U = [0 .. 255]
+     * Unit:       N/A
+     * Resolution: N/A
+     * </pre>
+     */
+    @DataPoint({"5.100", "dpst-5-100"})
+    public static final DPT5 FAN_STAGE = new DPT5("Fan Stage", 0, 255, null, null);
+
     /**
      * Calculation function
      * <p>
      * Calculates from {@link Integer} to {@link Float} using a formula
      */
-    private final Function<Integer, Double> calculationFunction;
+    private final IntToDoubleFunction calculationFunction;
 
     /**
      * Constructor for {@link DPT5}
      *
-     * @param desc                description for {@link DPT5}
+     * @param description         description for {@link DPT5}
      * @param lowerValue          the lower value for {@link DPT5}
      * @param upperValue          the upper value for {@link DPT5}
      * @param unit                the unit representation for {@link DPT5}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT5(final String desc,
+    private DPT5(final String description,
                  final int lowerValue,
                  final int upperValue,
                  final @Nullable String unit,
-                 final @Nullable Function<Integer, Double> calculationFunction) {
-        super(desc, lowerValue, upperValue, unit);
+                 final @Nullable IntToDoubleFunction calculationFunction) {
+        super(description, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public Function<Integer, Double> getCalculationFunction() {
-        return this.calculationFunction;
+    public IntToDoubleFunction getCalculationFunction() {
+        return calculationFunction;
     }
 
     @Override
@@ -199,9 +222,5 @@ public final class DPT5 extends BaseRangeDataPointType<DPT5Value, Integer> {
 
     public DPT5Value of(final int value) {
         return new DPT5Value(this, value);
-    }
-
-    public byte[] toByteArray(final int value) {
-        return DPT5Value.toByteArray(value);
     }
 }

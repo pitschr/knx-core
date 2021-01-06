@@ -19,8 +19,10 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.datapoint.DPT3;
 import li.pitschmann.knx.core.datapoint.DPT4;
 import li.pitschmann.knx.core.exceptions.KnxException;
+import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
@@ -65,42 +67,38 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
         try {
             return dpt.getCharsetDecoder().decode(ByteBuffer.wrap(new byte[]{b})).get();
         } catch (CharacterCodingException e) {
-            throw new KnxException(String.format("Issue during decoding charset '%s' with value: %s", dpt.getCharset(), ByteFormatter.formatHex(b)),
-                    e);
+            throw new KnxIllegalArgumentException(
+                    String.format("Issue during decoding charset '%s' with value: %s",
+                            dpt.getCharset(), ByteFormatter.formatHex(b)), e);
         }
     }
 
     /**
-     * Converts character to byte array
+     * Returns the character
      *
-     * @param character character to be converted
-     * @return byte array from character
+     * @return char
      */
-    public static byte[] toByteArray(final char character) {
-        return new byte[]{(byte) character};
-    }
-
     public char getCharacter() {
-        return this.character;
+        return character;
     }
 
     @Override
     public byte[] toByteArray() {
-        return toByteArray(this.character);
+        return new byte[]{(byte) character};
     }
 
     @Override
     public String toText() {
-        return String.format("char '%c'", getCharacter());
+        return "char '" + character + "'";
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("character", this.character)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("character", character)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -119,7 +117,7 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.character);
+        return Objects.hash(getDPT(), character);
     }
 
 }

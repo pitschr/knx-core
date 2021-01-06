@@ -20,9 +20,8 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT9;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,28 +40,25 @@ import java.util.Objects;
  * Encoding:   Float Value = (0.01 * M)*2(E)
  *             E = [0 .. 15]
  *             M = [-2048 .. 2047], two's complement notation
- * Range:      [-670760 .. 670760]
+ * Range:      [-671088.64 .. 670760.96]
  * </pre>
  *
  * @author PITSCHR
  */
 public final class DPT9Value extends AbstractDataPointValue<DPT9> {
     private static final Logger log = LoggerFactory.getLogger(DPT9Value.class);
-    private final double floatingValue;
-    private final byte[] byteArray;
+    private final double value;
 
     public DPT9Value(final DPT9 dpt, final byte[] bytes) {
-        super(dpt);
-        Preconditions.checkArgument(bytes.length == 2);
-        this.floatingValue = toFloatingValue(bytes);
-        this.byteArray = bytes;
+        this(dpt, toFloatingValue(bytes));
     }
 
     public DPT9Value(final DPT9 dpt, final double value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.floatingValue = value;
-        this.byteArray = toByteArray(value);
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
+        }
+        this.value = value;
     }
 
     /**
@@ -70,8 +66,13 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
      *
      * @param bytes byte array to be converted
      * @return double value from byte array
+     * @throws KnxNumberOutOfRangeException if the length of bytes is not expected
      */
-    public static double toFloatingValue(final byte[] bytes) {
+    private static double toFloatingValue(final byte[] bytes) {
+        if (bytes.length != 2) {
+            throw new KnxNumberOutOfRangeException("bytes", 2, 2, bytes.length, bytes);
+        }
+
         final var exponent = getExponent(bytes);
         final var mantissa = getMantissa(bytes);
         return (1 << exponent) * mantissa * 0.01d;
@@ -137,13 +138,12 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         return mantissa;
     }
 
-    /**
-     * Converts double value to byte array that is compatible with {@link DPT9}
-     *
-     * @param value double value to be converted
-     * @return {@link DPT9} compatible byte array for double value
-     */
-    public static byte[] toByteArray(final double value) {
+    public double getValue() {
+        return value;
+    }
+
+    @Override
+    public byte[] toByteArray() {
         // multiply with 100 because value is a digit with two decimal places
         var calcValue = value * 100d;
 
@@ -173,35 +173,26 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         highByte |= (exponent << 3);
         // .... MMMM
         highByte |= (mantissa >>> 8);
-        log.debug("High Byte for '{}': {} (unsigned: {})", value, highByte, Bytes.toUnsignedInt(highByte));
+        log.debug("High Byte for '{}': {} (unsigned: {})", value, highByte, Byte.toUnsignedInt(highByte));
 
         final var lowByte = (byte) (mantissa & 0xFF);
-        log.debug("Low Byte for '{}': {} (unsigned: {})", value, lowByte, Bytes.toUnsignedInt(lowByte));
+        log.debug("Low Byte for '{}': {} (unsigned: {})", value, lowByte, Byte.toUnsignedInt(lowByte));
 
         return new byte[]{highByte, lowByte};
     }
 
-    public double getFloatingValue() {
-        return this.floatingValue;
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return this.byteArray.clone();
-    }
-
     @Override
     public String toText() {
-        return getValueAsText(getFloatingValue());
+        return getValueAsText(getValue());
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("floatingValue", this.floatingValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("value", getValueAsText(value))
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -213,14 +204,14 @@ public final class DPT9Value extends AbstractDataPointValue<DPT9> {
         } else if (obj instanceof DPT9Value) {
             final var other = (DPT9Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.floatingValue, other.floatingValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.floatingValue);
+        return Objects.hash(getDPT(), value);
     }
 
 }

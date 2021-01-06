@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT11;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -62,21 +63,30 @@ import java.util.Objects;
 public final class DPT11Value extends AbstractDataPointValue<DPT11> {
     private static final Logger log = LoggerFactory.getLogger(DPT11Value.class);
     private final LocalDate date;
-    private final byte[] byteArray;
 
     public DPT11Value(final byte[] bytes) {
-        super(DPT11.DATE);
-        Preconditions.checkArgument(bytes.length == 3);
-        this.date = toLocalDate(bytes);
-        this.byteArray = bytes;
+        this(toLocalDate(bytes));
     }
 
     public DPT11Value(final LocalDate date) {
         super(DPT11.DATE);
-        Preconditions.checkNonNull(date);
-        Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: {}", date.getYear());
-        this.date = date;
-        this.byteArray = toByteArray(date);
+        this.date = validateLocalDate(date);
+    }
+
+    /**
+     * Validates if the year of given {@link LocalDate} is within
+     * {@code 1990} and {@code 2089}
+     *
+     * @param date the local date to be checked
+     * @return the local date, if validation was successful
+     * @throws NullPointerException     if local date is not provided
+     * @throws IllegalArgumentException if the local date is not within the range
+     */
+    private static LocalDate validateLocalDate(final LocalDate date) {
+        Preconditions.checkNonNull(date, "date is null");
+        Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089,
+                "Year must be between '1990..2089'. Got: {}", date.getYear());
+        return date;
     }
 
     /**
@@ -84,8 +94,13 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      *
      * @param bytes byte array to be converted
      * @return {@link LocalDate}
+     * @throws KnxNumberOutOfRangeException if the length of bytes is not expected
      */
     private static LocalDate toLocalDate(final byte[] bytes) {
+        if (bytes.length != 3) {
+            throw new KnxNumberOutOfRangeException("bytes", 3, 3, bytes.length, bytes);
+        }
+
         // day
         final var day = Bytes.toUnsignedInt(bytes[0]);
 
@@ -103,15 +118,12 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         return date;
     }
 
-    /**
-     * Converts {@link LocalDate} value to byte array
-     *
-     * @param date the local date
-     * @return byte array
-     */
-    public static byte[] toByteArray(final LocalDate date) {
-        Preconditions.checkArgument(date.getYear() >= 1990 && date.getYear() <= 2089, "Year must be between '1990..2089'. Got: " + date.getYear());
+    public LocalDate getDate() {
+        return date;
+    }
 
+    @Override
+    public byte[] toByteArray() {
         // byte 0: day
         final var dayAsByte = (byte) date.getDayOfMonth();
 
@@ -128,15 +140,6 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         return bytes;
     }
 
-    public LocalDate getDate() {
-        return this.date;
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return this.byteArray.clone();
-    }
-
     @Override
     public String toText() {
         return getDate().format(DateTimeFormatter.ISO_DATE);
@@ -146,9 +149,9 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("date", this.date)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("date", date)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -166,6 +169,6 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
 
     @Override
     public int hashCode() {
-        return this.date.hashCode();
+        return Objects.hash(getDPT(), date);
     }
 }

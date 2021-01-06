@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT6Value;
+import li.pitschmann.knx.core.datapoint.value.PayloadOptimizable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -81,13 +82,5 @@ class DPT6Test {
         assertThat(DPT6.VALUE_1_OCTET_COUNT.of(23)).isInstanceOf(DPT6Value.class);
         assertThat(DPT6.VALUE_1_OCTET_COUNT.of(-128)).isInstanceOf(DPT6Value.class);
         assertThat(DPT6.VALUE_1_OCTET_COUNT.of(127)).isInstanceOf(DPT6Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(int)")
-    void testToByteArray() {
-        assertThat(DPT6.VALUE_1_OCTET_COUNT.toByteArray(23)).containsExactly(0x17);
-        assertThat(DPT6.VALUE_1_OCTET_COUNT.toByteArray(-128)).containsExactly(0x80);
-        assertThat(DPT6.VALUE_1_OCTET_COUNT.toByteArray(127)).containsExactly(0x7F);
     }
 }

@@ -20,13 +20,12 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT8;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
+import java.math.BigInteger;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Data Point Value for {@link DPT8} (8.xxx)
@@ -43,64 +42,56 @@ import java.util.function.Function;
  * @author PITSCHR
  */
 public final class DPT8Value extends AbstractDataPointValue<DPT8> {
-    private final int rawSignedValue;
-    private final byte[] byteArray;
+    private final double value;
 
     public DPT8Value(final DPT8 dpt, final byte[] bytes) {
-        super(dpt);
-        Preconditions.checkArgument(bytes.length == 2);
-        this.rawSignedValue = Bytes.toSignedShort(bytes[0], bytes[1]);
-        this.byteArray = bytes;
+        this(dpt, new BigInteger(bytes).doubleValue());
     }
 
     public DPT8Value(final DPT8 dpt, final int value) {
+        this(dpt, (double) value);
+    }
+
+    public DPT8Value(final DPT8 dpt, final double value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.rawSignedValue = value;
-        this.byteArray = toByteArray(value);
-    }
-
-    /**
-     * Converts signed int value to byte array
-     *
-     * @param value signed integer value [-32768 .. 32767]
-     * @return two byte array
-     */
-    public static byte[] toByteArray(final int value) {
-        return new byte[]{(byte) (value >>> 8), (byte) value};
-    }
-
-    public double getSignedValue() {
-        final Function<Integer, Double> calcFunction = this.getDPT().getCalculationFunction();
-        if (calcFunction == null) {
-            return this.rawSignedValue;
-        } else {
-            return calcFunction.apply(this.rawSignedValue);
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
         }
+        this.value = value;
     }
 
-    public int getRawSignedValue() {
-        return this.rawSignedValue;
+    public double getValue() {
+        return value;
     }
 
     @Override
     public byte[] toByteArray() {
-        return this.byteArray.clone();
+        final var calcFunction = this.getDPT().getCalculationFunction();
+        final int newValue;
+        if (calcFunction == null) {
+            newValue = (int) value;
+        } else {
+            newValue = (int) Math.round(calcFunction.applyAsDouble(value));
+        }
+
+        return new byte[]{
+                (byte) (newValue >>> 8), //
+                (byte) newValue //
+        };
     }
 
     @Override
     public String toText() {
-        return getValueAsText(getSignedValue());
+        return getValueAsText(value);
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("signedValue", this.getSignedValue())
-                .add("rawSignedValue", this.rawSignedValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", this.getDPT().getId())
+                .add("value", getValueAsText(value))
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -112,13 +103,13 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
         } else if (obj instanceof DPT8Value) {
             final var other = (DPT8Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.rawSignedValue, other.rawSignedValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.rawSignedValue);
+        return Objects.hash(getDPT(), value);
     }
 }

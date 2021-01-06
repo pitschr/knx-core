@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import li.pitschmann.knx.core.plugin.api.TestUtils;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
@@ -31,6 +32,7 @@ import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 /**
@@ -39,7 +41,7 @@ import static org.mockito.Mockito.when;
 public class WriteRequestControllerTest {
 
     @ControllerTest(WriteRequestController.class)
-    @DisplayName("OK: Write Request endpoint using raw data (no DPT information required)")
+    @DisplayName("OK: Write Request endpoint using raw data")
     public void testWriteUsingRawData(final Controller controller) {
         final var writeRequestController = (WriteRequestController) controller;
         final var groupAddress = GroupAddress.of(0, 0, 23);
@@ -50,6 +52,7 @@ public class WriteRequestControllerTest {
 
         final var request = new WriteRequest();
         request.setGroupAddress(groupAddress);
+        request.setDataPointType(DPT1.SWITCH);
         request.setRaw(new byte[]{0x01});
 
         final var response = writeRequestController.writeRequest(request);
@@ -113,7 +116,7 @@ public class WriteRequestControllerTest {
         //
 
         // mock no ack body was found
-        when(writeRequestController.getKnxClient().writeRequest(groupAddress, new byte[]{0x01})).thenReturn(false);
+        when(writeRequestController.getKnxClient().writeRequest(eq(groupAddress), any(DataPointValue.class))).thenReturn(false);
 
         //
         // Verification

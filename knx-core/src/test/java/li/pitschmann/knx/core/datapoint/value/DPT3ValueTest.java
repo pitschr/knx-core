@@ -19,10 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT3;
-import li.pitschmann.knx.core.datapoint.value.DPT3Value.StepInterval;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,159 +31,177 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT3ValueTest {
-    /**
-     * Test {@link DPT3Value}
-     */
+class DPT3ValueTest {
+
     @Test
-    public void test() {
-        for (var stepCode = 0; stepCode < 7; stepCode++) {
-            final var stepInterval = StepInterval.ofCode(stepCode);
-            final var stepIntervalText = stepInterval.toText();
-            this.assertValue(DPT3.CONTROL_BLINDS, (byte) stepCode, false, stepCode, stepInterval, stepIntervalText);
-            this.assertValue(DPT3.CONTROL_BLINDS, (byte) (0x08 | stepCode), true, stepCode, stepInterval, "controlled '" + stepIntervalText + "'");
-        }
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: no control, stop/0%")
+    void testByteNotControlledPercent0() {
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b0000_0000);
+        assertThat(value.isControlled()).isFalse();
+        assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.STOP);
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("Stop");
     }
 
-    /**
-     * Test {@link DPT3Value} failures
-     */
     @Test
-    public void testFailures() {
-        // step code must be between 0..7
-        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, 8)).isInstanceOf(KnxNumberOutOfRangeException.class);
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: no control, 12%")
+    void testByteNotControlledPercent12() {
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b0000_0100);
+        assertThat(value.isControlled()).isFalse();
+        assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_12);
+        assertThat(value.toByteArray()).containsExactly(0x04);
 
-        // step interval must be defined
-        assertThatThrownBy(() -> new DPT3Value(DPT3.CONTROL_BLINDS, false, null)).isInstanceOf(KnxNullPointerException.class);
-
+        assertThat(value.toText()).isEqualTo("12%");
     }
 
-    private void assertValue(final DPT3 dpt, final byte b, final boolean controlled, final int stepCode, final StepInterval stepInterval, final String text) {
-        final var dptValue = new DPT3Value(dpt, controlled, stepCode);
-        final var dptValueByByte = new DPT3Value(dpt, b);
-        final var dptvalueByStepInterval = new DPT3Value(dpt, controlled, stepInterval);
+    @Test
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: control, 25%")
+    void testByteControlledPercent25() {
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b0000_1011);
+        assertThat(value.isControlled()).isTrue();
+        assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_25);
+        assertThat(value.toByteArray()).containsExactly(0x0B);
 
-        // instance methods
-        assertThat(dptValue.isControlled()).isEqualTo(controlled);
-        assertThat(dptValue.getStepCode()).isEqualTo(stepCode);
-        assertThat(dptValue.getStepInterval()).isEqualTo(stepInterval);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("controlled '25%'");
+    }
 
-        // class methods
-        assertThat(DPT3Value.toByteArray(controlled, stepCode)).containsExactly(b);
+    @Test
+    @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: control, 100%")
+    void testByteControlledPercent100() {
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, (byte)0b0000_1001);
+        assertThat(value.isControlled()).isTrue();
+        assertThat(value.getStepInterval()).isSameAs(DPT3Value.StepInterval.PERCENT_100);
+        assertThat(value.toByteArray()).containsExactly(0x09);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
-        assertThat(dptvalueByStepInterval).isEqualTo(dptValue);
-        assertThat(dptvalueByStepInterval).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("controlled '100%'");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var valueBlinds = new DPT3Value(DPT3.BLINDS_CONTROL, false, DPT3Value.StepInterval.PERCENT_100);
+        assertThat(valueBlinds).hasToString(
+                "DPT3Value{dpt=3.008, controlled=false, stepInterval=PERCENT_100, byteArray=0x01}"
+        );
+
+        final var valueDimming = new DPT3Value(DPT3.DIMMING_CONTROL, true, DPT3Value.StepInterval.PERCENT_6);
+        assertThat(valueDimming).hasToString(
+                "DPT3Value{dpt=3.007, controlled=true, stepInterval=PERCENT_6, byteArray=0x0D}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_3);
+        final var valueByte = new DPT3Value(DPT3.BLINDS_CONTROL, (byte)0b000_1110);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT3Value(DPT3.CONTROL_DIMMING, controlled, stepCode));
-        assertThat(dptValue).isNotEqualTo(new DPT3Value(dpt, controlled, stepCode + 1));
-        assertThat(dptValue).isNotEqualTo(new DPT3Value(dpt, !controlled, stepCode));
-
-        // toString
-        final var toString = String.format("DPT3Value{dpt=%s, controlled=%s, stepCode=%s, stepInterval=%s, byteArray=%s}", dpt, controlled, stepCode,
-                stepInterval, ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
-        assertThat(dptvalueByStepInterval).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.DIMMING_CONTROL, true, DPT3Value.StepInterval.PERCENT_3));
+        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.BLINDS_CONTROL, false, DPT3Value.StepInterval.PERCENT_3));
+        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.BLINDS_CONTROL, true, DPT3Value.StepInterval.PERCENT_1));
     }
 
-    /**
-     * Tests {@link StepInterval#ofCode(int)}
-     */
     @Test
+    @DisplayName("Implements 'PayloadOptimizable' interface")
+    void testPayloadOptimizable() {
+        assertThat(PayloadOptimizable.class).isAssignableFrom(DPT3Value.class);
+    }
+
+    @Test
+    @DisplayName("StepInterval#ofCode(int)")
     public void testStepByOfCode() {
         // 0 .. 7
-        assertThat(StepInterval.ofCode(0)).isEqualTo(StepInterval.STOP);
-        assertThat(StepInterval.ofCode(1)).isEqualTo(StepInterval.PERCENT_100);
-        assertThat(StepInterval.ofCode(2)).isEqualTo(StepInterval.PERCENT_50);
-        assertThat(StepInterval.ofCode(3)).isEqualTo(StepInterval.PERCENT_25);
-        assertThat(StepInterval.ofCode(4)).isEqualTo(StepInterval.PERCENT_12);
-        assertThat(StepInterval.ofCode(5)).isEqualTo(StepInterval.PERCENT_6);
-        assertThat(StepInterval.ofCode(6)).isEqualTo(StepInterval.PERCENT_3);
-        assertThat(StepInterval.ofCode(7)).isEqualTo(StepInterval.PERCENT_1);
+        assertThat(DPT3Value.StepInterval.ofCode(0)).isEqualTo(DPT3Value.StepInterval.STOP);
+        assertThat(DPT3Value.StepInterval.ofCode(1)).isEqualTo(DPT3Value.StepInterval.PERCENT_100);
+        assertThat(DPT3Value.StepInterval.ofCode(2)).isEqualTo(DPT3Value.StepInterval.PERCENT_50);
+        assertThat(DPT3Value.StepInterval.ofCode(3)).isEqualTo(DPT3Value.StepInterval.PERCENT_25);
+        assertThat(DPT3Value.StepInterval.ofCode(4)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
+        assertThat(DPT3Value.StepInterval.ofCode(5)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
+        assertThat(DPT3Value.StepInterval.ofCode(6)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
+        assertThat(DPT3Value.StepInterval.ofCode(7)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
 
         // invalid
-        assertThatThrownBy(() -> StepInterval.ofCode(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> StepInterval.ofCode(8)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> DPT3Value.StepInterval.ofCode(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> DPT3Value.StepInterval.ofCode(8)).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
-    /**
-     * Tests {@link StepInterval#ofInterval(int)}
-     */
     @Test
+    @DisplayName("StepInterval#ofInterval(int)")
     public void testStepByOfInterval() {
         // 0
-        assertThat(StepInterval.ofInterval(0)).isEqualTo(StepInterval.STOP);
+        assertThat(DPT3Value.StepInterval.ofInterval(0)).isEqualTo(DPT3Value.StepInterval.STOP);
         // 1
-        assertThat(StepInterval.ofInterval(1)).isEqualTo(StepInterval.PERCENT_100);
+        assertThat(DPT3Value.StepInterval.ofInterval(1)).isEqualTo(DPT3Value.StepInterval.PERCENT_100);
         // 2
-        assertThat(StepInterval.ofInterval(2)).isEqualTo(StepInterval.PERCENT_50);
+        assertThat(DPT3Value.StepInterval.ofInterval(2)).isEqualTo(DPT3Value.StepInterval.PERCENT_50);
         // 3
-        assertThat(StepInterval.ofInterval(3)).isEqualTo(StepInterval.PERCENT_25);
-        assertThat(StepInterval.ofInterval(4)).isEqualTo(StepInterval.PERCENT_25);
+        assertThat(DPT3Value.StepInterval.ofInterval(3)).isEqualTo(DPT3Value.StepInterval.PERCENT_25);
+        assertThat(DPT3Value.StepInterval.ofInterval(4)).isEqualTo(DPT3Value.StepInterval.PERCENT_25);
         // 4
-        for (var i = 5; i <= 8; i++) {
-            assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_12);
-        }
+        assertThat(DPT3Value.StepInterval.ofInterval(5)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
+        assertThat(DPT3Value.StepInterval.ofInterval(6)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
+        assertThat(DPT3Value.StepInterval.ofInterval(7)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
+        assertThat(DPT3Value.StepInterval.ofInterval(8)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
         // 5
-        for (var i = 9; i <= 16; i++) {
-            assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_6);
-        }
+        assertThat(DPT3Value.StepInterval.ofInterval(9)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
+        assertThat(DPT3Value.StepInterval.ofInterval(10)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
+        assertThat(DPT3Value.StepInterval.ofInterval(15)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
+        assertThat(DPT3Value.StepInterval.ofInterval(16)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
         // 6
-        for (var i = 17; i <= 32; i++) {
-            assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_3);
-        }
+        assertThat(DPT3Value.StepInterval.ofInterval(17)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
+        assertThat(DPT3Value.StepInterval.ofInterval(18)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
+        assertThat(DPT3Value.StepInterval.ofInterval(31)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
+        assertThat(DPT3Value.StepInterval.ofInterval(32)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
         // 7
-        for (var i = 33; i <= 64; i++) {
-            assertThat(StepInterval.ofInterval(i)).isEqualTo(StepInterval.PERCENT_1);
-        }
+        assertThat(DPT3Value.StepInterval.ofInterval(33)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
+        assertThat(DPT3Value.StepInterval.ofInterval(34)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
+        assertThat(DPT3Value.StepInterval.ofInterval(63)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
+        assertThat(DPT3Value.StepInterval.ofInterval(64)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
 
         // invalid
-        assertThatThrownBy(() -> StepInterval.ofInterval(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> StepInterval.ofInterval(65)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> DPT3Value.StepInterval.ofInterval(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> DPT3Value.StepInterval.ofInterval(65)).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
-    /**
-     * Tests {@link StepInterval#ofPercent(float)}
-     */
     @Test
+    @DisplayName("StepInterval#ofPercent(double)")
     public void testStepByOfPercent() {
         // 0
-        assertThat(StepInterval.ofPercent(0f)).isEqualTo(StepInterval.STOP);
-        assertThat(StepInterval.ofPercent(0.0099f)).isEqualTo(StepInterval.STOP);
+        assertThat(DPT3Value.StepInterval.ofPercent(0.0)).isEqualTo(DPT3Value.StepInterval.STOP);
+        assertThat(DPT3Value.StepInterval.ofPercent(0.0099)).isEqualTo(DPT3Value.StepInterval.STOP);
         // 1
-        assertThat(StepInterval.ofPercent(0.01f)).isEqualTo(StepInterval.PERCENT_1);
-        assertThat(StepInterval.ofPercent(2.199f)).isEqualTo(StepInterval.PERCENT_1);
+        assertThat(DPT3Value.StepInterval.ofPercent(0.01)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
+        assertThat(DPT3Value.StepInterval.ofPercent(2.199)).isEqualTo(DPT3Value.StepInterval.PERCENT_1);
         // 2
-        assertThat(StepInterval.ofPercent(2.2f)).isEqualTo(StepInterval.PERCENT_3);
-        assertThat(StepInterval.ofPercent(4.499f)).isEqualTo(StepInterval.PERCENT_3);
+        assertThat(DPT3Value.StepInterval.ofPercent(2.2)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
+        assertThat(DPT3Value.StepInterval.ofPercent(4.499)).isEqualTo(DPT3Value.StepInterval.PERCENT_3);
         // 3
-        assertThat(StepInterval.ofPercent(4.5f)).isEqualTo(StepInterval.PERCENT_6);
-        assertThat(StepInterval.ofPercent(8.999f)).isEqualTo(StepInterval.PERCENT_6);
+        assertThat(DPT3Value.StepInterval.ofPercent(4.5)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
+        assertThat(DPT3Value.StepInterval.ofPercent(8.999)).isEqualTo(DPT3Value.StepInterval.PERCENT_6);
         // 4
-        assertThat(StepInterval.ofPercent(9.0f)).isEqualTo(StepInterval.PERCENT_12);
-        assertThat(StepInterval.ofPercent(18.4f)).isEqualTo(StepInterval.PERCENT_12);
+        assertThat(DPT3Value.StepInterval.ofPercent(9.0)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
+        assertThat(DPT3Value.StepInterval.ofPercent(18.4)).isEqualTo(DPT3Value.StepInterval.PERCENT_12);
         // 5
-        assertThat(StepInterval.ofPercent(18.5f)).isEqualTo(StepInterval.PERCENT_25);
-        assertThat(StepInterval.ofPercent(37.499f)).isEqualTo(StepInterval.PERCENT_25);
+        assertThat(DPT3Value.StepInterval.ofPercent(18.5)).isEqualTo(DPT3Value.StepInterval.PERCENT_25);
+        assertThat(DPT3Value.StepInterval.ofPercent(37.499)).isEqualTo(DPT3Value.StepInterval.PERCENT_25);
         // 6
-        assertThat(StepInterval.ofPercent(37.5f)).isEqualTo(StepInterval.PERCENT_50);
-        assertThat(StepInterval.ofPercent(74.999f)).isEqualTo(StepInterval.PERCENT_50);
+        assertThat(DPT3Value.StepInterval.ofPercent(37.5)).isEqualTo(DPT3Value.StepInterval.PERCENT_50);
+        assertThat(DPT3Value.StepInterval.ofPercent(74.999)).isEqualTo(DPT3Value.StepInterval.PERCENT_50);
         // 7
-        assertThat(StepInterval.ofPercent(75.0f)).isEqualTo(StepInterval.PERCENT_100);
-        assertThat(StepInterval.ofPercent(100.0f)).isEqualTo(StepInterval.PERCENT_100);
+        assertThat(DPT3Value.StepInterval.ofPercent(75.0)).isEqualTo(DPT3Value.StepInterval.PERCENT_100);
+        assertThat(DPT3Value.StepInterval.ofPercent(100.0)).isEqualTo(DPT3Value.StepInterval.PERCENT_100);
 
         // invalid
-        assertThatThrownBy(() -> StepInterval.ofPercent(-0.0001f)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> StepInterval.ofPercent(100.0001f)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> DPT3Value.StepInterval.ofPercent(-0.0001)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> DPT3Value.StepInterval.ofPercent(100.0001)).isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 }

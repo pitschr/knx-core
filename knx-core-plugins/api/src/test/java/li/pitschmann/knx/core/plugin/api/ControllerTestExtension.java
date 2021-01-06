@@ -141,7 +141,6 @@ public final class ControllerTestExtension
         when(knxClientMock.getConfig(any(ConfigValue.class))).thenCallRealMethod();
         when(knxClientMock.getConfig().getProject()).thenReturn(xmlProject);
         when(knxClientMock.readRequest(any(GroupAddress.class))).thenReturn(true);
-        when(knxClientMock.writeRequest(any(GroupAddress.class), any(byte[].class))).thenReturn(true);
         when(knxClientMock.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(true);
 
         // append pre-defined Group Addresses from XML Project to the KNX Client Mock
