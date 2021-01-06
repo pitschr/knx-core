@@ -74,8 +74,10 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
             newValue = (int) Math.round(calcFunction.applyAsDouble(value));
         }
 
-        // multiply
-        return new byte[]{(byte) (newValue >>> 8), (byte) newValue};
+        return new byte[]{
+                (byte) (newValue >>> 8), //
+                (byte) newValue //
+        };
     }
 
     @Override

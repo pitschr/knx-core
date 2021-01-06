@@ -86,29 +86,4 @@ class DPT13Test {
         assertThat(dpt.of(0)).isInstanceOf(DPT13Value.class);
         assertThat(dpt.of(2147483647)).isInstanceOf(DPT13Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(int)")
-    void testToByteArray() {
-        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
-        assertThat(dpt.toByteArray(-2147483648)).containsExactly(0x80, 0x00, 0x00, 0x00);
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00, 0x00, 0x00);
-        assertThat(dpt.toByteArray(2147483647)).containsExactly(0x7F, 0xFF, 0xFF, 0xFF);
-    }
-
-    @Test
-    @DisplayName("Test #getCalculationFunction()")
-    void testCalculationFunction() {
-        assertThat(DPT13.VALUE_4_OCTET_COUNT.getCalculationFunction()).isNull();
-
-        // Flow Rate in 0.0001m^3 resolution (-2147483648 = -214748.3648m^3, 0 = 0ms, 2147483647 = 214748.3647m^3)
-        final var dpt = DPT13.FLOW_RATE;
-        assertThat(dpt.getCalculationFunction()).isNotNull();
-        assertThat(dpt.of(-2147483648).getRawSignedValue()).isEqualTo(-2147483648);
-        assertThat(dpt.of(-2147483648).getSignedValue()).isEqualTo(-214748.3648);
-        assertThat(dpt.of(0).getRawSignedValue()).isZero();
-        assertThat(dpt.of(0).getSignedValue()).isZero();
-        assertThat(dpt.of(2147483647).getRawSignedValue()).isEqualTo(2147483647);
-        assertThat(dpt.of(2147483647).getSignedValue()).isEqualTo(214748.3647);
-    }
 }

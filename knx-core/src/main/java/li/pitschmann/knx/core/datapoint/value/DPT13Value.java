@@ -20,11 +20,11 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT13;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import java.nio.ByteBuffer;
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -45,69 +45,46 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT13Value extends AbstractDataPointValue<DPT13> {
-    private final int rawSignedValue;
-    private final byte[] byteArray;
+    private final int value;
 
     public DPT13Value(final DPT13 dpt, final byte[] bytes) {
-        super(dpt);
-        Preconditions.checkArgument(bytes.length == 4);
-        // signed value
-        this.rawSignedValue = ByteBuffer.wrap(bytes).getInt();
-        this.byteArray = bytes;
+        this(dpt, new BigInteger(bytes).intValue());
     }
 
     public DPT13Value(final DPT13 dpt, final int value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.rawSignedValue = value;
-        this.byteArray = toByteArray(value);
-    }
-
-    /**
-     * Converts signed int value to byte array
-     *
-     * @param value integer value to be converted
-     * @return byte array
-     */
-    public static byte[] toByteArray(final int value) {
-        return new byte[]{ //
-                (byte) (value >> 24), //
-                (byte) (value >> 16), //
-                (byte) (value >> 8), //
-                (byte) value};
-    }
-
-    public double getSignedValue() {
-        final var calcFunction = this.getDPT().getCalculationFunction();
-        if (calcFunction == null) {
-            return this.rawSignedValue;
-        } else {
-            return calcFunction.applyAsDouble(this.rawSignedValue);
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
         }
+        this.value = value;
     }
 
-    public int getRawSignedValue() {
-        return this.rawSignedValue;
+    public int getValue() {
+        return value;
     }
 
     @Override
     public byte[] toByteArray() {
-        return this.byteArray.clone();
+        return new byte[]{ //
+                (byte) (value >>> 24), //
+                (byte) (value >>> 16), //
+                (byte) (value >>> 8), //
+                (byte) value //
+        };
     }
 
     @Override
     public String toText() {
-        return getValueAsText(getSignedValue());
+        return getValueAsText(value);
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("signedValue", this.getSignedValue())
-                .add("rawSignedValue", this.rawSignedValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", this.getDPT().getId())
+                .add("value", value)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -118,14 +95,14 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
             return true;
         } else if (obj instanceof DPT13Value) {
             final var other = (DPT13Value) obj;
-            return Objects.equals(this.getDPT(), other.getDPT()) && Objects.equals(this.rawSignedValue, other.rawSignedValue);
+            return Objects.equals(this.getDPT(), other.getDPT()) //
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.rawSignedValue);
+        return Objects.hash(getDPT(), value);
     }
-
 }

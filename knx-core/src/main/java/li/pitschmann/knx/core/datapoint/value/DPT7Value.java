@@ -62,14 +62,17 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
 
     @Override
     public byte[] toByteArray() {
-        final var calcFunction = this.getDPT().getCalculationFunction();
+        final var calcFunction = getDPT().getCalculationFunction();
         final int newValue;
         if (calcFunction == null) {
             newValue = value;
         } else {
             newValue = (int) Math.round(calcFunction.applyAsDouble(value));
         }
-        return new byte[]{(byte) (newValue >>> 8), (byte) newValue};
+        return new byte[]{
+                (byte) (newValue >>> 8), //
+                (byte) newValue //
+        };
     }
 
     @Override
@@ -81,7 +84,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT().getId())
+                .add("dpt", getDPT().getId())
                 .add("value", value)
                 .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
