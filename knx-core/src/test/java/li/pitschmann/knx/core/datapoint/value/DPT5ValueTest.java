@@ -150,7 +150,7 @@ class DPT5ValueTest {
 
         final var valueAngle = new DPT5Value(DPT5.ANGLE, 180);
         assertThat(valueAngle).hasToString(
-                "DPT5Value{dpt=5.003, value=180, byteArray=0x7F}"
+                "DPT5Value{dpt=5.003, value=180, byteArray=0x80}"
         );
 
     }
