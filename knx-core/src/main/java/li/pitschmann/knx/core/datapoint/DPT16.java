@@ -153,20 +153,10 @@ public final class DPT16 extends BaseDataPointType<DPT16Value> {
 
     @Override
     protected DPT16Value parse(final String[] args) {
-        return new DPT16Value(this, args[0]);
+        return of(args[0]);
     }
 
     public DPT16Value of(final String text) {
         return new DPT16Value(this, text);
-    }
-
-    /**
-     * Converts string representation to 14-octet array
-     *
-     * @param text up to 14 characters only!
-     * @return 14-octet array
-     */
-    public byte[] toByteArray(final String text) {
-        return DPT16Value.toByteArray(text, this.getCharset());
     }
 }

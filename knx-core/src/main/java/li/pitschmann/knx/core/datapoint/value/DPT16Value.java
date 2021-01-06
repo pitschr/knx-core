@@ -21,6 +21,7 @@ package li.pitschmann.knx.core.datapoint.value;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT16;
 import li.pitschmann.knx.core.exceptions.KnxException;
+import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -68,32 +69,9 @@ import java.util.Objects;
  */
 public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     private final String characters;
-    private final byte[] byteArray;
 
     public DPT16Value(final DPT16 dpt, final byte[] bytes) {
-        super(dpt);
-
-        // characters
-        if (bytes == null || bytes.length == 0) {
-            this.characters = "";
-            this.byteArray = new byte[14];
-        } else if (bytes.length > 14) {
-            throw new IllegalArgumentException(
-                    String.format("The length of bytes is too long (expected up to 14 bytes): %s", ByteFormatter.formatHexAsString(bytes)));
-        } else {
-            // removing 0x00 suffix if available
-            byte[] newBytes = Bytes.trimRight(bytes, (byte) 0x00);
-            try {
-                char[] chars = new char[newBytes.length];
-                dpt.getCharsetDecoder().decode(ByteBuffer.wrap(newBytes)).get(chars);
-                this.characters = new String(chars);
-            } catch (CharacterCodingException e) {
-                throw new KnxException(String.format("Issue during decoding charset '%s' with value: %s (original: %s)", dpt.getCharset(),
-                        ByteFormatter.formatHexAsString(newBytes), ByteFormatter.formatHexAsString(bytes)), e);
-            }
-            // byte array must be 14-bytes, pad 0x00 on right side
-            this.byteArray = Bytes.padRight(newBytes, (byte) 0x00, 14);
-        }
+        this(dpt, toCharacters(dpt, bytes));
     }
 
     public DPT16Value(final DPT16 dpt, final @Nullable String characters) {
@@ -101,40 +79,58 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
         Preconditions.checkArgument(characters == null || characters.length() <= 14,
                 "The length of characters is too long (expected up to 14 characters): {}", characters);
         this.characters = Objects.toString(characters, "");
-        this.byteArray = toByteArray(characters, dpt.getCharset());
     }
 
     /**
-     * Converts characters to byte array
+     * Converts {@code bytes} to a string representation of characters
      *
-     * @param characters may not be longer than 14 characters
-     * @param charset    used to encode the characters
-     * @return byte array
+     * @param dpt the data point that has {@link Charset} and {@link java.nio.charset.CharsetDecoder}
+     * @param bytes byte array to be decoded; may be {@code null} or empty
+     * @return a string representation of characters, or empty string if {@code bytes} were {@code null} or empty
+     * @throws KnxIllegalArgumentException if {@code bytes} could not be decoded
      */
-    public static byte[] toByteArray(final @Nullable String characters, final Charset charset) {
-        if (Strings.isNullOrEmpty(characters)) {
-            return new byte[14];
-        } else if (characters.length() > 14) {
-            throw new IllegalArgumentException(String.format("The length of characters is too long (expected up to 14 chars): %s", characters));
-        } else if (charset.newEncoder().canEncode(characters)) {
-            byte[] characterAsBytes = characters.getBytes(charset);
-            if (characterAsBytes.length < 14) {
-                characterAsBytes = Bytes.padRight(characterAsBytes, (byte) 0x00, 14);
-            }
-            return characterAsBytes;
+    private static String toCharacters(final DPT16 dpt, final byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
         } else {
-            throw new KnxException(String.format("The characters '%s' contains a character which is not compatible with charset '%s'.", characters, charset),
-                    new CharacterCodingException());
+            // removing 0x00 suffix if available
+            final byte[] newBytes = Bytes.trimRight(bytes, (byte) 0x00);
+            try {
+                final char[] chars = new char[newBytes.length];
+                dpt.getCharsetDecoder().decode(ByteBuffer.wrap(newBytes)).get(chars);
+                return new String(chars);
+            } catch (final CharacterCodingException e) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Issue during decoding charset '%s' with: %s", //
+                                dpt.getCharset(), //
+                                ByteFormatter.formatHexAsString(newBytes)
+                        )
+                );
+            }
         }
     }
 
     public String getCharacters() {
-        return this.characters;
+        return characters;
     }
 
     @Override
     public byte[] toByteArray() {
-        return this.byteArray.clone();
+        if (Strings.isNullOrEmpty(characters)) {
+            return new byte[14];
+        } else {
+            final var charSet = getDPT().getCharset();
+            if (charSet.newEncoder().canEncode(characters)) {
+                byte[] characterAsBytes = characters.getBytes(charSet);
+                if (characterAsBytes.length < 14) {
+                    characterAsBytes = Bytes.padRight(characterAsBytes, (byte) 0x00, 14);
+                }
+                return characterAsBytes;
+            } else {
+                throw new KnxException("Issue during decoding charset '{}' with: {}", charSet, characters);
+            }
+        }
     }
 
     /**
@@ -151,9 +147,9 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("characters", this.characters)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("characters", characters)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -172,6 +168,6 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.characters);
+        return Objects.hash(getDPT(), characters);
     }
 }
