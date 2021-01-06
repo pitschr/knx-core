@@ -65,17 +65,17 @@ class DPT14Test {
     @DisplayName("Test #parse(byte[])")
     void testByteParse() {
         final var dpt = DPT14.TEMPERATURE;
-        assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00, 0x00, 0x00})).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.parse(new byte[]{0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new byte[]{0x7F, 0x7F, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new byte[]{(byte) 0xFF, 0x7F, (byte) 0xFF, (byte) 0xFF})).isInstanceOf(DPT14Value.class);
     }
 
     @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT14.TEMPERATURE;
-        assertThat(dpt.parse(new String[]{"-3.40282347e+38f"})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new String[]{"-3.40282347e+38"})).isInstanceOf(DPT14Value.class);
         assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT14Value.class);
-        assertThat(dpt.parse(new String[]{"3.40282347e+38f"})).isInstanceOf(DPT14Value.class);
+        assertThat(dpt.parse(new String[]{"3.40282347e+38"})).isInstanceOf(DPT14Value.class);
     }
 
     @Test
@@ -85,14 +85,5 @@ class DPT14Test {
         assertThat(dpt.of(-3.40282347e+38f)).isInstanceOf(DPT14Value.class);
         assertThat(dpt.of(0)).isInstanceOf(DPT14Value.class);
         assertThat(dpt.of(3.40282347e+38f)).isInstanceOf(DPT14Value.class);
-    }
-
-    @Test
-    @DisplayName("Test #toByteArray(double)")
-    void testToByteArray() {
-        final var dpt = DPT14.TEMPERATURE;
-        assertThat(dpt.toByteArray(-3.40282347e+38f)).containsExactly(0xFF, 0x7F, 0xFF, 0xFF);
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00, 0x00, 0x00);
-        assertThat(dpt.toByteArray(3.40282347e+38f)).containsExactly(0x7F, 0x7F, 0xFF, 0xFF);
     }
 }

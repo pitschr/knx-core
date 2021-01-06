@@ -20,8 +20,8 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT14;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.nio.ByteBuffer;
@@ -47,69 +47,62 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT14Value extends AbstractDataPointValue<DPT14> {
-    private final double floatingValue;
-    private final byte[] byteArray;
+    private final double value;
 
     public DPT14Value(final DPT14 dpt, final byte[] bytes) {
-        super(dpt);
-        Preconditions.checkArgument(bytes.length == 4);
-        this.floatingValue = toFloatingValue(bytes);
-        this.byteArray = bytes;
+        this(dpt, toFloatingValue(bytes));
     }
 
     public DPT14Value(final DPT14 dpt, final double value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.floatingValue = value;
-        this.byteArray = toByteArray(value);
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
+        }
+        this.value = value;
     }
 
     /**
      * Converts the four byte array to float
      *
      * @param bytes byte array to be converted
-     * @return float value
+     * @return double value
+     * @throws KnxNumberOutOfRangeException if the length of bytes is not expected
      */
-    public static double toFloatingValue(final byte[] bytes) {
+    private static double toFloatingValue(final byte[] bytes) {
+        if (bytes.length != 4) {
+            throw new KnxNumberOutOfRangeException("bytes", 4, 4, bytes.length, bytes);
+        }
+
         return Float.intBitsToFloat(ByteBuffer.wrap(bytes).getInt());
     }
 
-    /**
-     * Converts double value to byte array
-     *
-     * @param value double value to be converted
-     * @return 4-byte array
-     */
-    public static byte[] toByteArray(final double value) {
-        final var rawBits = Float.floatToIntBits(Double.valueOf(value).floatValue());
-        return new byte[]{ //
-                (byte) ((rawBits >>> 24) & 0xFF), //
-                (byte) ((rawBits >>> 16) & 0xFF), //
-                (byte) ((rawBits >>> 8) & 0xFF), //
-                (byte) (rawBits & 0xFF)};
-    }
-
-    public double getFloatingValue() {
-        return this.floatingValue;
+    public double getValue() {
+        return value;
     }
 
     @Override
     public byte[] toByteArray() {
-        return this.byteArray.clone();
+        final var rawBits = Float.floatToIntBits((float) value);
+        return new byte[]{ //
+                (byte) ((rawBits >>> 24) & 0xFF), //
+                (byte) ((rawBits >>> 16) & 0xFF), //
+                (byte) ((rawBits >>> 8) & 0xFF), //
+                (byte) (rawBits & 0xFF) //
+        };
     }
 
     @Override
     public String toText() {
-        return getValueAsText(getFloatingValue());
+        return getValueAsText(value);
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("floatingValue", this.floatingValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("value", value)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -121,13 +114,13 @@ public final class DPT14Value extends AbstractDataPointValue<DPT14> {
         } else if (obj instanceof DPT14Value) {
             final var other = (DPT14Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.floatingValue, other.floatingValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.floatingValue);
+        return Objects.hash(getDPT(), value);
     }
 }

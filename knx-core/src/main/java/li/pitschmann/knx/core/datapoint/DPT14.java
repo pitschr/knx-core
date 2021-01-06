@@ -1873,14 +1873,10 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
 
     @Override
     protected DPT14Value parse(final String[] args) {
-        return new DPT14Value(this, Double.parseDouble(args[0]));
+        return of(Double.parseDouble(args[0]));
     }
 
     public DPT14Value of(final double value) {
         return new DPT14Value(this, value);
-    }
-
-    public byte[] toByteArray(final double value) {
-        return DPT14Value.toByteArray(value);
     }
 }
