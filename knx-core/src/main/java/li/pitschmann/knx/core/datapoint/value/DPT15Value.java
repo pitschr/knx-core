@@ -194,13 +194,18 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
          * @param b byte
          */
         public Flags(final byte b) {
-            // flags
-            this.error = (b & 0x80) != 0x00;
-            this.permissionAccepted = (b & 0x40) != 0x00;
-            this.readDirectionRightToLeft = (b & 0x20) != 0x00;
-            this.encryptionEnabled = (b & 0x10) != 0x00;
-            // index
-            this.index = b & 0x0F;
+            this(
+                    // error
+                    (b & 0x80) != 0x00,
+                    // permission accepted
+                    (b & 0x40) != 0x00,
+                    // read direction right-to-left
+                    (b & 0x20) != 0x00,
+                    // encryption enabled
+                    (b & 0x10) != 0x00,
+                    // index
+                    b & 0x0F
+            );
         }
 
         /**

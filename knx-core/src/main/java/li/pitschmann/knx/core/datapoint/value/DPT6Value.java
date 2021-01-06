@@ -128,14 +128,20 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
         private final Mode mode;
 
         public StatusMode(final byte b) {
-            super(DPT6.STATUS_MODE); // hardcoded
-
-            this.a = (b & 0x80) != 0x00;
-            this.b = (b & 0x40) != 0x00;
-            this.c = (b & 0x20) != 0x00;
-            this.d = (b & 0x10) != 0x00;
-            this.e = (b & 0x08) != 0x00;
-            this.mode = Mode.of(b & 0x07);
+            this(
+                    // boolean: a
+                    (b & 0x80) != 0x00,
+                    // boolean: b
+                    (b & 0x40) != 0x00,
+                    // boolean: c
+                    (b & 0x20) != 0x00,
+                    // boolean: d
+                    (b & 0x10) != 0x00,
+                    // boolean e
+                    (b & 0x08) != 0x00,
+                    // mode
+                    Mode.of(b & 0x07)
+            );
         }
 
         public StatusMode(final boolean a, final boolean b, final boolean c, final boolean d, final boolean e, final Mode mode) {

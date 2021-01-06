@@ -51,11 +51,12 @@ public final class DPT3Value extends AbstractDataPointValue<DPT3> implements Pay
     private final StepInterval stepInterval;
 
     public DPT3Value(final DPT3 dpt, final byte b) {
-        super(dpt);
-        // bit 4 = controlled
-        controlled = (b & 0x08) != 0x00;
-        // bit 0 .. 3 = stepCode
-        stepInterval = StepInterval.ofCode(b & 0x07);
+        this(dpt,
+            // bit 4 = controlled
+            (b & 0x08) != 0x00,
+            // bit 0 .. 3 = stepCode
+                StepInterval.ofCode(b & 0x07)
+        );
     }
 
     public DPT3Value(final DPT3 dpt, final boolean controlled, final StepInterval stepInterval) {

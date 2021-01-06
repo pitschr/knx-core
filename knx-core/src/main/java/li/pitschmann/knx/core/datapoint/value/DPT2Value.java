@@ -45,11 +45,12 @@ public final class DPT2Value extends AbstractDataPointValue<DPT2> implements Pay
     private final boolean value;
 
     public DPT2Value(final DPT2 dpt, final byte b) {
-        super(dpt);
-        // bit 1 = controlled
-        controlled = (b & 0x02) != 0x00;
-        // bit 0 = value
-        value = (b & 0x01) != 0x00;
+        this(dpt,
+                // bit 1 = controlled
+                (b & 0x02) != 0x00,
+                // bit 0 = value
+            (b & 0x01) != 0x00
+        );
     }
 
     public DPT2Value(final DPT2 dpt, final boolean controlled, final boolean booleanValue) {
