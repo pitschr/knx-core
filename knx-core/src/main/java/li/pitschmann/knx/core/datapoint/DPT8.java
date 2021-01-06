@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT8Value;
 
-import java.util.function.Function;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * Data Point Type 8 for '2-Octet Signed Value' (2 Octets)
@@ -36,7 +36,7 @@ import java.util.function.Function;
  *
  * @author PITSCHR
  */
-public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
+public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
     /**
      * <strong>8.001</strong> Value 2-octet signed count
      *
@@ -82,13 +82,13 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     2 octets (V<sub>16</sub>)
      * Range:      U = [-32768 .. 32767]
-     *                  -327.68ms .. 327.67ms
+     *                  -327680ms .. 327670ms
      * Unit:       ms
      * Resolution: 10 ms
      * </pre>
      */
     @DataPoint({"8.003", "dpst-8-3"})
-    public static final DPT8 DELTA_TIME_10MS = new DPT8("Delta Time (10ms)", -32768, 32767, "ms", v -> v / 100d);
+    public static final DPT8 DELTA_TIME_10MS = new DPT8("Delta Time (10ms)", -327680, 327670, "ms", v -> v / 10d);
 
     /**
      * <strong>8.004</strong> Delta Time (milliseconds, resolution 100ms)
@@ -100,13 +100,13 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     2 octets (V<sub>16</sub>)
      * Range:      U = [-32768 .. 32767]
-     *                  -3276.8ms .. -3276.7ms
+     *                  -3276800ms .. -3276700ms
      * Unit:       ms
      * Resolution: 100 ms
      * </pre>
      */
     @DataPoint({"8.004", "dpst-8-4"})
-    public static final DPT8 DELTA_TIME_100MS = new DPT8("Delta Time (100ms)", -32768, 32767, "ms", v -> v / 10d);
+    public static final DPT8 DELTA_TIME_100MS = new DPT8("Delta Time (100ms)", -3276800, 3276700, "ms", v -> v / 100d);
 
     /**
      * <strong>8.005</strong> Delta Time (seconds)
@@ -174,7 +174,7 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
      * </pre>
      */
     @DataPoint({"8.010", "dpst-8-10"})
-    public static final DPT8 PERCENT = new DPT8("Percent", -32768, 32767, "%", v -> v / 100d);
+    public static final DPT8 PERCENT = new DPT8("Percent", -327.68, 327.67, "%", v -> v * 100d);
 
     /**
      * <strong>8.011</strong> Rotation Angle (°)
@@ -218,30 +218,30 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
     /**
      * Calculation function
      * <p>
-     * Calculates from {@link Integer} to {@link Double} using a formula
+     * Calculates from {@link Double} to {@link Double} using a formula
      */
-    private final Function<Integer, Double> calculationFunction;
+    private final DoubleUnaryOperator calculationFunction;
 
     /**
      * Constructor for {@link DPT8}
      *
-     * @param desc                description for {@link DPT8}
+     * @param description         description for {@link DPT8}
      * @param lowerValue          the lower value for {@link DPT8}
      * @param upperValue          the upper value for {@link DPT8}
      * @param unit                the unit representation for {@link DPT8}
      * @param calculationFunction the calculation function for value representation
      */
-    private DPT8(final String desc,
-                 final int lowerValue,
-                 final int upperValue,
+    private DPT8(final String description,
+                 final double lowerValue,
+                 final double upperValue,
                  final @Nullable String unit,
-                 final @Nullable Function<Integer, Double> calculationFunction) {
-        super(desc, lowerValue, upperValue, unit);
+                 final @Nullable DoubleUnaryOperator calculationFunction) {
+        super(description, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public Function<Integer, Double> getCalculationFunction() {
+    public DoubleUnaryOperator getCalculationFunction() {
         return this.calculationFunction;
     }
 
@@ -262,14 +262,14 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
 
     @Override
     protected DPT8Value parse(final String[] args) {
-        return new DPT8Value(this, Integer.parseInt(args[0]));
+        return of(Integer.parseInt(args[0]));
     }
 
     public DPT8Value of(final int value) {
         return new DPT8Value(this, value);
     }
 
-    public byte[] toByteArray(final int value) {
-        return DPT8Value.toByteArray(value);
+    public DPT8Value of(final double value) {
+        return new DPT8Value(this, value);
     }
 }

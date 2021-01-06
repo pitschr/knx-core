@@ -33,8 +33,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class DPT22Test {
     private static final BaseDataPointType<?>[] DATAPOINT_TYPES = new BaseDataPointType<?>[]{
-            DPT22.STATUS_DHW_CONTROLLER,
-            DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER,
+            DPT22.DHW_CONTROLLER_STATUS,
+            DPT22.ROOM_HEATING_COOLING_CONTROLLER_STATUS,
             DPT22.MEDIA,
             DPT22.CHANNEL_ACTIVATION_16
     };
@@ -101,12 +101,12 @@ class DPT22Test {
     @DisplayName("Test #of(..)")
     void testOf() {
         // DHW Controller Status (0000 0000 1010 1001 = 0x00 0xA9)
-        assertThat(DPT22.STATUS_DHW_CONTROLLER.of(true, false, false, true, false, true, false, true))
-                .isInstanceOf(DPT22Value.StatusDHWController.class);
+        assertThat(DPT22.DHW_CONTROLLER_STATUS.of(true, false, false, true, false, true, false, true))
+                .isInstanceOf(DPT22Value.DHWControllerStatus.class);
 
         // Room Heating / Cooling Controller Status (0100 1001 1011 0011 = 0x49 0xB3)
-        assertThat(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER.of(true, true, false, false, true, true, false, true, true, false, false, true, false, false, true))
-                .isInstanceOf(DPT22Value.StatusRoomHeatingCoolingController.class);
+        assertThat(DPT22.ROOM_HEATING_COOLING_CONTROLLER_STATUS.of(true, true, false, false, true, true, false, true, true, false, false, true, false, false, true))
+                .isInstanceOf(DPT22Value.RoomHeatingCoolingControllerStatus.class);
 
         // Media (0000 0000 0000 0110 = 0x00 0x06)
         assertThat(DPT22.MEDIA.of(true, true, false, false))
@@ -121,11 +121,11 @@ class DPT22Test {
     @DisplayName("Test #toByteArray(..)")
     void testToByteArray() {
         // DHW Controller Status (0000 0000 1010 1001 = 0x00 0xA9)
-        assertThat(DPT22.STATUS_DHW_CONTROLLER.toByteArray(true, false, false, true, false, true, false, true))
+        assertThat(DPT22.DHW_CONTROLLER_STATUS.toByteArray(true, false, false, true, false, true, false, true))
                 .containsExactly(0x00, 0xA9);
 
         // Room Heating / Cooling Controller Status (0100 1001 1011 0011 = 0x49 0xB3)
-        assertThat(DPT22.STATUS_ROOM_HEATING_COOLING_CONTROLLER.toByteArray(true, true, false, false, true, true, false, true, true, false, false, true, false, false, true))
+        assertThat(DPT22.ROOM_HEATING_COOLING_CONTROLLER_STATUS.toByteArray(true, true, false, false, true, true, false, true, true, false, false, true, false, false, true))
                 .containsExactly(0x49, 0xB3);
 
         // Media (0000 0000 0000 0110 = 0x00 0x06)

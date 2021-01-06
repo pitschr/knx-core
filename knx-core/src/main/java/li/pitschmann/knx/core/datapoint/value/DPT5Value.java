@@ -73,7 +73,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
         if (calcFunction == null) {
             b = (byte) value;
         } else {
-            b = (byte) calcFunction.applyAsDouble(value);
+            b = (byte) Math.round(calcFunction.applyAsDouble(value));
         }
         return new byte[]{b};
     }

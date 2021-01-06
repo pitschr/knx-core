@@ -191,14 +191,14 @@ public final class DPT21Value {
     /**
      * <strong>21.102</strong> Room Heating Controller Status
      *
-     * @see DPT21#STATUS_ROOM_HEATING_CONTROLLER
+     * @see DPT21#ROOM_HEATING_CONTROLLER_STATUS
      */
-    public static final class StatusRoomHeatingController extends AbstractDataPointFlag<DPT21.StatusRoomHeatingController> {
-        public StatusRoomHeatingController(final byte b) {
-            super(DPT21.STATUS_ROOM_HEATING_CONTROLLER, b);
+    public static final class RoomHeatingControllerStatus extends AbstractDataPointFlag<DPT21.RoomHeatingControllerStatus> {
+        public RoomHeatingControllerStatus(final byte b) {
+            super(DPT21.ROOM_HEATING_CONTROLLER_STATUS, b);
         }
 
-        public StatusRoomHeatingController(final boolean fault,
+        public RoomHeatingControllerStatus(final boolean fault,
                                            final boolean statusEco,
                                            final boolean temperatureFlowLimit,
                                            final boolean temperatureReturnLimit,
@@ -246,14 +246,14 @@ public final class DPT21Value {
     /**
      * <strong>21.103</strong> Solar DHW Controller Status
      *
-     * @see DPT21#STATUS_SOLAR_DHW_CONTROLLER
+     * @see DPT21#SOLAR_DHW_CONTROLLER_STATUS
      */
-    public static final class StatusSolarDHWController extends AbstractDataPointFlag<DPT21.StatusSolarDHWController> {
-        public StatusSolarDHWController(final byte b) {
-            super(DPT21.STATUS_SOLAR_DHW_CONTROLLER, b);
+    public static final class SolarDHWControllerStatus extends AbstractDataPointFlag<DPT21.SolarDHWControllerStatus> {
+        public SolarDHWControllerStatus(final byte b) {
+            super(DPT21.SOLAR_DHW_CONTROLLER_STATUS, b);
         }
 
-        public StatusSolarDHWController(final boolean fault,
+        public SolarDHWControllerStatus(final boolean fault,
                                         final boolean statusDHWLoadActive,
                                         final boolean solarLoadSufficient) {
             this(Bytes.toByte(false, false, false, false, false, solarLoadSufficient, statusDHWLoadActive, fault));
@@ -304,14 +304,14 @@ public final class DPT21Value {
     /**
      * <strong>21.105</strong> Room Cooling Controller Status
      *
-     * @see DPT21#STATUS_ROOM_COOLING_CONTROLLER
+     * @see DPT21#ROOM_COOLING_CONTROLLER_STATUS
      */
-    public static final class StatusRoomCoolingController extends AbstractDataPointFlag<DPT21.StatusRoomCoolingController> {
-        public StatusRoomCoolingController(final byte b) {
-            super(DPT21.STATUS_ROOM_COOLING_CONTROLLER, b);
+    public static final class RoomCoolingControllerStatus extends AbstractDataPointFlag<DPT21.RoomCoolingControllerStatus> {
+        public RoomCoolingControllerStatus(final byte b) {
+            super(DPT21.ROOM_COOLING_CONTROLLER_STATUS, b);
         }
 
-        public StatusRoomCoolingController(final boolean fault) {
+        public RoomCoolingControllerStatus(final boolean fault) {
             this(Bytes.toByte(false, false, false, false, false, false, false, fault));
         }
 
@@ -328,14 +328,14 @@ public final class DPT21Value {
     /**
      * <strong>21.106</strong> Ventilation Controller Status
      *
-     * @see DPT21#STATUS_VENTILATION_CONTROLLER
+     * @see DPT21#VENTILATION_CONTROLLER_STATUS
      */
-    public static final class StatusVentilationController extends AbstractDataPointFlag<DPT21.StatusVentilationController> {
-        public StatusVentilationController(final byte b) {
-            super(DPT21.STATUS_VENTILATION_CONTROLLER, b);
+    public static final class VentilationControllerStatus extends AbstractDataPointFlag<DPT21.VentilationControllerStatus> {
+        public VentilationControllerStatus(final byte b) {
+            super(DPT21.VENTILATION_CONTROLLER_STATUS, b);
         }
 
-        public StatusVentilationController(final boolean fault,
+        public VentilationControllerStatus(final boolean fault,
                                            final boolean fanActive,
                                            final boolean heatingModeActive,
                                            final boolean coolingModeActive) {

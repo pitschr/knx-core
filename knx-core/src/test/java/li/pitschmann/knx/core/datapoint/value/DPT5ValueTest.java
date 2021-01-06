@@ -78,7 +78,7 @@ class DPT5ValueTest {
     void testScaling18() {
         final var value = new DPT5Value(DPT5.SCALING, 18);
         assertThat(value.getValue()).isEqualTo(18);
-        assertThat(value.toByteArray()).containsExactly(0x2D);
+        assertThat(value.toByteArray()).containsExactly(0x2E);
 
         assertThat(value.toText()).isEqualTo("18");
     }
@@ -145,7 +145,7 @@ class DPT5ValueTest {
 
         final var valueScaling = new DPT5Value(DPT5.SCALING, 83);
         assertThat(valueScaling).hasToString(
-                "DPT5Value{dpt=5.001, value=83, byteArray=0xD3}"
+                "DPT5Value{dpt=5.001, value=83, byteArray=0xD4}"
         );
 
         final var valueAngle = new DPT5Value(DPT5.ANGLE, 180);

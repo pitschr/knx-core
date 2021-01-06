@@ -75,63 +75,6 @@ public class BytesTest {
     }
 
     /**
-     * Test {@link Bytes#toSignedShort(byte, byte...)}  and {@link Bytes#toSignedShort(byte[])}}
-     */
-    @Test
-    public void testToSignedShort() {
-        // zero
-        assertThat(Bytes.toSignedShort((byte) 0x00)).isZero();
-        assertThat(Bytes.toSignedShort((byte) 0x00, (byte) 0x00)).isZero();
-        assertThat(Bytes.toSignedShort(new byte[]{(byte) 0x00, (byte) 0x00})).isZero();
-        // 0xff, 0x7f
-        assertThat(Bytes.toSignedShort((byte) 0xff)).isEqualTo((short) -1);
-        assertThat(Bytes.toSignedShort((byte) 0x7f)).isEqualTo((short) 127);
-        // max
-        assertThat(Bytes.toSignedShort((byte) 0x7f, (byte) 0xff)).isEqualTo(Short.MAX_VALUE);
-        assertThat(Bytes.toSignedShort(new byte[]{(byte) 0x7f, (byte) 0xff})).isEqualTo(Short.MAX_VALUE);
-        // min
-        assertThat(Bytes.toSignedShort((byte) 0x80, (byte) 0x00)).isEqualTo(Short.MIN_VALUE);
-        assertThat(Bytes.toSignedShort(new byte[]{(byte) 0x80, (byte) 0x00})).isEqualTo(Short.MIN_VALUE);
-    }
-
-    /**
-     * Test {@link Bytes#toUnsignedShort(byte, byte...)} and {@link Bytes#toUnsignedShort(byte[])}
-     */
-    @Test
-    public void testToUnsignedShort() {
-        // zero
-        assertThat(Bytes.toUnsignedShort(null)).isZero();
-        assertThat(Bytes.toUnsignedShort((byte) 0x00)).isZero();
-        assertThat(Bytes.toUnsignedShort((byte) 0x00, (byte) 0x00)).isZero();
-        assertThat(Bytes.toUnsignedShort(new byte[]{(byte) 0x00, (byte) 0x00})).isZero();
-        // max
-        assertThat(Bytes.toUnsignedShort((byte) 0x7f, (byte) 0xff)).isEqualTo(Short.MAX_VALUE);
-        assertThat(Bytes.toUnsignedShort(new byte[]{(byte) 0x7f, (byte) 0xff})).isEqualTo(Short.MAX_VALUE);
-        // fail because it exceeds Short#MAX_VALUE
-        assertThatThrownBy(() -> Bytes.toUnsignedShort((byte) 0x80, (byte) 0x00)).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("exceeds Short#MAX_VALUE");
-        assertThatThrownBy(() -> Bytes.toUnsignedShort(new byte[]{(byte) 0x80, (byte) 0x00})).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("exceeds Short#MAX_VALUE");
-    }
-
-    /**
-     * Test {@link Bytes#toSignedInt(byte, byte...)} and {@link Bytes#toSignedInt(byte[])}
-     */
-    @Test
-    public void testToSignedInt() {
-        // zero
-        assertThat(Bytes.toSignedInt((byte) 0x00)).isZero();
-        assertThat(Bytes.toSignedInt((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isZero();
-        assertThat(Bytes.toSignedInt(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00})).isZero();
-        // max
-        assertThat(Bytes.toSignedInt((byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff)).isEqualTo(Integer.MAX_VALUE);
-        assertThat(Bytes.toSignedInt(new byte[]{(byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff})).isEqualTo(Integer.MAX_VALUE);
-        // min
-        assertThat(Bytes.toSignedInt((byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00)).isEqualTo(Integer.MIN_VALUE);
-        assertThat(Bytes.toSignedInt(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00})).isEqualTo(Integer.MIN_VALUE);
-    }
-
-    /**
      * Test {@link Bytes#toUnsignedInt(byte, byte...)}, {@link Bytes#toUnsignedInt(byte, byte, byte, byte)}
      * and {@link Bytes#toUnsignedInt(byte[])}
      */
@@ -165,77 +108,6 @@ public class BytesTest {
                 .hasMessageContaining("exceeds Integer#MAX_VALUE");
         assertThatThrownBy(() -> Bytes.toUnsignedInt(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00}))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("exceeds Integer#MAX_VALUE");
-    }
-
-    /**
-     * Test {@link Bytes#toSignedLong(byte, byte...)}, {@link Bytes#toSignedLong(byte, byte, byte, byte, byte, byte, byte, byte)}
-     * and {@link Bytes#toSignedLong(byte[])}
-     */
-    @Test
-    public void testToSignedLong() {
-        // zero
-        assertThat(Bytes.toSignedLong((byte) 0x00)).isZero();
-        assertThat(Bytes.toSignedLong((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00))
-                .isZero();
-        assertThat(Bytes.toSignedLong(
-                new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00}))
-                .isZero();
-        // max
-        assertThat(Bytes.toSignedLong((byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff))
-                .isEqualTo(Long.MAX_VALUE);
-        assertThat(Bytes.toSignedLong((byte) 0x00, (byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
-                (byte) 0xff)).isEqualTo(Long.MAX_VALUE);
-        assertThat(Bytes.toSignedLong(
-                new byte[]{(byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff}))
-                .isEqualTo(Long.MAX_VALUE);
-        // min
-        assertThat(Bytes.toSignedLong((byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00))
-                .isEqualTo(Long.MIN_VALUE);
-        assertThat(Bytes.toSignedLong((byte) 0x00, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00)).isEqualTo(Long.MIN_VALUE);
-        assertThat(Bytes.toSignedLong(
-                new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00}))
-                .isEqualTo(Long.MIN_VALUE);
-        assertThat(Bytes.toSignedLong(new byte[]{(byte) 0x00, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00})).isEqualTo(Long.MIN_VALUE);
-    }
-
-    /**
-     * Test {@link Bytes#toUnsignedLong(byte, byte...)}, {@link Bytes#toUnsignedLong(byte, byte, byte, byte, byte, byte, byte, byte)}
-     * and {@link Bytes#toUnsignedLong(byte[])}
-     */
-    @Test
-    public void testToUnsignedLong() {
-        // zero
-        assertThat(Bytes.toUnsignedLong((byte) 0x00)).isZero();
-        assertThat(Bytes.toUnsignedLong((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00))
-                .isZero();
-        assertThat(Bytes.toUnsignedLong(
-                new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00}))
-                .isZero();
-        // max
-        assertThat(Bytes.toUnsignedLong( //
-                (byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, //
-                (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff //
-        )).isEqualTo(Long.MAX_VALUE);
-        assertThat(Bytes.toUnsignedLong( //
-                (byte) 0x00, (byte) 0x7f, (byte) 0xff, (byte) 0xff, //
-                (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, //
-                (byte) 0xff //
-        )).isEqualTo(Long.MAX_VALUE);
-        assertThat(Bytes.toUnsignedLong(new byte[]{ //
-                (byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, //
-                (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff} //
-        )).isEqualTo(Long.MAX_VALUE);
-        assertThat(Bytes.toUnsignedLong(new byte[]{ //
-                (byte) 0x00, (byte) 0x7f, (byte) 0xff, (byte) 0xff, //
-                (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, //
-                (byte) 0xff} //
-        )).isEqualTo(Long.MAX_VALUE);
-
-        // fail because it exceeds Long#MAX_VALUE
-        assertThatThrownBy(() -> Bytes.toUnsignedLong((byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("exceeds Long#MAX_VALUE");
     }
 
     /**
@@ -276,22 +148,10 @@ public class BytesTest {
     }
 
     /**
-     * Test {@link Bytes#trimRight(byte[])} and {@link Bytes#trimRight(byte[], byte)}
+     * Test {@link Bytes#trimRight(byte[], byte)}
      */
     @Test
     public void testTrimRight() {
-        // empty
-        assertThat(Bytes.trimRight(new byte[0])).isEmpty();
-        // no trim because 0x00 is not present
-        assertThat(Bytes.trimRight(new byte[]{0x11, 0x22, 0x33})).containsExactly(0x11, 0x22, 0x33);
-        // trim multiple 0x00 on right side
-        assertThat(Bytes.trimRight(new byte[]{0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00})).containsExactly(0x11, 0x22, 0x33);
-        // trim last 0x00 on right side
-        assertThat(Bytes.trimRight(new byte[]{0x11, 0x22, 0x33, 0x00, 0x00, 0x44, 0x00})).containsExactly(0x11, 0x22, 0x33, 0x00, 0x00, 0x44);
-        // trim last 0x00 on right side
-        assertThat(Bytes.trimRight(new byte[]{0x11, 0x22, 0x33, 0x00, 0x00, 0x44, 0x55})).containsExactly(0x11, 0x22, 0x33, 0x00, 0x00, 0x44,
-                0x55);
-
         // empty
         assertThat(Bytes.trimRight(new byte[0], (byte) 0x11)).isEmpty();
         // no trim because 0x11 is not present

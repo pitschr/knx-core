@@ -78,7 +78,7 @@ class DPT8Test {
 
     @Test
     @DisplayName("Test #of(int)")
-    void testOf() {
+    void testIntOf() {
         final var dpt = DPT8.VALUE_2_OCTET_COUNT;
         assertThat(dpt.of(-32768)).isInstanceOf(DPT8Value.class);
         assertThat(dpt.of(0)).isInstanceOf(DPT8Value.class);
@@ -86,12 +86,12 @@ class DPT8Test {
     }
 
     @Test
-    @DisplayName("Test #toByteArray(int)")
-    void testToByteArray() {
-        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-        assertThat(dpt.toByteArray(-32768)).containsExactly(0x80, 0x00);
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00, 0x00);
-        assertThat(dpt.toByteArray(32767)).containsExactly(0x7F, 0xFF);
+    @DisplayName("Test #of(double)")
+    void testDoubleOf() {
+        final var dpt = DPT8.PERCENT;
+        assertThat(dpt.of(-327.68)).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.of(0)).isInstanceOf(DPT8Value.class);
+        assertThat(dpt.of(327.67)).isInstanceOf(DPT8Value.class);
     }
 
     @Test
@@ -99,14 +99,14 @@ class DPT8Test {
     void testCalculationFunction() {
         assertThat(DPT8.VALUE_2_OCTET_COUNT.getCalculationFunction()).isNull();
 
-        // Delta Time Period in 10ms (-32768 = -327.68ms, 0 = 0ms, 32767 = 327.67ms)
+        // Delta Time Period in 10ms (-32768 = -327680ms, 0 = 0ms, 32767 = 327670ms)
         final var dpt = DPT8.DELTA_TIME_10MS;
         assertThat(dpt.getCalculationFunction()).isNotNull();
-        assertThat(dpt.of(-32768).getRawSignedValue()).isEqualTo(-32768);
-        assertThat(dpt.of(-32768).getSignedValue()).isEqualTo(-327.68);
-        assertThat(dpt.of(0).getRawSignedValue()).isZero();
-        assertThat(dpt.of(0).getSignedValue()).isZero();
-        assertThat(dpt.of(32767).getRawSignedValue()).isEqualTo(32767);
-        assertThat(dpt.of(32767).getSignedValue()).isEqualTo(327.67);
+        assertThat(dpt.of(-327680).getValue()).isEqualTo(-327680);
+        assertThat(dpt.of(-327680).toByteArray()).containsExactly(0x80, 0x00);
+        assertThat(dpt.of(0).getValue()).isZero();
+        assertThat(dpt.of(0).toByteArray()).containsExactly(0x00, 0x00);
+        assertThat(dpt.of(327670).getValue()).isEqualTo(327670);
+        assertThat(dpt.of(327670).toByteArray()).containsExactly(0x7F, 0xFF);
     }
 }

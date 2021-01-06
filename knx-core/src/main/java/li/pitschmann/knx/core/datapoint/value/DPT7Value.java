@@ -22,9 +22,9 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -45,7 +45,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
     private final int value;
 
     public DPT7Value(final DPT7 dpt, final byte[] bytes) {
-        this(dpt, Bytes.toUnsignedInt(bytes));
+        this(dpt, new BigInteger(1, bytes).intValue());
     }
 
     public DPT7Value(final DPT7 dpt, final int value) {
@@ -67,7 +67,7 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
         if (calcFunction == null) {
             newValue = value;
         } else {
-            newValue = (int)calcFunction.applyAsDouble(value);
+            newValue = (int) Math.round(calcFunction.applyAsDouble(value));
         }
         return new byte[]{(byte) (newValue >>> 8), (byte) newValue};
     }

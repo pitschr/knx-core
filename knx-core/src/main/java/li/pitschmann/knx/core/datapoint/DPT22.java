@@ -162,20 +162,20 @@ public final class DPT22 {
         }
     }
 
-    public static final class DHWControllerStatus extends InternalDataPointType<DPT22Value.StatusDHWController> {
+    public static final class DHWControllerStatus extends InternalDataPointType<DPT22Value.DHWControllerStatus> {
         private DHWControllerStatus() {
             super("DHW Controller Status");
         }
 
         @Override
-        protected DPT22Value.StatusDHWController parse(final byte[] bytes) {
-            return new DPT22Value.StatusDHWController(bytes);
+        protected DPT22Value.DHWControllerStatus parse(final byte[] bytes) {
+            return new DPT22Value.DHWControllerStatus(bytes);
         }
 
-        public DPT22Value.StatusDHWController of(final boolean fault, final boolean loadActive, final boolean legionellaProtectionActive,
+        public DPT22Value.DHWControllerStatus of(final boolean fault, final boolean loadActive, final boolean legionellaProtectionActive,
                                                  final boolean pushActive, final boolean otherEnergySourceActive, final boolean solarEnergyOnly,
                                                  final boolean solarEnergySupport, final boolean temperatureSetpointInfluenced) {
-            return new DPT22Value.StatusDHWController(fault, loadActive, legionellaProtectionActive, pushActive, otherEnergySourceActive,
+            return new DPT22Value.DHWControllerStatus(fault, loadActive, legionellaProtectionActive, pushActive, otherEnergySourceActive,
                     solarEnergyOnly, solarEnergySupport, temperatureSetpointInfluenced);
         }
 
@@ -187,22 +187,22 @@ public final class DPT22 {
         }
     }
 
-    public static final class RoomHeatinCoolingControllerStatus extends InternalDataPointType<DPT22Value.StatusRoomHeatingCoolingController> {
+    public static final class RoomHeatinCoolingControllerStatus extends InternalDataPointType<DPT22Value.RoomHeatingCoolingControllerStatus> {
         private RoomHeatinCoolingControllerStatus() {
             super("Room Heating / Cooling Controller Status");
         }
 
         @Override
-        protected DPT22Value.StatusRoomHeatingCoolingController parse(final byte[] bytes) {
-            return new DPT22Value.StatusRoomHeatingCoolingController(bytes);
+        protected DPT22Value.RoomHeatingCoolingControllerStatus parse(final byte[] bytes) {
+            return new DPT22Value.RoomHeatingCoolingControllerStatus(bytes);
         }
 
-        public DPT22Value.StatusRoomHeatingCoolingController of(final boolean fault, final boolean statusEcoHeating,
+        public DPT22Value.RoomHeatingCoolingControllerStatus of(final boolean fault, final boolean statusEcoHeating,
                                                                 final boolean temperatureFlowLimit, final boolean temperatureReturnLimit, final boolean statusMorningBoost,
                                                                 final boolean startOptimizationActive, final boolean stopOptimizationActive, final boolean heatingDisabled,
                                                                 final boolean heatingMode, final boolean statusEcoCooling, final boolean statusPreCooling, final boolean coolingDisabled,
                                                                 final boolean dewPointAlarm, final boolean frostAlarm, final boolean overheatAlarm) {
-            return new DPT22Value.StatusRoomHeatingCoolingController(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit,
+            return new DPT22Value.RoomHeatingCoolingControllerStatus(fault, statusEcoHeating, temperatureFlowLimit, temperatureReturnLimit,
                     statusMorningBoost, startOptimizationActive, stopOptimizationActive, heatingDisabled, heatingMode, statusEcoCooling,
                     statusPreCooling, coolingDisabled, dewPointAlarm, frostAlarm, overheatAlarm);
         }

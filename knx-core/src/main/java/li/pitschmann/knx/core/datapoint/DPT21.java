@@ -404,20 +404,20 @@ public final class DPT21 {
         }
     }
 
-    public static final class RoomHeatingControllerStatus extends InternalDataPointType<DPT21Value.StatusRoomHeatingController> {
+    public static final class RoomHeatingControllerStatus extends InternalDataPointType<DPT21Value.RoomHeatingControllerStatus> {
         private RoomHeatingControllerStatus() {
             super("Room Heating Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusRoomHeatingController parse(final byte[] bytes) {
-            return new DPT21Value.StatusRoomHeatingController(bytes[0]);
+        protected DPT21Value.RoomHeatingControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.RoomHeatingControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusRoomHeatingController of(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
+        public DPT21Value.RoomHeatingControllerStatus of(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
                                                          final boolean temperatureReturnLimit, final boolean statusMorningBoost, final boolean statusStartOptimizationActive,
                                                          final boolean statusStopOptimizationActive, final boolean summerMode) {
-            return new DPT21Value.StatusRoomHeatingController(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost,
+            return new DPT21Value.RoomHeatingControllerStatus(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost,
                     statusStartOptimizationActive, statusStopOptimizationActive, summerMode);
         }
 
@@ -429,19 +429,19 @@ public final class DPT21 {
         }
     }
 
-    public static final class SolarDHWControllerStatus extends InternalDataPointType<DPT21Value.StatusSolarDHWController> {
+    public static final class SolarDHWControllerStatus extends InternalDataPointType<DPT21Value.SolarDHWControllerStatus> {
         private SolarDHWControllerStatus() {
             super("Solar DHW Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusSolarDHWController parse(final byte[] bytes) {
-            return new DPT21Value.StatusSolarDHWController(bytes[0]);
+        protected DPT21Value.SolarDHWControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.SolarDHWControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusSolarDHWController of(final boolean fault, final boolean statusDHWLoadActive,
+        public DPT21Value.SolarDHWControllerStatus of(final boolean fault, final boolean statusDHWLoadActive,
                                                       final boolean solarLoadSufficient) {
-            return new DPT21Value.StatusSolarDHWController(fault, statusDHWLoadActive, solarLoadSufficient);
+            return new DPT21Value.SolarDHWControllerStatus(fault, statusDHWLoadActive, solarLoadSufficient);
         }
 
         public byte[] toByteArray(final boolean fault, final boolean statusDHWLoadActive, final boolean solarLoadSufficient) {
@@ -468,18 +468,18 @@ public final class DPT21 {
         }
     }
 
-    public static final class RoomCoolingControllerStatus extends InternalDataPointType<DPT21Value.StatusRoomCoolingController> {
+    public static final class RoomCoolingControllerStatus extends InternalDataPointType<DPT21Value.RoomCoolingControllerStatus> {
         private RoomCoolingControllerStatus() {
             super("Room Cooling Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusRoomCoolingController parse(final byte[] bytes) {
-            return new DPT21Value.StatusRoomCoolingController(bytes[0]);
+        protected DPT21Value.RoomCoolingControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.RoomCoolingControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusRoomCoolingController of(final boolean fault) {
-            return new DPT21Value.StatusRoomCoolingController(fault);
+        public DPT21Value.RoomCoolingControllerStatus of(final boolean fault) {
+            return new DPT21Value.RoomCoolingControllerStatus(fault);
         }
 
         public byte[] toByteArray(final boolean fault) {
@@ -487,19 +487,19 @@ public final class DPT21 {
         }
     }
 
-    public static final class VentilationControllerStatus extends InternalDataPointType<DPT21Value.StatusVentilationController> {
+    public static final class VentilationControllerStatus extends InternalDataPointType<DPT21Value.VentilationControllerStatus> {
         private VentilationControllerStatus() {
             super("Ventilation Controller Status");
         }
 
         @Override
-        protected DPT21Value.StatusVentilationController parse(final byte[] bytes) {
-            return new DPT21Value.StatusVentilationController(bytes[0]);
+        protected DPT21Value.VentilationControllerStatus parse(final byte[] bytes) {
+            return new DPT21Value.VentilationControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.StatusVentilationController of(final boolean fault, final boolean fanActive, final boolean heatingModeActive,
+        public DPT21Value.VentilationControllerStatus of(final boolean fault, final boolean fanActive, final boolean heatingModeActive,
                                                          final boolean coolingModeActive) {
-            return new DPT21Value.StatusVentilationController(fault, fanActive, heatingModeActive, coolingModeActive);
+            return new DPT21Value.VentilationControllerStatus(fault, fanActive, heatingModeActive, coolingModeActive);
         }
 
         public byte[] toByteArray(final boolean fault, final boolean fanActive, final boolean heatingModeActive, final boolean coolingModeActive) {
