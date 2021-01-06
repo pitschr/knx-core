@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT15;
 import li.pitschmann.knx.core.datapoint.value.DPT15Value.Flags;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
@@ -74,8 +75,10 @@ public final class DPT15ValueTest {
      */
     @Test
     public void testInvalid() {
-        assertThatThrownBy(() -> new DPT15Value(new byte[0])).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> new DPT15Value(new byte[0], null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new DPT15Value(new byte[0]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> new DPT15Value(new byte[3], null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     private void assertValue(final byte[] bytes, final byte[] accessIdentificationData, final Flags flags, final String text) {
@@ -87,9 +90,6 @@ public final class DPT15ValueTest {
         assertThat(dptValue.getFlags()).isEqualTo(flags);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
         assertThat(dptValue.toText()).isEqualTo(text);
-
-        // class methods
-        assertThat(DPT15Value.toByteArray(accessIdentificationData, flags)).containsExactly(bytes);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
@@ -111,25 +111,6 @@ public final class DPT15ValueTest {
                 ByteFormatter.formatHexAsString(accessIdentificationData), flags, ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);
-    }
-
-    /**
-     * Test the failures of {@link DPT15Value}
-     */
-    @Test
-    public void testFailures() {
-        assertThatThrownBy(() -> DPT15Value.toByteArray(new byte[4], new Flags((byte) 0x00))).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    /**
-     * Test special cases for {@link DPT15Value#toByteArray(byte[], Flags)}
-     */
-    @Test
-    public void testToByteArrayPadding() {
-        final var flags = new Flags((byte) 0x80);
-        assertThat(DPT15Value.toByteArray(new byte[0], flags)).containsExactly(0x00, 0x00, 0x00, 0x80);
-        assertThat(DPT15Value.toByteArray(new byte[]{0x11}, flags)).containsExactly(0x00, 0x00, 0x11, 0x80);
-        assertThat(DPT15Value.toByteArray(new byte[]{0x12, 0x11}, flags)).containsExactly(0x00, 0x12, 0x11, 0x80);
     }
 
     /**
