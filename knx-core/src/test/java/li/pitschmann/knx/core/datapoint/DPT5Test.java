@@ -94,9 +94,9 @@ class DPT5Test {
         assertThat(dptScaling.of(0).getValue()).isZero();
         assertThat(dptScaling.of(0).toByteArray()).containsExactly(0x00);
         assertThat(dptScaling.of(25).getValue()).isEqualTo(25);
-        assertThat(dptScaling.of(25).toByteArray()).containsExactly(0x3F); // 63.75
+        assertThat(dptScaling.of(25).toByteArray()).containsExactly(0x40); // 63.75 -> 64
         assertThat(dptScaling.of(50).getValue()).isEqualTo(50);
-        assertThat(dptScaling.of(50).toByteArray()).containsExactly(0x7F); // 127.5
+        assertThat(dptScaling.of(50).toByteArray()).containsExactly(0x80); // 127.5 -> 128
         assertThat(dptScaling.of(100).getValue()).isEqualTo(100);
         assertThat(dptScaling.of(100).toByteArray()).containsExactly(0xFF);
 
@@ -106,9 +106,9 @@ class DPT5Test {
         assertThat(dptAngle.of(0).getValue()).isZero();
         assertThat(dptAngle.of(0).toByteArray()).containsExactly(0x00);
         assertThat(dptAngle.of(60).getValue()).isEqualTo(60);
-        assertThat(dptAngle.of(60).toByteArray()).containsExactly(0x2A); // 42.5
+        assertThat(dptAngle.of(60).toByteArray()).containsExactly(0x2B); // 42.5 -> 43
         assertThat(dptAngle.of(180).getValue()).isEqualTo(180);
-        assertThat(dptAngle.of(180).toByteArray()).containsExactly(0x7F); // 127.5
+        assertThat(dptAngle.of(180).toByteArray()).containsExactly(0x80); // 127.5 -> 128
         assertThat(dptAngle.of(360).getValue()).isEqualTo(360);
         assertThat(dptAngle.of(360).toByteArray()).containsExactly(0xFF);
     }
