@@ -18,10 +18,8 @@
 
 package li.pitschmann.knx.core.datapoint.value;
 
-import li.pitschmann.knx.core.datapoint.DPT15;
-import li.pitschmann.knx.core.datapoint.value.DPT15Value.Flags;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,131 +30,190 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT15ValueTest {
-    /**
-     * Test {@link DPT15Value}
-     */
+class DPT15ValueTest {
     @Test
-    public void test() {
-        this.assertValue(
-                new byte[]{0x00, 0x00, 0x00, 0x00},
-                new byte[3],
-                new Flags(false, false, false, false, 0),
-                "data: 0x00 00 00, flags: 0x00"
+    @DisplayName("#(byte[]) with: 1-byte array for access data and 1-byte for flag")
+    void test1ByteAccessData_1ByteFlag() {
+        final var value = new DPT15Value(new byte[]{0x01, 0x02});
+        assertThat(value.getAccessIdentificationData()).containsExactly(0x00, 0x00, 0x01);
+        assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x02));
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x01, 0x02);
+
+        assertThat(value.toText()).isEqualTo("data: 0x00 00 01, flags: 0x02");
+    }
+
+    @Test
+    @DisplayName("#(byte[]) with: 2-byte array for access data and 1-byte for flag")
+    void test2BytesAccessData_1ByteFlag() {
+        final var value = new DPT15Value(new byte[]{0x01, 0x02, 0x03});
+        assertThat(value.getAccessIdentificationData()).containsExactly(0x00, 0x01, 0x02);
+        assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x03));
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x01, 0x02, 0x03);
+
+        assertThat(value.toText()).isEqualTo("data: 0x00 01 02, flags: 0x03");
+    }
+
+    @Test
+    @DisplayName("#(byte[]) with: 3-byte array for access data and 1-byte for flag")
+    void test3BytesAccessData_1ByteFlag() {
+        final var value = new DPT15Value(new byte[]{0x01, 0x02, 0x03, 0x04});
+        assertThat(value.getAccessIdentificationData()).containsExactly(0x01, 0x02, 0x03);
+        assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x04));
+        assertThat(value.toByteArray()).containsExactly(0x01, 0x02, 0x03, 0x04);
+
+        assertThat(value.toText()).isEqualTo("data: 0x01 02 03, flags: 0x04");
+    }
+
+    @Test
+    @DisplayName("#(byte[], Flags) with: 1-byte array for access data")
+    void test1ByteAccessData_FlagObject() {
+        final var value = new DPT15Value(new byte[]{0x01}, new DPT15Value.Flags((byte) 0x02));
+        assertThat(value.getAccessIdentificationData()).containsExactly(0x00, 0x00, 0x01);
+        assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x02));
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x01, 0x02);
+
+        assertThat(value.toText()).isEqualTo("data: 0x00 00 01, flags: 0x02");
+    }
+
+    @Test
+    @DisplayName("#(byte[], Flags) with: 2-byte array for access data")
+    void test2BytesAccessData_FlagObject() {
+        final var value = new DPT15Value(new byte[]{0x01, 0x02}, new DPT15Value.Flags((byte) 0x03));
+        assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x03));
+        assertThat(value.getAccessIdentificationData()).containsExactly(0x00, 0x01, 0x02);
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x01, 0x02, 0x03);
+
+        assertThat(value.toText()).isEqualTo("data: 0x00 01 02, flags: 0x03");
+    }
+
+    @Test
+    @DisplayName("#(byte[]) with invalid byte length")
+    void testBytesOutOfRange() {
+        // expected: 2-4 bytes, provided 5 bytes
+        assertThatThrownBy(() -> new DPT15Value(new byte[5]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '5' for argument 'bytes' is out of range '2'..'4'. Raw Data: 0x00 00 00 00 00");
+    }
+
+    @Test
+    @DisplayName("#(byte[], Flags) with: 3-byte array for access data")
+    void test3BytesAccessData_FlagObject() {
+        final var value = new DPT15Value(new byte[]{0x01, 0x02, 0x03}, new DPT15Value.Flags((byte) 0x04));
+        assertThat(value.getAccessIdentificationData()).containsExactly(0x01, 0x02, 0x03);
+        assertThat(value.toByteArray()).containsExactly(0x01, 0x02, 0x03, 0x04);
+
+        assertThat(value.toText()).isEqualTo("data: 0x01 02 03, flags: 0x04");
+    }
+
+    @Test
+    @DisplayName("#(byte[], Flags) with invalid length for Access Identification Data")
+    void testAccessIdentificationDataOutOfRange() {
+        // expected: 1, 2 or 3-byte array
+        assertThatThrownBy(() -> new DPT15Value(new byte[0], new DPT15Value.Flags((byte) 0x00)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Access Identification Data must be 3 bytes or less: []");
+        assertThatThrownBy(() -> new DPT15Value(new byte[4], new DPT15Value.Flags((byte) 0x00)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Access Identification Data must be 3 bytes or less: [0, 0, 0, 0]");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var flags = new DPT15Value.Flags((byte) 0x99);
+        final var value = new DPT15Value(new byte[] {0x11}, flags);
+        assertThat(value).hasToString(
+                String.format(
+                        "DPT15Value{dpt=15.000, accessIdentificationData=0x00 00 11, flags=%s, byteArray=0x00 00 11 99}", flags
+                )
         );
-        this.assertValue(
-                new byte[]{0x11, 0x22, 0x33, 0x0F},
-                new byte[]{0x11, 0x22, 0x33},
-                new Flags(false, false, false, false, 0x0F),
-                "data: 0x11 22 33, flags: 0x0F"
+
+        final var value2 = new DPT15Value(new byte[] {0x11, 0x22}, flags);
+        assertThat(value2).hasToString(
+                String.format(
+                        "DPT15Value{dpt=15.000, accessIdentificationData=0x00 11 22, flags=%s, byteArray=0x00 11 22 99}", flags
+                )
         );
-        this.assertValue(
-                new byte[]{0x44, 0x55, 0x66, (byte) 0xFF},
-                new byte[]{0x44, 0x55, 0x66},
-                new Flags(true, true, true, true, 0x0F),
-                "data: 0x44 55 66, flags: 0xFF"
+
+        final var value3 = new DPT15Value(new byte[] {0x11, 0x22, 0x33}, flags);
+        assertThat(value3).hasToString(
+                String.format(
+                        "DPT15Value{dpt=15.000, accessIdentificationData=0x11 22 33, flags=%s, byteArray=0x11 22 33 99}", flags
+                )
         );
-        this.assertValue(
-                new byte[]{0x22, 0x44, 0x11, (byte) 0xA3},
-                new byte[]{0x22, 0x44, 0x11},
-                new Flags(true, false, true, false, 0x03),
-                "data: 0x22 44 11, flags: 0xA3"
-        );
-        this.assertValue(
-                new byte[]{0x33, 0x77, 0x00, (byte) 0x5C},
-                new byte[]{0x33, 0x77, 0x00},
-                new Flags(false, true, false, true, 0x0C),
-                "data: 0x33 77 00, flags: 0x5C"
+
+        final var valueBytes = new DPT15Value(new byte[] {0x11, 0x22, 0x33, (byte)0x99});
+        assertThat(valueBytes).hasToString(
+                String.format(
+                        "DPT15Value{dpt=15.000, accessIdentificationData=0x11 22 33, flags=%s, byteArray=0x11 22 33 99}", flags
+                )
         );
     }
 
-    /**
-     * Test {@link DPT15Value} with invalid arguments
-     */
     @Test
-    public void testInvalid() {
-        assertThatThrownBy(() -> new DPT15Value(new byte[0]))
-                .isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> new DPT15Value(new byte[3], null))
-                .isInstanceOf(NullPointerException.class);
-    }
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT15Value(new byte[]{0x11, 0x22, 0x33}, new DPT15Value.Flags((byte) 0x44));
+        final var valueBytes = new DPT15Value(new byte[]{0x11, 0x22, 0x33, 0x44});
 
-    private void assertValue(final byte[] bytes, final byte[] accessIdentificationData, final Flags flags, final String text) {
-        final var dptValue = new DPT15Value(accessIdentificationData, flags);
-        final var dptValueByByte = new DPT15Value(bytes);
-
-        // instance methods
-        assertThat(dptValue.getAccessIdentificationData()).containsExactly(accessIdentificationData);
-        assertThat(dptValue.getFlags()).isEqualTo(flags);
-        assertThat(dptValue.toByteArray()).containsExactly(bytes);
-        assertThat(dptValue.toText()).isEqualTo(text);
-
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueBytes).isEqualTo(value);
+        assertThat(valueBytes).hasSameHashCodeAs(value);
 
         // not equals
-        final var anotherAccessIdentificationData = accessIdentificationData.clone();
-        anotherAccessIdentificationData[0] = (byte) ((anotherAccessIdentificationData[0] & 0xFF) == 0x00 ? 0x01 : 0x00);
-        final var flagByte = flags.getAsByte();
-        final var anotherFlags = new Flags((byte) (((byte) (flagByte & 0x80) == 0) ? flagByte | 0x80 : flagByte & 0x7F));
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT15Value(anotherAccessIdentificationData, flags));
-        assertThat(dptValue).isNotEqualTo(new DPT15Value(accessIdentificationData, anotherFlags));
-
-        // toString
-        final var toString = String.format("DPT15Value{dpt=%s, accessIdentificationData=%s, flags=%s, byteArray=%s}", DPT15.ACCESS_DATA,
-                ByteFormatter.formatHexAsString(accessIdentificationData), flags, ByteFormatter.formatHexAsString(bytes));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x00, 0x22, 0x33}, new DPT15Value.Flags((byte) 0x44)));
+        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x11, 0x00, 0x33}, new DPT15Value.Flags((byte) 0x44)));
+        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x11, 0x22, 0x00}, new DPT15Value.Flags((byte) 0x44)));
+        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x11, 0x22, 0x33}, new DPT15Value.Flags((byte) 0x00)));
     }
 
-    /**
-     * Test {@link Flags}
-     */
     @Test
-    public void testFlags() {
-        this.assertFlags((byte) 0x00, false, false, false, false, 0);
-        this.assertFlags((byte) 0x80, true, false, false, false, 0);
-        this.assertFlags((byte) 0x40, false, true, false, false, 0);
-        this.assertFlags((byte) 0x20, false, false, true, false, 0);
-        this.assertFlags((byte) 0x10, false, false, false, true, 0);
-        this.assertFlags((byte) 0x0F, false, false, false, false, 15);
+    @DisplayName("Flags#(byte) with: flags=1001 ...., index = 4")
+    void testFlagsCase1() {
+        final var flags = new DPT15Value.Flags(true, false, false, true, 4);
+        assertThat(flags.isError()).isTrue();
+        assertThat(flags.isPermissionAccepted()).isFalse();
+        assertThat(flags.isReadDirectionRightToLeft()).isFalse();
+        assertThat(flags.isEncryptionEnabled()).isTrue();
+        assertThat(flags.getIndex()).isEqualTo(4);
+
+        assertThat(flags.getAsByte()).isEqualTo((byte)0b1001_0100);
     }
 
-    private void assertFlags(final byte b, final boolean error, final boolean permissionAccepted, final boolean readDirectionRightToLeft,
-                             final boolean encryptionEnabled, final int index) {
-        final var flags = new Flags(error, permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index);
-        final var flagsByByte = new Flags(b);
+    @Test
+    @DisplayName("Flags#(byte) with: flags=0110 ...., index = 11")
+    void testFlagsCase2() {
+        final var flags = new DPT15Value.Flags(false, true, true, false, 11);
+        assertThat(flags.isError()).isFalse();
+        assertThat(flags.isPermissionAccepted()).isTrue();
+        assertThat(flags.isReadDirectionRightToLeft()).isTrue();
+        assertThat(flags.isEncryptionEnabled()).isFalse();
+        assertThat(flags.getIndex()).isEqualTo(11);
 
-        // instance methods
-        assertThat(flags.isError()).isEqualTo(error);
-        assertThat(flags.isPermissionAccepted()).isEqualTo(permissionAccepted);
-        assertThat(flags.isReadDirectionRightToLeft()).isEqualTo(readDirectionRightToLeft);
-        assertThat(flags.isEncryptionEnabled()).isEqualTo(encryptionEnabled);
-        assertThat(flags.getIndex()).isEqualTo(index);
-        assertThat(flags.getAsByte()).isEqualTo(b);
+        assertThat(flags.getAsByte()).isEqualTo((byte)0b0110_1011);
+    }
 
-        // equals
+    @Test
+    @DisplayName("Flags#equals() and Flags#hashCode()")
+    void testFlagsEqualsAndHashCode() {
+        final var flags = new DPT15Value.Flags(false, false, false, false, 0);
+        final var flagsBytes = new DPT15Value.Flags((byte)0b0000_0000);
+
+        // equals & same hash code
         assertThat(flags).isEqualTo(flags);
-        assertThat(flagsByByte).isEqualTo(flags);
-        assertThat(flagsByByte).hasSameHashCodeAs(flags);
+        assertThat(flagsBytes).isEqualTo(flags);
+        assertThat(flagsBytes).hasSameHashCodeAs(flags);
 
         // not equals
         assertThat(flags).isNotEqualTo(null);
         assertThat(flags).isNotEqualTo(new Object());
-        assertThat(flags).isNotEqualTo(new Flags(!error, permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index));
-        assertThat(flags).isNotEqualTo(new Flags(error, !permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index));
-        assertThat(flags).isNotEqualTo(new Flags(error, permissionAccepted, !readDirectionRightToLeft, encryptionEnabled, index));
-        assertThat(flags).isNotEqualTo(new Flags(error, permissionAccepted, readDirectionRightToLeft, !encryptionEnabled, index));
-        assertThat(flags).isNotEqualTo(new Flags(error, permissionAccepted, readDirectionRightToLeft, encryptionEnabled, (index + 1) % 15));
-
-        // toString
-        final var toString = String.format("Flags{error=%s, permissionAccepted=%s, readDirectionRightToLeft=%s, encryptionEnabled=%s, index=%s}", error,
-                permissionAccepted, readDirectionRightToLeft, encryptionEnabled, index);
-        assertThat(flags).hasToString(toString);
-        assertThat(flagsByByte).hasToString(toString);
+        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(true, false, false, false, 0));
+        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, true, false, false, 0));
+        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, false, true, false, 0));
+        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, false, false, true, 0));
+        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, false, false, false, 1));
     }
 }
