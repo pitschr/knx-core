@@ -20,11 +20,11 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT12;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -47,59 +47,46 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT12Value extends AbstractDataPointValue<DPT12> {
-    private final long unsignedValue;
-    private final byte[] byteArray;
+    private final long value;
 
     public DPT12Value(final DPT12 dpt, final byte[] bytes) {
-        super(dpt);
-        Preconditions.checkArgument(bytes.length == 4);
-        // unsigned value
-        this.unsignedValue = Bytes.toUnsignedLong(bytes);
-        this.byteArray = bytes;
+        this(dpt, new BigInteger(1, bytes).longValue());
     }
 
     public DPT12Value(final DPT12 dpt, final long value) {
         super(dpt);
-        Preconditions.checkArgument(dpt.isRangeClosed(value));
-        this.unsignedValue = value;
-        this.byteArray = toByteArray(value);
+        if (!getDPT().isRangeClosed(value)) {
+            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
+        }
+        this.value = value;
     }
 
-    /**
-     * Converts signed long value to 4-byte array
-     *
-     * @param value long value to be converted
-     * @return byte array
-     */
-    public static byte[] toByteArray(final long value) {
-        return new byte[]{ //
-                (byte) (value >>> 24), //
-                (byte) (value >>> 16), //
-                (byte) (value >>> 8), //
-                (byte) value};
-    }
-
-    public long getUnsignedValue() {
-        return this.unsignedValue;
+    public long getValue() {
+        return value;
     }
 
     @Override
     public byte[] toByteArray() {
-        return this.byteArray.clone();
+        return new byte[]{ //
+                (byte) (value >>> 24), //
+                (byte) (value >>> 16), //
+                (byte) (value >>> 8), //
+                (byte) value //
+        };
     }
 
     @Override
     public String toText() {
-        return getValueAsText(getUnsignedValue());
+        return getValueAsText(value);
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("unsignedValue", this.unsignedValue)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("value", value)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -111,14 +98,14 @@ public final class DPT12Value extends AbstractDataPointValue<DPT12> {
         } else if (obj instanceof DPT12Value) {
             final var other = (DPT12Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
-                    && Objects.equals(this.unsignedValue, other.unsignedValue);
+                    && Objects.equals(this.value, other.value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), this.unsignedValue);
+        return Objects.hash(getDPT(), value);
     }
 
 }

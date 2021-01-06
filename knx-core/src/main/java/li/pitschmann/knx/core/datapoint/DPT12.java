@@ -190,14 +190,10 @@ public final class DPT12 extends BaseRangeDataPointType<DPT12Value, Long> {
 
     @Override
     protected DPT12Value parse(final String[] args) {
-        return new DPT12Value(this, Long.parseLong(args[0]));
+        return of(Long.parseLong(args[0]));
     }
 
     public DPT12Value of(final long value) {
         return new DPT12Value(this, value);
-    }
-
-    public byte[] toByteArray(final long value) {
-        return DPT12Value.toByteArray(value);
     }
 }
