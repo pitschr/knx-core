@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT9;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,8 @@ public final class DPT9ValueTest {
      */
     @Test
     public void testInvalid() {
-        assertThatThrownBy(() -> new DPT9Value(DPT9.AIR_FLOW, new byte[0])).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new DPT9Value(DPT9.AIR_FLOW, new byte[0]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
     }
 
     private void assertValue(final DPT9 dpt, final byte[] bytes, final double floatingValue, final String text) {
@@ -54,13 +56,9 @@ public final class DPT9ValueTest {
         final var dptValueByByte = new DPT9Value(dpt, bytes);
 
         // instance methods
-        assertThat(dptValue.getFloatingValue()).isEqualTo(floatingValue);
+        assertThat(dptValue.getValue()).isEqualTo(floatingValue);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
         assertThat(dptValue.toText()).isEqualTo(text);
-
-        // class methods
-        assertThat(DPT9Value.toFloatingValue(bytes)).isEqualTo(floatingValue);
-        assertThat(DPT9Value.toByteArray(floatingValue)).containsExactly(bytes);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);

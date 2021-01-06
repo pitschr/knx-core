@@ -94,6 +94,7 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
      *
      * @param bytes byte array to be converted
      * @return {@link LocalDate}
+     * @throws KnxNumberOutOfRangeException if the length of bytes is not expected
      */
     private static LocalDate toLocalDate(final byte[] bytes) {
         if (bytes.length != 3) {

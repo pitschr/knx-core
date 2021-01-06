@@ -512,15 +512,10 @@ public final class DPT9 extends BaseRangeDataPointType<DPT9Value, Double> {
 
     @Override
     protected DPT9Value parse(final String[] args) {
-        return new DPT9Value(this, Double.parseDouble(args[0]));
+        return of(Double.parseDouble(args[0]));
     }
 
     public DPT9Value of(final double value) {
         return new DPT9Value(this, value);
     }
-
-    public byte[] toByteArray(final double value) {
-        return DPT9Value.toByteArray(value);
-    }
-
 }
