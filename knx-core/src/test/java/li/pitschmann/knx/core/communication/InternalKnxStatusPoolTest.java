@@ -174,13 +174,13 @@ public final class InternalKnxStatusPoolTest {
 
         // Scenario 1: Init (19.52 °C)
         final var tempValue = pool.<DPT9Value>getValue(ADDRESS, DPT9.TEMPERATURE.getId());
-        assertThat(tempValue.getFloatingValue()).isEqualTo(19.52d);
+        assertThat(tempValue.getValue()).isEqualTo(19.52d);
         final var tempValue2 = pool.getValue(ADDRESS, DPT9.TEMPERATURE);
-        assertThat(tempValue2.getFloatingValue()).isEqualTo(19.52d);
+        assertThat(tempValue2.getValue()).isEqualTo(19.52d);
 
         // Scenario 2: Update (20.78 °C)
-        assertThat(pool.<DPT9Value>getValue(ADDRESS_2, DPT9.TEMPERATURE.getId()).getFloatingValue()).isEqualTo(20.78d);
-        assertThat(pool.getValue(ADDRESS_2, DPT9.TEMPERATURE).getFloatingValue()).isEqualTo(20.78d);
+        assertThat(pool.<DPT9Value>getValue(ADDRESS_2, DPT9.TEMPERATURE.getId()).getValue()).isEqualTo(20.78d);
+        assertThat(pool.getValue(ADDRESS_2, DPT9.TEMPERATURE).getValue()).isEqualTo(20.78d);
 
         // Scenario 3: unknown address
         assertThat(pool.<DPT9Value>getValue(ADDRESS_UNKNOWN, DPT9.TEMPERATURE.getId())).isNull();
