@@ -80,6 +80,29 @@ class DPT10ValueTest {
     }
 
     @Test
+    @DisplayName("#(DayOfWeek, LocalTime) with: No Day, 04:07:43")
+    void test_NoDay_04_07_43() {
+        final var value = new DPT10Value(new byte[]{0x04, 0x07, 0x2B});
+        assertThat(value.getDayOfWeek()).isNull();
+        assertThat(value.getTime()).isEqualTo(LocalTime.of(4, 7, 43));
+        assertThat(value.toByteArray()).containsExactly(0x04, 0x07, 0x2B);
+
+        assertThat(value.toText()).isEqualTo("04:07:43");
+    }
+
+    @Test
+    @DisplayName("#(DayOfWeek, LocalTime) with: Friday, 17:32:11")
+    void test_Friday_17_32_11() {
+        // 10110001
+        final var value = new DPT10Value(new byte[]{(byte) 0xB1, 0x20, 0x0B});
+        assertThat(value.getDayOfWeek()).isSameAs(DayOfWeek.FRIDAY);
+        assertThat(value.getTime()).isEqualTo(LocalTime.of(17, 32, 11));
+        assertThat(value.toByteArray()).containsExactly(0xB1, 0x20, 0x0B);
+
+        assertThat(value.toText()).isEqualTo("Friday, 17:32:11");
+    }
+
+    @Test
     @DisplayName("#toString()")
     void testToString() {
         final var valueNoWeekDay = new DPT10Value(null, LocalTime.of(14, 47, 31));

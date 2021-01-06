@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.datapoint.value;
 
-import li.pitschmann.knx.core.datapoint.DPT11;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -32,63 +32,96 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT11ValueTest {
-    /**
-     * Test {@link DPT11Value}
-     */
+class DPT11ValueTest {
+
     @Test
-    public void test() {
-        // day = 1, month = 1, year = 90 (=1990)
-        this.assertValue(new byte[]{0x01, 0x01, 0x5a}, LocalDate.of(1990, 1, 1), "1990-01-01");
-        // day = 9, month = 3, year = 91 (=1991)
-        this.assertValue(new byte[]{0x09, 0x03, 0x5b}, LocalDate.of(1991, 3, 9), "1991-03-09");
-        // day = 18, month = 6, year = 99 (=1999)
-        this.assertValue(new byte[]{0x12, 0x06, 0x63}, LocalDate.of(1999, 6, 18), "1999-06-18");
-        // day = 27, month = 9, year = 50 (=2050)
-        this.assertValue(new byte[]{0x1b, 0x09, 0x32}, LocalDate.of(2050, 9, 27), "2050-09-27");
-        // day = 30, month = 12, year = 89 (=2089)
-        this.assertValue(new byte[]{0x1e, 0x0c, 0x59}, LocalDate.of(2089, 12, 30), "2089-12-30");
+    @DisplayName("#(byte[]) with: 1990-01-01")
+    void testBytes_1990_01_01() {
+        final var value = new DPT11Value(new byte[]{0x01, 0x01, 0x5A});
+        assertThat(value.getDate()).isEqualTo(LocalDate.of(1990, 1, 1));
+        assertThat(value.toByteArray()).containsExactly(0x01, 0x01, 0x5A);
+
+        assertThat(value.toText()).isEqualTo("1990-01-01");
     }
 
-    /**
-     * Test {@link DPT11Value} with invalid arguments
-     */
     @Test
-    public void testInvalid() {
-        assertThatThrownBy(() -> new DPT11Value(new byte[0])).isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("#(byte[]) with: 1991-03-09")
+    void testBytes_1991_03_09() {
+        final var value = new DPT11Value(new byte[]{0x09, 0x03, 0x5B});
+        assertThat(value.getDate()).isEqualTo(LocalDate.of(1991, 3, 9));
+        assertThat(value.toByteArray()).containsExactly(0x09, 0x03, 0x5B);
 
-        // invalid year (only 1990..2089 should be accepted)
-        assertThatThrownBy(() -> new DPT11Value(LocalDate.of(1989, 12, 31))).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> new DPT11Value(LocalDate.of(2090, 1, 1))).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DPT11Value.toByteArray(LocalDate.of(1989, 12, 31))).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DPT11Value.toByteArray(LocalDate.of(2090, 1, 1))).isInstanceOf(IllegalArgumentException.class);
+        assertThat(value.toText()).isEqualTo("1991-03-09");
     }
 
-    private void assertValue(final byte[] bytes, final LocalDate date, final String text) {
-        final var dptValue = new DPT11Value(date);
-        final var dptValueByByte = new DPT11Value(bytes);
+    @Test
+    @DisplayName("#(byte[]) with: 1999-06-18")
+    void testBytes_1999_06_09() {
+        final var value = new DPT11Value(new byte[]{0x12, 0x06, 0x63});
+        assertThat(value.getDate()).isEqualTo(LocalDate.of(1999, 6, 18));
+        assertThat(value.toByteArray()).containsExactly(0x12, 0x06, 0x63);
 
-        // instance methods
-        assertThat(dptValue.getDate()).isEqualTo(date);
-        assertThat(dptValue.toByteArray()).containsExactly(bytes);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("1999-06-18");
+    }
 
-        // class methods
-        assertThat(DPT11Value.toByteArray(date)).containsExactly(bytes);
+    @Test
+    @DisplayName("#(byte[]) with: 2050-09-27")
+    void testBytes_2050_09_27() {
+        final var value = new DPT11Value(new byte[]{0x1B, 0x09, 0x32});
+        assertThat(value.getDate()).isEqualTo(LocalDate.of(2050, 9, 27));
+        assertThat(value.toByteArray()).containsExactly(0x1B, 0x09, 0x32);
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+        assertThat(value.toText()).isEqualTo("2050-09-27");
+    }
+
+    @Test
+    @DisplayName("#(byte[]) with: 2089-12-30")
+    void testBytes_2089_12_30() {
+        final var value = new DPT11Value(new byte[]{0x1E, 0x0C, 0x59});
+        assertThat(value.getDate()).isEqualTo(LocalDate.of(2089, 12, 30));
+        assertThat(value.toByteArray()).containsExactly(0x1E, 0x0C, 0x59);
+
+        assertThat(value.toText()).isEqualTo("2089-12-30");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var value = new DPT11Value(LocalDate.of(1997, 12, 5));
+        assertThat(value).hasToString(
+                "DPT11Value{dpt=11.001, date=1997-12-05, byteArray=0x05 0C 61}"
+        );
+
+        final var value2 = new DPT11Value(LocalDate.of(2045, 4, 23));
+        assertThat(value2).hasToString(
+                "DPT11Value{dpt=11.001, date=2045-04-23, byteArray=0x17 04 2D}"
+        );
+    }
+
+    @Test
+    @DisplayName("#(byte[]) with invalid byte length")
+    void testBytesOutOfRange() {
+        // expected: 3 bytes, provided 13 bytes
+        assertThatThrownBy(() -> new DPT11Value(new byte[13]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT11Value(LocalDate.of(2020, 1, 2));
+        final var value2 = new DPT11Value(LocalDate.of(2020, 1, 2));
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(value2).isEqualTo(value);
+        assertThat(value2).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT11Value(date.plusDays(1)));
-
-        // toString
-        final var toString = String.format("DPT11Value{dpt=%s, date=%s, byteArray=%s}", DPT11.DATE, date, ByteFormatter.formatHexAsString(bytes));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT11Value(LocalDate.of(1999, 1, 2)));
+        assertThat(value).isNotEqualTo(new DPT11Value(LocalDate.of(2020, 9, 2)));
+        assertThat(value).isNotEqualTo(new DPT11Value(LocalDate.of(2020, 1, 9)));
     }
 }
