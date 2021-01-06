@@ -84,14 +84,10 @@ public final class DPT18 extends BaseRangeDataPointType<DPT18Value, Integer> {
         final var controlled = this.findByString(args, "controlled");
         final var intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
 
-        return new DPT18Value(controlled, Preconditions.checkNonNull(intValue, "The scene number must be present."));
+        return of(controlled, Preconditions.checkNonNull(intValue, "The scene number must be present."));
     }
 
     public DPT18Value of(final boolean controlled, final int sceneNumber) {
         return new DPT18Value(controlled, sceneNumber);
-    }
-
-    public byte[] toByteArray(final boolean controlled, final int sceneNumber) {
-        return DPT18Value.toByteArray(controlled, sceneNumber);
     }
 }

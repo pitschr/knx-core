@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT19;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -64,17 +65,18 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     private final LocalDate date;
     private final LocalTime time;
     private final Flags flags;
-    private final byte[] byteArray;
 
     public DPT19Value(final byte[] bytes) {
         super(DPT19.DATE_TIME);
-        Preconditions.checkArgument(bytes.length == 8);
+        // validate
+        if (bytes.length != 8) {
+            throw new KnxNumberOutOfRangeException("bytes", 8, 8, bytes.length, bytes);
+        }
 
         this.dayOfWeek = toDayOfWeek(bytes);
-        this.date = toLocalDate(bytes);
+        this.date = validateLocalDate(toLocalDate(bytes));
         this.time = toLocalTime(bytes);
         this.flags = new Flags(new byte[]{bytes[6], bytes[7]});
-        this.byteArray = bytes;
     }
 
     public DPT19Value(final @Nullable DayOfWeek dayOfWeek,
@@ -82,16 +84,27 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                       final LocalTime time,
                       final @Nullable Flags flags) {
         super(DPT19.DATE_TIME);
-        Preconditions.checkNonNull(date);
-        Preconditions.checkNonNull(time);
-        Preconditions.checkArgument(date.getYear() >= 1900 && date.getYear() <= 2155,
-                "Year must be between '1900..2155'. Got: {}", date.getYear());
 
         this.dayOfWeek = dayOfWeek;
-        this.date = date;
-        this.time = time;
+        this.date = validateLocalDate(date);
+        this.time = Objects.requireNonNull(time);
         this.flags = Objects.requireNonNullElse(flags, Flags.NO_FLAGS);
-        this.byteArray = toByteArray(dayOfWeek, date, time, flags);
+    }
+
+    /**
+     * Validates if the year of given {@link LocalDate} is within
+     * {@code 1900} and {@code 2155}
+     *
+     * @param date the local date to be checked
+     * @return the local date, if validation was successful
+     * @throws NullPointerException     if local date is not provided
+     * @throws IllegalArgumentException if the local date is not within the range
+     */
+    private static LocalDate validateLocalDate(final LocalDate date) {
+        Preconditions.checkNonNull(date, "date is null");
+        Preconditions.checkArgument(date.getYear() >= 1900 && date.getYear() <= 2155,
+                "Year must be between '1900..2155'. Got: {}", date.getYear());
+        return date;
     }
 
     /**
@@ -152,21 +165,25 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         return time;
     }
 
-    /**
-     * Converts {@link LocalDateTime} value to byte array
-     *
-     * @param dayOfWeek day of week
-     * @param date      local date
-     * @param time      local time
-     * @param flags     flags for date and time
-     * @return byte array
-     */
-    public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek,
-                                     final LocalDate date,
-                                     final LocalTime time,
-                                     final @Nullable Flags flags) {
-        Preconditions.checkArgument(date.getYear() >= 1900 && date.getYear() <= 2155, "Year must be between '1900..2155'. Got: " + date.getYear());
+    @Nullable
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public Flags getFlags() {
+        return flags;
+    }
+
+    @Override
+    public byte[] toByteArray() {
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
         final var yearAsByte = (byte) (date.getYear() - 1900);
 
@@ -198,28 +215,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         return bytes;
     }
 
-    @Nullable
-    public DayOfWeek getDayOfWeek() {
-        return this.dayOfWeek;
-    }
-
-    public LocalDate getDate() {
-        return this.date;
-    }
-
-    public LocalTime getTime() {
-        return this.time;
-    }
-
-    public Flags getFlags() {
-        return this.flags;
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return this.byteArray.clone();
-    }
-
     @Override
     public String toText() {
         final var sb = new StringBuilder(50);
@@ -239,12 +234,12 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("dayOfWeek", this.dayOfWeek)
-                .add("date", this.date)
-                .add("time", this.time)
-                .add("flags", this.flags)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("dayOfWeek", dayOfWeek)
+                .add("date", date)
+                .add("time", time)
+                .add("flags", flags)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -265,7 +260,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.dayOfWeek, this.date, this.time, this.flags);
+        return Objects.hash(dayOfWeek, date, time, flags);
     }
 
     /**
@@ -289,7 +284,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          * Create {@link Flags} given two bytes
          *
          * @param bytes byte array for flag
-         * @return new instance of {@link Flags}
          */
         public Flags(final byte[] bytes) {
             Preconditions.checkArgument(bytes != null && bytes.length == 2,
@@ -321,7 +315,6 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          * @param timeValid                   if time is valid
          * @param summerTime                  if it is a summer time (or standard time)
          * @param clockWithExternalSyncSignal if clock is externally synchronized
-         * @return new instance of {@link Flags}
          */
         public Flags(final boolean fault,
                      final boolean workingDay,
@@ -480,15 +473,15 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
 
         @Override
         public int hashCode() {
-            return Objects.hash(this.fault, //
-                    this.workingDay, //
-                    this.workingDayValid, //
-                    this.yearValid, //
-                    this.dateValid, //
-                    this.dayOfWeekValid, //
-                    this.timeValid, //
-                    this.summerTime, //
-                    this.clockWithExternalSyncSignal);
+            return Objects.hash(fault, //
+                    workingDay, //
+                    workingDayValid, //
+                    yearValid, //
+                    dateValid, //
+                    dayOfWeekValid, //
+                    timeValid, //
+                    summerTime, //
+                    clockWithExternalSyncSignal);
         }
     }
 }

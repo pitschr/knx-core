@@ -20,9 +20,9 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT17;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -50,18 +50,10 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
 
     public DPT17Value(final int sceneNumber) {
         super(DPT17.SCENE_NUMBER);
-        Preconditions.checkArgument(DPT17.SCENE_NUMBER.isRangeClosed(sceneNumber));
+        if (!getDPT().isRangeClosed(sceneNumber)) {
+            throw new KnxNumberOutOfRangeException("sceneNumber", getDPT().getLowerValue(), getDPT().getUpperValue(), sceneNumber);
+        }
         this.sceneNumber = sceneNumber;
-    }
-
-    /**
-     * Converts {@code sceneNumber} value to byte array
-     *
-     * @param sceneNumber scene number [0..63]
-     * @return byte array
-     */
-    public static byte[] toByteArray(final int sceneNumber) {
-        return new byte[]{(byte) sceneNumber};
     }
 
     public int getSceneNumber() {
@@ -70,21 +62,21 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
 
     @Override
     public byte[] toByteArray() {
-        return toByteArray(this.sceneNumber);
+        return new byte[]{(byte) sceneNumber};
     }
 
     @Override
     public String toText() {
-        return "scene " + getSceneNumber();
+        return "scene '" + getSceneNumber() + "'";
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("sceneNumber", this.sceneNumber)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("sceneNumber", sceneNumber)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -102,6 +94,6 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
 
     @Override
     public int hashCode() {
-        return Integer.hashCode(this.sceneNumber);
+        return Objects.hash(getDPT(), sceneNumber);
     }
 }

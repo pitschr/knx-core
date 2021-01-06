@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT19;
 import li.pitschmann.knx.core.datapoint.value.DPT19Value.Flags;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
@@ -100,15 +101,13 @@ public final class DPT19ValueTest {
      */
     @Test
     public void testInvalid() {
-        assertThatThrownBy(() -> new DPT19Value(new byte[0])).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new DPT19Value(new byte[0]))
+                .isInstanceOf(KnxNumberOutOfRangeException.class);
 
         // invalid year (only 1900..2155 should be accepted)
         assertThatThrownBy(() -> new DPT19Value(null, LocalDate.of(1899, 12, 31), LocalTime.now(), null))
                 .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> new DPT19Value(null, LocalDate.of(2156, 1, 1), LocalTime.now(), null)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DPT19Value.toByteArray(null, LocalDate.of(1899, 12, 31), LocalTime.now(), null))
-                .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DPT19Value.toByteArray(null, LocalDate.of(2156, 1, 1), LocalTime.now(), null))
+        assertThatThrownBy(() -> new DPT19Value(null, LocalDate.of(2156, 1, 1), LocalTime.now(), null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -126,9 +125,6 @@ public final class DPT19ValueTest {
         assertThat(dptValue.getFlags()).isEqualTo(flagsNotNull);
         assertThat(dptValue.toByteArray()).containsExactly(bytes);
         assertThat(dptValue.toText()).isEqualTo(text);
-
-        // class methods
-        assertThat(DPT19Value.toByteArray(dayOfWeek, date, time, flagsNotNull)).containsExactly(bytes);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
@@ -156,7 +152,7 @@ public final class DPT19ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT19Value(dayOfWeek, date, time, new Flags(new byte[]{flagBytes[0], anotherFlagByte2})));
 
         // toString
-        final var toString = String.format("DPT19Value{dpt=%s, dayOfWeek=%s, date=%s, time=%s, flags=%s, byteArray=%s}", DPT19.DATE_TIME, dayOfWeek,
+        final var toString = String.format("DPT19Value{dpt=%s, dayOfWeek=%s, date=%s, time=%s, flags=%s, byteArray=%s}", DPT19.DATE_TIME.getId(), dayOfWeek,
                 date, time, flagsNotNull, ByteFormatter.formatHexAsString(bytes));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

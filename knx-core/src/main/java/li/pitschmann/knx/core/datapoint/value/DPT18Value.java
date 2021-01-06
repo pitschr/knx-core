@@ -20,8 +20,8 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT18;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -48,53 +48,46 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
     private int sceneNumber;
 
     public DPT18Value(final byte b) {
-        super(DPT18.SCENE_CONTROL);
-        // control
-        this.controlled = (b & 0x80) != 0x00;
-        // scene number
-        this.sceneNumber = b & 0x3F;
+        this(
+                // controlled
+                (b & 0x80) != 0x00,
+                // scene number
+                b & 0x3F
+        );
     }
 
     public DPT18Value(final boolean controlled, final int sceneNumber) {
         super(DPT18.SCENE_CONTROL);
-        Preconditions.checkArgument(DPT18.SCENE_CONTROL.isRangeClosed(sceneNumber));
+        if (!getDPT().isRangeClosed(sceneNumber)) {
+            throw new KnxNumberOutOfRangeException("sceneNumber", getDPT().getLowerValue(), getDPT().getUpperValue(), sceneNumber);
+        }
         this.controlled = controlled;
         this.sceneNumber = sceneNumber;
     }
 
-    /**
-     * Converts {@code control} and {@code sceneNumber} value to byte array
-     *
-     * @param controlled  {@code true} if learn, {@code false} if activate
-     * @param sceneNumber the scene number [0..63]
-     * @return byte array
-     */
-    public static byte[] toByteArray(final boolean controlled, final int sceneNumber) {
+    public boolean isControlled() {
+        return controlled;
+    }
+
+    public int getSceneNumber() {
+        return sceneNumber;
+    }
+
+    @Override
+    public byte[] toByteArray() {
         final var controlledAsByte = controlled ? (byte) 0x80 : 0x00;
         final var sceneNumberAsByte = (byte) sceneNumber;
 
         return new byte[]{(byte) (controlledAsByte | sceneNumberAsByte)};
     }
 
-    public boolean isControlled() {
-        return this.controlled;
-    }
-
-    public int getSceneNumber() {
-        return this.sceneNumber;
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return toByteArray(this.controlled, this.sceneNumber);
-    }
-
     @Override
     public String toText() {
+
         if (isControlled()) {
-            return String.format("controlled 'scene %s'", getSceneNumber());
+            return "controlled 'scene " + sceneNumber + "'";
         } else {
-            return "scene " + getSceneNumber();
+            return "scene '" + sceneNumber + "'";
         }
     }
 
@@ -102,10 +95,10 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("controlled", this.controlled)
-                .add("sceneNumber", this.sceneNumber)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("controlled", controlled)
+                .add("sceneNumber", sceneNumber)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -124,6 +117,6 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.controlled, this.sceneNumber);
+        return Objects.hash(getDPT(), controlled, sceneNumber);
     }
 }

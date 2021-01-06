@@ -36,7 +36,7 @@ public final class DPT18ValueTest {
     @Test
     public void test() {
         this.assertValue((byte) 0x87, true, 7, "controlled 'scene 7'");
-        this.assertValue((byte) 0x29, false, 41, "scene 41");
+        this.assertValue((byte) 0x29, false, 41, "scene '41'");
     }
 
     private void assertValue(final byte b, final boolean controlled, final int sceneNumber, final String text) {
@@ -48,9 +48,6 @@ public final class DPT18ValueTest {
         assertThat(dptValue.getSceneNumber()).isEqualTo(sceneNumber);
         assertThat(dptValue.toByteArray()).containsExactly(b);
         assertThat(dptValue.toText()).isEqualTo(text);
-
-        // class methods
-        assertThat(DPT18Value.toByteArray(controlled, sceneNumber)).containsExactly(b);
 
         // equals
         assertThat(dptValue).isEqualTo(dptValue);
@@ -64,7 +61,7 @@ public final class DPT18ValueTest {
         assertThat(dptValue).isNotEqualTo(new DPT18Value(controlled, sceneNumber + 1));
 
         // toString
-        final var toString = String.format("DPT18Value{dpt=%s, controlled=%s, sceneNumber=%s, byteArray=%s}", DPT18.SCENE_CONTROL, controlled,
+        final var toString = String.format("DPT18Value{dpt=%s, controlled=%s, sceneNumber=%s, byteArray=%s}", DPT18.SCENE_CONTROL.getId(), controlled,
                 sceneNumber, ByteFormatter.formatHex(b));
         assertThat(dptValue).hasToString(toString);
         assertThat(dptValueByByte).hasToString(toString);

@@ -81,12 +81,4 @@ class DPT17Test {
         assertThat(dpt.of(0)).isInstanceOf(DPT17Value.class);
         assertThat(dpt.of(63)).isInstanceOf(DPT17Value.class);
     }
-
-    @Test
-    @DisplayName("Test #toByteArray(int)")
-    void testToByteArray() {
-        final var dpt = DPT17.SCENE_NUMBER;
-        assertThat(dpt.toByteArray(0)).containsExactly(0x00);
-        assertThat(dpt.toByteArray(63)).containsExactly(0x3F);
-    }
 }
