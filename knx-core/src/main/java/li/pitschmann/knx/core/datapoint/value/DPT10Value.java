@@ -20,9 +20,9 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT10;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,24 +62,22 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
     private static final Logger log = LoggerFactory.getLogger(DPT10Value.class);
     private final DayOfWeek dayOfWeek;
     private final LocalTime time;
-    private final byte[] byteArray;
 
     public DPT10Value(final byte[] bytes) {
         super(DPT10.TIME_OF_DAY);
-        Preconditions.checkArgument(bytes.length == 3);
+        // validate
+        if (bytes.length != 3) {
+            throw new KnxNumberOutOfRangeException("bytes", 3, 3, bytes.length, bytes);
+        }
 
         this.dayOfWeek = toDayOfWeek(bytes);
         this.time = toLocalTime(bytes);
-        this.byteArray = bytes;
     }
 
     public DPT10Value(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
         super(DPT10.TIME_OF_DAY);
-        Preconditions.checkNonNull(time);
-
         this.dayOfWeek = dayOfWeek;
-        this.time = time;
-        this.byteArray = toByteArray(dayOfWeek, time);
+        this.time = Objects.requireNonNull(time);
     }
 
     /**
@@ -123,14 +121,17 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         return time;
     }
 
-    /**
-     * Converts {@link DayOfWeek} and {@link LocalTime} values to byte array
-     *
-     * @param dayOfWeek 1=Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday, 7=Sunday, null=no day
-     * @param time      the local time
-     * @return byte array
-     */
-    public static byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
+    @Nullable
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    @Override
+    public byte[] toByteArray() {
         // byte 0: day-of-week + hour
         final var hourAsByte = (byte) time.getHour();
         final var dayOfWeekAsByte = dayOfWeek == null ? 0x00 : (byte) (dayOfWeek.getValue() << 5);
@@ -148,20 +149,6 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         return bytes;
     }
 
-    @Nullable
-    public DayOfWeek getDayOfWeek() {
-        return this.dayOfWeek;
-    }
-
-    public LocalTime getTime() {
-        return this.time;
-    }
-
-    @Override
-    public byte[] toByteArray() {
-        return this.byteArray.clone();
-    }
-
     @Override
     public String toText() {
         final var sb = new StringBuilder(30);
@@ -177,10 +164,10 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("dayOfWeek", this.dayOfWeek)
-                .add("time", this.time)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", getDPT().getId())
+                .add("dayOfWeek", dayOfWeek)
+                .add("time", time)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -199,6 +186,6 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.dayOfWeek, this.time);
+        return Objects.hash(dayOfWeek, time);
     }
 }

@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class DPT3ValueTest {
+class DPT3ValueTest {
 
     @Test
     @DisplayName("#(DPT3.BLINDS_CONTROL, byte) with: no control, stop/0%")

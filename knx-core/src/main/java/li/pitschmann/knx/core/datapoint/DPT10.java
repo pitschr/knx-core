@@ -104,14 +104,10 @@ public final class DPT10 extends BaseDataPointType<DPT10Value> {
         final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
         final var time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
 
-        return new DPT10Value(dayOfWeek, time);
+        return of(dayOfWeek, time);
     }
 
     public DPT10Value of(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
         return new DPT10Value(dayOfWeek, time);
-    }
-
-    public byte[] toByteArray(final @Nullable DayOfWeek dayOfWeek, final LocalTime time) {
-        return DPT10Value.toByteArray(dayOfWeek, time);
     }
 }

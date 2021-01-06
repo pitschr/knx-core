@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author PITSCHR
  */
-public final class DPT1ValueTest {
+class DPT1ValueTest {
 
     @Test
     @DisplayName("#(DPT1.SWITCH, byte) with: false")
