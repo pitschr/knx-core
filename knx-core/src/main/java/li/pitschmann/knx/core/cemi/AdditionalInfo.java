@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.cemi;
 
 import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 /**
@@ -36,7 +35,7 @@ public final class AdditionalInfo extends AbstractMultiRawData {
     private AdditionalInfo(final byte[] addInfoRawData) {
         super(addInfoRawData);
 
-        this.length = Bytes.toUnsignedInt(addInfoRawData[0]);
+        this.length = Byte.toUnsignedInt(addInfoRawData[0]);
         this.totalLength = addInfoRawData.length;
     }
 
@@ -66,7 +65,7 @@ public final class AdditionalInfo extends AbstractMultiRawData {
         }
 
         // validate length
-        if (Bytes.toUnsignedInt(addInfoRawData[0]) > 0) {
+        if (Byte.toUnsignedInt(addInfoRawData[0]) > 0) {
             throw new UnsupportedOperationException("Not implemented yet!");
         }
     }

@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
         final var sizeOfServiceFamilies = (rawData.length - 2) / 2;
         final var tmp = new ArrayList<ServiceTypeFamilyVersion>(sizeOfServiceFamilies);
         for (var i = 2; i < rawData.length; i += 2) {
-            tmp.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.valueOf(rawData[i]), Bytes.toUnsignedInt(rawData[i + 1])));
+            tmp.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.valueOf(rawData[i]), Byte.toUnsignedInt(rawData[i + 1])));
         }
         this.serviceFamilies = Collections.unmodifiableList(tmp);
     }

@@ -224,7 +224,7 @@ public final class GroupAddress extends KnxAddress {
         // byte 0: .... .xxx
         final var middle = address[0] & 0x07;
         // byte 1: xxxx xxxx
-        final var sub = Bytes.toUnsignedInt(address[1]);
+        final var sub = Byte.toUnsignedInt(address[1]);
 
         return main + "/" + (middle << 8 | sub);
     }
@@ -240,7 +240,7 @@ public final class GroupAddress extends KnxAddress {
         // byte 0: .... .xxx
         final var middle = address[0] & 0x07;
         // byte 1: xxxx xxxx
-        final var sub = Bytes.toUnsignedInt(address[1]);
+        final var sub = Byte.toUnsignedInt(address[1]);
 
         return main + "/" + middle + "/" + sub;
     }

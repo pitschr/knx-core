@@ -31,7 +31,6 @@ import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
@@ -166,8 +165,8 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
         var index = -1;
         for (var i = 0; i < rawData.length; ) {
-            final var dibLength = Bytes.toUnsignedInt(rawData[i]);
-            final var dibCode = Bytes.toUnsignedInt(rawData[i + 1]);
+            final var dibLength = Byte.toUnsignedInt(rawData[i]);
+            final var dibCode = Byte.toUnsignedInt(rawData[i + 1]);
             // we are interested in 2nd byte of DIB only
             if (descriptionType.getCode() == dibCode) {
                 // found it!
@@ -206,7 +205,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             return null;
         } else {
             // found
-            final var dibLength = Bytes.toUnsignedInt(rawData[index]);
+            final var dibLength = Byte.toUnsignedInt(rawData[index]);
             final var dibArray = new byte[dibLength];
             System.arraycopy(rawData, index, dibArray, 0, dibLength);
             if (log.isDebugEnabled()) {

@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public final class DisconnectRequestBody extends AbstractMultiRawData implements
     private DisconnectRequestBody(final byte[] bytes) {
         super(bytes);
 
-        this.channelId = Bytes.toUnsignedInt(bytes[0]);
+        this.channelId = Byte.toUnsignedInt(bytes[0]);
         // bytes[1] -> reserved
         this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 2, bytes.length));
     }

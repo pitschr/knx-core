@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.net.ConnectionType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 /**
@@ -62,9 +61,9 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
     private ConnectionRequestInformation(final byte[] criRawData) {
         super(criRawData);
 
-        this.length = Bytes.toUnsignedInt(criRawData[0]);
-        this.connectionType = ConnectionType.valueOf(Bytes.toUnsignedInt(criRawData[1]));
-        this.layerType = LayerType.valueOf(Bytes.toUnsignedInt(criRawData[2]));
+        this.length = Byte.toUnsignedInt(criRawData[0]);
+        this.connectionType = ConnectionType.valueOf(Byte.toUnsignedInt(criRawData[1]));
+        this.layerType = LayerType.valueOf(Byte.toUnsignedInt(criRawData[2]));
         // criRawData[3] = reserved
     }
 
@@ -123,8 +122,8 @@ public final class ConnectionRequestInformation extends AbstractMultiRawData {
             throw new KnxNullPointerException("criRawData");
         } else if (criRawData.length != 4) {
             throw new KnxNumberOutOfRangeException("criRawData", 4, 4, criRawData.length, criRawData);
-        } else if (Bytes.toUnsignedInt(criRawData[0]) != 4) {
-            throw new KnxNumberOutOfRangeException("criRawData[0]", 4, 4, Bytes.toUnsignedInt(criRawData[0]), criRawData);
+        } else if (Byte.toUnsignedInt(criRawData[0]) != 4) {
+            throw new KnxNumberOutOfRangeException("criRawData[0]", 4, 4, Byte.toUnsignedInt(criRawData[0]), criRawData);
         }
     }
 

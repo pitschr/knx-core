@@ -96,7 +96,7 @@ public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends BaseDat
 
     @Override
     protected DPTEnumValue<T> parse(final byte[] bytes) {
-        return this.of(Bytes.toUnsignedInt(bytes[0]));
+        return this.of(Byte.toUnsignedInt(bytes[0]));
     }
 
     @Override

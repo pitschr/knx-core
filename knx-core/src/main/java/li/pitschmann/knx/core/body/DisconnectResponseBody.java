@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 /**
@@ -54,8 +53,8 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     private DisconnectResponseBody(final byte[] bytes) {
         super(bytes);
 
-        this.channelId = Bytes.toUnsignedInt(bytes[0]);
-        this.status = Status.valueOf(Bytes.toUnsignedInt(bytes[1]));
+        this.channelId = Byte.toUnsignedInt(bytes[0]);
+        this.status = Status.valueOf(Byte.toUnsignedInt(bytes[1]));
     }
 
     /**

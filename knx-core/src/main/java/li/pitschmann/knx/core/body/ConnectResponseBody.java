@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -88,8 +87,8 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
     private ConnectResponseBody(final byte[] bytes) {
         super(bytes);
 
-        this.channelId = Bytes.toUnsignedInt(bytes[0]);
-        this.status = Status.valueOf(Bytes.toUnsignedInt(bytes[1]));
+        this.channelId = Byte.toUnsignedInt(bytes[0]);
+        this.status = Status.valueOf(Byte.toUnsignedInt(bytes[1]));
         if (bytes.length == STRUCTURE_LENGTH) {
             this.dataEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 2, 10));
             this.connectionResponseData = ConnectionResponseData.of(Arrays.copyOfRange(bytes, 10, 14));

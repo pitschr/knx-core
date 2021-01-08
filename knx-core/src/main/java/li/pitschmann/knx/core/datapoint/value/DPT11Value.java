@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT11;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
@@ -102,15 +101,15 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
         }
 
         // day
-        final var day = Bytes.toUnsignedInt(bytes[0]);
+        final var day = Byte.toUnsignedInt(bytes[0]);
 
         // month
-        final var month = Bytes.toUnsignedInt(bytes[1]);
+        final var month = Byte.toUnsignedInt(bytes[1]);
 
         // year (two digits only)
         // If year contains value ≥ 90 : interpret as 20th century
         // If year contains value < 90: interpret as 21st century
-        final var year = Bytes.toUnsignedInt(bytes[2]);
+        final var year = Byte.toUnsignedInt(bytes[2]);
         final var fullYear = (year < 90 ? 2000 : 1900) + year;
 
         final var date = LocalDate.of(fullYear, month, day);

@@ -25,7 +25,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -79,9 +78,9 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     private TunnelingRequestBody(final byte[] bytes) {
         super(bytes);
 
-        this.length = Bytes.toUnsignedInt(bytes[0]);
-        this.channelId = Bytes.toUnsignedInt(bytes[1]);
-        this.sequence = Bytes.toUnsignedInt(bytes[2]);
+        this.length = Byte.toUnsignedInt(bytes[0]);
+        this.channelId = Byte.toUnsignedInt(bytes[1]);
+        this.sequence = Byte.toUnsignedInt(bytes[2]);
         // [3] -> reserved
         this.cemi = CEMI.of(Arrays.copyOfRange(bytes, 4, bytes.length));
     }
@@ -134,7 +133,7 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_WITH_CEMI_MIN_LENGTH, STRUCTURE_WITH_CEMI_MAX_LENGTH, rawData.length,
                     rawData);
-        } else if (Bytes.toUnsignedInt(rawData[0]) != STRUCTURE_LENGTH) {
+        } else if (Byte.toUnsignedInt(rawData[0]) != STRUCTURE_LENGTH) {
             throw new KnxNumberOutOfRangeException("rawData[0]", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData[0], rawData);
         }
     }
