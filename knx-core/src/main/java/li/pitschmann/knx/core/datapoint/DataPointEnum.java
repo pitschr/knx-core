@@ -74,4 +74,22 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
         final var value = of();
         return value.getDPT().getDescription() + " - " + value.getDescription();
     }
+
+    /**
+     * Returns the {@link DataPointType}
+     *
+     * @return DPTEnum
+     */
+    default DPTEnum<T> getDPT() {
+        return of().getDPT();
+    }
+
+    /**
+     * Returns the value of {@link DataPointEnum}
+     *
+     * @return value
+     */
+    default int getValue() {
+        return of().getValue();
+    }
 }

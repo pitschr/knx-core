@@ -22,6 +22,8 @@ import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Test Class for {@link DPT20}
  *
@@ -32,5 +34,47 @@ class DPT20Test {
     @DisplayName("DPT20 Constructor not instantiable")
     void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DPT20.class);
+    }
+
+    @Test
+    @DisplayName("ActuatorConnectType.SENSOR")
+    void testActuatorConnectType_Sensor(){
+        final var valueSensor = DPT20.ActuatorConnectType.SENSOR;
+
+        // short access (via of())
+        assertThat(valueSensor.ordinal()).isEqualTo(0);
+        assertThat(valueSensor.getId()).isEqualTo("20.020 - SENSOR");
+        assertThat(valueSensor.getDescription()).isEqualTo("Actuator Connect Type - Sensor Connection");
+        assertThat(valueSensor.getValue()).isEqualTo(1);
+        assertThat(valueSensor.toByteArray()).containsExactly(0x01);
+        assertThat(valueSensor.toText()).isEqualTo("Sensor Connection");
+
+        // access vial DPTEnumValue
+        assertThat(valueSensor.of().getValue()).isEqualTo(1);
+        assertThat(valueSensor.of().getEnum()).isSameAs(DPT20.ActuatorConnectType.SENSOR);
+
+        // access via DPTEnum (value)
+        assertThat(valueSensor.getDPT().of(1).getEnum()).isEqualTo(DPT20.ActuatorConnectType.SENSOR);
+    }
+
+    @Test
+    @DisplayName("ActuatorConnectType.CONTROLLER")
+    void testActuatorConnectType_Controller(){
+        final var valueSensor = DPT20.ActuatorConnectType.CONTROLLER;
+
+        // short access (via of())
+        assertThat(valueSensor.ordinal()).isEqualTo(1);
+        assertThat(valueSensor.getId()).isEqualTo("20.020 - CONTROLLER");
+        assertThat(valueSensor.getDescription()).isEqualTo("Actuator Connect Type - Controller Connection");
+        assertThat(valueSensor.toByteArray()).containsExactly(0x02);
+        assertThat(valueSensor.toText()).isEqualTo("Controller Connection");
+
+
+        // access vial DPTEnumValue
+        assertThat(valueSensor.of().getValue()).isEqualTo(2);
+        assertThat(valueSensor.of().getEnum()).isSameAs(DPT20.ActuatorConnectType.CONTROLLER);
+
+        // access via DPTEnum (value)
+        assertThat(valueSensor.getDPT().of(2).getEnum()).isEqualTo(DPT20.ActuatorConnectType.CONTROLLER);
     }
 }

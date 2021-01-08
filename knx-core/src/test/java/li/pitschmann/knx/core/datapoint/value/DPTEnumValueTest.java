@@ -48,7 +48,7 @@ public final class DPTEnumValueTest {
         // instance methods
         assertThat(priorityHigh.getDPT()).isEqualTo(DPT_ENUM);
         assertThat(priorityHigh.getEnum()).isEqualTo(DPT20.Priority.HIGH);
-        assertThat(priorityHigh.getOrdinal()).isEqualTo(0);
+        assertThat(priorityHigh.getValue()).isEqualTo(0);
         assertThat(priorityHigh.getDescription()).isEqualTo("high");
         assertThat(priorityHigh.toByteArray()).containsExactly(0x00);
         assertThat(priorityHigh.toText()).isEqualTo("high");
@@ -70,9 +70,12 @@ public final class DPTEnumValueTest {
         assertThat(priorityHigh).isNotEqualTo(new DPTEnumValue<>(new DPTEnum<>("456.123", "foobar"), DPT20.Priority.HIGH, 0, "high"));
 
         // toString
-        final var toString = String.format("DPTEnumValue{dpt=%s, ordinal=0, enumField=%s.HIGH, description=high, byteArray=0x00}", DPT_ENUM,
-                DPT20.Priority.class.getName());
-        assertThat(priorityHigh).hasToString(toString);
+        assertThat(priorityHigh).hasToString(
+                String.format(
+                        "DPTEnumValue{dpt=123.456, value=0, enumField=%s.HIGH, description=high, byteArray=0x00}", //
+                        DPT20.Priority.class.getName() //
+                )
+        );
     }
 
     /**
