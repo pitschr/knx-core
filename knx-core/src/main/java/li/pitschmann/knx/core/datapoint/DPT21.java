@@ -333,11 +333,6 @@ public final class DPT21 {
                                            final boolean alarmNotAcknowledged) {
             return new DPT21Value.GeneralStatus(outOfService, fault, overridden, inAlarm, alarmNotAcknowledged);
         }
-
-        public byte[] toByteArray(final boolean outOfService, final boolean fault, final boolean overridden, final boolean inAlarm,
-                                  final boolean alarmNotAcknowledged) {
-            return this.of(outOfService, fault, overridden, inAlarm, alarmNotAcknowledged).toByteArray();
-        }
     }
 
     public static final class DeviceControl extends InternalDataPointType<DPT21Value.DeviceControl> {
@@ -353,10 +348,6 @@ public final class DPT21 {
         public DPT21Value.DeviceControl of(final boolean userApplicationStopped, final boolean ownIndividualAddress,
                                            final boolean verifyModeOn) {
             return new DPT21Value.DeviceControl(userApplicationStopped, ownIndividualAddress, verifyModeOn);
-        }
-
-        public byte[] toByteArray(final boolean userApplicationStopped, final boolean ownIndividualAddress, final boolean verifyModeOn) {
-            return this.of(userApplicationStopped, ownIndividualAddress, verifyModeOn).toByteArray();
         }
     }
 
@@ -376,13 +367,6 @@ public final class DPT21 {
             return new DPT21Value.ForcingSignal(forceRequest, protection, oversupply, overrun, dhwNormal, dhwLegionellaProtection, roomHeatingComfort,
                     roomHeatingMaxFlowTemperature);
         }
-
-        public byte[] toByteArray(final boolean forceRequest, final boolean protection, final boolean oversupply, final boolean overrun,
-                                  final boolean dhwNormal, final boolean dhwLegionellaProtection, final boolean roomHeatingComfort,
-                                  final boolean roomHeatingMaxFlowTemperature) {
-            return this.of(forceRequest, protection, oversupply, overrun, dhwNormal, dhwLegionellaProtection, roomHeatingComfort,
-                    roomHeatingMaxFlowTemperature).toByteArray();
-        }
     }
 
     public static final class ForcingSignalCooling extends InternalDataPointType<DPT21Value.ForcingSignalCooling> {
@@ -397,10 +381,6 @@ public final class DPT21 {
 
         public DPT21Value.ForcingSignalCooling of(final boolean forceRequest) {
             return new DPT21Value.ForcingSignalCooling(forceRequest);
-        }
-
-        public byte[] toByteArray(final boolean forceRequest) {
-            return this.of(forceRequest).toByteArray();
         }
     }
 
@@ -420,13 +400,6 @@ public final class DPT21 {
             return new DPT21Value.RoomHeatingControllerStatus(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost,
                     statusStartOptimizationActive, statusStopOptimizationActive, summerMode);
         }
-
-        public byte[] toByteArray(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
-                                  final boolean temperatureReturnLimit, final boolean statusMorningBoost, final boolean statusStartOptimizationActive,
-                                  final boolean statusStopOptimizationActive, final boolean summerMode) {
-            return this.of(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost, statusStartOptimizationActive,
-                    statusStopOptimizationActive, summerMode).toByteArray();
-        }
     }
 
     public static final class SolarDHWControllerStatus extends InternalDataPointType<DPT21Value.SolarDHWControllerStatus> {
@@ -443,10 +416,6 @@ public final class DPT21 {
                                                       final boolean solarLoadSufficient) {
             return new DPT21Value.SolarDHWControllerStatus(fault, statusDHWLoadActive, solarLoadSufficient);
         }
-
-        public byte[] toByteArray(final boolean fault, final boolean statusDHWLoadActive, final boolean solarLoadSufficient) {
-            return this.of(fault, statusDHWLoadActive, solarLoadSufficient).toByteArray();
-        }
     }
 
     public static final class FuelTypeSet extends InternalDataPointType<DPT21Value.FuelTypeSet> {
@@ -462,10 +431,6 @@ public final class DPT21 {
         public DPT21Value.FuelTypeSet of(final boolean oilFuelSupported, final boolean gasFuelSupported, final boolean solidStateFuelSupported) {
             return new DPT21Value.FuelTypeSet(oilFuelSupported, gasFuelSupported, solidStateFuelSupported);
         }
-
-        public byte[] toByteArray(final boolean oilFuelSupported, final boolean gasFuelSupported, final boolean solidStateFuelSupported) {
-            return this.of(oilFuelSupported, gasFuelSupported, solidStateFuelSupported).toByteArray();
-        }
     }
 
     public static final class RoomCoolingControllerStatus extends InternalDataPointType<DPT21Value.RoomCoolingControllerStatus> {
@@ -480,10 +445,6 @@ public final class DPT21 {
 
         public DPT21Value.RoomCoolingControllerStatus of(final boolean fault) {
             return new DPT21Value.RoomCoolingControllerStatus(fault);
-        }
-
-        public byte[] toByteArray(final boolean fault) {
-            return this.of(fault).toByteArray();
         }
     }
 
@@ -501,10 +462,6 @@ public final class DPT21 {
                                                          final boolean coolingModeActive) {
             return new DPT21Value.VentilationControllerStatus(fault, fanActive, heatingModeActive, coolingModeActive);
         }
-
-        public byte[] toByteArray(final boolean fault, final boolean fanActive, final boolean heatingModeActive, final boolean coolingModeActive) {
-            return this.of(fault, fanActive, heatingModeActive, coolingModeActive).toByteArray();
-        }
     }
 
     public static final class LightingActuatorErrorInfo extends InternalDataPointType<DPT21Value.LightingActuatorErrorInfo> {
@@ -521,11 +478,6 @@ public final class DPT21 {
                                                        final boolean underload, final boolean defectiveLoad, final boolean lampFailure, final boolean overheat) {
             return new DPT21Value.LightingActuatorErrorInfo(errorLoad, undervoltage, overcurrent, underload, defectiveLoad, lampFailure, overheat);
         }
-
-        public byte[] toByteArray(final boolean errorLoad, final boolean undervoltage, final boolean overcurrent, final boolean underload,
-                                  final boolean defectiveLoad, final boolean lampFailure, final boolean overheat) {
-            return this.of(errorLoad, undervoltage, overcurrent, underload, defectiveLoad, lampFailure, overheat).toByteArray();
-        }
     }
 
     public static final class RadioFrequencyCommunicationModeInfo extends InternalDataPointType<DPT21Value.RadioFrequencyCommunicationModeInfo> {
@@ -540,10 +492,6 @@ public final class DPT21 {
 
         public DPT21Value.RadioFrequencyCommunicationModeInfo of(final boolean asynchronous, final boolean master, final boolean slave) {
             return new DPT21Value.RadioFrequencyCommunicationModeInfo(asynchronous, master, slave);
-        }
-
-        public byte[] toByteArray(final boolean asynchronous, final boolean master, final boolean slave) {
-            return this.of(asynchronous, master, slave).toByteArray();
         }
     }
 
@@ -566,10 +514,6 @@ public final class DPT21 {
                                                               final boolean domainAddressAndSerialNumber) {
             return new DPT21Value.CEMIServerSupportedFilteringMode(domainAddress, serialNumber, domainAddressAndSerialNumber);
         }
-
-        public byte[] toByteArray(final boolean domainAddress, final boolean serialNumber, final boolean domainAddressAndSerialNumber) {
-            return this.of(domainAddress, serialNumber, domainAddressAndSerialNumber).toByteArray();
-        }
     }
 
     public static final class SecurityReport extends InternalDataPointType<DPT21Value.SecurityReport> {
@@ -584,10 +528,6 @@ public final class DPT21 {
 
         public DPT21Value.SecurityReport of(final boolean failure) {
             return new DPT21Value.SecurityReport(failure);
-        }
-
-        public byte[] toByteArray(final boolean failure) {
-            return this.of(failure).toByteArray();
         }
     }
 
@@ -604,11 +544,6 @@ public final class DPT21 {
         public DPT21Value.ChannelActivation8 of(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
                                                 final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8) {
             return new DPT21Value.ChannelActivation8(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8);
-        }
-
-        public byte[] toByteArray(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                  final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8) {
-            return this.of(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8).toByteArray();
         }
     }
 }
