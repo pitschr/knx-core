@@ -39,7 +39,7 @@ class DPT15ValueTest {
         assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x02));
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x01, 0x02);
 
-        assertThat(value.toText()).isEqualTo("data: 0x00 00 01, flags: 0x02");
+        assertThat(value.toText()).isEqualTo("Data: 0x00 00 01, Flags: 0x02");
     }
 
     @Test
@@ -50,7 +50,7 @@ class DPT15ValueTest {
         assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x03));
         assertThat(value.toByteArray()).containsExactly(0x00, 0x01, 0x02, 0x03);
 
-        assertThat(value.toText()).isEqualTo("data: 0x00 01 02, flags: 0x03");
+        assertThat(value.toText()).isEqualTo("Data: 0x00 01 02, Flags: 0x03");
     }
 
     @Test
@@ -61,7 +61,7 @@ class DPT15ValueTest {
         assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x04));
         assertThat(value.toByteArray()).containsExactly(0x01, 0x02, 0x03, 0x04);
 
-        assertThat(value.toText()).isEqualTo("data: 0x01 02 03, flags: 0x04");
+        assertThat(value.toText()).isEqualTo("Data: 0x01 02 03, Flags: 0x04");
     }
 
     @Test
@@ -72,7 +72,7 @@ class DPT15ValueTest {
         assertThat(value.getFlags()).isEqualTo(new DPT15Value.Flags((byte) 0x02));
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00, 0x01, 0x02);
 
-        assertThat(value.toText()).isEqualTo("data: 0x00 00 01, flags: 0x02");
+        assertThat(value.toText()).isEqualTo("Data: 0x00 00 01, Flags: 0x02");
     }
 
     @Test
@@ -83,7 +83,7 @@ class DPT15ValueTest {
         assertThat(value.getAccessIdentificationData()).containsExactly(0x00, 0x01, 0x02);
         assertThat(value.toByteArray()).containsExactly(0x00, 0x01, 0x02, 0x03);
 
-        assertThat(value.toText()).isEqualTo("data: 0x00 01 02, flags: 0x03");
+        assertThat(value.toText()).isEqualTo("Data: 0x00 01 02, Flags: 0x03");
     }
 
     @Test
@@ -102,7 +102,7 @@ class DPT15ValueTest {
         assertThat(value.getAccessIdentificationData()).containsExactly(0x01, 0x02, 0x03);
         assertThat(value.toByteArray()).containsExactly(0x01, 0x02, 0x03, 0x04);
 
-        assertThat(value.toText()).isEqualTo("data: 0x01 02 03, flags: 0x04");
+        assertThat(value.toText()).isEqualTo("Data: 0x01 02 03, Flags: 0x04");
     }
 
     @Test

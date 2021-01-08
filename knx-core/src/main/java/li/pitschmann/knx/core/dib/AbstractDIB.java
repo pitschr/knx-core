@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 /**
@@ -37,8 +36,8 @@ abstract class AbstractDIB extends AbstractMultiRawData {
     protected AbstractDIB(final byte[] rawData) {
         super(rawData);
 
-        this.length = Bytes.toUnsignedInt(rawData[0]);
-        this.descriptionType = DescriptionType.valueOf(Bytes.toUnsignedInt(rawData[1]));
+        this.length = Byte.toUnsignedInt(rawData[0]);
+        this.descriptionType = DescriptionType.valueOf(Byte.toUnsignedInt(rawData[1]));
     }
 
     @Override

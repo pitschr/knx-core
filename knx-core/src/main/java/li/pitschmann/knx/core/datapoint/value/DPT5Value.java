@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT5;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -45,7 +44,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     private int value;
 
     public DPT5Value(final DPT5 dpt, final byte b) {
-        this(dpt, Bytes.toUnsignedInt(b));
+        this(dpt, Byte.toUnsignedInt(b));
     }
 
     public DPT5Value(final DPT5 dpt, final int value) {

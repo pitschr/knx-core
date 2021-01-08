@@ -58,7 +58,7 @@ public final class IndividualAddress extends KnxAddress {
         // byte 0: .... xxxx
         this.line = addressRawData[0] & 0x0F;
         // byte 1: xxxx xxxx
-        this.device = Bytes.toUnsignedInt(addressRawData[1]);
+        this.device = Byte.toUnsignedInt(addressRawData[1]);
     }
 
     /**

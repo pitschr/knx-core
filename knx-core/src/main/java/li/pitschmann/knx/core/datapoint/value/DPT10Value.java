@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT10;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ import java.util.Objects;
  *              |         U   U   U   U   U   U |
  *              +---+---+---+---+---+---+---+---+
  * Format:     3 octets (N<sub>3</sub> U<sub>5</sub> r<sub>2</sub> U<sub>6</sub> r<sub>2</sub> U<sub>6</sub>)
- * Encoding:   Day = [0 .. 7]
+ * Encoding:   DayOfWeek = [0 .. 7]
  *                1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday, 7 = Sunday, 0 = no day
  *             Hour    = [0 .. 23]
  *             Minutes = [0 .. 59]
@@ -109,10 +108,10 @@ public final class DPT10Value extends AbstractDataPointValue<DPT10> {
         final var hour = bytes[0] & 0x1F;
 
         // minute
-        final var minute = Bytes.toUnsignedInt(bytes[1]);
+        final var minute = Byte.toUnsignedInt(bytes[1]);
 
         // second
-        final var second = Bytes.toUnsignedInt(bytes[2]);
+        final var second = Byte.toUnsignedInt(bytes[2]);
 
         final var time = LocalTime.of(hour, minute, second);
         if (log.isDebugEnabled()) {

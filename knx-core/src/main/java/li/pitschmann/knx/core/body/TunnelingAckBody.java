@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 /**
@@ -61,10 +60,10 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     private TunnelingAckBody(final byte[] bytes) {
         super(bytes);
 
-        this.length = Bytes.toUnsignedInt(bytes[0]);
-        this.channelId = Bytes.toUnsignedInt(bytes[1]);
-        this.sequence = Bytes.toUnsignedInt(bytes[2]);
-        this.status = Status.valueOf(Bytes.toUnsignedInt(bytes[3]));
+        this.length = Byte.toUnsignedInt(bytes[0]);
+        this.channelId = Byte.toUnsignedInt(bytes[1]);
+        this.sequence = Byte.toUnsignedInt(bytes[2]);
+        this.status = Status.valueOf(Byte.toUnsignedInt(bytes[3]));
     }
 
     /**

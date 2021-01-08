@@ -26,7 +26,6 @@ import li.pitschmann.knx.core.address.KnxAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.datapoint.value.PayloadOptimizable;
-import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
@@ -76,7 +75,7 @@ public final class CEMI extends AbstractMultiRawData {
     private CEMI(final byte[] cemiRawData) {
         super(cemiRawData);
 
-        messageCode = MessageCode.valueOf(Bytes.toUnsignedInt(cemiRawData[0]));
+        messageCode = MessageCode.valueOf(Byte.toUnsignedInt(cemiRawData[0]));
 
         // ------------------------------------------
         // Additional Information
@@ -85,7 +84,7 @@ public final class CEMI extends AbstractMultiRawData {
         // Total: min. 1 byte
         // ------------------------------------------
         final var addInfoIndex = 1;
-        if (Bytes.toUnsignedInt(cemiRawData[addInfoIndex]) > 0) {
+        if (Byte.toUnsignedInt(cemiRawData[addInfoIndex]) > 0) {
             throw new UnsupportedOperationException("Additional Info Length is not supported yet! CEMI Raw: " + getRawDataAsHexString());
         }
         additionalInfo = AdditionalInfo.empty();
@@ -127,7 +126,7 @@ public final class CEMI extends AbstractMultiRawData {
         // ------------------------------------------
         final var npduIndex = addrIndex + 4;
         // data bytes without TCPI/APCI bits
-        npduLength = Bytes.toUnsignedInt(cemiRawData[npduIndex]);
+        npduLength = Byte.toUnsignedInt(cemiRawData[npduIndex]);
 
         // 00.. .... UDT unnumbered package
         // 01.. .... NDT numbered package

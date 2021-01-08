@@ -79,8 +79,8 @@ public final class HPAI extends AbstractMultiRawData {
     private HPAI(final byte[] hpaiRawData) {
         super(hpaiRawData);
 
-        this.length = Bytes.toUnsignedInt(hpaiRawData[0]);
-        this.protocol = HostProtocol.valueOf(Bytes.toUnsignedInt(hpaiRawData[1]));
+        this.length = Byte.toUnsignedInt(hpaiRawData[0]);
+        this.protocol = HostProtocol.valueOf(Byte.toUnsignedInt(hpaiRawData[1]));
         this.address = Networker.getByAddress(hpaiRawData[2], hpaiRawData[3], hpaiRawData[4], hpaiRawData[5]);
         this.port = Bytes.toUnsignedInt(hpaiRawData[6], hpaiRawData[7]);
     }

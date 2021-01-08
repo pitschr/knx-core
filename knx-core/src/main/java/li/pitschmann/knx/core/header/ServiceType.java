@@ -23,7 +23,6 @@ import li.pitschmann.knx.core.dib.ServiceTypeFamily;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxServiceTypeHasNoResponseIdentifier;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -196,7 +195,7 @@ public enum ServiceType implements KnxBytesEnum {
         this.code = code;
         this.friendlyName = friendlyName;
         // the service type family is the high octet of the service type ID
-        this.family = ServiceTypeFamily.valueOf(Bytes.toUnsignedInt((byte) (code >>> 8)));
+        this.family = ServiceTypeFamily.valueOf(Byte.toUnsignedInt((byte) (code >>> 8)));
         this.responseIdentifier = responseIdentifier;
     }
 

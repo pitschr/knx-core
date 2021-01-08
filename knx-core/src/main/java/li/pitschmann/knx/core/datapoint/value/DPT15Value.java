@@ -140,9 +140,9 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
     @Override
     public String toText() {
         final var sb = new StringBuilder(30);
-        sb.append("data: ")
+        sb.append("Data: ")
                 .append(ByteFormatter.formatHexAsString(accessIdentificationData))
-                .append(", flags: ")
+                .append(", Flags: ")
                 .append(flags.toText());
         return sb.toString();
     }
