@@ -18,50 +18,128 @@
 
 package li.pitschmann.knx.core.datapoint.value;
 
-import li.pitschmann.knx.core.datapoint.DPT17;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test {@link DPT17Value}
  *
  * @author PITSCHR
  */
-public final class DPT17ValueTest {
-    /**
-     * Test {@link DPT17Value}
-     */
+class DPT17ValueTest {
+
     @Test
-    public void test() {
-        this.assertValue((byte) 0x09, 9, "scene '9'");
-        this.assertValue((byte) 0x29, 41, "scene '41'");
+    @DisplayName("#(byte) with: 0")
+    void testByte0() {
+        final var value = new DPT17Value((byte) 0x00);
+        assertThat(value.getSceneNumber()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("scene '0'");
     }
 
-    private void assertValue(final byte b, final int sceneNumber, final String text) {
-        final var dptValue = new DPT17Value(sceneNumber);
-        final var dptValueByByte = new DPT17Value(b);
+    @Test
+    @DisplayName("#(byte) with: 42")
+    void testByte42() {
+        final var value = new DPT17Value((byte) 0x2A);
+        assertThat(value.getSceneNumber()).isEqualTo(42);
+        assertThat(value.toByteArray()).containsExactly(0x2A);
 
-        // instance methods
-        assertThat(dptValue.getSceneNumber()).isEqualTo(sceneNumber);
-        assertThat(dptValue.toByteArray()).containsExactly(b);
-        assertThat(dptValue.toText()).isEqualTo(text);
+        assertThat(value.toText()).isEqualTo("scene '42'");
+    }
 
-        // equals
-        assertThat(dptValue).isEqualTo(dptValue);
-        assertThat(dptValueByByte).isEqualTo(dptValue);
-        assertThat(dptValueByByte).hasSameHashCodeAs(dptValue);
+    @Test
+    @DisplayName("#(byte) with: 63")
+    void testByte63() {
+        final var value = new DPT17Value((byte) 0x3F);
+        assertThat(value.getSceneNumber()).isEqualTo(63);
+        assertThat(value.toByteArray()).containsExactly(0x3F);
+
+        assertThat(value.toText()).isEqualTo("scene '63'");
+    }
+
+    @Test
+    @DisplayName("#(int) with: 0")
+    void testInt0() {
+        final var value = new DPT17Value(0);
+        assertThat(value.getSceneNumber()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("scene '0'");
+    }
+
+    @Test
+    @DisplayName("#(int) with: 53")
+    void testInt53() {
+        final var value = new DPT17Value(53);
+        assertThat(value.getSceneNumber()).isEqualTo(53);
+        assertThat(value.toByteArray()).containsExactly(0x35);
+
+        assertThat(value.toText()).isEqualTo("scene '53'");
+    }
+
+    @Test
+    @DisplayName("#(int) with: 63")
+    void testInt63() {
+        final var value = new DPT17Value(63);
+        assertThat(value.getSceneNumber()).isEqualTo(63);
+        assertThat(value.toByteArray()).containsExactly(0x3F);
+
+        assertThat(value.toText()).isEqualTo("scene '63'");
+    }
+
+    @Test
+    @DisplayName("#(byte) with scene number out of range")
+    void testByteOutOfRange() {
+        // negative scene number not possible with byte due unsigned int conversion
+        assertThatThrownBy(() -> new DPT17Value((byte)0x40))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '64' for argument 'sceneNumber' is out of range '0'..'63'.");
+    }
+
+    @Test
+    @DisplayName("#(int) with scene number out of range")
+    void testIntOutOfRange() {
+        assertThatThrownBy(() -> new DPT17Value(-1))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '-1' for argument 'sceneNumber' is out of range '0'..'63'.");
+        assertThatThrownBy(() -> new DPT17Value(64))
+                .isInstanceOf(KnxNumberOutOfRangeException.class)
+                .hasMessage("Value '64' for argument 'sceneNumber' is out of range '0'..'63'.");
+    }
+
+    @Test
+    @DisplayName("#toString()")
+    void testToString() {
+        final var value31 = new DPT17Value(31);
+        assertThat(value31).hasToString(
+                "DPT17Value{dpt=17.001, sceneNumber=31, byteArray=0x1F}"
+        );
+
+        final var value60 = new DPT17Value(60);
+        assertThat(value60).hasToString(
+                "DPT17Value{dpt=17.001, sceneNumber=60, byteArray=0x3C}"
+        );
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        final var value = new DPT17Value(17);
+        final var valueByte = new DPT17Value((byte)0b001_0001);
+
+        // equals & same hash code
+        assertThat(value).isEqualTo(value);
+        assertThat(valueByte).isEqualTo(value);
+        assertThat(valueByte).hasSameHashCodeAs(value);
 
         // not equals
-        assertThat(dptValue).isNotEqualTo(null);
-        assertThat(dptValue).isNotEqualTo(new Object());
-        assertThat(dptValue).isNotEqualTo(new DPT17Value(sceneNumber + 1));
-
-        // toString
-        final var toString = String.format("DPT17Value{dpt=%s, sceneNumber=%s, byteArray=%s}", DPT17.SCENE_NUMBER.getId(), sceneNumber,
-                ByteFormatter.formatHex(b));
-        assertThat(dptValue).hasToString(toString);
-        assertThat(dptValueByByte).hasToString(toString);
+        assertThat(value).isNotEqualTo(null);
+        assertThat(value).isNotEqualTo(new Object());
+        assertThat(value).isNotEqualTo(new DPT17Value(13));
     }
 }

@@ -52,7 +52,7 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
                 // controlled
                 (b & 0x80) != 0x00,
                 // scene number
-                b & 0x3F
+                b & 0x7F
         );
     }
 

@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT17;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -45,7 +44,7 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
     private int sceneNumber;
 
     public DPT17Value(final byte b) {
-        this(Bytes.toUnsignedInt(b));
+        this(Byte.toUnsignedInt(b));
     }
 
     public DPT17Value(final int sceneNumber) {
