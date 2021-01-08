@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT19;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
@@ -30,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -55,6 +53,14 @@ import java.util.Objects;
  *             | B   B   B   B   B   B   B   B |  B  r   r   r   r   r   r   r |
  *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * Format:     8 octets (U<sub>8</sub> [r<sub>4</sub>U<sub>4</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>2</sub>U<sub>6</sub>] [r<sub>2</sub>U<sub>6</sub>] B<sub>16</sub>)
+ * Encoding:   Day   = [1 .. 31]
+ *             Month = [1 .. 12]
+ *             Year  = [0 .. 99]
+ *             DayOfWeek = [0 .. 7]
+ *                1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday, 7 = Sunday, 0 = no day
+ *             Hour    = [0 .. 23]
+ *             Minutes = [0 .. 59]
+ *             Seconds = [0 .. 59]
  * </pre>
  *
  * @author PITSCHR
@@ -131,13 +137,13 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      */
     private static LocalDate toLocalDate(final byte[] bytes) {
         // byte 0: year (starting from 1900: 0=1900, 255=2155)
-        final var year = Bytes.toUnsignedInt(bytes[0]) + 1900;
+        final var year = Byte.toUnsignedInt(bytes[0]) + 1900;
 
         // byte 1: month
-        final var month = Bytes.toUnsignedInt(bytes[1]);
+        final var month = Byte.toUnsignedInt(bytes[1]);
 
         // byte 2: day of month
-        final var dayOfMonth = Bytes.toUnsignedInt(bytes[2]);
+        final var dayOfMonth = Byte.toUnsignedInt(bytes[2]);
 
         final var date = LocalDate.of(year, month, dayOfMonth);
         log.debug("Date of '{}': {}", ByteFormatter.formatHex(bytes), date);
@@ -155,10 +161,10 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         final var hour = bytes[3] & 0x1F;
 
         // byte 4: minute
-        final var minute = Bytes.toUnsignedInt(bytes[4]);
+        final var minute = Byte.toUnsignedInt(bytes[4]);
 
         // byte 5: second
-        final var second = Bytes.toUnsignedInt(bytes[5]);
+        final var second = Byte.toUnsignedInt(bytes[5]);
 
         final var time = LocalTime.of(hour, minute, second);
         log.debug("DateTime of '{}': {}", ByteFormatter.formatHex(bytes), time);
@@ -225,7 +231,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
         sb.append(getDate().format(DateTimeFormatter.ISO_DATE))
                 .append(' ')
                 .append(getTime().format(DateTimeFormatter.ISO_TIME))
-                .append(", flags: ")
+                .append(", Flags: ")
                 .append(getFlags().toText());
         return sb.toString();
     }
