@@ -38,7 +38,7 @@ import java.util.Objects;
 public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements DataPointValue {
     private final DPTEnum<T> dpt;
     private final T enumField;
-    private final int ordinal;
+    private final int value;
     private final String description;
     private final byte[] byteArray;
 
@@ -47,23 +47,23 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
      *
      * @param dpEnum      data point enum type
      * @param enumField   DPT enum value
-     * @param ordinal     enum ordinal value
+     * @param value     enum ordinal value
      * @param description description for DPT enum value
      */
-    public DPTEnumValue(final DPTEnum<T> dpEnum, final T enumField, final int ordinal, final @Nullable String description) {
+    public DPTEnumValue(final DPTEnum<T> dpEnum, final T enumField, final int value, final @Nullable String description) {
         Preconditions.checkNonNull(dpEnum);
         Preconditions.checkNonNull(enumField);
-        Preconditions.checkArgument(ordinal >= 0 && ordinal <= 0xFF, "The ordinal of enum should be between 0 and 255.");
+        Preconditions.checkArgument(value >= 0 && value <= 0xFF, "The value of enum should be between 0 and 255.");
         this.dpt = dpEnum;
         this.enumField = enumField;
-        this.ordinal = ordinal;
+        this.value = value;
         this.description = Objects.toString(description, "");
-        this.byteArray = new byte[]{(byte) (this.ordinal & 0xFF)};
+        this.byteArray = new byte[]{(byte) (value & 0xFF)};
     }
 
     @Override
     public final DPTEnum<T> getDPT() {
-        return this.dpt;
+        return dpt;
     }
 
     /**
@@ -72,16 +72,16 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
      * @return enum value instance
      */
     public T getEnum() {
-        return this.enumField;
+        return enumField;
     }
 
     /**
-     * Returns the ordinal value of current enum value
+     * Returns the value of current enum value
      *
-     * @return ordinal value
+     * @return value
      */
-    public int getOrdinal() {
-        return this.ordinal;
+    public int getValue() {
+        return value;
     }
 
     /**
@@ -90,12 +90,12 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
      * @return description
      */
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     @Override
     public byte[] toByteArray() {
-        return this.byteArray;
+        return new byte[]{(byte) value};
     }
 
     @Override
@@ -107,11 +107,11 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.dpt)
-                .add("ordinal", this.ordinal)
-                .add("enumField", this.enumField.getDeclaringClass().getName() + "." + this.enumField.name())
-                .add("description", this.description)
-                .add("byteArray", ByteFormatter.formatHexAsString(this.byteArray))
+                .add("dpt", dpt.getId())
+                .add("value", value)
+                .add("enumField", enumField.getDeclaringClass().getName() + "." + enumField.name())
+                .add("description", description)
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
         // @formatter:on
     }
@@ -130,6 +130,6 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.dpt, this.enumField);
+        return Objects.hash(dpt, enumField);
     }
 }

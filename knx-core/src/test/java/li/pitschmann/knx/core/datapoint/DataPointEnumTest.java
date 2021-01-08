@@ -40,7 +40,9 @@ public class DataPointEnumTest {
         assertThat(priorityValue.getDPT().getDescription()).isEqualTo("Priority");
         assertThat(priorityValue.getDescription()).isEqualTo("High");
         assertThat(priorityValue.getEnum()).isEqualTo(Priority.HIGH);
-        assertThat(priorityValue.getOrdinal()).isEqualTo(0);
+        assertThat(priorityValue.getValue()).isEqualTo(0);
+        assertThat(priorityValue.toByteArray()).containsExactly(0x00);
+        assertThat(priorityValue.toText()).isEqualTo("High");
     }
 
     @Test
@@ -48,12 +50,20 @@ public class DataPointEnumTest {
     public void testInterfaces() {
         assertThat(Priority.HIGH.getId()).isEqualTo("20.004 - HIGH");
         assertThat(Priority.HIGH.getDescription()).isEqualTo("Priority - High");
+        assertThat(Priority.HIGH.getValue()).isEqualTo(0);
         assertThat(Priority.HIGH.toByteArray()).containsExactly(0x00);
         assertThat(Priority.HIGH.toText()).isEqualTo("High");
+        assertThat(Priority.HIGH.getDPT().getId()).isEqualTo("20.004");
+        assertThat(Priority.HIGH.getDPT().getDescription()).isEqualTo("Priority");
 
         assertThat(Priority.MEDIUM.getId()).isEqualTo("20.004 - MEDIUM");
         assertThat(Priority.MEDIUM.getDescription()).isEqualTo("Priority - Medium");
+        assertThat(Priority.MEDIUM.getValue()).isEqualTo(1);
         assertThat(Priority.MEDIUM.toByteArray()).containsExactly(0x01);
         assertThat(Priority.MEDIUM.toText()).isEqualTo("Medium");
+        assertThat(Priority.MEDIUM.getDPT().getId()).isEqualTo("20.004");
+        assertThat(Priority.MEDIUM.getDPT().getDescription()).isEqualTo("Priority");
+
+        assertThat(Priority.HIGH.getDPT()).isSameAs(Priority.MEDIUM.getDPT());
     }
 }

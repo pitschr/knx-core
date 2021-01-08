@@ -21,7 +21,6 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPTEnumValue;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Maps;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
@@ -68,9 +67,9 @@ public final class DPTEnum<T extends Enum<T> & DataPointEnum<T>> extends BaseDat
      * @param enumValue value that should be used for DPT enumeration
      */
     final void addValue(final DPTEnumValue<T> enumValue) {
-        Preconditions.checkArgument(!this.values.containsKey(enumValue.getOrdinal()),
+        Preconditions.checkArgument(!this.values.containsKey(enumValue.getValue()),
                 "Data point field with value '{}' already registered. Please check your DPT implementation!", enumValue);
-        this.values.put(enumValue.getOrdinal(), enumValue);
+        this.values.put(enumValue.getValue(), enumValue);
     }
 
     /**
