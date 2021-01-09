@@ -346,23 +346,23 @@ class ConfigBuilderTest {
 
         // add plugins
         configBuilder
-                .plugin(TestPlugin.class)
-                .plugin(TestObserverPlugin.class)
-                .plugin(TestExtensionPlugin.class);
+                .plugin(new TestPlugin())
+                .plugin(new TestObserverPlugin())
+                .plugin(new TestExtensionPlugin());
 
         // verify
         final var config = configBuilder.build();
         assertThat(config.getPlugins()).hasSize(3);
-        assertThat(config.getPlugins().stream().filter(ObserverPlugin.class::isAssignableFrom).count()).isOne();
-        assertThat(config.getPlugins().stream().filter(ExtensionPlugin.class::isAssignableFrom).count()).isOne();
+        assertThat(config.getPlugins().stream().filter(p -> p instanceof ObserverPlugin)).hasSize(1);
+        assertThat(config.getPlugins().stream().filter(p -> p instanceof ExtensionPlugin)).hasSize(1);
 
         // invalid cases because of "null" reference
         assertThatThrownBy(() -> configBuilder.plugin(null))
                 .isInstanceOf(NullPointerException.class);
         // invalid case when re-try adding same plugin
-        assertThatThrownBy(() -> configBuilder.plugin(TestPlugin.class))
+        assertThatThrownBy(() -> configBuilder.plugin(new TestPlugin()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Plugin already added: li.pitschmann.knx.core.test.data.TestPlugin");
+                .hasMessage("There is already a plugin added with the class: li.pitschmann.knx.core.test.data.TestPlugin");
     }
 
     @Test

@@ -17,7 +17,8 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses />.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -31,7 +32,9 @@
     <!-- Sub Modules -->
     <modules>
         <module>knx-core</module>
-        <module>knx-core-plugins</module>
+        <module>knx-core-plugins/api</module>
+        <module>knx-core-plugins/audit</module>
+        <module>knx-core-plugins/statistic</module>
         <module>knx-logic</module>
         <module>knx-examples</module>
     </modules>
@@ -293,7 +296,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <argLine /> <!-- empty arg line -->
+                <argLine/> <!-- empty arg line -->
             </properties>
         </profile>
         <!--
@@ -303,7 +306,7 @@
         <profile>
             <id>release</id>
             <properties>
-                <argLine /> <!-- empty arg line -->
+                <argLine/> <!-- empty arg line -->
             </properties>
             <build>
                 <plugins>

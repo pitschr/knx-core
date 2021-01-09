@@ -13,7 +13,7 @@ public class Main {
 
         final var config = ConfigBuilder
                 .tunneling()                   // communication mode: tunneling
-                .plugin(MyPlugin.class) // register MyPlugin
+                .plugin(new MyPlugin())        // register MyPlugin
                 .build();                      // create immutable config
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery

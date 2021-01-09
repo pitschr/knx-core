@@ -69,9 +69,9 @@ public class ConfigFileUtilTest {
         final var configBuilder = ConfigFileUtil.loadFile(Paths.get("src/test/resources/config/pluginsOnly.config"));
         final var plugins = configBuilder.build().getPlugins();
         assertThat(plugins).hasSize(3);
-        assertThat(plugins.get(0)).isSameAs(TestPlugin.class);
-        assertThat(plugins.get(1)).isSameAs(TestObserverPlugin.class);
-        assertThat(plugins.get(2)).isSameAs(TestExtensionPlugin.class);
+        assertThat(plugins.get(0)).isExactlyInstanceOf(TestPlugin.class);
+        assertThat(plugins.get(1)).isExactlyInstanceOf(TestObserverPlugin.class);
+        assertThat(plugins.get(2)).isExactlyInstanceOf(TestExtensionPlugin.class);
     }
 
     @Test
@@ -85,9 +85,9 @@ public class ConfigFileUtilTest {
 
         final var plugins = config.getPlugins();
         assertThat(plugins).hasSize(3);
-        assertThat(plugins.get(0)).isSameAs(TestPlugin.class);
-        assertThat(plugins.get(1)).isSameAs(TestObserverPlugin.class);
-        assertThat(plugins.get(2)).isSameAs(TestExtensionPlugin.class);
+        assertThat(plugins.get(0)).isExactlyInstanceOf(TestPlugin.class);
+        assertThat(plugins.get(1)).isExactlyInstanceOf(TestObserverPlugin.class);
+        assertThat(plugins.get(2)).isExactlyInstanceOf(TestExtensionPlugin.class);
     }
 
     @Test

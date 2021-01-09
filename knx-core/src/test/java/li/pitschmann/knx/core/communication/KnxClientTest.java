@@ -67,8 +67,8 @@ public class KnxClientTest {
     public void testPlugins(final MockServer mockServer) {
         final var config = mockServer
                 .newConfigBuilder()
-                .plugin(TestObserverPlugin.class)
-                .plugin(TestExtensionPlugin.class)
+                .plugin(new TestObserverPlugin())
+                .plugin(new TestExtensionPlugin())
                 .build();
 
         final TestObserverPlugin observerPlugin;

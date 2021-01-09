@@ -137,7 +137,7 @@ public class MainClass {
 
         final var config = ConfigBuilder
                 .tunneling()                   // communication mode: tunneling
-                .plugin(MyMonitorPlugin.class) // register MyMonitorPlugin
+                .plugin(new MyMonitorPlugin()) // register MyMonitorPlugin
                 .build();                      // create immutable config
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
@@ -208,7 +208,7 @@ public class Main {
         final var config = ConfigBuilder
                 .tunneling()
                 // register the plugin
-                .plugin(MyConfigurablePlugin.class)
+                .plugin(new MyConfigurablePlugin())
                 // define config for plugin
                 .setting(MyConfigurablePlugin.ENUM, MyConfigurablePlugin.MyEnum.TWO)
                 .setting(MyConfigurablePlugin.ANIMAL, "cat")
