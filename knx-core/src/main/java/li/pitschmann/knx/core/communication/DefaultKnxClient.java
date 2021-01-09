@@ -41,7 +41,7 @@ public final class DefaultKnxClient extends BaseKnxClient {
     /**
      * Creates the Default KNX Client without endpoint address. The look up for an
      * applicable KNX Net/IP device will be using KNX discovery service on a broadcast
-     * address according to the KXN specification.
+     * address according to the KNX specification.
      *
      * @return an instance of {@link DefaultKnxClient}
      */

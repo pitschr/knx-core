@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.datapoint.DPT5;
 import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
@@ -45,7 +46,10 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
     private final int value;
 
     public DPT7Value(final DPT7 dpt, final byte[] bytes) {
-        this(dpt, new BigInteger(1, bytes).intValue());
+        this(
+                dpt, //
+                toUnsignedInt(dpt, bytes) //
+        );
     }
 
     public DPT7Value(final DPT7 dpt, final int value) {
@@ -56,6 +60,37 @@ public final class DPT7Value extends AbstractDataPointValue<DPT7> {
         this.value = value;
     }
 
+
+    /**
+     * <p>
+     * Converts from {@code bytes[]} to an unsigned {@code int} according
+     * to the {@link DPT7} specification.
+     * </p>
+     * <p>
+     * <u>Examples:</u><br>
+     * For {@link DPT7#VALUE_2_OCTET_UNSIGNED_COUNT} it is: 0x00 00 = 0, 0xFF FF = 65535<br>
+     * For {@link DPT7#TIME_PERIOD_10MS} it is: 0x00 00 = 0, 0xFF FF = 655350<br>
+     * For {@link DPT7#TIME_PERIOD_100MS} it is: 0x00 00 = 0, 0xFF FF = 6553500<br>
+     * </p>
+     * @param dpt the data point type that
+     * @param bytes the bytes array to be converted to unsigned int
+     * @return the unsigned integer
+     */
+    private static int toUnsignedInt(final DPT7 dpt, final byte[] bytes) {
+        final var calcFunction = dpt.getCalculationFunction();
+        final int unsignedInt = new BigInteger(1, bytes).intValue();
+        if (calcFunction == null) {
+            return unsignedInt;
+        } else {
+            return (int) Math.round((100d / calcFunction.applyAsDouble(100)) * unsignedInt);
+        }
+    }
+
+    /**
+     * Returns the value
+     *
+     * @return int
+     */
     public int getValue() {
         return value;
     }

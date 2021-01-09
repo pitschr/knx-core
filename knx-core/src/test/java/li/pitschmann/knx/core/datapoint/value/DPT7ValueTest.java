@@ -34,8 +34,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class DPT7ValueTest {
 
     @Test
-    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 0")
-    void testByte_0() {
+    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 0x00 00")
+    void testByte_0x00_00() {
         final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x00, 0x00});
         assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
@@ -44,8 +44,28 @@ class DPT7ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 7323")
-    void testByte_7323() {
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, byte[]) with: 0x00 00")
+    void testByte_0x00_00_TimePeriod_10ms() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, new byte[]{0x00, 0x00});
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, byte[]) with: 0x00 00")
+    void testByte_0x00_00_TimePeriod_100ms() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, new byte[]{0x00, 0x00});
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 0x1C 9B")
+    void testByte_0x1C_9B() {
         final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x1C, (byte)0x9B});
         assertThat(value.getValue()).isEqualTo(7323);
         assertThat(value.toByteArray()).containsExactly(0x1C, 0x9B);
@@ -54,8 +74,28 @@ class DPT7ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 65535")
-    void testByte_65535() {
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, byte[]) with: 0x1C 9B")
+    void testByte_0x1C_9B_TimePeriod_10ms() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, new byte[]{0x1C, (byte)0x9B});
+        assertThat(value.getValue()).isEqualTo(73230);
+        assertThat(value.toByteArray()).containsExactly(0x1C, 0x9B);
+
+        assertThat(value.toText()).isEqualTo("73230");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, byte[]) with: 0x1C 9B")
+    void testByte_0x1C_9B_TimePeriod_100ms() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, new byte[]{0x1C, (byte)0x9B});
+        assertThat(value.getValue()).isEqualTo(732300);
+        assertThat(value.toByteArray()).containsExactly(0x1C, 0x9B);
+
+        assertThat(value.toText()).isEqualTo("732300");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, byte[]) with: 0xFF FF")
+    void testByte_0xFF_FF() {
         final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xFF, (byte)0xFF});
         assertThat(value.getValue()).isEqualTo(65535);
         assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
@@ -64,8 +104,28 @@ class DPT7ValueTest {
     }
 
     @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_10MS, byte[]) with: 0xFF FF")
+    void testByte_0xFF_FF_TimePeriod_10ms() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, new byte[]{(byte) 0xFF, (byte)0xFF});
+        assertThat(value.getValue()).isEqualTo(655350);
+        assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
+
+        assertThat(value.toText()).isEqualTo("655350");
+    }
+
+    @Test
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, byte[]) with: 0xFF FF")
+    void testByte_0xFF_FF_TimePeriod_100ms() {
+        final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, new byte[]{(byte) 0xFF, (byte)0xFF});
+        assertThat(value.getValue()).isEqualTo(6553500);
+        assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
+
+        assertThat(value.toText()).isEqualTo("6553500");
+    }
+
+    @Test
     @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with: 0")
-    void testTimePeriod10ms_0() {
+    void testInt_0_TimePeriod_10ms() {
         final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, 0);
         assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
@@ -75,7 +135,7 @@ class DPT7ValueTest {
 
     @Test
     @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with: 22771")
-    void testTimePeriod10ms_22771() {
+    void testInt_22771_TimePeriod_10ms() {
         final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, 22771);
         assertThat(value.getValue()).isEqualTo(22771);
         assertThat(value.toByteArray()).containsExactly(0x08, 0xE5);
@@ -85,7 +145,7 @@ class DPT7ValueTest {
 
     @Test
     @DisplayName("#(DPT7.TIME_PERIOD_10MS, int) with: 655350")
-    void testTimePeriod10ms_655350() {
+    void testInt_655350_TimePeriod_10ms() {
         final var value = new DPT7Value(DPT7.TIME_PERIOD_10MS, 655350);
         assertThat(value.getValue()).isEqualTo(655350);
         assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);
@@ -95,7 +155,7 @@ class DPT7ValueTest {
 
     @Test
     @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 0")
-    void testTimePeriod100ms_0() {
+    void testInt_0_TimePeriod_100ms() {
         final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, 0);
         assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
@@ -104,8 +164,8 @@ class DPT7ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 1334455")
-    void testTimePeriod100ms_22771() {
+    @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 1334400")
+    void testInt_1334400_TimePeriod_100ms() {
         final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, 1334400);
         assertThat(value.getValue()).isEqualTo(1334400);
         assertThat(value.toByteArray()).containsExactly(0x34, 0x20);
@@ -115,7 +175,7 @@ class DPT7ValueTest {
 
     @Test
     @DisplayName("#(DPT7.TIME_PERIOD_100MS, int) with: 6553500")
-    void testTimePeriod100ms_6553500() {
+    void testInt_6553500_TimePeriod_100ms() {
         final var value = new DPT7Value(DPT7.TIME_PERIOD_100MS, 6553500);
         assertThat(value.getValue()).isEqualTo(6553500);
         assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF);

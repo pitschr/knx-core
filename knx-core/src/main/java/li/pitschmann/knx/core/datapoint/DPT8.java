@@ -100,7 +100,7 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     2 octets (V<sub>16</sub>)
      * Range:      U = [-32768 .. 32767]
-     *                  -3276800ms .. -3276700ms
+     *                  -3276800ms .. 3276700ms
      * Unit:       ms
      * Resolution: 100 ms
      * </pre>
