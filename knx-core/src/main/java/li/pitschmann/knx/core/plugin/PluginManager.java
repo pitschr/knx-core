@@ -44,17 +44,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 /**
  * Plugin Manager
  * <p>
- * This class is mutable and allows register/unregister plugins on-demand.
+ * This class is a storage for all plugins that listens to events
+ * triggered by the KNX client. An instance of {@link PluginManager}
+ * is mutable and allows to add or remove plugins on-demand.
  *
  * @author PITSCHR
  */
 public final class PluginManager implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
-    private static final BiConsumer<List<? extends Plugin>, Class<? extends Plugin>> UNREGISTER_PLUGIN_FUNCTION =
+    private static final BiConsumer<List<? extends Plugin>, Class<? extends Plugin>> REMOVE_PLUGIN_FUNCTION =
             (pluginList, pluginClass) -> {
                 for (var p : pluginList) {
                     if (pluginClass.equals(p.getClass())) {
@@ -84,7 +87,7 @@ public final class PluginManager implements AutoCloseable {
      */
     public void notifyInitialization(final KnxClient client) {
         this.client = Objects.requireNonNull(client);
-        this.client.getConfig().getPlugins().parallelStream().forEach(this::registerPluginInternal);
+        this.client.getConfig().getPlugins().parallelStream().forEach(this::addPlugin);
         log.info("All Plugins: {}", allPlugins);
         log.info("Observer Plugins: {}", observerPlugins);
         log.info("Extension Plugins: {}", extensionPlugins);
@@ -136,17 +139,16 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * Adds and registers the plugin from given URL and class path
+     * Creates and add the plugin from given URL and fully qualified class name.
      * <p>
      * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
      * {@code com.mycompany.MyPlugin} as {@code className}.
      *
      * @param filePath  path to the JAR file
      * @param className fully qualified class name
-     * @param <T>       the instance of {@link Plugin} which is an instance of {@code pluginClass}
-     * @return a new {@link Plugin} loaded from given URL and fully qualified class name
+     * @return a new {@link Plugin} instance
      */
-    public <T extends Plugin> T addPlugin(final Path filePath, final String className) {
+    public Plugin addPlugin(final Path filePath, final String className) {
         Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
                 "File doesn't end with '.jar' extension: {}", filePath);
         Preconditions.checkNonNull(className);
@@ -154,88 +156,104 @@ public final class PluginManager implements AutoCloseable {
                 "File doesn't exists or is not readable: {}", filePath);
 
         log.debug("Try to load plugin '{}' from path: {}", className, filePath);
+        final Plugin plugin;
         try (var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()})) {
-            final var cls = classLoader.loadClass(className);
-            Preconditions.checkArgument(Plugin.class.isAssignableFrom(cls),
-                    "Seems the given plugin is not an instance of {}: {}", Plugin.class, className);
-
-            @SuppressWarnings("unchecked")
-            final var plugin = addPlugin((Class<T>) cls);
+            plugin = newPluginInstance(classLoader.loadClass(className));
             log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
-            return plugin;
-        } catch (final Throwable t) {
-            throw new KnxPluginException("Could not load plugin '" + className + "' at: " + filePath, t);
+        } catch (final Exception e) {
+            throw new KnxPluginException("Could not load plugin '" + className + "' at: " + filePath, e);
         }
+
+        // all OK here, add plugin to the manager and return the new instance
+        return addPlugin(plugin);
     }
 
     /**
-     * Creates and registers the plugin
-     *
-     * @param pluginClass the plugin class to be added
-     * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
-     * @return new instance of {@link Plugin}
-     */
-    public <T extends Plugin> T addPlugin(final Class<T> pluginClass) {
-        final var plugin = registerPluginInternal(pluginClass);
-
-        // for extension plugins, we have a special case:
-        // if the KNX Client is already started -> kick in the onStart immediately!
-        if (plugin instanceof ExtensionPlugin && client.isRunning()) {
-            notifyPluginInternal(null, (ExtensionPlugin) plugin, (p, x) -> p.onStart());
-        }
-
-        return plugin;
-    }
-
-    /**
-     * Creates and registers the plugin based on {@code pluginClass}
+     * Creates and registers the plugin based on {@code pluginClass}.
+     * Precondition for that is that the class implements:
+     * <ul>
+     *     <li>the {@link Plugin} interface</li>
+     *     <li>has a public null-arg constructor</li>
+     * </ul>
      * <p>
-     * It will give plugin 10 seconds time for create. Otherwise, the plugin won't be registered.
+     * It will give plugin 10 seconds time for create. Otherwise, the plugin won't be added nor registered.
      *
-     * @param pluginClass the plugin class to be added
-     * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
+     * @param pluginClass the plugin class to create a new instance
      * @return new instance of plugin
+     * @throws KnxPluginException if the plugin could not be loaded
      */
-    private <T extends Plugin> T registerPluginInternal(final Class<T> pluginClass) {
+    private Plugin newPluginInstance(final Class<?> pluginClass) {
+        // validation if the class implements the Plugin interface
+        if (!Plugin.class.isAssignableFrom(pluginClass)) {
+            throw new KnxPluginException("Seems the given class is not an instance of {}: {}", Plugin.class, pluginClass);
+        }
+
+        // validation if the class has a public null-arg constructor
+        if (Stream.of(pluginClass.getConstructors()).noneMatch(c -> c.getParameterCount() == 0)) {
+            throw new KnxPluginException("There seems be no public null-arg constructor available for: {}", pluginClass);
+        }
+
+        // now try to load the plugin
+        try {
+            final var plugin = (Plugin)pluginClass.getDeclaredConstructor().newInstance();
+            log.debug("Created a new Plugin instance: {}", plugin);
+            return plugin;
+        } catch (final ReflectiveOperationException e) {
+            throw new KnxPluginException("Could not load plugin: {}", pluginClass.getName(), e);
+        }
+    }
+
+    /**
+     * Adds the {@link Plugin} to the Plugin Manager
+     * <p>
+     * It will give plugin some time for initialization. Otherwise, the plugin won't be recognized.
+     * This is done to avoid in case the plugin was badly designed.
+     * See: {@link CoreConfigs.Plugin#INITIALIZATION_TIMEOUT}
+     *
+     * @param plugin the plugin to be added
+     */
+    public <T extends Plugin> T addPlugin(final T plugin) {
+        final var pluginClass = plugin.getClass();
         Preconditions.checkArgument(getPlugin(pluginClass) == null,
-                "There is already a plugin registered for class: {}", pluginClass);
+                "There is already a plugin added for class: {}", pluginClass);
 
         final var sw = Stopwatch.createStarted();
-        final T plugin;
         try {
-            plugin = pluginClass.getDeclaredConstructor().newInstance();
-            log.debug("Creation completed for plugin: {}", plugin);
-
             // now perform onInitialization method and give a specific time to start
-            final var future = notifyPluginInternal(client, plugin, Plugin::onInitialization);
+            final var future = notifyPlugin(client, plugin, Plugin::onInitialization);
             if (future != null) {
                 final var timeoutInMs = this.client.getConfig(CoreConfigs.Plugin.INITIALIZATION_TIMEOUT);
                 future.get(timeoutInMs, TimeUnit.MILLISECONDS);
                 log.debug("Initialization completed for plugin: {}", plugin);
             }
-        } catch (final Throwable t) {
-            throw new KnxPluginException("Could not load plugin: " + pluginClass.getName(), t);
+        } catch (final Exception e) {
+            throw new KnxPluginException("Could not initialize plugin: {}", plugin, e);
         }
 
         allPlugins.add(plugin);
         if (plugin instanceof ExtensionPlugin) {
             extensionPlugins.add((ExtensionPlugin) plugin);
-            log.debug("Register plugin as Extension Plugin: {}", plugin);
+            log.debug("Add plugin as Extension Plugin: {}", plugin);
+            // for extension plugins, we have a special case:
+            // if the KNX Client is already started -> kick in the onStart immediately!
+            if (client.isRunning()) {
+                notifyPlugin(null, (ExtensionPlugin) plugin, (p, x) -> p.onStart());
+            }
         }
         if (plugin instanceof ObserverPlugin) {
             observerPlugins.add((ObserverPlugin) plugin);
-            log.debug("Register plugin as Observer Plugin: {}", plugin);
+            log.debug("Add plugin as Observer Plugin: {}", plugin);
         }
 
-        log.info("Plugin created, initialized and registered in {} ms: {}", sw.elapsed(TimeUnit.MILLISECONDS), plugin);
-
+        log.info("Plugin initialized and added in {} ms: {}", sw.elapsed(TimeUnit.MILLISECONDS), plugin);
         return plugin;
     }
 
     /**
-     * Returns an an already-registered Plugin for given {@code pluginClass}
+     * Returns an already-added Plugin for given {@code pluginClass}.
+     * There can only be a plugin exists with the same class.
      *
-     * @param pluginClass the plugin class to fetch the plugin instance
+     * @param pluginClass the plugin class for look up
      * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
      * @return An existing instance of {@link Plugin} if found, otherwise {@code null}
      */
@@ -251,23 +269,22 @@ public final class PluginManager implements AutoCloseable {
     }
 
     /**
-     * De-Registers the plugin by class
+     * Removes the plugin by class from the Plugin Manager.
+     * There can only one plugin exists with the same class.
      *
-     * @param pluginClass the plugin class to be unregistered
+     * @param pluginClass the class of plugin to be removed
      * @param <T>         the instance of {@link Plugin} which is an instance of {@code pluginClass}
-     * @return plugin instance that is being de-registered, otherwise {@link IllegalArgumentException} will be thrown
-     * @throws IllegalArgumentException in case the plugin class could not be found
+     * @return plugin instance that has been removed if found, otherwise {@code null}
      */
-    public <T extends Plugin> T unregisterPlugin(final Class<T> pluginClass) {
+    @Nullable
+    public <T extends Plugin> T removePlugin(final Class<T> pluginClass) {
         final var plugin = getPlugin(pluginClass);
-        Preconditions.checkArgument(plugin != null,
-                "No plugin is registered for class: {}", pluginClass);
-
-        // plugin class is registered, remove it from extension and/or observer plugin lists
-        UNREGISTER_PLUGIN_FUNCTION.accept(allPlugins, pluginClass);
-        UNREGISTER_PLUGIN_FUNCTION.accept(extensionPlugins, pluginClass);
-        UNREGISTER_PLUGIN_FUNCTION.accept(observerPlugins, pluginClass);
-
+        if (plugin != null) {
+            // remove it from all plugin lists
+            REMOVE_PLUGIN_FUNCTION.accept(allPlugins, pluginClass);
+            REMOVE_PLUGIN_FUNCTION.accept(extensionPlugins, pluginClass);
+            REMOVE_PLUGIN_FUNCTION.accept(observerPlugins, pluginClass);
+        }
         return plugin;
     }
 
@@ -284,7 +301,7 @@ public final class PluginManager implements AutoCloseable {
                                                      final List<P> plugins,
                                                      final BiConsumer<P, T> consumer) {
         for (final var plugin : plugins) {
-            notifyPluginInternal(object, plugin, consumer);
+            notifyPlugin(object, plugin, consumer);
         }
     }
 
@@ -299,9 +316,9 @@ public final class PluginManager implements AutoCloseable {
      * @return future for further check
      */
     @Nullable
-    private <T, P extends Plugin> Future<Void> notifyPluginInternal(final @Nullable T object,
-                                                                    final P plugin,
-                                                                    final BiConsumer<P, T> consumer) {
+    private <T, P extends Plugin> Future<Void> notifyPlugin(final @Nullable T object,
+                                                            final P plugin,
+                                                            final BiConsumer<P, T> consumer) {
         if (this.pluginExecutor.isShutdown()) {
             log.warn("Could not send to plug-in '{}' because plugin executor is shutdown already: {}",
                     plugin, object instanceof Throwable ? ((Throwable) object).getMessage() : object);

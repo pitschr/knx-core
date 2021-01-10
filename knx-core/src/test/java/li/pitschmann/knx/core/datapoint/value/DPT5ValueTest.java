@@ -34,8 +34,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class DPT5ValueTest {
 
     @Test
-    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 0")
-    void testByte0() {
+    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 0x00")
+    void testByte_0x00() {
         final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x00);
         assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00);
@@ -44,8 +44,28 @@ class DPT5ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 133")
-    void testByte133() {
+    @DisplayName("#(DPT5.SCALING, byte) with: 0x00")
+    void testByte_0x00_Scaling() {
+        final var value = new DPT5Value(DPT5.SCALING, (byte) 0x00);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.ANGLE, byte) with: 0x00")
+    void testByte_0x00_Angle() {
+        final var value = new DPT5Value(DPT5.ANGLE, (byte) 0x00);
+        assertThat(value.getValue()).isZero();
+        assertThat(value.toByteArray()).containsExactly(0x00);
+
+        assertThat(value.toText()).isEqualTo("0");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 0x85")
+    void testByte_0x85() {
         final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0x85);
         assertThat(value.getValue()).isEqualTo(133);
         assertThat(value.toByteArray()).containsExactly(0x85);
@@ -54,8 +74,28 @@ class DPT5ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 255")
-    void testByte1() {
+    @DisplayName("#(DPT5.SCALING, byte) with: 0x85")
+    void testByte_0x85_Scaling() {
+        final var value = new DPT5Value(DPT5.SCALING, (byte) 0x85);
+        assertThat(value.getValue()).isEqualTo(52);
+        assertThat(value.toByteArray()).containsExactly(0x85);
+
+        assertThat(value.toText()).isEqualTo("52");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.ANGLE, byte) with: 0x85")
+    void testByte_0x85_Angle() {
+        final var value = new DPT5Value(DPT5.ANGLE, (byte) 0x85);
+        assertThat(value.getValue()).isEqualTo(188);
+        assertThat(value.toByteArray()).containsExactly(0x85);
+
+        assertThat(value.toText()).isEqualTo("188");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, byte) with: 0xFF")
+    void testByte_0xFF() {
         final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0xFF);
         assertThat(value.getValue()).isEqualTo(255);
         assertThat(value.toByteArray()).containsExactly(0xFF);
@@ -64,8 +104,28 @@ class DPT5ValueTest {
     }
 
     @Test
+    @DisplayName("#(DPT5.SCALING, byte) with: 0xFF")
+    void testByte_0xFF_Scaling() {
+        final var value = new DPT5Value(DPT5.SCALING, (byte) 0xFF);
+        assertThat(value.getValue()).isEqualTo(100);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
+
+        assertThat(value.toText()).isEqualTo("100");
+    }
+
+    @Test
+    @DisplayName("#(DPT5.ANGLE, byte) with: 0xFF")
+    void testByte_0xFF_Angle() {
+        final var value = new DPT5Value(DPT5.ANGLE, (byte) 0xFF);
+        assertThat(value.getValue()).isEqualTo(360);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
+
+        assertThat(value.toText()).isEqualTo("360");
+    }
+
+    @Test
     @DisplayName("#(DPT5.SCALING, int) with: 0")
-    void testScaling0() {
+    void testInt_0_Scaling() {
         final var value = new DPT5Value(DPT5.SCALING, 0);
         assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00);
@@ -75,7 +135,7 @@ class DPT5ValueTest {
 
     @Test
     @DisplayName("#(DPT5.SCALING, int) with: 18")
-    void testScaling18() {
+    void testInt_18_Scaling() {
         final var value = new DPT5Value(DPT5.SCALING, 18);
         assertThat(value.getValue()).isEqualTo(18);
         assertThat(value.toByteArray()).containsExactly(0x2E);
@@ -85,7 +145,7 @@ class DPT5ValueTest {
 
     @Test
     @DisplayName("#(DPT5.SCALING, int) with: 100")
-    void testScaling100() {
+    void testInt_100_Scaling() {
         final var value = new DPT5Value(DPT5.SCALING, 100);
         assertThat(value.getValue()).isEqualTo(100);
         assertThat(value.toByteArray()).containsExactly(0xFF);
@@ -95,7 +155,7 @@ class DPT5ValueTest {
 
     @Test
     @DisplayName("#(DPT5.ANGLE, int) with: 40")
-    void testAngle40() {
+    void testInt_40_() {
         final var value = new DPT5Value(DPT5.ANGLE, 40);
         assertThat(value.getValue()).isEqualTo(40);
         assertThat(value.toByteArray()).containsExactly(0x1C);
@@ -104,8 +164,8 @@ class DPT5ValueTest {
     }
 
     @Test
-    @DisplayName("#(DPT5.ANGLE, int) with: 255")
-    void testAngle360() {
+    @DisplayName("#(DPT5.ANGLE, int) with: 360")
+    void testInt_360_Angle() {
         final var value = new DPT5Value(DPT5.ANGLE, 360);
         assertThat(value.getValue()).isEqualTo(360);
         assertThat(value.toByteArray()).containsExactly(0xFF);

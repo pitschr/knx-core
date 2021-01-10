@@ -22,8 +22,10 @@ try (final var client = DefaultKnxClient.createStarted("address:port")) {
 #### Example: Switch on/off lamp with boolean values
 
 Let's start with an easy sample: You want to switch `on` a lamp. The KNX actuator listens 
-on group address `1/2/110` which is configured for switching on/off a lamp. 
+on group address `1/2/110` which is configured for switching on/off a lamp. For this case we have to use the KNX `DPT1`
+for 1-bit values, it is the same what you have to define in the ETS that is used to configure the KNX infrastructure:
 
+##### With Java:
 ```java
 public final class LampOnExample {
    public static void main(final String[] args) {
@@ -38,6 +40,20 @@ public final class LampOnExample {
         }
 
         // auto-closed and disconnected by KNX client
+    }
+}
+```
+
+##### With Kotlin:
+```kotlin
+fun main() {
+    // this is the group address where the KNX actuator listens to switch on/off a lamp
+    val groupAddress = GroupAddress.of(1, 2, 110);
+    DefaultKnxClient.createStarted().use { client ->
+
+        // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
+        client.writeRequest(groupAddress, DPT1.SWITCH.of(true));  // or DPT1.SWITCH.of((byte)0x01)
+                                                                  // or DPT1.SWITCH.of("on")
     }
 }
 ```
@@ -69,7 +85,7 @@ public final class LampInverseExample {
 
             // wait a bit (usually few milliseconds, but up to 1 second maximum)
             // KNX actuator will send a response to the KNX client with actual lamp status
-            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getBooleanValue();
+            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getValue();
 
             // lamp status will be inverted (on -> off / off -> on)
             final var lampStatusInverted = !lampStatus;
@@ -85,20 +101,33 @@ public final class LampInverseExample {
 
 #### Example: Work with Data Point Type
 
-Given snippet, we want to convert a date and time objects into KNX compatible byte array:
+Given snippet, we want to send a date and time objects to KNX Group Address `1/2/3`. For KNX we may use the 
+data point type 19 (=`19.001`, according to KNX specification):
 
 ```
+// Group Address
+var groupAddress = GroupAddress.of(1, 2, 3);
+
 // Saturday, 2013-08-17 04:10:45
-final var dayOfWeek = DayOfWeek.SATURDAY;
-final var date = LocalDate.of(2013, 8, 17);
-final var time = LocalTime.of(04, 10, 45);
+var dayOfWeek = DayOfWeek.SATURDAY;
+var date = LocalDate.of(2013, 8, 17);
+var time = LocalTime.of(04, 10, 45);
+var knxDateTime = DPT19.DATE_TIME.of(dayOfWeek, date, time);
 
-DPT19.DATE_TIME.toByteArray(dayOfWeek, date, time);
+// send a write request to KNX Net/IP
+client.writeRequest(groupAddress, knxDateTime);
 ```
 
-This can be also more simplified using direct string representation:
+Defining Group Address and value for *Date & Time* using text:
 ```
-DPT19.DATE_TIME.toByteArray("Saturday", "2013-08-17", "04:10:45");
+// Group Address
+var groupAddress = GroupAddress.of("1/2/3");
+
+// Saturday, 2013-08-17 04:10:45
+var knxDateTime = DPT19.DATE_TIME.of("Saturday", "2013-08-17", "04:10:45");
+
+// send a write request to KNX Net/IP
+client.writeRequest(groupAddress, knxDateTime);
 ```
 
 ## Core Configuration

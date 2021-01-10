@@ -73,7 +73,7 @@ public class BaseKnxClientTest {
     @DisplayName("OK: Check Base KNX Client")
     public void testCommonMethods(final MockServer mockServer) {
         final var config = mockServer.newConfigBuilder()
-                .plugin(TestExtensionPlugin.class)
+                .plugin(new TestExtensionPlugin())
                 .build();
 
         try (final var client = new BaseKnxClient(config)) {

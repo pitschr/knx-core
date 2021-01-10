@@ -11,7 +11,7 @@ public class Main {
         final var config = ConfigBuilder
                 .tunneling()
                 // register the plugin
-                .plugin(MyConfigurablePlugin.class)
+                .plugin(new MyConfigurablePlugin())
                 // define config for plugin
                 .setting(MyConfigurablePlugin.ENUM, MyConfigurablePlugin.MyEnum.TWO)
                 .setting(MyConfigurablePlugin.ANIMAL, "cat")

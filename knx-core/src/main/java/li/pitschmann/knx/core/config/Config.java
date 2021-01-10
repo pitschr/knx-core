@@ -40,7 +40,7 @@ public final class Config {
     private final boolean routingEnabled;
     private final InetAddress remoteControlAddress;
     private final int remoteControlPort;
-    private final List<Class<Plugin>> plugins;
+    private final List<Plugin> plugins;
     private final Map<ConfigValue<?>, Object> settings;
     private final XmlProject xmlProject;
 
@@ -48,7 +48,7 @@ public final class Config {
            final InetAddress remoteControlAddress,
            final int remoteControlPort,
            final Map<ConfigValue<?>, Object> settings,
-           final List<Class<Plugin>> pluginClasses) {
+           final List<Plugin> plugins) {
         // communication type
         this.routingEnabled = routingEnabled;
 
@@ -57,7 +57,7 @@ public final class Config {
         this.remoteControlPort = remoteControlPort;
 
         // plugins
-        this.plugins = List.copyOf(pluginClasses);
+        this.plugins = List.copyOf(plugins);
 
         // defensive copy of custom settings
         this.settings = Map.copyOf(settings);
@@ -67,8 +67,8 @@ public final class Config {
         XmlProject tmpXmlProject;
         try {
             tmpXmlProject = Files.isReadable(projectPath) ? XmlProject.of(projectPath) : null;
-        } catch (final Throwable t) {
-            log.warn("Could not parse KNX Project file: {}. Omitted!", projectPath, t);
+        } catch (final Exception e) {
+            log.warn("Could not parse KNX Project file: {}. Omitted!", projectPath, e);
             tmpXmlProject = null;
         }
         this.xmlProject = tmpXmlProject;
@@ -118,13 +118,11 @@ public final class Config {
     }
 
     /**
-     * Returns list of all plug-in classes
+     * Returns list of all plug-in instances
      *
-     * @return unmodifiable list of all {@link Plugin} classes
+     * @return unmodifiable list of all {@link Plugin} instances
      */
-    public List<Class<Plugin>> getPlugins() {
-        return this.plugins;
-    }
+    public List<Plugin> getPlugins() { return plugins; }
 
     /**
      * Returns if Network Address Translation (NAT) is enabled. Only used when tunneling.

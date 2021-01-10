@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pitschr/knx-link.svg?branch=master)](https://travis-ci.org/pitschr/knx-link)
+[![Build Status](https://travis-ci.com/pitschr/knx-link.svg?branch=master)](https://travis-ci.com/pitschr/knx-link)
 [![Coverage Status](https://coveralls.io/repos/github/pitschr/knx-link/badge.svg?branch=master)](https://coveralls.io/github/pitschr/knx-link?branch=master)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Maven Central](https://img.shields.io/maven-central/v/li.pitschmann/knx-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22li.pitschmann%22)

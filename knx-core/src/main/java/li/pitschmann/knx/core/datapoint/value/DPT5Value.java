@@ -44,7 +44,10 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
     private int value;
 
     public DPT5Value(final DPT5 dpt, final byte b) {
-        this(dpt, Byte.toUnsignedInt(b));
+        this(
+                dpt,
+                toUnsignedInt(dpt, b)
+        );
     }
 
     public DPT5Value(final DPT5 dpt, final int value) {
@@ -54,6 +57,31 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
         }
 
         this.value = value;
+    }
+
+    /**
+     * <p>
+     * Converts from {@code byte} to an unsigned {@code int} according
+     * to the {@link DPT5} specification.
+     * </p>
+     * <p>
+     * <u>Examples:</u><br>
+     * For {@link DPT5#VALUE_1_OCTET_UNSIGNED_COUNT} it is: 0x00 = 0, 0xFF = 255<br>
+     * For {@link DPT5#SCALING} it is: 0x00 = 0, 0xFF = 100<br>
+     * For {@link DPT5#ANGLE} it is: 0x00 = 0, 0xFF = 360<br>
+     * </p>
+     * @param dpt the data point type that
+     * @param b the byte to be converted to unsigned int
+     * @return the unsigned integer
+     */
+    private static int toUnsignedInt(final DPT5 dpt, final byte b) {
+        final var calcFunction = dpt.getCalculationFunction();
+        final int unsignedInt = Byte.toUnsignedInt(b);
+        if (calcFunction == null) {
+            return unsignedInt;
+        } else {
+            return (int) Math.round((100d / calcFunction.applyAsDouble(100)) * unsignedInt);
+        }
     }
 
     /**
@@ -67,7 +95,7 @@ public final class DPT5Value extends AbstractDataPointValue<DPT5> {
 
     @Override
     public byte[] toByteArray() {
-        final var calcFunction = this.getDPT().getCalculationFunction();
+        final var calcFunction = getDPT().getCalculationFunction();
         final byte b;
         if (calcFunction == null) {
             b = (byte) value;

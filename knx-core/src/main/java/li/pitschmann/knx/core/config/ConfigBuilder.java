@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public final class ConfigBuilder {
     private static final Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
-    private final List<Class<Plugin>> pluginClasses = new LinkedList<>();
+    private final List<Plugin> plugins = new LinkedList<>();
     private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
     private InetAddress remoteControlAddress;
     private int remoteControlPort;
@@ -263,17 +263,15 @@ public final class ConfigBuilder {
     /**
      * Adds plugin to be used by KNX client
      *
-     * @param pluginClass plugin class to be provided for registering the plugin
+     * @param plugin plugin to be provided for registering the plugin
      * @return myself
      */
-    public ConfigBuilder plugin(final Class<? extends Plugin> pluginClass) {
-        Preconditions.checkNonNull(pluginClass);
-        Preconditions.checkArgument(!this.pluginClasses.contains(pluginClass),
-                "Plugin already added: {}", pluginClass.getName());
+    public ConfigBuilder plugin(final Plugin plugin) {
+        final var pluginClass = plugin.getClass();
+        Preconditions.checkArgument(plugins.stream().noneMatch(p -> pluginClass == p.getClass()),
+                "There is already a plugin added with the class: {}", pluginClass.getName());
 
-        @SuppressWarnings("unchecked")
-        final var pluginClassCasted = (Class<Plugin>) pluginClass;
-        this.pluginClasses.add(pluginClassCasted);
+        this.plugins.add(plugin);
         return this;
     }
 
@@ -312,7 +310,7 @@ public final class ConfigBuilder {
                 remoteControlAddress,
                 remoteControlPort,
                 settings,
-                pluginClasses
+                plugins
         );
     }
 }

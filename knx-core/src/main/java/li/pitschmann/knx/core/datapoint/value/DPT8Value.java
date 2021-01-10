@@ -45,11 +45,17 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
     private final double value;
 
     public DPT8Value(final DPT8 dpt, final byte[] bytes) {
-        this(dpt, new BigInteger(bytes).doubleValue());
+        this(
+                dpt, //
+                toDouble(dpt, bytes) //
+        );
     }
 
     public DPT8Value(final DPT8 dpt, final int value) {
-        this(dpt, (double) value);
+        this(
+                dpt, //
+                (double) value //
+        );
     }
 
     public DPT8Value(final DPT8 dpt, final double value) {
@@ -60,9 +66,50 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
         this.value = value;
     }
 
-    public double getValue() {
-        return value;
+    /**
+     * <p>
+     * Converts from {@code bytes[]} to a {@code double} according
+     * to the {@link DPT8} specification.
+     * </p>
+     * <p>
+     * <u>Examples:</u><br>
+     * For {@link DPT8#VALUE_2_OCTET_COUNT} it is: 0x00 00 = -32768, 0xFF FF = 32767<br>
+     * For {@link DPT8#PERCENT} it is: 0x00 00 = -327,68, 0xFF FF = 327,67<br>
+     * For {@link DPT8#DELTA_TIME_100MS} it is: 0x00 00 = -3276800, 0xFF FF = 3276700<br>
+     * </p>
+     * @param dpt the data point type that
+     * @param bytes the bytes array to be converted to signed int
+     * @return the signed integer
+     */
+    private static double toDouble(final DPT8 dpt, final byte[] bytes) {
+        final var calcFunction = dpt.getCalculationFunction();
+        final int signedInt = new BigInteger(bytes).intValue();
+        if (calcFunction == null) {
+            return signedInt;
+        } else {
+            return (100d / calcFunction.applyAsDouble(100)) * signedInt;
+        }
     }
+
+    /**
+     * Returns the value as int
+     *
+     * @return int
+     */
+    public int getValueAsInt() {
+        // fixes IEEE floating precision issue
+        if (value > 0) {
+            return (int) (value + 0.001d);
+        } else {
+            return (int) (value - 0.001d);
+        }
+    }
+
+    /**
+     * Returns the value as double
+     * @return double
+     */
+    public double getValueAsDouble() { return value; }
 
     @Override
     public byte[] toByteArray() {

@@ -77,7 +77,7 @@ final class ConfigFileUtil {
             // add plugins
             for (final var plugin : allPlugins) {
                 configBuilder.plugin(plugin);
-                allRegisteredConfigValues.putAll(Configs.getConfigMapValues(plugin));
+                allRegisteredConfigValues.putAll(Configs.getConfigMapValues(plugin.getClass()));
             }
 
             // add settings
@@ -102,18 +102,19 @@ final class ConfigFileUtil {
      * like {@code my.package.MyClass}
      *
      * @param lines lines to be parsed
-     * @return list of {@link Plugin} classes
+     * @return list of {@link Plugin} instances
      */
-    private static List<Class<Plugin>> asPluginList(final List<String> lines) {
+    private static List<Plugin> asPluginList(final List<String> lines) {
         final var filteredLines = filterBySection(lines, "plugins");
-        final var plugins = new ArrayList<Class<Plugin>>(filteredLines.size());
+        final var plugins = new ArrayList<Plugin>(filteredLines.size());
 
         for (final var line : filteredLines) {
             try {
-                @SuppressWarnings("unchecked")
-                final var pluginClass = (Class<Plugin>) Class.forName(line);
-                log.info("Plugin class: {}", pluginClass);
-                plugins.add(pluginClass);
+                @SuppressWarnings("unchecked") final var pluginClass = (Class<Plugin>) Class.forName(line);
+                log.trace("Plugin class: {}", pluginClass);
+                final var plugin = pluginClass.getDeclaredConstructor().newInstance();
+                log.info("Plugin instance: {}", plugin);
+                plugins.add(plugin);
             } catch (final Exception ex) {
                 throw new KnxConfigurationException("Could not load plugin: " + line, ex);
             }
