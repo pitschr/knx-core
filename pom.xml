@@ -32,9 +32,7 @@
     <!-- Sub Modules -->
     <modules>
         <module>knx-core</module>
-        <module>knx-core-plugins/api</module>
-        <module>knx-core-plugins/audit</module>
-        <module>knx-core-plugins/statistic</module>
+        <module>knx-core-plugins</module>
         <module>knx-logic</module>
         <module>knx-examples</module>
     </modules>
