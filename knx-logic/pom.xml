@@ -21,14 +21,14 @@
     <parent>
         <groupId>li.pitschmann</groupId>
         <artifactId>knx-link</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.2.0</version>
     </parent>
 
     <!-- Project -->
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>knx-logic</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.2.0</version>
     <name>KNX Logic</name>
     <description>Logic Engine for KNX</description>
 
