@@ -319,19 +319,14 @@
             </build>
         </profile>
         <!--
-        Travis Profile
-        ==============
-        If the 'env.TRAVIS' property is 'true' then it will consider the
-        code coverage using JaCoCo maven plugin and submits the result to coveralls.
+        GitHub Actions Profile
+        ======================
+        This profile is subject to be used by 'GitHub Actions' only.
+        It is running the test and creating report for code coverage using JaCoCo maven plugin
+        and submits the code coverage report to coveralls.io site.
         -->
         <profile>
-            <id>travis</id>
-            <activation>
-                <property>
-                    <name>env.TRAVIS</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <id>github-actions</id>
             <build>
                 <plugins>
                     <plugin>
