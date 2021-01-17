@@ -73,10 +73,26 @@ class DPT18Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT18.SCENE_CONTROL;
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.parse(new String[]{"63"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "0"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "63"})).isInstanceOf(DPT18Value.class);
+
+        // not controlled, scene number: 0
+        final var scene0NotControlled = dpt.parse(new String[]{"0"});
+        assertThat(scene0NotControlled.isControlled()).isFalse();
+        assertThat(scene0NotControlled.getSceneNumber()).isZero();
+
+        // not controlled, scene number: 63
+        final var scene63NotControlled = dpt.parse(new String[]{"63"});
+        assertThat(scene63NotControlled.isControlled()).isFalse();
+        assertThat(scene63NotControlled.getSceneNumber()).isEqualTo(63);
+
+        // controlled, scene number: 0
+        final var scene0Controlled = dpt.parse(new String[]{"0", "controlled"});
+        assertThat(scene0Controlled.isControlled()).isTrue();
+        assertThat(scene0Controlled.getSceneNumber()).isZero();
+
+        // controlled, scene number: 63
+        final var scene63Controlled = dpt.parse(new String[]{"controlled", "63"});
+        assertThat(scene63Controlled.isControlled()).isTrue();
+        assertThat(scene63Controlled.getSceneNumber()).isEqualTo(63);
     }
 
     @Test

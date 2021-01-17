@@ -85,7 +85,7 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 | 2.xxx  | Controlled Binary        | 12.xxx | 4-Octet Unsigned Value           | 22.xxx | 16-Bit Flagged Messages |
 | 3.xxx  | Controlled Step/Interval | 13.xxx | 4-Octet Signed Value             | 23.xxx | 2-Bit Enumeration       |
 | 4.xxx  | Character                | 14.xxx | 4-Octet Float Value              | 25.xxx | 2-Nibble Set            |
-| 5.xxx  | 8-Bit Unsigned Value     | 15.xxx | Access Data                      |
+| 5.xxx  | 8-Bit Unsigned Value     | 15.xxx | Access Data                      | 26.xxx | Scene Information       |
 | 6.xxx  | 8-Bit Signed Value       | 16.xxx | 14-Octet Characters              |
 | 7.xxx  | 2-Octet Unsigned Value   | 17.xxx | Scene Number                     |
 | 8.xxx  | 2-Octet Signed Value     | 18.xxx | Controlled Scene Number          |
