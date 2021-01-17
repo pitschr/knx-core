@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ public final class DataPointRegistry {
         registerDataPointType(DPT21.class);
         registerDataPointType(DPT22.class);
         registerDataPointType(DPT23.class);
+        registerDataPointType(DPT25.class);
 
         if (log.isDebugEnabled()) {
             log.debug("{} data point types registered: {}", dataPointTypeMap.size(),
