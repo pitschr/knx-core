@@ -116,7 +116,7 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
         final var calcFunction = this.getDPT().getCalculationFunction();
         final int newValue;
         if (calcFunction == null) {
-            newValue = (int) value;
+            newValue = getValueAsInt();
         } else {
             newValue = (int) Math.round(calcFunction.applyAsDouble(value));
         }
