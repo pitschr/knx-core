@@ -46,7 +46,9 @@ class DPT21Test {
             DPT21.RADIO_FREQUENCY_COMMUNICATION_MODE_INFO,
             DPT21.CEMI_SERVER_SUPPORTED_FILTERING_MODE,
             DPT21.SECURITY_REPORT,
-            DPT21.CHANNEL_ACTIVATION_8
+            DPT21.CHANNEL_ACTIVATION_8,
+            DPT21.VIRTUAL_CONTACT_STATUS,
+            DPT21.PHASE_STATUS
     };
 
     @Test
@@ -165,5 +167,13 @@ class DPT21Test {
         // 8 Channel Activation (1001 1100 = 0x9C)
         assertThat(DPT21.CHANNEL_ACTIVATION_8.of(false, false, true, true, true, false, false, true))
                 .isInstanceOf(DPT21Value.ChannelActivation8.class);
+
+        // Virtual Contact Status (0110 1001 = 0x69)
+        assertThat(DPT21.VIRTUAL_CONTACT_STATUS.of(false, true, true, false, true, false, false, true))
+                .isInstanceOf(DPT21Value.VirtualContactStatus.class);
+
+        // Phase Status(.... .110 = 0x06)
+        assertThat(DPT21.PHASE_STATUS.of(true, true, false))
+                .isInstanceOf(DPT21Value.PhaseStatus.class);
     }
 }

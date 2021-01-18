@@ -55,6 +55,32 @@ abstract class AbstractDataPointFlag<T extends BaseDataPointType<?>> extends Abs
         // @formatter:on
     }
 
+    /**
+     * Returns human-friendly text which bits are set
+     * <p>
+     * If b0 is set, then "1" is returned.<br>
+     * If b0, b1, b3 and b7 are set, then "1, 2, 4, 8" is returned.<br>
+     *
+     * @param emptyText text to be returned in case no bits are set
+     * @return string representation of bit-set
+     */
+    protected String toText(final String emptyText) {
+        if (b == 0) {
+            return emptyText;
+        } else {
+            final var sb = new StringBuilder(30);
+            for (var i = 0; i < 8; i++) {
+                if (this.isSet(i)) {
+                    if (sb.length() != 0) {
+                        sb.append(", ");
+                    }
+                    sb.append((i + 1));
+                }
+            }
+            return sb.toString();
+        }
+    }
+
     public final boolean isSet(final int bit) {
         Preconditions.checkArgument(bit >= 0 && bit < 8, "Bit must be between 0 and 7 (actual: {})", bit);
         return ((this.b & 0xFF) & (0x01 << bit)) != 0;

@@ -43,8 +43,8 @@ import java.util.regex.Pattern;
  *             | 0   0   (Minutes)             | 0   0   (Seconds)             |
  *             | r   r   U   U   U   U   U   U | r   r   U   U   U   U   U   U |
  *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ 0   0   0   0   0   0   0 |
- *             | B   B   B   B   B   B   B   B |  B  r   r   r   r   r   r   r |
+ *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ SRC 0   0   0   0   0   0 |
+ *             | B   B   B   B   B   B   B   B | B   B   r   r   r   r   r   r |
  *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * Format:     8 octets (U<sub>8</sub> [r<sub>4</sub>U<sub>4</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>2</sub>U<sub>6</sub>] [r<sub>2</sub>U<sub>6</sub>] B<sub>16</sub>)
  * </pre>
@@ -66,8 +66,8 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
      *             | 0   0   (Minutes)             | 0   0   (Seconds)             |
      *             | r   r   U   U   U   U   U   U | r   r   U   U   U   U   U   U |
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
-     *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ 0   0   0   0   0   0   0 |
-     *             | B   B   B   B   B   B   B   B |  B  r   r   r   r   r   r   r |
+     *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ SRC 0   0   0   0   0   0 |
+     *             | B   B   B   B   B   B   B   B | B   B   r   r   r   r   r   r |
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     8 octets (U<sub>8</sub> [r<sub>4</sub>U<sub>4</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>2</sub>U<sub>6</sub>] [r<sub>2</sub>U<sub>6</sub>] B<sub>16</sub>)
      * Encoding:
@@ -108,6 +108,9 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
      *             (CLQ)  QualityOfClock = {0, 1}
      *                        0 = Clock without external synchronization signal
      *                        1 = Clock with external synchronization signal (DCF 77, VideoText, ...)
+     *             (SRC)  SynchronisationSourceReliability = {0, 1}
+     *                        0 = Unreliable Synchronisation (mains, local quartz)
+     *                        1 = Reliable Synchronisation (radio, internet)
      * </pre>
      * <p>
      * The encoding of the hour is within the range [0 .. 24] instead of [0 .. 23]. When the hour is set to "24", the

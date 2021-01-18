@@ -399,6 +399,36 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
     @DataPoint({"1.100", "dpst-1-100"})
     public static final DPT1 HEATING_COOLING = new DPT1("Heating & Cooling", "Cooling", "Heating");
 
+    /**
+     * <strong>1.1200</strong> Consumer & Producer
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names |                             b |
+     * Encoding    |                             B |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     1 bit (B<sub>1</sub>)
+     * Range:      b = {0 = consumer, 1 = producer}
+     * </pre>
+     */
+    @DataPoint({"1.1200", "dpst-1-1200"})
+    public static final DPT1 CONSUMER_PRODUCER = new DPT1("Consumer & Producer", "Consumer", "Producer");
+
+    /**
+     * <strong>1.1201</strong> Energy Direction
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names |                             b |
+     * Encoding    |                             B |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     1 bit (B<sub>1</sub>)
+     * Range:      b = {0 = positive, 1 = negative}
+     * </pre>
+     */
+    @DataPoint({"1.1201", "dpst-1-1201"})
+    public static final DPT1 ENERGY_DIRECTION = new DPT1("Energy Direction", "Positive", "Negative");
+
     private final String textForFalse;
     private final String textForTrue;
 
