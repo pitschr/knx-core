@@ -261,12 +261,13 @@ final class DPT19ValueTest {
         assertThat(flags.isTimeValid()).isFalse();
         assertThat(flags.isSummerTime()).isTrue();
         assertThat(flags.isClockWithExternalSyncSignal()).isTrue();
+        assertThat(flags.isSyncSourceReliable()).isFalse();
         assertThat(flags.getAsBytes()).containsExactly(0b1101_1001, 0b1000_0000);
     }
 
     @Test
     @DisplayName("Flags#(boolean, ..) with: 0110 1101 0100 0000")
-    void testFlags_0110_1101_0000_0000() {
+    void testFlags_0110_1101_0100_0000() {
         final var flags = new DPT19Value.Flags(
                 false, true, true, false, //
                 true, true, false, true, //
@@ -282,6 +283,7 @@ final class DPT19ValueTest {
         assertThat(flags.isTimeValid()).isFalse();
         assertThat(flags.isSummerTime()).isTrue();
         assertThat(flags.isClockWithExternalSyncSignal()).isFalse();
+        assertThat(flags.isSyncSourceReliable()).isTrue();
         assertThat(flags.getAsBytes()).containsExactly(0b0110_1101, 0b0100_0000);
     }
 
@@ -292,14 +294,14 @@ final class DPT19ValueTest {
         assertThat(flags).hasToString(
                 "Flags{fault=true, workingDay=false, workingDayValid=true, yearValid=false, dateValid=true, " +
                         "dayOfWeekValid=true, timeValid=false, summerTime=false, clockWithExternalSyncSignal=true, " +
-                        "synchronizationSourceReliability=true}"
+                        "syncSourceReliable=true}"
         );
 
         final var flagsBytes = new DPT19Value.Flags(new byte[]{0b0110_1101, 0b0000_0000});
         assertThat(flagsBytes).hasToString(
                 "Flags{fault=false, workingDay=true, workingDayValid=true, yearValid=false, dateValid=true, " +
                         "dayOfWeekValid=true, timeValid=false, summerTime=true, clockWithExternalSyncSignal=false, " +
-                        "synchronizationSourceReliability=false}"
+                        "syncSourceReliable=false}"
         );
     }
 
