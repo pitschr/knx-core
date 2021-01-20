@@ -71,7 +71,7 @@ public final class AbstractDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(new TestDIB(BYTES)).hasToString(String.format("TestDIB{length=2 (0x02), descriptionType=%s, rawData=%s}",
+        assertThat(new TestDIB(BYTES)).hasToString(String.format("AbstractDIBTest$TestDIB{length=2 (0x02), descriptionType=%s, rawData=%s}",
                 DescriptionType.DEVICE_INFO, ByteFormatter.formatHexAsString(BYTES)));
     }
 

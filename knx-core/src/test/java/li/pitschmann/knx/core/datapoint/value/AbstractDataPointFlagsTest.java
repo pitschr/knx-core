@@ -58,7 +58,7 @@ public class AbstractDataPointFlagsTest {
         assertThat(flag1).isNotEqualTo(new TestDataPointFlags(DPT1.SWITCH, new byte[]{0x08, 0x03}));
 
         // toString
-        final var toString = String.format("TestDataPointFlags{dpt=%s, byteArray=0x08 04}", DPT1.SWITCH,
+        final var toString = String.format("AbstractDataPointFlagsTest$TestDataPointFlags{dpt=%s, byteArray=0x08 04}", DPT1.SWITCH,
                 ByteFormatter.formatHexAsString(new byte[]{0x08, 0x04}));
         assertThat(flag1).hasToString(toString);
     }

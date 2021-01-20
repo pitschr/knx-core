@@ -292,14 +292,14 @@ final class DPT19ValueTest {
     void testFlagsToString() {
         final var flags = new DPT19Value.Flags(true, false, true, false, true, true, false, false, true, true);
         assertThat(flags).hasToString(
-                "Flags{fault=true, workingDay=false, workingDayValid=true, yearValid=false, dateValid=true, " +
+                "DPT19Value$Flags{fault=true, workingDay=false, workingDayValid=true, yearValid=false, dateValid=true, " +
                         "dayOfWeekValid=true, timeValid=false, summerTime=false, clockWithExternalSyncSignal=true, " +
                         "syncSourceReliable=true}"
         );
 
         final var flagsBytes = new DPT19Value.Flags(new byte[]{0b0110_1101, 0b0000_0000});
         assertThat(flagsBytes).hasToString(
-                "Flags{fault=false, workingDay=true, workingDayValid=true, yearValid=false, dateValid=true, " +
+                "DPT19Value$Flags{fault=false, workingDay=true, workingDayValid=true, yearValid=false, dateValid=true, " +
                         "dayOfWeekValid=true, timeValid=false, summerTime=true, clockWithExternalSyncSignal=false, " +
                         "syncSourceReliable=false}"
         );

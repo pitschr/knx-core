@@ -23,12 +23,23 @@ public final class Strings {
     /**
      * Creates a {@link ToStringHelper} for creating string representations.
      * Similar to Guava's {@code ToStringHelper} but simpler.
+     * <p>
+     * If the class of object is a member class the parent class will be also be a part of name.
+     * Example: {@code my.package.MyClass$MyInnerClass} -> {@code MyClass$MyInnerClass}
      *
      * @param obj the instance of {@link Object} that should be used for creating a {@link ToStringHelper}
      * @return a new instance of {@link ToStringHelper}
      */
     public static ToStringHelper toStringHelper(final Object obj) {
-        return new ToStringHelper(obj.getClass().getSimpleName());
+        final var clazz = obj.getClass();
+        if (clazz.isMemberClass()) {
+            // E.g. my.package.MyClass$MyInnerClass -> MyClass$MyInnerClass
+            final var name = clazz.getName();
+            return new ToStringHelper(name.substring(name.lastIndexOf('.') + 1));
+        } else {
+            // E.g. my.package.MyClass -> MyClass
+            return new ToStringHelper(clazz.getSimpleName());
+        }
     }
 
     /**

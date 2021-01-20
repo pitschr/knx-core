@@ -86,15 +86,6 @@ class DPT8Test {
     }
 
     @Test
-    @DisplayName("Test #of(double)")
-    void testDoubleOf() {
-        final var dpt = DPT8.PERCENT;
-        assertThat(dpt.of(-327.68)).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of(0)).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.of(327.67)).isInstanceOf(DPT8Value.class);
-    }
-
-    @Test
     @DisplayName("Test #getCalculationFunction()")
     void testCalculationFunction() {
         assertThat(DPT8.VALUE_2_OCTET_COUNT.getCalculationFunction()).isNull();
@@ -102,21 +93,11 @@ class DPT8Test {
         // Delta Time Period in 10ms (-32768 = -327680ms, 0 = 0ms, 32767 = 327670ms)
         final var dptDeltaTime = DPT8.DELTA_TIME_10MS;
         assertThat(dptDeltaTime.getCalculationFunction()).isNotNull();
-        assertThat(dptDeltaTime.of(-327680).getValueAsInt()).isEqualTo(-327680);
+        assertThat(dptDeltaTime.of(-327680).getValue()).isEqualTo(-327680);
         assertThat(dptDeltaTime.of(-327680).toByteArray()).containsExactly(0x80, 0x00);
-        assertThat(dptDeltaTime.of(0).getValueAsInt()).isZero();
+        assertThat(dptDeltaTime.of(0).getValue()).isZero();
         assertThat(dptDeltaTime.of(0).toByteArray()).containsExactly(0x00, 0x00);
-        assertThat(dptDeltaTime.of(327670).getValueAsInt()).isEqualTo(327670);
+        assertThat(dptDeltaTime.of(327670).getValue()).isEqualTo(327670);
         assertThat(dptDeltaTime.of(327670).toByteArray()).containsExactly(0x7F, 0xFF);
-
-        // Percent (-32768 = -327.68%, 0 = 0%, 32767 = 327.67%)
-        final var dptPercent = DPT8.PERCENT;
-        assertThat(dptPercent.getCalculationFunction()).isNotNull();
-        assertThat(dptPercent.of(-327.68).getValueAsDouble()).isEqualTo(-327.68);
-        assertThat(dptPercent.of(-327.68).toByteArray()).containsExactly(0x80, 0x00);
-        assertThat(dptPercent.of(0).getValueAsDouble()).isZero();
-        assertThat(dptPercent.of(0).toByteArray()).containsExactly(0x00, 0x00);
-        assertThat(dptPercent.of(327.67).getValueAsDouble()).isEqualTo(327.67);
-        assertThat(dptPercent.of(327.67).toByteArray()).containsExactly(0x7F, 0xFF);
     }
 }

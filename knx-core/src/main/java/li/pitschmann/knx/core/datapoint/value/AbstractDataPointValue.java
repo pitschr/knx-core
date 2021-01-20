@@ -62,7 +62,7 @@ abstract class AbstractDataPointValue<T extends DataPointType> implements DataPo
      *
      * @return data point type
      */
-    public final T getDPT() {
+    protected final T getDPT() {
         return this.dpt;
     }
 }
