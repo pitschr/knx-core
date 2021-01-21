@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author PITSCHR
  */
-public class KnxSingleEventTest {
-    /**
-     * Tests the initialization of {@link KnxSingleEvent}
-     */
+class KnxSingleEventTest {
+
     @Test
     @DisplayName("Check of initialization values for single event")
-    public void testInit() {
+    void testInit() {
         final var event = new KnxSingleEvent<>();
 
         assertThat(event.hasRequest()).isFalse();
@@ -49,12 +47,9 @@ public class KnxSingleEventTest {
         assertThat(event.getResponseTime()).isNull();
     }
 
-    /**
-     * Tests {@link KnxSingleEvent#getRequest()} and {@link KnxSingleEvent#getRequestTime()}
-     */
     @Test
-    @DisplayName("Check set of request for single event")
-    public void testRequest() {
+    @DisplayName("Check set of request and request time for single event")
+    void testRequest() {
         final var event = new KnxSingleEvent<>();
 
         final var instantBeforeRequest = Instant.now();
@@ -70,12 +65,9 @@ public class KnxSingleEventTest {
         assertThat(event.getResponseTime()).isNull();
     }
 
-    /**
-     * Tests {@link KnxSingleEvent#getResponse()} and {@link KnxSingleEvent#getResponseTime()}
-     */
     @Test
-    @DisplayName("Check one and two responses (overwrite) for single event")
-    public void testResponse() {
+    @DisplayName("Check set of response and response time for single event and override it")
+    void testResponse() {
         final var event = new KnxSingleEvent<>();
 
         final var instantBeforeResponse = Instant.now();
@@ -100,12 +92,30 @@ public class KnxSingleEventTest {
         assertThat(event.getResponseTime()).isBetween(instantBeforeResponse2, instantAfterResponse2); // changed
     }
 
-    /**
-     * Test {@link KnxSingleEvent#toString()}
-     */
+    @Test
+    @DisplayName("Check the #clearResponse() for single event")
+    void testClearResponse() {
+        final var event = new KnxSingleEvent<>();
+
+        event.setResponse(KnxBody.TUNNELING_ACK_BODY);
+
+        // response is present
+        assertThat(event.hasResponse()).isTrue();
+        assertThat(event.getResponse()).isEqualTo(KnxBody.TUNNELING_ACK_BODY);
+        assertThat(event.getResponseTime()).isNotNull();
+
+        // clear the response
+        event.clearResponse();
+
+        // response is not present anymore
+        assertThat(event.hasResponse()).isFalse();
+        assertThat(event.getResponse()).isNull();
+        assertThat(event.getResponseTime()).isNull();
+    }
+
     @Test
     @DisplayName("Check toString() method for single event")
-    public void testToString() {
+    void testToString() {
         final var instantFormatRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z";
         final var instantFormatPlaceholder = "0000-00-00T00:00:00.000000000Z";
 

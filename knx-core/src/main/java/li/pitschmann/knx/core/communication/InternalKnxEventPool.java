@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,15 +116,6 @@ public final class InternalKnxEventPool {
     }
 
     /**
-     * Adds {@link RequestBody} to the event pool
-     *
-     * @param request an instance of {@link RequestBody} to be added
-     */
-    public void add(final RequestBody request) {
-        get(request).setRequest(request);
-    }
-
-    /**
      * Returns the {@link KnxSingleEvent} for given {@link RequestBody} from event pool
      *
      * @param request    {@link RequestBody} we are looking for {@link KnxEvent}
@@ -148,7 +139,7 @@ public final class InternalKnxEventPool {
             return (KnxMultiEvent<REQUEST, RESPONSE>) this.searchEvent;
         }
         log.error("Request body is not supported for 'get(RequestBody)' method: {}", request);
-        throw new IllegalArgumentException("Request body is not supported.");
+        throw new IllegalArgumentException("Request body is not supported: " + request);
     }
 
     /**

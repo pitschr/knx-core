@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,20 @@ package li.pitschmann.knx.core.communication;
 
 import li.pitschmann.knx.core.body.RequestBody;
 import li.pitschmann.knx.core.test.KnxBody;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the {@link InternalKnxEventPool}
  *
  * @author PITSCHR
  */
-public class InternalKnxEventPoolTest {
+class InternalKnxEventPoolTest {
     /**
      * Test events:
      * <ol>
@@ -45,7 +45,8 @@ public class InternalKnxEventPoolTest {
      * </ol>
      */
     @Test
-    public void testEvents() {
+    @DisplayName("Test all supported events")
+    void testEvents() {
         final var pool = new InternalKnxEventPool();
 
         assertThat(pool.searchEvent()).isNotNull().isSameAs(pool.get(KnxBody.SEARCH_REQUEST_BODY));
@@ -58,33 +59,15 @@ public class InternalKnxEventPoolTest {
         assertThat(pool.get(KnxBody.TUNNELING_ACK_BODY)).isNotNull().isSameAs(pool.get(KnxBody.TUNNELING_REQUEST_BODY));
     }
 
-    /**
-     * Test {@link InternalKnxEventPool#add(RequestBody)}
-     */
     @Test
-    public void testAdd() {
+    @DisplayName("Unknown request type for #get(RequestBody)")
+    void testUnknownEvent() {
         final var pool = new InternalKnxEventPool();
-        final var eventData = pool.descriptionEvent();
+        final var requestMock = mock(RequestBody.class);
+        when(requestMock.toString()).thenReturn("DummyRequestBody");
 
-        assertThat(eventData.getRequest()).isNull();
-        assertThat(eventData.getRequestTime()).isNull();
-
-        final var instantBeforeAdd = Instant.now();
-        pool.add(KnxBody.DESCRIPTION_REQUEST_BODY);
-        final var instantAfterAdd = Instant.now();
-
-        assertThat(eventData.getRequest()).isSameAs(KnxBody.DESCRIPTION_REQUEST_BODY);
-        assertThat(eventData.getRequestTime()).isBetween(instantBeforeAdd, instantAfterAdd);
-    }
-
-    /**
-     * Test failures for {@link InternalKnxEventPool#add(RequestBody)}
-     */
-    @Test
-    public void testAddFailures() {
-        assertThatThrownBy(() -> new InternalKnxEventPool().add(null)).isInstanceOf(IllegalArgumentException.class);
-
-        final var requestBody = mock(RequestBody.class);
-        assertThatThrownBy(() -> new InternalKnxEventPool().add(requestBody)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> pool.get(requestMock))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Request body is not supported: DummyRequestBody");
     }
 }
