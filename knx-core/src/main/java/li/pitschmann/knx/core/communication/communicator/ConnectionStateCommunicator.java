@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,8 +148,9 @@ public final class ConnectionStateCommunicator implements Runnable {
         // create body
         final var requestBody = ConnectionStateRequestBody.of(this.client.getChannelId(), this.client.getControlHPAI());
 
-        // send
-        this.client.getEventPool().add(requestBody);
+        // send and register set the last request body
+        // the response won't be cleared because we need to keep the last time of response
+        this.client.getEventPool().connectionStateEvent().setRequest(requestBody);
         this.client.send(requestBody);
 
         // wait bit

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author PITSCHR
  */
-public class KnxMultiEventTest {
-    /**
-     * Tests the initialization of {@link KnxMultiEvent}
-     */
+class KnxMultiEventTest {
+
     @Test
     @DisplayName("Check of initialization values for multi event")
-    public void testInit() {
+    void testInit() {
         final var event = new KnxMultiEvent<>();
 
         assertThat(event.hasRequest()).isFalse();
@@ -52,12 +50,9 @@ public class KnxMultiEventTest {
         assertThat(event.getResponseTime()).isNull();
     }
 
-    /**
-     * Tests {@link KnxMultiEvent#getRequest()} and {@link KnxMultiEvent#getRequestTime()}
-     */
     @Test
-    @DisplayName("Check set of request for multi event")
-    public void testRequest() {
+    @DisplayName("Check set of request and request time for multi event")
+    void testRequest() {
         final var event = new KnxMultiEvent<>();
 
         final var instantBeforeRequest = Instant.now();
@@ -73,12 +68,9 @@ public class KnxMultiEventTest {
         assertThat(event.getResponseTime()).isNull();
     }
 
-    /**
-     * Tests {@link KnxMultiEvent#getResponse()} and {@link KnxMultiEvent#getResponseTime()}
-     */
     @Test
-    @DisplayName("Check two responses for KNX multi event")
-    public void testResponse() {
+    @DisplayName("Check adding responses and response times for KNX multi event")
+    void testResponse() {
         final var event = new KnxMultiEvent<TunnelingRequestBody, TunnelingAckBody>();
 
         // first response
@@ -124,12 +116,35 @@ public class KnxMultiEventTest {
         assertThat(event.getResponseEvent((res) -> false)).isNull();
     }
 
-    /**
-     * Test {@link KnxMultiEvent#toString()}
-     */
+    @Test
+    @DisplayName("Check the #clearResponse() for multi event")
+    void testClearResponse() {
+        final var event = new KnxMultiEvent<>();
+
+        event.setResponse(KnxBody.TUNNELING_ACK_BODY);
+        event.setResponse(KnxBody.TUNNELING_ACK_BODY_2);
+
+        // response is present
+        assertThat(event.hasResponse()).isTrue();
+        assertThat(event.getResponse()).isEqualTo(KnxBody.TUNNELING_ACK_BODY);
+        assertThat(event.getResponse(0)).isEqualTo(KnxBody.TUNNELING_ACK_BODY);
+        assertThat(event.getResponse(1)).isEqualTo(KnxBody.TUNNELING_ACK_BODY_2);
+        assertThat(event.getResponseTime()).isNotNull();
+
+        // clear the response
+        event.clearResponse();
+
+        // response is not present anymore
+        assertThat(event.hasResponse()).isFalse();
+        assertThat(event.getResponse()).isNull();
+        assertThat(event.getResponse(0)).isNull();
+        assertThat(event.getResponse(1)).isNull();
+        assertThat(event.getResponseTime()).isNull();
+    }
+
     @Test
     @DisplayName("Check toString() method for multi event")
-    public void testToString() {
+    void testToString() {
         final var instantFormatRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z";
         final var instantFormatPlaceholder = "0000-00-00T00:00:00.000000000Z";
 

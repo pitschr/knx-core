@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,11 @@ public final class KnxSingleEvent<REQUEST extends RequestBody, RESPONSE extends 
     @Override
     public void setResponse(final RESPONSE response) {
         this.responseEvent = new ResponseEvent<>(response);
+    }
+
+    @Override
+    public void clearResponse() {
+        this.responseEvent = null;
     }
 
     @Override
