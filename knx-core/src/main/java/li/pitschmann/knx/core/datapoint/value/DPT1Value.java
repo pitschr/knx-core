@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public final class DPT1Value extends AbstractDataPointValue<DPT1> implements Pay
         this(
                 dpt,
                 // boolean
-                (b & 0x01) != 0x00
+                b == 0x01
         );
     }
 
