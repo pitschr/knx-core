@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.value.DPT1Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -72,9 +71,9 @@ class DPT1Test {
         // 0x00 = 0 => false
         final var falseByte = dpt.parse(new byte[]{0x00});
         assertThat(falseByte.getValue()).isFalse();
-        // 0x00 = 0 => false
-        final var falseByte2 = dpt.parse(new byte[]{0x02});
-        assertThat(falseByte2.getValue()).isFalse();
+        // 0x02 = 0 => false
+        final var invalidByte = dpt.parse(new byte[]{0x02});
+        assertThat(invalidByte.getValue()).isFalse();
     }
 
     @Test
@@ -136,11 +135,11 @@ class DPT1Test {
     @Test
     @DisplayName("Test #of(boolean)")
     void testOf() {
-        // false
-        assertThat(DPT1.SWITCH.of(false)).isInstanceOf(DPT1Value.class);
-        assertThat(DPT1.UP_DOWN.of(false)).isInstanceOf(DPT1Value.class);
-        // true
-        assertThat(DPT1.SWITCH.of(true)).isInstanceOf(DPT1Value.class);
-        assertThat(DPT1.UP_DOWN.of(true)).isInstanceOf(DPT1Value.class);
+        // not-controlled, false
+        final var falseValue = DPT1.SWITCH.of(false);
+        assertThat(falseValue.getValue()).isFalse();
+        // not-controlled, true
+        final var trueValue = DPT1.SWITCH.of(true);
+        assertThat(trueValue.getValue()).isTrue();
     }
 }

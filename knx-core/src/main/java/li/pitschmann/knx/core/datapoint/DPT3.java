@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT3Value;
-import li.pitschmann.knx.core.datapoint.value.DPT3Value.StepInterval;
+import li.pitschmann.knx.core.datapoint.value.StepInterval;
+import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.util.regex.Pattern;
 
@@ -114,7 +115,10 @@ public final class DPT3 extends BaseDataPointType<DPT3Value> {
     @Override
     protected DPT3Value parse(final String[] args) {
         final var controlled = this.findByString(args, "controlled");
-        final var stepInterval = this.findByPattern(args, Pattern.compile("^[\\d]+$"), i -> StepInterval.ofCode(Integer.parseInt(i)));
+        final var stepInterval = this.findByPattern(args, Pattern.compile("^([\\d]+|[\\d.,]+%|stop)$", Pattern.CASE_INSENSITIVE), StepInterval::parse);
+
+        Preconditions.checkArgument(stepInterval != null,
+                "Step Interval missing. Supported are: 0, 0%, 0.0%, 0,0% and stop");
         return of(controlled, stepInterval);
     }
 

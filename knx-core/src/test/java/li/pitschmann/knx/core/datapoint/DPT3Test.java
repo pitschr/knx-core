@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,12 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT3Value;
+import li.pitschmann.knx.core.datapoint.value.StepInterval;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT3}
@@ -72,10 +74,32 @@ class DPT3Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT3.BLINDS_CONTROL;
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT3Value.class);
-        assertThat(dpt.parse(new String[]{"2"})).isInstanceOf(DPT3Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "2"})).isInstanceOf(DPT3Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "7"})).isInstanceOf(DPT3Value.class);
+
+        // not-controlled, stop
+        final var stopValue = dpt.parse(new String[]{"STOP"});
+        assertThat(stopValue.isControlled()).isFalse();
+        assertThat(stopValue.getStepInterval()).isSameAs(StepInterval.STOP);
+        // not-controlled, percent = 50%
+        final var percent50Value = dpt.parse(new String[]{"50%"});
+        assertThat(percent50Value.isControlled()).isFalse();
+        assertThat(percent50Value.getStepInterval()).isSameAs(StepInterval.PERCENT_50);
+        // controlled, percent = 11.5%  (nearest percent 12%) with dot as separator
+        final var percentControlled = dpt.parse(new String[]{"controlled", "11.5%"});
+        assertThat(percentControlled.isControlled()).isTrue();
+        assertThat(percentControlled.getStepInterval()).isSameAs(StepInterval.PERCENT_12);
+        // controlled, percent = 56,2%  (nearest percent 50%) with comma a separator
+        final var percentControlled2 = dpt.parse(new String[]{"controlled", "56,2%"});
+        assertThat(percentControlled2.isControlled()).isTrue();
+        assertThat(percentControlled2.getStepInterval()).isSameAs(StepInterval.PERCENT_50);
+        // controlled, interval = 40
+        final var percent1Controlled = dpt.parse(new String[]{"40", "controlled"});
+        assertThat(percent1Controlled.isControlled()).isTrue();
+        assertThat(percent1Controlled.getStepInterval()).isSameAs(StepInterval.PERCENT_1);
+
+        // invalid text provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Step Interval missing. Supported are: 0, 0%, 0.0%, 0,0% and stop");
     }
 
     @Test
@@ -89,12 +113,12 @@ class DPT3Test {
     @DisplayName("Test #of(boolean, StepInterval)")
     void testOfStepInterval() {
         // not controlled, step = 0 (STOP)
-        assertThat(DPT3.BLINDS_CONTROL.of(false, DPT3Value.StepInterval.STOP)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(false, StepInterval.STOP)).isInstanceOf(DPT3Value.class);
         // controlled, step = 2 (PERCENT_50)
-        assertThat(DPT3.BLINDS_CONTROL.of(true, DPT3Value.StepInterval.PERCENT_50)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(true, StepInterval.PERCENT_50)).isInstanceOf(DPT3Value.class);
         // not controlled, step = 7 (PERCENT_1)
-        assertThat(DPT3.BLINDS_CONTROL.of(false, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(false, StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
         // controlled, step =  7 (PERCENT_1)
-        assertThat(DPT3.BLINDS_CONTROL.of(true, DPT3Value.StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
+        assertThat(DPT3.BLINDS_CONTROL.of(true, StepInterval.PERCENT_1)).isInstanceOf(DPT3Value.class);
     }
 }

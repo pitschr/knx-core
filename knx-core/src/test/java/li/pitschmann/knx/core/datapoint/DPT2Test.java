@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,10 +73,23 @@ class DPT2Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT2.SWITCH_CONTROL;
-        assertThat(dpt.parse(new String[]{"false"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.parse(new String[]{"true"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "false"})).isInstanceOf(DPT2Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "true"})).isInstanceOf(DPT2Value.class);
+
+        // not-controlled, false
+        final var falseValue = dpt.parse(new String[]{"false"});
+        assertThat(falseValue.getValue()).isFalse();
+        assertThat(falseValue.isControlled()).isFalse();
+        // not-controlled, true
+        final var trueValue = dpt.parse(new String[]{"true"});
+        assertThat(trueValue.getValue()).isTrue();
+        assertThat(trueValue.isControlled()).isFalse();
+        // controlled, false
+        final var falseControlled = dpt.parse(new String[]{"false", "controlled"});
+        assertThat(falseControlled.getValue()).isFalse();
+        assertThat(falseControlled.isControlled()).isTrue();
+        // controlled, true
+        final var trueControlled = dpt.parse(new String[]{"true", "controlled"});
+        assertThat(trueControlled.getValue()).isTrue();
+        assertThat(trueControlled.isControlled()).isTrue();
     }
 
     @Test
@@ -90,17 +103,21 @@ class DPT2Test {
     @Test
     @DisplayName("Test #of(boolean, boolean)")
     void testOf() {
-        // false, not controlled
-        assertThat(DPT2.SWITCH_CONTROL.of(false, false)).isInstanceOf(DPT2Value.class);
-        assertThat(DPT2.UP_DOWN_CONTROL.of(false, false)).isInstanceOf(DPT2Value.class);
-        // true, not controlled
-        assertThat(DPT2.SWITCH_CONTROL.of(false, true)).isInstanceOf(DPT2Value.class);
-        assertThat(DPT2.UP_DOWN_CONTROL.of(false, true)).isInstanceOf(DPT2Value.class);
-        // false, controlled
-        assertThat(DPT2.SWITCH_CONTROL.of(true, false)).isInstanceOf(DPT2Value.class);
-        assertThat(DPT2.UP_DOWN_CONTROL.of(true, false)).isInstanceOf(DPT2Value.class);
-        // true, controlled
-        assertThat(DPT2.SWITCH_CONTROL.of(true, true)).isInstanceOf(DPT2Value.class);
-        assertThat(DPT2.UP_DOWN_CONTROL.of(true, true)).isInstanceOf(DPT2Value.class);
+        // not-controlled, false
+        final var falseValue = DPT2.SWITCH_CONTROL.of(false, false);
+        assertThat(falseValue.getValue()).isFalse();
+        assertThat(falseValue.isControlled()).isFalse();
+        // not-controlled, true
+        final var trueValue = DPT2.SWITCH_CONTROL.of(false, true);
+        assertThat(trueValue.getValue()).isTrue();
+        assertThat(trueValue.isControlled()).isFalse();
+        // controlled, false
+        final var falseControlled = DPT2.SWITCH_CONTROL.of(true, false);
+        assertThat(falseControlled.getValue()).isFalse();
+        assertThat(falseControlled.isControlled()).isTrue();
+        // controlled, true
+        final var trueControlled = DPT2.SWITCH_CONTROL.of(true, true);
+        assertThat(trueControlled.getValue()).isTrue();
+        assertThat(trueControlled.isControlled()).isTrue();
     }
 }
