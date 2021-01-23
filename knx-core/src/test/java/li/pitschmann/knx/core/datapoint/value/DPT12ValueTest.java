@@ -56,7 +56,7 @@ class DPT12ValueTest {
     @Test
     @DisplayName("#(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, byte[]) with: 4294967295")
     void testByte_4294967295() {
-        final var value = new DPT12Value(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xFF, (byte)0xFF, (byte) 0xFF, (byte)0xFF});
+        final var value = new DPT12Value(DPT12.VALUE_4_OCTET_UNSIGNED_COUNT, new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
         assertThat(value.getValue()).isEqualTo(4294967295L);
         assertThat(value.toByteArray()).containsExactly(0xFF, 0xFF, 0xFF, 0xFF);
 

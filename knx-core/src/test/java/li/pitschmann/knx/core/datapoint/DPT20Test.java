@@ -38,7 +38,7 @@ class DPT20Test {
 
     @Test
     @DisplayName("ActuatorConnectType.SENSOR")
-    void testActuatorConnectType_Sensor(){
+    void testActuatorConnectType_Sensor() {
         final var valueSensor = DPT20.ActuatorConnectType.SENSOR;
 
         // short access (via of())
@@ -60,7 +60,7 @@ class DPT20Test {
 
     @Test
     @DisplayName("ActuatorConnectType.CONTROLLER")
-    void testActuatorConnectType_Controller(){
+    void testActuatorConnectType_Controller() {
         final var valueSensor = DPT20.ActuatorConnectType.CONTROLLER;
 
         // short access (via of())

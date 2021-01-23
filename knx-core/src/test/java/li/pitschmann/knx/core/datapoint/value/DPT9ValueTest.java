@@ -97,7 +97,7 @@ class DPT9ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT9Value(DPT9.TEMPERATURE, 471.04);
-        final var valueBytes = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x2D, (byte)0xC0});
+        final var valueBytes = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x2D, (byte) 0xC0});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

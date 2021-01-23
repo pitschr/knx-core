@@ -166,7 +166,7 @@ class DPT6ValueStatusModeTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0);
-        final var valueBytes = new DPT6Value.StatusMode((byte)0b0000_0001);
+        final var valueBytes = new DPT6Value.StatusMode((byte) 0b0000_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

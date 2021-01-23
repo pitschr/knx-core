@@ -73,7 +73,7 @@ class DPT14ValueTest {
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '3.40282348E38' for argument 'value' is out of range '-3.40282347E38'..'3.40282347E38'.");
     }
-    
+
     @Test
     @DisplayName("#(byte[]) with invalid byte length")
     void testBytesOutOfRange() {
@@ -100,7 +100,7 @@ class DPT14ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT14Value(DPT14.ACCELERATION, 4711.0);
-        final var value2 = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x45, (byte)0x93, 0x38, 0x00});
+        final var value2 = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x45, (byte) 0x93, 0x38, 0x00});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

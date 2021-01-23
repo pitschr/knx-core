@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT17}
@@ -70,8 +71,24 @@ class DPT17Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT17.SCENE_NUMBER;
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT17Value.class);
-        assertThat(dpt.parse(new String[]{"63"})).isInstanceOf(DPT17Value.class);
+
+        // Scene: 0
+        final var scene0 = dpt.parse(new String[]{"0"});
+        assertThat(scene0.getSceneNumber()).isZero();
+        // Scene: 63
+        final var scene63 = dpt.parse(new String[]{"63"});
+        assertThat(scene63.getSceneNumber()).isEqualTo(63);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT17.SCENE_NUMBER;
+
+        // no scene number format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Scene Number missing (digit between 0 and 63). Provided: [foobar]");
     }
 
     @Test

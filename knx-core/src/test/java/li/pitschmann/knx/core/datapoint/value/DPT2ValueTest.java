@@ -82,12 +82,12 @@ class DPT2ValueTest {
     @Test
     @DisplayName("#toString()")
     void testToString() {
-        final var valueSwitch = new DPT2Value(DPT2.SWITCH_CONTROL, false,true);
+        final var valueSwitch = new DPT2Value(DPT2.SWITCH_CONTROL, false, true);
         assertThat(valueSwitch).hasToString(
                 "DPT2Value{dpt=2.001, controlled=false, value=true, text=On, byteArray=0x01}"
         );
 
-        final var valueEnable = new DPT2Value(DPT2.ENABLE_CONTROL, true,false);
+        final var valueEnable = new DPT2Value(DPT2.ENABLE_CONTROL, true, false);
         assertThat(valueEnable).hasToString(
                 "DPT2Value{dpt=2.003, controlled=true, value=false, text=Disable, byteArray=0x02}"
         );
@@ -97,7 +97,7 @@ class DPT2ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT2Value(DPT2.SWITCH_CONTROL, true, true);
-        final var valueByte = new DPT2Value(DPT2.SWITCH_CONTROL, (byte)0b0000_0011);
+        final var valueByte = new DPT2Value(DPT2.SWITCH_CONTROL, (byte) 0b0000_0011);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

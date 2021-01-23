@@ -191,12 +191,12 @@ final class DPT19ValueTest {
         );
         assertThat(value).hasToString(
                 String.format(
-                    "DPT19Value{dpt=19.001, dayOfWeek=TUESDAY, date=2021-01-08, time=21:04:32, flags=%s, byteArray=0x79 01 08 55 04 20 B8 80}",
-                        new Flags(new byte[]{ (byte) 0xB8, (byte) 0x80 })
+                        "DPT19Value{dpt=19.001, dayOfWeek=TUESDAY, date=2021-01-08, time=21:04:32, flags=%s, byteArray=0x79 01 08 55 04 20 B8 80}",
+                        new Flags(new byte[]{(byte) 0xB8, (byte) 0x80})
                 )
         );
 
-        final var valueBytes = new DPT19Value(new byte[]{0x7B, 0x0B, 0x18, (byte)0xB1, 0x04, 0x21, 0x08, 0x00});
+        final var valueBytes = new DPT19Value(new byte[]{0x7B, 0x0B, 0x18, (byte) 0xB1, 0x04, 0x21, 0x08, 0x00});
         assertThat(valueBytes).hasToString(
                 String.format(
                         "DPT19Value{dpt=19.001, dayOfWeek=FRIDAY, date=2023-11-24, time=17:04:33, flags=%s, byteArray=0x7B 0B 18 B1 04 21 08 00}",
@@ -240,7 +240,7 @@ final class DPT19ValueTest {
         assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(1, 59, 59), Flags.NO_FLAGS));
         assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 1, 59), Flags.NO_FLAGS));
         assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 1), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 59), new Flags(new byte[] { 0x01, 0x00})));
+        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 59), new Flags(new byte[]{0x01, 0x00})));
     }
 
     @Test

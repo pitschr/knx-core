@@ -76,7 +76,7 @@ class DPT8ValueTest {
     @Test
     @DisplayName("#(DPT8.VALUE_2_OCTET_COUNT, byte[]) with: 0x7F FF")
     void testByte_0x7F_FF() {
-        final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte)0xFF});
+        final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte) 0xFF});
         assertThat(value.getValue()).isEqualTo(32767);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
 
@@ -86,7 +86,7 @@ class DPT8ValueTest {
     @Test
     @DisplayName("#(DPT8.DELTA_TIME_100MS, byte[]) with: 0x7F FF")
     void testByte_0x7F_FF_DeltaTime_100ms() {
-        final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, new byte[]{(byte) 0x7F, (byte)0xFF});
+        final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, new byte[]{(byte) 0x7F, (byte) 0xFF});
         assertThat(value.getValue()).isEqualTo(3276700);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
 

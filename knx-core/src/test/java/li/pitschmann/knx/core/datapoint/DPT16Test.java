@@ -62,9 +62,9 @@ class DPT16Test {
         assertThat(dpt.isCompatible(new String[1])).isFalse();
         assertThat(dpt.isCompatible(new String[2])).isFalse();
 
-        assertThat(dpt.isCompatible(new String[] { "" })).isTrue();
-        assertThat(dpt.isCompatible(new String[] { "12345678901234" })).isTrue();
-        assertThat(dpt.isCompatible(new String[] { "123456789012345" })).isFalse();
+        assertThat(dpt.isCompatible(new String[]{""})).isTrue();
+        assertThat(dpt.isCompatible(new String[]{"12345678901234"})).isTrue();
+        assertThat(dpt.isCompatible(new String[]{"123456789012345"})).isFalse();
     }
 
     @Test

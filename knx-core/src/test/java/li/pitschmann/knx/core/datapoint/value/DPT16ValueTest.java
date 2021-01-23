@@ -35,7 +35,7 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#(DPT16.ASCII, byte[]) with characters: abcXYZ")
     void testByteASCII() {
-        final var value = new DPT16Value(DPT16.ASCII, new byte[] {0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
+        final var value = new DPT16Value(DPT16.ASCII, new byte[]{0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
         assertThat(value.getCharacters()).isEqualTo("abcXYZ");
         assertThat(value.toByteArray()).containsExactly(
                 // padded with 8 empty 0x00 as the byte array must be a 14-byte array
@@ -50,9 +50,9 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#(DPT16.ISO_8859_1, byte[]) with characters: äöüÄÖÜ123")
     void testByteISO() {
-        final var value = new DPT16Value(DPT16.ISO_8859_1, new byte[] {
-                (byte)0xE4, (byte)0xF6, (byte)0xFC, // äöü
-                (byte)0xC4, (byte)0xD6, (byte)0xDC, // ÄÖÜ
+        final var value = new DPT16Value(DPT16.ISO_8859_1, new byte[]{
+                (byte) 0xE4, (byte) 0xF6, (byte) 0xFC, // äöü
+                (byte) 0xC4, (byte) 0xD6, (byte) 0xDC, // ÄÖÜ
                 0x31, 0x32, 0x33 // 123
         });
         assertThat(value.getCharacters()).isEqualTo("äöüÄÖÜ123");
@@ -70,7 +70,7 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#(DPT16.ASCII, byte[]) with null bytes")
     void testNullBytes() {
-        final var value = new DPT16Value(DPT16.ASCII, (byte[])null);
+        final var value = new DPT16Value(DPT16.ASCII, (byte[]) null);
         assertThat(value.getCharacters()).isEqualTo("");
         assertThat(value.toByteArray()).containsExactly(new byte[14]);
 
@@ -90,7 +90,7 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#(DPT16.ASCII, String) with null string")
     void testNullString() {
-        final var value = new DPT16Value(DPT16.ASCII, (String)null);
+        final var value = new DPT16Value(DPT16.ASCII, (String) null);
         assertThat(value.getCharacters()).isEqualTo("");
         assertThat(value.toByteArray()).containsExactly(new byte[14]);
 
@@ -110,7 +110,7 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#(DPT16.ASCII, byte[]) with unsupported character 'ä' (0xE4)")
     void testBytesUnsupportedCharacter() {
-        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, new byte[]{(byte)0xE4}))
+        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, new byte[]{(byte) 0xE4}))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Issue during decoding charset 'US-ASCII' with: 0xE4");
     }
@@ -143,8 +143,8 @@ class DPT16ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT16Value(DPT16.ASCII, "abcXYZ");
-        final var valueBytes = new DPT16Value(DPT16.ASCII, new byte[] {0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
-        final var valueBytesTrailing = new DPT16Value(DPT16.ASCII, new byte[] {0x61, 0x62, 0x63, 0x58, 0x59, 0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
+        final var valueBytes = new DPT16Value(DPT16.ASCII, new byte[]{0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
+        final var valueBytesTrailing = new DPT16Value(DPT16.ASCII, new byte[]{0x61, 0x62, 0x63, 0x58, 0x59, 0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

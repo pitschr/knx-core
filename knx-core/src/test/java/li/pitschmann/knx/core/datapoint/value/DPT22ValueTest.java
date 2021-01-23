@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.ChannelActivation16;
-import li.pitschmann.knx.core.datapoint.value.DPT22Value.Media;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.DHWControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT22Value.Media;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.RoomHeatingCoolingControllerStatus;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;

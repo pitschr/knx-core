@@ -57,7 +57,7 @@ class DPT13ValueTest {
     @Test
     @DisplayName("#(DPT13.VALUE_4_OCTET_COUNT, byte[]) with: 2147483647")
     void testBytePositive() {
-        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte)0xFF, (byte)0xFF, (byte)0xFF});
+        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
         assertThat(value.getValue()).isEqualTo(2147483647);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF, 0xFF, 0xFF);
 

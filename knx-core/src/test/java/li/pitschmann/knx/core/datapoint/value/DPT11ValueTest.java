@@ -110,7 +110,7 @@ class DPT11ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT11Value(LocalDate.of(2020, 1, 2));
-        final var valueBytes = new DPT11Value(new byte[] {0b0000_0010, 0b0000_0001, 0b0001_0100});
+        final var valueBytes = new DPT11Value(new byte[]{0b0000_0010, 0b0000_0001, 0b0001_0100});
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

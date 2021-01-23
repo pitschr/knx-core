@@ -76,7 +76,7 @@ class DPT4ValueTest {
     @Test
     @DisplayName("#(DPT4.ASCII, char) with unsupported character 'ä' (0xE4)")
     void testUnsupportedCharacter() {
-        assertThatThrownBy(() -> new DPT4Value(DPT4.ASCII, (byte)0xE4))
+        assertThatThrownBy(() -> new DPT4Value(DPT4.ASCII, (byte) 0xE4))
                 .isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessage("Issue during decoding charset 'US-ASCII' with value: 0xE4");
     }
@@ -99,7 +99,7 @@ class DPT4ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT4Value(DPT4.ASCII, 'a');
-        final var valueByte = new DPT4Value(DPT4.ASCII, (byte)0b0110_0001);
+        final var valueByte = new DPT4Value(DPT4.ASCII, (byte) 0b0110_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

@@ -96,7 +96,7 @@ class DPT17ValueTest {
     @DisplayName("#(byte) with scene number out of range")
     void testByteOutOfRange() {
         // negative scene number not possible with byte due unsigned int conversion
-        assertThatThrownBy(() -> new DPT17Value((byte)0x40))
+        assertThatThrownBy(() -> new DPT17Value((byte) 0x40))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '64' for argument 'sceneNumber' is out of range '0'..'63'.");
     }
@@ -130,7 +130,7 @@ class DPT17ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT17Value(17);
-        final var valueByte = new DPT17Value((byte)0b001_0001);
+        final var valueByte = new DPT17Value((byte) 0b001_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

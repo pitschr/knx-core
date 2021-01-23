@@ -55,7 +55,7 @@ class DPT8ValuePercentTest {
     @Test
     @DisplayName("#(byte[]) with: 0x7F FF")
     void testByte_0x7F_FF_Percent() {
-        final var value = new DPT8Value.Percent(new byte[]{(byte) 0x7F, (byte)0xFF});
+        final var value = new DPT8Value.Percent(new byte[]{(byte) 0x7F, (byte) 0xFF});
         assertThat(value.getValue()).isEqualTo(327.67);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
 

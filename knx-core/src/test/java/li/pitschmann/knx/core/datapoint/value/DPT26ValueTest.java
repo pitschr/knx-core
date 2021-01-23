@@ -167,10 +167,10 @@ class DPT26ValueTest {
     @Test
     @DisplayName("#(boolean, int) with scene number out of range")
     void testIntOutOfRange() {
-        assertThatThrownBy(() -> new DPT26Value(true,-1))
+        assertThatThrownBy(() -> new DPT26Value(true, -1))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '-1' for argument 'sceneNumber' is out of range '0'..'63'.");
-        assertThatThrownBy(() -> new DPT26Value(true,64))
+        assertThatThrownBy(() -> new DPT26Value(true, 64))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '64' for argument 'sceneNumber' is out of range '0'..'63'.");
     }
@@ -178,7 +178,7 @@ class DPT26ValueTest {
     @Test
     @DisplayName("#toString()")
     void testToString() {
-        final var value = new DPT26Value(false,31);
+        final var value = new DPT26Value(false, 31);
         assertThat(value).hasToString(
                 "DPT26Value{dpt=26.001, active=false, sceneNumber=31, byteArray=0x1F}"
         );
@@ -193,7 +193,7 @@ class DPT26ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT26Value(true, 17);
-        final var valueByte = new DPT26Value((byte)0b0101_0001);
+        final var valueByte = new DPT26Value((byte) 0b0101_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

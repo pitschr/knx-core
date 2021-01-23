@@ -122,7 +122,7 @@ class DPT6ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, 111);
-        final var valueByte = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte)0b0110_1111);
+        final var valueByte = new DPT6Value(DPT6.VALUE_1_OCTET_COUNT, (byte) 0b0110_1111);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

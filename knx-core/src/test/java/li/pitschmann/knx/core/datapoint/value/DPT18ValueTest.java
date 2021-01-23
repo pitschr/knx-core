@@ -168,7 +168,7 @@ class DPT18ValueTest {
     @DisplayName("#(boolean, byte) with scene number out of range")
     void testByteOutOfRange() {
         // negative scene number not possible with byte due unsigned int conversion
-        assertThatThrownBy(() -> new DPT18Value((byte)0x40))
+        assertThatThrownBy(() -> new DPT18Value((byte) 0x40))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '64' for argument 'sceneNumber' is out of range '0'..'63'.");
     }
@@ -176,10 +176,10 @@ class DPT18ValueTest {
     @Test
     @DisplayName("#(boolean, int) with scene number out of range")
     void testIntOutOfRange() {
-        assertThatThrownBy(() -> new DPT18Value(true,-1))
+        assertThatThrownBy(() -> new DPT18Value(true, -1))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '-1' for argument 'sceneNumber' is out of range '0'..'63'.");
-        assertThatThrownBy(() -> new DPT18Value(true,64))
+        assertThatThrownBy(() -> new DPT18Value(true, 64))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessage("Value '64' for argument 'sceneNumber' is out of range '0'..'63'.");
     }
@@ -187,7 +187,7 @@ class DPT18ValueTest {
     @Test
     @DisplayName("#toString()")
     void testToString() {
-        final var value = new DPT18Value(false,31);
+        final var value = new DPT18Value(false, 31);
         assertThat(value).hasToString(
                 "DPT18Value{dpt=18.001, controlled=false, sceneNumber=31, byteArray=0x1F}"
         );
@@ -202,7 +202,7 @@ class DPT18ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT18Value(true, 17);
-        final var valueByte = new DPT18Value((byte)0b1001_0001);
+        final var valueByte = new DPT18Value((byte) 0b1001_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

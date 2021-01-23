@@ -219,7 +219,7 @@ class DPT5ValueTest {
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
         final var value = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, 33);
-        final var valueByte = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte)0b0010_0001);
+        final var valueByte = new DPT5Value(DPT5.VALUE_1_OCTET_UNSIGNED_COUNT, (byte) 0b0010_0001);
 
         // equals & same hash code
         assertThat(value).isEqualTo(value);

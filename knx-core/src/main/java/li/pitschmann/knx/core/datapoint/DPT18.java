@@ -21,6 +21,7 @@ package li.pitschmann.knx.core.datapoint;
 import li.pitschmann.knx.core.datapoint.value.DPT18Value;
 import li.pitschmann.knx.core.utils.Preconditions;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -84,7 +85,13 @@ public final class DPT18 extends BaseRangeDataPointType<DPT18Value, Integer> {
         final var controlled = containsString(args, "controlled");
         final var intValue = findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
 
-        return of(controlled, Preconditions.checkNonNull(intValue, "The scene number must be present."));
+        Preconditions.checkArgument(intValue != null,
+                "Scene Number missing (digit between {} and {}). Provided: {}",
+                getLowerValue(),
+                getUpperValue(),
+                Arrays.toString(args)
+        );
+        return of(controlled, intValue);
     }
 
     public DPT18Value of(final boolean controlled, final int sceneNumber) {
