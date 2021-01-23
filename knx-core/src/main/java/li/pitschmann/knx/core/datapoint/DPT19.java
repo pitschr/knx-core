@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -148,19 +149,23 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
 
     @Override
     protected boolean isCompatible(final String[] args) {
-        return args.length >= 1 && args.length <= 4;
+        return args.length >= 2 && args.length <= 4;
     }
 
     @Override
     protected DPT19Value parse(final String[] args) {
-        final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
-        final var date = Preconditions.checkNonNull(this.findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse),
-                "Date must be present in format: 0000-00-00");
-        final var time = Preconditions.checkNonNull(this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse),
-                "Time must be present in format: 00:00:00 or 00:00");
-        final var flags = this.findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), null);
+        final var dayOfWeek = findByEnumConstant(args, DayOfWeek.class);
+        final var date = findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse);
+        final var time = findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
+        final var flags = findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), Flags.NO_FLAGS);
 
-        return new DPT19Value(dayOfWeek, date, time, flags);
+        // minimum are date and time
+        Preconditions.checkArgument(date != null,
+                "Date missing (supported format: 'yyyy-mm-dd'). Provided: {}", Arrays.toString(args));
+        Preconditions.checkArgument(time != null,
+                "Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: {}", Arrays.toString(args));
+
+        return of(dayOfWeek, date, time, flags);
     }
 
     public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time) {

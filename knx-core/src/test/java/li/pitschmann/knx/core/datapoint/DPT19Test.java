@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@ import org.junit.jupiter.api.Test;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT19}
@@ -65,8 +67,8 @@ class DPT19Test {
         final var dpt = DPT19.DATE_TIME;
         // String is supported for length == [1, 4] only
         assertThat(dpt.isCompatible(new String[0])).isFalse();
-        assertThat(dpt.isCompatible(new String[1])).isTrue(); // HH:MM:SS
-        assertThat(dpt.isCompatible(new String[2])).isTrue(); // DDD, HH:MM:SS
+        assertThat(dpt.isCompatible(new String[1])).isFalse();
+        assertThat(dpt.isCompatible(new String[2])).isTrue(); // YYYY-MM-DD HH:MM:SS
         assertThat(dpt.isCompatible(new String[3])).isTrue(); // DDD, YYYY-MM-DD HH:MM:SS
         assertThat(dpt.isCompatible(new String[4])).isTrue(); // DDD, YYYY-MM-DD HH:MM:SS Flags
         assertThat(dpt.isCompatible(new String[5])).isFalse();
@@ -90,14 +92,58 @@ class DPT19Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT19.DATE_TIME;
+
         // no day, 1900-01-01 00:00:00
-        assertThat(dpt.of("1900-01-01", "00:00:00")).isInstanceOf(DPT19Value.class);
+        final var dateAndTime = dpt.of("1900-01-01", "00:00");
+        assertThat(dateAndTime.getDayOfWeek()).isNull();
+        assertThat(dateAndTime.getDate()).isEqualTo(LocalDate.of(1900, 1, 1));
+        assertThat(dateAndTime.getTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(dateAndTime.getFlags()).isSameAs(DPT19Value.Flags.NO_FLAGS);
         // monday, 1950-02-03 6:15:20
-        assertThat(dpt.of("Monday", "1950-02-03", "06:15:20")).isInstanceOf(DPT19Value.class);
+        final var weekOfDayAndDateAndTime = dpt.of("Monday", "1950-02-03", "06:15:20");
+        assertThat(weekOfDayAndDateAndTime.getDayOfWeek()).isSameAs(DayOfWeek.MONDAY);
+        assertThat(weekOfDayAndDateAndTime.getDate()).isEqualTo(LocalDate.of(1950, 2, 3));
+        assertThat(weekOfDayAndDateAndTime.getTime()).isEqualTo(LocalTime.of(6, 15, 20));
+        assertThat(weekOfDayAndDateAndTime.getFlags()).isSameAs(DPT19Value.Flags.NO_FLAGS);
         // wednesday, 2000-04-05 12:30:45
-        assertThat(dpt.of("Wednesday", "2000-04-05", "12:30:45")).isInstanceOf(DPT19Value.class);
-        // sunday, 2155-12-31 23:59:59
-        assertThat(dpt.of("Sunday", "2155-12-31", "23:59:59")).isInstanceOf(DPT19Value.class);
+        final var weekOfDayAndDateAndTime2 = dpt.of("Wednesday", "2000-04-05", "12:30:45");
+        assertThat(weekOfDayAndDateAndTime2.getDayOfWeek()).isSameAs(DayOfWeek.WEDNESDAY);
+        assertThat(weekOfDayAndDateAndTime2.getDate()).isEqualTo(LocalDate.of(2000, 4, 5));
+        assertThat(weekOfDayAndDateAndTime2.getTime()).isEqualTo(LocalTime.of(12, 30, 45));
+        assertThat(weekOfDayAndDateAndTime2.getFlags()).isSameAs(DPT19Value.Flags.NO_FLAGS);
+        // no day, 2155-12-31 23:59:59, Flags: 0x53 C0
+        final var dateAndTimeAndFlag = dpt.of("2155-12-31", "23:59:59", "0x53C0");
+        assertThat(dateAndTimeAndFlag.getDayOfWeek()).isNull();
+        assertThat(dateAndTimeAndFlag.getDate()).isEqualTo(LocalDate.of(2155, 12, 31));
+        assertThat(dateAndTimeAndFlag.getTime()).isEqualTo(LocalTime.of(23, 59, 59));
+        assertThat(dateAndTimeAndFlag.getFlags()).isEqualTo(new DPT19Value.Flags(new byte[]{ 0b0101_0011, (byte) 0b1100_0000}));
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT19.DATE_TIME;
+
+        // no date provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Date missing (supported format: 'yyyy-mm-dd'). Provided: [foobar]");
+        // wrong date format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"01.02.2020"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Date missing (supported format: 'yyyy-mm-dd'). Provided: [01.02.2020]");
+
+        // no time provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"2000-01-01"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: [2000-01-01]");
+        // wrong time format (expected: 00:00:00)
+        assertThatThrownBy(() -> dpt.parse(new String[]{"2000-01-01", "0:0:0"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: [2000-01-01, 0:0:0]");
+        // wrong hour format (expected: 00 - 23)
+        assertThatThrownBy(() -> dpt.parse(new String[]{"2000-01-01", "24:00:00"}))
+                .isInstanceOf(DateTimeParseException.class);
     }
 
     @Test
