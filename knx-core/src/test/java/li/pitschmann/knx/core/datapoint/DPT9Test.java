@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT9}
@@ -63,17 +64,42 @@ class DPT9Test {
     @DisplayName("Test #parse(byte[])")
     void testByteParse() {
         final var dpt = DPT9.AIR_FLOW;
-        assertThat(dpt.parse(new byte[]{0x44, 0x55})).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.parse(new byte[]{(byte) 0xE6, (byte) 0xBB})).isInstanceOf(DPT9Value.class);
+
+        // value: -671088.64
+        final var valueNegative = dpt.parse(new byte[]{(byte) 0xF8, 0x00});
+        assertThat(valueNegative.getValue()).isEqualTo(-671088.64);
+        // value: 0
+        final var valueZero = dpt.parse(new String[]{"0"});
+        assertThat(valueZero.getValue()).isZero();
+        // value: 670760.96
+        final var valuePositive = dpt.parse(new byte[]{0x7F, (byte) 0xFF});
+        assertThat(valuePositive.getValue()).isEqualTo(670760.96);
     }
 
     @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
-        assertThat(dpt.parse(new String[]{"-671088.64"})).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT9Value.class);
-        assertThat(dpt.parse(new String[]{"670760.96"})).isInstanceOf(DPT9Value.class);
+
+        // value: -671088.64
+        final var valueNegative = dpt.parse(new String[]{"-671088.64"});
+        assertThat(valueNegative.getValue()).isEqualTo(-671088.64);
+        // value: 0
+        final var valueZero = dpt.parse(new String[]{"0"});
+        assertThat(valueZero.getValue()).isZero();
+        // value: 670760.96
+        final var valuePositive = dpt.parse(new String[]{"670760.96"});
+        assertThat(valuePositive.getValue()).isEqualTo(670760.96);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT9.TEMPERATURE_DIFFERENCE;
+
+        // no double format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(NumberFormatException.class);
     }
 
     @Test

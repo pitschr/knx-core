@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT10}
@@ -76,8 +78,37 @@ class DPT10Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT10.TIME_OF_DAY;
-        assertThat(dpt.parse(new String[]{"14:56:30"})).isInstanceOf(DPT10Value.class);
-        assertThat(dpt.parse(new String[]{"FrIDaY", "14:56:30"})).isInstanceOf(DPT10Value.class);
+
+        // time only with 'hh:mm'
+        final var time_hh_mm = dpt.parse(new String[]{"17:43"});
+        assertThat(time_hh_mm.getDayOfWeek()).isNull();
+        assertThat(time_hh_mm.getTime()).isEqualTo(LocalTime.of(17, 43));
+        // time only with 'hh:mm:ss'
+        final var time_hh_mm_ss = dpt.parse(new String[]{"14:56:03"});
+        assertThat(time_hh_mm_ss.getDayOfWeek()).isNull();
+        assertThat(time_hh_mm_ss.getTime()).isEqualTo(LocalTime.of(14, 56, 3));
+        // day of week and time
+        final var dayOfWeekAndTime = dpt.parse(new String[]{"FrIDaY", "12:34:07"});
+        assertThat(dayOfWeekAndTime.getDayOfWeek()).isSameAs(DayOfWeek.FRIDAY);
+        assertThat(dayOfWeekAndTime.getTime()).isEqualTo(LocalTime.of(12, 34, 7));
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT10.TIME_OF_DAY;
+
+        // no time provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"Sunday"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: [Sunday]");
+        // wrong time format (expected: 00:00:00)
+        assertThatThrownBy(() -> dpt.parse(new String[]{"0:0:0"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: [0:0:0]");
+        // wrong hour format (expected: 00 - 23)
+        assertThatThrownBy(() -> dpt.parse(new String[]{"24:00:00"}))
+                .isInstanceOf(DateTimeParseException.class);
     }
 
     @Test

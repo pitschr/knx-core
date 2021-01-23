@@ -22,6 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT1}
@@ -102,9 +103,22 @@ class DPT1Test {
         // Off => false
         final var falseValueText = dpt.parse(new String[]{"OFF"});
         assertThat(falseValueText.getValue()).isFalse();
-        // foobar => false
-        final var falseDefault = dpt.parse(new String[]{"foobar"});
-        assertThat(falseDefault.getValue()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        // no value provided
+        // false = Off, true = On
+        assertThatThrownBy(() -> DPT1.SWITCH.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Please provide a value (supported: 'false', 'true', '0', '1', 'Off' and 'On'). Provided: [foobar]");
+
+        // no value provided (2nd case)
+        // false = No Alarm, true = Alarm
+        assertThatThrownBy(() -> DPT1.ALARM.parse(new String[]{"baz"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Please provide a value (supported: 'false', 'true', '0', '1', 'No Alarm' and 'Alarm'). Provided: [baz]");
     }
 
     @Test

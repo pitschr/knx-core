@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,11 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT11Value;
+import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Data Point Type 11 for 'Date' (3 Octets)
@@ -100,6 +103,10 @@ public final class DPT11 extends BaseDataPointType<DPT11Value> {
 
     @Override
     protected DPT11Value parse(final String[] args) {
+        final var date = findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse);
+
+        Preconditions.checkArgument(date != null,
+                "Date missing (supported format: 'yyyy-mm-dd'). Provided: {}", Arrays.toString(args));
         return of(LocalDate.parse(args[0]));
     }
 

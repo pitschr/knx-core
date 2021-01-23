@@ -95,11 +95,17 @@ class DPT3Test {
         final var percent1Controlled = dpt.parse(new String[]{"40", "controlled"});
         assertThat(percent1Controlled.isControlled()).isTrue();
         assertThat(percent1Controlled.getStepInterval()).isSameAs(StepInterval.PERCENT_1);
+    }
 
-        // invalid text provided
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT3.BLINDS_CONTROL;
+
+        // no step interval provided
         assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Step Interval missing. Supported are: 0, 0%, 0.0%, 0,0% and stop");
+                .hasMessage("Step Interval missing (format: '0', '0%', '0.0%', '0,0%' or 'stop'). Provided: [foobar]");
     }
 
     @Test

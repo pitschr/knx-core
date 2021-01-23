@@ -22,6 +22,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT3Value;
 import li.pitschmann.knx.core.datapoint.value.StepInterval;
 import li.pitschmann.knx.core.utils.Preconditions;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -114,11 +115,13 @@ public final class DPT3 extends BaseDataPointType<DPT3Value> {
 
     @Override
     protected DPT3Value parse(final String[] args) {
-        final var controlled = this.findByString(args, "controlled");
-        final var stepInterval = this.findByPattern(args, Pattern.compile("^([\\d]+|[\\d.,]+%|stop)$", Pattern.CASE_INSENSITIVE), StepInterval::parse);
+        final var controlled = containsString(args, "controlled");
+        final var stepInterval = findByPattern(args, Pattern.compile("^([\\d]+|[\\d.,]+%|stop)$", Pattern.CASE_INSENSITIVE), StepInterval::parse);
 
         Preconditions.checkArgument(stepInterval != null,
-                "Step Interval missing. Supported are: 0, 0%, 0.0%, 0,0% and stop");
+                "Step Interval missing (format: '0', '0%%', '0.0%%', '0,0%%' or 'stop'). Provided: {}",
+                Arrays.toString(args)
+        );
         return of(controlled, stepInterval);
     }
 

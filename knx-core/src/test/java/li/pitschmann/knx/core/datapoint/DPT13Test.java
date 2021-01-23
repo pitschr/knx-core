@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT13}
@@ -73,9 +74,26 @@ class DPT13Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT13.VALUE_4_OCTET_COUNT;
-        assertThat(dpt.parse(new String[]{"-2147483648"})).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT13Value.class);
-        assertThat(dpt.parse(new String[]{"2147483647"})).isInstanceOf(DPT13Value.class);
+
+        // value: -2147483648
+        final var valueNegative = dpt.parse(new String[]{"-2147483648"});
+        assertThat(valueNegative.getValue()).isEqualTo(-2147483648);
+        // value: 0
+        final var valueZero = dpt.parse(new String[]{"0"});
+        assertThat(valueZero.getValue()).isZero();
+        // value: 2147483647
+        final var valuePositive = dpt.parse(new String[]{"2147483647"});
+        assertThat(valuePositive.getValue()).isEqualTo(2147483647);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT13.VALUE_4_OCTET_COUNT;
+
+        // no integer format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(NumberFormatException.class);
     }
 
     @Test

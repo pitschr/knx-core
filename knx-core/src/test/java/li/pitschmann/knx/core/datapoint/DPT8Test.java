@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT8}
@@ -63,17 +64,42 @@ class DPT8Test {
     @DisplayName("Test #parse(byte[])")
     void testByteParse() {
         final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-        assertThat(dpt.parse(new byte[]{(byte) 0x80, 0x00})).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.parse(new byte[]{(byte) 0xF6, (byte) 0xCA})).isInstanceOf(DPT8Value.class);
+
+        // value: 0x80 0x00
+        final var valueNegative = dpt.parse(new byte[]{(byte) 0x80, 0x00});
+        assertThat(valueNegative.getValue()).isEqualTo(-32768);
+        // value: 0x00 0x00
+        final var valueZero = dpt.parse(new byte[]{0x00, 0x00});
+        assertThat(valueZero.getValue()).isZero();
+        // value: 0x7F 0xFF
+        final var valuePositive = dpt.parse(new byte[]{0x7F, (byte) 0xFF});
+        assertThat(valuePositive.getValue()).isEqualTo(32767);
     }
 
     @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT8.VALUE_2_OCTET_COUNT;
-        assertThat(dpt.parse(new String[]{"-32768"})).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT8Value.class);
-        assertThat(dpt.parse(new String[]{"32767"})).isInstanceOf(DPT8Value.class);
+
+        // value: -32768
+        final var valueNegative = dpt.parse(new String[]{"-32768"});
+        assertThat(valueNegative.getValue()).isEqualTo(-32768);
+        // value: 0
+        final var valueZero = dpt.parse(new String[]{"0"});
+        assertThat(valueZero.getValue()).isZero();
+        // value: 32767
+        final var valuePositive = dpt.parse(new String[]{"32767"});
+        assertThat(valuePositive.getValue()).isEqualTo(32767);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT8.VALUE_2_OCTET_COUNT;
+
+        // no integer format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(NumberFormatException.class);
     }
 
     @Test

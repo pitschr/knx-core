@@ -86,8 +86,8 @@ public final class DPT26 extends BaseRangeDataPointType<DPT26Value, Integer> {
 
     @Override
     protected DPT26Value parse(final String[] args) {
-        final var sceneActive = this.findByString(args, "active", "true");
-        final var sceneNumber = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
+        final var sceneActive = containsString(args, "active", "true");
+        final var sceneNumber = findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
         return of(sceneActive, sceneNumber);
     }
 

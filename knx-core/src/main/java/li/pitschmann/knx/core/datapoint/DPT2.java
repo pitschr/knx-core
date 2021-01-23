@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT2Value;
+import li.pitschmann.knx.core.utils.Preconditions;
+
+import java.util.Arrays;
 
 /**
  * Data Point Type 2 for 'Controlled Boolean' (2 Bit)
@@ -241,7 +244,7 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
     }
 
     public DPT1 getDPT1() {
-        return this.dpt1;
+        return dpt1;
     }
 
     @Override
@@ -261,11 +264,20 @@ public final class DPT2 extends BaseDataPointType<DPT2Value> {
 
     @Override
     protected DPT2Value parse(final String[] args) {
-        // true if 'true' or '1' or DPT related true value (e.g. switch => 'on'), otherwise false
-        final var boolValue = this.findByString(args, "true", "1", this.getDPT1().getTextForTrue());
-        final var controlled = this.findByString(args, "controlled");
+        final var controlled = containsString(args, "controlled");
+        // true if 'true' or '1' or DPT related true value (e.g. switch => 'on')
+        final var trueValue = containsString(args, "true", "1", dpt1.getTextForTrue());
+        // true if 'false' or '0' or DPT related false value (e.g. switch => 'off')
+        final var falseValue = containsString(args, "false", "0", dpt1.getTextForFalse());
 
-        return new DPT2Value(this, controlled, boolValue);
+        // we expect that either of 'trueValue' or 'falseValue' is true, otherwise the value has not been provided yet
+        Preconditions.checkArgument(trueValue || falseValue,
+                "Please provide a value (supported: 'false', 'true', '0', '1', '{}' and '{}'). Provided: {}",
+                dpt1.getTextForFalse(),
+                dpt1.getTextForTrue(),
+                Arrays.toString(args)
+        );
+        return of(controlled, trueValue);
     }
 
     public DPT2Value of(final boolean controlled, final boolean booleanValue) {

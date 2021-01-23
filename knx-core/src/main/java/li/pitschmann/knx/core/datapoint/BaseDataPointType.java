@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,16 +63,16 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
 
     @Override
     public String getDescription() {
-        if (this.unit == null) {
-            return this.description;
+        if (unit == null) {
+            return description;
         } else {
-            return this.description + " (" + this.unit + ")";
+            return description + " (" + unit + ")";
         }
     }
 
     @Override
     public String getUnit() {
-        return Objects.toString(this.unit, "");
+        return Objects.toString(unit, "");
     }
 
     @Override
@@ -85,12 +85,12 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
             throw new KnxNumberOutOfRangeException("bytes.length", 0, 0xFF, bytes.length);
         }
         // not compatible?
-        else if (!this.isCompatible(bytes)) {
+        else if (!isCompatible(bytes)) {
             throw new DataPointTypeIncompatibleBytesException(this, bytes);
         }
 
         // all OK, now let's parse it
-        return this.parse(bytes);
+        return parse(bytes);
     }
 
     @Override
@@ -117,7 +117,7 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
             return tryParseAsHexString(args);
         }
         // not a string
-        else if (this.isCompatible(args)) {
+        else if (isCompatible(args)) {
             // seems be ok -> try parse it!
             try {
                 return parse(args);
@@ -188,7 +188,7 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
     private V tryParseAsHexString(final String[] args) {
         Preconditions.checkArgument(args[0].startsWith("0x"), "Hex string should start with '0x'. Actual: {}", args[0]);
         final var joinedString = Stream.of(args).map(arg -> arg.replaceFirst("0x", "")).collect(Collectors.joining());
-        return this.of(Bytes.toByteArray(joinedString));
+        return of(Bytes.toByteArray(joinedString));
     }
 
     /**
@@ -247,35 +247,48 @@ public abstract class BaseDataPointType<V extends DataPointValue> implements Dat
     }
 
     /**
-     * Returns if the given {@code searchString} or {@code moreSearchStrings} was found in argument array.
+     * Returns {@code true }if the given {@code searchString} or {@code moreSearchStrings} was
+     * found in argument array. The search is case-insensitive.
      *
      * @param args              array of arguments
      * @param searchString      first search string to find the suitable argument
      * @param moreSearchStrings alternative search strings to find the suitable argument
      * @return {@code true} if found, otherwise {@code false}
      */
-    protected final boolean findByString(final String[] args, final String searchString, final @Nullable String... moreSearchStrings) {
-        for (var i = 0; i < args.length; i++) {
-            if (searchString.equalsIgnoreCase(args[i])) {
-                return true;
+    protected final boolean containsString(final String[] args, final String searchString, final @Nullable String... moreSearchStrings) {
+        return findByString(args, searchString, moreSearchStrings) != null;
+    }
+
+    /**
+     * Returns the first matching {@link String} if the given {@code searchString} or
+     * {@code moreSearchStrings} was found in argument array. The search is case-insensitive.
+     *
+     * @param args              array of arguments
+     * @param searchString      first search string to find the suitable argument
+     * @param moreSearchStrings alternative search strings to find the suitable argument
+     * @return the first {@code String} if found, otherwise {@code null}
+     */
+    @Nullable
+    protected final String findByString(final String[] args, final String searchString, final @Nullable String... moreSearchStrings) {
+        for (final var arg : args) {
+            if (searchString.equalsIgnoreCase(arg)) {
+                return searchString;
             }
-            if (moreSearchStrings != null) {
-                for (final String moreSearchString : moreSearchStrings) {
-                    if (moreSearchString.equalsIgnoreCase(args[i])) {
-                        return true;
-                    }
+            for (final var moreSearchString : moreSearchStrings) {
+                if (moreSearchString.equalsIgnoreCase(arg)) {
+                    return moreSearchString;
                 }
             }
         }
-        return false; // not found
+        return null; // not found
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("id", this.getId())
-                .add("description", this.getDescription())
+                .add("id", getId())
+                .add("description", getDescription())
                 .toString();
         // @formatter:on
     }

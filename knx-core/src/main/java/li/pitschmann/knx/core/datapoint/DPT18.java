@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,8 +81,8 @@ public final class DPT18 extends BaseRangeDataPointType<DPT18Value, Integer> {
 
     @Override
     protected DPT18Value parse(final String[] args) {
-        final var controlled = this.findByString(args, "controlled");
-        final var intValue = this.findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
+        final var controlled = containsString(args, "controlled");
+        final var intValue = findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
 
         return of(controlled, Preconditions.checkNonNull(intValue, "The scene number must be present."));
     }

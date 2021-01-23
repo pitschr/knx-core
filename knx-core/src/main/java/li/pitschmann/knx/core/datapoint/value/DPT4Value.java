@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,10 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.DPT3;
 import li.pitschmann.knx.core.datapoint.DPT4;
-import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.nio.ByteBuffer;
@@ -47,11 +46,17 @@ public final class DPT4Value extends AbstractDataPointValue<DPT4> {
     private final char character;
 
     public DPT4Value(final DPT4 dpt, final byte b) {
-        this(dpt, toCharacter(dpt, b));
+        super(dpt);
+
+        // no need to check if it can be encoded
+        this.character = toCharacter(dpt, b);
     }
 
     public DPT4Value(final DPT4 dpt, final char character) {
         super(dpt);
+
+        Preconditions.checkArgument(dpt.getCharsetEncoder().canEncode(character),
+                "The given character cannot be encoded by DPT '{}': {}", dpt.getId(), character);
         this.character = character;
     }
 

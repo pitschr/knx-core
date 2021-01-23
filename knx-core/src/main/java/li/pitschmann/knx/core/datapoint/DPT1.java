@@ -19,6 +19,9 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT1Value;
+import li.pitschmann.knx.core.utils.Preconditions;
+
+import java.util.Arrays;
 
 /**
  * Data Point Type 1 for 'Boolean' (1 Bit)
@@ -448,15 +451,15 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
     }
 
     public String getTextFor(final boolean value) {
-        return value ? this.textForTrue : this.textForFalse;
+        return value ? textForTrue : textForFalse;
     }
 
     public String getTextForFalse() {
-        return this.textForFalse;
+        return textForFalse;
     }
 
     public String getTextForTrue() {
-        return this.textForTrue;
+        return textForTrue;
     }
 
     @Override
@@ -476,9 +479,19 @@ public final class DPT1 extends BaseDataPointType<DPT1Value> {
 
     @Override
     protected DPT1Value parse(final String[] args) {
-        // true if 'true' or '1' or DPT related true value (e.g. switch => 'on'), otherwise false
-        final var boolValue = this.findByString(args, "true", "1", this.getTextForTrue());
-        return new DPT1Value(this, boolValue);
+        // true if 'true' or '1' or DPT related true value (e.g. switch => 'on')
+        final var trueValue = containsString(args, "true", "1", textForTrue);
+        // true if 'false' or '0' or DPT related false value (e.g. switch => 'off')
+        final var falseValue = containsString(args, "false", "0", textForFalse);
+
+        // we expect that either of 'trueValue' or 'falseValue' is true, otherwise the value has not been provided yet
+        Preconditions.checkArgument(trueValue || falseValue,
+                "Please provide a value (supported: 'false', 'true', '0', '1', '{}' and '{}'). Provided: {}",
+                textForFalse,
+                textForTrue,
+                Arrays.toString(args)
+        );
+        return of(trueValue);
     }
 
     public DPT1Value of(final boolean value) {
