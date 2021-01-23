@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT16Value;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -113,6 +114,7 @@ public final class DPT16 extends BaseDataPointType<DPT16Value> {
 
     private final Charset charset;
     private final CharsetDecoder charsetDecoder;
+    private final CharsetEncoder charsetEncoder;
 
     /**
      * Constructor for {@link DPT16}
@@ -126,14 +128,19 @@ public final class DPT16 extends BaseDataPointType<DPT16Value> {
 
         this.charset = Objects.requireNonNull(charset);
         this.charsetDecoder = charset.newDecoder();
+        this.charsetEncoder = charset.newEncoder();
     }
 
     public Charset getCharset() {
-        return this.charset;
+        return charset;
     }
 
     public CharsetDecoder getCharsetDecoder() {
-        return this.charsetDecoder;
+        return charsetDecoder;
+    }
+
+    public CharsetEncoder getCharsetEncoder() {
+        return charsetEncoder;
     }
 
     @Override
@@ -148,7 +155,7 @@ public final class DPT16 extends BaseDataPointType<DPT16Value> {
 
     @Override
     protected boolean isCompatible(final String[] args) {
-        return args.length == 1;
+        return args.length == 1 && args[0] != null && args[0].length() <= 14;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.DPT16;
-import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
@@ -71,14 +70,24 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
     private final String characters;
 
     public DPT16Value(final DPT16 dpt, final byte[] bytes) {
-        this(dpt, toCharacters(dpt, bytes));
+        super(dpt);
+
+        // no need to check if it can be encoded
+        this.characters = toCharacters(dpt, bytes);
     }
 
     public DPT16Value(final DPT16 dpt, final @Nullable String characters) {
         super(dpt);
-        Preconditions.checkArgument(characters == null || characters.length() <= 14,
-                "The length of characters is too long (expected up to 14 characters): {}", characters);
-        this.characters = Objects.toString(characters, "");
+
+        if (characters == null || characters.trim().isEmpty()) {
+            this.characters = "";
+        } else {
+            Preconditions.checkArgument(characters.length() <= 14,
+                    "The length of characters is too long (expected up to 14 characters): {}", characters);
+            Preconditions.checkArgument(dpt.getCharsetEncoder().canEncode(characters),
+                    "The given characters cannot be encoded by DPT '{}': {}", dpt.getId(), characters);
+            this.characters = characters;
+        }
     }
 
     /**
@@ -121,15 +130,11 @@ public final class DPT16Value extends AbstractDataPointValue<DPT16> {
             return new byte[14];
         } else {
             final var charSet = getDPT().getCharset();
-            if (charSet.newEncoder().canEncode(characters)) {
-                byte[] characterAsBytes = characters.getBytes(charSet);
-                if (characterAsBytes.length < 14) {
-                    characterAsBytes = Bytes.padRight(characterAsBytes, (byte) 0x00, 14);
-                }
-                return characterAsBytes;
-            } else {
-                throw new KnxException("Issue during decoding charset '{}' with: {}", charSet, characters);
+            byte[] characterAsBytes = characters.getBytes(charSet);
+            if (characterAsBytes.length < 14) {
+                characterAsBytes = Bytes.padRight(characterAsBytes, (byte) 0x00, 14);
             }
+            return characterAsBytes;
         }
     }
 

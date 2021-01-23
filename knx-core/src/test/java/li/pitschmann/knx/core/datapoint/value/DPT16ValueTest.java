@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT16;
-import li.pitschmann.knx.core.exceptions.KnxException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -119,13 +118,9 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#(DPT16.ASCII, String) with unsupported character 'ä' (0xE4)")
     void testStringUnsupportedCharacter() {
-        // this is OK, because we only store as string
-        // the issue will happen on encoding to byte array then
-        final var value = new DPT16Value(DPT16.ASCII, "ä");
-
-        assertThatThrownBy(value::toByteArray)
-                .isInstanceOf(KnxException.class)
-                .hasMessage("Issue during decoding charset 'US-ASCII' with: ä");
+        assertThatThrownBy(() -> new DPT16Value(DPT16.ASCII, "ä"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The given characters cannot be encoded by DPT '16.000': ä");
     }
 
     @Test
