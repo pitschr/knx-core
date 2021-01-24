@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT1;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -92,19 +93,7 @@ class DPT1ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT1Value(DPT1.SWITCH, true);
-        final var valueByte = new DPT1Value(DPT1.SWITCH, (byte) 0b0000_0001);
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueByte).isEqualTo(value);
-        assertThat(valueByte).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT1Value(DPT1.ACKNOWLEDGE, true));
-        assertThat(value).isNotEqualTo(new DPT1Value(DPT1.SWITCH, false));
+        EqualsVerifier.forClass(DPT1Value.class).verify();
     }
 
     @Test

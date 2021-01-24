@@ -41,7 +41,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT17Value extends AbstractDataPointValue<DPT17> {
-    private int sceneNumber;
+    private final int sceneNumber;
 
     public DPT17Value(final byte b) {
         this(Byte.toUnsignedInt(b));
@@ -93,6 +93,6 @@ public final class DPT17Value extends AbstractDataPointValue<DPT17> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDPT(), sceneNumber);
+        return Objects.hash(sceneNumber);
     }
 }

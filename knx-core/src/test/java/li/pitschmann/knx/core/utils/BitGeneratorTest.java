@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package li.pitschmann.knx.core.utils;
 
 import li.pitschmann.knx.core.test.TestHelpers;
@@ -69,18 +68,22 @@ public class BitGeneratorTest {
         assertThat(BitGenerator.falseAndTrueOnly(1)).isEmpty();
 
         // 2-bits
-        assertThat(BitGenerator.falseAndTrueOnly(2)).containsExactly( //
-                new boolean[]{false, true}, //
-                new boolean[]{true, false});
+        assertThat(BitGenerator.falseAndTrueOnly(2))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, true}, //
+                        new boolean[]{true, false} //
+                });
 
         // 3-bits
-        assertThat(BitGenerator.falseAndTrueOnly(3)).containsExactly( //
-                new boolean[]{false, false, true}, //
-                new boolean[]{false, true, false}, //
-                new boolean[]{false, true, true}, //
-                new boolean[]{true, false, false}, //
-                new boolean[]{true, false, true}, //
-                new boolean[]{true, true, false});
+        assertThat(BitGenerator.falseAndTrueOnly(3))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, false, true}, //
+                        new boolean[]{false, true, false}, //
+                        new boolean[]{false, true, true}, //
+                        new boolean[]{true, false, false}, //
+                        new boolean[]{true, false, true}, //
+                        new boolean[]{true, true, false} //
+                });
     }
 
     /**
@@ -89,27 +92,33 @@ public class BitGeneratorTest {
     @Test
     public void matrix() {
         // 1-bit
-        assertThat(BitGenerator.matrix(1)).containsExactly( //
-                new boolean[]{false}, //
-                new boolean[]{true});
+        assertThat(BitGenerator.matrix(1))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false}, //
+                        new boolean[]{true} //
+                });
 
         // 2-bits
-        assertThat(BitGenerator.matrix(2)).containsExactly( //
-                new boolean[]{false, false}, //
-                new boolean[]{false, true}, //
-                new boolean[]{true, false}, //
-                new boolean[]{true, true});
+        assertThat(BitGenerator.matrix(2))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, false}, //
+                        new boolean[]{false, true}, //
+                        new boolean[]{true, false}, //
+                        new boolean[]{true, true} //
+                });
 
         // 3-bits
-        assertThat(BitGenerator.matrix(3)).containsExactly( //
-                new boolean[]{false, false, false}, //
-                new boolean[]{false, false, true}, //
-                new boolean[]{false, true, false}, //
-                new boolean[]{false, true, true}, //
-                new boolean[]{true, false, false}, //
-                new boolean[]{true, false, true}, //
-                new boolean[]{true, true, false}, //
-                new boolean[]{true, true, true});
+        assertThat(BitGenerator.matrix(3))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, false, false}, //
+                        new boolean[]{false, false, true}, //
+                        new boolean[]{false, true, false}, //
+                        new boolean[]{false, true, true}, //
+                        new boolean[]{true, false, false}, //
+                        new boolean[]{true, false, true}, //
+                        new boolean[]{true, true, false}, //
+                        new boolean[]{true, true, true} //
+                });
     }
 
     /**
@@ -119,24 +128,30 @@ public class BitGeneratorTest {
     @Test
     public void matrixSkipOnlyFalse() {
         // 1-bit
-        assertThat(BitGenerator.matrix(1, true, false)).containsExactly( //
-                new boolean[]{true});
+        assertThat(BitGenerator.matrix(1, true, false))
+                .isDeepEqualTo(new boolean[][] {
+                        new boolean[]{true}
+                });
 
         // 2-bits
-        assertThat(BitGenerator.matrix(2, true, false)).containsExactly( //
-                new boolean[]{false, true}, //
-                new boolean[]{true, false}, //
-                new boolean[]{true, true});
+        assertThat(BitGenerator.matrix(2, true, false))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, true}, //
+                        new boolean[]{true, false}, //
+                        new boolean[]{true, true} //
+                });
 
         // 3-bits
-        assertThat(BitGenerator.matrix(3, true, false)).containsExactly( //
-                new boolean[]{false, false, true}, //
-                new boolean[]{false, true, false}, //
-                new boolean[]{false, true, true}, //
-                new boolean[]{true, false, false}, //
-                new boolean[]{true, false, true}, //
-                new boolean[]{true, true, false}, //
-                new boolean[]{true, true, true});
+        assertThat(BitGenerator.matrix(3, true, false))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, false, true}, //
+                        new boolean[]{false, true, false}, //
+                        new boolean[]{false, true, true}, //
+                        new boolean[]{true, false, false}, //
+                        new boolean[]{true, false, true}, //
+                        new boolean[]{true, true, false}, //
+                        new boolean[]{true, true, true} //
+                });
     }
 
     /**
@@ -146,24 +161,30 @@ public class BitGeneratorTest {
     @Test
     public void matrixSkipOnlyTrue() {
         // 1-bit
-        assertThat(BitGenerator.matrix(1, false, true)).containsExactly( //
-                new boolean[]{false});
+        assertThat(BitGenerator.matrix(1, false, true))
+                .isDeepEqualTo(new boolean[][]{
+                                new boolean[]{false} //
+                });
 
         // 2-bits
-        assertThat(BitGenerator.matrix(2, false, true)).containsExactly( //
-                new boolean[]{false, false}, //
-                new boolean[]{false, true}, //
-                new boolean[]{true, false});
+        assertThat(BitGenerator.matrix(2, false, true))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, false}, //
+                        new boolean[]{false, true}, //
+                        new boolean[]{true, false}
+                });
 
         // 3-bits
-        assertThat(BitGenerator.matrix(3, false, true)).containsExactly( //
-                new boolean[]{false, false, false}, //
-                new boolean[]{false, false, true}, //
-                new boolean[]{false, true, false}, //
-                new boolean[]{false, true, true}, //
-                new boolean[]{true, false, false}, //
-                new boolean[]{true, false, true}, //
-                new boolean[]{true, true, false});
+        assertThat(BitGenerator.matrix(3, false, true))
+                .isDeepEqualTo(new boolean[][]{
+                        new boolean[]{false, false, false}, //
+                        new boolean[]{false, false, true}, //
+                        new boolean[]{false, true, false}, //
+                        new boolean[]{false, true, true}, //
+                        new boolean[]{true, false, false}, //
+                        new boolean[]{true, false, true}, //
+                        new boolean[]{true, true, false} //
+                });
     }
 
     /**

@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT9;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -96,18 +97,6 @@ class DPT9ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT9Value(DPT9.TEMPERATURE, 471.04);
-        final var valueBytes = new DPT9Value(DPT9.TEMPERATURE, new byte[]{0x2D, (byte) 0xC0});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE_DIFFERENCE, 471.04));
-        assertThat(value).isNotEqualTo(new DPT9Value(DPT9.TEMPERATURE, 174.40));
+        EqualsVerifier.forClass(DPT9Value.class).verify();
     }
 }

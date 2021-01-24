@@ -44,8 +44,8 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT18Value extends AbstractDataPointValue<DPT18> {
-    private boolean controlled;
-    private int sceneNumber;
+    private final boolean controlled;
+    private final int sceneNumber;
 
     public DPT18Value(final byte b) {
         this(
@@ -117,6 +117,6 @@ public final class DPT18Value extends AbstractDataPointValue<DPT18> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDPT(), controlled, sceneNumber);
+        return Objects.hash(controlled, sceneNumber);
     }
 }

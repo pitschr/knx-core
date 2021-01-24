@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.value.DPT19Value.Flags;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -206,44 +207,6 @@ final class DPT19ValueTest {
     }
 
     @Test
-    @DisplayName("#equals() and #hashCode()")
-    void testEqualsAndHashCode() {
-        final var value = new DPT19Value(
-                DayOfWeek.SUNDAY, //
-                LocalDate.of(2155, 12, 30), //
-                LocalTime.of(23, 59, 59), //
-                Flags.NO_FLAGS //
-        );
-        final var valueNullFlags = new DPT19Value(
-                DayOfWeek.SUNDAY, //
-                LocalDate.of(2155, 12, 30), //
-                LocalTime.of(23, 59, 59), //
-                null //
-        );
-        final var valueByte = new DPT19Value(new byte[]{(byte) 0xff, 0x0c, 0x1e, (byte) 0xf7, 0x3b, 0x3b, 0x00, 0x00});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueNullFlags).isEqualTo(value);
-        assertThat(valueNullFlags).hasSameHashCodeAs(value);
-        assertThat(valueByte).isEqualTo(value);
-        assertThat(valueByte).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT19Value(null, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.MONDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2100, 12, 30), LocalTime.of(23, 59, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 1, 30), LocalTime.of(23, 59, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 1), LocalTime.of(23, 59, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(1, 59, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 1, 59), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 1), Flags.NO_FLAGS));
-        assertThat(value).isNotEqualTo(new DPT19Value(DayOfWeek.SUNDAY, LocalDate.of(2155, 12, 30), LocalTime.of(23, 59, 59), new Flags(new byte[]{0x01, 0x00})));
-    }
-
-    @Test
     @DisplayName("Flags#(boolean, ..) with: 1101 1001 1000 0000")
     void testFlags_1101_1001_1000_0000() {
         final var flags = new DPT19Value.Flags(
@@ -306,28 +269,9 @@ final class DPT19ValueTest {
     }
 
     @Test
-    @DisplayName("Flags#equals() and Flags#hashCode()")
+    @DisplayName("#equals() and #hashCode()")
     void testFlagsEqualsAndHashCode() {
-        final var flags = new Flags(true, true, false, false, false, true, true, false, true, true);
-        final var flagBytes = new Flags(new byte[]{(byte) 0b1100_0110, (byte) 0b1100_0000});
-
-        // equals & same hash code
-        assertThat(flags).isEqualTo(flags);
-        assertThat(flagBytes).isEqualTo(flags);
-        assertThat(flagBytes).hasSameHashCodeAs(flags);
-
-        // not equals
-        assertThat(flags).isNotEqualTo(null);
-        assertThat(flags).isNotEqualTo(new Object());
-        assertThat(flags).isNotEqualTo(new Flags(!true, true, false, false, false, true, true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, !true, false, false, false, true, true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, !false, false, false, true, true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, !false, false, true, true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, false, !false, true, true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, false, false, !true, true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, false, false, true, !true, false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, false, false, true, true, !false, true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, false, false, true, true, false, !true, true));
-        assertThat(flags).isNotEqualTo(new Flags(true, true, false, false, false, true, true, false, true, !true));
+        EqualsVerifier.forClass(DPT19Value.class).withIgnoredFields("dpt").verify();
+        EqualsVerifier.forClass(DPT19Value.Flags.class).verify();
     }
 }

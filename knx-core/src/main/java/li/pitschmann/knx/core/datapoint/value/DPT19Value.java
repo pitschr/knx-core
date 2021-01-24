@@ -276,16 +276,16 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      */
     public static final class Flags {
         public static final Flags NO_FLAGS = new Flags(new byte[2]);
-        private boolean fault;
-        private boolean workingDay;
-        private boolean workingDayValid;
-        private boolean yearValid;
-        private boolean dateValid;
-        private boolean dayOfWeekValid;
-        private boolean timeValid;
-        private boolean summerTime;
-        private boolean clockWithExternalSyncSignal;
-        private boolean syncSourceReliable;
+        private final boolean fault;
+        private final boolean workingDay;
+        private final boolean workingDayValid;
+        private final boolean yearValid;
+        private final boolean dateValid;
+        private final boolean dayOfWeekValid;
+        private final boolean timeValid;
+        private final boolean summerTime;
+        private final boolean clockWithExternalSyncSignal;
+        private final boolean syncSourceReliable;
 
         /**
          * Create {@link Flags} given two bytes

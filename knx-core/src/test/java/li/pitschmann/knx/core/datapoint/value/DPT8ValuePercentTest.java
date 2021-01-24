@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -120,17 +121,6 @@ class DPT8ValuePercentTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT8Value.Percent(47.11);
-        final var valueBytes = new DPT8Value.Percent(new byte[]{0x12, 0x67});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT8Value.Percent(11.47));
+        EqualsVerifier.forClass(DPT8Value.Percent.class).verify();
     }
 }

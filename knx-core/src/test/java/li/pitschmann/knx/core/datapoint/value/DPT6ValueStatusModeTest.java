@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -165,34 +166,6 @@ class DPT6ValueStatusModeTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0);
-        final var valueBytes = new DPT6Value.StatusMode((byte) 0b0000_0001);
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(
-                new DPT6Value.StatusMode(true, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_0)
-        );
-        assertThat(value).isNotEqualTo(
-                new DPT6Value.StatusMode(false, true, false, false, false, DPT6Value.StatusMode.Mode.MODE_0)
-        );
-        assertThat(value).isNotEqualTo(
-                new DPT6Value.StatusMode(false, false, true, false, false, DPT6Value.StatusMode.Mode.MODE_0)
-        );
-        assertThat(value).isNotEqualTo(
-                new DPT6Value.StatusMode(false, false, false, true, false, DPT6Value.StatusMode.Mode.MODE_0)
-        );
-        assertThat(value).isNotEqualTo(
-                new DPT6Value.StatusMode(false, false, false, false, true, DPT6Value.StatusMode.Mode.MODE_0)
-        );
-        assertThat(value).isNotEqualTo(
-                new DPT6Value.StatusMode(false, false, false, false, false, DPT6Value.StatusMode.Mode.MODE_1)
-        );
+        EqualsVerifier.forClass(DPT6Value.StatusMode.class).withIgnoredFields("dpt").verify();
     }
 }

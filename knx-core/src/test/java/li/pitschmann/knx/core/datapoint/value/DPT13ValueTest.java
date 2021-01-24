@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT13;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -123,18 +124,6 @@ class DPT13ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, 4711);
-        final var value2 = new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, new byte[]{0x12, 0x67});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT13Value(DPT13.FLOW_RATE, 4711));
-        assertThat(value).isNotEqualTo(new DPT13Value(DPT13.VALUE_4_OCTET_COUNT, 1147));
+        EqualsVerifier.forClass(DPT13Value.class).verify();
     }
 }

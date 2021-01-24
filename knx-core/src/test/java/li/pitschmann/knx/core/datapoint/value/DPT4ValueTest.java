@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT4;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -98,18 +99,6 @@ class DPT4ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT4Value(DPT4.ASCII, 'a');
-        final var valueByte = new DPT4Value(DPT4.ASCII, (byte) 0b0110_0001);
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueByte).isEqualTo(value);
-        assertThat(valueByte).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT4Value(DPT4.ISO_8859_1, 'a'));
-        assertThat(value).isNotEqualTo(new DPT4Value(DPT4.ASCII, 'b'));
+        EqualsVerifier.forClass(DPT4Value.class).verify();
     }
 }

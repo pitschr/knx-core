@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,18 +87,18 @@ abstract class AbstractDataPointFlag<T extends BaseDataPointType<?>> extends Abs
     }
 
     @Override
-    public boolean equals(final @Nullable Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj != null && this.getClass().equals(obj.getClass())) {
-            final var other = this.getClass().cast(obj);
-            return Objects.equals(this.getDPT(), other.getDPT()) && this.b == other.b;
+    public final boolean equals(final @Nullable Object obj) {
+        if (obj instanceof AbstractDataPointFlag) {
+            final var other = (AbstractDataPointFlag<?>)obj;
+            return this.getClass() == obj.getClass()
+                    && Objects.equals(this.getDPT(), other.getDPT()) //
+                    && Objects.equals(this.b, other.b);
         }
         return false;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.getDPT(), this.b);
+    public final int hashCode() {
+        return Objects.hash(getClass(), getDPT(), b);
     }
 }

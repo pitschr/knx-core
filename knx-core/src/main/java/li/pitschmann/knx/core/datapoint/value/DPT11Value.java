@@ -168,6 +168,6 @@ public final class DPT11Value extends AbstractDataPointValue<DPT11> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDPT(), date);
+        return Objects.hash(date);
     }
 }

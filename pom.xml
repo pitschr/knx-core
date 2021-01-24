@@ -82,21 +82,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Maven Plugin Versions and Licenses -->
         <version.coveralls-maven-plugin>4.3.0</version.coveralls-maven-plugin> <!-- MIT -->
-        <version.jacoco-maven-plugin>0.8.2</version.jacoco-maven-plugin> <!-- EPL 2.0 -->
-        <version.maven-assembly-plugin>3.2.0</version.maven-assembly-plugin> <!-- Apache 2.0 -->
+        <version.jacoco-maven-plugin>0.8.6</version.jacoco-maven-plugin> <!-- EPL 2.0 -->
+        <version.maven-assembly-plugin>3.3.0</version.maven-assembly-plugin> <!-- Apache 2.0 -->
         <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin> <!-- Apache 2.0 -->
         <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin> <!-- Apache 2.0 -->
         <version.maven-jar-plugin>3.2.0</version.maven-jar-plugin> <!-- Apache 2.0 -->
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin> <!-- Apache 2.0 -->
-        <version.maven-surefire-plugin>2.22.1</version.maven-surefire-plugin> <!-- Apache 2.0 -->
+        <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin> <!-- Apache 2.0 -->
         <!-- Dependency Versions and Licenses -->
-        <version.assertj-core>3.14.0</version.assertj-core> <!-- Apache 2.0 -->
-        <version.junit-jupiter-engine>5.5.2</version.junit-jupiter-engine> <!-- EPL 2.0 -->
-        <version.junit-platform-runner>1.5.2</version.junit-platform-runner> <!-- EPL 2.0 -->
+        <version.assertj-core>3.18.1</version.assertj-core> <!-- Apache 2.0 -->
+        <version.junit-jupiter-engine>5.7.0</version.junit-jupiter-engine> <!-- EPL 2.0 -->
+        <version.junit-platform-runner>1.7.0</version.junit-platform-runner> <!-- EPL 2.0 -->
         <version.logback-classic>1.2.3</version.logback-classic> <!-- EPL 1.0, LGPL 2.1 -->
-        <version.mockito-inline>3.2.0</version.mockito-inline> <!-- MIT -->
+        <version.mockito-inline>3.5.15</version.mockito-inline> <!-- MIT -->
         <version.rotating-fos>0.9.2</version.rotating-fos> <!-- Apache 2.0 -->
-        <version.slf4j>1.7.29</version.slf4j> <!-- MIT -->
+        <version.slf4j>1.7.30</version.slf4j> <!-- MIT -->
+        <version.equals-verifier>3.5.2</version.equals-verifier>
         <!-- Default Argument Line for Surefire for test stability -->
         <setting.surefire.default.argLine>
             -Duser.timezone=UTC
@@ -156,6 +157,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>nl.jqno.equalsverifier</groupId>
+                <artifactId>equalsverifier</artifactId>
+                <version>${version.equals-verifier}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${version.logback-classic}</version>
@@ -186,6 +193,10 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

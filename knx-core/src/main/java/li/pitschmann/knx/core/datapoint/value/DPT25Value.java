@@ -40,8 +40,8 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT25Value extends AbstractDataPointValue<DPT25> {
-    private int busy;
-    private int nak;
+    private final int busy;
+    private final int nak;
 
     public DPT25Value(final byte b) {
         this(

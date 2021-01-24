@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT16;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -142,21 +143,6 @@ class DPT16ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT16Value(DPT16.ASCII, "abcXYZ");
-        final var valueBytes = new DPT16Value(DPT16.ASCII, new byte[]{0x61, 0x62, 0x63, 0x58, 0x59, 0x5A});
-        final var valueBytesTrailing = new DPT16Value(DPT16.ASCII, new byte[]{0x61, 0x62, 0x63, 0x58, 0x59, 0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-        assertThat(valueBytesTrailing).isEqualTo(value);
-        assertThat(valueBytesTrailing).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT16Value(DPT16.ISO_8859_1, "abcXYZ"));
-        assertThat(value).isNotEqualTo(new DPT16Value(DPT16.ASCII, "XYZabc"));
+        EqualsVerifier.forClass(DPT16Value.class).verify();
     }
 }

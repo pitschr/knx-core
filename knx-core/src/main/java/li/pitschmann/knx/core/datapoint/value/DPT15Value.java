@@ -182,11 +182,11 @@ public final class DPT15Value extends AbstractDataPointValue<DPT15> {
      * @author PITSCHR
      */
     public static final class Flags {
-        private boolean error;
-        private boolean permissionAccepted;
-        private boolean readDirectionRightToLeft;
-        private boolean encryptionEnabled;
-        private int index;
+        private final boolean error;
+        private final boolean permissionAccepted;
+        private final boolean readDirectionRightToLeft;
+        private final boolean encryptionEnabled;
+        private final int index;
 
         /**
          * Create {@link Flags} given byte parameter

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -151,26 +152,6 @@ class DPT15ValueTest {
     }
 
     @Test
-    @DisplayName("#equals() and #hashCode()")
-    void testEqualsAndHashCode() {
-        final var value = new DPT15Value(new byte[]{0x11, 0x22, 0x33}, new DPT15Value.Flags((byte) 0x44));
-        final var valueBytes = new DPT15Value(new byte[]{0x11, 0x22, 0x33, 0x44});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x00, 0x22, 0x33}, new DPT15Value.Flags((byte) 0x44)));
-        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x11, 0x00, 0x33}, new DPT15Value.Flags((byte) 0x44)));
-        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x11, 0x22, 0x00}, new DPT15Value.Flags((byte) 0x44)));
-        assertThat(value).isNotEqualTo(new DPT15Value(new byte[]{0x11, 0x22, 0x33}, new DPT15Value.Flags((byte) 0x00)));
-    }
-
-    @Test
     @DisplayName("Flags#(byte) with: flags=1001 ...., index = 4")
     void testFlagsCase1() {
         final var flags = new DPT15Value.Flags(true, false, false, true, 4);
@@ -197,23 +178,9 @@ class DPT15ValueTest {
     }
 
     @Test
-    @DisplayName("Flags#equals() and Flags#hashCode()")
-    void testFlagsEqualsAndHashCode() {
-        final var flags = new DPT15Value.Flags(false, false, false, false, 0);
-        final var flagsBytes = new DPT15Value.Flags((byte) 0b0000_0000);
-
-        // equals & same hash code
-        assertThat(flags).isEqualTo(flags);
-        assertThat(flagsBytes).isEqualTo(flags);
-        assertThat(flagsBytes).hasSameHashCodeAs(flags);
-
-        // not equals
-        assertThat(flags).isNotEqualTo(null);
-        assertThat(flags).isNotEqualTo(new Object());
-        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(true, false, false, false, 0));
-        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, true, false, false, 0));
-        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, false, true, false, 0));
-        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, false, false, true, 0));
-        assertThat(flags).isNotEqualTo(new DPT15Value.Flags(false, false, false, false, 1));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(DPT15Value.class).withIgnoredFields("dpt").verify();
+        EqualsVerifier.forClass(DPT15Value.Flags.class).verify();
     }
 }

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -127,21 +128,6 @@ class DPT10ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT10Value(DayOfWeek.MONDAY, LocalTime.of(1, 2, 3));
-        final var valueBytes = new DPT10Value(new byte[]{0b0010_0001, 0b0000_0010, 0b000_0011});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT10Value(DayOfWeek.MONDAY, LocalTime.of(9, 2, 3)));
-        assertThat(value).isNotEqualTo(new DPT10Value(DayOfWeek.MONDAY, LocalTime.of(1, 9, 3)));
-        assertThat(value).isNotEqualTo(new DPT10Value(DayOfWeek.MONDAY, LocalTime.of(1, 2, 9)));
-        assertThat(value).isNotEqualTo(new DPT10Value(DayOfWeek.TUESDAY, LocalTime.of(1, 2, 3)));
-        assertThat(value).isNotEqualTo(new DPT10Value(null, LocalTime.of(1, 2, 3)));
+        EqualsVerifier.forClass(DPT10Value.class).withIgnoredFields("dpt").verify();
     }
 }

@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -228,18 +229,6 @@ class DPT7ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 4711);
-        final var valueBytes = new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, new byte[]{0x12, 0x67});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT7Value(DPT7.TIME_PERIOD_10MS, 4711));
-        assertThat(value).isNotEqualTo(new DPT7Value(DPT7.VALUE_2_OCTET_UNSIGNED_COUNT, 1147));
+        EqualsVerifier.forClass(DPT7Value.class).verify();
     }
 }

@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT3;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -92,20 +93,7 @@ class DPT3ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT3Value(DPT3.BLINDS_CONTROL, true, StepInterval.PERCENT_3);
-        final var valueByte = new DPT3Value(DPT3.BLINDS_CONTROL, (byte) 0b000_1110);
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueByte).isEqualTo(value);
-        assertThat(valueByte).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.DIMMING_CONTROL, true, StepInterval.PERCENT_3));
-        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.BLINDS_CONTROL, false, StepInterval.PERCENT_3));
-        assertThat(value).isNotEqualTo(new DPT3Value(DPT3.BLINDS_CONTROL, true, StepInterval.PERCENT_1));
+        EqualsVerifier.forClass(DPT3Value.class).verify();
     }
 
     @Test

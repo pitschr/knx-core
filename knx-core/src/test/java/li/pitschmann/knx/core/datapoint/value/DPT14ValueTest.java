@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT14;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -99,18 +100,6 @@ class DPT14ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT14Value(DPT14.ACCELERATION, 4711.0);
-        final var value2 = new DPT14Value(DPT14.ACCELERATION, new byte[]{0x45, (byte) 0x93, 0x38, 0x00});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(value2).isEqualTo(value);
-        assertThat(value2).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT14Value(DPT14.SPEED, 4711.0));
-        assertThat(value).isNotEqualTo(new DPT14Value(DPT14.ACCELERATION, 11.47));
+        EqualsVerifier.forClass(DPT14Value.class).verify();
     }
 }
