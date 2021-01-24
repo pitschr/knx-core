@@ -5,7 +5,7 @@ Welcome to the section where you can find various examples how you can use the K
 
 ### Example: Read the status of a lamp
 
-The [LampReadExample.java](knx-examples/src/main/java/li/pitschmann/knx/examples/lamp_read/LampReadExample.java)
+The [LampReadExample.java](src/main/java/li/pitschmann/knx/examples/lamp_read/LampReadExample.java)
 demonstrates how to send a read request to fetch the lamp status.
 
 ```
@@ -20,7 +20,7 @@ var isLampOn = statusPool.getValue(knxGroupAddress, DPT1.SWITCH).getValue();
 
 ### Example: Switch on the lamp
 
-The [LampOnExample.java](knx-examples/src/main/java/li/pitschmann/knx/examples/lamp_on/LampOnExample.java)
+The [LampOnExample.java](src/main/java/li/pitschmann/knx/examples/lamp_on/LampOnExample.java)
 demonstrates how you can switch `on` a lamp for a given KNX Group Address with a pre-defined value. The KNX 
 Client is flexible and gives you various ways how to achieve it:
 
@@ -39,7 +39,7 @@ Client is flexible and gives you various ways how to achieve it:
 
 ### Example: Switch on/off the lamp twice times (write sequence)
 
-The [LampWriteExample.java](knx-examples/src/main/java/li/pitschmann/knx/examples/lamp_write/LampWriteExample.java)
+The [LampWriteExample.java](src/main/java/li/pitschmann/knx/examples/lamp_write/LampWriteExample.java)
 demonstrates how to send a sequence of values to the KNX actuator. Given example below we want to switch on/off the 
 lamp twice times (`on`, `off`, `on`, `off`).
 
@@ -59,7 +59,7 @@ for (final String value : values) {
 
 ### Example: Toggle the lamp
 
-The [LampToggleExample.java](knx-examples/src/main/java/li/pitschmann/knx/examples/lamp_toggle/LampToggleExample.java)
+The [LampToggleExample.java](src/main/java/li/pitschmann/knx/examples/lamp_toggle/LampToggleExample.java)
 demonstrates how to toggle the lamp:
 * If the lamp is `off` then it will be switch `on`. 
 * If the lamp is `on` then it will switch `off`.
@@ -84,4 +84,4 @@ var lampStatusInverted = !lampStatus;
 client.writeRequest(writeGroupAddress, DPT1.SWITCH.of(lampStatusInverted));
 ```
 
-For more examples, see the [examples package](knx-examples/src/main/java/li/pitschmann/knx/examples) 
+For more examples, see the [examples package](src/main/java/li/pitschmann/knx/examples) 

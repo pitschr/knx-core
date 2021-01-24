@@ -150,6 +150,8 @@ java -cp <file>.jar li.pitschmann.knx.examples.read.Main --ip 192.168.1.16 --nat
 java -cp <file>.jar li.pitschmann.knx.examples.read.Main --routing -ga 1/2/113 -n 10
 ```
 
+For more examples there is a [dedicated page](knx-examples) available.
+
 ## Programming
 
 #### Core Development
