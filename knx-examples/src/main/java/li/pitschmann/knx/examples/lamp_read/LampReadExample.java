@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.examples.lamp_on;
+package li.pitschmann.knx.examples.lamp_read;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
@@ -25,27 +25,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Example One: Switch Lamp Status On
- * <p>
- * Note:
- * This works only when write flag is enabled for group address (1/2/110).
+ * Demo class how to send a read request to a KNX group address.
  *
  * @author PITSCHR
  */
-public final class LampOnExample {
+public final class LampReadExample {
     // disable logging as we only want to print System.out.println(..)
     static {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(ch.qos.logback.classic.Level.OFF);
     }
 
     public static void main(final String[] args) {
-        // this is the group address where the KNX actuator listens to switch on/off a lamp
-        final var groupAddress = GroupAddress.of(1, 2, 110);
+        // this is the group address where the KNX actuator read the status of lamp
+        final var readGroupAddress = GroupAddress.of(1, 2, 113);
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted()) {
-            // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
-            client.writeRequest(groupAddress, DPT1.SWITCH.of(true));
+
+
+            // send a 'read' request to KNX
+            client.readRequest(readGroupAddress);
+
+            // this is the status pool that holds all status information which have been requested
+            var statusPool = client.getStatusPool();
+            // the status pool will translate the byte array from KNX into boolean value
+            var isLampOn = statusPool.getValue(readGroupAddress, DPT1.SWITCH).getValue();
+
+            if (isLampOn) {
+                System.out.println("Yes, lamp is on!");
+            } else {
+                System.out.println("No, lamp is off!");
+            }
         }
 
         // auto-closed and disconnected by KNX client

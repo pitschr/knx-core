@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,36 +16,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.examples.lamp_on;
+package li.pitschmann.knx.examples.lamp_write;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
-import li.pitschmann.knx.core.datapoint.DPT1;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
+import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Example One: Switch Lamp Status On
- * <p>
- * Note:
- * This works only when write flag is enabled for group address (1/2/110).
+ * Demo class how to send a sequence of write request to a lamp.
  *
  * @author PITSCHR
  */
-public final class LampOnExample {
+public final class LampWriteExample {
     // disable logging as we only want to print System.out.println(..)
     static {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(ch.qos.logback.classic.Level.OFF);
     }
 
     public static void main(final String[] args) {
-        // this is the group address where the KNX actuator listens to switch on/off a lamp
-        final var groupAddress = GroupAddress.of(1, 2, 110);
+        // KNX data point type ID (=DPT1.SWITCH)
+        var dpt = "1.001";
+
+        // sequence of values to be set
+        var values = new String[]{"on", "off", "on", "off"};
+
+        // this is the group address where the KNX actuator returns the status of lamp
+        final var writeGroupAddress = GroupAddress.of(1, 2, 110);
 
         // create KNX client and connect to KNX Net/IP device using auto-discovery
         try (final var client = DefaultKnxClient.createStarted()) {
-            // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
-            client.writeRequest(groupAddress, DPT1.SWITCH.of(true));
+            for (final String value : values) {
+                // translate the human-friendly text into a KNX compatible data point value of DPT 1.001
+                // and send to the KNX actuator
+                var knxValue = DataPointRegistry.getDataPointType(dpt).of(value);
+                client.writeRequest(writeGroupAddress, knxValue);
+
+                System.out.println("Lamp status sent: " + value);
+                Sleeper.seconds(1);
+            }
         }
 
         // auto-closed and disconnected by KNX client
