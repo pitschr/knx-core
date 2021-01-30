@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.MultiRawDataAware;
 import li.pitschmann.knx.core.address.AddressType;
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.address.IndividualAddress;
@@ -27,10 +27,9 @@ import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.datapoint.value.PayloadOptimizable;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -59,7 +58,23 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class CEMI extends AbstractMultiRawData {
+public final class CEMI implements MultiRawDataAware {
+    /**
+     * Minimum Structure Length for {@link CEMI}
+     * <p>
+     * 1 byte message code<br>
+     * 1 byte additional info length (+ N bytes data)<br>
+     * 2 byte control bytes<br>
+     * 4 bytes for address<br>
+     * 3 bytes for NPDU (minimum)<br>
+     */
+    private static final int STRUCTURE_MIN_LENGTH = 11;
+
+    /**
+     * Maximum Structure Length for {@link CEMI}
+     */
+    private static final int STRUCTURE_MAX_LENGTH = 250;
+
     private final MessageCode messageCode;
     private final AdditionalInfo additionalInfo;
     private final ControlByte1 controlByte1;
@@ -70,24 +85,26 @@ public final class CEMI extends AbstractMultiRawData {
     private final TPCI tpci;
     private final int packetNumber;
     private final APCI apci;
-    private final byte[] data;
+    private final DataPointValue dataPointValue;
 
-    private CEMI(final byte[] cemiRawData) {
-        super(cemiRawData);
-
-        messageCode = MessageCode.valueOf(Byte.toUnsignedInt(cemiRawData[0]));
+    private CEMI(final byte[] bytes) {
+        // ------------------------------------------
+        // Message Code
+        // ------------------------------------------
+        messageCode = MessageCode.valueOf(Byte.toUnsignedInt(bytes[0]));
 
         // ------------------------------------------
         // Additional Information
-        // 1 byte for additional info length
-        // N byte (dynamic)
-        // Total: min. 1 byte
+        // byte[1] for additional info length
+        // byte[2..N] for additional info data (dynamic)
         // ------------------------------------------
-        final var addInfoIndex = 1;
-        if (Byte.toUnsignedInt(cemiRawData[addInfoIndex]) > 0) {
-            throw new UnsupportedOperationException("Additional Info Length is not supported yet! CEMI Raw: " + getRawDataAsHexString());
+        final var addInfoLength = Byte.toUnsignedInt(bytes[1]);
+        final var addInfoIndex = 2;
+        if (addInfoLength == 0) {
+            additionalInfo = AdditionalInfo.empty();
+        } else {
+            additionalInfo = AdditionalInfo.of(Arrays.copyOfRange(bytes, addInfoIndex, addInfoIndex + addInfoLength));
         }
-        additionalInfo = AdditionalInfo.empty();
 
         // ------------------------------------------
         // Control Bytes
@@ -95,9 +112,9 @@ public final class CEMI extends AbstractMultiRawData {
         // 1 byte for 2nd control
         // Total: 2 bytes
         // ------------------------------------------
-        final var controlIndex = addInfoIndex + additionalInfo.getTotalLength();
-        controlByte1 = ControlByte1.of(cemiRawData[controlIndex]);
-        controlByte2 = ControlByte2.of(cemiRawData[controlIndex + 1]);
+        final var controlIndex = addInfoIndex + addInfoLength;
+        controlByte1 = ControlByte1.of(bytes[controlIndex]);
+        controlByte2 = ControlByte2.of(bytes[controlIndex + 1]);
 
         // ------------------------------------------
         // Addresses
@@ -106,9 +123,9 @@ public final class CEMI extends AbstractMultiRawData {
         // Total: 4 bytes
         // ------------------------------------------
         final var addrIndex = controlIndex + 2;
-        sourceAddress = IndividualAddress.of(new byte[]{cemiRawData[addrIndex], cemiRawData[addrIndex + 1]});
+        sourceAddress = IndividualAddress.of(new byte[]{bytes[addrIndex], bytes[addrIndex + 1]});
         // destination address is either individual or group (depends on address type on control 2 bit)
-        final var destinationAddressBytes = new byte[]{cemiRawData[addrIndex + 2], cemiRawData[addrIndex + 3]};
+        final var destinationAddressBytes = new byte[]{bytes[addrIndex + 2], bytes[addrIndex + 3]};
         if (controlByte2.getAddressType() == AddressType.INDIVIDUAL) {
             destinationAddress = IndividualAddress.of(destinationAddressBytes);
         } else {
@@ -126,15 +143,15 @@ public final class CEMI extends AbstractMultiRawData {
         // ------------------------------------------
         final var npduIndex = addrIndex + 4;
         // data bytes without TCPI/APCI bits
-        npduLength = Byte.toUnsignedInt(cemiRawData[npduIndex]);
+        npduLength = Byte.toUnsignedInt(bytes[npduIndex]);
 
         // 00.. .... UDT unnumbered package
         // 01.. .... NDT numbered package
         // 10.. .... UCD unnumbered control data
         // 11.. .... NCD numbered control data
-        tpci = TPCI.valueOf(cemiRawData[npduIndex + 1] & 0xC0);
+        tpci = TPCI.valueOf(bytes[npduIndex + 1] & 0xC0);
         // ..xx xx.. packet number
-        packetNumber = (cemiRawData[npduIndex + 1] & 0x3C) >>> 2;
+        packetNumber = (bytes[npduIndex + 1] & 0x3C) >>> 2;
         // .... ..xx xx.. .... APCI code
         // .... ..00 0000 0000 group value request
         // .... ..00 01nn nnnn group value response
@@ -142,31 +159,104 @@ public final class CEMI extends AbstractMultiRawData {
         // .... ..00 1100 0000 individual address write
         // .... ..01 0000 0000 individual address read
         // .... ..01 0100 0000 individual address response
-        apci = APCI.valueOf(Bytes.toUnsignedInt((byte) (cemiRawData[npduIndex + 1] & 0x03), (byte) (cemiRawData[npduIndex + 2] & 0xC0)));
+        apci = APCI.valueOf(Bytes.toUnsignedInt((byte) (bytes[npduIndex + 1] & 0x03), (byte) (bytes[npduIndex + 2] & 0xC0)));
 
         // APCI data
         if (apci == APCI.GROUP_VALUE_READ) {
             // no data when APCI code is a read command
-            data = new byte[0];
+            dataPointValue = () -> new byte[0];
         } else if (npduLength == 1) {
             // in case data is up to 6 bits, then it is a part of APCI
-            data = new byte[]{(byte) (cemiRawData[npduIndex + 2] & 0x3F)};
+            dataPointValue = () -> new byte[]{(byte) (bytes[npduIndex + 2] & 0x3F)};
         } else {
             // in case data is more than 6 bits then bytes are appended
             final var npduIndexStart = npduIndex + 3;
             final var npduIndexEnd = npduIndexStart + npduLength - 1;
-            if (npduIndexEnd != cemiRawData.length) {
+            if (npduIndexEnd != bytes.length) {
                 // should never happen, assuming NPDU length is correct!
                 throw new KnxIllegalArgumentException("There seems be a conflict with NDPU length ({}), " +
                         "NPDU Start Index ({}), NPDU End Index ({}) and CEMI raw (length={}): {}",
                         npduLength,
                         npduIndexStart,
                         npduIndexEnd,
-                        cemiRawData.length,
-                        getRawDataAsHexString()
+                        bytes.length,
+                        ByteFormatter.formatHexAsString(bytes)
                 );
             }
-            data = Arrays.copyOfRange(cemiRawData, npduIndexStart, npduIndexEnd);
+            final var rawBytes = Arrays.copyOfRange(bytes, npduIndexStart, npduIndexEnd);
+            dataPointValue = () -> rawBytes;
+        }
+    }
+
+    private CEMI(final MessageCode messageCode,
+                 final AdditionalInfo additionalInfo,
+                 final ControlByte1 controlByte1,
+                 final ControlByte2 controlByte2,
+                 final IndividualAddress sourceAddress,
+                 final KnxAddress destinationAddress,
+                 final TPCI tpci,
+                 final int packetNumber,
+                 final APCI apci,
+                 final DataPointValue dataPointValue) {
+        Preconditions.checkNonNull(messageCode, "Message Code is required.");
+        Preconditions.checkNonNull(additionalInfo, "Additional Info is required.");
+        Preconditions.checkNonNull(controlByte1, "Control Byte 1 is required.");
+        Preconditions.checkNonNull(controlByte2, "Control Byte 2 is required.");
+        Preconditions.checkNonNull(sourceAddress, "Source Address is required.");
+        Preconditions.checkNonNull(destinationAddress, "Destination Address is required.");
+        Preconditions.checkNonNull(tpci, "TPCI is required.");
+        Preconditions.checkNonNull(apci, "APCI is required.");
+
+        Preconditions.checkArgument(packetNumber >= 0x00 && packetNumber <= 0xFF,
+                "Incompatible packet number. Expected [0..255] but was: {}", packetNumber);
+
+        // Data Point Value is required when APCI is sending value
+        if (apci == APCI.GROUP_VALUE_RESPONSE || apci == APCI.GROUP_VALUE_WRITE) {
+            Preconditions.checkNonNull(dataPointValue, "Data Point Value is required for APCI: " + apci.name());
+        }
+
+        // when TPCI is unnumbered, the packet number should be always 0
+        if (tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) {
+            Preconditions.checkArgument(packetNumber == 0,
+                    "TPCI packet number should not be set when TCPI is unnumbered: tpci={}, packetNumber={}", tpci.name(), packetNumber);
+        }
+
+        // Destination Address should be same address type like in Control Byte 2
+        Preconditions.checkArgument(destinationAddress.getAddressType() == controlByte2.getAddressType(),
+                "Incompatible address type between destinationAddress ({}) and ControlByte2#addressType ({}) detected.",
+                destinationAddress.getAddressType().name(), controlByte2.getAddressType().name());
+
+        this.messageCode = messageCode;
+        this.additionalInfo = additionalInfo;
+        this.controlByte1 = controlByte1;
+        this.controlByte2 = controlByte2;
+        this.sourceAddress = sourceAddress;
+        this.destinationAddress = destinationAddress;
+        this.npduLength = calculateNpduLength(apci, dataPointValue);
+        this.tpci = tpci;
+        this.packetNumber = packetNumber;
+        this.apci = apci;
+        this.dataPointValue = dataPointValue;
+    }
+
+    /*
+     * Calculates the NDPU length based on {@link APCI} and {@link DataPointValue}
+     */
+    private static int calculateNpduLength(final APCI apci, final DataPointValue dataPointValue) {
+        if (apci == APCI.GROUP_VALUE_READ) {
+            // always 1 because the value is 0x00
+            return 1;
+        } else if (apci == APCI.GROUP_VALUE_RESPONSE || apci == APCI.GROUP_VALUE_WRITE) {
+            if (dataPointValue instanceof PayloadOptimizable) {
+                // always 1 because the data point value stores value up to 6-bits only
+                return 1;
+            } else {
+                // byte[0] is always 0x00
+                // byte[1..N] contains the value in byte array format
+                return 1 + dataPointValue.toByteArray().length;
+            }
+        } else {
+            throw new IllegalArgumentException("Current APCI is not supported: " + apci.name());
         }
     }
 
@@ -177,6 +267,9 @@ public final class CEMI extends AbstractMultiRawData {
      * @return a new immutable {@link CEMI}
      */
     public static CEMI of(final byte[] bytes) {
+        Preconditions.checkNonNull(bytes, "Bytes is required.");
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_MIN_LENGTH && bytes.length <= STRUCTURE_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, bytes.length);
         return new CEMI(bytes);
     }
 
@@ -245,128 +338,7 @@ public final class CEMI extends AbstractMultiRawData {
                           final int packetNumber,
                           final APCI apci,
                           final @Nullable DataPointValue dataPointValue) {
-        // validate
-        if (messageCode == null) {
-            throw new KnxNullPointerException("messageCode");
-        } else if (additionalInfo == null) {
-            throw new KnxNullPointerException("additionalInfo");
-        } else if (controlByte1 == null) {
-            throw new KnxNullPointerException("controlByte1");
-        } else if (controlByte2 == null) {
-            throw new KnxNullPointerException("controlByte2");
-        } else if (sourceAddress == null) {
-            throw new KnxNullPointerException("sourceAddress");
-        } else if (destinationAddress == null) {
-            throw new KnxNullPointerException("destinationAddress");
-        } else if (tpci == null) {
-            throw new KnxNullPointerException("tpci");
-        } else if (apci == null) {
-            throw new KnxNullPointerException("apci");
-        } else if (packetNumber < 0 || packetNumber > 0xFF) {
-            throw new KnxNumberOutOfRangeException("packetNumber", 0, 0xFF, packetNumber);
-        } else if ((tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) && packetNumber != 0) {
-            throw new KnxIllegalArgumentException(
-                    "TPCI packet number should not be set when TCPI is unnumbered: tpci={}, packetNumber={}",
-                    tpci.name(), packetNumber
-            );
-        } else if ((destinationAddress instanceof GroupAddress && controlByte2.getAddressType() != AddressType.GROUP)
-                || (destinationAddress instanceof IndividualAddress && controlByte2.getAddressType() != AddressType.INDIVIDUAL)) {
-            throw new KnxIllegalArgumentException(
-                    "Address type in ControlByte2 ({}) is not compatible with destination address type: {}",
-                    controlByte2.getAddressType().name(), destinationAddress.getAddressType().name()
-            );
-        }
-
-        final var sourceAddressAsBytes = sourceAddress.getRawData();
-        final var destinationAddressAsBytes = destinationAddress.getRawData();
-
-        // xx.. .... TCPI code
-        // 00.. .... UDT unnumbered package
-        // 01.. .... NDT numbered package
-        // 10.. .... UCD unnumbered control data
-        // 11.. .... NCD numbered control data
-        final var tpciPaketTypeAsByte = tpci.getCodeAsByte();
-        // ..xx xx.. package number
-        final var tpciPacketNumberAsByte = (byte) ((packetNumber & 0x0F) << 2);
-
-        // .... ..xx xx.. .... APCI code
-        // .... ..00 0000 0000 group value request
-        // .... ..00 01nn nnnn group value response
-        // .... ..00 10nn nnnn group value write (not requested)
-        // .... ..00 1100 0000 individual address write
-        // .... ..01 0000 0000 individual address read
-        // .... ..01 0100 0000 individual address response
-        final var acpiCodeAsByte = apci.getCodeAsBytes();
-        final byte[] apciDataAsByteArray;
-        final byte apciDataAsByte;
-        final boolean apciDataOptimized;
-        final int npduLength;
-        if (apci == APCI.GROUP_VALUE_READ) {
-            // request only
-            apciDataOptimized = false;
-            apciDataAsByte = 0x00;
-            apciDataAsByteArray = new byte[0];
-            npduLength = 1;
-        } else if (apci == APCI.GROUP_VALUE_RESPONSE || apci == APCI.GROUP_VALUE_WRITE) {
-            Objects.requireNonNull(dataPointValue, "DataPointType is null.");
-            if (dataPointValue instanceof PayloadOptimizable) {
-                // optimized version available only for group value write and response
-                // data is within 6 bits
-                apciDataOptimized = true;
-                apciDataAsByte = (byte) (dataPointValue.toByteArray()[0] & 0x3F);
-                apciDataAsByteArray = new byte[0];
-                npduLength = 1;
-            } else {
-                // data are as separate bytes
-                apciDataOptimized = false;
-                apciDataAsByte = 0x00;
-                apciDataAsByteArray = dataPointValue.toByteArray();
-                npduLength = 1 + apciDataAsByteArray.length;
-            }
-        } else {
-            throw new KnxIllegalArgumentException("Current APCI is not supported: {}", apci.name());
-        }
-
-        // create bytes
-        final var bytes = new byte[255];
-        var byteCount = 0;
-        // message code
-        bytes[byteCount++] = messageCode.getCodeAsByte();
-        // add info
-        System.arraycopy(additionalInfo.getRawData(), 0, bytes, byteCount, additionalInfo.getTotalLength());
-        byteCount += additionalInfo.getTotalLength();
-        // control bytes
-        bytes[byteCount++] = controlByte1.getRawData();
-        bytes[byteCount++] = controlByte2.getRawData();
-        // source address
-        System.arraycopy(sourceAddressAsBytes, 0, bytes, byteCount, sourceAddressAsBytes.length);
-        byteCount += sourceAddressAsBytes.length;
-        // destination address
-        System.arraycopy(destinationAddressAsBytes, 0, bytes, byteCount, destinationAddressAsBytes.length);
-        byteCount += destinationAddressAsBytes.length;
-        // NDPU (incl. TCPI and APCI and its data)
-        bytes[byteCount++] = (byte) npduLength;
-        bytes[byteCount++] = (byte) (tpciPaketTypeAsByte | tpciPacketNumberAsByte | acpiCodeAsByte[0]);
-        bytes[byteCount++] = (byte) (acpiCodeAsByte[1] | apciDataAsByte);
-        if (!apciDataOptimized) {
-            System.arraycopy(apciDataAsByteArray, 0, bytes, byteCount, apciDataAsByteArray.length);
-            byteCount += apciDataAsByteArray.length;
-        }
-        return of(Arrays.copyOf(bytes, byteCount));
-    }
-
-    @Override
-    protected void validate(final byte[] cemiRawData) {
-        if (cemiRawData == null) {
-            throw new KnxNullPointerException("cemiRawData");
-        } else if (cemiRawData.length < 11) {
-            // 1 byte message code
-            // 1 byte additional info length (+ N bytes data)
-            // 2 byte control bytes
-            // 4 bytes for address
-            // 3 bytes for NPDU (minimum)
-            throw new KnxNumberOutOfRangeException("cemiRawData", 11, 0xFF, cemiRawData.length, cemiRawData);
-        }
+        return new CEMI(messageCode, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, tpci, packetNumber, apci, dataPointValue);
     }
 
     public MessageCode getMessageCode() {
@@ -393,7 +365,9 @@ public final class CEMI extends AbstractMultiRawData {
         return destinationAddress;
     }
 
-    public int getLength() { return npduLength; }
+    public int getLength() {
+        return npduLength;
+    }
 
     public TPCI getTPCI() {
         return tpci;
@@ -408,28 +382,144 @@ public final class CEMI extends AbstractMultiRawData {
     }
 
     public byte[] getData() {
-        return data.clone();
+        return dataPointValue == null ? new byte[0] : dataPointValue.toByteArray();
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
+    public byte[] getRawData() {
+        return toByteArray();
+    }
+
+    public byte[] toByteArray() {
+        final var sourceAddressAsBytes = sourceAddress.getRawData();
+        final var destinationAddressAsBytes = destinationAddress.getRawData();
+
+        // xx.. .... TCPI code
+        // 00.. .... UDT unnumbered package
+        // 01.. .... NDT numbered package
+        // 10.. .... UCD unnumbered control data
+        // 11.. .... NCD numbered control data
+        final var tpciPaketTypeAsByte = tpci.getCodeAsByte();
+        // ..xx xx.. package number
+        final var tpciPacketNumberAsByte = (byte) ((packetNumber & 0x0F) << 2);
+
+        // .... ..xx xx.. .... APCI code
+        // .... ..00 0000 0000 group value request
+        // .... ..00 01nn nnnn group value response
+        // .... ..00 10nn nnnn group value write (not requested)
+        // .... ..00 1100 0000 individual address write
+        // .... ..01 0000 0000 individual address read
+        // .... ..01 0100 0000 individual address response
+        final var acpiCodeAsByte = apci.getCodeAsBytes();
+        final byte[] apciDataAsByteArray;
+        final byte apciDataAsByte;
+        final boolean apciDataOptimized;
+        if (apci == APCI.GROUP_VALUE_READ) {
+            // request only
+            apciDataOptimized = false;
+            apciDataAsByte = 0x00;
+            apciDataAsByteArray = new byte[0];
+        } else if (apci == APCI.GROUP_VALUE_RESPONSE || apci == APCI.GROUP_VALUE_WRITE) {
+            if (npduLength == 1) {
+                // optimized version available only for group value write and response
+                // data is within 6 bits
+                apciDataOptimized = true;
+                apciDataAsByte = (byte) (dataPointValue.toByteArray()[0] & 0x3F);
+                apciDataAsByteArray = new byte[0];
+            } else {
+                // data are as separate bytes
+                apciDataOptimized = false;
+                apciDataAsByte = 0x00;
+                apciDataAsByteArray = dataPointValue.toByteArray();
+            }
+        } else {
+            throw new KnxIllegalArgumentException("Current APCI is not supported: {}", apci.name());
+        }
+
+        // create bytes
+        final var bytes = new byte[255];
+        var byteCount = 0;
+        // message code
+        bytes[byteCount++] = messageCode.getCodeAsByte();
+        // add info
+        final var addInfoBytes = additionalInfo.toByteArray();
+        bytes[byteCount++] = (byte) addInfoBytes.length;
+        if (addInfoBytes.length > 0) {
+            System.arraycopy(addInfoBytes, 0, bytes, byteCount, addInfoBytes.length);
+            byteCount += addInfoBytes.length;
+        }
+        // control bytes
+        bytes[byteCount++] = controlByte1.getRawData();
+        bytes[byteCount++] = controlByte2.getRawData();
+        // source address
+        System.arraycopy(sourceAddressAsBytes, 0, bytes, byteCount, sourceAddressAsBytes.length);
+        byteCount += sourceAddressAsBytes.length;
+        // destination address
+        System.arraycopy(destinationAddressAsBytes, 0, bytes, byteCount, destinationAddressAsBytes.length);
+        byteCount += destinationAddressAsBytes.length;
+        // NDPU (incl. TCPI and APCI and its data)
+        bytes[byteCount++] = (byte) npduLength;
+        bytes[byteCount++] = (byte) (tpciPaketTypeAsByte | tpciPacketNumberAsByte | acpiCodeAsByte[0]);
+        bytes[byteCount++] = (byte) (acpiCodeAsByte[1] | apciDataAsByte);
+        if (!apciDataOptimized) {
+            System.arraycopy(apciDataAsByteArray, 0, bytes, byteCount, apciDataAsByteArray.length);
+            byteCount += apciDataAsByteArray.length;
+        }
+        return Arrays.copyOf(bytes, byteCount);
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
                 .add("messageCode", messageCode)
                 .add("additionalInfo", additionalInfo)
                 .add("controlByte1", controlByte1)
                 .add("controlByte2", controlByte2)
                 .add("sourceAddress", sourceAddress)
                 .add("destinationAddress", destinationAddress)
-                .add("npduLength", npduLength + " (" + ByteFormatter.formatHex(npduLength) + ")")
+                .add("npduLength", npduLength)
                 .add("tpci", tpci)
-                .add("packetNumber", packetNumber + " (" + ByteFormatter.formatHex(packetNumber) + ")")
+                .add("packetNumber", packetNumber)
                 .add("apci", apci)
-                .add("data", Arrays.toString(data) + " (" + ByteFormatter.formatHexAsString(data) + ")");
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", getRawDataAsHexString());
+                .add("dataPointValue", dataPointValue)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof CEMI) {
+            final var other = (CEMI) obj;
+            return Objects.equals(this.messageCode, other.messageCode)
+                    && Objects.equals(this.additionalInfo, other.additionalInfo)
+                    && Objects.equals(this.controlByte1, other.controlByte1)
+                    && Objects.equals(this.controlByte2, other.controlByte2)
+                    && Objects.equals(this.sourceAddress, other.sourceAddress)
+                    && Objects.equals(this.destinationAddress, other.destinationAddress)
+                    && this.npduLength == other.npduLength
+                    && Objects.equals(this.tpci, other.tpci)
+                    && this.packetNumber == other.packetNumber
+                    && Objects.equals(this.apci, other.apci)
+                    && Objects.equals(this.dataPointValue, other.dataPointValue);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                messageCode,
+                additionalInfo,
+                controlByte1,
+                controlByte2,
+                sourceAddress,
+                destinationAddress,
+                npduLength,
+                tpci,
+                packetNumber,
+                apci,
+                dataPointValue
+        );
     }
 }

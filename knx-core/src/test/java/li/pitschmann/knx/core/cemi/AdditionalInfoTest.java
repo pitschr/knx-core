@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,41 +30,49 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class AdditionalInfoTest {
+final class AdditionalInfoTest {
 
-    /**
-     * Test {@link AdditionalInfo} with no length
-     */
     @Test
-    public void emptyAdditionalInfo() {
+    @DisplayName("Test #empty()")
+    void testEmpty() {
         // create
-        final var addInfoByCreate = AdditionalInfo.empty();
-        assertThat(addInfoByCreate.getLength()).isEqualTo(0);
-        assertThat(addInfoByCreate.getTotalLength()).isEqualTo(1);
+        final var emptyInfo = AdditionalInfo.empty();
 
-        // create by bytes
-        final var addInfoByValueOf = AdditionalInfo.of(new byte[]{0x00});
-        assertThat(addInfoByValueOf.getLength()).isEqualTo(0);
-        assertThat(addInfoByValueOf.getTotalLength()).isEqualTo(addInfoByCreate.getRawData().length);
+        // byte array shall be empty
+        assertThat(emptyInfo.toByteArray()).isEmpty();
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(addInfoByCreate.getRawData()).isEqualTo(addInfoByValueOf.getRawData());
-
-        // with raw data
-        assertThat(AdditionalInfo.empty()).hasToString("AdditionalInfo{length=0, totalLength=1, rawData=0x00}");
-        // without raw data
-        assertThat(AdditionalInfo.empty().toString(false)).isEqualTo("AdditionalInfo{length=0, totalLength=1}");
+        // toString
+        assertThat(emptyInfo).hasToString("AdditionalInfo{bytes=}");
     }
 
-    /**
-     * Tests <strong>invalid</strong> control byte parameters
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> AdditionalInfo.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addInfoRawData");
+    @DisplayName("Test #of(byte[])")
+    void testOf() {
+        // create by bytes
+        final var additionalInfo = AdditionalInfo.of(new byte[]{
+                0x04, // Structure Length of Additional Info
+                0x01, 0x02, 0x03, 0x04 // data
+        });
 
-        // additional info are not supported yet
-        assertThatThrownBy(() -> AdditionalInfo.of(new byte[]{0x01, 0x00})).isInstanceOf(UnsupportedOperationException.class);
+        // compare the byte array of 'create by bytes'
+        assertThat(additionalInfo.toByteArray()).containsExactly(0x04, 0x01, 0x02, 0x03, 0x04);
+
+        // toString
+        assertThat(additionalInfo).hasToString("AdditionalInfo{bytes=0x04 01 02 03 04}");
+    }
+
+    @Test
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases() {
+        // null
+        assertThatThrownBy(() -> AdditionalInfo.of(null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageStartingWith("Bytes is required.");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(AdditionalInfo.class).verify();
     }
 }

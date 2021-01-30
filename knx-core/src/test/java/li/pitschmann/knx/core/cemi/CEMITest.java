@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT5;
 import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.datapoint.DPT8;
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ final class CEMITest {
         // assert
         assertThat(cemiDefault.getRawData()).containsExactly(
                 0x29, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xBC, // ControlByte1
                 0x60, // ControlByte2
                 0x00, 0x00, // source address
@@ -67,9 +67,6 @@ final class CEMITest {
         );
     }
 
-    /**
-     * Tests the {@code of(..)} methods
-     */
     @Test
     @DisplayName("Test #of(..)")
     void testOfMethods() {
@@ -92,7 +89,7 @@ final class CEMITest {
         // assert
         assertThat(cemi.getRawData()).containsExactly(
                 0x2E, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xBC, // ControlByte1
                 0xE0, // ControlByte2
                 0x00, 0x00, // source address
@@ -144,7 +141,7 @@ final class CEMITest {
 
         assertThat(cemi.getRawData()).containsExactly(
                 0x2E, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xBC, // ControlByte1
                 0xE0, // ControlByte2
                 0x10, 0xFF, // source address
@@ -200,7 +197,7 @@ final class CEMITest {
 
         assertThat(cemi.getRawData()).containsExactly(
                 0x29, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xA8, // ControlByte1
                 0xBC, // ControlByte2
                 0x10, 0x15, // source address
@@ -255,7 +252,7 @@ final class CEMITest {
 
         assertThat(cemi.getRawData()).containsExactly(
                 0x29, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xBC, // ControlByte1
                 0xE0, // ControlByte2
                 0x10, 0x15, // source address
@@ -311,7 +308,7 @@ final class CEMITest {
 
         assertThat(cemi.getRawData()).containsExactly(
                 0x29, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xBC, // ControlByte1
                 0x60, // ControlByte2
                 0x10, 0x82, // source address
@@ -367,7 +364,7 @@ final class CEMITest {
 
         assertThat(cemi.getRawData()).containsExactly(
                 0x29, // Message Code
-                0x00, // AdditionalInfo
+                0x00, // Additional Info Length
                 0xBC, // ControlByte1
                 0x60, // ControlByte2
                 0x10, 0x82, // source address
@@ -380,19 +377,53 @@ final class CEMITest {
 
         // assert
         assertCEMI(cemi, MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress, 3,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, new byte[]{(byte)0xFC, 0x46});
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, new byte[]{(byte) 0xFC, 0x46});
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with additional info")
+    void testWithAdditionalInfoLength() {
+        // create by bytes
+        final var cemiAsBytes = CEMI.of(new byte[]{
+                0x29, // Message Code
+                0x04, // Additional Info Length
+                0x01, 0x02, 0x03, 0x04, // Additional Info Data
+                (byte) 0xBC, // ControlByte1
+                0x60, // ControlByte2
+                0x10, (byte) 0x82, // source address
+                0x63, 0x43, // destination address
+                0x03, // NDPU length
+                0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
+                0x40, // APCI (8bits)
+                (byte) 0xFC, 0x46 // APCI data
+        });
+
+        // create
+        final var additionalInfo = AdditionalInfo.of(new byte[]{0x01, 0x02, 0x03, 0x04});
+        final var controlByte1 = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.of(AddressType.INDIVIDUAL, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 130);
+        final var destinationAddress = IndividualAddress.of(6, 3, 67);
+
+        // create
+        final var cemi = CEMI.of(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(64582));
+        assertThat(cemi.getAdditionalInfo().toByteArray()).containsExactly(0x01, 0x02, 0x03, 0x04);
+
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(cemi.toByteArray()).containsExactly(cemiAsBytes.toByteArray());
     }
 
     @Test
     @DisplayName("Test #of(byte[]) with null or empty byte array")
     void testWithNullAndEmptyByteArray() {
         assertThatThrownBy(() -> CEMI.of(null))
-                .isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("cemiRawData");
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Bytes is required.");
 
         assertThatThrownBy(() -> CEMI.of(new byte[0]))
-                .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("cemiRawData");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [11..250] but was: 0");
     }
 
     @Test
@@ -400,178 +431,178 @@ final class CEMITest {
     void testWithoutMandatoryArguments() {
         assertThatThrownBy(() -> CEMI.of(
                 null, // issue!
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("messageCode");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("Message Code is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
+                mock(MessageCode.class),
                 null, // issue!
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("additionalInfo");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("Additional Info is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
                 null, // issue!
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("controlByte1");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("Control Byte 1 is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
                 null, // issue!
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1, 2, 3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("controlByte2");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("Control Byte 2 is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
                 null, // issue!
-                GroupAddress.of(1, 2, 3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("sourceAddress");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("Source Address is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
                 null, // issue!
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(TPCI.class),
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("destinationAddress");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("Destination Address is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
                 null, // issue!
                 0,
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("tpci");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("TPCI is required.");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 0,
                 null, // issue!
-                null)
-        ).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("apci");
+                mock(DataPointValue.class))
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("APCI is required.");
     }
 
     @Test
     @DisplayName("Test #of(..) with packet number out of range")
     void testOutOfRangeArguments() {
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 -1, // issue!
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("packetNumber");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible packet number. Expected [0..255] but was: -1");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                mock(TPCI.class),
                 256, // issue!
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("packetNumber");
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible packet number. Expected [0..255] but was: 256");
     }
 
     @Test
     @DisplayName("Test #of(..) with illegal, unsupported or incompatible arguments")
     void testIllegalArguments() {
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_PACKAGE,
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                TPCI.UNNUMBERED_PACKAGE, // issue!
                 1, // issue!
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxIllegalArgumentException.class)
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TPCI packet number should not be set when TCPI is unnumbered: tpci=UNNUMBERED_PACKAGE, packetNumber=1");
 
         assertThatThrownBy(() -> CEMI.of(
-                MessageCode.L_DATA_CON,
-                AdditionalInfo.empty(),
-                ControlByte1.useDefault(),
-                ControlByte2.of(IndividualAddress.useDefault()),
-                IndividualAddress.useDefault(),
-                GroupAddress.of(1,2,3),
-                TPCI.UNNUMBERED_CONTROL_DATA,
+                mock(MessageCode.class),
+                mock(AdditionalInfo.class),
+                mock(ControlByte1.class),
+                mock(ControlByte2.class),
+                mock(IndividualAddress.class),
+                mock(GroupAddress.class),
+                TPCI.UNNUMBERED_CONTROL_DATA, // issue!
                 1, // issue!
-                APCI.GROUP_VALUE_READ,
-                null)
-        ).isInstanceOf(KnxIllegalArgumentException.class)
+                mock(APCI.class),
+                mock(DataPointValue.class))
+        ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TPCI packet number should not be set when TCPI is unnumbered: tpci=UNNUMBERED_CONTROL_DATA, packetNumber=1");
 
         assertThatThrownBy(() -> CEMI.useDefault(
@@ -579,7 +610,7 @@ final class CEMITest {
                 GroupAddress.of(1, 2, 3),
                 APCI.INDIVIDUAL_ADDRESS_READ, // issue!
                 null)
-        ).isInstanceOf(KnxIllegalArgumentException.class)
+        ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Current APCI is not supported: INDIVIDUAL_ADDRESS_READ");
     }
 
@@ -594,14 +625,14 @@ final class CEMITest {
                 APCI.GROUP_VALUE_WRITE,
                 null) // issue!
         ).isInstanceOf(NullPointerException.class)
-                .hasMessage("DataPointType is null.");
+                .hasMessage("Data Point Value is required for APCI: GROUP_VALUE_WRITE");
 
         assertThatThrownBy(() -> CEMI.useDefault(
                 MessageCode.L_DATA_CON,
                 GroupAddress.of(1, 2, 3),
                 APCI.GROUP_VALUE_RESPONSE, null) // issue!
         ).isInstanceOf(NullPointerException.class)
-                .hasMessage("DataPointType is null.");
+                .hasMessage("Data Point Value is required for APCI: GROUP_VALUE_RESPONSE");
     }
 
     @Test
@@ -619,9 +650,8 @@ final class CEMITest {
                 0,
                 APCI.GROUP_VALUE_READ,
                 null)
-        )
-                .isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessage("Address type in ControlByte2 (GROUP) is not compatible with destination address type: INDIVIDUAL");
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible address type between destinationAddress (INDIVIDUAL) and ControlByte2#addressType (GROUP) detected.");
 
         // ControlByte2#addressType = INDIVIDUAL, destination = GROUP
         assertThatThrownBy(() -> CEMI.of(
@@ -635,17 +665,8 @@ final class CEMITest {
                 0,
                 APCI.GROUP_VALUE_READ,
                 null)
-        )
-                .isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessage("Address type in ControlByte2 (INDIVIDUAL) is not compatible with destination address type: GROUP");
-    }
-
-    @Test
-    @DisplayName("Test #of(byte[]) with additional info which is currently not supported")
-    void testWithAdditionalInfoLength() {
-        assertThatThrownBy(() -> CEMI.of(new byte[]{0x29, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessageContaining("Additional Info Length is not supported yet!");
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible address type between destinationAddress (GROUP) and ControlByte2#addressType (INDIVIDUAL) detected.");
     }
 
     @Test
@@ -656,16 +677,16 @@ final class CEMITest {
 
         // here we just tell that NDPU length is 4 bytes which is incorrect!
         assertThatThrownBy(() -> CEMI.of(new byte[]{
-                0x2E, // Message Code
-                0x00, // AdditionalInfo
-                (byte)0xBC, // ControlByte1
-                (byte)0xE0, // ControlByte2
-                0x10, (byte)0xFF, // source address
-                0x0A, (byte)0x96, // destination address
-                0x04, // NDPU length <-- ISSUE
-                0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
-                (byte)0x80, // APCI (8bits)
-                0x00, 0x00 // APCI data
+                        0x2E, // Message Code
+                        0x00, // Additional Info Length
+                        (byte) 0xBC, // ControlByte1
+                        (byte) 0xE0, // ControlByte2
+                        0x10, (byte) 0xFF, // source address
+                        0x0A, (byte) 0x96, // destination address
+                        0x04, // NDPU length <-- ISSUE
+                        0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
+                        (byte) 0x80, // APCI (8bits)
+                        0x00, 0x00 // APCI data
                 })
         ).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageStartingWith("There seems be a conflict with NDPU length (4), NPDU Start Index (11), NPDU End Index (14) and CEMI raw (length=13):");
@@ -673,14 +694,14 @@ final class CEMITest {
         // here we just tell that NDPU length is 2 bytes which is incorrect!
         assertThatThrownBy(() -> CEMI.of(new byte[]{
                         0x2E, // Message Code
-                        0x00, // AdditionalInfo
-                        (byte)0xBC, // ControlByte1
-                        (byte)0xE0, // ControlByte2
-                        0x10, (byte)0xFF, // source address
-                        0x0A, (byte)0x96, // destination address
+                        0x00, // Additional Info Length
+                        (byte) 0xBC, // ControlByte1
+                        (byte) 0xE0, // ControlByte2
+                        0x10, (byte) 0xFF, // source address
+                        0x0A, (byte) 0x96, // destination address
                         0x02, // NDPU length <-- ISSUE
                         0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
-                        (byte)0x80, // APCI (8bits)
+                        (byte) 0x80, // APCI (8bits)
                         0x00, 0x00 // APCI data
                 })
         ).isInstanceOf(KnxIllegalArgumentException.class)
@@ -688,7 +709,7 @@ final class CEMITest {
     }
 
     @Test
-    @DisplayName("Test #toString() and #toString(boolean) with Address Type: Group")
+    @DisplayName("Test #toString() with Address Type: Group")
     void testToStringWithRawData() {
         // with raw data
         final var additionalInfo = AdditionalInfo.empty();
@@ -702,17 +723,19 @@ final class CEMITest {
 
         // with raw data
         assertThat(cemi).hasToString(String.format(
-                "CEMI{messageCode=%s, additionalInfo=%s, controlByte1=%s, controlByte2=%s, sourceAddress=%s, "
-                        + "destinationAddress=%s, npduLength=1 (0x01), tpci=%s, packetNumber=0 (0x00), apci=%s, "
-                        + "data=[] (), rawData=0x2E 00 BC E0 10 FF 0A 96 01 00 00}",
-                MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_READ));
-
-        // without raw data
-        assertThat(cemi.toString(false)).isEqualTo(String.format(
-                "CEMI{messageCode=%s, additionalInfo=%s, controlByte1=%s, controlByte2=%s, sourceAddress=%s, "
-                        + "destinationAddress=%s, npduLength=1 (0x01), tpci=%s, packetNumber=0 (0x00), apci=%s, "
-                        + "data=[] ()}",
+                "CEMI{" +
+                        "messageCode=%s, " +
+                        "additionalInfo=%s, " +
+                        "controlByte1=%s, " +
+                        "controlByte2=%s, " +
+                        "sourceAddress=%s, " +
+                        "destinationAddress=%s, " +
+                        "npduLength=1, " +
+                        "tpci=%s, " +
+                        "packetNumber=0, " +
+                        "apci=%s, " +
+                        "dataPointValue=null" +
+                        "}",
                 MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_READ));
     }
@@ -725,17 +748,29 @@ final class CEMITest {
         final var controlByte2 = ControlByte2.of(AddressType.INDIVIDUAL, 6, 0);
         final var sourceAddress = IndividualAddress.of(1, 0, 130);
         final var destinationAddress = IndividualAddress.of(6, 3, 67);
+        final var dataPointValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(3081);
 
         // create
         final var cemi = CEMI.of(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(3081));
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, dataPointValue);
 
         assertThat(cemi).hasToString(String.format(
-                "CEMI{messageCode=%s, additionalInfo=%s, controlByte1=%s, controlByte2=%s, sourceAddress=%s, "
-                        + "destinationAddress=%s, npduLength=3 (0x03), tpci=%s, packetNumber=0 (0x00), apci=%s, "
-                        + "data=[12, 9] (0x0C 09), rawData=0x29 00 BC 60 10 82 63 43 03 00 80 0C 09}",
+                "CEMI{" +
+                        "messageCode=%s, " +
+                        "additionalInfo=%s, " +
+                        "controlByte1=%s, " +
+                        "controlByte2=%s, " +
+                        "sourceAddress=%s, " +
+                        "destinationAddress=%s, " +
+                        "npduLength=3, " +
+                        "tpci=%s, " +
+                        "packetNumber=0, " +
+                        "apci=%s, " +
+                        "dataPointValue=%s" +
+                        "}",
                 MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_WRITE));
+                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_WRITE, dataPointValue)
+        );
     }
 
     /**
@@ -778,12 +813,15 @@ final class CEMITest {
         assertThat(cemi.getAPCI()).isSameAs(apci);
         assertThat(cemi.getData()).containsExactly(data);
 
-        // test hashCode() and equals()
-        final var cemiByRawData = CEMI.of(cemi.getRawData());
-        assertThat(cemi).isEqualTo(cemi);
-        assertThat(cemi).isEqualTo(cemiByRawData);
-
-        assertThat(cemi).hasSameHashCodeAs(cemi);
-        assertThat(cemi).hasSameHashCodeAs(cemiByRawData);
+        // test byte array
+        final var cemiByRawData = CEMI.of(cemi.toByteArray());
+        assertThat(cemi.toByteArray()).containsExactly(cemiByRawData.toByteArray());
     }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(CEMI.class).verify();
+    }
+
 }
