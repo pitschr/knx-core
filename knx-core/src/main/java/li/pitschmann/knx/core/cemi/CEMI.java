@@ -85,7 +85,7 @@ public final class CEMI implements MultiRawDataAware {
     private final TPCI tpci;
     private final int packetNumber;
     private final APCI apci;
-    private final DataPointValue dataPointValue;
+    private final byte[] data;
 
     private CEMI(final byte[] bytes) {
         // ------------------------------------------
@@ -164,10 +164,10 @@ public final class CEMI implements MultiRawDataAware {
         // APCI data
         if (apci == APCI.GROUP_VALUE_READ) {
             // no data when APCI code is a read command
-            dataPointValue = () -> new byte[0];
+            data = new byte[0];
         } else if (npduLength == 1) {
             // in case data is up to 6 bits, then it is a part of APCI
-            dataPointValue = () -> new byte[]{(byte) (bytes[npduIndex + 2] & 0x3F)};
+            data = new byte[]{(byte) (bytes[npduIndex + 2] & 0x3F)};
         } else {
             // in case data is more than 6 bits then bytes are appended
             final var npduIndexStart = npduIndex + 3;
@@ -183,8 +183,7 @@ public final class CEMI implements MultiRawDataAware {
                         ByteFormatter.formatHexAsString(bytes)
                 );
             }
-            final var rawBytes = Arrays.copyOfRange(bytes, npduIndexStart, npduIndexEnd);
-            dataPointValue = () -> rawBytes;
+            data = Arrays.copyOfRange(bytes, npduIndexStart, npduIndexEnd);
         }
     }
 
@@ -197,7 +196,7 @@ public final class CEMI implements MultiRawDataAware {
                  final TPCI tpci,
                  final int packetNumber,
                  final APCI apci,
-                 final DataPointValue dataPointValue) {
+                 final @Nullable DataPointValue dataPointValue) {
         Preconditions.checkNonNull(messageCode, "Message Code is required.");
         Preconditions.checkNonNull(additionalInfo, "Additional Info is required.");
         Preconditions.checkNonNull(controlByte1, "Control Byte 1 is required.");
@@ -236,7 +235,7 @@ public final class CEMI implements MultiRawDataAware {
         this.tpci = tpci;
         this.packetNumber = packetNumber;
         this.apci = apci;
-        this.dataPointValue = dataPointValue;
+        this.data = dataPointValue == null ? new byte[0] : dataPointValue.toByteArray().clone();
     }
 
     /*
@@ -382,7 +381,7 @@ public final class CEMI implements MultiRawDataAware {
     }
 
     public byte[] getData() {
-        return dataPointValue == null ? new byte[0] : dataPointValue.toByteArray();
+        return data.clone();
     }
 
     @Override
@@ -424,13 +423,13 @@ public final class CEMI implements MultiRawDataAware {
                 // optimized version available only for group value write and response
                 // data is within 6 bits
                 apciDataOptimized = true;
-                apciDataAsByte = (byte) (dataPointValue.toByteArray()[0] & 0x3F);
+                apciDataAsByte = (byte) (data[0] & 0x3F);
                 apciDataAsByteArray = new byte[0];
             } else {
                 // data are as separate bytes
                 apciDataOptimized = false;
                 apciDataAsByte = 0x00;
-                apciDataAsByteArray = dataPointValue.toByteArray();
+                apciDataAsByteArray = data;
             }
         } else {
             throw new KnxIllegalArgumentException("Current APCI is not supported: {}", apci.name());
@@ -481,7 +480,7 @@ public final class CEMI implements MultiRawDataAware {
                 .add("tpci", tpci)
                 .add("packetNumber", packetNumber)
                 .add("apci", apci)
-                .add("dataPointValue", dataPointValue)
+                .add("data", ByteFormatter.formatHexAsString(data))
                 .toString();
     }
 
@@ -501,7 +500,7 @@ public final class CEMI implements MultiRawDataAware {
                     && Objects.equals(this.tpci, other.tpci)
                     && this.packetNumber == other.packetNumber
                     && Objects.equals(this.apci, other.apci)
-                    && Objects.equals(this.dataPointValue, other.dataPointValue);
+                    && Arrays.equals(this.data, other.data);
         }
         return false;
     }
@@ -519,7 +518,7 @@ public final class CEMI implements MultiRawDataAware {
                 tpci,
                 packetNumber,
                 apci,
-                dataPointValue
+                Arrays.hashCode(data)
         );
     }
 }

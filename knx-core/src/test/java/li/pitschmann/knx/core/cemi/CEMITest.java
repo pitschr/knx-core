@@ -734,7 +734,7 @@ final class CEMITest {
                         "tpci=%s, " +
                         "packetNumber=0, " +
                         "apci=%s, " +
-                        "dataPointValue=null" +
+                        "data=" +
                         "}",
                 MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_READ));
@@ -766,10 +766,10 @@ final class CEMITest {
                         "tpci=%s, " +
                         "packetNumber=0, " +
                         "apci=%s, " +
-                        "dataPointValue=%s" +
+                        "data=0x0C 09" +
                         "}",
                 MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_WRITE, dataPointValue)
+                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_WRITE)
         );
     }
 
