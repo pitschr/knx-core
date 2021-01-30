@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.cemi;
 
 import li.pitschmann.knx.core.KnxBytesEnum;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -108,18 +107,20 @@ public enum APCI implements KnxBytesEnum {
      * for given {@code code} exists
      */
     public static APCI valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> code >= x.codeRangeStart && code <= x.codeRangeEnd).findFirst()
+        return Arrays.stream(values())
+                .filter(x -> code >= x.codeRangeStart && code <= x.codeRangeEnd)
+                .findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(APCI.class, code));
     }
 
     @Override
     public int getCode() {
-        return this.codeRangeStart;
+        return codeRangeStart;
     }
 
     @Override
     public byte[] getCodeAsBytes() {
-        final var code = this.getCode();
+        final var code = getCode();
         return new byte[]{(byte) (code >>> 8), (byte) (code & 0xFF)};
     }
 
@@ -129,24 +130,24 @@ public enum APCI implements KnxBytesEnum {
      * @return {@code true} if APCI code is a range, otherwise {@code false}
      */
     public boolean isCodeRange() {
-        return this.codeRangeStart != this.codeRangeEnd;
+        return codeRangeStart != codeRangeEnd;
     }
 
     @Override
     public String getFriendlyName() {
-        return this.friendlyName;
+        return friendlyName;
     }
 
     @Override
     public String toString() {
         // @formatter:off
         final var h = Strings.toStringHelper(this)
-                .add("name", this.name())
-                .add("friendlyName", this.friendlyName);
-        if (this.isCodeRange()) {
-            h.add("code", this.codeRangeStart + ".." + this.codeRangeEnd + " (" + ByteFormatter.formatHex(this.codeRangeStart) + ".." + ByteFormatter.formatHex(this.codeRangeEnd) + ")");
+                .add("name", name())
+                .add("friendlyName", friendlyName);
+        if (isCodeRange()) {
+            h.add("code", codeRangeStart + ".." + codeRangeEnd);
         } else {
-            h.add("code", this.codeRangeStart + " (" + ByteFormatter.formatHex(this.codeRangeStart) + ")");
+            h.add("code", codeRangeStart);
         }
         return h.toString();
         // @formatter:on

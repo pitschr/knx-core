@@ -470,16 +470,16 @@ public final class CEMI implements MultiRawDataAware {
     @Override
     public String toString() {
         return Strings.toStringHelper(this)
-                .add("messageCode", messageCode)
+                .add("messageCode", messageCode.name())
                 .add("additionalInfo", additionalInfo)
                 .add("controlByte1", controlByte1)
                 .add("controlByte2", controlByte2)
                 .add("sourceAddress", sourceAddress)
                 .add("destinationAddress", destinationAddress)
                 .add("npduLength", npduLength)
-                .add("tpci", tpci)
+                .add("tpci", tpci.name())
                 .add("packetNumber", packetNumber)
-                .add("apci", apci)
+                .add("apci", apci.name())
                 .add("data", ByteFormatter.formatHexAsString(data))
                 .toString();
     }

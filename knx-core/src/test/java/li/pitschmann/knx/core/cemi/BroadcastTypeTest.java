@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,50 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link BroadcastType} enum class
  *
  * @author PITSCHR
  */
-public final class BroadcastTypeTest extends AbstractKnxByteEnumTest<BroadcastType> {
-    @Override
-    protected int numberOfElements() {
-        return 2;
+final class BroadcastTypeTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(BroadcastType.values()).hasSize(2);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(BroadcastType.valueOf(0x00)).isEqualTo(BroadcastType.SYSTEM);
         assertThat(BroadcastType.valueOf(0x01)).isEqualTo(BroadcastType.NORMAL);
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> BroadcastType.valueOf(-1)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(BroadcastType.SYSTEM.getFriendlyName()).isEqualTo("System Broadcast");
         assertThat(BroadcastType.NORMAL.getFriendlyName()).isEqualTo("Normal Broadcast");
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(BroadcastType.SYSTEM).hasToString("BroadcastType{name=SYSTEM, friendlyName=System Broadcast, code=0 (0x00)}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(BroadcastType.SYSTEM).hasToString("BroadcastType{name=SYSTEM, friendlyName=System Broadcast, code=0}");
+        assertThat(BroadcastType.NORMAL).hasToString("BroadcastType{name=NORMAL, friendlyName=Normal Broadcast, code=1}");
     }
 }

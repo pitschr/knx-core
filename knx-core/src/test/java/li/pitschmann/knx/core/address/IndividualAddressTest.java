@@ -142,7 +142,8 @@ final class IndividualAddressTest {
         assertThat(testByString.getAddress()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("IndividualAddress{addressType=%s, address=%s}", AddressType.INDIVIDUAL,
-                testByCreate.getAddress()));
+        assertThat(testByCreate).hasToString(
+                String.format("IndividualAddress{address=%s}", testByCreate.getAddress())
+        );
     }
 }

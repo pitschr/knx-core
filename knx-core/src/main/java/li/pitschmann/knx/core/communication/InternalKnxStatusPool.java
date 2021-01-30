@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.communication;
 
+import li.pitschmann.knx.core.CEMIAware;
 import li.pitschmann.knx.core.address.KnxAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.RequestBody;
@@ -98,13 +99,9 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
      * @param requestBody the request body we want to mark as dirty
      */
     public void setDirty(final @Nullable RequestBody requestBody) {
-        // for tunneling
-        if (requestBody instanceof TunnelingRequestBody) {
-            setDirty(((TunnelingRequestBody) requestBody).getCEMI().getDestinationAddress());
-        }
-        // for routing
-        else if (requestBody instanceof RoutingIndicationBody) {
-            setDirty(((RoutingIndicationBody) requestBody).getCEMI().getDestinationAddress());
+        if (requestBody instanceof CEMIAware) {
+            final var cemi = ((CEMIAware) requestBody).getCEMI();
+            setDirty(cemi.getDestinationAddress());
         }
     }
 

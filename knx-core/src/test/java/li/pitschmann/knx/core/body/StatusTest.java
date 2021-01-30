@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,15 +28,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author PITSCHR
  */
-public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
-    @Override
-    protected int numberOfElements() {
-        return 12;
+final class StatusTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(Status.values()).hasSize(12);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         // 0x00 .. 0x10
         assertThat(Status.valueOf(0x00)).isEqualTo(Status.NO_ERROR);
         assertThat(Status.valueOf(0x01)).isEqualTo(Status.HOST_PROTOCOL_TYPE);
@@ -55,15 +57,14 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
     }
 
     @Test
-    @Override
-    public void invalidValueOf() {
-        // doesn't exists --> fallback to undefined status
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
         assertThat(Status.valueOf(0xEE)).isEqualTo(Status.UNKNOWN);
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         // 0x00 .. 0x10
         assertThat(Status.NO_ERROR.getFriendlyName()).isEqualTo("Operation successful");
         assertThat(Status.HOST_PROTOCOL_TYPE.getFriendlyName()).isEqualTo("Host Protocol type not supported");
@@ -82,10 +83,14 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(Status.NO_ERROR).hasToString("Status{name=NO_ERROR, friendlyName=Operation successful, code=0}");
-        assertThat(Status.NO_MORE_CONNECTIONS)
-                .hasToString("Status{name=NO_MORE_CONNECTIONS, friendlyName=All connections already used, code=36}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(Status.NO_ERROR).hasToString(
+                "Status{name=NO_ERROR, friendlyName=Operation successful, code=0}"
+        );
+
+        assertThat(Status.NO_MORE_CONNECTIONS).hasToString(
+                "Status{name=NO_MORE_CONNECTIONS, friendlyName=All connections already used, code=36}"
+        );
     }
 }

@@ -206,7 +206,9 @@ public enum ServiceType implements KnxBytesEnum {
      * if given {@code code} is not known
      */
     public static ServiceType valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
+        return Arrays.stream(values())
+                .filter(x -> x.getCode() == code)
+                .findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ServiceType.class, code));
     }
 

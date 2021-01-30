@@ -261,7 +261,6 @@ public final class GroupAddress implements KnxAddress {
     @Override
     public String toString() {
         return Strings.toStringHelper(this)
-                .add("addressType", getAddressType())
                 .add("address", getAddress())
                 .add("address(2-level)", getAddressLevel2())
                 .add("address(3-level)", getAddressLevel3())

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.AbstractKnxEnumTest;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.knx.core.utils.Bytes;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,31 +30,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class APCITest extends AbstractKnxEnumTest<APCI> {
-    @Override
-    protected int numberOfElements() {
-        return 6;
-    }
+final class APCITest {
 
-    @Override
     @Test
-    public void invalidValueOf() {
-        // bytes
-        final var testInvalidBytes = new byte[][]{new byte[]{0x02}, new byte[]{0x02, 0x01, 0x00}};
-        for (final var testInvalidByte : testInvalidBytes) {
-            assertThatThrownBy(() -> APCI.valueOf(Bytes.toUnsignedInt(testInvalidByte))).isInstanceOf(KnxEnumNotFoundException.class);
-        }
-
-        // integers
-        final var testInvalidInts = new int[]{-1, 0x200};
-        for (final var testInvalidInt : testInvalidInts) {
-            assertThatThrownBy(() -> APCI.valueOf(testInvalidInt)).isInstanceOf(KnxEnumNotFoundException.class);
-        }
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(APCI.values()).hasSize(6);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(APCI.valueOf(0x00)).isEqualTo(APCI.GROUP_VALUE_READ);
         assertThat(APCI.valueOf(0x40)).isEqualTo(APCI.GROUP_VALUE_RESPONSE);
         assertThat(APCI.valueOf(0x80)).isEqualTo(APCI.GROUP_VALUE_WRITE);
@@ -65,8 +50,15 @@ public final class APCITest extends AbstractKnxEnumTest<APCI> {
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> APCI.valueOf(0xFF)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> APCI.valueOf(0xFFFF)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(APCI.GROUP_VALUE_READ.getFriendlyName()).isEqualTo("Group Value Read");
         assertThat(APCI.GROUP_VALUE_RESPONSE.getFriendlyName()).isEqualTo("Group Value Response");
         assertThat(APCI.GROUP_VALUE_WRITE.getFriendlyName()).isEqualTo("Group Value Write");
@@ -76,19 +68,31 @@ public final class APCITest extends AbstractKnxEnumTest<APCI> {
     }
 
     @Test
-    @Override
-    public void testToString() {
+    @DisplayName("Test #toString()")
+    void testToString() {
         // without code range
-        assertThat(APCI.GROUP_VALUE_READ).hasToString("APCI{name=GROUP_VALUE_READ, friendlyName=Group Value Read, code=0 (0x00)}");
+        assertThat(APCI.GROUP_VALUE_READ).hasToString(
+                "APCI{name=GROUP_VALUE_READ, friendlyName=Group Value Read, code=0}"
+        );
 
         // with code range
-        assertThat(APCI.GROUP_VALUE_RESPONSE)
-                .hasToString("APCI{name=GROUP_VALUE_RESPONSE, friendlyName=Group Value Response, code=64..127 (0x40..0x7F)}");
+        assertThat(APCI.GROUP_VALUE_RESPONSE).hasToString(
+                "APCI{name=GROUP_VALUE_RESPONSE, friendlyName=Group Value Response, code=64..127}"
+        );
     }
 
-    /**
-     * Tests the ranges
-     *
+    @Test
+    @DisplayName("Test #getCodeAsBytes()")
+    void testGetCodeAsByte() {
+        assertThat(APCI.GROUP_VALUE_READ.getCodeAsBytes()).containsExactly(new byte[]{0x00, 0x00});
+        assertThat(APCI.GROUP_VALUE_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x00, 0x40});
+        assertThat(APCI.GROUP_VALUE_WRITE.getCodeAsBytes()).containsExactly(new byte[]{0x00, (byte) 0x80});
+        assertThat(APCI.INDIVIDUAL_ADDRESS_WRITE.getCodeAsBytes()).containsExactly(new byte[]{0x00, (byte) 0xC0});
+        assertThat(APCI.INDIVIDUAL_ADDRESS_READ.getCodeAsBytes()).containsExactly(new byte[]{0x01, 0x00});
+        assertThat(APCI.INDIVIDUAL_ADDRESS_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x01, 0x40});
+    }
+
+    /*
      * <pre>
      * GROUP_VALUE_RESPONSE        Range: 0x40 .. 0x7F
      * GROUP_VALUE_WRITE 0x80      Range: 0x80 .. 0xBF
@@ -96,7 +100,8 @@ public final class APCITest extends AbstractKnxEnumTest<APCI> {
      * </pre>
      */
     @Test
-    public void validRangeTest() {
+    @DisplayName("Test the range of #valueOf() and #isCodeRange()")
+    void validRangeTest() {
         // check if correct APCI is returned
         assertThat(APCI.valueOf(0x7F)).isEqualTo(APCI.GROUP_VALUE_RESPONSE);
         assertThat(APCI.valueOf(0x80)).isEqualTo(APCI.GROUP_VALUE_WRITE);

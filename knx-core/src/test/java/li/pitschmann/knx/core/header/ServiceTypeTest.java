@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 final class ServiceTypeTest {
 
     @Test
-    @DisplayName("Test number of Service Type elements")
+    @DisplayName("Test number of enum elements")
     void numberOfElements() {
         assertThat(ServiceType.values()).hasSize(17);
     }

@@ -204,8 +204,13 @@ final class GroupAddressTest {
         assertThat(testByString.getAddress()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s}",
-                AddressType.GROUP, testByCreate.getAddress(), testByCreate.getAddressLevel2(), testByCreate.getAddressLevel3()));
+        assertThat(testByCreate).hasToString(
+                String.format("GroupAddress{address=%s, address(2-level)=%s, address(3-level)=%s}",
+                        testByCreate.getAddress(),
+                        testByCreate.getAddressLevel2(),
+                        testByCreate.getAddressLevel3()
+                )
+        );
     }
 
     /**
@@ -245,8 +250,13 @@ final class GroupAddressTest {
         assertThat(testByString.getAddressLevel2()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s}",
-                AddressType.GROUP, testByCreate.getAddress(), testByCreate.getAddressLevel2(), testByCreate.getAddressLevel3()));
+        assertThat(testByCreate).hasToString(
+                String.format("GroupAddress{address=%s, address(2-level)=%s, address(3-level)=%s}",
+                        testByCreate.getAddress(),
+                        testByCreate.getAddressLevel2(),
+                        testByCreate.getAddressLevel3()
+                )
+        );
     }
 
     /**
@@ -287,7 +297,12 @@ final class GroupAddressTest {
         assertThat(testByString.getAddressLevel3()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s}",
-                AddressType.GROUP, testByCreate.getAddress(), testByCreate.getAddressLevel2(), testByCreate.getAddressLevel3()));
+        assertThat(testByCreate).hasToString(
+                String.format("GroupAddress{address=%s, address(2-level)=%s, address(3-level)=%s}",
+                        testByCreate.getAddress(),
+                        testByCreate.getAddressLevel2(),
+                        testByCreate.getAddressLevel3()
+                )
+        );
     }
 }

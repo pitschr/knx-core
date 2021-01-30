@@ -163,7 +163,6 @@ public final class IndividualAddress implements KnxAddress {
     @Override
     public String toString() {
         return Strings.toStringHelper(this)
-                .add("addressType", getAddressType())
                 .add("address", getAddress())
                 .toString();
     }

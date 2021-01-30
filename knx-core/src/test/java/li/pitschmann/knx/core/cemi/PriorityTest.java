@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,29 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link Priority} enum class
  *
  * @author PITSCHR
  */
-public final class PriorityTest extends AbstractKnxByteEnumTest<Priority> {
-    @Override
-    protected int numberOfElements() {
-        return 4;
+public final class PriorityTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(Priority.values()).hasSize(4);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(Priority.valueOf(0x00)).isEqualTo(Priority.SYSTEM);
         assertThat(Priority.valueOf(0x01)).isEqualTo(Priority.NORMAL);
         assertThat(Priority.valueOf(0x02)).isEqualTo(Priority.URGENT);
@@ -44,8 +48,14 @@ public final class PriorityTest extends AbstractKnxByteEnumTest<Priority> {
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> Priority.valueOf(0x04)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(Priority.SYSTEM.getFriendlyName()).isEqualTo("System Priority");
         assertThat(Priority.NORMAL.getFriendlyName()).isEqualTo("Normal Priority");
         assertThat(Priority.URGENT.getFriendlyName()).isEqualTo("Urgent Priority");
@@ -53,9 +63,12 @@ public final class PriorityTest extends AbstractKnxByteEnumTest<Priority> {
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(Priority.SYSTEM).hasToString("Priority{name=SYSTEM, friendlyName=System Priority, code=0 (0x00)}");
-        assertThat(Priority.NORMAL).hasToString("Priority{name=NORMAL, friendlyName=Normal Priority, code=1 (0x01)}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(Priority.SYSTEM).hasToString("Priority{name=SYSTEM, friendlyName=System Priority, code=0}");
+        assertThat(Priority.NORMAL).hasToString("Priority{name=NORMAL, friendlyName=Normal Priority, code=1}");
+        assertThat(Priority.URGENT).hasToString("Priority{name=URGENT, friendlyName=Urgent Priority, code=2}");
+        assertThat(Priority.LOW).hasToString("Priority{name=LOW, friendlyName=Low Priority, code=3}");
+
     }
 }

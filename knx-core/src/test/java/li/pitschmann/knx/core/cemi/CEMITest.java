@@ -724,20 +724,20 @@ final class CEMITest {
         // with raw data
         assertThat(cemi).hasToString(String.format(
                 "CEMI{" +
-                        "messageCode=%s, " +
+                        "messageCode=L_DATA_CON, " +
                         "additionalInfo=%s, " +
                         "controlByte1=%s, " +
                         "controlByte2=%s, " +
                         "sourceAddress=%s, " +
                         "destinationAddress=%s, " +
                         "npduLength=1, " +
-                        "tpci=%s, " +
+                        "tpci=UNNUMBERED_PACKAGE, " +
                         "packetNumber=0, " +
-                        "apci=%s, " +
+                        "apci=GROUP_VALUE_READ, " +
                         "data=" +
                         "}",
-                MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_READ));
+                additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress
+        ));
     }
 
     @Test
@@ -756,21 +756,20 @@ final class CEMITest {
 
         assertThat(cemi).hasToString(String.format(
                 "CEMI{" +
-                        "messageCode=%s, " +
+                        "messageCode=L_DATA_IND, " +
                         "additionalInfo=%s, " +
                         "controlByte1=%s, " +
                         "controlByte2=%s, " +
                         "sourceAddress=%s, " +
                         "destinationAddress=%s, " +
                         "npduLength=3, " +
-                        "tpci=%s, " +
+                        "tpci=UNNUMBERED_PACKAGE, " +
                         "packetNumber=0, " +
-                        "apci=%s, " +
+                        "apci=GROUP_VALUE_WRITE, " +
                         "data=0x0C 09" +
                         "}",
-                MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, APCI.GROUP_VALUE_WRITE)
-        );
+                additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress
+        ));
     }
 
     /**

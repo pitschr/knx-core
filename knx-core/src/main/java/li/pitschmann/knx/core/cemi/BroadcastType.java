@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package li.pitschmann.knx.core.cemi;
 
 import li.pitschmann.knx.core.KnxByteEnum;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -51,28 +50,28 @@ public enum BroadcastType implements KnxByteEnum {
      * for given {@code code} exists
      */
     public static BroadcastType valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
+        return Arrays.stream(values())
+                .filter(x -> x.getCode() == code)
+                .findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(BroadcastType.class, code));
     }
 
     @Override
     public int getCode() {
-        return this.code;
+        return code;
     }
 
     @Override
     public String getFriendlyName() {
-        return this.friendlyName;
+        return friendlyName;
     }
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
                 .add("name", name())
-                .add("friendlyName", this.friendlyName)
-                .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")
+                .add("friendlyName", friendlyName)
+                .add("code", code)
                 .toString();
-        // @formatter:on
     }
 }
