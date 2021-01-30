@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 
 package li.pitschmann.knx.core.header;
 
-import li.pitschmann.knx.core.AbstractKnxEnumTest;
 import li.pitschmann.knx.core.dib.ServiceTypeFamily;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxServiceTypeHasNoResponseIdentifier;
-import li.pitschmann.knx.core.utils.Bytes;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,31 +32,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
-    @Override
-    protected int numberOfElements() {
-        return 17;
+final class ServiceTypeTest {
+
+    @Test
+    @DisplayName("Test number of Service Type elements")
+    void numberOfElements() {
+        assertThat(ServiceType.values()).hasSize(17);
     }
 
-    @Override
     @Test
-    public void invalidValueOf() {
-        // bytes
-        final var testInvalidBytes = new byte[][]{null, new byte[0], new byte[]{0x02}, new byte[]{0x02, 0x01, 0x00}};
-        for (final var testInvalidByte : testInvalidBytes) {
-            assertThatThrownBy(() -> ServiceType.valueOf(Bytes.toUnsignedInt(testInvalidByte))).isInstanceOf(KnxEnumNotFoundException.class);
-        }
-
-        // ints
-        final var testInvalidInts = new int[]{-1, 0x200};
-        for (final var testInvalidInt : testInvalidInts) {
-            assertThatThrownBy(() -> ServiceType.valueOf(testInvalidInt)).isInstanceOf(KnxEnumNotFoundException.class);
-        }
-    }
-
-    @Override
-    @Test
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(ServiceType.valueOf(0x0201)).isEqualTo(ServiceType.SEARCH_REQUEST);
         assertThat(ServiceType.valueOf(0x0202)).isEqualTo(ServiceType.SEARCH_RESPONSE);
         assertThat(ServiceType.valueOf(0x0203)).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
@@ -77,9 +62,16 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.valueOf(0x0532)).isEqualTo(ServiceType.ROUTING_BUSY);
     }
 
-    @Override
     @Test
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> ServiceType.valueOf(-1)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> ServiceType.valueOf(0x200)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(ServiceType.SEARCH_REQUEST.getFriendlyName()).isEqualTo("Search Request");
         assertThat(ServiceType.SEARCH_RESPONSE.getFriendlyName()).isEqualTo("Search Response");
         assertThat(ServiceType.DESCRIPTION_REQUEST.getFriendlyName()).isEqualTo("Description Request");
@@ -100,24 +92,23 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
     }
 
     @Test
-    @Override
-    public void testToString() {
+    @DisplayName("Test #toString()")
+    void testToString() {
         // with response identifier
-        assertThat(ServiceType.TUNNELING_REQUEST).hasToString(String.format(
-                "ServiceType{name=TUNNELING_REQUEST, friendlyName=Tunneling Request, code=1056 (0x04 20), family=%s, responseIdentifier=TUNNELING_ACK}",
-                ServiceTypeFamily.TUNNELING));
+        assertThat(ServiceType.TUNNELING_REQUEST).hasToString(
+                "ServiceType{name=TUNNELING_REQUEST, friendlyName=Tunneling Request, code=1056, family=TUNNELING, responseIdentifier=TUNNELING_ACK}"
+        );
 
         // without response identifier
-        assertThat(ServiceType.SEARCH_RESPONSE).hasToString(String.format(
-                "ServiceType{name=SEARCH_RESPONSE, friendlyName=Search Response, code=514 (0x02 02), family=%s, responseIdentifier=}",
-                ServiceTypeFamily.CORE));
+        assertThat(ServiceType.SEARCH_RESPONSE).hasToString(
+                "ServiceType{name=SEARCH_RESPONSE, friendlyName=Search Response, code=514, family=CORE, responseIdentifier=}"
+        );
     }
 
-    /**
-     * Tests the {@link ServiceType#getCodeAsBytes()}
-     */
     @Test
-    public void codeAsByte() {
+    @DisplayName("Test #getCodeAsBytes()")
+    void testGetCodeAsByte() {
+        // 0x02 xx Core
         assertThat(ServiceType.SEARCH_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x01});
         assertThat(ServiceType.SEARCH_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x02});
         assertThat(ServiceType.DESCRIPTION_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x03});
@@ -128,20 +119,25 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x08});
         assertThat(ServiceType.DISCONNECT_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x09});
         assertThat(ServiceType.DISCONNECT_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x0A});
+
+        // 0x03 xx Device Management
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x03, 0x10});
         assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.getCodeAsBytes()).containsExactly(new byte[]{0x03, 0x11});
+
+        // 0x04 xx Tunneling
         assertThat(ServiceType.TUNNELING_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x04, 0x20});
         assertThat(ServiceType.TUNNELING_ACK.getCodeAsBytes()).containsExactly(new byte[]{0x04, 0x21});
+
+        // 0x05 xx Routing
         assertThat(ServiceType.ROUTING_INDICATION.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x30});
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x31});
         assertThat(ServiceType.ROUTING_BUSY.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x32});
     }
 
-    /**
-     * Tests the {@link ServiceType#getFamily()}
-     */
     @Test
-    public void family() {
+    @DisplayName("Test #getFamily()")
+    void testGetFamily() {
+        // Core
         assertThat(ServiceType.SEARCH_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.SEARCH_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.DESCRIPTION_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
@@ -152,44 +148,49 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.DISCONNECT_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceType.DISCONNECT_RESPONSE.getFamily()).isEqualTo(ServiceTypeFamily.CORE);
+
+        // Device Management
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.getFamily()).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
+
+        // Tunneling
         assertThat(ServiceType.TUNNELING_REQUEST.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELING);
         assertThat(ServiceType.TUNNELING_ACK.getFamily()).isEqualTo(ServiceTypeFamily.TUNNELING);
+
+        // Routing
         assertThat(ServiceType.ROUTING_INDICATION.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
         assertThat(ServiceType.ROUTING_BUSY.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
     }
 
-    /**
-     * Tests the {@link ServiceType#hasResponseIdentifier()}
-     */
     @Test
-    public void hasResponseIdentifier() {
+    @DisplayName("Test #hasResponseIdentifier()")
+    void testHasResponseIdentifier() {
+        // has response identifier
         assertThat(ServiceType.SEARCH_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.SEARCH_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.DESCRIPTION_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.DESCRIPTION_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.CONNECT_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.CONNECT_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.CONNECTION_STATE_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.DISCONNECT_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.DISCONNECT_RESPONSE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.hasResponseIdentifier()).isTrue();
-        assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.TUNNELING_REQUEST.hasResponseIdentifier()).isTrue();
+
+        // no response identifier
+        assertThat(ServiceType.SEARCH_RESPONSE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.DESCRIPTION_RESPONSE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.CONNECT_RESPONSE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.DISCONNECT_RESPONSE.hasResponseIdentifier()).isFalse();
+        assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.TUNNELING_ACK.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.ROUTING_INDICATION.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.ROUTING_LOST_MESSAGE.hasResponseIdentifier()).isFalse();
         assertThat(ServiceType.ROUTING_BUSY.hasResponseIdentifier()).isFalse();
     }
 
-    /**
-     * Tests the {@link ServiceType#getResponseIdentifier()}
-     */
     @Test
-    public void getResponseIdentifier() {
+    @DisplayName("Test #getResponseIdentifier()")
+    void testGetResponseIdentifier() {
         // requests with response identifiers
         assertThat(ServiceType.SEARCH_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.SEARCH_RESPONSE);
         assertThat(ServiceType.DESCRIPTION_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
@@ -200,19 +201,27 @@ public final class ServiceTypeTest extends AbstractKnxEnumTest<ServiceType> {
         assertThat(ServiceType.TUNNELING_REQUEST.getResponseIdentifier()).isEqualTo(ServiceType.TUNNELING_ACK);
 
         // response itself
-        assertThatThrownBy(() -> ServiceType.SEARCH_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.DESCRIPTION_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.CONNECT_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.SEARCH_RESPONSE.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.DESCRIPTION_RESPONSE.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.CONNECT_RESPONSE.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.CONNECTION_STATE_RESPONSE.getResponseIdentifier())
                 .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.DISCONNECT_RESPONSE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.DISCONNECT_RESPONSE.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
         assertThatThrownBy(() -> ServiceType.DEVICE_CONFIGURATION_ACK.getResponseIdentifier())
                 .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.TUNNELING_ACK.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.TUNNELING_ACK.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
 
         // services without response identifier
-        assertThatThrownBy(() -> ServiceType.ROUTING_INDICATION.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.ROUTING_LOST_MESSAGE.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
-        assertThatThrownBy(() -> ServiceType.ROUTING_BUSY.getResponseIdentifier()).isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.ROUTING_INDICATION.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.ROUTING_LOST_MESSAGE.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
+        assertThatThrownBy(() -> ServiceType.ROUTING_BUSY.getResponseIdentifier())
+                .isInstanceOf(KnxServiceTypeHasNoResponseIdentifier.class);
     }
 }

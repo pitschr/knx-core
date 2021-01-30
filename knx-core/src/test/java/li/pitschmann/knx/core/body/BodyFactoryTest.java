@@ -46,7 +46,7 @@ class BodyFactoryTest {
     void testOf_TunnelingRequest() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x04, 0x20, // Tunneling Request
                 0x00, 0x17, // Total Length Octets
                 // Body
@@ -60,7 +60,7 @@ class BodyFactoryTest {
     void testOf_TunnelingAck() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x04, 0x21, // Tunneling Ack
                 0x00, 0x0A, // Total Length Octets
                 // Body
@@ -74,7 +74,7 @@ class BodyFactoryTest {
     void testOf_RoutingIndication() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x05, 0x30, // Routing Indication
                 0x00, 0x13, // Total Length Octets
                 // Body
@@ -88,7 +88,7 @@ class BodyFactoryTest {
     void testOf_ConnectionStateRequest() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x07, // Connection State Request
                 0x00, 0x10, // Total Length Octets
                 // Body
@@ -103,7 +103,7 @@ class BodyFactoryTest {
     void testOf_ConnectionStateResponse() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x08, // Connection State Response
                 0x00, 0x08, // Total Length Octets
                 // Body
@@ -117,7 +117,7 @@ class BodyFactoryTest {
     void testOf_DisconnectRequest() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x09, // Disconnect Request
                 0x00, 0x10, // Total Length Octets
                 // Body
@@ -131,7 +131,7 @@ class BodyFactoryTest {
     void testOf_DisconnectResponse() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x0A, // Disconnect Response
                 0x00, 0x08, // Total Length Octets
                 // Body
@@ -145,7 +145,7 @@ class BodyFactoryTest {
     void testOf_DescriptionRequest() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x03, // Description Request
                 0x00, 0x0E, // Total Length Octets
                 // Body
@@ -159,7 +159,7 @@ class BodyFactoryTest {
     void testOf_DescriptionResponse() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x04, // Description Response
                 0x00, 0x46, // Total Length Octets
                 // Body
@@ -176,7 +176,7 @@ class BodyFactoryTest {
     void testOf_ConnectRequest() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x05, // Connect Request
                 0x00, 0x1A, // Total Length Octets
                 // Body
@@ -191,7 +191,7 @@ class BodyFactoryTest {
     void testOf_ConnectResponse() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x06, // Connect Response
                 0x00, 0x14, // Total Length Octets
                 // Body
@@ -205,7 +205,7 @@ class BodyFactoryTest {
     void testOf_SearchRequest() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x01, // Search Request
                 0x00, 0x0E, // Total Length Octets
                 // Body
@@ -219,7 +219,7 @@ class BodyFactoryTest {
     void testOf_SearchResponse() {
         final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x02, // Search Response
                 0x00, 0x4a, // Total Length Octets
                 // Body
@@ -237,7 +237,7 @@ class BodyFactoryTest {
     void testWithUnsupportedBytes() {
         final var unsupportedBytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x03, 0x10, // Device Configuration Request (not supported)
                 0x00, 0x06 // Total Length Octets
         };
