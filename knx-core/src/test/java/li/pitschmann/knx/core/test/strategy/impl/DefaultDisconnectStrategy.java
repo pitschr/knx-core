@@ -49,7 +49,7 @@ public class DefaultDisconnectStrategy implements DisconnectStrategy {
      * @return status
      */
     protected Status getStatus() {
-        return Status.E_NO_ERROR;
+        return Status.NO_ERROR;
     }
 
     /**

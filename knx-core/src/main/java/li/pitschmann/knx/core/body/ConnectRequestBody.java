@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Body for Connect Request
@@ -58,7 +58,7 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class ConnectRequestBody extends AbstractMultiRawData implements RequestBody, ControlChannelRelated {
+public final class ConnectRequestBody implements RequestBody, ControlChannelRelated {
     /**
      * Structure Length for {@link ConnectRequestBody}
      * <p>
@@ -72,61 +72,52 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     private final ConnectionRequestInformation connectionRequestInformation;
 
     private ConnectRequestBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // byte[0..7] => control endpoint
+                HPAI.of(Arrays.copyOfRange(bytes, 0, 8)),
+                // byte[8..15]
+                HPAI.of(Arrays.copyOfRange(bytes, 8, 16)),
+                // byte[16..19]
+                ConnectionRequestInformation.of(Arrays.copyOfRange(bytes, 16, 20))
+        );
+    }
 
-        this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 0, 8));
-        this.dataEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 8, 16));
-        this.connectionRequestInformation = ConnectionRequestInformation.of(Arrays.copyOfRange(bytes, 16, 20));
+    private ConnectRequestBody(final HPAI controlEndpoint,
+                               final HPAI dataEndpoint,
+                               final ConnectionRequestInformation connectionRequestInformation) {
+        Preconditions.checkNonNull(controlEndpoint, "Control Endpoint is required.");
+        Preconditions.checkNonNull(dataEndpoint, "Data Endpoint is required.");
+        Preconditions.checkNonNull(connectionRequestInformation, "Connection request information is required.");
+
+        this.controlEndpoint = controlEndpoint;
+        this.dataEndpoint = dataEndpoint;
+        this.connectionRequestInformation = connectionRequestInformation;
     }
 
     /**
      * Builds a new {@link ConnectRequestBody} instance
      *
      * @param bytes complete byte array for {@link ConnectRequestBody}
-     * @return a  new immutable {@link ConnectRequestBody}
+     * @return a new immutable {@link ConnectRequestBody}
      */
     public static ConnectRequestBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new ConnectRequestBody(bytes);
     }
 
     /**
      * Creates a new {@link ConnectRequestBody} instance
      *
-     * @param controlEndpoint {@link HPAI} of control endpoint
-     * @param dataEndpoint    {@link HPAI} of data endpoint
-     * @param cri             connection request information
+     * @param controlEndpoint              {@link HPAI} of control endpoint
+     * @param dataEndpoint                 {@link HPAI} of data endpoint
+     * @param connectionRequestInformation connection request information
      * @return a  new immutable {@link ConnectRequestBody}
      */
-    public static ConnectRequestBody of(final HPAI controlEndpoint, final HPAI dataEndpoint, final ConnectionRequestInformation cri) {
-        // validate
-        if (controlEndpoint == null) {
-            throw new KnxNullPointerException("controlEndpoint");
-        } else if (dataEndpoint == null) {
-            throw new KnxNullPointerException("dataEndpoint");
-        } else if (cri == null) {
-            throw new KnxNullPointerException("cri");
-        }
-
-        final var controlEndpointAsBytes = controlEndpoint.getRawData();
-        final var dataEndpointAsBytes = dataEndpoint.getRawData();
-        final var criAsBytes = cri.getRawData();
-
-        // create bytes
-        final var bytes = new byte[controlEndpointAsBytes.length + dataEndpointAsBytes.length + criAsBytes.length];
-        System.arraycopy(controlEndpointAsBytes, 0, bytes, 0, controlEndpointAsBytes.length);
-        System.arraycopy(dataEndpointAsBytes, 0, bytes, 8, dataEndpointAsBytes.length);
-        System.arraycopy(criAsBytes, 0, bytes, 16, criAsBytes.length);
-
-        return of(bytes);
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+    public static ConnectRequestBody of(final HPAI controlEndpoint,
+                                        final HPAI dataEndpoint,
+                                        final ConnectionRequestInformation connectionRequestInformation) {
+        return new ConnectRequestBody(controlEndpoint, dataEndpoint, connectionRequestInformation);
     }
 
     @Override
@@ -135,28 +126,60 @@ public final class ConnectRequestBody extends AbstractMultiRawData implements Re
     }
 
     public HPAI getControlEndpoint() {
-        return this.controlEndpoint;
+        return controlEndpoint;
     }
 
     public HPAI getDataEndpoint() {
-        return this.dataEndpoint;
+        return dataEndpoint;
     }
 
     public ConnectionRequestInformation getConnectionRequestInformation() {
-        return this.connectionRequestInformation;
+        return connectionRequestInformation;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("controlEndpoint", this.controlEndpoint.toString(false))
-                .add("dataEndpoint", this.dataEndpoint.toString(false))
-                .add("connectionRequestInformation", this.connectionRequestInformation.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] getRawData() {
+        return toByteArray();
+    }
+
+    public byte[] toByteArray() {
+        final var controlEndpointAsBytes = controlEndpoint.getRawData();
+        final var dataEndpointAsBytes = dataEndpoint.getRawData();
+        final var criAsBytes = connectionRequestInformation.getRawData();
+
+        // create bytes
+        final var bytes = new byte[controlEndpointAsBytes.length + dataEndpointAsBytes.length + criAsBytes.length];
+        System.arraycopy(controlEndpointAsBytes, 0, bytes, 0, controlEndpointAsBytes.length);
+        System.arraycopy(dataEndpointAsBytes, 0, bytes, 8, dataEndpointAsBytes.length);
+        System.arraycopy(criAsBytes, 0, bytes, 16, criAsBytes.length);
+
+        return bytes;
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("controlEndpoint", controlEndpoint)
+                .add("dataEndpoint", dataEndpoint)
+                .add("connectionRequestInformation", connectionRequestInformation)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof ConnectRequestBody) {
+            final var other = (ConnectRequestBody) obj;
+            return Objects.equals(this.controlEndpoint, other.controlEndpoint)
+                    && Objects.equals(this.dataEndpoint, other.dataEndpoint)
+                    && Objects.equals(this.connectionRequestInformation, other.connectionRequestInformation);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(controlEndpoint, dataEndpoint, connectionRequestInformation);
     }
 }

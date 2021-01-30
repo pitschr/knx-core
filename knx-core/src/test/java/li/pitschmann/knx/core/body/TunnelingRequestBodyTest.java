@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,14 @@ import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.cemi.Priority;
 import li.pitschmann.knx.core.cemi.TPCI;
 import li.pitschmann.knx.core.datapoint.DPT7;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.utils.Bytes;
-import li.pitschmann.knx.core.utils.Bytes.FillDirection;
-import org.junit.jupiter.api.BeforeEach;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link TunnelingRequestBody}
@@ -48,31 +46,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author PITSCHR
  */
 public class TunnelingRequestBodyTest {
-    // prepare
-    private int channelId;
-    private int sequence;
-    private CEMI cemi;
-
-    @BeforeEach
-    public void before() {
-        final var controlByte1 = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
-        final var controlByte2 = ControlByte2.of(AddressType.GROUP, 6, 0);
-        final var sourceAddress = IndividualAddress.of(1, 0, 160);
-        final var destinationAddress = GroupAddress.of(9, 4, 7);
-
-        // ACPI data: new byte[]{0x0c, 0x3f}
-        final var dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(3135);
-
-        this.channelId = 17;
-        this.sequence = 92;
-        this.cemi = CEMI.of(MessageCode.L_DATA_IND, AdditionalInfo.empty(), controlByte1, controlByte2, sourceAddress, destinationAddress,
-                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, dptValue);
-    }
-
     /**
-     * Tests the {@link TunnelingRequestBody#of(int, int, CEMI)} and
-     * {@link TunnelingRequestBody#of(byte[])} methods.
-     *
      * <pre>
      * 	KNX/IP
      * 	    Header
@@ -81,9 +55,9 @@ public class TunnelingRequestBodyTest {
      * 	        Service Type Identifier: TUNNELING_REQUEST (0x0420)
      * 	        Total Length: 23 octets
      * 	    Body
-     * 	        Structure Length: 4 octets
-     * 	        Communication Channel ID: 17
-     * 	        Sequence Counter: 92
+     * 	        Structure Length: 4 octets (0x04)
+     * 	        Communication Channel ID: 17 (0x11)
+     * 	        Sequence Counter: 92 (0x5C)
      * 	        reserved: 00
      * 	        cEMI
      * 	            messagecode: L_Data.ind (0x29)
@@ -99,63 +73,104 @@ public class TunnelingRequestBodyTest {
      * 	                1... .... = Destination address type: 1
      * 	                .110 .... = Hop count: 6
      * 	                .... 0000 = Extended Frame Format: 0x0
-     * 	            Source Address 1.0.160
-     * 	            Destination Address 9/4/7 or 9/1031
-     * 		        NPDU length: 3 octets
+     * 	            Source Address 1.0.160 (0x10 A0)
+     * 	            Destination Address 9/4/7 or 9/1031 (0x4C 07)
+     * 		        NPDU length: 3 octets (0x03)
      * 		        00.. .... = TPCI: UDT (Unnumbered Data Packet) (0x0)
      * 		        .... ..00  10.. .... = APCI: A_GroupValue_Write (0x0002)
      * 		        data: 0c3f
      * </pre>
      */
     @Test
+    @DisplayName("Test valid cases using #of(byte[]) and #of(int, int, CEMI)")
     public void validCases() {
-        // create
-        final var body = TunnelingRequestBody.of(this.channelId, this.sequence, this.cemi);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
-        assertThat(body.getLength()).isEqualTo(4);
-        assertThat(body.getChannelId()).isEqualTo(this.channelId);
-        assertThat(body.getSequence()).isEqualTo(this.sequence);
-        assertThat(body.getCEMI().getRawData()).containsExactly(this.cemi.getRawData());
-
         // create by bytes
-        final var bodyByBytes = TunnelingRequestBody.of(new byte[]{0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc,
-                (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f});
+        final var bodyByBytes = TunnelingRequestBody.of(new byte[]{
+                0x04,               // Structure Length
+                0x11,               // Communication Channel ID
+                0x5C,               // Sequence Counter
+                0x00,               // (reserved)
+                // CEMI -- Start --
+                0x29,               // Message Code
+                0x00,               // Additional Information Length
+                (byte) 0xBC,        // Control Field 1
+                (byte) 0xE0,        // Control Field 2
+                0x10, (byte) 0xA0,  // Source Address
+                0x4C, 0x07,         // Destination Address
+                0x03,               // NPDU length
+                0x00, (byte) 0x80,  // TPCI + APCI type
+                0x0C, 0x3F          // APCI data
+                // CEMI --  End  --
+        });
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+        // create
+        final var channelId = 17;
+        final var sequence = 92;
+
+        final var controlByte1 = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        final var controlByte2 = ControlByte2.of(AddressType.GROUP, 6, 0);
+        final var sourceAddress = IndividualAddress.of(1, 0, 160);
+        final var destinationAddress = GroupAddress.of(9, 4, 7);
+        final var dptValue = DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(new byte[]{0x0c, 0x3f});
+        final var cemi = CEMI.of(MessageCode.L_DATA_IND, AdditionalInfo.empty(), controlByte1, controlByte2, sourceAddress, destinationAddress,
+                TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, dptValue);
+
+        // create
+        final var body = TunnelingRequestBody.of(channelId, sequence, cemi);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.TUNNELING_REQUEST);
+        assertThat(body.getLength()).isEqualTo(4);
+        assertThat(body.getChannelId()).isEqualTo(channelId);
+        assertThat(body.getSequence()).isEqualTo(sequence);
+        assertThat(body.getCEMI()).isSameAs(cemi);
+
+        // compare byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format(
-                "TunnelingRequestBody{length=4 (0x04), channelId=17 (0x11), sequence=92 (0x5C), cemi=%s, rawData=0x04 11 5C 00 29 00 BC E0 10 A0 4C 07 03 00 80 0C 3F}",
-                this.cemi.toString(false)));
+        assertThat(body).hasToString(
+                String.format("TunnelingRequestBody{length=4, channelId=17, sequence=92, cemi=%s}", cemi)
+        );
     }
 
-    /**
-     * Tests {@link TunnelingRequestBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> TunnelingRequestBody.of(this.channelId, this.sequence, null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("cemi");
-
-        // invalid size
-        assertThatThrownBy(() -> TunnelingRequestBody.of(this.channelId, -1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("sequence");
-        assertThatThrownBy(() -> TunnelingRequestBody.of(this.channelId, 0xFF + 1, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("sequence");
-        assertThatThrownBy(() -> TunnelingRequestBody.of(-1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> TunnelingRequestBody.of(0xFF + 1, this.sequence, this.cemi)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("channelId");
-
-        // invalid raw data length
-        assertThatThrownBy(() -> TunnelingRequestBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnelingRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnelingRequestBody.of(new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> TunnelingRequestBody.of(Bytes.fillByteArray(new byte[20], new byte[]{0x05}, FillDirection.LEFT_TO_RIGHT)))
-                .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData[0]");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        // invalid cases
+        assertThatThrownBy(() -> TunnelingRequestBody.of(null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> TunnelingRequestBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [15..255] but was: 0");
     }
+
+    @Test
+    @DisplayName("Invalid cases for #of(int, int, CEMI)")
+    void invalidCases_ofObjects() {
+        // null
+        assertThatThrownBy(() -> TunnelingRequestBody.of(0, 0, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("CEMI is required.");
+
+        // invalid range
+        assertThatThrownBy(() -> TunnelingRequestBody.of(-1, 0, mock(CEMI.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: -1");
+        assertThatThrownBy(() -> TunnelingRequestBody.of(0xFF + 1, 0, mock(CEMI.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: 256");
+
+        assertThatThrownBy(() -> TunnelingRequestBody.of(0, -1, mock(CEMI.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible sequence. Expected [0..255] but was: -1");
+        assertThatThrownBy(() -> TunnelingRequestBody.of(0, 0xFF + 1, mock(CEMI.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible sequence. Expected [0..255] but was: 256");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(TunnelingRequestBody.class).verify();
+    }
+
 }

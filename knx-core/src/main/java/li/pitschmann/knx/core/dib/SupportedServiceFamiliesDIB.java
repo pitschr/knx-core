@@ -64,21 +64,21 @@ import java.util.List;
  *
  * @author PITSCHR
  */
-public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
+public final class SupportedServiceFamiliesDIB extends AbstractDIB {
     /**
-     * Minimum Structure Length for {@link SupportedDeviceFamiliesDIB}
+     * Minimum Structure Length for {@link SupportedServiceFamiliesDIB}
      * <p>
      * 1 byte for Structure Length<br>
      * 1 byte for Description Type Code<br>
      */
     private static final int STRUCTURE_MIN_LENGTH = 2;
     /**
-     * Maximum Structure Length for {@link SupportedDeviceFamiliesDIB} is 254
+     * Maximum Structure Length for {@link SupportedServiceFamiliesDIB} is 254
      */
     private static final int STRUCTURE_MAX_LENGTH = 0xFE;
     private final List<ServiceTypeFamilyVersion> serviceFamilies;
 
-    private SupportedDeviceFamiliesDIB(final byte[] rawData) {
+    private SupportedServiceFamiliesDIB(final byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -94,13 +94,13 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
     }
 
     /**
-     * Builds a new {@link SupportedDeviceFamiliesDIB} instance
+     * Builds a new {@link SupportedServiceFamiliesDIB} instance
      *
-     * @param bytes complete byte array for {@link SupportedDeviceFamiliesDIB}
-     * @return a new immutable {@link SupportedDeviceFamiliesDIB}
+     * @param bytes complete byte array for {@link SupportedServiceFamiliesDIB}
+     * @return a new immutable {@link SupportedServiceFamiliesDIB}
      */
-    public static SupportedDeviceFamiliesDIB of(final byte[] bytes) {
-        return new SupportedDeviceFamiliesDIB(bytes);
+    public static SupportedServiceFamiliesDIB of(final byte[] bytes) {
+        return new SupportedServiceFamiliesDIB(bytes);
     }
 
     @Override
@@ -136,16 +136,11 @@ public final class SupportedDeviceFamiliesDIB extends AbstractDIB {
 
     @Override
     public String toString(boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.getLength() + " (" + ByteFormatter.formatHex(this.getLength()) + ")")
+        return Strings.toStringHelper(this)
+                .add("length", this.getLength())
                 .add("descriptionType", this.getDescriptionType())
-                .add("serviceFamilies", this.serviceFamilies);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+                .add("serviceFamilies", serviceFamilies)
+                .toString();
     }
 
 }

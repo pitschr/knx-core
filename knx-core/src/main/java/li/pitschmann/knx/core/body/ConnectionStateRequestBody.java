@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,15 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.ChannelIdAware;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Body for Connection State Request
@@ -55,12 +54,12 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class ConnectionStateRequestBody extends AbstractMultiRawData implements RequestBody, ChannelIdAware, ControlChannelRelated {
+public final class ConnectionStateRequestBody implements RequestBody, ChannelIdAware, ControlChannelRelated {
     /**
      * Structure Length for {@link ConnectionStateRequestBody}
      * <p>
      * 1 byte for channel id<br>
-     * 1 byte as reserved<br>
+     * 1 byte not-used / reserved<br>
      * 8 bytes for HPAI<br>
      */
     private static final int STRUCTURE_LENGTH = 10;
@@ -68,11 +67,22 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
     private final HPAI controlEndpoint;
 
     private ConnectionStateRequestBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // bytes[0] => channelId
+                Byte.toUnsignedInt(bytes[0]),
+                // bytes[1] (not-used, reserved)
+                // bytes[2..10] => HPAI
+                HPAI.of(Arrays.copyOfRange(bytes, 2, 10))
+        );
+    }
 
-        this.channelId = Byte.toUnsignedInt(bytes[0]);
-        // bytes[1] -> reserved
-        this.controlEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 2, bytes.length));
+    private ConnectionStateRequestBody(final int channelId, final HPAI controlEndpoint) {
+        Preconditions.checkArgument(channelId >= 0x00 && channelId <= 0xFF,
+                "Incompatible channel id. Expected [0..255] but was: {}", channelId);
+        Preconditions.checkNonNull(controlEndpoint, "Control Endpoint is required.");
+
+        this.channelId = channelId;
+        this.controlEndpoint = controlEndpoint;
     }
 
     /**
@@ -82,6 +92,8 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
     public static ConnectionStateRequestBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new ConnectionStateRequestBody(bytes);
     }
 
@@ -93,31 +105,7 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
      * @return a new immutable {@link ConnectionStateRequestBody}
      */
     public static ConnectionStateRequestBody of(final int channelId, final HPAI controlEndpoint) {
-        // validate
-        if (controlEndpoint == null) {
-            throw new KnxNullPointerException("controlEndpoint");
-        } else if (channelId < 0 || channelId > 0xFF) {
-            throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
-        }
-
-        final var hpaiAsBytes = controlEndpoint.getRawData();
-
-        // create bytes
-        final var bytes = new byte[2 + hpaiAsBytes.length];
-        bytes[0] = (byte) channelId;
-        bytes[1] = 0x00; // reserved
-        System.arraycopy(hpaiAsBytes, 0, bytes, 2, hpaiAsBytes.length);
-
-        return of(bytes);
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+        return new ConnectionStateRequestBody(channelId, controlEndpoint);
     }
 
     @Override
@@ -127,23 +115,52 @@ public final class ConnectionStateRequestBody extends AbstractMultiRawData imple
 
     @Override
     public int getChannelId() {
-        return this.channelId;
+        return channelId;
     }
 
     public HPAI getControlEndpoint() {
-        return this.controlEndpoint;
+        return controlEndpoint;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("channelId", this.channelId + " (" + ByteFormatter.formatHex(this.channelId) + ")")
-                .add("controlEndpoint", this.controlEndpoint.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] getRawData() {
+        return toByteArray();
+    }
+
+    public byte[] toByteArray() {
+        final var hpaiAsBytes = controlEndpoint.getRawData();
+
+        // create bytes
+        final var bytes = new byte[2 + hpaiAsBytes.length];
+        bytes[0] = (byte) channelId;
+        bytes[1] = 0x00; // reserved
+        System.arraycopy(hpaiAsBytes, 0, bytes, 2, hpaiAsBytes.length);
+
+        return bytes;
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("channelId", channelId)
+                .add("controlEndpoint", controlEndpoint)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof ConnectionStateRequestBody) {
+            final var other = (ConnectionStateRequestBody) obj;
+            return Objects.equals(this.channelId, other.channelId)
+                    && Objects.equals(this.controlEndpoint, other.controlEndpoint);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(channelId, controlEndpoint);
     }
 }

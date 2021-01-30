@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ public final class AddressTypeTest extends AbstractKnxByteEnumTest<AddressType> 
     @Test
     @Override
     public void testToString() {
-        assertThat(AddressType.INDIVIDUAL).hasToString("AddressType{name=INDIVIDUAL, friendlyName=Individual Address, code=0 (0x00)}");
-        assertThat(AddressType.GROUP).hasToString("AddressType{name=GROUP, friendlyName=Group Address, code=1 (0x01)}");
+        assertThat(AddressType.INDIVIDUAL).hasToString("AddressType{name=INDIVIDUAL, friendlyName=Individual Address, code=0x00}");
+        assertThat(AddressType.GROUP).hasToString("AddressType{name=GROUP, friendlyName=Group Address, code=0x01}");
     }
 }

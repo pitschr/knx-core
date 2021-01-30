@@ -18,12 +18,12 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.utils.Networker;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,11 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class SearchRequestBodyTest {
+class SearchRequestBodyTest {
 
     /**
-     * Tests the {@link SearchRequestBody#of(HPAI)} and {@link SearchRequestBody#of(byte[])} methods.
-     *
      * <pre>
      * KNX/IP Search Request, Discovery @ 192.168.1.24:63723
      *     KNX/IP Header: Search Request
@@ -56,66 +54,81 @@ public class SearchRequestBodyTest {
      * </pre>
      */
     @Test
-    public void validCases() {
+    @DisplayName("Test valid cases using #of(byte[]) and #of(HPAI)")
+    void validCases() {
+        // create by bytes
+        final var bodyByBytes = SearchRequestBody.of(new byte[]{
+                0x08,                                   // Structure Length
+                0x01,                                   // Host Protocol
+                (byte) 0xC0, (byte) 0xA8, 0x01, 0x18,   // IP Address
+                (byte) 0xF8, (byte) 0xEB                // IP Port Number
+        });
+
         // create
         final var discoveryEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(192, 168, 1, 24), 63723);
         final var body = SearchRequestBody.of(discoveryEndpoint);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
-        assertThat(body.getDiscoveryEndpoint()).isEqualTo(discoveryEndpoint);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.SEARCH_REQUEST);
+        assertThat(body.getDiscoveryEndpoint()).isSameAs(discoveryEndpoint);
 
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
+
+        // toString
+        assertThat(body).hasToString(
+                String.format("SearchRequestBody{discoveryEndpoint=%s}", discoveryEndpoint)
+        );
+    }
+
+    @Test
+    @DisplayName("Test #useDefault()")
+    void testUseDefault() {
         // create by bytes
-        final var bodyByBytes = SearchRequestBody.of(new byte[]{0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x18, (byte) 0xf8, (byte) 0xeb});
+        final var bodyByBytes = SearchRequestBody.of(new byte[]{
+                0x08,                   // Structure Length
+                0x01,                   // Host Protocol
+                0x00, 0x00, 0x00, 0x00, // IP Address
+                0x00, 0x00              // IP Port Number
+        });
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
-
-        // toString
-        assertThat(body).hasToString(String.format("SearchRequestBody{discoveryEndpoint=%s, rawData=0x08 01 C0 A8 01 18 F8 EB}",
-                discoveryEndpoint.toString(false)));
-    }
-
-    /**
-     * Tests the {@link SearchRequestBody#useDefault()} method.
-     *
-     * <pre>
-     * KNX/IP Search Request, Discovery @ 0.0.0.0:0
-     *     KNX/IP Header: Search Request
-     *         Header Length: 6 bytes
-     *         Protocol Version: 1.0
-     *         Service Identifier: Search Request (0x0201)
-     *             Service Family: Core (0x02)
-     *             Service Type: Search Request (0x0201)
-     *         Total Length: 14 bytes
-     *     HPAI Discovery Endpoint: 0.0.0.0:0 UDP
-     *         Structure Length: 8 bytes
-     *         Host Protocol: IPv4 UDP (0x01)
-     *         IP Address: unbound (0.0.0.0)
-     *         Port Number: 0
-     * </pre>
-     */
-    @Test
-    public void validCaseNoArg() {
         // create
+        final var discoveryEndpoint = HPAI.useDefault();
+
         final var body = SearchRequestBody.useDefault();
-        assertThat(body.getRawData()).containsExactly(0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.SEARCH_REQUEST);
+        assertThat(body.getDiscoveryEndpoint()).isSameAs(discoveryEndpoint);
+
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format("SearchRequestBody{discoveryEndpoint=%s, rawData=0x08 01 00 00 00 00 00 00}",
-                HPAI.useDefault().toString(false)));
+        assertThat(body).hasToString(
+                String.format("SearchRequestBody{discoveryEndpoint=%s}", discoveryEndpoint)
+        );
     }
 
-    /**
-     * Tests {@link SearchRequestBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> SearchRequestBody.of((HPAI) null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("discoveryEndpoint");
-
-        // invalid raw data length
-        assertThatThrownBy(() -> SearchRequestBody.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> SearchRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        assertThatThrownBy(() -> SearchRequestBody.of((byte[]) null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> SearchRequestBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '8' but was: 0");
     }
+
+    @Test
+    @DisplayName("Invalid cases for #of(HPAI)")
+    void invalidCases_ofObjects() {
+        // null
+        assertThatThrownBy(() -> SearchRequestBody.of((HPAI) null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Discovery Endpoint is required.");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(SearchRequestBody.class).verify();
+    }
+
 }

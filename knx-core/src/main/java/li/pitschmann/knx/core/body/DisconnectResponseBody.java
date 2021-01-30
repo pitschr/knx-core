@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.ChannelIdAware;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Body for Disconnect Response
@@ -39,7 +39,7 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class DisconnectResponseBody extends AbstractMultiRawData implements ResponseBody, ChannelIdAware, ControlChannelRelated {
+public final class DisconnectResponseBody implements ResponseBody, ChannelIdAware, ControlChannelRelated {
     /**
      * Structure Length for {@link DisconnectResponseBody}
      * <p>
@@ -51,10 +51,21 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     private final Status status;
 
     private DisconnectResponseBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // byte[0] => channel id
+                Byte.toUnsignedInt(bytes[0]),
+                // byte[1] => status
+                Status.valueOf(Byte.toUnsignedInt(bytes[1]))
+        );
+    }
 
-        this.channelId = Byte.toUnsignedInt(bytes[0]);
-        this.status = Status.valueOf(Byte.toUnsignedInt(bytes[1]));
+    private DisconnectResponseBody(final int channelId, final Status status) {
+        Preconditions.checkArgument(channelId >= 0x00 && channelId <= 0xFF,
+                "Incompatible channel id. Expected [0..255] but was: {}", channelId);
+        Preconditions.checkNonNull(status, "Status is required.");
+
+        this.channelId = channelId;
+        this.status = status;
     }
 
     /**
@@ -64,6 +75,8 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
      * @return a new immutable {@link DisconnectResponseBody}
      */
     public static DisconnectResponseBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new DisconnectResponseBody(bytes);
     }
 
@@ -75,28 +88,7 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
      * @return a new immutable {@link DisconnectResponseBody}
      */
     public static DisconnectResponseBody of(final int channelId, final Status status) {
-        // validate
-        if (status == null) {
-            throw new KnxNullPointerException("status");
-        } else if (channelId < 0 || channelId > 0xFF) {
-            throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
-        }
-
-        // create bytes
-        final var bytes = new byte[2];
-        bytes[0] = (byte) channelId;
-        bytes[1] = status.getCodeAsByte();
-
-        return of(bytes);
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+        return new DisconnectResponseBody(channelId, status);
     }
 
     @Override
@@ -114,15 +106,39 @@ public final class DisconnectResponseBody extends AbstractMultiRawData implement
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("channelId", this.channelId + " (" + ByteFormatter.formatHex(this.channelId) + ")")
-                .add("status", this.status);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] getRawData() {
+        return toByteArray();
+    }
+
+    public byte[] toByteArray() {
+        final var bytes = new byte[2];
+        bytes[0] = (byte) channelId;
+        bytes[1] = status.getCodeAsByte();
+        return bytes;
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("channelId", this.channelId)
+                .add("status", this.status)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof DisconnectResponseBody) {
+            final var other = (DisconnectResponseBody) obj;
+            return Objects.equals(this.channelId, other.channelId)
+                    && Objects.equals(this.status, other.status);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(channelId, status);
     }
 }

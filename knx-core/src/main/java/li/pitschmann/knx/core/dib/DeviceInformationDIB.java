@@ -81,9 +81,9 @@ import java.util.stream.IntStream;
  *
  * @author PITSCHR
  */
-public final class DeviceHardwareInformationDIB extends AbstractDIB {
+public final class DeviceInformationDIB extends AbstractDIB {
     /**
-     * Structure Length for {@link DeviceHardwareInformationDIB}
+     * Structure Length for {@link DeviceInformationDIB}
      * <p>
      * 1 byte for Structure Length<br>
      * 1 byte for Description Type Code<br>
@@ -107,7 +107,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
     private final String macAddress;
     private final String deviceFriendlyName;
 
-    private DeviceHardwareInformationDIB(final byte[] rawData) {
+    private DeviceInformationDIB(final byte[] rawData) {
         super(rawData);
 
         // rawData[0] -> length already covered in abstract class DIB
@@ -133,13 +133,13 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
     }
 
     /**
-     * Builds a new {@link DeviceHardwareInformationDIB} instance
+     * Builds a new {@link DeviceInformationDIB} instance
      *
-     * @param bytes complete byte array for {@link DeviceHardwareInformationDIB}
-     * @return a new immutable {@link DeviceHardwareInformationDIB}
+     * @param bytes complete byte array for {@link DeviceInformationDIB}
+     * @return a new immutable {@link DeviceInformationDIB}
      */
-    public static DeviceHardwareInformationDIB of(final byte[] bytes) {
-        return new DeviceHardwareInformationDIB(bytes);
+    public static DeviceInformationDIB of(final byte[] bytes) {
+        return new DeviceInformationDIB(bytes);
     }
 
     @Override
@@ -193,7 +193,7 @@ public final class DeviceHardwareInformationDIB extends AbstractDIB {
                 .add("descriptionType", this.getDescriptionType())
                 .add("mediumType", this.mediumType)
                 .add("programmingMode", this.programmingMode)
-                .add("individualAddress", this.individualAddress.toString(false))
+                .add("individualAddress", this.individualAddress)
                 .add("projectNumber", this.projectNumber)
                 .add("projectInstallationIdentifier", this.projectInstallationIdentifier)
                 .add("serialNumber", this.serialNumber)

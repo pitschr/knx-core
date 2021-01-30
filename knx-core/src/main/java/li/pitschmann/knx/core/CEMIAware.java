@@ -16,30 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.address;
+package li.pitschmann.knx.core;
 
-import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.cemi.CEMI;
 
 /**
- * KNX Address interface for {@link IndividualAddress} and
- * {@link GroupAddress} implementations.
+ * Interface for KNX packet bodies which are aware of {@link CEMI}.
  *
  * @author PITSCHR
  */
-public interface KnxAddress extends MultiRawDataAware {
-    int STRUCTURE_LENGTH = 2;
-
+public interface CEMIAware {
     /**
-     * Returns the {@link AddressType} of current implementation
+     * Returns the {@link CEMI} which represents the cEMI message format
+     * in a generic structure for KNX Net/IP medium.
      *
-     * @return {@link AddressType}
+     * @return cEMI message
      */
-    AddressType getAddressType();
-
-    /**
-     * Returns the address as String
-     *
-     * @return address in human-friendly format.
-     */
-    String getAddress();
+    CEMI getCEMI();
 }

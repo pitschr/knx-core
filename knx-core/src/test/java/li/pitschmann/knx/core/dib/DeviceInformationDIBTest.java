@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Test case for {@link DeviceHardwareInformationDIB}
+ * Test case for {@link DeviceInformationDIB}
  *
  * @author PITSCHR
  */
@@ -51,7 +51,7 @@ public final class DeviceInformationDIBTest {
     };
 
     /**
-     * Tests {@link DeviceHardwareInformationDIB#of(byte[])}
+     * Tests {@link DeviceInformationDIB#of(byte[])}
      *
      * <pre>
      *  DIB: DEVICE_INFO
@@ -74,7 +74,7 @@ public final class DeviceInformationDIBTest {
     @Test
     public void valueOfMDT() {
         // create by bytes
-        final var infoByValueOf = DeviceHardwareInformationDIB.of(BYTES);
+        final var infoByValueOf = DeviceInformationDIB.of(BYTES);
 
         // compare
         assertThat(infoByValueOf.getLength()).isEqualTo(54);
@@ -91,7 +91,7 @@ public final class DeviceInformationDIBTest {
     }
 
     /**
-     * Tests {@link DeviceHardwareInformationDIB#of(byte[])}
+     * Tests {@link DeviceInformationDIB#of(byte[])}
      *
      * <pre>
      * 	DIB: DEVICE_INFO
@@ -114,7 +114,7 @@ public final class DeviceInformationDIBTest {
     @Test
     public void valueOfWireGate() {
         // create by bytes
-        final var infoByValueOf = DeviceHardwareInformationDIB
+        final var infoByValueOf = DeviceInformationDIB
                 .of(new byte[]{0x36, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x36, 0x01, 0x02, 0x00, 0x00, 0x00, (byte) 0xe0, 0x00,
                         0x17, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x69, 0x62, 0x64, 0x20, 0x6f, 0x6e, 0x20, 0x57, 0x69, 0x72,
                         0x65, 0x47, 0x61, 0x74, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
@@ -134,27 +134,27 @@ public final class DeviceInformationDIBTest {
     }
 
     /**
-     * Tests {@link DeviceHardwareInformationDIB} with invalid arguments
+     * Tests {@link DeviceInformationDIB} with invalid arguments
      */
     @Test
     public void invalidCases() {
         // incorrect size of bytes
-        assertThatThrownBy(() -> DeviceHardwareInformationDIB
+        assertThatThrownBy(() -> DeviceInformationDIB
                 .of(Bytes.fillByteArray(new byte[55], new byte[]{0x37, 0x01, 0x02}, FillDirection.LEFT_TO_RIGHT)))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
     }
 
     /**
-     * Test {@link DeviceHardwareInformationDIB#toString()}
+     * Test {@link DeviceInformationDIB#toString()}
      */
     @Test
     public void testToString() {
-        assertThat(DeviceHardwareInformationDIB.of(BYTES)).hasToString(String.format(
-                "DeviceHardwareInformationDIB{"
+        assertThat(DeviceInformationDIB.of(BYTES)).hasToString(String.format(
+                "DeviceInformationDIB{"
                         + "length=54 (0x36), descriptionType=%s, mediumType=%s, programmingMode=false, individualAddress=%s, "
                         + "projectNumber=582, projectInstallationIdentifier=4, serialNumber=0x00 88 99 AA BB CC, "
                         + "multicastAddress=224.0.23.12, macAddress=01:02:03:04:05:AA, deviceFriendlyName=MDT KNX IP Router, rawData=%s}",
-                DescriptionType.DEVICE_INFO, MediumType.TP, IndividualAddress.of(new byte[]{0x10, 0x00}).toString(false),
+                DescriptionType.DEVICE_INFO, MediumType.TP, IndividualAddress.of(new byte[]{0x10, 0x00}),
                 ByteFormatter.formatHexAsString(BYTES)));
     }
 }

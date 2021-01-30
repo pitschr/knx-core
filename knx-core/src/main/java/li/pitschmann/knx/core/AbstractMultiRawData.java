@@ -18,10 +18,12 @@
 
 package li.pitschmann.knx.core;
 
+import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxException;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Abstract class representing raw data of KNX packet with byte array.
@@ -39,22 +41,7 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
 
     @Override
     public byte[] getRawData() {
-        return this.rawData.clone();
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj != null && this.getClass().equals(obj.getClass())) {
-            return Arrays.equals(this.getRawData(), ((AbstractMultiRawData) obj).getRawData());
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(this.getRawData());
+        return rawData.clone();
     }
 
     @Override
@@ -79,4 +66,19 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
      * @return string representation with or without raw data
      */
     public abstract String toString(final boolean inclRawData);
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj != null && this.getClass().equals(obj.getClass())) {
+            return Arrays.equals(this.rawData, ((AbstractMultiRawData) obj).rawData);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(rawData);
+    }
 }

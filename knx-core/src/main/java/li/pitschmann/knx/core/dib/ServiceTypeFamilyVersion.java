@@ -24,7 +24,7 @@ import java.util.Objects;
 
 /**
  * Service Type Family and Version. Designed to be used
- * for {@link SupportedDeviceFamiliesDIB}.
+ * for {@link SupportedServiceFamiliesDIB}.
  *
  * @author PITSCHR
  */

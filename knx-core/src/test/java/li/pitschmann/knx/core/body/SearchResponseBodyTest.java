@@ -18,67 +18,57 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
-import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
-import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.dib.DeviceInformationDIB;
+import li.pitschmann.knx.core.dib.SupportedServiceFamiliesDIB;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;
-import org.junit.jupiter.api.BeforeEach;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link SearchResponseBody}
  *
  * @author PITSCHR
  */
-public class SearchResponseBodyTest {
-    private HPAI controlEndpoint;
-    private DeviceHardwareInformationDIB deviceHardwareInformation;
-    private SupportedDeviceFamiliesDIB supportedDeviceFamilies;
-
-    @BeforeEach
-    public void before() {
-        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(6, 2, 77, 4), 8332);
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.of(new byte[]{ //
-                0x36, // Structure Length
-                0x01, // Description Type Code
-                0x02, // KNX medium
-                0x00, // Device Status
-                0x10, 0x00, // KNX Individual Address
-                0x00, 0x00, // Project-Installation identifier
-                0x00, (byte) 0x88, (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, // KNX device Serial Number
-                (byte) 0xe0, 0x00, 0x17, 0x0c, // KNX device routing multicast address
-                0x01, 0x02, 0x03, 0x04, 0x05, (byte) 0xAA, // KNX device MAC address
-                0x4d, 0x44, 0x54, 0x20, 0x4b, 0x4e, 0x58, 0x20, // Device Friendly Name
-                0x49, 0x50, 0x20, 0x52, 0x6f, 0x75, 0x74, 0x65, // Device Friendly Name (continued)
-                0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
-        });
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.of(new byte[]{ //
-                0x0a, // Structure Length
-                0x02, // Description Type Code
-                0x02, 0x01, // Service Family ID + Version #1
-                0x03, 0x02, // Service Family ID + Version #2
-                0x04, 0x01, // Service Family ID + Version #3
-                0x05, 0x03 // Service Family ID + Version #4
-        });
-    }
+class SearchResponseBodyTest {
+    private HPAI controlEndpoint = HPAI.of(
+            HostProtocol.IPV4_UDP,
+            Networker.getByAddress(6, 2, 77, 4),
+            8332
+    );
+    private DeviceInformationDIB deviceInformation = DeviceInformationDIB.of(new byte[]{ //
+            0x36, // Structure Length
+            0x01, // Description Type Code
+            0x02, // KNX medium
+            0x00, // Device Status
+            0x10, 0x00, // KNX Individual Address
+            0x00, 0x00, // Project-Installation identifier
+            0x00, (byte) 0x88, (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, // KNX device Serial Number
+            (byte) 0xe0, 0x00, 0x17, 0x0c, // KNX device routing multicast address
+            0x01, 0x02, 0x03, 0x04, 0x05, (byte) 0xAA, // KNX device MAC address
+            0x4d, 0x44, 0x54, 0x20, 0x4b, 0x4e, 0x58, 0x20, // Device Friendly Name
+            0x49, 0x50, 0x20, 0x52, 0x6f, 0x75, 0x74, 0x65, // Device Friendly Name (continued)
+            0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
+    });
+    private SupportedServiceFamiliesDIB supportedServiceFamilies = SupportedServiceFamiliesDIB.of(new byte[]{ //
+            0x0a, // Structure Length
+            0x02, // Description Type Code
+            0x02, 0x01, // Service Family ID + Version #1
+            0x03, 0x02, // Service Family ID + Version #2
+            0x04, 0x01, // Service Family ID + Version #3
+            0x05, 0x03  // Service Family ID + Version #4
+    });
 
     /**
-     * Tests the
-     * {@link SearchResponseBody#of(HPAI, DeviceHardwareInformationDIB, SupportedDeviceFamiliesDIB)}
-     * and {@link SearchResponseBody#of(byte[])} methods.
-     *
      * <pre>
      * 	KNX/IP
      * 	    Header
@@ -108,69 +98,114 @@ public class SearchResponseBodyTest {
      * 	            Service ID: KNX/IP Core (0x02)
      * 	                Version: 1
      * 	            Service ID: KNX device Management (0x03)
-     * 	                Version: 1
+     * 	                Version: 2
      * 	            Service ID: KNX/IP Tunneling (0x04)
      * 	                Version: 1
      * 	            Service ID: KNX/IP Routing (0x05)
-     * 	                Version: 1
+     * 	                Version: 3
      * </pre>
      */
     @Test
-    public void validCases() {
-        // create
-        final var body = SearchResponseBody.of(this.controlEndpoint, this.deviceHardwareInformation, this.supportedDeviceFamilies);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
-        assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
-        assertThat(body.getDeviceInformation()).isEqualTo(this.deviceHardwareInformation);
-        assertThat(body.getSupportedDeviceFamilies()).isEqualTo(this.supportedDeviceFamilies);
-
+    @DisplayName("Test valid cases using #of(byte[]) and #of(HPAI, DeviceInformationDIB, SupportedServiceFamiliesDIB)")
+    void validCases() {
         // create by bytes
-        byte[] bytes = Bytes.concat(this.controlEndpoint.getRawData(), this.deviceHardwareInformation.getRawData(), this.supportedDeviceFamilies.getRawData());
-        final var bodyByBytes = SearchResponseBody.of(bytes);
+        final var bodyByBytes = SearchResponseBody.of(
+                Bytes.concat(
+                        controlEndpoint.getRawData(),
+                        deviceInformation.getRawData(),
+                        supportedServiceFamilies.getRawData()
+                )
+        );
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+        // create
+        final var body = SearchResponseBody.of(controlEndpoint, deviceInformation, supportedServiceFamilies);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.SEARCH_RESPONSE);
+        assertThat(body.getControlEndpoint()).isSameAs(controlEndpoint);
+        assertThat(body.getDeviceInformation()).isSameAs(deviceInformation);
+        assertThat(body.getSupportedDeviceFamilies()).isSameAs(supportedServiceFamilies);
+
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format(
-                "SearchResponseBody{controlEndpoint=%s, deviceHardwareInformation=%s, supportedDeviceFamilies=%s, rawData=%s}",
-                this.controlEndpoint.toString(false), //
-                this.deviceHardwareInformation.toString(false), //
-                this.supportedDeviceFamilies.toString(false), //
-                ByteFormatter.formatHexAsString(bytes)));
+        assertThat(body).hasToString(
+                String.format("SearchResponseBody{controlEndpoint=%s, deviceInformation=%s, supportedServiceFamilies=%s}",
+                        controlEndpoint, //
+                        deviceInformation, //
+                        supportedServiceFamilies //
+                )
+        );
     }
 
-    /**
-     * Tests {@link SearchResponseBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> SearchResponseBody.of(null, this.deviceHardwareInformation, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("controlEndpoint");
-        assertThatThrownBy(() -> SearchResponseBody.of(this.controlEndpoint, null, this.supportedDeviceFamilies)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("deviceHardwareInformation");
-        assertThatThrownBy(() -> SearchResponseBody.of(this.controlEndpoint, this.deviceHardwareInformation, null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("supportedDeviceFamilies");
-
-        // invalid raw data length
-        assertThatThrownBy(() -> SearchResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-
-        // not proper size of byte array provided
-        assertThatThrownBy(() -> SearchResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class);
-
-        // size if byte array must be divisible by two
-        assertThatThrownBy(() -> SearchResponseBody.of(new byte[59])).isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessageContaining("The size of 'rawData' must be divisible by two.");
-
-        // missing device information DIB
-        final var bytesNoDeviceHardwareInfo = Bytes.concat(this.controlEndpoint.getRawData(), new byte[DeviceHardwareInformationDIB.STRUCTURE_LENGTH]);//Bytes.padRight(new byte[]{0x36, 0x02, 0x02}, (byte)0x00, DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
-        assertThatThrownBy(() -> SearchResponseBody.of(bytesNoDeviceHardwareInfo)).isInstanceOf(KnxException.class)
-                .hasMessage("Could not find device hardware information DIB array.");
-
-        // missing supported device families DIB
-        final var bytesNoDeviceFamilies = Bytes.concat(this.controlEndpoint.getRawData(), this.deviceHardwareInformation.getRawData(), new byte[2]);//Bytes.padRight(new byte[]{0x36, 0x02, 0x02}, (byte)0x00, DeviceHardwareInformationDIB.STRUCTURE_LENGTH));
-        assertThatThrownBy(() -> SearchResponseBody.of(bytesNoDeviceFamilies)).isInstanceOf(KnxException.class)
-                .hasMessage("Could not find supported device families DIB array.");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        assertThatThrownBy(() -> SearchResponseBody.of(null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> SearchResponseBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [58..254] but was: 0");
     }
+
+    @Test
+    @DisplayName("No Device Information for #of(byte[])")
+    void invalidCase_NoDeviceInfo() {
+        final var bytes = Bytes.concat(
+                // Control Endpoint
+                controlEndpoint.getRawData(),
+                // Device Information
+                deviceInformation.getRawData(),
+                // Supported Service Families
+                supportedServiceFamilies.getRawData()
+        );
+        // change byte of Device Information Description Type which is on 9th byte array position
+        bytes[9] = 0x00;
+
+        // device information DIB not found because DEVICE_INFO has 0x01
+        assertThatThrownBy(() -> SearchResponseBody.of(bytes))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure. No Device Information DIB.");
+    }
+
+    @Test
+    @DisplayName("No Supported Service Families for #of(byte[])")
+    void invalidCase_NoSupportedServiceFamilies() {
+        final var bytes = Bytes.concat(
+                // Control Endpoint
+                controlEndpoint.getRawData(),
+                // Device Information
+                deviceInformation.getRawData(),
+                // Supported Service Families
+                supportedServiceFamilies.getRawData()
+        );
+        // change byte of Supported Service Families Description Type which is on 63th byte array position
+        bytes[63] = 0x00;
+
+        // supported service families DIB not found because SUPPORTED_SERVICE_FAMILIES has 0x02
+        assertThatThrownBy(() -> SearchResponseBody.of(bytes))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure. No Supported Service Families DIB.");
+    }
+
+    @Test
+    @DisplayName("Invalid cases for #of(HPAI, DeviceInformationDIB, SupportedServiceFamiliesDIB)")
+    void invalidCases_ofObjects() {
+        // null
+        assertThatThrownBy(() -> SearchResponseBody.of(null, mock(DeviceInformationDIB.class), mock(SupportedServiceFamiliesDIB.class)))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Control Endpoint is required.");
+        assertThatThrownBy(() -> SearchResponseBody.of(mock(HPAI.class), null, mock(SupportedServiceFamiliesDIB.class)))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("DIB about Device Information is required.");
+        assertThatThrownBy(() -> SearchResponseBody.of(mock(HPAI.class), mock(DeviceInformationDIB.class), null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("DIB about Supported Service Families is required.");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(SearchResponseBody.class).verify();
+    }
+
 }

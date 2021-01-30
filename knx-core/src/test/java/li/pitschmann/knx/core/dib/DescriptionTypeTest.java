@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class DescriptionTypeTest extends AbstractKnxByteEnumTest<DescriptionType> {
     @Override
     protected int numberOfElements() {
-        return 6;
+        return 7;
     }
 
     @Test
@@ -43,6 +43,15 @@ public final class DescriptionTypeTest extends AbstractKnxByteEnumTest<Descripti
         assertThat(DescriptionType.valueOf(0x04)).isEqualTo(DescriptionType.IP_CURRENT_CONFIG);
         assertThat(DescriptionType.valueOf(0x05)).isEqualTo(DescriptionType.KNX_ADDRESSES);
         assertThat(DescriptionType.valueOf(0xFE)).isEqualTo(DescriptionType.MANUFACTURER_DATA);
+        assertThat(DescriptionType.valueOf(0xFF)).isEqualTo(DescriptionType.UNKNOWN);
+    }
+
+    @Test
+    @Override
+    public void invalidValueOf() {
+        assertThat(DescriptionType.valueOf(0x00)).isEqualTo(DescriptionType.UNKNOWN);
+        assertThat(DescriptionType.valueOf(0x80)).isEqualTo(DescriptionType.UNKNOWN);
+        assertThat(DescriptionType.valueOf(0x90)).isEqualTo(DescriptionType.UNKNOWN);
     }
 
     @Test
@@ -54,11 +63,12 @@ public final class DescriptionTypeTest extends AbstractKnxByteEnumTest<Descripti
         assertThat(DescriptionType.IP_CURRENT_CONFIG.getFriendlyName()).isEqualTo("IP Current Configuration");
         assertThat(DescriptionType.KNX_ADDRESSES.getFriendlyName()).isEqualTo("KNX addresses");
         assertThat(DescriptionType.MANUFACTURER_DATA.getFriendlyName()).isEqualTo("Manufacturer Data");
+        assertThat(DescriptionType.UNKNOWN.getFriendlyName()).isEqualTo("Unknown Description Type");
     }
 
     @Test
     @Override
     public void testToString() {
-        assertThat(DescriptionType.DEVICE_INFO).hasToString("DescriptionType{name=DEVICE_INFO, friendlyName=Device information, code=1 (0x01)}");
+        assertThat(DescriptionType.DEVICE_INFO).hasToString("DescriptionType{name=DEVICE_INFO, friendlyName=Device information, code=1}");
     }
 }

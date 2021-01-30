@@ -83,7 +83,7 @@ public class ConnectRequestTest {
         } catch (final KnxChannelIdNotReceivedException e) {
             assertThat(e.getRequestBody()).isNotNull();
             assertThat(e.getResponseBody()).isNotNull();
-            assertThat(e.getResponseBody().getStatus()).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
+            assertThat(e.getResponseBody().getStatus()).isEqualTo(Status.NO_MORE_CONNECTIONS);
             // OK - we can abort mock server
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

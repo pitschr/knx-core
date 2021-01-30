@@ -32,22 +32,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Test case for {@link SupportedDeviceFamiliesDIB}
+ * Test case for {@link SupportedServiceFamiliesDIB}
  *
  * @author PITSCHR
  */
-public final class SupportedDeviceFamiliesDIBTest {
+final class SupportedServiceFamiliesDIBTest {
     private static final byte[] BYTES = new byte[]{ //
             0x0a, // Structure Length
             0x02, // Description Type Code
             0x02, 0x01, // Service Family ID + Version #1
             0x03, 0x02, // Service Family ID + Version #2
             0x04, 0x01, // Service Family ID + Version #1
-            0x05, 0x03 // Service Family ID + Version #3
+            0x05, 0x03  // Service Family ID + Version #3
     };
 
     /**
-     * Tests {@link SupportedDeviceFamiliesDIB#of(byte[])}
+     * Tests {@link SupportedServiceFamiliesDIB#of(byte[])}
      *
      * <pre>
      * 	DIB: SUPP_SVC_FAMILIES
@@ -65,9 +65,9 @@ public final class SupportedDeviceFamiliesDIBTest {
      */
     @Test
     @DisplayName("OK: Test with Core, DevMgmt, Tunneling and Routing Service Type Families")
-    public void validCases() {
+    void validCases() {
         // create by bytes
-        final var supportedDevicesFamiliesByValueOf = SupportedDeviceFamiliesDIB.of(BYTES);
+        final var supportedDevicesFamiliesByValueOf = SupportedServiceFamiliesDIB.of(BYTES);
 
         // compare
         assertThat(supportedDevicesFamiliesByValueOf.getLength()).isEqualTo(10);
@@ -96,26 +96,26 @@ public final class SupportedDeviceFamiliesDIBTest {
 
     @Test
     @DisplayName("ERROR: Test with invalid arguments")
-    public void invalidCases() {
+    void invalidCases() {
         // null check
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(null)).isInstanceOf(KnxNullPointerException.class)
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(null)).isInstanceOf(KnxNullPointerException.class)
                 .hasMessageContaining("rawData");
 
-        // specific for supported device families DIB
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
+        // specific for supported service families DIB
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
                 .hasMessageContaining("divisible by two");
 
         // incorrect size of bytes
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(new byte[]{0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[]{0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
                 .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> SupportedDeviceFamiliesDIB.of(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
                 .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
     }
 
     @Test
     @DisplayName("Test if has supported service type family")
-    public void testServiceTypeFamily() {
-        final var dib = SupportedDeviceFamiliesDIB.of(
+    void testServiceTypeFamily() {
+        final var dib = SupportedServiceFamiliesDIB.of(
                 new byte[]{ //
                         0x06, // Structure Length
                         0x02, // Description Type Code
@@ -132,18 +132,18 @@ public final class SupportedDeviceFamiliesDIBTest {
     }
 
     @Test
-    @DisplayName("Test #toString() and #toString(boolean)")
-    public void testToString() {
-        final var supportedDevicesFamiliesDIB = SupportedDeviceFamiliesDIB.of(BYTES);
+    @DisplayName("Test #toString()")
+    void testToString() {
+        final var supportedDevicesFamiliesDIB = SupportedServiceFamiliesDIB.of(BYTES);
 
-        final var familyVersions = new ArrayList<ServiceTypeFamilyVersion>();
-        familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.CORE, 1));
-        familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.DEVICE_MANAGEMENT, 2));
-        familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.TUNNELING, 1));
-        familyVersions.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.ROUTING, 3));
+        final var serviceFamilies = new ArrayList<ServiceTypeFamilyVersion>();
+        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.CORE, 1));
+        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.DEVICE_MANAGEMENT, 2));
+        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.TUNNELING, 1));
+        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.ROUTING, 3));
 
-        assertThat(supportedDevicesFamiliesDIB)
-                .hasToString(String.format("SupportedDeviceFamiliesDIB{length=10 (0x0A), descriptionType=%s, serviceFamilies=%s, rawData=%s}",
-                        DescriptionType.SUPPORTED_SERVICE_FAMILIES, familyVersions, ByteFormatter.formatHexAsString(BYTES)));
+        assertThat(supportedDevicesFamiliesDIB).hasToString(
+                String.format("SupportedServiceFamiliesDIB{length=10, descriptionType=%s, serviceFamilies=%s}",
+                        DescriptionType.SUPPORTED_SERVICE_FAMILIES, serviceFamilies));
     }
 }

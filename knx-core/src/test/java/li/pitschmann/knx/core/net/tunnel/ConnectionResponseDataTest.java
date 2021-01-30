@@ -82,12 +82,12 @@ public final class ConnectionResponseDataTest {
     @Test
     public void testToString() {
         assertThat(ConnectionResponseData.of(TEST_ADDRESS))
-                .hasToString(String.format("ConnectionResponseData{length=4 (0x04), connectionType=%s, address=%s, rawData=0x04 04 FF FF}",
-                        ConnectionType.TUNNEL_CONNECTION, TEST_ADDRESS.toString(false)));
+                .hasToString(String.format("ConnectionResponseData{length=4, connectionType=%s, address=%s}",
+                        ConnectionType.TUNNEL_CONNECTION, TEST_ADDRESS));
 
         assertThat(ConnectionResponseData.of(new byte[]{0x04, 0x06, 0x16, 0x63}).toString(false)).hasToString(String.format(
-                "ConnectionResponseData{length=4 (0x04), connectionType=%s, address=%s}", ConnectionType.REMOTE_LOGGING_CONNECTION,
-                IndividualAddress.of(new byte[]{0x16, 0x63}).toString(false)));
+                "ConnectionResponseData{length=4, connectionType=%s, address=%s}", ConnectionType.REMOTE_LOGGING_CONNECTION,
+                IndividualAddress.of(new byte[]{0x16, 0x63})));
 
     }
 }

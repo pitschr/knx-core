@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,10 @@ public enum AddressType implements KnxByteEnum {
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
                 .add("name", name())
-                .add("friendlyName", this.friendlyName)
-                .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")
+                .add("friendlyName", friendlyName)
+                .add("code", ByteFormatter.formatHex(code))
                 .toString();
-        // @formatter:on
     }
 }

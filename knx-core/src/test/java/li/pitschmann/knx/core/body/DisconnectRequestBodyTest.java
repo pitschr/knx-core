@@ -18,38 +18,26 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.utils.Networker;
-import org.junit.jupiter.api.BeforeEach;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link DisconnectRequestBody}
  *
  * @author PITSCHR
  */
-public class DisconnectRequestBodyTest {
-    // prepare
-    private int channelId;
-    private HPAI controlEndpoint;
-
-    @BeforeEach
-    public void before() {
-        this.channelId = 10;
-        this.controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(5, 5, 5, 5), 58702);
-    }
+class DisconnectRequestBodyTest {
 
     /**
-     * Tests the {@link DisconnectRequestBody#of(int, HPAI)} and {@link DisconnectRequestBody#of(byte[])}
-     * methods.
-     *
      * <pre>
      * 	KNX/IP
      * 	    Header
@@ -68,42 +56,69 @@ public class DisconnectRequestBodyTest {
      * </pre>
      */
     @Test
-    public void validCases() {
-        // create
-        final var body = DisconnectRequestBody.of(this.channelId, this.controlEndpoint);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
-        assertThat(body.getChannelId()).isEqualTo(this.channelId);
-        assertThat(body.getControlEndpoint()).isEqualTo(this.controlEndpoint);
-
+    @DisplayName("Test valid cases using #of(byte[]) and #of(int, HPAI)")
+    void validCases() {
         // create by bytes
         final var bodyByBytes = DisconnectRequestBody
-                .of(new byte[]{0x0A, 0x00, 0x08, 0x01, 0x05, 0x05, 0x05, 0x05, (byte) 0xe5, 0x4e});
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+                .of(new byte[]{
+                        0x0A,                   // Communication Channel ID
+                        0x00,                   // (not-used, reserved)
+                        // Control Endpoint (HPAI)
+                        0x08,                   // Structure Length
+                        0x01,                   // Host Protocol Code
+                        0x05, 0x05, 0x05, 0x05, // IP Address
+                        (byte) 0xe5, 0x4e       // IP Port
+                });
+
+        // create
+        final var channelId = 10;
+        final var controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(5, 5, 5, 5), 58702);
+
+        final var body = DisconnectRequestBody.of(channelId, controlEndpoint);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.DISCONNECT_REQUEST);
+        assertThat(body.getChannelId()).isEqualTo(channelId);
+        assertThat(body.getControlEndpoint()).isSameAs(controlEndpoint);
+
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
         assertThat(body).hasToString(
-                String.format("DisconnectRequestBody{channelId=10 (0x0A), controlEndpoint=%s, rawData=0x0A 00 08 01 05 05 05 05 E5 4E}",
-                        this.controlEndpoint.toString(false)));
+                String.format("DisconnectRequestBody{channelId=10, controlEndpoint=%s}", controlEndpoint)
+        );
     }
 
-    /**
-     * Tests {@link DisconnectRequestBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> DisconnectRequestBody.of(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("controlEndpoint");
-
-        // invalid channel id
-        assertThatThrownBy(() -> DisconnectRequestBody.of(-1, this.controlEndpoint)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> DisconnectRequestBody.of(0xFF + 1, this.controlEndpoint)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("channelId");
-
-        // invalid raw data length
-        assertThatThrownBy(() -> DisconnectRequestBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> DisconnectRequestBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        assertThatThrownBy(() -> DisconnectRequestBody.of(null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> DisconnectRequestBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '10' but was: 0");
     }
+
+    @Test
+    @DisplayName("Invalid cases for #of(int, HPAI)")
+    void invalidCases_ofObjects() {
+        // null
+        assertThatThrownBy(() -> DisconnectRequestBody.of(0, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Control Endpoint is required.");
+
+        // invalid range
+        assertThatThrownBy(() -> DisconnectRequestBody.of(-1, mock(HPAI.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: -1");
+        assertThatThrownBy(() -> DisconnectRequestBody.of(0xFF + 1, mock(HPAI.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: 256");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(DisconnectRequestBody.class).verify();
+    }
+
 }

@@ -49,7 +49,7 @@ public class DefaultConnectStrategy implements ConnectStrategy {
      * @return status
      */
     protected Status getStatus() {
-        return Status.E_NO_ERROR;
+        return Status.NO_ERROR;
     }
 
     /**

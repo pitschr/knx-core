@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,54 +38,54 @@ public final class StatusTest extends AbstractKnxByteEnumTest<Status> {
     @Override
     public void validValueOf() {
         // 0x00 .. 0x10
-        assertThat(Status.valueOf(0x00)).isEqualTo(Status.E_NO_ERROR);
-        assertThat(Status.valueOf(0x01)).isEqualTo(Status.E_HOST_PROTOCOL_TYPE);
-        assertThat(Status.valueOf(0x02)).isEqualTo(Status.E_VERSION_NOT_SUPPORTED);
-        assertThat(Status.valueOf(0x04)).isEqualTo(Status.E_SEQUENCE_NUMBER);
+        assertThat(Status.valueOf(0x00)).isEqualTo(Status.NO_ERROR);
+        assertThat(Status.valueOf(0x01)).isEqualTo(Status.HOST_PROTOCOL_TYPE);
+        assertThat(Status.valueOf(0x02)).isEqualTo(Status.VERSION_NOT_SUPPORTED);
+        assertThat(Status.valueOf(0x04)).isEqualTo(Status.SEQUENCE_NUMBER);
         // 0x20 .. 0x30
-        assertThat(Status.valueOf(0x21)).isEqualTo(Status.E_CONNECTION_ID);
-        assertThat(Status.valueOf(0x22)).isEqualTo(Status.E_CONNECTION_TYPE);
-        assertThat(Status.valueOf(0x23)).isEqualTo(Status.E_CONNECTION_OPTION);
-        assertThat(Status.valueOf(0x24)).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
-        assertThat(Status.valueOf(0x26)).isEqualTo(Status.E_DATA_CONNECTION);
-        assertThat(Status.valueOf(0x27)).isEqualTo(Status.E_KNX_CONNECTION);
-        assertThat(Status.valueOf(0x29)).isEqualTo(Status.E_TUNNELING_LAYER);
+        assertThat(Status.valueOf(0x21)).isEqualTo(Status.CONNECTION_ID);
+        assertThat(Status.valueOf(0x22)).isEqualTo(Status.CONNECTION_TYPE);
+        assertThat(Status.valueOf(0x23)).isEqualTo(Status.CONNECTION_OPTION);
+        assertThat(Status.valueOf(0x24)).isEqualTo(Status.NO_MORE_CONNECTIONS);
+        assertThat(Status.valueOf(0x26)).isEqualTo(Status.DATA_CONNECTION);
+        assertThat(Status.valueOf(0x27)).isEqualTo(Status.KNX_CONNECTION);
+        assertThat(Status.valueOf(0x29)).isEqualTo(Status.TUNNELING_LAYER);
         // else
-        assertThat(Status.valueOf(0xFF)).isEqualTo(Status.E_UNDEFINED_STATUS);
+        assertThat(Status.valueOf(0xFF)).isEqualTo(Status.UNKNOWN);
     }
 
     @Test
     @Override
     public void invalidValueOf() {
         // doesn't exists --> fallback to undefined status
-        assertThat(Status.valueOf(0xEE)).isEqualTo(Status.E_UNDEFINED_STATUS);
+        assertThat(Status.valueOf(0xEE)).isEqualTo(Status.UNKNOWN);
     }
 
     @Test
     @Override
     public void friendlyName() {
         // 0x00 .. 0x10
-        assertThat(Status.E_NO_ERROR.getFriendlyName()).isEqualTo("Operation successful");
-        assertThat(Status.E_HOST_PROTOCOL_TYPE.getFriendlyName()).isEqualTo("Host Protocol type not supported");
-        assertThat(Status.E_VERSION_NOT_SUPPORTED.getFriendlyName()).isEqualTo("Protocol version not supported");
-        assertThat(Status.E_SEQUENCE_NUMBER.getFriendlyName()).isEqualTo("Sequence number out of order");
+        assertThat(Status.NO_ERROR.getFriendlyName()).isEqualTo("Operation successful");
+        assertThat(Status.HOST_PROTOCOL_TYPE.getFriendlyName()).isEqualTo("Host Protocol type not supported");
+        assertThat(Status.VERSION_NOT_SUPPORTED.getFriendlyName()).isEqualTo("Protocol version not supported");
+        assertThat(Status.SEQUENCE_NUMBER.getFriendlyName()).isEqualTo("Sequence number out of order");
         // 0x20 .. 0x30
-        assertThat(Status.E_CONNECTION_ID.getFriendlyName()).isEqualTo("No active connection with specified id");
-        assertThat(Status.E_CONNECTION_TYPE.getFriendlyName()).isEqualTo("Connection type not supported");
-        assertThat(Status.E_CONNECTION_OPTION.getFriendlyName()).isEqualTo("Connection option not supported");
-        assertThat(Status.E_NO_MORE_CONNECTIONS.getFriendlyName()).isEqualTo("All connections already used");
-        assertThat(Status.E_DATA_CONNECTION.getFriendlyName()).isEqualTo("Error in data connection for specified id");
-        assertThat(Status.E_KNX_CONNECTION.getFriendlyName()).isEqualTo("Error in KNX connection for specified id");
-        assertThat(Status.E_TUNNELING_LAYER.getFriendlyName()).isEqualTo("Requested KNX/IP Tunneling layer not supported");
+        assertThat(Status.CONNECTION_ID.getFriendlyName()).isEqualTo("No active connection with specified id");
+        assertThat(Status.CONNECTION_TYPE.getFriendlyName()).isEqualTo("Connection type not supported");
+        assertThat(Status.CONNECTION_OPTION.getFriendlyName()).isEqualTo("Connection option not supported");
+        assertThat(Status.NO_MORE_CONNECTIONS.getFriendlyName()).isEqualTo("All connections already used");
+        assertThat(Status.DATA_CONNECTION.getFriendlyName()).isEqualTo("Error in data connection for specified id");
+        assertThat(Status.KNX_CONNECTION.getFriendlyName()).isEqualTo("Error in KNX connection for specified id");
+        assertThat(Status.TUNNELING_LAYER.getFriendlyName()).isEqualTo("Requested KNX/IP Tunneling layer not supported");
         // else
-        assertThat(Status.E_UNDEFINED_STATUS.getFriendlyName()).isEqualTo("Undefined status");
+        assertThat(Status.UNKNOWN.getFriendlyName()).isEqualTo("Unknown status");
     }
 
     @Test
     @Override
     public void testToString() {
-        assertThat(Status.E_NO_ERROR).hasToString("Status{name=E_NO_ERROR, friendlyName=Operation successful, code=0 (0x00)}");
-        assertThat(Status.E_NO_MORE_CONNECTIONS)
-                .hasToString("Status{name=E_NO_MORE_CONNECTIONS, friendlyName=All connections already used, code=36 (0x24)}");
+        assertThat(Status.NO_ERROR).hasToString("Status{name=NO_ERROR, friendlyName=Operation successful, code=0}");
+        assertThat(Status.NO_MORE_CONNECTIONS)
+                .hasToString("Status{name=NO_MORE_CONNECTIONS, friendlyName=All connections already used, code=36}");
     }
 }

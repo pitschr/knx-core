@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ import li.pitschmann.knx.core.cemi.ControlByte2;
 import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.cemi.Priority;
 import li.pitschmann.knx.core.cemi.TPCI;
-import li.pitschmann.knx.core.datapoint.DPT12;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.datapoint.DPT8;
 import li.pitschmann.knx.core.header.ServiceType;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,10 +44,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class RoutingIndicationBodyTest {
+class RoutingIndicationBodyTest {
     /**
-     * Tests the {@link RoutingIndicationBody#of(CEMI)} and
-     * {@link RoutingIndicationBody#of(byte[])} methods.
      * <pre>
      *   KNX/IP Routing Indication
      *     KNX/IP Header: Routing Indication
@@ -84,13 +82,28 @@ public class RoutingIndicationBodyTest {
      * </pre>
      */
     @Test
-    public void validCases() {
+    @DisplayName("Test valid cases using #of(byte[]) and #of(CEMI)")
+    void validCases() {
+        // create by bytes
+        final var bodyByBytes = RoutingIndicationBody.of(new byte[]{
+                0x29,          // Message Code
+                0x00,          // Additional Info
+                (byte) 0xBC,   // Control Byte 1
+                (byte) 0xD0,   // Control Byte 2
+                0x10, 0x6E,    // Source Address
+                0x4C, 0x01,    // Destination Address
+                0x03,          // NPDU Length
+                0x00,          // TPCI + Packet Number
+                (byte) 0x80,   // APCI
+                0x0C, 0x35     // Data
+        });
+
+        // create
         final var controlByte1 = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
         final var controlByte2 = ControlByte2.of(AddressType.GROUP, 5, 0);
         final var sourceAddress = IndividualAddress.of(1, 0, 110);
         final var destinationAddress = GroupAddress.of(9, 4, 1);
-
-        CEMI cemi = CEMI.of(
+        final var cemi = CEMI.of(
                 MessageCode.L_DATA_IND,
                 AdditionalInfo.empty(),
                 controlByte1,
@@ -100,51 +113,43 @@ public class RoutingIndicationBodyTest {
                 TPCI.UNNUMBERED_PACKAGE,
                 0,
                 APCI.GROUP_VALUE_WRITE,
-                DPT12.VALUE_4_OCTET_UNSIGNED_COUNT.of(722821273));
+                DPT8.VALUE_2_OCTET_COUNT.of(3125));
 
-        // create
         final var body = RoutingIndicationBody.of(cemi);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);
-        assertThat(body.getCEMI().getRawData()).containsExactly(cemi.getRawData());
+        assertThat(body.getServiceType()).isSameAs(ServiceType.ROUTING_INDICATION);
+        assertThat(body.getCEMI()).isSameAs(cemi);
 
-        // create by bytes
-        final var bodyByBytes = RoutingIndicationBody.of(new byte[]{
-                0x29, // Message Code
-                0x00, // Additional Info
-                (byte) 0xbc, // Control Byte 1
-                (byte) 0xd0, // Control Byte 2
-                0x10, 0x6e, // Source Address
-                0x4c, 0x01, // Destination Address
-                0x05, // NPDU Length
-                0x00, // TPCI + Packet Number
-                (byte) 0x80, // APCI
-                0x2B, 0x15, 0x60, (byte)0x99 // Data
-        });
-
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+        // compare byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format(
-                "RoutingIndicationBody{cemi=%s, rawData=0x29 00 BC D0 10 6E 4C 01 05 00 80 2B 15 60 99}",
-                cemi.toString(false)));
+        assertThat(body).hasToString(
+                String.format("RoutingIndicationBody{cemi=%s}", cemi)
+        );
     }
 
-    /**
-     * Tests {@link RoutingIndicationBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> RoutingIndicationBody.of((CEMI) null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("cemi");
-
-        // invalid raw data length
-        assertThatThrownBy(() -> RoutingIndicationBody.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> RoutingIndicationBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> RoutingIndicationBody.of(new byte[0xFF + 1])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        assertThatThrownBy(() -> RoutingIndicationBody.of((byte[])null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> RoutingIndicationBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [11..255] but was: 0");
     }
+
+    @Test
+    @DisplayName("Invalid cases for #of(CEMI)")
+    void invalidCases_ofObjects() {
+        assertThatThrownBy(() -> RoutingIndicationBody.of((CEMI) null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("CEMI is required.");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(RoutingIndicationBody.class).verify();
+    }
+
 }

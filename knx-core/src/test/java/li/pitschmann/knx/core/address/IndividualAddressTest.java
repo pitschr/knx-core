@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,8 @@
 
 package li.pitschmann.knx.core.address;
 
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,85 +30,79 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class IndividualAddressTest {
-    /**
-     * Tests <strong>valid</strong> addresses
-     */
+final class IndividualAddressTest {
+
     @Test
-    public void testValid() {
-        this.assertIndividualAddress(0, 0, 0, new byte[]{0x00, 0x00});
-        this.assertIndividualAddress(8, 7, 128, new byte[]{(byte) 0x87, (byte) 0x80});
-        this.assertIndividualAddress(15, 15, 255, new byte[]{(byte) 0xFF, (byte) 0xFF});
+    @DisplayName("Test valid Individual Addresses")
+    void testValid() {
+        assertIndividualAddress(0, 0, 0, new byte[]{0x00, 0x00});
+        assertIndividualAddress(8, 7, 128, new byte[]{(byte) 0x87, (byte) 0x80});
+        assertIndividualAddress(15, 15, 255, new byte[]{(byte) 0xFF, (byte) 0xFF});
     }
 
-    /**
-     * Test <strong>invalid</strong> addresses for {@link IndividualAddress#of(byte[])}
-     */
     @Test
-    public void invalidValueOf() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidByteLength() {
         // null
-        assertThatThrownBy(() -> IndividualAddress.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addressRawData");
+        assertThatThrownBy(() -> IndividualAddress.of((byte[]) null))
+                .isInstanceOf(NullPointerException.class);
 
         // address should have 2 bytes
-        assertThatThrownBy(() -> IndividualAddress.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("addressRawData");
+        assertThatThrownBy(() -> IndividualAddress.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("2 Bytes is expected but got: []");
+        assertThatThrownBy(() -> IndividualAddress.of(new byte[3]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("2 Bytes is expected but got: [0, 0, 0]");
     }
 
-    /**
-     * Test <strong>invalid</strong> addresses for {@link IndividualAddress#of(int, int, int)}
-     */
     @Test
-    public void invalidCreate() {
+    @DisplayName("Invalid cases for #of(String)")
+    void invalidOfString() {
         // invalid format
-        assertThatThrownBy(() -> IndividualAddress.of("1.2.3.4")).isInstanceOf(KnxIllegalArgumentException.class).hasMessageStartingWith("Invalid Individual Address provided");
-
-        // negative numbers
-        assertThatThrownBy(() -> IndividualAddress.of(-1, 0, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("area");
-        assertThatThrownBy(() -> IndividualAddress.of(0, -1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("line");
-        assertThatThrownBy(() -> IndividualAddress.of(0, 0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("device");
-
-        // too big numbers
-        assertThatThrownBy(() -> IndividualAddress.of(0x0F + 1, 0, 0)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("area");
-        assertThatThrownBy(() -> IndividualAddress.of(0, 0x0F + 1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("line");
-        assertThatThrownBy(() -> IndividualAddress.of(0, 0, 0xFF + 1)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("device");
+        assertThatThrownBy(() -> IndividualAddress.of("1.2.3.4"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("Invalid Individual Address provided: 1.2.3.4");
     }
 
-    /**
-     * Test {@link IndividualAddress#useDefault()}
-     */
     @Test
-    public void testUseDefault() {
+    @DisplayName("Invalid cases for #of(int, int, int)")
+    void invalidAddresses() {
+        // area, line or device out or range
+        assertThatThrownBy(() -> IndividualAddress.of(-1, 0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid area provided. Expected [0..15] but was: -1");
+        assertThatThrownBy(() -> IndividualAddress.of(0x0F + 1, 0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid area provided. Expected [0..15] but was: 16");
+
+        assertThatThrownBy(() -> IndividualAddress.of(0, -1, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid line provided. Expected [0..15] but was: -1");
+        assertThatThrownBy(() -> IndividualAddress.of(0, 0x0F + 1, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid line provided. Expected [0..15] but was: 16");
+
+        assertThatThrownBy(() -> IndividualAddress.of(0, 0, -1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid device provided. Expected [0..255] but was: -1");
+        assertThatThrownBy(() -> IndividualAddress.of(0, 0, 0xFF + 1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid device provided. Expected [0..255] but was: 256");
+    }
+
+    @Test
+    @DisplayName("Test #useDefault()")
+    void testUseDefault() {
         final var addr = IndividualAddress.useDefault();
         assertThat(addr.getAddress()).isEqualTo("0.0.0");
         assertThat(addr.getRawData()).containsExactly(new byte[2]);
     }
 
-    /**
-     * Test {@link IndividualAddress#equals(Object)} and {@link IndividualAddress#hashCode()}
-     */
     @Test
-    public void testEqualsAndHashcode() {
-        final var addrA = IndividualAddress.of(new byte[]{(byte) 0x93, 0x66});
-        final var addrB = IndividualAddress.of(9, 3, 102);
-        final var addrC = IndividualAddress.of(9, 3, 102);
-
-        // equals
-        assertThat(addrA).isEqualTo(addrA);
-        assertThat(addrB).isEqualTo(addrA);
-        assertThat(addrC).isEqualTo(addrA);
-        assertThat(addrA).hasSameHashCodeAs(addrA);
-        assertThat(addrB).hasSameHashCodeAs(addrA);
-        assertThat(addrC).hasSameHashCodeAs(addrA);
-
-        // not equals
-        assertThat(addrA).isNotEqualTo(GroupAddress.of(new byte[]{(byte) 0x93, 0x66}));
-        assertThat(addrA).isNotEqualTo(GroupAddress.of(9, 3, 102));
-        assertThat(addrA).isNotEqualTo(IndividualAddress.of(8, 3, 102));
-        assertThat(addrA).isNotEqualTo(IndividualAddress.of(9, 4, 102));
-        assertThat(addrA).isNotEqualTo(IndividualAddress.of(9, 3, 101));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(IndividualAddress.class).verify();
     }
 
     /**
@@ -128,13 +120,13 @@ public final class IndividualAddressTest {
      */
     private void assertIndividualAddress(final int area, final int line, final int device, final byte[] bytes) {
         final var testByCreate = IndividualAddress.of(area, line, device);
-        final var testByCreateRawData = IndividualAddress.of(testByCreate.getRawData());
+        final var testByCreateRawData = IndividualAddress.of(testByCreate.toByteArray());
         final var testByValueOfRawData = IndividualAddress.of(bytes);
         final var testByString = IndividualAddress.of(area + "." + line + "." + device);
 
-        assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByCreateRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByValueOfRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByString.toByteArray());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.INDIVIDUAL);
@@ -150,7 +142,7 @@ public final class IndividualAddressTest {
         assertThat(testByString.getAddress()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("IndividualAddress{addressType=%s, address=%s, rawData=%s}", AddressType.INDIVIDUAL,
-                testByCreate.getAddress(), ByteFormatter.formatHexAsString(bytes)));
+        assertThat(testByCreate).hasToString(String.format("IndividualAddress{addressType=%s, address=%s}", AddressType.INDIVIDUAL,
+                testByCreate.getAddress()));
     }
 }

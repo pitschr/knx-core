@@ -54,7 +54,12 @@ public enum DescriptionType implements KnxByteEnum {
     /**
      * DIB structure for further data defined by device manufacturer.
      */
-    MANUFACTURER_DATA(0xFE, "Manufacturer Data");
+    MANUFACTURER_DATA(0xFE, "Manufacturer Data"),
+    /**
+     * Unknown Description Type (not in KNX specification)
+     */
+    UNKNOWN(0xFF, "Unknown Description Type");
+
 
     private final int code;
     private final String friendlyName;
@@ -68,12 +73,11 @@ public enum DescriptionType implements KnxByteEnum {
      * A matching {@link DescriptionType} for the given {@code code}
      *
      * @param code value to find the associated {@link DescriptionType}
-     * @return existing {@link DescriptionType}, or {@link KnxEnumNotFoundException} if no {@link DescriptionType}
+     * @return existing {@link DescriptionType}, or {@link #UNKNOWN} if no {@link DescriptionType}
      * for given {@code code} exists
      */
     public static DescriptionType valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
-                .orElseThrow(() -> new KnxEnumNotFoundException(DescriptionType.class, code));
+        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst().orElse(UNKNOWN);
     }
 
     @Override
@@ -92,7 +96,7 @@ public enum DescriptionType implements KnxByteEnum {
         return Strings.toStringHelper(this)
                 .add("name", this.name())
                 .add("friendlyName", this.friendlyName)
-                .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")
+                .add("code", this.code)
                 .toString();
         // @formatter:on
     }

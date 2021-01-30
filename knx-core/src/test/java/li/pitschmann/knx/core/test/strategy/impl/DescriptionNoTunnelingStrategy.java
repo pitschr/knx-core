@@ -18,7 +18,7 @@
 
 package li.pitschmann.knx.core.test.strategy.impl;
 
-import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.core.dib.SupportedServiceFamiliesDIB;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.DescriptionStrategy;
 
@@ -26,10 +26,10 @@ import li.pitschmann.knx.core.test.strategy.DescriptionStrategy;
  * No Tunneling Service Family for {@link DescriptionStrategy}
  */
 public class DescriptionNoTunnelingStrategy extends DefaultDescriptionStrategy {
-    private static SupportedDeviceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
+    private static SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
 
     static {
-        DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedDeviceFamiliesDIB.of(new byte[]{ //
+        DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedServiceFamiliesDIB.of(new byte[]{ //
                 0x08, // Structure Length
                 0x02, // Description Type Code
                 0x02, 0x01, // Service Family ID (Core) + Version #1
@@ -39,12 +39,12 @@ public class DescriptionNoTunnelingStrategy extends DefaultDescriptionStrategy {
     }
 
     /**
-     * Returns the supported device families without TUNNELING feature.
+     * Returns the supported service families without TUNNELING feature.
      *
      * @param mockServer the mock server
-     * @return DIB supported device families
+     * @return DIB supported service families
      */
-    protected SupportedDeviceFamiliesDIB getSupportedDeviceFamilies(final MockServer mockServer) {
+    protected SupportedServiceFamiliesDIB getSupportedDeviceFamilies(final MockServer mockServer) {
         return DEFAULT_SUPPORTED_DEVICE_FAMILIES;
     }
 }

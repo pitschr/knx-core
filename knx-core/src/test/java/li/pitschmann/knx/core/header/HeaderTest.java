@@ -70,7 +70,7 @@ public final class HeaderTest {
      */
     @Test
     public void testHeadersWithBody() {
-        final var body = TunnelingAckBody.of(0x33, 0x66, Status.E_TUNNELING_LAYER);
+        final var body = TunnelingAckBody.of(0x33, 0x66, Status.TUNNELING_LAYER);
         final var headerByBody = Header.of(body);
         final var headerByCreate = Header.of(ServiceType.TUNNELING_ACK, Header.KNXNET_HEADER_LENGTH + body.getLength());
 

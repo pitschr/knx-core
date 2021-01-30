@@ -31,6 +31,6 @@ public class ConnectNoMoreConnectionsStrategy extends DefaultConnectStrategy {
      * @return status
      */
     protected Status getStatus() {
-        return Status.E_NO_MORE_CONNECTIONS;
+        return Status.NO_MORE_CONNECTIONS;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,15 +127,10 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
 
     @Override
     public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("connectionType", this.connectionType)
-                .add("address", this.address.toString(false));
-        // @formatter:off
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+        return Strings.toStringHelper(this)
+                .add("length", length)
+                .add("connectionType", connectionType)
+                .add("address", address)
+                .toString();
     }
 }

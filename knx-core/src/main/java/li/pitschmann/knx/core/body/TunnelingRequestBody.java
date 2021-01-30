@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.CEMIAware;
 import li.pitschmann.knx.core.ChannelIdAware;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.cemi.CEMI;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Body for Tunneling Request
@@ -49,16 +49,17 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class TunnelingRequestBody extends AbstractMultiRawData implements RequestBody, ChannelIdAware, DataChannelRelated {
+public final class TunnelingRequestBody implements RequestBody, ChannelIdAware, CEMIAware, DataChannelRelated {
     /**
      * Structure Length for {@link TunnelingRequestBody} without {@link CEMI}
      * <p>
      * 1 byte for length<br>
      * 1 byte for channel id<br>
      * 1 byte for sequence<br>
-     * 1 byte for status<br>
+     * 1 byte is not-used / reserved<br>
      */
     private static final int STRUCTURE_LENGTH = 4;
+
     /**
      * Minimum Structure Length for {@link TunnelingRequestBody} including {@link CEMI}
      * <p>
@@ -66,6 +67,7 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * 11 bytes minimum for {@link CEMI}<br>
      */
     private static final int STRUCTURE_WITH_CEMI_MIN_LENGTH = STRUCTURE_LENGTH + 11;
+
     /**
      * Maximum Structure Length for {@link TunnelingRequestBody} including {@link CEMI}
      */
@@ -76,13 +78,32 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
     private final CEMI cemi;
 
     private TunnelingRequestBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // byte[0] => length
+                Byte.toUnsignedInt(bytes[0]),
+                // byte[1] => channel id
+                Byte.toUnsignedInt(bytes[1]),
+                // byte[2] => sequence
+                Byte.toUnsignedInt(bytes[2]),
+                // byte[3] (not used, reserved)
+                // byte[4..] => cemi
+                CEMI.of(Arrays.copyOfRange(bytes, 4, bytes.length))
+        );
+    }
 
-        this.length = Byte.toUnsignedInt(bytes[0]);
-        this.channelId = Byte.toUnsignedInt(bytes[1]);
-        this.sequence = Byte.toUnsignedInt(bytes[2]);
-        // [3] -> reserved
-        this.cemi = CEMI.of(Arrays.copyOfRange(bytes, 4, bytes.length));
+    private TunnelingRequestBody(final int length, final int channelId, final int sequence, final CEMI cemi) {
+        Preconditions.checkArgument(length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, length);
+        Preconditions.checkArgument(channelId >= 0x00 && channelId <= 0xFF,
+                "Incompatible channel id. Expected [0..255] but was: {}", channelId);
+        Preconditions.checkArgument(sequence >= 0x00 && sequence <= 0xFF,
+                "Incompatible sequence. Expected [0..255] but was: {}", sequence);
+        Preconditions.checkNonNull(cemi, "CEMI is required.");
+
+        this.length = length;
+        this.channelId = channelId;
+        this.sequence = sequence;
+        this.cemi = cemi;
     }
 
     /**
@@ -92,6 +113,8 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @return a new immutable {@link TunnelingRequestBody}
      */
     public static TunnelingRequestBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_WITH_CEMI_MIN_LENGTH && bytes.length <= STRUCTURE_WITH_CEMI_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_WITH_CEMI_MIN_LENGTH, STRUCTURE_WITH_CEMI_MAX_LENGTH, bytes.length);
         return new TunnelingRequestBody(bytes);
     }
 
@@ -104,15 +127,38 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
      * @return a new immutable {@link TunnelingRequestBody}
      */
     public static TunnelingRequestBody of(final int channelId, final int sequence, final CEMI cemi) {
-        // validate
-        if (cemi == null) {
-            throw new KnxNullPointerException("cemi");
-        } else if (channelId < 0 || channelId > 0xFF) {
-            throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
-        } else if (sequence < 0 || sequence > 0xFF) {
-            throw new KnxNumberOutOfRangeException("sequence", 0, 0xFF, sequence);
-        }
+        return new TunnelingRequestBody(STRUCTURE_LENGTH, channelId, sequence, cemi);
+    }
 
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.TUNNELING_REQUEST;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public int getChannelId() {
+        return channelId;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    @Override
+    public CEMI getCEMI() {
+        return cemi;
+    }
+
+    @Override
+    public byte[] getRawData() {
+        return toByteArray();
+    }
+
+    public byte[] toByteArray() {
         final var cemiAsBytes = cemi.getRawData();
 
         // create bytes
@@ -123,55 +169,35 @@ public final class TunnelingRequestBody extends AbstractMultiRawData implements 
         bytes[3] = 0x00; // reserved
         System.arraycopy(cemiAsBytes, 0, bytes, STRUCTURE_LENGTH, cemiAsBytes.length);
 
-        return of(bytes);
+        return bytes;
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_WITH_CEMI_MIN_LENGTH, STRUCTURE_WITH_CEMI_MAX_LENGTH, rawData.length,
-                    rawData);
-        } else if (Byte.toUnsignedInt(rawData[0]) != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData[0]", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData[0], rawData);
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("length", length)
+                .add("channelId", channelId)
+                .add("sequence", sequence)
+                .add("cemi", cemi)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof TunnelingRequestBody) {
+            final var other = (TunnelingRequestBody) obj;
+            return Objects.equals(this.length, other.length)
+                    && Objects.equals(this.channelId, other.channelId)
+                    && Objects.equals(this.sequence, other.sequence)
+                    && Objects.equals(this.cemi, other.cemi);
         }
+        return false;
     }
 
     @Override
-    public ServiceType getServiceType() {
-        return ServiceType.TUNNELING_REQUEST;
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    @Override
-    public int getChannelId() {
-        return this.channelId;
-    }
-
-    public int getSequence() {
-        return this.sequence;
-    }
-
-    public CEMI getCEMI() {
-        return this.cemi;
-    }
-
-    @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("channelId", this.channelId + " (" + ByteFormatter.formatHex(this.channelId) + ")")
-                .add("sequence", this.sequence + " (" + ByteFormatter.formatHex(this.sequence) + ")")
-                .add("cemi", this.cemi.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+    public int hashCode() {
+        return Objects.hash(length, channelId, sequence, cemi);
     }
 }

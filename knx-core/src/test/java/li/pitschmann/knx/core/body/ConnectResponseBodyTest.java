@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,43 +19,27 @@
 package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.core.utils.Networker;
-import org.junit.jupiter.api.BeforeEach;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link ConnectResponseBody}
  *
  * @author PITSCHR
  */
-public class ConnectResponseBodyTest {
-    // prepare
-    private int channelId;
-    private Status status;
-    private HPAI dataEndpoint;
-    private ConnectionResponseData crd;
-
-    @BeforeEach
-    public void before() {
-        this.channelId = 7;
-        this.status = Status.E_NO_ERROR;
-        this.dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(3, 3, 3, 3), 3671);
-        this.crd = ConnectionResponseData.of(IndividualAddress.of(15, 15, 242));
-    }
+class ConnectResponseBodyTest {
 
     /**
-     * Tests the {@link ConnectResponseBody#of(int, Status, HPAI, ConnectionResponseData)} and
-     * {@link ConnectResponseBody#of(byte[])} methods.
-     *
      * <pre>
      * 	KNX/IP
      * 	    Header
@@ -65,7 +49,7 @@ public class ConnectResponseBodyTest {
      * 	        Total Length: 20 octets
      * 	    Body
      * 	        Communication Channel ID: 7
-     * 	        Status: E_CONNECTION_TYPE - Connection type not supported (0x22)
+     * 	        Status: E_NO_ERROR (0x00)
      * 	        HPAI: Data endpoint
      * 	            Structure Length: 8 octets
      * 	            Host Protocol Code: IPV4_UDP (0x01)
@@ -78,72 +62,111 @@ public class ConnectResponseBodyTest {
      * </pre>
      */
     @Test
+    @DisplayName("Test valid cases using #of(byte[]) and #of(int, Status, HPAI, ConnectionResponseData)")
     public void validCases() {
-        // create
-        final var body = ConnectResponseBody.of(this.channelId, this.status, this.dataEndpoint, this.crd);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
-        assertThat(body.getChannelId()).isEqualTo(this.channelId);
-        assertThat(body.getStatus()).isEqualTo(this.status);
-        assertThat(body.getDataEndpoint()).isEqualTo(this.dataEndpoint);
-        assertThat(body.getConnectionResponseData()).isEqualTo(this.crd);
-
         // create by bytes
         final var bodyByBytes = ConnectResponseBody
-                .of(new byte[]{0x07, 0x00, 0x08, 0x01, 0x03, 0x03, 0x03, 0x03, 0x0e, 0x57, 0x04, 0x04, (byte) 0xff, (byte) 0xf2});
+                .of(new byte[]{
+                        0x07,                     // Channel ID
+                        0x00,                     // Status
+                        // Data Endpoint (HPAI)
+                        0x08,                     // Structure Length
+                        0x01,                     // Host Protocol Code
+                        0x03, 0x03, 0x03, 0x03,   // IP Address
+                        0x0e, 0x57,               // IP Port
+                        // Connection Response Data
+                        0x04,                     // Structure Length
+                        0x04,                     // Connection Type
+                        (byte) 0xff, (byte) 0xf2  // KNX Address
+                });
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+        // create
+        final var channelId = 7;
+        final var status = Status.NO_ERROR;
+        final var dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(3, 3, 3, 3), 3671);
+        final var crd = ConnectionResponseData.of(IndividualAddress.of(15, 15, 242));
+
+        final var body = ConnectResponseBody.of(channelId, status, dataEndpoint, crd);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.CONNECT_RESPONSE);
+        assertThat(body.getChannelId()).isEqualTo(channelId);
+        assertThat(body.getStatus()).isSameAs(status);
+        assertThat(body.getDataEndpoint()).isSameAs(dataEndpoint);
+        assertThat(body.getConnectionResponseData()).isSameAs(crd);
+
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format(
-                "ConnectResponseBody{channelId=7 (0x07), status=%s, dataEndpoint=%s, connectionResponseData=%s, rawData=0x07 00 08 01 03 03 03 03 0E 57 04 04 FF F2}",
-                this.status, this.dataEndpoint.toString(false), this.crd.toString(false)));
+        assertThat(body).hasToString(
+                String.format("ConnectResponseBody{channelId=7, status=%s, dataEndpoint=%s, connectionResponseData=%s}", status, dataEndpoint, crd)
+        );
     }
 
     @Test
-    public void validCaseErrorStatus() {
+    @DisplayName("Test valid cases using #of(byte[]) and #of(int, Status, HPAI, ConnectionResponseData) with error")
+    void validCases_with_error() {
+        // create by bytes
+        final var bodyByBytes = ConnectResponseBody.of(new byte[]{
+                0x0F, // Channel ID
+                0x01  // Status (HOST_PROTOCOL_TYPE)
+        });
+
         // create
-        final var body = ConnectResponseBody.of(10, Status.E_NO_MORE_CONNECTIONS, null, null);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
-        assertThat(body.getChannelId()).isEqualTo(0x0A);
-        assertThat(body.getStatus()).isEqualTo(Status.E_NO_MORE_CONNECTIONS);
+        final var body = ConnectResponseBody.of(15, Status.HOST_PROTOCOL_TYPE, null, null);
+        assertThat(body.getChannelId()).isEqualTo(15);
+        assertThat(body.getStatus()).isSameAs(Status.HOST_PROTOCOL_TYPE);
         assertThat(body.getDataEndpoint()).isNull();
         assertThat(body.getConnectionResponseData()).isNull();
 
-        // create by bytes
-        final var bodyByBytes = ConnectResponseBody.of(new byte[]{0x0A, 0x24});
-
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format(
-                "ConnectResponseBody{channelId=10 (0x0A), status=%s, dataEndpoint=null, connectionResponseData=null, rawData=0x0A 24}",
-                Status.E_NO_MORE_CONNECTIONS));
+        assertThat(body).hasToString(
+                String.format("ConnectResponseBody{channelId=15, status=%s, dataEndpoint=null, connectionResponseData=null}", Status.HOST_PROTOCOL_TYPE)
+        );
     }
 
-    /**
-     * Tests {@link ConnectResponseBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
-        // null
-        assertThatThrownBy(() -> ConnectResponseBody.of(this.channelId, null, this.dataEndpoint, this.crd))
-                .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("status");
-        assertThatThrownBy(() -> ConnectResponseBody.of(this.channelId, this.status, null, this.crd)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("dataEndpoint");
-        assertThatThrownBy(() -> ConnectResponseBody.of(this.channelId, this.status, this.dataEndpoint, null))
-                .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crd");
-
-        // invalid channel id
-        assertThatThrownBy(() -> ConnectResponseBody.of(-1, this.status, this.dataEndpoint, this.crd))
-                .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("channelId");
-        assertThatThrownBy(() -> ConnectResponseBody.of(0xFF + 1, this.status, this.dataEndpoint, this.crd))
-                .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("channelId");
-
-        // invalid raw data length
-        assertThatThrownBy(() -> ConnectResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ConnectResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        // invalid cases
+        assertThatThrownBy(() -> ConnectResponseBody.of(null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> ConnectResponseBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [2,14] but was: 0");
     }
+
+    @Test
+    @DisplayName("Invalid cases for #of(int, Status, HPAI, ConnectionResponseData)")
+    void invalidCases_ofObjects() {
+        // null
+        assertThatThrownBy(() -> ConnectResponseBody.of(0, null, mock(HPAI.class), mock(ConnectionResponseData.class)))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Status is required.");
+
+        // null (depending on status)
+        assertThatThrownBy(() -> ConnectResponseBody.of(0, Status.NO_ERROR, null, mock(ConnectionResponseData.class)))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Data Endpoint is required.");
+        assertThatThrownBy(() -> ConnectResponseBody.of(0, Status.NO_ERROR, mock(HPAI.class), null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Connection response data is required.");
+
+        // invalid range
+        assertThatThrownBy(() -> ConnectResponseBody.of(-1, mock(Status.class), mock(HPAI.class), mock(ConnectionResponseData.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: -1");
+        assertThatThrownBy(() -> ConnectResponseBody.of(0xFF + 1, mock(Status.class), mock(HPAI.class), mock(ConnectionResponseData.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: 256");
+    }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(ConnectResponseBody.class).verify();
+    }
+
 }
