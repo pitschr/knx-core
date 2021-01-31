@@ -52,7 +52,7 @@ public final class DescriptionRequestBody implements RequestBody, DescriptionCha
      * <p>
      * 8 bytes for HPAI<br>
      */
-    private static final int STRUCTURE_LENGTH = HPAI.KNXNET_HPAI_LENGTH;
+    private static final int STRUCTURE_LENGTH = HPAI.STRUCTURE_LENGTH;
     private static final DescriptionRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI controlEndpoint;
 

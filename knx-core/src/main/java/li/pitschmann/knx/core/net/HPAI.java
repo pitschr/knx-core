@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,11 @@
 
 package li.pitschmann.knx.core.net;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.MultiRawDataAware;
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.net.InetAddress;
@@ -64,11 +61,11 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class HPAI extends AbstractMultiRawData {
+public final class HPAI implements MultiRawDataAware {
     /**
      * Fixed length for HPAI
      */
-    public static final int KNXNET_HPAI_LENGTH = 0x08;
+    public static final int STRUCTURE_LENGTH = 0x08;
     private static final HPAI DEFAULT = of(HostProtocol.IPV4_UDP, Networker.getAddressUnbound(), 0);
 
     private final int length;
@@ -77,12 +74,32 @@ public final class HPAI extends AbstractMultiRawData {
     private final int port;
 
     private HPAI(final byte[] hpaiRawData) {
-        super(hpaiRawData);
+        this(
+                // bytes[0] => length
+                Byte.toUnsignedInt(hpaiRawData[0]),
+                // bytes[1] => Host Protocol
+                HostProtocol.valueOf(Byte.toUnsignedInt(hpaiRawData[1])),
+                // bytes[2..5] => Address
+                Networker.getByAddress(hpaiRawData[2], hpaiRawData[3], hpaiRawData[4], hpaiRawData[5]),
+                // bytes[6+7] => Port
+                Bytes.toUnsignedInt(hpaiRawData[6], hpaiRawData[7])
+        );
+    }
 
-        this.length = Byte.toUnsignedInt(hpaiRawData[0]);
-        this.protocol = HostProtocol.valueOf(Byte.toUnsignedInt(hpaiRawData[1]));
-        this.address = Networker.getByAddress(hpaiRawData[2], hpaiRawData[3], hpaiRawData[4], hpaiRawData[5]);
-        this.port = Bytes.toUnsignedInt(hpaiRawData[6], hpaiRawData[7]);
+    private HPAI(final int length,
+                 final HostProtocol protocol,
+                 final InetAddress address,
+                 final int port) {
+        Preconditions.checkArgument(length == STRUCTURE_LENGTH);
+        Preconditions.checkNonNull(protocol, "Host Protocol is required.");
+        Preconditions.checkNonNull(address, "Address is required.");
+        Preconditions.checkArgument(port >= 0 && port <= 65535,
+                "Port is out of range. Expected [0..65535] but was: {}", port);
+
+        this.length = length;
+        this.protocol = protocol;
+        this.address = address;
+        this.port = port;
     }
 
     /**
@@ -92,6 +109,8 @@ public final class HPAI extends AbstractMultiRawData {
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new HPAI(bytes);
     }
 
@@ -112,10 +131,7 @@ public final class HPAI extends AbstractMultiRawData {
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final Channel channel) {
-        // validate
-        if (channel == null) {
-            throw new KnxNullPointerException("channel");
-        }
+        Preconditions.checkNonNull(channel, "Channel is required.");
 
         // is channel supported?
         if (channel instanceof DatagramChannel) {
@@ -123,11 +139,11 @@ public final class HPAI extends AbstractMultiRawData {
             final var socket = ((DatagramChannel) channel).socket();
             return of(HostProtocol.IPV4_UDP, socket.getLocalAddress(), socket.getLocalPort());
         } else if (channel instanceof SocketChannel) {
+            // TCP
             final var socket = ((SocketChannel) channel).socket();
             return of(HostProtocol.IPV4_TCP, socket.getLocalAddress(), socket.getLocalPort());
-        } else {
-            throw new KnxIllegalArgumentException(String.format("Channel type is not supported: %s", channel.getClass()));
         }
+        throw new IllegalArgumentException("HPAI is not supported for channel class: " + channel.getClass().getName());
     }
 
     /**
@@ -139,63 +155,54 @@ public final class HPAI extends AbstractMultiRawData {
      * @return a new immutable {@link HPAI}
      */
     public static HPAI of(final HostProtocol protocol, final InetAddress address, final int port) {
-        // validate
-        if (protocol == null) {
-            throw new KnxNullPointerException("protocol");
-        } else if (address == null) {
-            throw new KnxNullPointerException("address");
-        } else if (port < 0 || port > 0xFFFF) {
-            throw new KnxNumberOutOfRangeException("port", 0, 0xFFFF, port);
-        }
-
-        final var ipAddressAsBytes = address.getAddress();
-        final var ipPortAsBytes = new byte[]{(byte) (port >>> 8), (byte) port};
-
-        // create bytes
-        final var bytes = new byte[]{KNXNET_HPAI_LENGTH, protocol.getCodeAsByte(), ipAddressAsBytes[0], ipAddressAsBytes[1], ipAddressAsBytes[2],
-                ipAddressAsBytes[3], ipPortAsBytes[0], ipPortAsBytes[1]};
-
-        return of(bytes);
-    }
-
-    @Override
-    protected void validate(final byte[] hpaiRawData) {
-        if (hpaiRawData == null) {
-            throw new KnxNullPointerException("hpaiRawData");
-        } else if (hpaiRawData.length != KNXNET_HPAI_LENGTH) {
-            throw new KnxNumberOutOfRangeException("hpaiRawData", KNXNET_HPAI_LENGTH, KNXNET_HPAI_LENGTH, hpaiRawData.length, hpaiRawData);
-        }
+        return new HPAI(STRUCTURE_LENGTH, protocol, address, port);
     }
 
     public int getLength() {
-        return this.length;
+        return length;
     }
 
     public HostProtocol getProtocol() {
-        return this.protocol;
+        return protocol;
     }
 
     public InetAddress getAddress() {
-        return this.address;
+        return address;
     }
 
     public int getPort() {
-        return this.port;
+        return port;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("protocol", this.protocol)
-                .add("address", this.address.getHostAddress() + " (" + ByteFormatter.formatHexAsString(this.address.getAddress()) + ")")
-                .add("port", this.port + " (" + ByteFormatter.formatHex(this.port) + ")");
-        // @formatter:off
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+    public byte[] getRawData() {
+        return toByteArray();
+    }
+
+    public byte[] toByteArray() {
+        final var ipAddressAsBytes = address.getAddress();
+
+        // create bytes
+        return new byte[]{
+                // Structure Length
+                STRUCTURE_LENGTH,
+                // Host Protocol
+                protocol.getCodeAsByte(),
+                // Address
+                ipAddressAsBytes[0], ipAddressAsBytes[1], ipAddressAsBytes[2], ipAddressAsBytes[3],
+                // Port
+                (byte) (port >>> 8), (byte) port
+        };
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("length", length)
+                .add("protocol", protocol.name())
+                .add("address", address.getHostAddress())
+                .add("port", port)
+                .toString();
     }
 
     @Override
@@ -204,13 +211,16 @@ public final class HPAI extends AbstractMultiRawData {
             return true;
         } else if (obj instanceof HPAI) {
             final var other = (HPAI) obj;
-            return this.length == other.length && Objects.equals(this.protocol, other.protocol) && Objects.equals(this.address, other.address) && this.port == other.port;
+            return this.length == other.length //
+                    && Objects.equals(this.protocol, other.protocol) //
+                    && Objects.equals(this.address, other.address) //
+                    && this.port == other.port; //
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.length, this.protocol, this.address, this.port);
+        return Objects.hash(length, protocol, address, port);
     }
 }

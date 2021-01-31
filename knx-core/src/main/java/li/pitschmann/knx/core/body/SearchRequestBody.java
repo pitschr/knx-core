@@ -52,7 +52,7 @@ public final class SearchRequestBody implements RequestBody, MulticastChannelRel
      * <p>
      * 8 bytes for HPAI<br>
      */
-    private static final int STRUCTURE_LENGTH = HPAI.KNXNET_HPAI_LENGTH;
+    private static final int STRUCTURE_LENGTH = HPAI.STRUCTURE_LENGTH;
     private static final SearchRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI discoveryEndpoint;
 

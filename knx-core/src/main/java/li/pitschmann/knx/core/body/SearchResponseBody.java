@@ -115,9 +115,9 @@ public final class SearchResponseBody implements ResponseBody, MulticastChannelR
     public static SearchResponseBody of(final byte[] bytes) {
         Preconditions.checkArgument(bytes.length >= STRUCTURE_MIN_LENGTH && bytes.length <= STRUCTURE_MAX_LENGTH,
                 "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, bytes.length);
-        Preconditions.checkArgument(bytes[HPAI.KNXNET_HPAI_LENGTH + 1] == 0x01,
+        Preconditions.checkArgument(bytes[HPAI.STRUCTURE_LENGTH + 1] == 0x01,
                 "Incompatible structure. No Device Information DIB.");
-        Preconditions.checkArgument(bytes[HPAI.KNXNET_HPAI_LENGTH + DeviceInformationDIB.STRUCTURE_LENGTH + 1] == 0x02,
+        Preconditions.checkArgument(bytes[HPAI.STRUCTURE_LENGTH + DeviceInformationDIB.STRUCTURE_LENGTH + 1] == 0x02,
                 "Incompatible structure. No Supported Service Families DIB.");
         return new SearchResponseBody(bytes);
     }
