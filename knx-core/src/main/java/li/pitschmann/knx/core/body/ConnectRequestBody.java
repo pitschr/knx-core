@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.body;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
-import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInfo;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
@@ -37,7 +37,7 @@ import java.util.Objects;
  * shall begin with the return address information of the KNXnet/IP
  * Client’s control endpoint.
  * <p>
- * Next follows the {@link ConnectionRequestInformation}, a variable
+ * Next follows the {@link ConnectionRequestInfo}, a variable
  * data structure that shall include all additional information that
  * is specific to the requested connection type (and to the underlying
  * host protocol).
@@ -69,7 +69,7 @@ public final class ConnectRequestBody implements RequestBody, ControlChannelRela
     private static final int STRUCTURE_LENGTH = 20;
     private final HPAI controlEndpoint;
     private final HPAI dataEndpoint;
-    private final ConnectionRequestInformation connectionRequestInformation;
+    private final ConnectionRequestInfo connectionRequestInformation;
 
     private ConnectRequestBody(final byte[] bytes) {
         this(
@@ -78,13 +78,13 @@ public final class ConnectRequestBody implements RequestBody, ControlChannelRela
                 // byte[8..15]
                 HPAI.of(Arrays.copyOfRange(bytes, 8, 16)),
                 // byte[16..19]
-                ConnectionRequestInformation.of(Arrays.copyOfRange(bytes, 16, 20))
+                ConnectionRequestInfo.of(Arrays.copyOfRange(bytes, 16, 20))
         );
     }
 
     private ConnectRequestBody(final HPAI controlEndpoint,
                                final HPAI dataEndpoint,
-                               final ConnectionRequestInformation connectionRequestInformation) {
+                               final ConnectionRequestInfo connectionRequestInformation) {
         Preconditions.checkNonNull(controlEndpoint, "Control Endpoint is required.");
         Preconditions.checkNonNull(dataEndpoint, "Data Endpoint is required.");
         Preconditions.checkNonNull(connectionRequestInformation, "Connection request information is required.");
@@ -116,7 +116,7 @@ public final class ConnectRequestBody implements RequestBody, ControlChannelRela
      */
     public static ConnectRequestBody of(final HPAI controlEndpoint,
                                         final HPAI dataEndpoint,
-                                        final ConnectionRequestInformation connectionRequestInformation) {
+                                        final ConnectionRequestInfo connectionRequestInformation) {
         return new ConnectRequestBody(controlEndpoint, dataEndpoint, connectionRequestInformation);
     }
 
@@ -133,7 +133,7 @@ public final class ConnectRequestBody implements RequestBody, ControlChannelRela
         return dataEndpoint;
     }
 
-    public ConnectionRequestInformation getConnectionRequestInformation() {
+    public ConnectionRequestInfo getConnectionRequestInformation() {
         return connectionRequestInformation;
     }
 

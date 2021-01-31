@@ -66,6 +66,9 @@ public final class HPAI implements MultiRawDataAware {
      * Fixed length for HPAI
      */
     public static final int STRUCTURE_LENGTH = 0x08;
+    /**
+     * Default HPAI (UDP, Address Unbound, Port = 0)
+     */
     private static final HPAI DEFAULT = of(HostProtocol.IPV4_UDP, Networker.getAddressUnbound(), 0);
 
     private final int length;

@@ -63,7 +63,7 @@ public class NetworkerTest {
     public void testLocalhost() {
         final var localHost = Networker.getLocalHost();
         assertThat(localHost.getHostAddress()).isEqualTo("127.0.0.1");
-        assertThat(localHost.getAddress()).containsExactly(new byte[]{127, 0, 0, 1});
+        assertThat(localHost.getAddress()).containsExactly(127, 0, 0, 1);
 
         // it should be always same instance
         assertThat(Networker.getLocalHost()).isSameAs(localHost);

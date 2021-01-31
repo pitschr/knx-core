@@ -21,7 +21,7 @@ package li.pitschmann.knx.core.body;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
-import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInfo;
 import li.pitschmann.knx.core.utils.Networker;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
@@ -89,7 +89,7 @@ class ConnectRequestBodyTest {
         // create
         final var controlEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(1, 1, 1, 1), 58702);
         final var dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(2, 2, 2, 2), 58703);
-        final var cri = ConnectionRequestInformation.useDefault();
+        final var cri = ConnectionRequestInfo.useDefault();
 
         final var body = ConnectRequestBody.of(controlEndpoint, dataEndpoint, cri);
         assertThat(body.getServiceType()).isSameAs(ServiceType.CONNECT_REQUEST);
@@ -122,10 +122,10 @@ class ConnectRequestBodyTest {
     @DisplayName("Invalid cases for #of(HPAI, HPAI, ConnectionRequestInformation)")
     void invalidCases_ofObjects() {
         // null
-        assertThatThrownBy(() -> ConnectRequestBody.of(null, mock(HPAI.class), mock(ConnectionRequestInformation.class)))
+        assertThatThrownBy(() -> ConnectRequestBody.of(null, mock(HPAI.class), mock(ConnectionRequestInfo.class)))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Control Endpoint is required.");
-        assertThatThrownBy(() -> ConnectRequestBody.of(mock(HPAI.class), null, mock(ConnectionRequestInformation.class)))
+        assertThatThrownBy(() -> ConnectRequestBody.of(mock(HPAI.class), null, mock(ConnectionRequestInfo.class)))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Data Endpoint is required.");
         assertThatThrownBy(() -> ConnectRequestBody.of(mock(HPAI.class), mock(HPAI.class), null))

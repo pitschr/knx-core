@@ -18,7 +18,6 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;

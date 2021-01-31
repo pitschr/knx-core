@@ -45,7 +45,7 @@ import li.pitschmann.knx.core.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.core.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.core.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.core.net.HPAI;
-import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInfo;
 import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.PluginManager;
 import li.pitschmann.knx.core.utils.Closeables;
@@ -552,7 +552,7 @@ public final class InternalKnxClient implements AutoCloseable {
         log.trace("Method 'fetchChannelIdFromKNX()' called.");
 
         // create connect request and send it
-        final var cri = ConnectionRequestInformation.useDefault();
+        final var cri = ConnectionRequestInfo.useDefault();
         final var requestBody = ConnectRequestBody.of(this.controlHPAI, this.dataHPAI, cri);
         log.debug("Request for connect: {}", requestBody);
 

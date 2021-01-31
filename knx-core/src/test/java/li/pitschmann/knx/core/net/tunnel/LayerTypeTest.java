@@ -18,41 +18,54 @@
 
 package li.pitschmann.knx.core.net.tunnel;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link LayerType} enum class
  *
  * @author PITSCHR
  */
-public final class LayerTypeTest extends AbstractKnxByteEnumTest<LayerType> {
-    @Override
-    protected int numberOfElements() {
-        return 3;
+final class LayerTypeTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(LayerType.values()).hasSize(3);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(LayerType.valueOf(0x02)).isEqualTo(LayerType.TUNNEL_LINKLAYER);
         assertThat(LayerType.valueOf(0x04)).isEqualTo(LayerType.TUNNEL_RAW);
         assertThat(LayerType.valueOf(0x80)).isEqualTo(LayerType.TUNNEL_BUSMONITOR);
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> LayerType.valueOf(0x00)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> LayerType.valueOf(0xFF)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(LayerType.TUNNEL_LINKLAYER.getFriendlyName()).isEqualTo("Tunneling Link Layer");
         assertThat(LayerType.TUNNEL_RAW.getFriendlyName()).isEqualTo("Tunneling Raw Layer");
         assertThat(LayerType.TUNNEL_BUSMONITOR.getFriendlyName()).isEqualTo("Tunneling Busmonitor Layer");
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(LayerType.TUNNEL_LINKLAYER).hasToString("LayerType{name=TUNNEL_LINKLAYER, friendlyName=Tunneling Link Layer, code=2 (0x02)}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(LayerType.TUNNEL_LINKLAYER).hasToString(
+                "LayerType{name=TUNNEL_LINKLAYER, friendlyName=Tunneling Link Layer, code=2}"
+        );
     }
 }

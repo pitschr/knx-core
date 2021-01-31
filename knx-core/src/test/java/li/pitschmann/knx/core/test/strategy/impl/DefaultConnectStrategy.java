@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.test.strategy.impl;
 
 import li.pitschmann.knx.core.body.ConnectResponseBody;
 import li.pitschmann.knx.core.body.Status;
+import li.pitschmann.knx.core.net.ConnectionType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.core.test.MockRequest;
@@ -69,7 +70,7 @@ public class DefaultConnectStrategy implements ConnectStrategy {
      * @return connection response data
      */
     protected ConnectionResponseData getConnectionResponseData(final MockServer mockServer) {
-        return ConnectionResponseData.of(mockServer.getIndividualAddress());
+        return ConnectionResponseData.of(ConnectionType.TUNNEL_CONNECTION, mockServer.getIndividualAddress());
     }
 
     @Override

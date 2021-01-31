@@ -109,29 +109,29 @@ final class ServiceTypeTest {
     @DisplayName("Test #getCodeAsBytes()")
     void testGetCodeAsByte() {
         // 0x02 xx Core
-        assertThat(ServiceType.SEARCH_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x01});
-        assertThat(ServiceType.SEARCH_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x02});
-        assertThat(ServiceType.DESCRIPTION_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x03});
-        assertThat(ServiceType.DESCRIPTION_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x04});
-        assertThat(ServiceType.CONNECT_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x05});
-        assertThat(ServiceType.CONNECT_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x06});
-        assertThat(ServiceType.CONNECTION_STATE_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x07});
-        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x08});
-        assertThat(ServiceType.DISCONNECT_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x09});
-        assertThat(ServiceType.DISCONNECT_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x02, 0x0A});
+        assertThat(ServiceType.SEARCH_REQUEST.getCodeAsBytes()).containsExactly(0x02, 0x01);
+        assertThat(ServiceType.SEARCH_RESPONSE.getCodeAsBytes()).containsExactly(0x02, 0x02);
+        assertThat(ServiceType.DESCRIPTION_REQUEST.getCodeAsBytes()).containsExactly(0x02, 0x03);
+        assertThat(ServiceType.DESCRIPTION_RESPONSE.getCodeAsBytes()).containsExactly(0x02, 0x04);
+        assertThat(ServiceType.CONNECT_REQUEST.getCodeAsBytes()).containsExactly(0x02, 0x05);
+        assertThat(ServiceType.CONNECT_RESPONSE.getCodeAsBytes()).containsExactly(0x02, 0x06);
+        assertThat(ServiceType.CONNECTION_STATE_REQUEST.getCodeAsBytes()).containsExactly(0x02, 0x07);
+        assertThat(ServiceType.CONNECTION_STATE_RESPONSE.getCodeAsBytes()).containsExactly(0x02, 0x08);
+        assertThat(ServiceType.DISCONNECT_REQUEST.getCodeAsBytes()).containsExactly(0x02, 0x09);
+        assertThat(ServiceType.DISCONNECT_RESPONSE.getCodeAsBytes()).containsExactly(0x02, 0x0A);
 
         // 0x03 xx Device Management
-        assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x03, 0x10});
-        assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.getCodeAsBytes()).containsExactly(new byte[]{0x03, 0x11});
+        assertThat(ServiceType.DEVICE_CONFIGURATION_REQUEST.getCodeAsBytes()).containsExactly(0x03, 0x10);
+        assertThat(ServiceType.DEVICE_CONFIGURATION_ACK.getCodeAsBytes()).containsExactly(0x03, 0x11);
 
         // 0x04 xx Tunneling
-        assertThat(ServiceType.TUNNELING_REQUEST.getCodeAsBytes()).containsExactly(new byte[]{0x04, 0x20});
-        assertThat(ServiceType.TUNNELING_ACK.getCodeAsBytes()).containsExactly(new byte[]{0x04, 0x21});
+        assertThat(ServiceType.TUNNELING_REQUEST.getCodeAsBytes()).containsExactly(0x04, 0x20);
+        assertThat(ServiceType.TUNNELING_ACK.getCodeAsBytes()).containsExactly(0x04, 0x21);
 
         // 0x05 xx Routing
-        assertThat(ServiceType.ROUTING_INDICATION.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x30});
-        assertThat(ServiceType.ROUTING_LOST_MESSAGE.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x31});
-        assertThat(ServiceType.ROUTING_BUSY.getCodeAsBytes()).containsExactly(new byte[]{0x05, 0x32});
+        assertThat(ServiceType.ROUTING_INDICATION.getCodeAsBytes()).containsExactly(0x05, 0x30);
+        assertThat(ServiceType.ROUTING_LOST_MESSAGE.getCodeAsBytes()).containsExactly(0x05, 0x31);
+        assertThat(ServiceType.ROUTING_BUSY.getCodeAsBytes()).containsExactly(0x05, 0x32);
     }
 
     @Test

@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.net.ConnectionType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
 import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
@@ -84,7 +85,7 @@ class ConnectResponseBodyTest {
         final var channelId = 7;
         final var status = Status.NO_ERROR;
         final var dataEndpoint = HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(3, 3, 3, 3), 3671);
-        final var crd = ConnectionResponseData.of(IndividualAddress.of(15, 15, 242));
+        final var crd = ConnectionResponseData.of(ConnectionType.TUNNEL_CONNECTION, IndividualAddress.of(15, 15, 242));
 
         final var body = ConnectResponseBody.of(channelId, status, dataEndpoint, crd);
         assertThat(body.getServiceType()).isSameAs(ServiceType.CONNECT_RESPONSE);

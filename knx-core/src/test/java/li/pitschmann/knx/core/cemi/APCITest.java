@@ -84,12 +84,12 @@ final class APCITest {
     @Test
     @DisplayName("Test #getCodeAsBytes()")
     void testGetCodeAsByte() {
-        assertThat(APCI.GROUP_VALUE_READ.getCodeAsBytes()).containsExactly(new byte[]{0x00, 0x00});
-        assertThat(APCI.GROUP_VALUE_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x00, 0x40});
-        assertThat(APCI.GROUP_VALUE_WRITE.getCodeAsBytes()).containsExactly(new byte[]{0x00, (byte) 0x80});
-        assertThat(APCI.INDIVIDUAL_ADDRESS_WRITE.getCodeAsBytes()).containsExactly(new byte[]{0x00, (byte) 0xC0});
-        assertThat(APCI.INDIVIDUAL_ADDRESS_READ.getCodeAsBytes()).containsExactly(new byte[]{0x01, 0x00});
-        assertThat(APCI.INDIVIDUAL_ADDRESS_RESPONSE.getCodeAsBytes()).containsExactly(new byte[]{0x01, 0x40});
+        assertThat(APCI.GROUP_VALUE_READ.getCodeAsBytes()).containsExactly(0x00, 0x00);
+        assertThat(APCI.GROUP_VALUE_RESPONSE.getCodeAsBytes()).containsExactly(0x00, 0x40);
+        assertThat(APCI.GROUP_VALUE_WRITE.getCodeAsBytes()).containsExactly(0x00, (byte) 0x80);
+        assertThat(APCI.INDIVIDUAL_ADDRESS_WRITE.getCodeAsBytes()).containsExactly(0x00, (byte) 0xC0);
+        assertThat(APCI.INDIVIDUAL_ADDRESS_READ.getCodeAsBytes()).containsExactly(0x01, 0x00);
+        assertThat(APCI.INDIVIDUAL_ADDRESS_RESPONSE.getCodeAsBytes()).containsExactly(0x01, 0x40);
     }
 
     /*

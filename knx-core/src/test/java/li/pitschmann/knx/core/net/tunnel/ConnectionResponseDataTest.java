@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 package li.pitschmann.knx.core.net.tunnel;
 
 import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.net.ConnectionType;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,62 +32,68 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class ConnectionResponseDataTest {
-    private static final IndividualAddress TEST_ADDRESS = IndividualAddress.of(15, 15, 255);
+final class ConnectionResponseDataTest {
 
-    /**
-     * Valid {@link ConnectionResponseData} for tunneling.
-     * <p>
-     * Tests the {@link ConnectionResponseData#of(IndividualAddress)} and
-     * {@link ConnectionResponseData#of(byte[])}
-     */
     @Test
-    public void validCase() {
-        final var criByCreate = ConnectionResponseData.of(TEST_ADDRESS);
-        final var criByCreateRawData = ConnectionResponseData.of(criByCreate.getRawData());
-        assertThat(criByCreateRawData.getLength()).isEqualTo(4);
-        assertThat(criByCreateRawData.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
-        assertThat(criByCreateRawData.getAddress()).isEqualTo(TEST_ADDRESS);
+    @DisplayName("Test #of(byte[])")
+    void testOf_Bytes() {
+        final var bytes = new byte[]{
+                ConnectionResponseData.STRUCTURE_LENGTH,  // Structure Length
+                0x03,                                     // Connection Type DEVICE_MANAGEMENT_CONNECTION
+                (byte) 0x74, 0x5C                         // Address
+        };
 
-        // create by bytes
-        final var criByValueOf = ConnectionResponseData.of(new byte[]{0x04, 0x04, (byte) 0xFF, (byte) 0xFF});
-        assertThat(criByValueOf.getLength()).isEqualTo(4);
-        assertThat(criByValueOf.getConnectionType()).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
-        assertThat(criByValueOf.getAddress()).isEqualTo(TEST_ADDRESS);
-
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(criByCreateRawData.getRawData()).isEqualTo(criByCreateRawData.getRawData());
-        assertThat(criByCreateRawData.getRawData()).isEqualTo(criByValueOf.getRawData());
+        final var cri = ConnectionResponseData.of(bytes);
+        assertThat(cri.getLength()).isEqualTo(ConnectionResponseData.STRUCTURE_LENGTH);
+        assertThat(cri.getConnectionType()).isSameAs(ConnectionType.DEVICE_MANAGEMENT_CONNECTION);
+        assertThat(cri.getAddress()).isEqualTo(IndividualAddress.of(7, 4, 92));
+        assertThat(cri.toByteArray()).containsExactly(bytes);
     }
 
-    /**
-     * Tests <strong>invalid</strong> connection response data parameters
-     */
     @Test
-    public void invalidCases() {
+    @DisplayName("Test #of(ConnectionType, IndividualAddress)")
+    void testOf_ConnectionType_IndividualAddress() {
+        final var address = IndividualAddress.of(13, 14, 15);
+        final var cri = ConnectionResponseData.of(ConnectionType.OBJECT_SERVER_CONNECTION, address);
+        assertThat(cri.getLength()).isEqualTo(ConnectionResponseData.STRUCTURE_LENGTH);
+        assertThat(cri.getConnectionType()).isSameAs(ConnectionType.OBJECT_SERVER_CONNECTION);
+        assertThat(cri.getAddress()).isEqualTo(address);
+
+        assertThat(cri.toByteArray()).containsExactly(
+                ConnectionResponseData.STRUCTURE_LENGTH,  // Structure Length
+                0x08,                                     // Connection Type OBJECT_SERVER_CONNECTION
+                (byte) 0xDE, 0x0F                         // Address
+        );
+    }
+
+    @Test
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
         // null
-        assertThatThrownBy(() -> ConnectionResponseData.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("crdRawData");
-        assertThatThrownBy(() -> ConnectionResponseData.of((IndividualAddress) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("address");
+        assertThatThrownBy(() -> ConnectionResponseData.of(null))
+                .isInstanceOf(NullPointerException.class);
 
-        // out of range
-        assertThatThrownBy(() -> ConnectionResponseData.of(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("crdRawData");
-        assertThatThrownBy(() -> ConnectionResponseData.of(new byte[4])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("crdRawData[0]"); // illegal length (byte 0)
+        // invalid structure
+        assertThatThrownBy(() -> ConnectionResponseData.of(new byte[5]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '4' but was: 5");
     }
 
-    /**
-     * Test {@link ConnectionResponseData#toString()} and {@link ConnectionResponseData#toString(boolean)}
-     */
     @Test
-    public void testToString() {
-        assertThat(ConnectionResponseData.of(TEST_ADDRESS))
-                .hasToString(String.format("ConnectionResponseData{length=4, connectionType=%s, address=%s}",
-                        ConnectionType.TUNNEL_CONNECTION, TEST_ADDRESS));
-
-        assertThat(ConnectionResponseData.of(new byte[]{0x04, 0x06, 0x16, 0x63}).toString(false)).hasToString(String.format(
-                "ConnectionResponseData{length=4, connectionType=%s, address=%s}", ConnectionType.REMOTE_LOGGING_CONNECTION,
-                IndividualAddress.of(new byte[]{0x16, 0x63})));
-
+    @DisplayName("Test #toString()")
+    void testToString() {
+        final var address = IndividualAddress.of(12, 3, 41);
+        final var crd = ConnectionResponseData.of(ConnectionType.TUNNEL_CONNECTION, address);
+        assertThat(crd).hasToString(
+                String.format("ConnectionResponseData{length=4, connectionType=TUNNEL_CONNECTION, address=%s}",
+                        address)
+        );
     }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(ConnectionResponseData.class).verify();
+    }
+
 }

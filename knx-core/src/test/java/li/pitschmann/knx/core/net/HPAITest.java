@@ -53,12 +53,12 @@ final class HPAITest {
         assertThat(hpai.getAddress()).isEqualTo(Networker.getAddressUnbound());
         assertThat(hpai.getPort()).isZero();
 
-        assertThat(hpai.toByteArray()).containsExactly(new byte[]{
+        assertThat(hpai.toByteArray()).containsExactly(
                 HPAI.STRUCTURE_LENGTH,  // Structure Length
                 0x01,                   // Host Protocol
                 0x00, 0x00, 0x00, 0x00, // Address
                 0x00, 0x00              // Port
-        });
+        );
     }
 
     @Test
@@ -89,12 +89,12 @@ final class HPAITest {
         assertThat(hpai.getProtocol()).isSameAs(HostProtocol.IPV4_UDP);
         assertThat(hpai.getAddress()).isEqualTo(address);
         assertThat(hpai.getPort()).isEqualTo(32373);
-        assertThat(hpai.toByteArray()).containsExactly(new byte[]{
+        assertThat(hpai.toByteArray()).containsExactly(
                 HPAI.STRUCTURE_LENGTH,  // Structure Length
                 0x01,                   // Host Protocol
                 0x0A, 0x25, 0x53, 0x1E, // Address (10.37.83.30)
                 0x7E, 0x75              // Port (32373)
-        });
+        );
     }
 
     @Test
@@ -108,12 +108,12 @@ final class HPAITest {
         when(socketMock.getLocalPort()).thenReturn(12345);
 
         final var hpai = HPAI.of(udpChannelMock);
-        assertThat(hpai.toByteArray()).containsExactly(new byte[]{
+        assertThat(hpai.toByteArray()).containsExactly(
                 HPAI.STRUCTURE_LENGTH,         // Structure Length
                 0x01,                          // Host Protocol
                 0x51, 0x7C, (byte) 0xE9, 0x07, // Address (81.124.233.7)
                 0x30, 0x39                     // Port (12345)
-        });
+        );
     }
 
     @Test
@@ -127,12 +127,12 @@ final class HPAITest {
         when(tcpSocketMock.getLocalPort()).thenReturn(7333);
 
         final var hpai = HPAI.of(tcpChannelMock);
-        assertThat(hpai.toByteArray()).containsExactly(new byte[]{
+        assertThat(hpai.toByteArray()).containsExactly(
                 HPAI.STRUCTURE_LENGTH,         // Structure Length
                 0x02,                          // Host Protocol
                 (byte) 0xF3, 0x1C, 0x5C, 0x29, // Address (243.28.92.41)
                 0x1C, (byte) 0xA5              // Port (7333)
-        });
+        );
     }
 
     @Test
