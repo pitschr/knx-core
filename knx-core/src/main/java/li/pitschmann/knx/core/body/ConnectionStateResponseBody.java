@@ -120,10 +120,6 @@ public final class ConnectionStateResponseBody implements ResponseBody, ChannelI
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         // create bytes
         final var bytes = new byte[2];

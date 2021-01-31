@@ -98,12 +98,8 @@ public final class RoutingIndicationBody implements RequestBody, ResponseBody, C
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        return this.cemi.getRawData();
+        return this.cemi.toByteArray();
     }
 
     @Override

@@ -187,11 +187,10 @@ public final class DeviceInformationDIB extends AbstractDIB {
 
     @Override
     public String toString(boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.getLength() + " (" + ByteFormatter.formatHex(this.getLength()) + ")")
-                .add("descriptionType", this.getDescriptionType())
-                .add("mediumType", this.mediumType)
+        return Strings.toStringHelper(this)
+                .add("length", this.getLength())
+                .add("descriptionType", this.getDescriptionType().name())
+                .add("mediumType", this.mediumType.name())
                 .add("programmingMode", this.programmingMode)
                 .add("individualAddress", this.individualAddress)
                 .add("projectNumber", this.projectNumber)
@@ -199,12 +198,8 @@ public final class DeviceInformationDIB extends AbstractDIB {
                 .add("serialNumber", this.serialNumber)
                 .add("multicastAddress", this.multicastAddress.getHostAddress())
                 .add("macAddress", this.macAddress)
-                .add("deviceFriendlyName", this.deviceFriendlyName);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+                .add("deviceFriendlyName", this.deviceFriendlyName)
+                .toString();
     }
 
 }

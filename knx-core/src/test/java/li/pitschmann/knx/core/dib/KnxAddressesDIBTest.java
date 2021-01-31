@@ -94,7 +94,8 @@ public final class KnxAddressesDIBTest {
                 IndividualAddress.of(15, 15, 255));
 
         assertThat(KnxAddressesDIB.of(BYTES)).hasToString(
-                String.format("KnxAddressesDIB{length=10 (0x0A), descriptionType=%s, knxAddress=%s, additionalAddresses=%s, rawData=%s}",
-                        DescriptionType.KNX_ADDRESSES, knxAddress, additionalAddresses, ByteFormatter.formatHexAsString(BYTES)));
+                String.format("KnxAddressesDIB{length=10, descriptionType=KNX_ADDRESSES, knxAddress=%s, additionalAddresses=%s}",
+                        knxAddress, additionalAddresses)
+        );
     }
 }

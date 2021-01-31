@@ -120,11 +120,11 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
         final ByteBuffer byteBuffer;
         if (body instanceof BytesBody) {
             // byte body
-            byteBuffer = ByteBuffer.wrap(body.getRawData());
+            byteBuffer = ByteBuffer.wrap(body.toByteArray());
         } else {
             // OK
-            final var headerRawData = Header.of(body).getRawData();
-            final var bodyRawData = body.getRawData();
+            final var headerRawData = Header.of(body).toByteArray();
+            final var bodyRawData = body.toByteArray();
             byteBuffer = ByteBuffer.wrap(Bytes.concat(headerRawData, bodyRawData));
         }
 

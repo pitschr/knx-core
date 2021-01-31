@@ -271,13 +271,9 @@ public final class DescriptionResponseBody implements ResponseBody, DescriptionC
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var deviceInformationAsBytes = deviceInformation.getRawData();
-        final var deviceFamiliesAsBytes = supportedServiceFamilies.getRawData();
+        final var deviceInformationAsBytes = deviceInformation.toByteArray();
+        final var deviceFamiliesAsBytes = supportedServiceFamilies.toByteArray();
 
         final var totalLength = deviceInformationAsBytes.length + deviceFamiliesAsBytes.length;
 

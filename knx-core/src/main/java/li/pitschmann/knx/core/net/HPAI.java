@@ -178,10 +178,6 @@ public final class HPAI implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         final var ipAddressAsBytes = address.getAddress();
 

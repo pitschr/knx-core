@@ -385,13 +385,9 @@ public final class CEMI implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var sourceAddressAsBytes = sourceAddress.getRawData();
-        final var destinationAddressAsBytes = destinationAddress.getRawData();
+        final var sourceAddressAsBytes = sourceAddress.toByteArray();
+        final var destinationAddressAsBytes = destinationAddress.toByteArray();
 
         // xx.. .... TCPI code
         // 00.. .... UDT unnumbered package
@@ -448,8 +444,8 @@ public final class CEMI implements MultiRawDataAware {
             byteCount += addInfoBytes.length;
         }
         // control bytes
-        bytes[byteCount++] = controlByte1.getRawData();
-        bytes[byteCount++] = controlByte2.getRawData();
+        bytes[byteCount++] = controlByte1.toByte();
+        bytes[byteCount++] = controlByte2.toByte();
         // source address
         System.arraycopy(sourceAddressAsBytes, 0, bytes, byteCount, sourceAddressAsBytes.length);
         byteCount += sourceAddressAsBytes.length;

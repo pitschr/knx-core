@@ -19,6 +19,7 @@
 package li.pitschmann.knx.core;
 
 import li.pitschmann.knx.core.exceptions.KnxException;
+import li.pitschmann.knx.core.utils.ByteFormatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,7 +69,7 @@ public class AbstractMultiRawDataTest {
 
         @Override
         public String toString(boolean inclRawData) {
-            return "TestMultiRawData{" + this.getRawDataAsHexString() + "}";
+            return "TestMultiRawData{" + ByteFormatter.formatHexAsString(toByteArray()) + "}";
         }
     }
 
@@ -89,7 +90,7 @@ public class AbstractMultiRawDataTest {
 
         @Override
         public String toString(boolean inclRawData) {
-            return "AnotherTestMultiRawData{" + this.getRawDataAsHexString() + "}";
+            return "AnotherTestMultiRawData{" + ByteFormatter.formatHexAsString(toByteArray()) + "}";
         }
     }
 }

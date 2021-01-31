@@ -45,9 +45,9 @@ public interface Body extends MultiRawDataAware {
      */
     default byte[] getRawData(final boolean withHeader) {
         if (withHeader) {
-            return Bytes.concat(Header.of(this).getRawData(), getRawData());
+            return Bytes.concat(Header.of(this).toByteArray(), toByteArray());
         } else {
-            return getRawData();
+            return toByteArray();
         }
     }
 }

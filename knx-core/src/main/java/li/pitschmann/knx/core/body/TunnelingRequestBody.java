@@ -154,12 +154,8 @@ public final class TunnelingRequestBody implements RequestBody, ChannelIdAware, 
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var cemiAsBytes = cemi.getRawData();
+        final var cemiAsBytes = cemi.toByteArray();
 
         // create bytes
         final var bytes = new byte[STRUCTURE_LENGTH + cemiAsBytes.length];

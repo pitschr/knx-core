@@ -18,12 +18,10 @@
 
 package li.pitschmann.knx.core;
 
-import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxException;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Abstract class representing raw data of KNX packet with byte array.
@@ -40,7 +38,7 @@ public abstract class AbstractMultiRawData implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
+    public byte[] toByteArray() {
         return rawData.clone();
     }
 

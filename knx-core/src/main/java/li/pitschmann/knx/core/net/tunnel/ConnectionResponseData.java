@@ -109,10 +109,6 @@ public final class ConnectionResponseData implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         final var addressAsBytes = address.toByteArray();
 

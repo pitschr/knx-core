@@ -72,7 +72,8 @@ public final class IPCurrentConfigDIBTest {
     @Test
     public void testToString() {
         assertThat(IPCurrentConfigDIB.of(BYTES))
-                .hasToString(String.format("IPCurrentConfigDIB{length=20 (0x14), descriptionType=%s, rawData=%s}",
-                        DescriptionType.IP_CURRENT_CONFIG, ByteFormatter.formatHexAsString(BYTES)));
+                .hasToString(String.format("IPCurrentConfigDIB{length=20, descriptionType=IP_CURRENT_CONFIG, rawData=%s}",
+                        ByteFormatter.formatHexAsString(BYTES))
+                );
     }
 }

@@ -60,10 +60,6 @@ public final class AdditionalInfo implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         return bytes.clone();
     }

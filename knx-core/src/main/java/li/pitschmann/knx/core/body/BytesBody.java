@@ -90,12 +90,7 @@ public final class BytesBody implements Body {
         return serviceType;
     }
 
-
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         return bytes.clone();
     }

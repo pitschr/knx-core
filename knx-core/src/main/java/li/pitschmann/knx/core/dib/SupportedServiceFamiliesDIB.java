@@ -138,7 +138,7 @@ public final class SupportedServiceFamiliesDIB extends AbstractDIB {
     public String toString(boolean inclRawData) {
         return Strings.toStringHelper(this)
                 .add("length", this.getLength())
-                .add("descriptionType", this.getDescriptionType())
+                .add("descriptionType", this.getDescriptionType().name())
                 .add("serviceFamilies", serviceFamilies)
                 .toString();
     }

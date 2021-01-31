@@ -143,7 +143,8 @@ final class SupportedServiceFamiliesDIBTest {
         serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.ROUTING, 3));
 
         assertThat(supportedDevicesFamiliesDIB).hasToString(
-                String.format("SupportedServiceFamiliesDIB{length=10, descriptionType=%s, serviceFamilies=%s}",
-                        DescriptionType.SUPPORTED_SERVICE_FAMILIES, serviceFamilies));
+                String.format("SupportedServiceFamiliesDIB{length=10, descriptionType=SUPPORTED_SERVICE_FAMILIES, serviceFamilies=%s}",
+                        serviceFamilies)
+        );
     }
 }

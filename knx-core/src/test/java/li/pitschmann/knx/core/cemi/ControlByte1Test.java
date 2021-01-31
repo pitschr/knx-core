@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,165 +30,142 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class ControlByte1Test {
-    /**
-     * Tests the {@link ControlByte1#useDefault()}
-     */
-    @Test
-    public void useDefault() {
-        final ControlByte1 controlByte1Default = ControlByte1.useDefault();
-        final ControlByte1 controlByte1CreateBy = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+final class ControlByte1Test {
 
-        // assert
-        assertThat(controlByte1Default.getRawData()).isEqualTo(controlByte1CreateBy.getRawData());
+    @Test
+    @DisplayName("Test #useDefault()")
+    void testUseDefault() {
+        final var cbDefault = ControlByte1.useDefault();
+        assertThat(cbDefault.isStandardFrame()).isTrue();
+        assertThat(cbDefault.isRepeatEnabled()).isFalse();
+        assertThat(cbDefault.getBroadcastType()).isSameAs(BroadcastType.NORMAL);
+        assertThat(cbDefault.getPriority()).isSameAs(Priority.LOW);
+        assertThat(cbDefault.isRequestAcknowledge()).isFalse();
+        assertThat(cbDefault.isErrorConfirmation()).isFalse();
+        assertThat(cbDefault.toByte()).isEqualTo(
+                (byte) 0b1011_1100
+                //       ^... .... Frame Type
+                //       .^.. .... (reserved)
+                //       ..^. .... Repetition (0=repeat on error, 1=don't repeat on error)
+                //       ...^ .... Broadcast Type
+                //       .... ^^.. Priority
+                //       .... ..^. Acknowledge Request
+                //       .... ...^ Error Confirmation (0=no error, 1=error)
+        );
     }
 
-    /**
-     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#of(byte)} with all parameters as {@code true}, {@link BroadcastType#SYSTEM} and
-     * {@link Priority#SYSTEM}.
-     */
     @Test
-    public void validCaseA() {
-        // create
-        final var controlByteByCreate = ControlByte1.of(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false);
-        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
-        assertThat(controlByteByCreateRawData.isStandardFrame()).isFalse();
-        assertThat(controlByteByCreateRawData.isRepeatEnabled()).isFalse();
-        assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
-        assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.SYSTEM);
-        assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isFalse();
+    @DisplayName("Test #of(byte) standardFrame=false, repeatEnabled=false, BroadcastType#SYSTEM, Priority#SYSTEM, requestAcknowledge=false, errorConfirmation=false")
+    void testOf_Byte_A() {
+        final var createByByte = ControlByte1.of(
+                (byte) 0b0010_0000
+        //               ^... .... Frame Type
+        //               .^.. .... (reserved)
+        //               ..^. .... Repetition (0=repeat on error, 1=don't repeat on error)
+        //               ...^ .... Broadcast Type
+        //               .... ^^.. Priority
+        //               .... ..^. Acknowledge Request
+        //               .... ...^ Error Confirmation (0=no error, 1=error)
+        );
 
-        // create by bytes
-        final var controlByteByValueOf = ControlByte1.of((byte) (0x00 << 7 | 0x01 << 5 | 0x00 << 4 | 0x00 << 2 | 0x00 << 1 | 0x00));
-        assertThat(controlByteByValueOf.isStandardFrame()).isFalse();
-        assertThat(controlByteByValueOf.isRepeatEnabled()).isFalse();
-        assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
-        assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.SYSTEM);
-        assertThat(controlByteByValueOf.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByValueOf.isErrorConfirmation()).isFalse();
+        final var create = ControlByte1.of(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false);
+        assertThat(create.isStandardFrame()).isFalse();
+        assertThat(create.isRepeatEnabled()).isFalse();
+        assertThat(create.getBroadcastType()).isSameAs(BroadcastType.SYSTEM);
+        assertThat(create.getPriority()).isSameAs(Priority.SYSTEM);
+        assertThat(create.isRequestAcknowledge()).isFalse();
+        assertThat(create.isErrorConfirmation()).isFalse();
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
+        assertThat(create.toByte()).isEqualTo(createByByte.toByte());
+        assertThat(create).isEqualTo(createByByte);
+        assertThat(create).hasSameHashCodeAs(createByByte);
     }
 
-    /**
-     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#of(byte)} with all parameters as {@code true}, {@link BroadcastType#NORMAL} and
-     * {@link Priority#LOW}.
-     */
     @Test
-    public void validCaseB() {
-        // create
-        final var controlByteByCreate = ControlByte1.of(true, true, BroadcastType.NORMAL, Priority.LOW, true, true);
-        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
-        assertThat(controlByteByCreateRawData.isStandardFrame()).isTrue();
-        assertThat(controlByteByCreateRawData.isRepeatEnabled()).isTrue();
-        assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
-        assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.LOW);
-        assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isTrue();
+    @DisplayName("Test #of(byte) standardFrame=true, repeatEnabled=true, BroadcastType#NORMAL, Priority#LOW, requestAcknowledge=true, errorConfirmation=true")
+    void testOf_Byte_B() {
+        final var createByByte = ControlByte1.of(
+                (byte) 0b1001_1111
+                //       ^... .... Frame Type
+                //       .^.. .... (reserved)
+                //       ..^. .... Repetition (0=repeat on error, 1=don't repeat on error)
+                //       ...^ .... Broadcast Type
+                //       .... ^^.. Priority
+                //       .... ..^. Acknowledge Request
+                //       .... ...^ Error Confirmation (0=no error, 1=error)
+        );
 
-        // create by bytes
-        final var controlByteByValueOf = ControlByte1.of((byte) (0x01 << 7 | 0x00 << 5 | 0x01 << 4 | 0x03 << 2 | 0x01 << 1 | 0x01));
-        assertThat(controlByteByValueOf.isStandardFrame()).isTrue();
-        assertThat(controlByteByValueOf.isRepeatEnabled()).isTrue();
-        assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
-        assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.LOW);
-        assertThat(controlByteByValueOf.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByValueOf.isErrorConfirmation()).isTrue();
+        final var create = ControlByte1.of(true, true, BroadcastType.NORMAL, Priority.LOW, true, true);
+        assertThat(create.isStandardFrame()).isTrue();
+        assertThat(create.isRepeatEnabled()).isTrue();
+        assertThat(create.getBroadcastType()).isSameAs(BroadcastType.NORMAL);
+        assertThat(create.getPriority()).isSameAs(Priority.LOW);
+        assertThat(create.isRequestAcknowledge()).isTrue();
+        assertThat(create.isErrorConfirmation()).isTrue();
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
+        assertThat(create.toByte()).isEqualTo(createByByte.toByte());
+        assertThat(create).isEqualTo(createByByte);
+        assertThat(create).hasSameHashCodeAs(createByByte);
     }
 
-    /**
-     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#of(byte)} in {@code true}/{@code false} sequence, {@link BroadcastType#SYSTEM} and
-     * {@link Priority#NORMAL}.
-     */
     @Test
-    public void validCaseC() {
-        // create
-        final var controlByteByCreate = ControlByte1.of(true, false, BroadcastType.SYSTEM, Priority.NORMAL, true, false);
-        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
-        assertThat(controlByteByCreateRawData.isStandardFrame()).isTrue();
-        assertThat(controlByteByCreateRawData.isRepeatEnabled()).isFalse();
-        assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
-        assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.NORMAL);
-        assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isFalse();
+    @DisplayName("Test #of(byte) standardFrame=true, repeatEnabled=false, BroadcastType#SYSTEM, Priority#NORMAL, requestAcknowledge=true, errorConfirmation=false")
+    void testOf_Byte_C() {
+        final var createByByte = ControlByte1.of(
+                (byte) 0b1010_0110
+                //       ^... .... Frame Type
+                //       .^.. .... (reserved)
+                //       ..^. .... Repetition (0=repeat on error, 1=don't repeat on error)
+                //       ...^ .... Broadcast Type
+                //       .... ^^.. Priority
+                //       .... ..^. Acknowledge Request
+                //       .... ...^ Error Confirmation (0=no error, 1=error)
+        );
 
-        // create by bytes
-        final var controlByteByValueOf = ControlByte1.of((byte) (0x01 << 7 | 0x01 << 5 | 0x00 << 4 | 0x01 << 2 | 0x01 << 1 | 0x00));
-        assertThat(controlByteByValueOf.isStandardFrame()).isTrue();
-        assertThat(controlByteByValueOf.isRepeatEnabled()).isFalse();
-        assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.SYSTEM);
-        assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.NORMAL);
-        assertThat(controlByteByValueOf.isRequestAcknowledge()).isTrue();
-        assertThat(controlByteByValueOf.isErrorConfirmation()).isFalse();
+        final var create = ControlByte1.of(true, false, BroadcastType.SYSTEM, Priority.NORMAL, true, false);
+        assertThat(create.isStandardFrame()).isTrue();
+        assertThat(create.isRepeatEnabled()).isFalse();
+        assertThat(create.getBroadcastType()).isSameAs(BroadcastType.SYSTEM);
+        assertThat(create.getPriority()).isSameAs(Priority.NORMAL);
+        assertThat(create.isRequestAcknowledge()).isTrue();
+        assertThat(create.isErrorConfirmation()).isFalse();
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
+        assertThat(create.toByte()).isEqualTo(createByByte.toByte());
+        assertThat(create).isEqualTo(createByByte);
+        assertThat(create).hasSameHashCodeAs(createByByte);
     }
 
-    /**
-     * Tests {@link ControlByte1#of(boolean, boolean, BroadcastType, Priority, boolean, boolean)} and
-     * {@link ControlByte1#of(byte)} in {@code false}/{@code true} sequence, {@link BroadcastType#NORMAL} and
-     * {@link Priority#NORMAL}.
-     */
     @Test
-    public void validCaseD() {
-        // create
-        final var controlByteByCreate = ControlByte1.of(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true);
-        final var controlByteByCreateRawData = ControlByte1.of(controlByteByCreate.getRawData());
-        assertThat(controlByteByCreateRawData.isStandardFrame()).isFalse();
-        assertThat(controlByteByCreateRawData.isRepeatEnabled()).isTrue();
-        assertThat(controlByteByCreateRawData.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
-        assertThat(controlByteByCreateRawData.getPriority()).isEqualTo(Priority.URGENT);
-        assertThat(controlByteByCreateRawData.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByCreateRawData.isErrorConfirmation()).isTrue();
+    @DisplayName("Invalid cases for #of(boolean, boolean, BroadcastType, Priority, boolean, boolean)")
+    void invalidCases_of_2boolean_BroadcastType_Priority_2boolean() {
+        // null
+        assertThatThrownBy(() -> ControlByte1.of(false, false, null, Priority.LOW, false, false))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Broadcast Type is required.");
 
-        // create by bytes
-        final var controlByteByValueOf = ControlByte1.of((byte) (0x00 << 7 | 0x00 << 5 | 0x01 << 4 | 0x02 << 2 | 0x00 << 1 | 0x01));
-        assertThat(controlByteByValueOf.isStandardFrame()).isFalse();
-        assertThat(controlByteByValueOf.isRepeatEnabled()).isTrue();
-        assertThat(controlByteByValueOf.getBroadcastType()).isEqualTo(BroadcastType.NORMAL);
-        assertThat(controlByteByValueOf.getPriority()).isEqualTo(Priority.URGENT);
-        assertThat(controlByteByValueOf.isRequestAcknowledge()).isFalse();
-        assertThat(controlByteByValueOf.isErrorConfirmation()).isTrue();
-
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByCreateRawData.getRawData());
-        assertThat(controlByteByCreate.getRawData()).isEqualTo(controlByteByValueOf.getRawData());
-    }
-
-    /**
-     * Tests <strong>invalid</strong> control byte parameters
-     */
-    @Test
-    public void invalidCases() {
-        assertThatThrownBy(() -> ControlByte1.of(false, false, null, Priority.LOW, false, false)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("broadcastType");
         assertThatThrownBy(() -> ControlByte1.of(false, false, BroadcastType.SYSTEM, null, false, false))
-                .isInstanceOf(KnxNullPointerException.class).hasMessageContaining("priority");
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Priority is required.");
     }
 
-    /**
-     * Test {@link ControlByte1#toString()}
-     */
     @Test
-    public void testToString() {
-        assertThat(ControlByte1.of(false, false, BroadcastType.SYSTEM, Priority.SYSTEM, false, false)).hasToString(String.format(
-                "ControlByte1{standardFrame=false, repeatEnabled=false, broadcastType=%s, priority=%s, requestAcknowledge=false, errorConfirmation=false, rawData=0x20}",
-                BroadcastType.SYSTEM, Priority.SYSTEM));
+    @DisplayName("Test #toString()")
+    void testToString() {
+        final var first = ControlByte1.of(true, false, BroadcastType.NORMAL, Priority.LOW, false, false);
+        assertThat(first).hasToString(
+                "ControlByte1{standardFrame=true, repeatEnabled=false, broadcastType=NORMAL, priority=LOW, requestAcknowledge=false, errorConfirmation=false}"
+        );
 
-        assertThat(ControlByte1.of(false, true, BroadcastType.NORMAL, Priority.URGENT, false, true)).hasToString(String.format(
-                "ControlByte1{standardFrame=false, repeatEnabled=true, broadcastType=%s, priority=%s, requestAcknowledge=false, errorConfirmation=true, rawData=0x19}",
-                BroadcastType.NORMAL, Priority.URGENT));
+        final var second = ControlByte1.of(false, true, BroadcastType.SYSTEM, Priority.URGENT, false, true);
+        assertThat(second).hasToString(
+                "ControlByte1{standardFrame=false, repeatEnabled=true, broadcastType=SYSTEM, priority=URGENT, requestAcknowledge=false, errorConfirmation=true}"
+        );
     }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(ControlByte1.class).verify();
+    }
+
 }

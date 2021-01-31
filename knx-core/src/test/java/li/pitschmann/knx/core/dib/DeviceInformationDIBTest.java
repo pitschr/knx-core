@@ -151,10 +151,10 @@ public final class DeviceInformationDIBTest {
     public void testToString() {
         assertThat(DeviceInformationDIB.of(BYTES)).hasToString(String.format(
                 "DeviceInformationDIB{"
-                        + "length=54 (0x36), descriptionType=%s, mediumType=%s, programmingMode=false, individualAddress=%s, "
+                        + "length=54, descriptionType=DEVICE_INFO, mediumType=TP, programmingMode=false, individualAddress=%s, "
                         + "projectNumber=582, projectInstallationIdentifier=4, serialNumber=0x00 88 99 AA BB CC, "
-                        + "multicastAddress=224.0.23.12, macAddress=01:02:03:04:05:AA, deviceFriendlyName=MDT KNX IP Router, rawData=%s}",
-                DescriptionType.DEVICE_INFO, MediumType.TP, IndividualAddress.of(new byte[]{0x10, 0x00}),
-                ByteFormatter.formatHexAsString(BYTES)));
+                        + "multicastAddress=224.0.23.12, macAddress=01:02:03:04:05:AA, deviceFriendlyName=MDT KNX IP Router}",
+                IndividualAddress.of(new byte[]{0x10, 0x00}))
+        );
     }
 }

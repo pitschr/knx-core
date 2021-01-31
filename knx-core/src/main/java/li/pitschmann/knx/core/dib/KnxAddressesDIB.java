@@ -115,16 +115,11 @@ public final class KnxAddressesDIB extends AbstractDIB {
 
     @Override
     public String toString(boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.getLength() + " (" + ByteFormatter.formatHex(this.getLength()) + ")")
-                .add("descriptionType", this.getDescriptionType())
+        return Strings.toStringHelper(this)
+                .add("length", this.getLength())
+                .add("descriptionType", this.getDescriptionType().name())
                 .add("knxAddress", this.knxAddress)
-                .add("additionalAddresses", this.additionalAddresses);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+                .add("additionalAddresses", this.additionalAddresses)
+                .toString();
     }
 }

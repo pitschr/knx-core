@@ -133,10 +133,6 @@ public final class ConnectionRequestInfo implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         return new byte[]{
                 STRUCTURE_LENGTH,               // Structure Length

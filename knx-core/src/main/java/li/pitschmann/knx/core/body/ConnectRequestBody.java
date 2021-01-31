@@ -138,14 +138,10 @@ public final class ConnectRequestBody implements RequestBody, ControlChannelRela
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var controlEndpointAsBytes = controlEndpoint.getRawData();
-        final var dataEndpointAsBytes = dataEndpoint.getRawData();
-        final var criAsBytes = connectionRequestInformation.getRawData();
+        final var controlEndpointAsBytes = controlEndpoint.toByteArray();
+        final var dataEndpointAsBytes = dataEndpoint.toByteArray();
+        final var criAsBytes = connectionRequestInformation.toByteArray();
 
         // create bytes
         final var bytes = new byte[controlEndpointAsBytes.length + dataEndpointAsBytes.length + criAsBytes.length];

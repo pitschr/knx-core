@@ -149,7 +149,7 @@ public final class Header implements MultiRawDataAware {
      */
     public static Header of(final Body body) {
         Preconditions.checkNonNull(body, "Body is required.");
-        return new Header(STRUCTURE_LENGTH, PROTOCOL_VERSION_V1, body.getServiceType(), Header.STRUCTURE_LENGTH + body.getRawData().length);
+        return new Header(STRUCTURE_LENGTH, PROTOCOL_VERSION_V1, body.getServiceType(), Header.STRUCTURE_LENGTH + body.toByteArray().length);
     }
 
     /**
@@ -189,10 +189,6 @@ public final class Header implements MultiRawDataAware {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         final var serviceTypeAsBytes = serviceType.getCodeAsBytes();
         final var totalLengthAsBytes = new byte[]{(byte) (totalLength >>> 8), (byte) totalLength};

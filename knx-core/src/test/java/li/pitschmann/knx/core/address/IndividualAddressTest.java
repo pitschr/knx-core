@@ -96,7 +96,7 @@ final class IndividualAddressTest {
     void testUseDefault() {
         final var addr = IndividualAddress.useDefault();
         assertThat(addr.getAddress()).isEqualTo("0.0.0");
-        assertThat(addr.getRawData()).containsExactly(new byte[2]);
+        assertThat(addr.toByteArray()).containsExactly(new byte[2]);
     }
 
     @Test

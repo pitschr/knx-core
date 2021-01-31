@@ -132,10 +132,6 @@ public final class TunnelingAckBody implements ResponseBody, ChannelIdAware, Dat
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         final var bytes = new byte[STRUCTURE_LENGTH];
         bytes[0] = STRUCTURE_LENGTH;

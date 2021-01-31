@@ -17,12 +17,12 @@ public class MyPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override
     public void onIncomingBody(final Body item) {
-        System.out.println("Incoming: " + item.getServiceType().getFriendlyName() + " (" + item.getRawDataAsHexString() + ")");
+        System.out.println("Incoming: " + item);
     }
 
     @Override
     public void onOutgoingBody(final Body item) {
-        System.out.println("Outgoing: " + item.getServiceType().getFriendlyName() + " (" + item.getRawDataAsHexString() + ")");
+        System.out.println("Outgoing: " + item);
     }
 
     @Override

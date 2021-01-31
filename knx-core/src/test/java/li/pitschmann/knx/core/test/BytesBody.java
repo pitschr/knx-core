@@ -23,6 +23,7 @@ import li.pitschmann.knx.core.body.Body;
 import li.pitschmann.knx.core.exceptions.KnxException;
 import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
 /**
@@ -49,10 +50,8 @@ public abstract class BytesBody extends AbstractMultiRawData implements Body {
 
     @Override
     public String toString(boolean inclRawData) {
-        // @formatter:off
         return Strings.toStringHelper(this)
-                .add("rawData", this.getRawDataAsHexString())
+                .add("rawData", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
-        // @formatter:on
     }
 }

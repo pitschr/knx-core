@@ -111,12 +111,8 @@ public final class SearchRequestBody implements RequestBody, MulticastChannelRel
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        return discoveryEndpoint.getRawData();
+        return discoveryEndpoint.toByteArray();
     }
 
     @Override

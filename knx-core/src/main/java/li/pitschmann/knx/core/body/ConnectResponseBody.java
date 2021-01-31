@@ -204,16 +204,12 @@ public final class ConnectResponseBody implements ResponseBody, ChannelIdAware, 
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         // behavior depends on status
         if (status == Status.NO_ERROR) {
             // no error - provide everything
-            final var dataEndpointAsBytes = dataEndpoint.getRawData();
-            final var crdAsBytes = connectionResponseData.getRawData();
+            final var dataEndpointAsBytes = dataEndpoint.toByteArray();
+            final var crdAsBytes = connectionResponseData.toByteArray();
 
             // create bytes
             final var bytes = new byte[2 + dataEndpointAsBytes.length + crdAsBytes.length];

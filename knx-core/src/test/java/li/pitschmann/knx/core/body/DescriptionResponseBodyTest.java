@@ -147,8 +147,8 @@ class DescriptionResponseBodyTest {
         // create by bytes
         final var bodyByBytes = DescriptionResponseBody.of(
                 Bytes.concat(
-                        deviceInformation.getRawData(), //
-                        supportedServiceFamilies.getRawData() //
+                        deviceInformation.toByteArray(), //
+                        supportedServiceFamilies.toByteArray() //
                 )
         );
 
@@ -198,12 +198,12 @@ class DescriptionResponseBodyTest {
         // create by bytes
         final var bodyByBytes = DescriptionResponseBody.of(
                 Bytes.concat(
-                        deviceInformation.getRawData(), //
-                        supportedServiceFamilies.getRawData(), //
-                        ipConfig.getRawData(), //
-                        ipCurrentConfig.getRawData(), //
-                        knxAddresses.getRawData(), //
-                        manufacturerData.getRawData() //
+                        deviceInformation.toByteArray(), //
+                        supportedServiceFamilies.toByteArray(), //
+                        ipConfig.toByteArray(), //
+                        ipCurrentConfig.toByteArray(), //
+                        knxAddresses.toByteArray(), //
+                        manufacturerData.toByteArray() //
                 )
         );
 
@@ -259,9 +259,9 @@ class DescriptionResponseBodyTest {
     void invalidCase_NoDeviceInfo() {
         final var bytes = Bytes.concat(
                 // Device Information
-                deviceInformation.getRawData(),
+                deviceInformation.toByteArray(),
                 // Supported Service Families
-                supportedServiceFamilies.getRawData()
+                supportedServiceFamilies.toByteArray()
         );
         // change byte of Device Information Description Type which is on 1st byte array position
         bytes[1] = 0x00;
@@ -277,9 +277,9 @@ class DescriptionResponseBodyTest {
     void invalidCase_NoSupportedServiceFamilies() {
         final var bytes = Bytes.concat(
                 // Device Information
-                deviceInformation.getRawData(),
+                deviceInformation.toByteArray(),
                 // Supported Service Families
-                supportedServiceFamilies.getRawData()
+                supportedServiceFamilies.toByteArray()
         );
         // change byte of Supported Service Families Description Type which is on 55th byte array position
         bytes[55] = 0x00;
@@ -295,9 +295,9 @@ class DescriptionResponseBodyTest {
     void invalidCase_endlessLoop() {
         final var bytes = Bytes.concat(
                 // Device Information
-                deviceInformation.getRawData(),
+                deviceInformation.toByteArray(),
                 // Supported Service Families
-                supportedServiceFamilies.getRawData(),
+                supportedServiceFamilies.toByteArray(),
                 // add dummy byte array which causes an endless loop
                 new byte[3]
         );

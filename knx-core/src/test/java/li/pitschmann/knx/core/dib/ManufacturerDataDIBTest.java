@@ -95,8 +95,9 @@ public final class ManufacturerDataDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(ManufacturerDataDIB.of(BYTES_WITH_DATA))
-                .hasToString(String.format("ManufacturerDataDIB{length=19 (0x13), descriptionType=%s, rawData=%s}",
-                        DescriptionType.MANUFACTURER_DATA, ByteFormatter.formatHexAsString(BYTES_WITH_DATA)));
+        assertThat(ManufacturerDataDIB.of(BYTES_WITH_DATA)).hasToString(
+                String.format("ManufacturerDataDIB{length=19, descriptionType=MANUFACTURER_DATA, rawData=%s}",
+                        ByteFormatter.formatHexAsString(BYTES_WITH_DATA))
+        );
     }
 }

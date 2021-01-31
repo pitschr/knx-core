@@ -42,13 +42,13 @@ public class BodyTest {
         final var body = KnxBody.TUNNELING_ACK_BODY;
 
         // false -> should return the byte array of body only
-        final var bodyBytes = body.getRawData();
+        final var bodyBytes = body.toByteArray();
         assertThat(body.getRawData(false)).containsExactly(bodyBytes);
 
         // true -> should return the byte array of header and body
-        final var headerBytes = Header.of(body).getRawData();
+        final var headerBytes = Header.of(body).toByteArray();
         assertThat(body.getRawData(true)).startsWith(headerBytes);
-        assertThat(body.getRawData(true)).endsWith(body.getRawData());
+        assertThat(body.getRawData(true)).endsWith(body.toByteArray());
         assertThat(body.getRawData(true)).hasSize(headerBytes.length + bodyBytes.length);
     }
 }

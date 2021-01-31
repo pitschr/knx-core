@@ -144,10 +144,6 @@ public final class IndividualAddress implements KnxAddress {
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         // byte 0: xxxx ....
         final var areaAsByte = (byte) ((area & 0x0F) << 4);

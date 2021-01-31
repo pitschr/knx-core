@@ -111,12 +111,8 @@ public final class DescriptionRequestBody implements RequestBody, DescriptionCha
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        return controlEndpoint.getRawData();
+        return controlEndpoint.toByteArray();
     }
 
     @Override

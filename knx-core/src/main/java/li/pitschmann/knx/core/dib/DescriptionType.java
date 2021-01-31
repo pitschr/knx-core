@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,27 +77,28 @@ public enum DescriptionType implements KnxByteEnum {
      * for given {@code code} exists
      */
     public static DescriptionType valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst().orElse(UNKNOWN);
+        return Arrays.stream(values())
+                .filter(x -> x.getCode() == code)
+                .findFirst()
+                .orElse(UNKNOWN);
     }
 
     @Override
     public int getCode() {
-        return this.code;
+        return code;
     }
 
     @Override
     public String getFriendlyName() {
-        return this.friendlyName;
+        return friendlyName;
     }
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
-                .add("name", this.name())
-                .add("friendlyName", this.friendlyName)
-                .add("code", this.code)
+                .add("name", name())
+                .add("friendlyName", friendlyName)
+                .add("code", code)
                 .toString();
-        // @formatter:on
     }
 }

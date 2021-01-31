@@ -154,14 +154,10 @@ public final class SearchResponseBody implements ResponseBody, MulticastChannelR
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var controlEndpointAsBytes = controlEndpoint.getRawData();
-        final var deviceInformationAsBytes = deviceInformation.getRawData();
-        final var deviceFamiliesAsBytes = supportedServiceFamilies.getRawData();
+        final var controlEndpointAsBytes = controlEndpoint.toByteArray();
+        final var deviceInformationAsBytes = deviceInformation.toByteArray();
+        final var deviceFamiliesAsBytes = supportedServiceFamilies.toByteArray();
 
         final var totalLength = controlEndpointAsBytes.length + //
                 deviceInformationAsBytes.length + //

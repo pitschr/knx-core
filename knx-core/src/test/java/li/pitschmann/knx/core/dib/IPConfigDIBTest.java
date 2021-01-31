@@ -70,7 +70,7 @@ public final class IPConfigDIBTest {
      */
     @Test
     public void testToString() {
-        assertThat(IPConfigDIB.of(BYTES)).hasToString(String.format("IPConfigDIB{length=16 (0x10), descriptionType=%s, rawData=%s}",
-                DescriptionType.IP_CONFIG, ByteFormatter.formatHexAsString(BYTES)));
+        assertThat(IPConfigDIB.of(BYTES)).hasToString(String.format("IPConfigDIB{length=16, descriptionType=IP_CONFIG, rawData=%s}",
+                ByteFormatter.formatHexAsString(BYTES)));
     }
 }

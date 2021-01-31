@@ -123,12 +123,8 @@ public final class ConnectionStateRequestBody implements RequestBody, ChannelIdA
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var hpaiAsBytes = controlEndpoint.getRawData();
+        final var hpaiAsBytes = controlEndpoint.toByteArray();
 
         // create bytes
         final var bytes = new byte[2 + hpaiAsBytes.length];

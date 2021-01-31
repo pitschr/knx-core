@@ -60,15 +60,11 @@ abstract class AbstractDIB extends AbstractMultiRawData {
 
     @Override
     public String toString(boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("descriptionType", this.descriptionType);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+        return Strings.toStringHelper(this)
+                .add("length", this.length)
+                .add("descriptionType", this.descriptionType.name())
+                .add("rawData", ByteFormatter.formatHexAsString(toByteArray()))
+                .toString();
     }
 
 }

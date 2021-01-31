@@ -18,9 +18,7 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
-import li.pitschmann.knx.core.net.tunnel.LayerType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

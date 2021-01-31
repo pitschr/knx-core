@@ -112,12 +112,8 @@ public final class DisconnectRequestBody implements RequestBody, ChannelIdAware,
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
-        final var hpaiAsBytes = controlEndpoint.getRawData();
+        final var hpaiAsBytes = controlEndpoint.toByteArray();
 
         final var bytes = new byte[2 + hpaiAsBytes.length];
         bytes[0] = (byte) channelId;

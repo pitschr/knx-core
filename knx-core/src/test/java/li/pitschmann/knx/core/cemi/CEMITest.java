@@ -53,7 +53,7 @@ final class CEMITest {
         final var cemiDefault = CEMI.useDefault(MessageCode.L_DATA_IND, knxAddress, APCI.GROUP_VALUE_WRITE, dptValue);
 
         // assert
-        assertThat(cemiDefault.getRawData()).containsExactly(
+        assertThat(cemiDefault.toByteArray()).containsExactly(
                 0x29, // Message Code
                 0x00, // Additional Info Length
                 0xBC, // ControlByte1
@@ -87,7 +87,7 @@ final class CEMITest {
                 dptValue);
 
         // assert
-        assertThat(cemi.getRawData()).containsExactly(
+        assertThat(cemi.toByteArray()).containsExactly(
                 0x2E, // Message Code
                 0x00, // Additional Info Length
                 0xBC, // ControlByte1
@@ -139,7 +139,7 @@ final class CEMITest {
         final var cemi = CEMI.of(MessageCode.L_DATA_CON, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_READ, null);
 
-        assertThat(cemi.getRawData()).containsExactly(
+        assertThat(cemi.toByteArray()).containsExactly(
                 0x2E, // Message Code
                 0x00, // Additional Info Length
                 0xBC, // ControlByte1
@@ -195,7 +195,7 @@ final class CEMITest {
         final var cemi = CEMI.of(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.NUMBERED_PACKAGE, 1, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(true));
 
-        assertThat(cemi.getRawData()).containsExactly(
+        assertThat(cemi.toByteArray()).containsExactly(
                 0x29, // Message Code
                 0x00, // Additional Info Length
                 0xA8, // ControlByte1
@@ -250,7 +250,7 @@ final class CEMITest {
         final var cemi = CEMI.of(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, DPT5.VALUE_1_OCTET_UNSIGNED_COUNT.of(93));
 
-        assertThat(cemi.getRawData()).containsExactly(
+        assertThat(cemi.toByteArray()).containsExactly(
                 0x29, // Message Code
                 0x00, // Additional Info Length
                 0xBC, // ControlByte1
@@ -306,7 +306,7 @@ final class CEMITest {
         final var cemi = CEMI.of(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_WRITE, DPT8.VALUE_2_OCTET_COUNT.of(3081));
 
-        assertThat(cemi.getRawData()).containsExactly(
+        assertThat(cemi.toByteArray()).containsExactly(
                 0x29, // Message Code
                 0x00, // Additional Info Length
                 0xBC, // ControlByte1
@@ -362,7 +362,7 @@ final class CEMITest {
         final var cemi = CEMI.of(MessageCode.L_DATA_IND, additionalInfo, controlByte1, controlByte2, sourceAddress, destinationAddress,
                 TPCI.UNNUMBERED_PACKAGE, 0, APCI.GROUP_VALUE_RESPONSE, DPT7.VALUE_2_OCTET_UNSIGNED_COUNT.of(64582));
 
-        assertThat(cemi.getRawData()).containsExactly(
+        assertThat(cemi.toByteArray()).containsExactly(
                 0x29, // Message Code
                 0x00, // Additional Info Length
                 0xBC, // ControlByte1

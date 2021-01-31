@@ -106,10 +106,6 @@ public final class DisconnectResponseBody implements ResponseBody, ChannelIdAwar
     }
 
     @Override
-    public byte[] getRawData() {
-        return toByteArray();
-    }
-
     public byte[] toByteArray() {
         final var bytes = new byte[2];
         bytes[0] = (byte) channelId;

@@ -111,9 +111,9 @@ class SearchResponseBodyTest {
         // create by bytes
         final var bodyByBytes = SearchResponseBody.of(
                 Bytes.concat(
-                        controlEndpoint.getRawData(),
-                        deviceInformation.getRawData(),
-                        supportedServiceFamilies.getRawData()
+                        controlEndpoint.toByteArray(),
+                        deviceInformation.toByteArray(),
+                        supportedServiceFamilies.toByteArray()
                 )
         );
 
@@ -152,11 +152,11 @@ class SearchResponseBodyTest {
     void invalidCase_NoDeviceInfo() {
         final var bytes = Bytes.concat(
                 // Control Endpoint
-                controlEndpoint.getRawData(),
+                controlEndpoint.toByteArray(),
                 // Device Information
-                deviceInformation.getRawData(),
+                deviceInformation.toByteArray(),
                 // Supported Service Families
-                supportedServiceFamilies.getRawData()
+                supportedServiceFamilies.toByteArray()
         );
         // change byte of Device Information Description Type which is on 9th byte array position
         bytes[9] = 0x00;
@@ -172,11 +172,11 @@ class SearchResponseBodyTest {
     void invalidCase_NoSupportedServiceFamilies() {
         final var bytes = Bytes.concat(
                 // Control Endpoint
-                controlEndpoint.getRawData(),
+                controlEndpoint.toByteArray(),
                 // Device Information
-                deviceInformation.getRawData(),
+                deviceInformation.toByteArray(),
                 // Supported Service Families
-                supportedServiceFamilies.getRawData()
+                supportedServiceFamilies.toByteArray()
         );
         // change byte of Supported Service Families Description Type which is on 63th byte array position
         bytes[63] = 0x00;
