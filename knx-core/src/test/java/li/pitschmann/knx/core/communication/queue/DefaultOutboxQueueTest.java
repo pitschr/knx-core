@@ -73,7 +73,7 @@ public class DefaultOutboxQueueTest {
         // capture what is written to channel
         final var byteBufferCaptor = ArgumentCaptor.forClass(ByteBuffer.class);
         verify(channelMock).write(byteBufferCaptor.capture());
-        assertThat(byteBufferCaptor.getValue().array()).containsExactly(body.getRawData(true));
+        assertThat(byteBufferCaptor.getValue().array()).containsExactly(body.toByteArray(true));
         verify(clientMock).notifyOutgoingBody(body);
     }
 
@@ -108,9 +108,9 @@ public class DefaultOutboxQueueTest {
         Sleeper.milliseconds(100);
 
         // verify if remote channel got those bytes
-        final var bb = ByteBuffer.allocate(body.getRawData(true).length);
+        final var bb = ByteBuffer.allocate(body.toByteArray(true).length);
         remoteChannel.read(bb);
-        assertThat(bb.array()).containsExactly(body.getRawData(true));
+        assertThat(bb.array()).containsExactly(body.toByteArray(true));
     }
 
     /**

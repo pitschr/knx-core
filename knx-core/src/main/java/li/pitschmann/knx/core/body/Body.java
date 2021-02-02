@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,16 @@ public interface Body extends MultiRawDataAware {
     ServiceType getServiceType();
 
     /**
-     * Returns the header and body as raw data in byte array
+     * Returns the byte array.
+     * <p>
+     * If {@code includeHeader} is {@code true} then byte array also contains
+     * {@link Header} byte array, otherwise it is equivalent to {@link #toByteArray()}.
      *
-     * @param withHeader if {@code true} then returned byte array will also contain the KNX header array
+     * @param includeHeader if {@code true} then returned byte array will also contain the KNX header array
      * @return byte array
      */
-    default byte[] getRawData(final boolean withHeader) {
-        if (withHeader) {
+    default byte[] toByteArray(final boolean includeHeader) {
+        if (includeHeader) {
             return Bytes.concat(Header.of(this).toByteArray(), toByteArray());
         } else {
             return toByteArray();

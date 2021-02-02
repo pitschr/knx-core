@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.body;
 
 import li.pitschmann.knx.core.header.Header;
 import li.pitschmann.knx.core.test.KnxBody;
+import li.pitschmann.knx.core.utils.Bytes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,27 +29,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests for {@link Body}
  */
-public class BodyTest {
+class BodyTest {
 
-    /**
-     * Tests the results of {@link Body#getRawData(boolean)}
-     * <p>
-     * When passing {@code true} then byte array of header and body is returned,
-     * otherwise only the byte array of body is returned.
-     */
     @Test
-    @DisplayName("Test #getRawData(Boolean)")
-    public void testGetRawData() {
+    @DisplayName("Test #toByteArray(boolean)")
+    void testToByteArray_with_boolean() {
         final var body = KnxBody.TUNNELING_ACK_BODY;
 
         // false -> should return the byte array of body only
         final var bodyBytes = body.toByteArray();
-        assertThat(body.getRawData(false)).containsExactly(bodyBytes);
+        assertThat(body.toByteArray(false)).containsExactly(bodyBytes);
 
         // true -> should return the byte array of header and body
         final var headerBytes = Header.of(body).toByteArray();
-        assertThat(body.getRawData(true)).startsWith(headerBytes);
-        assertThat(body.getRawData(true)).endsWith(body.toByteArray());
-        assertThat(body.getRawData(true)).hasSize(headerBytes.length + bodyBytes.length);
+        assertThat(body.toByteArray(true)).startsWith(headerBytes);
+        assertThat(body.toByteArray(true)).endsWith(body.toByteArray());
+        assertThat(body.toByteArray(true)).hasSize(headerBytes.length + bodyBytes.length);
+        assertThat(body.toByteArray(true)).containsExactly(Bytes.concat(headerBytes, bodyBytes));
     }
 }
