@@ -18,8 +18,9 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,50 +31,48 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class IPCurrentConfigDIBTest {
-    private static final byte[] BYTES = new byte[]{ //
-            0x14, // Structure Length
-            0x04, // Description Type Code
-            0x11, 0x22, 0x33, 0x44, // Current IP Address
-            0x55, 0x66, 0x77, (byte) 0x88, // Current Subnet Mask
-            (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, // Current Default Gateway
-            (byte) 0xD1, (byte) 0xD2, (byte) 0xD3, (byte) 0xD4, // DHCP Server
-            (byte) 0xDD, // IP Capabilities
-            (byte) 0x00 // (reserved)
-    };
+final class IPCurrentConfigDIBTest {
 
-    /**
-     * Tests {@link IPCurrentConfigDIB#of(byte[])}
-     */
     @Test
-    public void validCases() {
-        // create by bytes
-        final var dib = IPCurrentConfigDIB.of(BYTES);
+    @DisplayName("Test #of(byte[])")
+    void testOf_Bytes() {
+        final var bytes = new byte[]{ //
+                0x14,                                               // Structure Length
+                0x04,                                               // Description Type Code
+                0x11, 0x22, 0x33, 0x44,                             // Current IP Address
+                0x55, 0x66, 0x77, (byte) 0x88,                      // Current Subnet Mask
+                (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, // Current Default Gateway
+                (byte) 0xD1, (byte) 0xD2, (byte) 0xD3, (byte) 0xD4, // DHCP Server
+                (byte) 0xDD,                                        // IP Capabilities
+                (byte) 0x00                                         // (reserved)
+        };
+        final var dib = IPCurrentConfigDIB.of(bytes);
 
         // compare
-        assertThat(dib.getLength()).isEqualTo(20);
-        assertThat(dib.getDescriptionType()).isEqualTo(DescriptionType.IP_CURRENT_CONFIG);
+        assertThat(dib.toByteArray()).containsExactly(bytes);
+        assertThat(dib).hasToString(
+                String.format("IPCurrentConfigDIB{bytes=%s}", ByteFormatter.formatHexAsString(bytes))
+        );
     }
 
-    /**
-     * Tests {@link IPCurrentConfigDIB} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
+        // null
+        assertThatThrownBy(() -> IPCurrentConfigDIB.of(null))
+                .isInstanceOf(NullPointerException.class);
+
         // incorrect size of bytes
-        assertThatThrownBy(() -> IPCurrentConfigDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> IPCurrentConfigDIB.of(new byte[]{0x03, 0x02, 0x01}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '20' but was: 3");
 
     }
 
-    /**
-     * Test {@link IPCurrentConfigDIB#toString()}
-     */
     @Test
-    public void testToString() {
-        assertThat(IPCurrentConfigDIB.of(BYTES))
-                .hasToString(String.format("IPCurrentConfigDIB{length=20, descriptionType=IP_CURRENT_CONFIG, rawData=%s}",
-                        ByteFormatter.formatHexAsString(BYTES))
-                );
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(IPCurrentConfigDIB.class).verify();
     }
+
 }

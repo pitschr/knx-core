@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
 
 package li.pitschmann.knx.core.dib;
 
+import li.pitschmann.knx.core.MultiRawDataAware;
 import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * KNX Addresses DIB to specify DIB for type {@link DescriptionType#KNX_ADDRESSES}
@@ -52,7 +54,7 @@ import java.util.List;
  *
  * @author PITSCHR
  */
-public final class KnxAddressesDIB extends AbstractDIB {
+public final class KnxAddressesDIB implements MultiRawDataAware {
     /**
      * Minimum Structure Length for {@link KnxAddressesDIB}
      * <p>
@@ -65,22 +67,20 @@ public final class KnxAddressesDIB extends AbstractDIB {
      * Maximum Structure Length for {@link KnxAddressesDIB} is 254
      */
     private static final int STRUCTURE_MAX_LENGTH = 0xFE;
-    private final IndividualAddress knxAddress;
+    private final IndividualAddress address;
     private final List<IndividualAddress> additionalAddresses;
 
-    private KnxAddressesDIB(final byte[] rawData) {
-        super(rawData);
-
-        // rawData[0] -> length already covered in abstract class DIB
-        // rawData[1] -> description type already covered in abstract class DIB
+    private KnxAddressesDIB(final byte[] bytes) {
+        // bytes[0] -> length not relevant
+        // bytes[1] -> description type not relevant
 
         // KNX Individual Address (mandatory)
-        this.knxAddress = IndividualAddress.of(new byte[]{rawData[2], rawData[3]});
+        this.address = IndividualAddress.of(new byte[]{bytes[2], bytes[3]});
         // Additional Individual Addresses (optional)
-        final var sizeOfAdditionalAddresses = (rawData.length - 4) / 2;
+        final var sizeOfAdditionalAddresses = (bytes.length - 4) / 2;
         final var tmp = new ArrayList<IndividualAddress>(sizeOfAdditionalAddresses);
-        for (var i = 4; i < rawData.length; i += 2) {
-            tmp.add(IndividualAddress.of(new byte[]{rawData[i], rawData[i + 1]}));
+        for (var i = 4; i < bytes.length; i += 2) {
+            tmp.add(IndividualAddress.of(new byte[]{bytes[i], bytes[i + 1]}));
         }
         this.additionalAddresses = Collections.unmodifiableList(tmp);
     }
@@ -92,34 +92,69 @@ public final class KnxAddressesDIB extends AbstractDIB {
      * @return a new immutable {@link KnxAddressesDIB}
      */
     public static KnxAddressesDIB of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_MIN_LENGTH && bytes.length <= STRUCTURE_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, bytes.length);
+        Preconditions.checkArgument(bytes.length % 2 == 0,
+                "Incompatible structure length. Length must be divisible by 2, but was: {}", bytes.length);
         return new KnxAddressesDIB(bytes);
     }
 
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
-        } else if (rawData.length % 2 != 0) {
-            throw new KnxIllegalArgumentException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
-                    rawData.length, ByteFormatter.formatHexAsString(rawData)));
-        }
-    }
-
-    public IndividualAddress getKnxAddress() {
-        return this.knxAddress;
+    public IndividualAddress getAddress() {
+        return address;
     }
 
     public List<IndividualAddress> getAdditionalAddresses() {
-        return this.additionalAddresses;
+        return additionalAddresses;
     }
 
     @Override
-    public String toString(boolean inclRawData) {
+    public byte[] toByteArray() {
+        // 4 bytes (Structure Length, Description Type + KNX Individual Address)
+        // + N dynamic bytes for additional KNX Individual Addresses
+        final var totalLength = 4 + additionalAddresses.size() * 2;
+
+        final var addressAsBytes = address.toByteArray();
+
+        final var bytes = new byte[totalLength];
+        bytes[0] = (byte) totalLength;
+        bytes[1] = DescriptionType.KNX_ADDRESSES.getCodeAsByte();
+        bytes[2] = addressAsBytes[0];
+        bytes[3] = addressAsBytes[1];
+        if (!additionalAddresses.isEmpty()) {
+            var pos = 4;
+            for (var additionalAddress : additionalAddresses) {
+                final var additionalAddressAsBytes = additionalAddress.toByteArray();
+                bytes[pos++] = additionalAddressAsBytes[0];
+                bytes[pos++] = additionalAddressAsBytes[1];
+            }
+        }
+
+        return bytes;
+    }
+
+    @Override
+    public String toString() {
         return Strings.toStringHelper(this)
-                .add("length", this.getLength())
-                .add("descriptionType", this.getDescriptionType().name())
-                .add("knxAddress", this.knxAddress)
-                .add("additionalAddresses", this.additionalAddresses)
+                .add("address", address.getAddress())
+                .add("additionalAddresses", additionalAddresses.stream().map(IndividualAddress::getAddress).collect(Collectors.toList()))
                 .toString();
     }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof KnxAddressesDIB) {
+            final var other = (KnxAddressesDIB) obj;
+            return Objects.equals(this.address, other.address)
+                    && Objects.equals(this.additionalAddresses, other.additionalAddresses);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, additionalAddresses);
+    }
+
 }

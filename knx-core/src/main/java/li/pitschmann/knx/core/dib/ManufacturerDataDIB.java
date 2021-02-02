@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,15 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
+import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Manufacturer Data DIB to specify DIB for type {@link DescriptionType#MANUFACTURER_DATA}
@@ -54,7 +59,7 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class ManufacturerDataDIB extends AbstractDIB {
+public final class ManufacturerDataDIB implements MultiRawDataAware {
     /**
      * Minimum Structure Length for {@link ManufacturerDataDIB}
      * <p>
@@ -67,23 +72,21 @@ public final class ManufacturerDataDIB extends AbstractDIB {
      * Maximum Structure Length for {@link ManufacturerDataDIB}
      */
     private static final int STRUCTURE_MAX_LENGTH = 0xFF;
-    private final int manufacturerId;
-    private final byte[] manufacturerSpecificData;
+    private final int id;
+    private final byte[] data;
 
-    private ManufacturerDataDIB(final byte[] rawData) {
-        super(rawData);
-
-        // rawData[0] -> length already covered in abstract class DIB
-        // rawData[1] -> description type already covered in abstract class DIB
+    private ManufacturerDataDIB(final byte[] bytes) {
+        // bytes[0] -> length not relevant
+        // bytes[1] -> description type not relevant
 
         // manufacturer id
-        this.manufacturerId = Bytes.toUnsignedInt(rawData[2], rawData[3]);
+        this.id = Bytes.toUnsignedInt(bytes[2], bytes[3]);
 
         // manufacturer specific data
-        if (rawData.length > STRUCTURE_MIN_LENGTH) {
-            this.manufacturerSpecificData = Arrays.copyOfRange(rawData, STRUCTURE_MIN_LENGTH, rawData.length);
+        if (bytes.length > STRUCTURE_MIN_LENGTH) {
+            this.data = Arrays.copyOfRange(bytes, STRUCTURE_MIN_LENGTH, bytes.length);
         } else {
-            this.manufacturerSpecificData = new byte[0];
+            this.data = new byte[0];
         }
     }
 
@@ -94,21 +97,63 @@ public final class ManufacturerDataDIB extends AbstractDIB {
      * @return a new immutable {@link ManufacturerDataDIB}
      */
     public static ManufacturerDataDIB of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_MIN_LENGTH && bytes.length <= STRUCTURE_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, bytes.length);
+        Preconditions.checkArgument(bytes[1] == DescriptionType.MANUFACTURER_DATA.getCodeAsByte(),
+                "Incompatible value for bytes[1]. Expected '{}' but was: {}", DescriptionType.MANUFACTURER_DATA.getCodeAsByte(), bytes[1]);
+
         return new ManufacturerDataDIB(bytes);
     }
 
-    public int getManufacturerId() {
-        return this.manufacturerId;
+    public int getId() {
+        return id;
     }
 
-    public byte[] getManufacturerSpecificData() {
-        return this.manufacturerSpecificData.clone();
+    public byte[] getData() {
+        return data.clone();
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
+    public byte[] toByteArray() {
+        // 4 bytes (Structure Length, Description Type + Manufacturer Id)
+        // + N dynamic bytes for manufacturer specific data
+        final var totalLength = 4 + data.length;
+
+        final var bytes = new byte[totalLength];
+        bytes[0] = (byte) totalLength;
+        bytes[1] = DescriptionType.MANUFACTURER_DATA.getCodeAsByte();
+        bytes[2] = (byte) (id >>> 8);
+        bytes[3] = (byte) (id & 0xFF);
+        if (data.length > 0) {
+            System.arraycopy(data, 0, bytes, 4, data.length);
         }
+
+        return bytes;
     }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("id", id)
+                .add("data", ByteFormatter.formatHexAsString(data))
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof ManufacturerDataDIB) {
+            final var other = (ManufacturerDataDIB) obj;
+            return Objects.equals(this.id, other.id)
+                    && Arrays.equals(this.data, other.data);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, Arrays.hashCode(data));
+    }
+
 }

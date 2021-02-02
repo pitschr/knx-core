@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Device Supported Service Families DIB to specify DIB for type
@@ -64,7 +65,7 @@ import java.util.List;
  *
  * @author PITSCHR
  */
-public final class SupportedServiceFamiliesDIB extends AbstractDIB {
+public final class SupportedServiceFamiliesDIB implements MultiRawDataAware {
     /**
      * Minimum Structure Length for {@link SupportedServiceFamiliesDIB}
      * <p>
@@ -77,18 +78,19 @@ public final class SupportedServiceFamiliesDIB extends AbstractDIB {
      */
     private static final int STRUCTURE_MAX_LENGTH = 0xFE;
     private final List<ServiceTypeFamilyVersion> serviceFamilies;
+    private final byte[] bytes;
 
-    private SupportedServiceFamiliesDIB(final byte[] rawData) {
-        super(rawData);
+    private SupportedServiceFamiliesDIB(final byte[] bytes) {
+        this.bytes = bytes.clone();
 
-        // rawData[0] -> length already covered in abstract class DIB
-        // rawData[1] -> description type already covered in abstract class DIB
+        // bytes[0] -> length not relevant
+        // bytes[1] -> description type not relevant
 
         // Service Type Family / Version
-        final var sizeOfServiceFamilies = (rawData.length - 2) / 2;
+        final var sizeOfServiceFamilies = (bytes.length - 2) / 2;
         final var tmp = new ArrayList<ServiceTypeFamilyVersion>(sizeOfServiceFamilies);
-        for (var i = 2; i < rawData.length; i += 2) {
-            tmp.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.valueOf(rawData[i]), Byte.toUnsignedInt(rawData[i + 1])));
+        for (var i = 2; i < bytes.length; i += 2) {
+            tmp.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.valueOf(bytes[i]), Byte.toUnsignedInt(bytes[i + 1])));
         }
         this.serviceFamilies = Collections.unmodifiableList(tmp);
     }
@@ -100,23 +102,15 @@ public final class SupportedServiceFamiliesDIB extends AbstractDIB {
      * @return a new immutable {@link SupportedServiceFamiliesDIB}
      */
     public static SupportedServiceFamiliesDIB of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_MIN_LENGTH && bytes.length <= STRUCTURE_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, bytes.length);
+        Preconditions.checkArgument(bytes.length % 2 == 0,
+                "Incompatible structure length. Length must be divisible by 2, but was: {}", bytes.length);
         return new SupportedServiceFamiliesDIB(bytes);
     }
 
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length < STRUCTURE_MIN_LENGTH || rawData.length > STRUCTURE_MAX_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, rawData.length, rawData);
-        } else if (rawData.length % 2 != 0) {
-            throw new KnxIllegalArgumentException(String.format("The size of 'rawData' must be divisible by two. Actual length is: %s. RawData: %s",
-                    rawData.length, ByteFormatter.formatHexAsString(rawData)));
-        }
-    }
-
     public List<ServiceTypeFamilyVersion> getServiceFamilies() {
-        return this.serviceFamilies;
+        return serviceFamilies;
     }
 
     /**
@@ -135,12 +129,32 @@ public final class SupportedServiceFamiliesDIB extends AbstractDIB {
     }
 
     @Override
-    public String toString(boolean inclRawData) {
+    public byte[] toByteArray() {
+        return bytes.clone();
+    }
+
+    @Override
+    public String toString() {
         return Strings.toStringHelper(this)
-                .add("length", this.getLength())
-                .add("descriptionType", this.getDescriptionType().name())
                 .add("serviceFamilies", serviceFamilies)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof SupportedServiceFamiliesDIB) {
+            final var other = (SupportedServiceFamiliesDIB) obj;
+            return Objects.equals(this.serviceFamilies, other.serviceFamilies)
+                    && Arrays.equals(this.bytes, other.bytes);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(serviceFamilies, Arrays.hashCode(bytes));
     }
 
 }

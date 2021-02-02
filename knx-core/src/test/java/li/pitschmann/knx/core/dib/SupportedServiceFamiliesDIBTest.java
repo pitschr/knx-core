@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,9 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Bytes;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,18 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author PITSCHR
  */
 final class SupportedServiceFamiliesDIBTest {
-    private static final byte[] BYTES = new byte[]{ //
-            0x0a, // Structure Length
-            0x02, // Description Type Code
-            0x02, 0x01, // Service Family ID + Version #1
-            0x03, 0x02, // Service Family ID + Version #2
-            0x04, 0x01, // Service Family ID + Version #1
-            0x05, 0x03  // Service Family ID + Version #3
-    };
-
     /**
-     * Tests {@link SupportedServiceFamiliesDIB#of(byte[])}
-     *
      * <pre>
      * 	DIB: SUPP_SVC_FAMILIES
      * 	    Structure Length: 10 octets
@@ -64,17 +47,20 @@ final class SupportedServiceFamiliesDIBTest {
      * </pre>
      */
     @Test
-    @DisplayName("OK: Test with Core, DevMgmt, Tunneling and Routing Service Type Families")
-    void validCases() {
-        // create by bytes
-        final var supportedDevicesFamiliesByValueOf = SupportedServiceFamiliesDIB.of(BYTES);
-
-        // compare
-        assertThat(supportedDevicesFamiliesByValueOf.getLength()).isEqualTo(10);
-        assertThat(supportedDevicesFamiliesByValueOf.getDescriptionType()).isEqualTo(DescriptionType.SUPPORTED_SERVICE_FAMILIES);
+    @DisplayName("Test #of(byte[]) with: Core, Device management, Tunneling and Routing")
+    void testOf_ServiceFamilyVersions() {
+        final var bytes = new byte[]{
+                0x0A,       // Structure Length
+                0x02,       // Description Type Code
+                0x02, 0x01, // Service Family ID + Version #1
+                0x03, 0x02, // Service Family ID + Version #2
+                0x04, 0x01, // Service Family ID + Version #1
+                0x05, 0x03  // Service Family ID + Version #3
+        };
+        final var dibByBytes = SupportedServiceFamiliesDIB.of(bytes);
 
         // verify service type family & version
-        final var serviceFamilyVersions = supportedDevicesFamiliesByValueOf.getServiceFamilies();
+        final var serviceFamilyVersions = dibByBytes.getServiceFamilies();
         assertThat(serviceFamilyVersions).hasSize(4);
 
         final var svcCore = serviceFamilyVersions.get(0);
@@ -92,59 +78,61 @@ final class SupportedServiceFamiliesDIBTest {
         final var svcRouting = serviceFamilyVersions.get(3);
         assertThat(svcRouting.getFamily()).isEqualTo(ServiceTypeFamily.ROUTING);
         assertThat(svcRouting.getVersion()).isEqualTo(3);
+
+        assertThat(dibByBytes.toByteArray()).containsExactly(bytes);
+
+        assertThat(dibByBytes).hasToString(
+                String.format("SupportedServiceFamiliesDIB{serviceFamilies=%s}", serviceFamilyVersions)
+        );
+
     }
 
     @Test
-    @DisplayName("ERROR: Test with invalid arguments")
-    void invalidCases() {
-        // null check
-        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("rawData");
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
+        // null
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(null))
+                .isInstanceOf(NullPointerException.class);
 
         // specific for supported service families DIB
-        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[]{0x03, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessageContaining("divisible by two");
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[]{0x03, 0x00, 0x00}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Length must be divisible by 2, but was: 3");
 
         // incorrect size of bytes
-        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[]{0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
-                .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[]{0x01}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [2..254] but was: 1");
+        assertThatThrownBy(() -> SupportedServiceFamiliesDIB.of(new byte[256]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [2..254] but was: 256");
     }
 
     @Test
-    @DisplayName("Test if has supported service type family")
+    @DisplayName("Test #hasServiceTypeFamily(ServiceTypeFamily)")
     void testServiceTypeFamily() {
         final var dib = SupportedServiceFamiliesDIB.of(
                 new byte[]{ //
-                        0x06, // Structure Length
-                        0x02, // Description Type Code
+                        0x06,       // Structure Length
+                        0x02,       // Description Type Code
                         0x02, 0x01, // Service Family ID + Version #1
                         0x04, 0x01, // Service Family ID + Version #1
                 }
         );
 
-        assertThat(dib.getServiceFamilies()).hasSize(2);
         assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.CORE)).isTrue();
         assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.DEVICE_MANAGEMENT)).isFalse();
         assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.TUNNELING)).isTrue();
         assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.ROUTING)).isFalse();
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.OBJECT_SERVER)).isFalse();
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.REMOTE_LOGGING)).isFalse();
+        assertThat(dib.hasServiceTypeFamily(ServiceTypeFamily.REMOTE_CONFIGURATION_AND_DIAGNOSIS)).isFalse();
     }
 
     @Test
-    @DisplayName("Test #toString()")
-    void testToString() {
-        final var supportedDevicesFamiliesDIB = SupportedServiceFamiliesDIB.of(BYTES);
-
-        final var serviceFamilies = new ArrayList<ServiceTypeFamilyVersion>();
-        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.CORE, 1));
-        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.DEVICE_MANAGEMENT, 2));
-        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.TUNNELING, 1));
-        serviceFamilies.add(new ServiceTypeFamilyVersion(ServiceTypeFamily.ROUTING, 3));
-
-        assertThat(supportedDevicesFamiliesDIB).hasToString(
-                String.format("SupportedServiceFamiliesDIB{length=10, descriptionType=SUPPORTED_SERVICE_FAMILIES, serviceFamilies=%s}",
-                        serviceFamilies)
-        );
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(SupportedServiceFamiliesDIB.class).verify();
     }
+
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,19 @@
 
 package li.pitschmann.knx.core.dib;
 
+import li.pitschmann.knx.core.MultiRawDataAware;
 import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Networker;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -48,7 +51,7 @@ import java.util.stream.IntStream;
  * | Project-Installation identifier                               |
  * | (2 octets)                                                    |
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- * | KNX device KNX Serial Number                            |
+ * | KNX device KNX Serial Number                                  |
  * | (6 octets)                                                    |
  * +- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
  * |                                                               |
@@ -81,7 +84,7 @@ import java.util.stream.IntStream;
  *
  * @author PITSCHR
  */
-public final class DeviceInformationDIB extends AbstractDIB {
+public final class DeviceInformationDIB implements MultiRawDataAware {
     /**
      * Structure Length for {@link DeviceInformationDIB}
      * <p>
@@ -102,34 +105,32 @@ public final class DeviceInformationDIB extends AbstractDIB {
     private final IndividualAddress individualAddress;
     private final int projectNumber;
     private final int projectInstallationIdentifier;
-    private final String serialNumber;
+    private final byte[] serialNumber;
     private final InetAddress multicastAddress;
-    private final String macAddress;
+    private final byte[] macAddress;
     private final String deviceFriendlyName;
+    private final byte[] bytes;
 
-    private DeviceInformationDIB(final byte[] rawData) {
-        super(rawData);
+    private DeviceInformationDIB(final byte[] bytes) {
+        this.bytes = bytes.clone();
 
-        // rawData[0] -> length already covered in abstract class DIB
-        // rawData[1] -> description type already covered in abstract class DIB
-        this.mediumType = MediumType.valueOf(rawData[2]);
+        // bytes[0] -> length not relevant
+        // bytes[1] -> description type not relevant
+
+        this.mediumType = MediumType.valueOf(bytes[2]);
         // .... ...0 = not in programming mode (default)
         // .... ...1 = in programming mode
-        this.programmingMode = (rawData[3] & 0x01) == 0x01;
-        this.individualAddress = IndividualAddress.of(new byte[]{rawData[4], rawData[5]});
-        this.projectNumber = (Bytes.toUnsignedInt(rawData[6], rawData[7]) & 0xFFF8) >> 3;
-        this.projectInstallationIdentifier = rawData[7] & 0x07;
-        this.serialNumber = ByteFormatter.formatHexAsString(Arrays.copyOfRange(rawData, 8, 14));
-        this.multicastAddress = Networker.getByAddress(rawData[14], rawData[15], rawData[16], rawData[17]);
-
-        // mac address
-        byte[] macAddressAsBytes = Arrays.copyOfRange(rawData, 18, 24);
-        this.macAddress = IntStream.range(0, macAddressAsBytes.length).mapToObj(i -> String.format("%02X", macAddressAsBytes[i]))
-                .collect(Collectors.joining(":"));
+        this.programmingMode = (bytes[3] & 0x01) == 0x01;
+        this.individualAddress = IndividualAddress.of(new byte[]{bytes[4], bytes[5]});
+        this.projectNumber = (Bytes.toUnsignedInt(bytes[6], bytes[7]) & 0xFFF8) >> 3;
+        this.projectInstallationIdentifier = bytes[7] & 0x07;
+        this.serialNumber = Arrays.copyOfRange(bytes, 8, 14);
+        this.multicastAddress = Networker.getByAddress(bytes[14], bytes[15], bytes[16], bytes[17]);
+        this.macAddress = Arrays.copyOfRange(bytes, 18, 24);
 
         // device friendly name (and removes all characters with 0x00 at the end)
         // according to specification the device friendly name is ISO 8859-1 encoded
-        this.deviceFriendlyName = new String(Arrays.copyOfRange(rawData, 24, 54), StandardCharsets.ISO_8859_1).replaceAll("\0+$", "");
+        this.deviceFriendlyName = new String(Arrays.copyOfRange(bytes, 24, 54), StandardCharsets.ISO_8859_1).replaceAll("\0+$", "");
     }
 
     /**
@@ -139,67 +140,97 @@ public final class DeviceInformationDIB extends AbstractDIB {
      * @return a new immutable {@link DeviceInformationDIB}
      */
     public static DeviceInformationDIB of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
+        Preconditions.checkArgument(bytes[0] == STRUCTURE_LENGTH,
+                "Incompatible value for bytes[0]. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes[0]);
+        Preconditions.checkArgument(bytes[1] == DescriptionType.DEVICE_INFO.getCodeAsByte(),
+                "Incompatible value for bytes[1]. Expected '{}' but was: {}", DescriptionType.DEVICE_INFO.getCodeAsByte(), bytes[1]);
+
         return new DeviceInformationDIB(bytes);
     }
 
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
-    }
-
     public MediumType getMediumType() {
-        return this.mediumType;
+        return mediumType;
     }
 
     public boolean isProgrammingMode() {
-        return this.programmingMode;
+        return programmingMode;
     }
 
     public IndividualAddress getIndividualAddress() {
-        return this.individualAddress;
+        return individualAddress;
     }
 
     public int getProjectNumber() {
-        return this.projectNumber;
+        return projectNumber;
     }
 
     public int getProjectInstallationIdentifier() {
-        return this.projectInstallationIdentifier;
+        return projectInstallationIdentifier;
     }
 
     public String getSerialNumber() {
-        return this.serialNumber;
+        return ByteFormatter.formatHexAsString(serialNumber);
     }
 
     public InetAddress getMulticastAddress() {
-        return this.multicastAddress;
+        return multicastAddress;
     }
 
     public String getMacAddress() {
-        return this.macAddress;
+        return IntStream.range(0, macAddress.length).mapToObj(i -> String.format("%02X", macAddress[i]))
+                .collect(Collectors.joining(":"));
     }
 
     public String getDeviceFriendlyName() {
-        return this.deviceFriendlyName;
+        return deviceFriendlyName;
     }
 
     @Override
-    public String toString(boolean inclRawData) {
+    public byte[] toByteArray() {
+        return bytes.clone();
+    }
+
+    @Override
+    public String toString() {
         return Strings.toStringHelper(this)
-                .add("length", this.getLength())
-                .add("descriptionType", this.getDescriptionType().name())
-                .add("mediumType", this.mediumType.name())
-                .add("programmingMode", this.programmingMode)
-                .add("individualAddress", this.individualAddress)
-                .add("projectNumber", this.projectNumber)
-                .add("projectInstallationIdentifier", this.projectInstallationIdentifier)
-                .add("serialNumber", this.serialNumber)
-                .add("multicastAddress", this.multicastAddress.getHostAddress())
-                .add("macAddress", this.macAddress)
-                .add("deviceFriendlyName", this.deviceFriendlyName)
+                .add("mediumType", mediumType.name())
+                .add("programmingMode", programmingMode)
+                .add("individualAddress", individualAddress.getAddress())
+                .add("projectNumber", projectNumber)
+                .add("projectInstallationIdentifier", projectInstallationIdentifier)
+                .add("serialNumber", getSerialNumber())
+                .add("multicastAddress", multicastAddress.getHostAddress())
+                .add("macAddress", getMacAddress())
+                .add("deviceFriendlyName", deviceFriendlyName)
                 .toString();
     }
 
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof DeviceInformationDIB) {
+            final var other = (DeviceInformationDIB) obj;
+            return Objects.equals(this.mediumType, other.mediumType)
+                    && Objects.equals(this.programmingMode, other.programmingMode)
+                    && Objects.equals(this.individualAddress, other.individualAddress)
+                    && Objects.equals(this.projectNumber, other.projectNumber)
+                    && Objects.equals(this.projectInstallationIdentifier, other.projectInstallationIdentifier)
+                    && Arrays.equals(this.serialNumber, other.serialNumber)
+                    && Objects.equals(this.multicastAddress, other.multicastAddress)
+                    && Arrays.equals(this.macAddress, other.macAddress)
+                    && Objects.equals(this.deviceFriendlyName, other.deviceFriendlyName)
+                    && Arrays.equals(this.bytes, other.bytes);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mediumType, programmingMode, individualAddress, projectNumber,
+                projectInstallationIdentifier, Arrays.hashCode(serialNumber), multicastAddress,
+                Arrays.hashCode(macAddress), deviceFriendlyName, Arrays.hashCode(bytes));
+    }
 }

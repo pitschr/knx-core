@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,13 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
+import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Arrays;
 
 /**
  * IP Config DIB to specify DIB for type {@link DescriptionType#IP_CONFIG}
@@ -51,7 +57,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
  *
  * @author PITSCHR
  */
-public final class IPConfigDIB extends AbstractDIB {
+public final class IPConfigDIB implements MultiRawDataAware {
     /**
      * Structure Length for {@link IPConfigDIB}
      * <p>
@@ -64,9 +70,10 @@ public final class IPConfigDIB extends AbstractDIB {
      * 1 byte for IP assignment method<br>
      */
     private static final int STRUCTURE_LENGTH = 16;
+    private final byte[] bytes;
 
-    private IPConfigDIB(final byte[] rawData) {
-        super(rawData);
+    private IPConfigDIB(final byte[] bytes) {
+        this.bytes = bytes.clone();
     }
 
     /**
@@ -76,13 +83,37 @@ public final class IPConfigDIB extends AbstractDIB {
      * @return a new immutable {@link IPConfigDIB}
      */
     public static IPConfigDIB of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new IPConfigDIB(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+    public byte[] toByteArray() {
+        return bytes.clone();
     }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("bytes", ByteFormatter.formatHexAsString(toByteArray()))
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof IPConfigDIB) {
+            final var other = (IPConfigDIB) obj;
+            return Arrays.equals(this.bytes, other.bytes);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(bytes);
+    }
+
 }

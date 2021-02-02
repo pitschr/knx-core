@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 package li.pitschmann.knx.core.dib;
 
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Objects;
@@ -30,28 +32,45 @@ import java.util.Objects;
  */
 public final class ServiceTypeFamilyVersion {
     private final ServiceTypeFamily family;
-    private int version;
+    private final int version;
 
     public ServiceTypeFamilyVersion(final ServiceTypeFamily family, final int version) {
-        this.family = Objects.requireNonNull(family);
+        Preconditions.checkNonNull(family, "Service Type Family is required.");
+
+        this.family = family;
         this.version = version;
     }
 
     public ServiceTypeFamily getFamily() {
-        return this.family;
+        return family;
     }
 
     public int getVersion() {
-        return this.version;
+        return version;
     }
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
-                .add("family", this.family)
-                .add("version", this.version)
+                .add("family", family.name())
+                .add("version", version)
                 .toString();
-        // @formatter:on
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof ServiceTypeFamilyVersion) {
+            final var other = (ServiceTypeFamilyVersion) obj;
+            return Objects.equals(this.family, other.family)
+                    && Objects.equals(this.version, other.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(family, version);
     }
 }
