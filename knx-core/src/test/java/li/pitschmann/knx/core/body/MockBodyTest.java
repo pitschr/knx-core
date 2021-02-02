@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-class BytesBodyTest {
+class MockBodyTest {
 
     @Test
     @DisplayName("Test valid cases for #of(ServiceType, byte[])")

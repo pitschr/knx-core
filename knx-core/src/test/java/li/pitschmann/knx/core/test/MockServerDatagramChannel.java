@@ -118,8 +118,8 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     public void send(final SelectionKey key, final Body body) throws IOException {
         // packet: header + body
         final ByteBuffer byteBuffer;
-        if (body instanceof BytesBody) {
-            // byte body
+        if (body instanceof MockBody) {
+            // mock body contains complete byte array (header + body)
             byteBuffer = ByteBuffer.wrap(body.toByteArray());
         } else {
             // OK

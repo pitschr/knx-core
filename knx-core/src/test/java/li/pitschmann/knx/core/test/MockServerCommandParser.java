@@ -81,7 +81,7 @@ public class MockServerCommandParser {
         // wrong control channel (used in TunnelingRequestTest)
         else if ("channel=control,cemi(1)={2900bce010c84c0f0300800c23}".equals(command)) {
             final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
-            return Collections.singletonList(new RequestMockAction(this.mockServer, new ControlBytesBody(mockRequest.getBody().getRawData(true))));
+            return Collections.singletonList(new RequestMockAction(this.mockServer, new ControlMockBody(mockRequest.getBody().getRawData(true))));
         }
         // Two corrupted bodies (used in KnxClientTest)
         else if ("raw(2)={0610020600140000000100000000000004000000}".equals(command)) {

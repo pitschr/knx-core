@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2021 Pitschmann Christoph
+ * Copyright (C) 2019 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,32 +18,15 @@
 
 package li.pitschmann.knx.core.test;
 
-import li.pitschmann.knx.core.body.ResponseBody;
+import li.pitschmann.knx.core.body.ControlChannelRelated;
 
 /**
- * Response for KNX Mock Server
+ * A {@link MockBody} that is going to be sent to Control channel.
+ * <p>
+ * Using it we can simulate a false body routing.
  */
-public class MockResponse {
-    private final ResponseBody responseBody;
-
-    public MockResponse(final byte[] bytes) {
-        this.responseBody = new MockResponseBody(bytes);
-    }
-
-    public MockResponse(final ResponseBody responseBody) {
-        this.responseBody = responseBody;
-    }
-
-    public ResponseBody getBody() {
-        return responseBody;
-    }
-
-    /**
-     * Mock Response Body for KNX Mock Server
-     */
-    private static class MockResponseBody extends MockBody implements ResponseBody {
-        MockResponseBody(final byte[] bytes) {
-            super(bytes);
-        }
+public final class ControlMockBody extends MockBody implements ControlChannelRelated {
+    public ControlMockBody(final byte[] bytes) {
+        super(bytes);
     }
 }
