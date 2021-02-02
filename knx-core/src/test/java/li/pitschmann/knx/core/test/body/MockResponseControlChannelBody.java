@@ -16,34 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.test;
+package li.pitschmann.knx.core.test.body;
 
-import li.pitschmann.knx.core.body.ResponseBody;
+import li.pitschmann.knx.core.body.ControlChannelRelated;
 
 /**
- * Response for KNX Mock Server
+ * A {@link MockResponseBody} that is going to be sent to Control channel.
+ * <p>
+ * Using it we can simulate a false body routing.
  */
-public class MockResponse {
-    private final ResponseBody responseBody;
-
-    public MockResponse(final byte[] bytes) {
-        this.responseBody = new MockResponseBody(bytes);
-    }
-
-    public MockResponse(final ResponseBody responseBody) {
-        this.responseBody = responseBody;
-    }
-
-    public ResponseBody getBody() {
-        return responseBody;
-    }
-
-    /**
-     * Mock Response Body for KNX Mock Server
-     */
-    private static class MockResponseBody extends MockBody implements ResponseBody {
-        MockResponseBody(final byte[] bytes) {
-            super(bytes);
-        }
+public final class MockResponseControlChannelBody extends MockResponseBody implements ControlChannelRelated {
+    public MockResponseControlChannelBody(final byte[] bytes) {
+        super(bytes);
     }
 }

@@ -27,6 +27,7 @@ import li.pitschmann.knx.core.body.DescriptionChannelRelated;
 import li.pitschmann.knx.core.body.DescriptionRequestBody;
 import li.pitschmann.knx.core.body.MulticastChannelRelated;
 import li.pitschmann.knx.core.header.Header;
+import li.pitschmann.knx.core.test.body.MockResponseBody;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Networker;
@@ -118,7 +119,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
     public void send(final SelectionKey key, final Body body) throws IOException {
         // packet: header + body
         final ByteBuffer byteBuffer;
-        if (body instanceof MockBody) {
+        if (body instanceof MockResponseBody) {
             // mock body contains complete byte array (header + body)
             byteBuffer = ByteBuffer.wrap(body.toByteArray());
         } else {

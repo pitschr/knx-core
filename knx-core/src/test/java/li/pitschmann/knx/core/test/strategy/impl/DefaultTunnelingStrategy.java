@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,15 @@
 
 package li.pitschmann.knx.core.test.strategy.impl;
 
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.Status;
 import li.pitschmann.knx.core.body.TunnelingAckBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.cemi.CEMI;
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.TunnelingStrategy;
+import li.pitschmann.knx.core.utils.Preconditions;
 
 /**
  * Default implementation for {@link TunnelingStrategy}
@@ -77,19 +78,20 @@ public class DefaultTunnelingStrategy implements TunnelingStrategy {
     }
 
     @Override
-    public MockRequest createRequest(final MockServer mockServer, final CEMI cemi) {
+    public RequestBody createRequest(final MockServer mockServer, final CEMI cemi) {
         final var channelId = getChannelId(mockServer);
         final var sequence = getRequestSequence(mockServer);
 
-        return new MockRequest(TunnelingRequestBody.of(channelId, sequence, cemi));
+        return TunnelingRequestBody.of(channelId, sequence, cemi);
     }
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody request) {
+        Preconditions.checkArgument(request instanceof TunnelingRequestBody);
         final var channelId = getChannelId(mockServer);
-        final var sequence = getResponseSequence(request.getBody());
+        final var sequence = getResponseSequence((TunnelingRequestBody) request);
         final var status = getStatus();
 
-        return new MockResponse(TunnelingAckBody.of(channelId, sequence, status));
+        return TunnelingAckBody.of(channelId, sequence, status);
     }
 }

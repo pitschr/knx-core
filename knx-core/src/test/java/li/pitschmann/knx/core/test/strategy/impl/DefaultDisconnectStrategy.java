@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ package li.pitschmann.knx.core.test.strategy.impl;
 
 import li.pitschmann.knx.core.body.DisconnectRequestBody;
 import li.pitschmann.knx.core.body.DisconnectResponseBody;
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.Status;
 import li.pitschmann.knx.core.net.HPAI;
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.DisconnectStrategy;
 
@@ -63,18 +63,18 @@ public class DefaultDisconnectStrategy implements DisconnectStrategy {
     }
 
     @Override
-    public MockRequest createRequest(final MockServer mockServer, final Void unused) {
+    public RequestBody createRequest(final MockServer mockServer, final Void unused) {
         final var channelId = getChannelId(mockServer);
         final var hpai = getHPAI(mockServer);
 
-        return new MockRequest(DisconnectRequestBody.of(channelId, hpai));
+        return DisconnectRequestBody.of(channelId, hpai);
     }
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody unused) {
         final var channelId = getChannelId(mockServer);
         final var status = getStatus();
 
-        return new MockResponse(DisconnectResponseBody.of(channelId, status));
+        return DisconnectResponseBody.of(channelId, status);
     }
 }

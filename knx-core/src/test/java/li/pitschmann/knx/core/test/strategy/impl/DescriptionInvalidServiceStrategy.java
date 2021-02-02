@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 package li.pitschmann.knx.core.test.strategy.impl;
 
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
+import li.pitschmann.knx.core.test.body.MockResponseBody;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.DescriptionStrategy;
 import li.pitschmann.knx.core.utils.Bytes;
@@ -30,8 +31,8 @@ import li.pitschmann.knx.core.utils.Bytes;
 public final class DescriptionInvalidServiceStrategy implements DescriptionStrategy {
 
     @Override
-    public MockResponse createResponse(MockServer mockServer, MockRequest request) {
-        return new MockResponse(Bytes.toByteArray("061002FF002036010200100000000083497f01ece000170ccc1be08008da4d44"));
+    public ResponseBody createResponse(MockServer mockServer, RequestBody request) {
+        return new MockResponseBody(Bytes.toByteArray("061002FF002036010200100000000083497f01ece000170ccc1be08008da4d44"));
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 package li.pitschmann.knx.core.test.strategy.impl;
 
 import li.pitschmann.knx.core.body.ConnectResponseBody;
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.Status;
 import li.pitschmann.knx.core.net.ConnectionType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.ConnectStrategy;
 
@@ -74,13 +74,11 @@ public class DefaultConnectStrategy implements ConnectStrategy {
     }
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
-        final var responseBody = ConnectResponseBody.of(
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody unused) {
+        return ConnectResponseBody.of(
                 getChannelId(mockServer), //
                 getStatus(), //
                 getHPAI(mockServer), //
                 getConnectionResponseData(mockServer));
-
-        return new MockResponse(responseBody);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.test.strategy.impl;
 
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
 import li.pitschmann.knx.core.dib.DeviceInformationDIB;
 import li.pitschmann.knx.core.dib.SupportedServiceFamiliesDIB;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.DiscoveryStrategy;
 import li.pitschmann.knx.core.utils.Networker;
@@ -86,12 +86,12 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
     }
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody unused) {
         // use 'localhost' instead of channel as the address would be 0.0.0.0 otherwise
         final var hpai = HPAI.of(HostProtocol.IPV4_UDP, Networker.getLocalHost(), mockServer.getHPAI().getPort());
         final var deviceInformation = getDeviceInformation(mockServer);
         final var supportedServiceFamilies = getSupportedDeviceFamilies(mockServer);
 
-        return new MockResponse(SearchResponseBody.of(hpai, deviceInformation, supportedServiceFamilies));
+        return SearchResponseBody.of(hpai, deviceInformation, supportedServiceFamilies);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
 
 package li.pitschmann.knx.core.test.strategy;
 
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.test.MockServer;
 
 /**
- * Response Strategy defining what should be done when
- * KNX mock server get a request from KNX Net/IP client
+ * Response Strategy defining what should be respond to KNX Net/IP client
+ * when KNX mock server got a request
  */
 public interface ResponseStrategy {
     /**
-     * Creates a new instance of mock response to be sent to KNX Net/IP client
+     * Returns an instance of {@link ResponseBody} to be sent to KNX Net/IP client
      *
      * @param mockServer the mock server
-     * @param request    the mock request
-     * @return a mocked response
+     * @param request    the request body
+     * @return a response body
      */
-    MockResponse createResponse(MockServer mockServer, MockRequest request);
+    ResponseBody createResponse(MockServer mockServer, RequestBody request);
 }

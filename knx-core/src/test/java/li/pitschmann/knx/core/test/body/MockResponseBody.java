@@ -16,20 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.test;
+package li.pitschmann.knx.core.test.body;
 
-import li.pitschmann.knx.core.body.Body;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.header.ServiceType;
 
-/**
- * Mock Body
- * <p>
- * With KNX mock server we are simulating any scenarios (incl. bad / corrupt scenario).
- */
-public class MockBody implements Body {
+public class MockResponseBody implements ResponseBody {
     private final byte[] bytes;
 
-    protected MockBody(final byte[] bytes) {
+    public MockResponseBody(final byte[] bytes) {
         this.bytes = bytes.clone();
     }
 

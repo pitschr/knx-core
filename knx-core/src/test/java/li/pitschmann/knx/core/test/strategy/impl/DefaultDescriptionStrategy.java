@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 package li.pitschmann.knx.core.test.strategy.impl;
 
 import li.pitschmann.knx.core.body.DescriptionResponseBody;
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.dib.DeviceInformationDIB;
 import li.pitschmann.knx.core.dib.SupportedServiceFamiliesDIB;
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.DescriptionStrategy;
 
@@ -83,10 +83,10 @@ public class DefaultDescriptionStrategy implements DescriptionStrategy {
     }
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody unused) {
         final var deviceInformation = getDeviceInformation(mockServer);
         final var supportedServiceFamilies = getSupportedDeviceFamilies(mockServer);
 
-        return new MockResponse(DescriptionResponseBody.of(deviceInformation, supportedServiceFamilies));
+        return DescriptionResponseBody.of(deviceInformation, supportedServiceFamilies);
     }
 }

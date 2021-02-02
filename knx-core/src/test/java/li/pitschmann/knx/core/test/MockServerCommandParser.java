@@ -24,6 +24,8 @@ import li.pitschmann.knx.core.test.action.MockAction;
 import li.pitschmann.knx.core.test.action.RequestMockAction;
 import li.pitschmann.knx.core.test.action.WaitDelayMockAction;
 import li.pitschmann.knx.core.test.action.WaitServiceTypeMockAction;
+import li.pitschmann.knx.core.test.body.MockResponseBody;
+import li.pitschmann.knx.core.test.body.MockResponseControlChannelBody;
 import li.pitschmann.knx.core.test.strategy.impl.DefaultDisconnectStrategy;
 import li.pitschmann.knx.core.test.strategy.impl.DefaultTunnelingStrategy;
 import li.pitschmann.knx.core.utils.Bytes;
@@ -58,37 +60,37 @@ public class MockServerCommandParser {
     public List<MockAction> parse(final String command) {
         // One disconnect request
         if (DISCONNECT_REQUEST_COMMAND.equals(command)) {
-            final var mockRequest = new DefaultDisconnectStrategy().createRequest(this.mockServer, null);
-            return Collections.singletonList(new RequestMockAction(this.mockServer, mockRequest.getBody()));
+            final var requestBody = new DefaultDisconnectStrategy().createRequest(this.mockServer, null);
+            return Collections.singletonList(new RequestMockAction(this.mockServer, requestBody));
         }
         // One normal tunnelling request with CEMI bytes
         // (used in TunnelingRequestTest)
         else if ("cemi(1)={2900bce010c84c0f0300800c23}".equals(command)) {
-            final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
-            return Collections.singletonList(new RequestMockAction(this.mockServer, mockRequest.getBody()));
+            final var requestBody = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
+            return Collections.singletonList(new RequestMockAction(this.mockServer, requestBody));
         }
         // 100-times tunnelling request with CEMI bytes
         // (used in PerformanceKnxTest)
         else if ("cemi(260)={2E00BCE010FF0A96010081}".equals(command)) {
             final var actions = new ArrayList<MockAction>(260);
             for (int i = 0; i < 260; i++) {
-                final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2E00BCE010FF0A96010081")));
-                actions.add(new RequestMockAction(this.mockServer, mockRequest.getBody()));
+                final var requestBody = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2E00BCE010FF0A96010081")));
+                actions.add(new RequestMockAction(this.mockServer, requestBody));
             }
             return actions;
         }
         // One a tunneling request with CEMI bytes, but routing to
         // wrong control channel (used in TunnelingRequestTest)
         else if ("channel=control,cemi(1)={2900bce010c84c0f0300800c23}".equals(command)) {
-            final var mockRequest = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
-            return Collections.singletonList(new RequestMockAction(this.mockServer, new ControlMockBody(mockRequest.getBody().getRawData(true))));
+            final var requestBody = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
+            return Collections.singletonList(new RequestMockAction(this.mockServer, new MockResponseControlChannelBody(requestBody.getRawData(true))));
         }
         // Two corrupted bodies (used in KnxClientTest)
         else if ("raw(2)={0610020600140000000100000000000004000000}".equals(command)) {
-            final var mockRequest = new MockResponse(Bytes.toByteArray("0610020600140000000100000000000004000000"));
+            final var mockResponseBody = new MockResponseBody(Bytes.toByteArray("0610020600140000000100000000000004000000"));
             return List.of(
-                    new RequestMockAction(this.mockServer, mockRequest.getBody()), // 1
-                    new RequestMockAction(this.mockServer, mockRequest.getBody()) // 2
+                    new RequestMockAction(this.mockServer, mockResponseBody), // 1
+                    new RequestMockAction(this.mockServer, mockResponseBody) // 2
             );
         }
         // If we should wait for a specific request
