@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,24 +55,50 @@ abstract class AbstractDataPointFlag<T extends BaseDataPointType<?>> extends Abs
         // @formatter:on
     }
 
+    /**
+     * Returns human-friendly text which bits are set
+     * <p>
+     * If b0 is set, then "1" is returned.<br>
+     * If b0, b1, b3 and b7 are set, then "1, 2, 4, 8" is returned.<br>
+     *
+     * @param emptyText text to be returned in case no bits are set
+     * @return string representation of bit-set
+     */
+    protected String toText(final String emptyText) {
+        if (b == 0) {
+            return emptyText;
+        } else {
+            final var sb = new StringBuilder(30);
+            for (var i = 0; i < 8; i++) {
+                if (this.isSet(i)) {
+                    if (sb.length() != 0) {
+                        sb.append(", ");
+                    }
+                    sb.append((i + 1));
+                }
+            }
+            return sb.toString();
+        }
+    }
+
     public final boolean isSet(final int bit) {
         Preconditions.checkArgument(bit >= 0 && bit < 8, "Bit must be between 0 and 7 (actual: {})", bit);
         return ((this.b & 0xFF) & (0x01 << bit)) != 0;
     }
 
     @Override
-    public boolean equals(final @Nullable Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj != null && this.getClass().equals(obj.getClass())) {
-            final var other = this.getClass().cast(obj);
-            return Objects.equals(this.getDPT(), other.getDPT()) && this.b == other.b;
+    public final boolean equals(final @Nullable Object obj) {
+        if (obj instanceof AbstractDataPointFlag) {
+            final var other = (AbstractDataPointFlag<?>)obj;
+            return this.getClass() == obj.getClass()
+                    && Objects.equals(this.getDPT(), other.getDPT()) //
+                    && Objects.equals(this.b, other.b);
         }
         return false;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.getDPT(), this.b);
+    public final int hashCode() {
+        return Objects.hash(getClass(), getDPT(), b);
     }
 }

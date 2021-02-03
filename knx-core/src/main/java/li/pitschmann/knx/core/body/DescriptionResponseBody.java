@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,24 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.dib.DescriptionType;
-import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
+import li.pitschmann.knx.core.dib.DeviceInformationDIB;
 import li.pitschmann.knx.core.dib.IPConfigDIB;
 import li.pitschmann.knx.core.dib.IPCurrentConfigDIB;
 import li.pitschmann.knx.core.dib.KnxAddressesDIB;
 import li.pitschmann.knx.core.dib.ManufacturerDataDIB;
-import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.core.dib.SupportedServiceFamiliesDIB;
 import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Body for Description Response
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * sent by the KNXnet/IP Server in response to the KNXnet/IP Client’s {@link ServiceType#DESCRIPTION_REQUEST}.
  * <p>
  * At least two DIB structures shall be returned with information about the device capabilities on:
- * {@link DeviceHardwareInformationDIB} and {@link SupportedDeviceFamiliesDIB}.
+ * {@link DeviceInformationDIB} and {@link SupportedServiceFamiliesDIB}.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -66,34 +67,65 @@ import org.slf4j.LoggerFactory;
  *
  * @author PITSCHR
  */
-public final class DescriptionResponseBody extends AbstractMultiRawData implements ResponseBody, DescriptionChannelRelated {
+public final class DescriptionResponseBody implements ResponseBody, DescriptionChannelRelated {
     private static final Logger log = LoggerFactory.getLogger(DescriptionResponseBody.class);
-    private final DeviceHardwareInformationDIB deviceHardwareInformation;
-    private final SupportedDeviceFamiliesDIB supportedDeviceFamilies;
+
+    /**
+     * Minimum Structure Length for {@link DescriptionResponseBody}
+     * <p>
+     * 54 bytes for {@link DeviceInformationDIB}<br>
+     * 2 bytes for {@link SupportedServiceFamiliesDIB} at minimum<br>
+     * (others are optional)
+     */
+    private static final int STRUCTURE_MIN_LENGTH = DeviceInformationDIB.STRUCTURE_LENGTH + 2;
+
+    /**
+     * Maximum Structure Length for {@link DescriptionResponseBody}
+     */
+    private static final int STRUCTURE_MAX_LENGTH = 255;
+
+    private final DeviceInformationDIB deviceInformation;
+    private final SupportedServiceFamiliesDIB supportedServiceFamilies;
     private final IPConfigDIB ipConfig;
     private final IPCurrentConfigDIB ipCurrentConfig;
     private final KnxAddressesDIB knxAddresses;
     private final ManufacturerDataDIB manufacturerData;
 
     private DescriptionResponseBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // device information
+                getDIB(bytes, DescriptionType.DEVICE_INFO, DeviceInformationDIB::of),
+                // supported service families
+                getDIB(bytes, DescriptionType.SUPPORTED_SERVICE_FAMILIES, SupportedServiceFamiliesDIB::of),
+                // (optional) - IP Config
+                getDIB(bytes, DescriptionType.IP_CONFIG, IPConfigDIB::of),
+                // (optional) - IP Current Config
+                getDIB(bytes, DescriptionType.IP_CURRENT_CONFIG, IPCurrentConfigDIB::of),
+                // (optional) - KNX Address
+                getDIB(bytes, DescriptionType.KNX_ADDRESSES, KnxAddressesDIB::of),
+                // (optional) - Manufacturer Data
+                getDIB(bytes, DescriptionType.MANUFACTURER_DATA, ManufacturerDataDIB::of)
+        );
+    }
+
+    private DescriptionResponseBody(final DeviceInformationDIB deviceInformation,
+                                    final SupportedServiceFamiliesDIB supportedServiceFamilies,
+                                    final @Nullable IPConfigDIB ipConfig,
+                                    final @Nullable IPCurrentConfigDIB ipCurrentConfig,
+                                    final @Nullable KnxAddressesDIB knxAddresses,
+                                    final @Nullable ManufacturerDataDIB manufacturerData) {
+        Preconditions.checkNonNull(deviceInformation, "DIB about Device Information is required.");
+        Preconditions.checkNonNull(supportedServiceFamilies, "DIB about Supported Service Families is required.");
 
         // mandatory
-        this.deviceHardwareInformation = DeviceHardwareInformationDIB.of(this.getArrayPartByDIB(DescriptionType.DEVICE_INFO, bytes));
-        this.supportedDeviceFamilies = SupportedDeviceFamiliesDIB.of(this.getArrayPartByDIB(DescriptionType.SUPPORTED_SERVICE_FAMILIES, bytes));
+        this.deviceInformation = deviceInformation;
+        this.supportedServiceFamilies = supportedServiceFamilies;
 
         // optional
-        byte[] ipConfigArray = this.getArrayPartByDIB(DescriptionType.IP_CONFIG, bytes);
-        this.ipConfig = ipConfigArray == null ? null : IPConfigDIB.of(ipConfigArray);
-
-        byte[] ipCurrentConfigArray = this.getArrayPartByDIB(DescriptionType.IP_CURRENT_CONFIG, bytes);
-        this.ipCurrentConfig = ipCurrentConfigArray == null ? null : IPCurrentConfigDIB.of(ipCurrentConfigArray);
-
-        byte[] knxAddressesArray = this.getArrayPartByDIB(DescriptionType.KNX_ADDRESSES, bytes);
-        this.knxAddresses = knxAddressesArray == null ? null : KnxAddressesDIB.of(knxAddressesArray);
-
-        byte[] manufacturerDataArray = this.getArrayPartByDIB(DescriptionType.MANUFACTURER_DATA, bytes);
-        this.manufacturerData = manufacturerDataArray == null ? null : ManufacturerDataDIB.of(manufacturerDataArray);
+        this.ipConfig = ipConfig;
+        this.ipCurrentConfig = ipCurrentConfig;
+        this.knxAddresses = knxAddresses;
+        this.manufacturerData = manufacturerData;
     }
 
     /**
@@ -103,70 +135,59 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
      * @return a new immutable {@link DescriptionResponseBody}
      */
     public static DescriptionResponseBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_MIN_LENGTH && bytes.length <= STRUCTURE_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_MIN_LENGTH, STRUCTURE_MAX_LENGTH, bytes.length);
+        Preconditions.checkArgument(bytes[1] == 0x01,
+                "Incompatible structure. No Device Information DIB.");
+        Preconditions.checkArgument(bytes[DeviceInformationDIB.STRUCTURE_LENGTH + 1] == 0x02,
+                "Incompatible structure. No Supported Service Families DIB.");
         return new DescriptionResponseBody(bytes);
     }
 
     /**
      * Creates a new {@link DescriptionResponseBody} instance
      *
-     * @param deviceHardwareInformation information about device hardware
-     * @param supportedDeviceFamilies   supported device families
+     * @param deviceInformation        description information about device hardware; may not be null
+     * @param supportedServiceFamilies description information about supported service families; may not be null
      * @return a new immutable {@link DescriptionResponseBody}
      */
-    public static DescriptionResponseBody of(final DeviceHardwareInformationDIB deviceHardwareInformation,
-                                             final SupportedDeviceFamiliesDIB supportedDeviceFamilies) {
-        // validate
-        if (deviceHardwareInformation == null) {
-            throw new KnxNullPointerException("deviceHardwareInformation");
-        } else if (supportedDeviceFamilies == null) {
-            throw new KnxNullPointerException("supportedDeviceFamilies");
-        }
-
-        final var deviceHardwareInformationAsBytes = deviceHardwareInformation.getRawData();
-        final var deviceFamiliesAsBytes = supportedDeviceFamilies.getRawData();
-
-        final var totalLength = deviceHardwareInformationAsBytes.length + deviceFamiliesAsBytes.length;
-
-        // create bytes
-        final var bytes = new byte[totalLength];
-        var pos = 0;
-        System.arraycopy(deviceHardwareInformationAsBytes, 0, bytes, pos, deviceHardwareInformationAsBytes.length);
-        pos += deviceHardwareInformationAsBytes.length;
-        System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
-
-        return of(bytes);
+    public static DescriptionResponseBody of(final DeviceInformationDIB deviceInformation,
+                                             final SupportedServiceFamiliesDIB supportedServiceFamilies) {
+        return of(deviceInformation, supportedServiceFamilies, null, null, null, null);
     }
 
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else {
-            // mandatory are device information DIB and supported device families DIB
-            final var deviceInformationFound = this.indexOfDIB(DescriptionType.DEVICE_INFO, rawData) >= 0;
-            if (!deviceInformationFound) {
-                throw new KnxException("Could not find device hardware information DIB array.");
-            }
-            final var supportedDeviceFamiliesFound = this.indexOfDIB(DescriptionType.SUPPORTED_SERVICE_FAMILIES, rawData) >= 0;
-            if (!supportedDeviceFamiliesFound) {
-                throw new KnxException("Could not find supported device families DIB array.");
-            }
-            this.getArrayPartByDIB(DescriptionType.MANUFACTURER_DATA, rawData);
-        }
+    /**
+     * Creates a new {@link DescriptionResponseBody} instance
+     *
+     * @param deviceInformation        description information about device hardware; may not be null
+     * @param supportedServiceFamilies description information about supported service families; may not be null
+     * @param ipConfig                 description information about IP config
+     * @param ipCurrentConfig          description about current IP config
+     * @param knxAddresses             description information about KNX addresses
+     * @param manufacturerData         description information about manufacturer
+     * @return a new immutable {@link DescriptionResponseBody}
+     */
+    public static DescriptionResponseBody of(final DeviceInformationDIB deviceInformation,
+                                             final SupportedServiceFamiliesDIB supportedServiceFamilies,
+                                             final @Nullable IPConfigDIB ipConfig,
+                                             final @Nullable IPCurrentConfigDIB ipCurrentConfig,
+                                             final @Nullable KnxAddressesDIB knxAddresses,
+                                             final @Nullable ManufacturerDataDIB manufacturerData) {
+        return new DescriptionResponseBody(deviceInformation, supportedServiceFamilies, ipConfig, ipCurrentConfig, knxAddresses, manufacturerData);
     }
 
     /**
      * Returns the index of {@link DescriptionType} DIB we are looking in {@code rawData} array.
      *
      * @param descriptionType type of description we are looking for
-     * @param rawData         byte array to be scanned
+     * @param bytes           byte array to be scanned
      * @return positive number if found, otherwise {@code -1}.
      */
-    private int indexOfDIB(final DescriptionType descriptionType, final byte[] rawData) {
+    private static int indexOfDIB(final DescriptionType descriptionType, final byte[] bytes) {
         var index = -1;
-        for (var i = 0; i < rawData.length; ) {
-            final var dibLength = Byte.toUnsignedInt(rawData[i]);
-            final var dibCode = Byte.toUnsignedInt(rawData[i + 1]);
+        for (var i = 0; i < bytes.length; ) {
+            final var dibLength = Byte.toUnsignedInt(bytes[i]);
+            final var dibCode = Byte.toUnsignedInt(bytes[i + 1]);
             // we are interested in 2nd byte of DIB only
             if (descriptionType.getCode() == dibCode) {
                 // found it!
@@ -175,7 +196,7 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
             } else {
                 // not found - try with next one
                 if (dibLength == 0) {
-                    throw new KnxException(String.format("Bad rawData provided. This would result into an endless loop: %s", ByteFormatter.formatHexAsString(rawData)));
+                    throw new KnxException(String.format("Bad bytes provided. This would result into an endless loop: %s", ByteFormatter.formatHexAsString(bytes)));
                 }
                 i += dibLength;
             }
@@ -186,32 +207,33 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
     }
 
     /**
-     * Returns the array part for the given {@link DescriptionType} DIB.
+     * Returns the given {@link DescriptionType} DIB if found
      *
+     * @param bytes           byte array to be parsed
      * @param descriptionType type of description we are looking for
-     * @param rawData         byte array to be scanned
-     * @return byte array if found, otherwise {@code null}
+     * @return an instance of DIB if found, otherwise {@code null}
      */
     @Nullable
-    private byte[] getArrayPartByDIB(final DescriptionType descriptionType, final byte[] rawData) {
-        Preconditions.checkNonNull(descriptionType);
-        final var index = this.indexOfDIB(descriptionType, rawData);
+    private static <T> T getDIB(final byte[] bytes, final DescriptionType descriptionType, Function<byte[], T> caller) {
+        final var index = indexOfDIB(descriptionType, bytes);
 
         if (index < 0) {
             // not found
             if (log.isDebugEnabled()) {
-                log.debug("DIB '{}' not found in: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(rawData));
+                log.debug("DIB '{}' not found in: {}", descriptionType.name(), ByteFormatter.formatHexAsString(bytes));
             }
             return null;
         } else {
             // found
-            final var dibLength = Byte.toUnsignedInt(rawData[index]);
+            final var dibLength = Byte.toUnsignedInt(bytes[index]);
             final var dibArray = new byte[dibLength];
-            System.arraycopy(rawData, index, dibArray, 0, dibLength);
+            System.arraycopy(bytes, index, dibArray, 0, dibLength);
+
+            final var dibObject = caller.apply(dibArray);
             if (log.isDebugEnabled()) {
-                log.debug("DIB '{}' found: {}", descriptionType.getFriendlyName(), ByteFormatter.formatHexAsString(dibArray));
+                log.debug("DIB '{}' found: {}", descriptionType.name(), dibObject);
             }
-            return dibArray;
+            return dibObject;
         }
     }
 
@@ -220,50 +242,88 @@ public final class DescriptionResponseBody extends AbstractMultiRawData implemen
         return ServiceType.DESCRIPTION_RESPONSE;
     }
 
-    public DeviceHardwareInformationDIB getDeviceInformation() {
-        return this.deviceHardwareInformation;
+    public DeviceInformationDIB getDeviceInformation() {
+        return deviceInformation;
     }
 
-    public SupportedDeviceFamiliesDIB getSupportedDeviceFamilies() {
-        return this.supportedDeviceFamilies;
+    public SupportedServiceFamiliesDIB getSupportedDeviceFamilies() {
+        return supportedServiceFamilies;
     }
 
     @Nullable
     public IPConfigDIB getIPConfig() {
-        return this.ipConfig;
+        return ipConfig;
     }
 
     @Nullable
     public IPCurrentConfigDIB getIPCurrentConfig() {
-        return this.ipCurrentConfig;
+        return ipCurrentConfig;
     }
 
     @Nullable
     public KnxAddressesDIB getKnxAddresses() {
-        return this.knxAddresses;
+        return knxAddresses;
     }
 
     @Nullable
     public ManufacturerDataDIB getManufacturerData() {
-        return this.manufacturerData;
+        return manufacturerData;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                // mandatory
-                .add("deviceHardwareInformation", this.deviceHardwareInformation.toString(false))
-                .add("supportedDeviceFamilies", this.supportedDeviceFamilies.toString(false))
-                // optional
-                .add("ipConfig", this.ipConfig == null ? null : this.ipConfig.toString(false))
-                .add("ipCurrentConfig", this.ipCurrentConfig == null ? null : this.ipCurrentConfig.toString(false))
-                .add("knxAddresses", this.knxAddresses == null ? null : this.knxAddresses.toString(false))
-                .add("manufacturerData", this.manufacturerData == null ? null : this.manufacturerData.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        final var deviceInformationAsBytes = deviceInformation.toByteArray();
+        final var deviceFamiliesAsBytes = supportedServiceFamilies.toByteArray();
+
+        final var totalLength = deviceInformationAsBytes.length + deviceFamiliesAsBytes.length;
+
+        // create bytes
+        final var bytes = new byte[totalLength];
+        var pos = 0;
+        System.arraycopy(deviceInformationAsBytes, 0, bytes, pos, deviceInformationAsBytes.length);
+        pos += deviceInformationAsBytes.length;
+        System.arraycopy(deviceFamiliesAsBytes, 0, bytes, pos, deviceFamiliesAsBytes.length);
+
+        return bytes;
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("deviceInformation", deviceInformation)
+                .add("supportedServiceFamilies", supportedServiceFamilies)
+                .add("ipConfig", ipConfig)
+                .add("ipCurrentConfig", ipCurrentConfig)
+                .add("knxAddresses", knxAddresses)
+                .add("manufacturerData", manufacturerData)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof DescriptionResponseBody) {
+            final var other = (DescriptionResponseBody) obj;
+            return Objects.equals(this.deviceInformation, other.deviceInformation)
+                    && Objects.equals(this.supportedServiceFamilies, other.supportedServiceFamilies)
+                    && Objects.equals(this.ipConfig, other.ipConfig)
+                    && Objects.equals(this.ipCurrentConfig, other.ipCurrentConfig)
+                    && Objects.equals(this.knxAddresses, other.knxAddresses)
+                    && Objects.equals(this.manufacturerData, other.manufacturerData);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                deviceInformation,
+                supportedServiceFamilies,
+                ipConfig,
+                ipCurrentConfig,
+                knxAddresses,
+                manufacturerData
+        );
     }
 }

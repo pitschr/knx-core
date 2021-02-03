@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,35 +18,23 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
-import org.junit.jupiter.api.BeforeEach;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link ConnectionStateResponseBody}
  *
  * @author PITSCHR
  */
-public class ConnectionStateResponseBodyTest {
-    // prepare
-    private int channelId;
-    private Status status;
-
-    @BeforeEach
-    public void before() {
-        this.channelId = 9;
-        this.status = Status.E_SEQUENCE_NUMBER;
-    }
+class ConnectionStateResponseBodyTest {
 
     /**
-     * Tests the {@link ConnectionStateResponseBody#of(int, Status)} and
-     * {@link ConnectionStateResponseBody#of(byte[])} methods.
-     *
      * <pre>
      * 	KNX/IP
      * 	    Header
@@ -55,47 +43,70 @@ public class ConnectionStateResponseBodyTest {
      * 	        Service Type Identifier: CONNECTION_STATE_RESPONSE (0x0208)
      * 	        Total Length: 8 octets
      * 	    Body
-     * 	        Communication Channel ID: 17
-     * 	        Status: E_NO_ERROR - The connection state is normal (0x00)
+     * 	        Communication Channel ID: 17 (0x11)
+     * 	        Status: E_SEQUENCE_NUMBER (0x04)
      * </pre>
      */
     @Test
+    @DisplayName("Test valid cases using #of(byte[]) and #of(int, Status)")
     public void validCases() {
-        // create
-        final var body = ConnectionStateResponseBody.of(this.channelId, this.status);
-        assertThat(body.getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
-        assertThat(body.getChannelId()).isEqualTo(this.channelId);
-        assertThat(body.getStatus()).isEqualTo(this.status);
-
         // create by bytes
-        final var bodyByBytes = ConnectionStateResponseBody.of(new byte[]{0x09, 0x04});
+        final var bodyByBytes = ConnectionStateResponseBody.of(new byte[]{
+                0x11, // Communication Channel ID
+                0x04  // Status
+        });
 
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(body.getRawData()).containsExactly(bodyByBytes.getRawData());
+        // create
+        final var channelId = 17;
+        final var status = Status.SEQUENCE_NUMBER;
+
+        final var body = ConnectionStateResponseBody.of(channelId, status);
+        assertThat(body.getServiceType()).isSameAs(ServiceType.CONNECTION_STATE_RESPONSE);
+        assertThat(body.getChannelId()).isEqualTo(channelId);
+        assertThat(body.getStatus()).isSameAs(status);
+
+        // compare the byte array of 'create' and 'create by bytes'
+        assertThat(body.toByteArray()).containsExactly(bodyByBytes.toByteArray());
 
         // toString
-        assertThat(body).hasToString(String.format("ConnectionStateResponseBody{channelId=9 (0x09), status=%s, rawData=0x09 04}", this.status));
+        assertThat(body).hasToString(
+                String.format("ConnectionStateResponseBody{channelId=17, status=%s}", status)
+        );
     }
 
-    /**
-     * Tests {@link ConnectionStateResponseBody} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_ofBytes() {
+        // invalid cases
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(null))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '2' but was: 0");
+    }
+
+    @Test
+    @DisplayName("Invalid cases for #of(int, Status)")
+    void invalidCases_ofObjects() {
         // null
-        assertThatThrownBy(() -> ConnectionStateResponseBody.of(this.channelId, null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("status");
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(0, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Status is required.");
 
         // invalid channel id
-        assertThatThrownBy(() -> ConnectionStateResponseBody.of(-1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("channelId");
-        assertThatThrownBy(() -> ConnectionStateResponseBody.of(0xFF + 1, this.status)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("channelId");
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(-1, mock(Status.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: -1");
 
-        // invalid raw data length
-        assertThatThrownBy(() -> ConnectionStateResponseBody.of(null)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ConnectionStateResponseBody.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> ConnectionStateResponseBody.of(0xFF + 1, mock(Status.class)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible channel id. Expected [0..255] but was: 256");
     }
+
+    @Test
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(ConnectionStateResponseBody.class).verify();
+    }
+
 }

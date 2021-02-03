@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,8 +244,11 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
                                                                  final long msTimeout) {
         final var eventPool = this.client.getEventPool();
 
-        // add request body to event pool
-        eventPool.add(requestBody);
+        // override the last knx event with the most recent request body
+        // the response will be cleared to ensure the response is not linked with the request anymore
+        final var lastKnxEvent = eventPool.get(requestBody);
+        lastKnxEvent.setRequest(requestBody);
+        lastKnxEvent.clearResponse();
         log.trace("Request Body added to event pool.");
 
         // mark as dirty (if possible)

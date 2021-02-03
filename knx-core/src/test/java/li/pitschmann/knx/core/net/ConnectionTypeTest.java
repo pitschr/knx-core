@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,29 @@
 
 package li.pitschmann.knx.core.net;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link ConnectionType} enum class
  *
  * @author PITSCHR
  */
-public final class ConnectionTypeTest extends AbstractKnxByteEnumTest<ConnectionType> {
-    @Override
-    protected int numberOfElements() {
-        return 5;
+final class ConnectionTypeTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(ConnectionType.values()).hasSize(5);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(ConnectionType.valueOf(0x03)).isEqualTo(ConnectionType.DEVICE_MANAGEMENT_CONNECTION);
         assertThat(ConnectionType.valueOf(0x04)).isEqualTo(ConnectionType.TUNNEL_CONNECTION);
         assertThat(ConnectionType.valueOf(0x06)).isEqualTo(ConnectionType.REMOTE_LOGGING_CONNECTION);
@@ -45,8 +49,15 @@ public final class ConnectionTypeTest extends AbstractKnxByteEnumTest<Connection
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> ConnectionType.valueOf(0x00)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> ConnectionType.valueOf(0xFF)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(ConnectionType.DEVICE_MANAGEMENT_CONNECTION.getFriendlyName()).isEqualTo("Device Management Connection");
         assertThat(ConnectionType.TUNNEL_CONNECTION.getFriendlyName()).isEqualTo("Tunnel Connection");
         assertThat(ConnectionType.REMOTE_LOGGING_CONNECTION.getFriendlyName()).isEqualTo("Remote Logging Connection");
@@ -55,9 +66,10 @@ public final class ConnectionTypeTest extends AbstractKnxByteEnumTest<Connection
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(ConnectionType.TUNNEL_CONNECTION)
-                .hasToString("ConnectionType{name=TUNNEL_CONNECTION, friendlyName=Tunnel Connection, code=4 (0x04)}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(ConnectionType.TUNNEL_CONNECTION).hasToString(
+                "ConnectionType{name=TUNNEL_CONNECTION, friendlyName=Tunnel Connection, code=4}"
+        );
     }
 }

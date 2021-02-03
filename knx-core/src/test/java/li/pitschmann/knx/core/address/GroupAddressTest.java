@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,7 @@
 
 package li.pitschmann.knx.core.address;
 
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,44 +30,33 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class GroupAddressTest {
-    /**
-     * Tests <strong>valid</strong> addresses for free-level group address structure
-     */
+final class GroupAddressTest {
     @Test
     @DisplayName("Test free-level group address structure")
-    public void testValidFreeLevel() {
-        this.assertGroupAddressFreeLevel(1, new byte[]{0x00, 0x01});
-        this.assertGroupAddressFreeLevel(4610, new byte[]{(byte) 0x12, (byte) 0x02});
-        this.assertGroupAddressFreeLevel(65535, new byte[]{(byte) 0xFF, (byte) 0xFF});
+    void testValidFreeLevel() {
+        assertGroupAddressFreeLevel(1, new byte[]{0x00, 0x01});
+        assertGroupAddressFreeLevel(4610, new byte[]{(byte) 0x12, (byte) 0x02});
+        assertGroupAddressFreeLevel(65535, new byte[]{(byte) 0xFF, (byte) 0xFF});
     }
 
-    /**
-     * Tests <strong>valid</strong> addresses for level 2 group address structure
-     */
     @Test
     @DisplayName("Test 2-level group address structure")
     public void testValid2Level() {
-        this.assertGroupAddress2Level(0, 1, new byte[]{0x00, 0x01});
-        this.assertGroupAddress2Level(7, 1024, new byte[]{(byte) 0x3C, (byte) 0x00});
-        this.assertGroupAddress2Level(31, 2047, new byte[]{(byte) 0xFF, (byte) 0xFF});
+        assertGroupAddress2Level(0, 1, new byte[]{0x00, 0x01});
+        assertGroupAddress2Level(7, 1024, new byte[]{(byte) 0x3C, (byte) 0x00});
+        assertGroupAddress2Level(31, 2047, new byte[]{(byte) 0xFF, (byte) 0xFF});
     }
 
-    /**
-     * Tests <strong>valid</strong> addresses for level 3 group address structure
-     */
     @Test
     @DisplayName("Test 3-level group address structure")
     public void testValid3Level() {
-        this.assertGroupAddress3Level(0, 0, 1, new byte[]{0x00, 0x01});
-        this.assertGroupAddress3Level(7, 3, 128, new byte[]{(byte) 0x3B, (byte) 0x80});
-        this.assertGroupAddress3Level(31, 7, 255, new byte[]{(byte) 0xFF, (byte) 0xFF});
+        assertGroupAddress3Level(0, 0, 1, new byte[]{0x00, 0x01});
+        assertGroupAddress3Level(7, 3, 128, new byte[]{(byte) 0x3B, (byte) 0x80});
+        assertGroupAddress3Level(31, 7, 255, new byte[]{(byte) 0xFF, (byte) 0xFF});
     }
 
-    /**
-     * Tests {@link GroupAddress#of(String)} that is being parsed for given string
-     */
     @Test
+    @DisplayName("Test #of(String)")
     public void testAddressByString() {
         assertThat(GroupAddress.of("1")).isEqualTo(GroupAddress.of(1));
         assertThat(GroupAddress.of("65535")).isEqualTo(GroupAddress.of(65535));
@@ -84,100 +70,102 @@ public final class GroupAddressTest {
         // bad cases
         assertThatThrownBy(() -> GroupAddress.of((String) null)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> GroupAddress.of("foobar")).isInstanceOf(NumberFormatException.class);
-        assertThatThrownBy(() -> GroupAddress.of("0/0/0/0")).isInstanceOf(KnxIllegalArgumentException.class);
+        assertThatThrownBy(() -> GroupAddress.of("0/0/0/0")).isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * Test <strong>invalid</strong> addresses for {@link GroupAddress#of(byte[])}
-     */
     @Test
-    public void invalidValueOf() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidByteLength() {
         // null
-        assertThatThrownBy(() -> GroupAddress.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("addressRawData");
+        assertThatThrownBy(() -> GroupAddress.of((byte[]) null))
+                .isInstanceOf(NullPointerException.class);
 
         // address should have 2 bytes
-        assertThatThrownBy(() -> GroupAddress.of(new byte[0])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("addressRawData");
+        assertThatThrownBy(() -> GroupAddress.of(new byte[0]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("2 Bytes is expected but got: []");
+        assertThatThrownBy(() -> GroupAddress.of(new byte[3]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("2 Bytes is expected but got: [0, 0, 0]");
     }
 
-    /**
-     * Test <strong>invalid</strong> addresses for {@link GroupAddress#of(int)}
-     */
     @Test
-    public void invalidCreateFreeLevel() {
-        // negative numbers
-        assertThatThrownBy(() -> GroupAddress.of(-1)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("address");
-        // 0 not possible (GA value, 0)
-        assertThatThrownBy(() -> GroupAddress.of(0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("address");
-        // too big numbers
-        assertThatThrownBy(() -> GroupAddress.of(65536)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("address");
+    @DisplayName("Invalid cases for #of(int)")
+    void invalid_FreeLevel() {
+        // out of range
+        assertThatThrownBy(() -> GroupAddress.of(0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Free-Level address must be between [1, 65535] but was: 0");
+        assertThatThrownBy(() -> GroupAddress.of(-1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Free-Level address must be between [1, 65535] but was: -1");
+        assertThatThrownBy(() -> GroupAddress.of(65536))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Free-Level address must be between [1, 65535] but was: 65536");
     }
 
-    /**
-     * Test <strong>invalid</strong> addresses for {@link GroupAddress#of(int, int)}
-     */
     @Test
-    public void invalidCreate2Level() {
+    @DisplayName("Invalid cases for #of(int, int)")
+    void invalid_2Level() {
         // not allowed 0/0
-        assertThatThrownBy(() -> GroupAddress.of(0, 0)).isInstanceOf(KnxIllegalArgumentException.class);
+        assertThatThrownBy(() -> GroupAddress.of(0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Group address '0/0' is not allowed.");
 
-        // negative numbers
-        assertThatThrownBy(() -> GroupAddress.of(-1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("main");
-        assertThatThrownBy(() -> GroupAddress.of(0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("sub");
+        // out of range
+        assertThatThrownBy(() -> GroupAddress.of(-1, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Main group of 2-Level address must be between [0, 31] but was: -1");
+        assertThatThrownBy(() -> GroupAddress.of(32, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Main group of 2-Level address must be between [0, 31] but was: 32");
 
-        // too big numbers
-        assertThatThrownBy(() -> GroupAddress.of(32, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("main");
-        assertThatThrownBy(() -> GroupAddress.of(0, 2048)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("sub");
+        assertThatThrownBy(() -> GroupAddress.of(0, -1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Sub group of 2-Level address must be between [0, 2047] but was: -1");
+        assertThatThrownBy(() -> GroupAddress.of(0, 2048))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Sub group of 2-Level address must be between [0, 2047] but was: 2048");
     }
 
     /**
      * Test <strong>invalid</strong> addresses for {@link GroupAddress#of(int, int, int)}
      */
     @Test
-    public void invalidCreate3Level() {
+    @DisplayName("Invalid cases for #of(int, int, int)")
+    void invalid_3Level() {
         // not allowed 0/0/0
-        assertThatThrownBy(() -> GroupAddress.of(0, 0, 0)).isInstanceOf(KnxIllegalArgumentException.class);
+        assertThatThrownBy(() -> GroupAddress.of(0, 0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Group address '0/0/0' is not allowed.");
 
-        // negative numbers
-        assertThatThrownBy(() -> GroupAddress.of(-1, 0, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("main");
-        assertThatThrownBy(() -> GroupAddress.of(0, -1, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("middle");
-        assertThatThrownBy(() -> GroupAddress.of(0, 0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("sub");
+        // out of range
+        assertThatThrownBy(() -> GroupAddress.of(-1, 0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Main group of 3-Level address must be between [0, 31] but was: -1");
+        assertThatThrownBy(() -> GroupAddress.of(32, 0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Main group of 3-Level address must be between [0, 31] but was: 32");
 
-        // too big numbers
-        assertThatThrownBy(() -> GroupAddress.of(32, 0, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("main");
-        assertThatThrownBy(() -> GroupAddress.of(0, 8, 0)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("middle");
-        assertThatThrownBy(() -> GroupAddress.of(0, 0, 256)).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("sub");
+        assertThatThrownBy(() -> GroupAddress.of(0, -1, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Middle group of 3-Level address must be between [0, 7] but was: -1");
+        assertThatThrownBy(() -> GroupAddress.of(0, 8, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Middle group of 3-Level address must be between [0, 7] but was: 8");
+
+        assertThatThrownBy(() -> GroupAddress.of(0, 0, -1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Sub group of 3-Level address must be between [0, 255] but was: -1");
+        assertThatThrownBy(() -> GroupAddress.of(0, 0, 256))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Sub group of 3-Level address must be between [0, 255] but was: 256");
     }
 
-    /**
-     * Test {@link GroupAddress#equals(Object)} and {@link GroupAddress#hashCode()}
-     */
     @Test
-    public void testEqualsAndHashcode() {
-        final var addrA = GroupAddress.of(new byte[]{0x19, (byte) 0xC8});
-        final var addrB = GroupAddress.of(3, 456);
-        final var addrC = GroupAddress.of(3, 456);
-        final var addrD = GroupAddress.of(3, 1, 200);
-        final var addrE = GroupAddress.of(6600);
-
-        // equals
-        assertThat(addrA).isEqualTo(addrA);
-        assertThat(addrB).isEqualTo(addrA);
-        assertThat(addrC).isEqualTo(addrA);
-        assertThat(addrD).isEqualTo(addrA);
-        assertThat(addrE).isEqualTo(addrA);
-        assertThat(addrA).hasSameHashCodeAs(addrA);
-        assertThat(addrB).hasSameHashCodeAs(addrA);
-        assertThat(addrC).hasSameHashCodeAs(addrA);
-        assertThat(addrD).hasSameHashCodeAs(addrA);
-        assertThat(addrE).hasSameHashCodeAs(addrA);
-
-        // not equals
-        assertThat(addrA).isNotEqualTo(IndividualAddress.of(new byte[]{0x19, (byte) 0xC8}));
-        assertThat(addrA).isNotEqualTo(IndividualAddress.of(3, 1, 200));
-        assertThat(addrA).isNotEqualTo(GroupAddress.of(3, 457));
-        assertThat(addrA).isNotEqualTo(GroupAddress.of(2, 456));
-        assertThat(addrA).isNotEqualTo(GroupAddress.of(3, 968));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(GroupAddress.class).verify();
     }
 
     /**
@@ -194,13 +182,13 @@ public final class GroupAddressTest {
      */
     private void assertGroupAddressFreeLevel(final int address, final byte[] bytes) {
         final var testByCreate = GroupAddress.of(address);
-        final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
+        final var testByCreateRawData = GroupAddress.of(testByCreate.toByteArray());
         final var testByValueOfRawData = GroupAddress.of(bytes);
         final var testByString = GroupAddress.of(String.valueOf(address));
 
-        assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByCreateRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByValueOfRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByString.toByteArray());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.GROUP);
@@ -216,8 +204,13 @@ public final class GroupAddressTest {
         assertThat(testByString.getAddress()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s, rawData=%s}",
-                AddressType.GROUP, testByCreate.getAddress(), testByCreate.getAddressLevel2(), testByCreate.getAddressLevel3(), ByteFormatter.formatHexAsString(bytes)));
+        assertThat(testByCreate).hasToString(
+                String.format("GroupAddress{address=%s, address(2-level)=%s, address(3-level)=%s}",
+                        testByCreate.getAddress(),
+                        testByCreate.getAddressLevel2(),
+                        testByCreate.getAddressLevel3()
+                )
+        );
     }
 
     /**
@@ -235,13 +228,13 @@ public final class GroupAddressTest {
      */
     private void assertGroupAddress2Level(final int main, final int sub, final byte[] bytes) {
         final var testByCreate = GroupAddress.of(main, sub);
-        final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
+        final var testByCreateRawData = GroupAddress.of(testByCreate.toByteArray());
         final var testByValueOfRawData = GroupAddress.of(bytes);
         final var testByString = GroupAddress.of(main + "/" + sub);
 
-        assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByCreateRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByValueOfRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByString.toByteArray());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.GROUP);
@@ -257,8 +250,13 @@ public final class GroupAddressTest {
         assertThat(testByString.getAddressLevel2()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s, rawData=%s}",
-                AddressType.GROUP, testByCreate.getAddress(), testByCreate.getAddressLevel2(), testByCreate.getAddressLevel3(), ByteFormatter.formatHexAsString(bytes)));
+        assertThat(testByCreate).hasToString(
+                String.format("GroupAddress{address=%s, address(2-level)=%s, address(3-level)=%s}",
+                        testByCreate.getAddress(),
+                        testByCreate.getAddressLevel2(),
+                        testByCreate.getAddressLevel3()
+                )
+        );
     }
 
     /**
@@ -277,13 +275,13 @@ public final class GroupAddressTest {
      */
     private void assertGroupAddress3Level(final int main, final int middle, final int sub, final byte[] bytes) {
         final var testByCreate = GroupAddress.of(main, middle, sub);
-        final var testByCreateRawData = GroupAddress.of(testByCreate.getRawData());
+        final var testByCreateRawData = GroupAddress.of(testByCreate.toByteArray());
         final var testByValueOfRawData = GroupAddress.of(bytes);
         final var testByString = GroupAddress.of(main + "/" + middle + "/" + sub);
 
-        assertThat(testByCreate.getRawData()).containsExactly(testByCreateRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByValueOfRawData.getRawData());
-        assertThat(testByCreate.getRawData()).containsExactly(testByString.getRawData());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByCreateRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByValueOfRawData.toByteArray());
+        assertThat(testByCreate.toByteArray()).containsExactly(testByString.toByteArray());
 
         // check address type
         assertThat(testByCreate.getAddressType()).isEqualTo(AddressType.GROUP);
@@ -299,7 +297,12 @@ public final class GroupAddressTest {
         assertThat(testByString.getAddressLevel3()).isEqualTo(addressAsString);
 
         // toString
-        assertThat(testByCreate).hasToString(String.format("GroupAddress{addressType=%s, address=%s, address(2-level)=%s, address(3-level)=%s, rawData=%s}",
-                AddressType.GROUP, testByCreate.getAddress(), testByCreate.getAddressLevel2(), testByCreate.getAddressLevel3(), ByteFormatter.formatHexAsString(bytes)));
+        assertThat(testByCreate).hasToString(
+                String.format("GroupAddress{address=%s, address(2-level)=%s, address(3-level)=%s}",
+                        testByCreate.getAddress(),
+                        testByCreate.getAddressLevel2(),
+                        testByCreate.getAddressLevel3()
+                )
+        );
     }
 }

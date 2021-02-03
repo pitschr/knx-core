@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,16 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.ChannelIdAware;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Body for Connect Response
@@ -69,33 +68,62 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class ConnectResponseBody extends AbstractMultiRawData implements ResponseBody, ChannelIdAware, ControlChannelRelated {
+public final class ConnectResponseBody implements ResponseBody, ChannelIdAware, ControlChannelRelated {
     /**
-     * Structure Length for {@link ConnectResponseBody}
+     * Structure Length for {@link ConnectResponseBody} in case there was <strong>an error</strong>
+     * <p>
+     * 1 byte for channel id<br>
+     * 1 byte for status<br>
+     */
+    private static final int STRUCTURE_LENGTH_WITH_ERROR = 2;
+
+    /**
+     * Structure Length for {@link ConnectResponseBody} in case there was <strong>no error</strong>
      * <p>
      * 1 byte for channel id<br>
      * 1 byte for status<br>
      * 8 bytes for data endpoint<br>
      * 4 bytes for connection response data<br>
      */
-    private static final int STRUCTURE_LENGTH = 14;
+    private static final int STRUCTURE_LENGTH_NO_ERROR = 14;
     private final int channelId;
     private final Status status;
     private final HPAI dataEndpoint;
     private final ConnectionResponseData connectionResponseData;
 
     private ConnectResponseBody(final byte[] bytes) {
-        super(bytes);
-
+        // byte[0] => channel id
         this.channelId = Byte.toUnsignedInt(bytes[0]);
+        // byte[1] => status
         this.status = Status.valueOf(Byte.toUnsignedInt(bytes[1]));
-        if (bytes.length == STRUCTURE_LENGTH) {
+
+        if (bytes.length == STRUCTURE_LENGTH_NO_ERROR) {
+            // byte[2..9] => data endpoint
             this.dataEndpoint = HPAI.of(Arrays.copyOfRange(bytes, 2, 10));
+            // byte[10..13] => connection response data
             this.connectionResponseData = ConnectionResponseData.of(Arrays.copyOfRange(bytes, 10, 14));
         } else {
             this.dataEndpoint = null;
             this.connectionResponseData = null;
         }
+    }
+
+    private ConnectResponseBody(final int channelId,
+                                final Status status,
+                                final @Nullable HPAI dataEndpoint,
+                                final @Nullable ConnectionResponseData connectionResponseData) {
+        Preconditions.checkArgument(channelId >= 0x00 && channelId <= 0xFF,
+                "Incompatible channel id. Expected [0..255] but was: {}", channelId);
+        Preconditions.checkNonNull(status, "Status is required.");
+        if (Status.NO_ERROR.equals(status)) {
+            Preconditions.checkNonNull(dataEndpoint, "Data Endpoint is required.");
+            Preconditions.checkNonNull(connectionResponseData, "Connection response data is required.");
+        }
+
+        this.channelId = channelId;
+        this.status = status;
+        this.dataEndpoint = dataEndpoint;
+        this.connectionResponseData = connectionResponseData;
     }
 
     /**
@@ -105,65 +133,30 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * @return a new immutable {@link ConnectResponseBody}
      */
     public static ConnectResponseBody of(final byte[] bytes) {
+        Preconditions.checkArgument(
+                // OK -> there was no error (dataEndpoint and connectionResponseData will be present)
+                bytes.length == STRUCTURE_LENGTH_NO_ERROR
+                        // OK -> there was an error (dataEndpoint and connectionResponseData will be null)
+                        || bytes.length == STRUCTURE_LENGTH_WITH_ERROR,
+                "Incompatible structure length. Expected [{},{}] but was: {}", STRUCTURE_LENGTH_WITH_ERROR, STRUCTURE_LENGTH_NO_ERROR, bytes.length);
+
         return new ConnectResponseBody(bytes);
     }
 
     /**
      * Creates a new {@link ConnectResponseBody} instance
      *
-     * @param channelId    channel id (0..255)
-     * @param status       status of connect response
-     * @param dataEndpoint (required only when {@link Status#E_NO_ERROR})
-     * @param crd          (required only when {@link Status#E_NO_ERROR})
+     * @param channelId              channel id (0..255)
+     * @param status                 status of connect response
+     * @param dataEndpoint           (required only when {@link Status#NO_ERROR})
+     * @param connectionResponseData (required only when {@link Status#NO_ERROR})
      * @return a new immutable {@link ConnectResponseBody}
      */
     public static ConnectResponseBody of(final int channelId,
                                          final Status status,
-                                         final HPAI dataEndpoint,
-                                         final ConnectionResponseData crd) {
-        // validate
-        if (channelId < 0 || channelId > 0xFF) {
-            throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
-        } else if (status == null) {
-            throw new KnxNullPointerException("status");
-        }
-
-        // behavior depends on status
-        if (status == Status.E_NO_ERROR) {
-            if (dataEndpoint == null) {
-                throw new KnxNullPointerException("dataEndpoint");
-            } else if (crd == null) {
-                throw new KnxNullPointerException("crd");
-            }
-
-            // no error - provide everything
-            final var dataEndpointAsBytes = dataEndpoint.getRawData();
-            final var crdAsBytes = crd.getRawData();
-
-            // create bytes
-            final var bytes = new byte[2 + dataEndpointAsBytes.length + crdAsBytes.length];
-            bytes[0] = (byte) channelId;
-            bytes[1] = status.getCodeAsByte();
-            System.arraycopy(dataEndpointAsBytes, 0, bytes, 2, dataEndpointAsBytes.length);
-            System.arraycopy(crdAsBytes, 0, bytes, dataEndpointAsBytes.length + 2, crdAsBytes.length);
-
-            return of(bytes);
-        } else {
-            // error (only channel id + status)
-            return of(new byte[]{(byte) channelId, status.getCodeAsByte()});
-        }
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length == 2) {
-            // OK -> there was an error (dataEndpoint and connectionResponseData will be null)
-        } else if (rawData.length != STRUCTURE_LENGTH) {
-            // OK -> no error
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+                                         final @Nullable HPAI dataEndpoint,
+                                         final @Nullable ConnectionResponseData connectionResponseData) {
+        return new ConnectResponseBody(channelId, status, dataEndpoint, connectionResponseData);
     }
 
     @Override
@@ -178,7 +171,7 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      */
     @Override
     public int getChannelId() {
-        return this.channelId;
+        return channelId;
     }
 
     /**
@@ -187,7 +180,7 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      * @return status
      */
     public Status getStatus() {
-        return this.status;
+        return status;
     }
 
     /**
@@ -195,8 +188,9 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return {@link HPAI}, it may be null when there was an error (see: {@link #getStatus()})
      */
+    @Nullable
     public HPAI getDataEndpoint() {
-        return this.dataEndpoint;
+        return dataEndpoint;
     }
 
     /**
@@ -204,22 +198,62 @@ public final class ConnectResponseBody extends AbstractMultiRawData implements R
      *
      * @return {@link ConnectionResponseData}, it may be null when there was an error (see: {@link #getStatus()})
      */
+    @Nullable
     public ConnectionResponseData getConnectionResponseData() {
-        return this.connectionResponseData;
+        return connectionResponseData;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("channelId", this.channelId + " (" + ByteFormatter.formatHex(this.channelId) + ")")
-                .add("status", this.status)
-                .add("dataEndpoint", this.dataEndpoint == null ? "null" : this.dataEndpoint.toString(false))
-                .add("connectionResponseData", this.connectionResponseData == null ? "null" : this.connectionResponseData.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        // behavior depends on status
+        if (status == Status.NO_ERROR) {
+            // no error - provide everything
+            final var dataEndpointAsBytes = dataEndpoint.toByteArray();
+            final var crdAsBytes = connectionResponseData.toByteArray();
+
+            // create bytes
+            final var bytes = new byte[2 + dataEndpointAsBytes.length + crdAsBytes.length];
+            bytes[0] = (byte) channelId;
+            bytes[1] = status.getCodeAsByte();
+            System.arraycopy(dataEndpointAsBytes, 0, bytes, 2, dataEndpointAsBytes.length);
+            System.arraycopy(crdAsBytes, 0, bytes, dataEndpointAsBytes.length + 2, crdAsBytes.length);
+
+            return bytes;
+        } else {
+            // error (only channel id + status)
+            return new byte[]{
+                    (byte) channelId,
+                    status.getCodeAsByte()
+            };
         }
-        return h.toString();
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("channelId", channelId)
+                .add("status", status)
+                .add("dataEndpoint", dataEndpoint)
+                .add("connectionResponseData", connectionResponseData)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof ConnectResponseBody) {
+            final var other = (ConnectResponseBody) obj;
+            return Objects.equals(this.channelId, other.channelId)
+                    && Objects.equals(this.status, other.status)
+                    && Objects.equals(this.dataEndpoint, other.dataEndpoint)
+                    && Objects.equals(this.connectionResponseData, other.connectionResponseData);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(channelId, status, dataEndpoint, connectionResponseData);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.AbstractSingleRawData;
+import li.pitschmann.knx.core.SingleRawDataAware;
 import li.pitschmann.knx.core.address.AddressType;
 import li.pitschmann.knx.core.address.KnxAddress;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Second Control Field for {@link CEMI}, containing:
@@ -45,27 +46,41 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class ControlByte2 extends AbstractSingleRawData {
-    private static final int DEFAULT_HOP_COUNT = 6;
-    private static final int DEFAULT_FRAME_FORMAT = 0;
+public final class ControlByte2 implements SingleRawDataAware {
+    public static final int DEFAULT_HOP_COUNT = 6;
+    public static final int DEFAULT_FRAME_FORMAT = 0;
     private final AddressType addressType;
     private final int hopCount;
-    private final int extendedFrameFormat;
+    private final int frameFormat;
 
     private ControlByte2(final byte ctrlRawData) {
-        super(ctrlRawData);
+        this(
+                // x... .... destination address type
+                // 0 = individual address
+                // 1 = group address
+                AddressType.valueOf((ctrlRawData & 0x80) >>> 7),
+                // .xxx .... routing / hop count
+                (ctrlRawData & 0x70) >>> 4,
+                // .... xxxx extended frame format
+                // .... 0000 for standard frame
+                // .... 01xx for LTE frames
+                // .... 1111 for Escape (reserved by KNX Assocation)
+                ctrlRawData & 0xF
+        );
+    }
 
-        // x... .... destination address type
-        // 0 = individual address
-        // 1 = group address
-        this.addressType = AddressType.valueOf((ctrlRawData & 0x80) >>> 7);
-        // .xxx .... routing / hop count
-        this.hopCount = (ctrlRawData & 0x70) >>> 4;
-        // .... xxxx extended frame format
-        // .... 0000 for standard frame
-        // .... 01xx for LTE frames
-        // .... 1111 for Escape (reserved by KNX Assocation)
-        this.extendedFrameFormat = ctrlRawData & 0xF;
+    private ControlByte2(final AddressType addressType,
+                         final int hopCount,
+                         final int frameFormat) {
+        Preconditions.checkNonNull(addressType, "Address Type is required.");
+        Preconditions.checkArgument(hopCount >= 0b0000_0000 && hopCount <= 0b0000_0111,
+                "Incompatible hop count number. Expected [0..7] but was: {}", hopCount);
+        Preconditions.checkArgument(frameFormat >= 0b0000_0000 && frameFormat <= 0b0000_1111,
+                "Incompatible Extended Frame Format. Expected [0..15] but was: {}", frameFormat);
+
+        this.addressType = addressType;
+        this.hopCount = hopCount;
+        this.frameFormat = frameFormat;
     }
 
     /**
@@ -87,15 +102,12 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * <li>Frame Format = {@link #DEFAULT_FRAME_FORMAT}</li>
      * </ul>
      *
-     * @param knxAddress to distinguish which address type from destination address should be used.
+     * @param address to distinguish which address type from destination address should be used.
      * @return a new immutable {@link ControlByte1} with default hop count and frame format
      */
-    public static ControlByte2 of(final KnxAddress knxAddress) {
-        // validate
-        if (knxAddress == null) {
-            throw new KnxNullPointerException("knxAddress");
-        }
-        return of(knxAddress.getAddressType(), DEFAULT_HOP_COUNT, DEFAULT_FRAME_FORMAT);
+    public static ControlByte2 of(final KnxAddress address) {
+        Preconditions.checkNonNull(address, "Address is required.");
+        return new ControlByte2(address.getAddressType(), DEFAULT_HOP_COUNT, DEFAULT_FRAME_FORMAT);
     }
 
     /**
@@ -107,15 +119,23 @@ public final class ControlByte2 extends AbstractSingleRawData {
      * @return a new immutable {@link ControlByte2}
      */
     public static ControlByte2 of(final AddressType addressType, final int hopCount, final int frameFormat) {
-        // validate
-        if (addressType == null) {
-            throw new KnxNullPointerException("addressType");
-        } else if (hopCount < 0 || hopCount > 0x07) {
-            throw new KnxNumberOutOfRangeException("hopCount", 0, 0x07, hopCount);
-        } else if (frameFormat < 0 || frameFormat > 0x0F) {
-            throw new KnxNumberOutOfRangeException("frameFormat", 0, 0x0F, frameFormat);
-        }
+        return new ControlByte2(addressType, hopCount, frameFormat);
+    }
 
+    public AddressType getAddressType() {
+        return this.addressType;
+    }
+
+    public int getHopCount() {
+        return this.hopCount;
+    }
+
+    public int getFrameFormat() {
+        return this.frameFormat;
+    }
+
+    @Override
+    public byte toByte() {
         // x... .... destination address type
         // 0 = individual address
         // 1 = group address
@@ -129,36 +149,37 @@ public final class ControlByte2 extends AbstractSingleRawData {
         final var frameFormatAsByte = (byte) (frameFormat & 0x0F);
 
         // create byte
-        final var b = (byte) (addressTypeAsByte | hopCountAsByte | frameFormatAsByte);
-        return of(b);
-    }
-
-    @Override
-    protected void validate(final byte ctrlRawData) {
-        // nothing to be validated
-    }
-
-    public AddressType getAddressType() {
-        return this.addressType;
-    }
-
-    public int getHopCount() {
-        return this.hopCount;
-    }
-
-    public int getExtendedFrameFormat() {
-        return this.extendedFrameFormat;
+        return (byte) (
+                addressTypeAsByte            // bit 7: Destination Address Type (AT)
+                        | hopCountAsByte     // bit 6+5+4: Hop Count (HC)
+                        | frameFormatAsByte  // bit 3+2+1+0: Extended Frame Format (EFF)
+        );
     }
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
-                .add("addressType", this.addressType)
-                .add("hopCount", this.hopCount + " (" + ByteFormatter.formatHex(this.hopCount) + ")")
-                .add("extendedFrameFormat", this.extendedFrameFormat + " (" + ByteFormatter.formatHex(this.extendedFrameFormat) + ")")
-                .add("rawData", this.getRawDataAsHexString())
+                .add("addressType", this.addressType.name())
+                .add("hopCount", this.hopCount)
+                .add("frameFormat", this.frameFormat)
                 .toString();
-        // @formatter:on
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof ControlByte2) {
+            final var other = (ControlByte2) obj;
+            return Objects.equals(this.addressType, other.addressType) //
+                    && this.hopCount == other.hopCount //
+                    && this.frameFormat == other.frameFormat; //
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(addressType, hopCount, frameFormat);
     }
 }

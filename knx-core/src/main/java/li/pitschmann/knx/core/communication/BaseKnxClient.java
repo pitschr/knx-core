@@ -79,7 +79,7 @@ public class BaseKnxClient implements KnxClient {
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
                 final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)).get();
-                return ackBody.getStatus() == Status.E_NO_ERROR;
+                return ackBody.getStatus() == Status.NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during write request for tunneling", ex);
             } catch (final InterruptedException ie) {
@@ -102,7 +102,7 @@ public class BaseKnxClient implements KnxClient {
             try {
                 final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, null);
                 final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)).get();
-                return ackBody.getStatus() == Status.E_NO_ERROR;
+                return ackBody.getStatus() == Status.NO_ERROR;
             } catch (final ExecutionException ex) {
                 log.warn("Exception during read response for tunneling", ex);
             } catch (final InterruptedException ie) {

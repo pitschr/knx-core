@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +18,28 @@
 
 package li.pitschmann.knx.core.address;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.MultiRawDataAware;
 
 /**
- * Abstract KNX Address class for {@link IndividualAddress} and
+ * KNX Address interface for {@link IndividualAddress} and
  * {@link GroupAddress} implementations.
  *
  * @author PITSCHR
  */
-public abstract class KnxAddress extends AbstractMultiRawData {
-    public static final int STRUCTURE_LENGTH = 2;
-
-    protected KnxAddress(final byte[] addressRawData) {
-        super(addressRawData);
-    }
+public interface KnxAddress extends MultiRawDataAware {
+    int STRUCTURE_LENGTH = 2;
 
     /**
      * Returns the {@link AddressType} of current implementation
      *
      * @return {@link AddressType}
      */
-    public abstract AddressType getAddressType();
+    AddressType getAddressType();
 
     /**
      * Returns the address as String
      *
      * @return address in human-friendly format.
      */
-    public abstract String getAddress();
-
-    @Override
-    protected void validate(final byte[] addressRawData) {
-        if (addressRawData == null) {
-            throw new KnxNullPointerException("addressRawData");
-        } else if (addressRawData.length != STRUCTURE_LENGTH) {
-            // 2 bytes for this body
-            throw new KnxNumberOutOfRangeException("addressRawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, addressRawData.length, addressRawData);
-        }
-    }
+    String getAddress();
 }

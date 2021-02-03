@@ -52,7 +52,7 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
      * @return text
      */
     default String toText() {
-        return of().getDescription();
+        return of().toText();
     }
 
     /**
@@ -61,18 +61,29 @@ public interface DataPointEnum<T extends Enum<T> & DataPointEnum<T>> {
      * @return id
      */
     default String getId() {
-        final var value = of();
-        return value.getDPT().getId() + " - " + value.getEnum();
+        return of().getId();
     }
 
     /**
-     * Returns the description
+     * Returns the human-friendly full description of enum value
+     * <p>
+     * Example: {@code High}
      *
      * @return description
      */
     default String getDescription() {
-        final var value = of();
-        return value.getDPT().getDescription() + " - " + value.getDescription();
+        return of().getDescription();
+    }
+
+    /**
+     * Returns the human-friendly full description of enum field and value
+     * <p>
+     * Example: {@code Priority - High}
+     *
+     * @return full description
+     */
+    default String getFullDescription() {
+        return of().getFullDescription();
     }
 
     /**

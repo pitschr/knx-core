@@ -57,7 +57,7 @@ public class AbstractDataPointFlagTest {
         assertThat(flag1).isNotEqualTo(new TestDataPointFlag(DPT1.SWITCH, (byte) 0x03));
 
         // toString
-        final var toString = String.format("TestDataPointFlag{dpt=%s, byte=0x04}", DPT1.SWITCH);
+        final var toString = String.format("AbstractDataPointFlagTest$TestDataPointFlag{dpt=%s, byte=0x04}", DPT1.SWITCH);
         assertThat(flag1).hasToString(toString);
     }
 

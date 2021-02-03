@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@ package li.pitschmann.knx.core.address;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * KNX Group Address (examples: {@code 1/2/100} or {@code 1/330})
@@ -47,8 +47,8 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class GroupAddress extends KnxAddress {
-    private byte[] address;
+public final class GroupAddress implements KnxAddress {
+    private final byte[] address;
 
     /**
      * Private Constructor for {@link GroupAddress}
@@ -56,8 +56,7 @@ public final class GroupAddress extends KnxAddress {
      * @param addressRawData address in two-byte array
      */
     private GroupAddress(final byte[] addressRawData) {
-        super(addressRawData);
-        address = getRawData();
+        address = addressRawData;
     }
 
     /**
@@ -67,7 +66,9 @@ public final class GroupAddress extends KnxAddress {
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final byte[] bytes) {
-        // no validation required, validation will be done in KnxAddress class
+        Preconditions.checkArgument(bytes.length == KnxAddress.STRUCTURE_LENGTH,
+                "2 Bytes is expected but got: {}", Arrays.toString(bytes));
+
         return new GroupAddress(bytes);
     }
 
@@ -101,7 +102,7 @@ public final class GroupAddress extends KnxAddress {
         } else if (groupAddressAreas.length == 1) {
             return of(Integer.parseInt(groupAddressAreas[0]));
         }
-        throw new KnxIllegalArgumentException("Invalid Group Address provided: " + addressAsString);
+        throw new IllegalArgumentException("Invalid Group Address provided: " + addressAsString);
     }
 
     /**
@@ -113,9 +114,8 @@ public final class GroupAddress extends KnxAddress {
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int address) {
-        if (address < 1 || address > 0xFFFF) {
-            throw new KnxNumberOutOfRangeException("address", 1, 0xFFFF, address);
-        }
+        Preconditions.checkArgument(address >= 1 && address <= 65535,
+                "Free-Level address must be between [1, 65535] but was: {}", address);
 
         // byte 0: xxxx xxxx
         final var byte0 = (byte) (address >>> 8);
@@ -136,12 +136,14 @@ public final class GroupAddress extends KnxAddress {
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int sub) {
-        if (main < 0 || main > 0x1F) {
-            throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
-        } else if (sub < 0 || sub > 0x7FF) {
-            throw new KnxNumberOutOfRangeException("sub", 0, 0x7FF, sub);
-        } else if (main == 0 && sub == 0) {
-            throw new KnxIllegalArgumentException("Group Address 0/0 is not allowed.");
+        Preconditions.checkArgument(main >= 0 && main <= 31,
+                "Main group of 2-Level address must be between [0, 31] but was: {}", main);
+        Preconditions.checkArgument(sub >= 0 && sub <= 2047,
+                "Sub group of 2-Level address must be between [0, 2047] but was: {}", sub);
+
+        // special logic: 0/0 is not allowed
+        if (main == 0 && sub == 0) {
+            throw new IllegalArgumentException("Group address '0/0' is not allowed.");
         }
 
         // byte 0: xxxx x...
@@ -167,14 +169,16 @@ public final class GroupAddress extends KnxAddress {
      * @return a new immutable {@link GroupAddress}
      */
     public static GroupAddress of(final int main, final int middle, final int sub) {
-        if (main < 0 || main > 0x1F) {
-            throw new KnxNumberOutOfRangeException("main", 0, 0x1F, main);
-        } else if (middle < 0 || middle > 0x07) {
-            throw new KnxNumberOutOfRangeException("middle", 0, 0x07, middle);
-        } else if (sub < 0 || sub > 0xFF) {
-            throw new KnxNumberOutOfRangeException("sub", 0, 0xFF, sub);
-        } else if (main == 0 && middle == 0 && sub == 0) {
-            throw new KnxIllegalArgumentException("Group Address 0/0/0 is not allowed.");
+        Preconditions.checkArgument(main >= 0 && main <= 31,
+                "Main group of 3-Level address must be between [0, 31] but was: {}", main);
+        Preconditions.checkArgument(middle >= 0 && middle <= 7,
+                "Middle group of 3-Level address must be between [0, 7] but was: {}", middle);
+        Preconditions.checkArgument(sub >= 0 && sub <= 255,
+                "Sub group of 3-Level address must be between [0, 255] but was: {}", sub);
+
+        // special logic: 0/0/0 is not allowed
+        if (main == 0 && middle == 0 && sub == 0) {
+            throw new IllegalArgumentException("Group address '0/0/0' is not allowed.");
         }
 
         // byte 0: xxxx x...
@@ -246,18 +250,17 @@ public final class GroupAddress extends KnxAddress {
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("addressType", this.getAddressType())
-                .add("address", this.getAddress())
-                .add("address(2-level)", this.getAddressLevel2())
-                .add("address(3-level)", this.getAddressLevel3());
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+    public byte[] toByteArray() {
+        return address.clone();
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("address", getAddress())
+                .add("address(2-level)", getAddressLevel2())
+                .add("address(3-level)", getAddressLevel3())
+                .toString();
     }
 
     @Override
@@ -266,13 +269,13 @@ public final class GroupAddress extends KnxAddress {
             return true;
         } else if (obj instanceof GroupAddress) {
             final var other = (GroupAddress) obj;
-            return Objects.equals(this.address[0], other.address[0]) && Objects.equals(this.address[1], other.address[1]);
+            return Arrays.equals(this.address, other.address);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getAddressType(), this.address[0], this.address[1]);
+        return Arrays.hashCode(address);
     }
 }

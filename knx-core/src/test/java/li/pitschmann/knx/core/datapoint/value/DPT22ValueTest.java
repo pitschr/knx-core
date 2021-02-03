@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.ChannelActivation16;
-import li.pitschmann.knx.core.datapoint.value.DPT22Value.Media;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.DHWControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT22Value.Media;
 import li.pitschmann.knx.core.datapoint.value.DPT22Value.RoomHeatingCoolingControllerStatus;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;

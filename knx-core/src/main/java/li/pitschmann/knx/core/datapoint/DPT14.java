@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1800,6 +1800,28 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
      */
     @DataPoint({"14.079", "dpst-14-79"})
     public static final DPT14 WORK = new DPT14("Work", "J");
+
+    /**
+     * <strong>14.080</strong> Apparent Power (VA)
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | S   (Exponent)                  (Fraction)                    |
+     * Encoding    | F   F   F   F   F   F   F   F   F   F   F   F   F   F   F   F |
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     *             | (Fraction)                                                    |
+     *             | F   F   F   F   F   F   F   F   F   F   F   F   F   F   F   F |
+     *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+     * Format:     4 octets (F<sub>32</sub>)
+     * Encoding:   S = {0, 1}
+     *             Exponent = [0 .. 255]
+     *             Fraction = [0 .. 8388607]
+     * Unit:       VA
+     * Resolution: 1 VA
+     * </pre>
+     */
+    @DataPoint({"14.080", "dpst-14-80"})
+    public static final DPT14 APPARENT_POWER = new DPT14("Apparent Power", "VA");
 
     /**
      * <strong>14.1200</strong> Volume Flux Meter (m<sup>3</sup>/h)

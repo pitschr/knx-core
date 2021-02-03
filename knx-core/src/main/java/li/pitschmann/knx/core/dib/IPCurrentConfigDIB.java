@@ -18,7 +18,13 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
+import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Arrays;
 
 /**
  * IP Current Config DIB to specify DIB for type {@link DescriptionType#IP_CURRENT_CONFIG}
@@ -56,7 +62,7 @@ import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
  *
  * @author PITSCHR
  */
-public final class IPCurrentConfigDIB extends AbstractDIB {
+public final class IPCurrentConfigDIB implements MultiRawDataAware {
     /**
      * Structure Length for {@link IPCurrentConfigDIB}
      * <p>
@@ -70,9 +76,10 @@ public final class IPCurrentConfigDIB extends AbstractDIB {
      * 1 byte for Reserved<br>
      */
     private static final int STRUCTURE_LENGTH = 20;
+    private final byte[] bytes;
 
-    private IPCurrentConfigDIB(final byte[] rawData) {
-        super(rawData);
+    private IPCurrentConfigDIB(final byte[] bytes) {
+        this.bytes = bytes.clone();
     }
 
     /**
@@ -82,13 +89,37 @@ public final class IPCurrentConfigDIB extends AbstractDIB {
      * @return a new immutable {@link IPCurrentConfigDIB}
      */
     public static IPCurrentConfigDIB of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new IPCurrentConfigDIB(bytes);
     }
 
     @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+    public byte[] toByteArray() {
+        return bytes.clone();
     }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("bytes", ByteFormatter.formatHexAsString(toByteArray()))
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof IPCurrentConfigDIB) {
+            final var other = (IPCurrentConfigDIB) obj;
+            return Arrays.equals(this.bytes, other.bytes);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(bytes);
+    }
+
 }

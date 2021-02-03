@@ -20,8 +20,9 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT8Value;
+import li.pitschmann.knx.core.utils.Bytes;
 
-import java.util.function.DoubleUnaryOperator;
+import java.util.function.IntUnaryOperator;
 
 /**
  * Data Point Type 8 for '2-Octet Signed Value' (2 Octets)
@@ -36,7 +37,7 @@ import java.util.function.DoubleUnaryOperator;
  *
  * @author PITSCHR
  */
-public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
+public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Integer> {
     /**
      * <strong>8.001</strong> Value 2-octet signed count
      *
@@ -88,7 +89,7 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
      * </pre>
      */
     @DataPoint({"8.003", "dpst-8-3"})
-    public static final DPT8 DELTA_TIME_10MS = new DPT8("Delta Time (10ms)", -327680, 327670, "ms", v -> v / 10d);
+    public static final DPT8 DELTA_TIME_10MS = new DPT8("Delta Time (10ms)", -327680, 327670, "ms", v -> v / 10);
 
     /**
      * <strong>8.004</strong> Delta Time (milliseconds, resolution 100ms)
@@ -106,7 +107,7 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
      * </pre>
      */
     @DataPoint({"8.004", "dpst-8-4"})
-    public static final DPT8 DELTA_TIME_100MS = new DPT8("Delta Time (100ms)", -3276800, 3276700, "ms", v -> v / 100d);
+    public static final DPT8 DELTA_TIME_100MS = new DPT8("Delta Time (100ms)", -3276800, 3276700, "ms", v -> v / 100);
 
     /**
      * <strong>8.005</strong> Delta Time (seconds)
@@ -174,7 +175,7 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
      * </pre>
      */
     @DataPoint({"8.010", "dpst-8-10"})
-    public static final DPT8 PERCENT = new DPT8("Percent", -327.68, 327.67, "%", v -> v * 100d);
+    public static final DPT8.Percent PERCENT = new DPT8.Percent();
 
     /**
      * <strong>8.011</strong> Rotation Angle (°)
@@ -218,9 +219,9 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
     /**
      * Calculation function
      * <p>
-     * Calculates from {@link Double} to {@link Double} using a formula
+     * Calculates from {@link Integer} to {@link Integer} using a formula
      */
-    private final DoubleUnaryOperator calculationFunction;
+    private final IntUnaryOperator calculationFunction;
 
     /**
      * Constructor for {@link DPT8}
@@ -232,16 +233,16 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
      * @param calculationFunction the calculation function for value representation
      */
     private DPT8(final String description,
-                 final double lowerValue,
-                 final double upperValue,
+                 final int lowerValue,
+                 final int upperValue,
                  final @Nullable String unit,
-                 final @Nullable DoubleUnaryOperator calculationFunction) {
+                 final @Nullable IntUnaryOperator calculationFunction) {
         super(description, lowerValue, upperValue, unit);
         this.calculationFunction = calculationFunction;
     }
 
     @Nullable
-    public DoubleUnaryOperator getCalculationFunction() {
+    public IntUnaryOperator getCalculationFunction() {
         return this.calculationFunction;
     }
 
@@ -269,7 +270,41 @@ public final class DPT8 extends BaseRangeDataPointType<DPT8Value, Double> {
         return new DPT8Value(this, value);
     }
 
-    public DPT8Value of(final double value) {
-        return new DPT8Value(this, value);
+    /**
+     * Special class for {@link DPT8}: Percent
+     *
+     * @author PITSCHR
+     */
+    public static class Percent extends BaseRangeDataPointType<DPT8Value.Percent, Double> {
+        /**
+         * Constructor for {@link DPT8.Percent}
+         */
+        private Percent() {
+            super("Percent", -327.68, 327.67, "%");
+        }
+
+        @Override
+        protected boolean isCompatible(final byte[] bytes) {
+            return bytes.length == 2;
+        }
+
+        @Override
+        protected DPT8Value.Percent parse(final byte[] bytes) {
+            return new DPT8Value.Percent(bytes);
+        }
+
+        @Override
+        protected boolean isCompatible(final String[] args) {
+            return args.length == 1;
+        }
+
+        @Override
+        protected DPT8Value.Percent parse(final String[] args) {
+            return of(Double.parseDouble(args[0]));
+        }
+
+        public DPT8Value.Percent of(final double value) {
+            return new DPT8Value.Percent(value);
+        }
     }
 }

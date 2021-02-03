@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.test;
+package li.pitschmann.knx.core.test.body;
 
 import li.pitschmann.knx.core.body.ResponseBody;
+import li.pitschmann.knx.core.header.ServiceType;
 
-/**
- * Response for KNX Mock Server
- */
-public class MockResponse {
-    private final ResponseBody responseBody;
+public class MockResponseBody implements ResponseBody {
+    private final byte[] bytes;
 
-    public MockResponse(final byte[] bytes) {
-        this.responseBody = new CorruptedResponseBody(bytes);
+    public MockResponseBody(final byte[] bytes) {
+        this.bytes = bytes.clone();
     }
 
-    public MockResponse(final ResponseBody responseBody) {
-        this.responseBody = responseBody;
+    @Override
+    public ServiceType getServiceType() {
+        throw new UnsupportedOperationException();
     }
 
-    public ResponseBody getBody() {
-        return responseBody;
-    }
-
-    private class CorruptedResponseBody extends BytesBody implements ResponseBody {
-        CorruptedResponseBody(final byte[] bytes) {
-            super(bytes);
-        }
+    @Override
+    public byte[] toByteArray() {
+        return this.bytes.clone();
     }
 }

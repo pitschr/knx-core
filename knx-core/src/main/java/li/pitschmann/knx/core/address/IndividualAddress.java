@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ package li.pitschmann.knx.core.address;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -44,21 +44,34 @@ import java.util.Objects;
  *
  * @author PITSCHR
  */
-public final class IndividualAddress extends KnxAddress {
-    private static final IndividualAddress DEFAULT = new IndividualAddress(new byte[]{0x00, 0x00});
+public final class IndividualAddress implements KnxAddress {
+    private static final IndividualAddress DEFAULT = new IndividualAddress(0, 0, 0);
     private final int area;
     private final int line;
     private final int device;
 
     private IndividualAddress(final byte[] addressRawData) {
-        super(addressRawData);
+        this(
+                // byte[0]: xxxx .... => area
+                (addressRawData[0] & 0xF0) >>> 4,
+                // byte[0]: .... xxxx => line
+                addressRawData[0] & 0x0F,
+                // byte[1]: xxxx xxxx => device
+                Byte.toUnsignedInt(addressRawData[1])
+        );
+    }
 
-        // byte 0: xxxx ....
-        this.area = (addressRawData[0] & 0xF0) >>> 4;
-        // byte 0: .... xxxx
-        this.line = addressRawData[0] & 0x0F;
-        // byte 1: xxxx xxxx
-        this.device = Byte.toUnsignedInt(addressRawData[1]);
+    private IndividualAddress(final int area, final int line, final int device) {
+        Preconditions.checkArgument(area >= 0 && area <= 0x0F,
+                "Invalid area provided. Expected [0..15] but was: {}", area);
+        Preconditions.checkArgument(line >= 0 && line <= 0x0F,
+                "Invalid line provided. Expected [0..15] but was: {}", line);
+        Preconditions.checkArgument(device >= 0 && device <= 0xFF,
+                "Invalid device provided. Expected [0..255] but was: {}", device);
+
+        this.area = area;
+        this.line = line;
+        this.device = device;
     }
 
     /**
@@ -68,13 +81,27 @@ public final class IndividualAddress extends KnxAddress {
      * @return a new immutable {@link IndividualAddress}
      */
     public static IndividualAddress of(final byte[] bytes) {
-        // no validation required, validation will be done in KnxAddress class
+        Preconditions.checkArgument(bytes.length == KnxAddress.STRUCTURE_LENGTH,
+                "2 Bytes is expected but got: {}", Arrays.toString(bytes));
+
         return new IndividualAddress(bytes);
     }
 
     /**
-     * Returns the default {@link IndividualAddress} ({@code 0.0.0}). This will usually use the address from the
-     * KNX Net/IP device.
+     * Returns an instance of {@link IndividualAddress}
+     *
+     * @param area   [0..15]
+     * @param line   [0..15]
+     * @param device [0..255]
+     * @return a new immutable {@link IndividualAddress}
+     */
+    public static IndividualAddress of(final int area, final int line, final int device) {
+        return new IndividualAddress(area, line, device);
+    }
+
+    /**
+     * Returns the default {@link IndividualAddress} ({@code 0.0.0}).
+     * This will usually use the address from the KNX Net/IP device.
      *
      * @return re-usable immutable default {@link IndividualAddress} ({@code 0.0.0})
      */
@@ -103,36 +130,7 @@ public final class IndividualAddress extends KnxAddress {
                     Integer.parseInt(individualAddressAreas[2]) //
             );
         }
-        throw new KnxIllegalArgumentException("Invalid Individual Address provided: " + addressAsString);
-    }
-
-    /**
-     * Returns an instance of {@link IndividualAddress}
-     *
-     * @param area   [0..15]
-     * @param line   [0..15]
-     * @param device [0..255] (0 only allowed, when main group != 0 or middle group != 0)
-     * @return a new immutable {@link IndividualAddress}
-     */
-    public static IndividualAddress of(final int area, final int line, final int device) {
-        if (area < 0 || area > 0x0F) {
-            throw new KnxNumberOutOfRangeException("area", 0, 0x0F, area);
-        } else if (line < 0 || line > 0x0F) {
-            throw new KnxNumberOutOfRangeException("line", 0, 0x0F, line);
-        } else if (device < 0 || device > 0xFF) {
-            throw new KnxNumberOutOfRangeException("device", 0, 0xFF, device);
-        }
-
-        // byte 0: xxxx ....
-        final var areaAsByte = (byte) ((area & 0x0F) << 4);
-        // byte 0: .... xxxx
-        final var lineAsByte = (byte) (line & 0x0F);
-        // byte 1: xxxx xxxx
-        final var deviceAsByte = (byte) device;
-
-        // create bytes
-        final var bytes = new byte[]{(byte) (areaAsByte | lineAsByte), deviceAsByte};
-        return of(bytes);
+        throw new IllegalArgumentException("Invalid Individual Address provided: " + addressAsString);
     }
 
     @Override
@@ -142,20 +140,27 @@ public final class IndividualAddress extends KnxAddress {
 
     @Override
     public String getAddress() {
-        return this.area + "." + this.line + "." + this.device;
+        return area + "." + line + "." + device;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("addressType", this.getAddressType())
-                .add("address", this.getAddress());
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
-        }
-        return h.toString();
+    public byte[] toByteArray() {
+        // byte 0: xxxx ....
+        final var areaAsByte = (byte) ((area & 0x0F) << 4);
+        // byte 0: .... xxxx
+        final var lineAsByte = (byte) (line & 0x0F);
+        // byte 1: xxxx xxxx
+        final var deviceAsByte = (byte) device;
+
+        // create bytes
+        return new byte[]{(byte) (areaAsByte | lineAsByte), deviceAsByte};
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("address", getAddress())
+                .toString();
     }
 
     @Override
@@ -164,13 +169,15 @@ public final class IndividualAddress extends KnxAddress {
             return true;
         } else if (obj instanceof IndividualAddress) {
             final var other = (IndividualAddress) obj;
-            return this.area == other.area && this.line == other.line && this.device == other.device;
+            return Objects.equals(this.area, other.area)
+                    && Objects.equals(this.line, other.line)
+                    && Objects.equals(this.device, other.device);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getAddressType(), this.area, this.line, this.device);
+        return Objects.hash(area, line, device);
     }
 }

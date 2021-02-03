@@ -20,6 +20,7 @@ package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.datapoint.DPT8;
 import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,19 +38,7 @@ class DPT8ValueTest {
     @DisplayName("#(DPT8.VALUE_2_OCTET_COUNT, byte[]) with: 0x00 00")
     void testByte_0x00_00() {
         final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x00, 0x00});
-        assertThat(value.getValueAsInt()).isZero();
-        assertThat(value.getValueAsDouble()).isZero();
-        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
-
-        assertThat(value.toText()).isEqualTo("0");
-    }
-
-    @Test
-    @DisplayName("#(DPT8.PERCENT, byte[]) with: 0x00 00")
-    void testByte_0x00_00_Percent() {
-        final var value = new DPT8Value(DPT8.PERCENT, new byte[]{0x00, 0x00});
-        assertThat(value.getValueAsInt()).isZero();
-        assertThat(value.getValueAsDouble()).isZero();
+        assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
 
         assertThat(value.toText()).isEqualTo("0");
@@ -59,8 +48,7 @@ class DPT8ValueTest {
     @DisplayName("#(DPT8.DELTA_TIME_100MS, byte[]) with: 0x00 00")
     void testByte_0x00_00_DeltaTime_100ms() {
         final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, new byte[]{0x00, 0x00});
-        assertThat(value.getValueAsInt()).isZero();
-        assertThat(value.getValueAsDouble()).isZero();
+        assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
 
         assertThat(value.toText()).isEqualTo("0");
@@ -70,30 +58,17 @@ class DPT8ValueTest {
     @DisplayName("#(DPT8.VALUE_2_OCTET_COUNT, byte[]) with: 0x80 00")
     void testByte_0x80_00() {
         final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0x80, (byte) 0x00});
-        assertThat(value.getValueAsInt()).isEqualTo(-32768);
-        assertThat(value.getValueAsDouble()).isEqualTo(-32768.0);
+        assertThat(value.getValue()).isEqualTo(-32768);
         assertThat(value.toByteArray()).containsExactly(0x80, 0x00);
 
         assertThat(value.toText()).isEqualTo("-32768");
     }
 
     @Test
-    @DisplayName("#(DPT8.PERCENT, byte[]) with: 0x80 00")
-    void testByte_0x80_00_Percent() {
-        final var value = new DPT8Value(DPT8.PERCENT, new byte[]{(byte) 0x80, (byte) 0x00});
-        assertThat(value.getValueAsInt()).isEqualTo(-327);
-        assertThat(value.getValueAsDouble()).isEqualTo(-327.68);
-        assertThat(value.toByteArray()).containsExactly(0x80, 0x00);
-
-        assertThat(value.toText()).isEqualTo("-327.68");
-    }
-
-    @Test
     @DisplayName("#(DPT8.DELTA_TIME_100MS, byte[]) with: 0x80 00")
     void testByte_0x80_00_DeltaTime_100ms() {
         final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, new byte[]{(byte) 0x80, (byte) 0x00});
-        assertThat(value.getValueAsInt()).isEqualTo(-3276800);
-        assertThat(value.getValueAsDouble()).isEqualTo(-3276800.0);
+        assertThat(value.getValue()).isEqualTo(-3276800);
         assertThat(value.toByteArray()).containsExactly(0x80, 0x00);
 
         assertThat(value.toText()).isEqualTo("-3276800");
@@ -102,31 +77,18 @@ class DPT8ValueTest {
     @Test
     @DisplayName("#(DPT8.VALUE_2_OCTET_COUNT, byte[]) with: 0x7F FF")
     void testByte_0x7F_FF() {
-        final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte)0xFF});
-        assertThat(value.getValueAsInt()).isEqualTo(32767);
-        assertThat(value.getValueAsDouble()).isEqualTo(32767.0);
+        final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{(byte) 0x7F, (byte) 0xFF});
+        assertThat(value.getValue()).isEqualTo(32767);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
 
         assertThat(value.toText()).isEqualTo("32767");
     }
 
     @Test
-    @DisplayName("#(DPT8.PERCENT, byte[]) with: 0x7F FF")
-    void testByte_0x7F_FF_Percent() {
-        final var value = new DPT8Value(DPT8.PERCENT, new byte[]{(byte) 0x7F, (byte)0xFF});
-        assertThat(value.getValueAsInt()).isEqualTo(327);
-        assertThat(value.getValueAsDouble()).isEqualTo(327.67);
-        assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
-
-        assertThat(value.toText()).isEqualTo("327.67");
-    }
-
-    @Test
     @DisplayName("#(DPT8.DELTA_TIME_100MS, byte[]) with: 0x7F FF")
     void testByte_0x7F_FF_DeltaTime_100ms() {
-        final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, new byte[]{(byte) 0x7F, (byte)0xFF});
-        assertThat(value.getValueAsInt()).isEqualTo(3276700);
-        assertThat(value.getValueAsDouble()).isEqualTo(3276700.0);
+        final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, new byte[]{(byte) 0x7F, (byte) 0xFF});
+        assertThat(value.getValue()).isEqualTo(3276700);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
 
         assertThat(value.toText()).isEqualTo("3276700");
@@ -136,8 +98,7 @@ class DPT8ValueTest {
     @DisplayName("#(DPT8.DELTA_TIME_100MS, int) with: 0")
     void testInt_Zero_DeltaTime_100ms() {
         final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, 0);
-        assertThat(value.getValueAsInt()).isZero();
-        assertThat(value.getValueAsDouble()).isZero();
+        assertThat(value.getValue()).isZero();
         assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
 
         assertThat(value.toText()).isEqualTo("0");
@@ -147,8 +108,7 @@ class DPT8ValueTest {
     @DisplayName("#(DPT8.DELTA_TIME_100MS, int) with: -3276800")
     void testInt_Negative_DeltaTime_100ms() {
         final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, -3276800);
-        assertThat(value.getValueAsInt()).isEqualTo(-3276800);
-        assertThat(value.getValueAsDouble()).isEqualTo(-3276800.0);
+        assertThat(value.getValue()).isEqualTo(-3276800);
         assertThat(value.toByteArray()).containsExactly(0x80, 0x00);
 
         assertThat(value.toText()).isEqualTo("-3276800");
@@ -158,44 +118,10 @@ class DPT8ValueTest {
     @DisplayName("#(DPT8.DELTA_TIME_100MS, int) with: 3276700")
     void testInt_Positive_DeltaTime_100ms() {
         final var value = new DPT8Value(DPT8.DELTA_TIME_100MS, 3276700);
-        assertThat(value.getValueAsInt()).isEqualTo(3276700);
-        assertThat(value.getValueAsDouble()).isEqualTo(3276700.0);
+        assertThat(value.getValue()).isEqualTo(3276700);
         assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
 
         assertThat(value.toText()).isEqualTo("3276700");
-    }
-
-    @Test
-    @DisplayName("#(DPT8.PERCENT, double) with: 0")
-    void testInt_Zero_Percent() {
-        final var value = new DPT8Value(DPT8.PERCENT, 0);
-        assertThat(value.getValueAsInt()).isZero();
-        assertThat(value.getValueAsDouble()).isZero();
-        assertThat(value.toByteArray()).containsExactly(0x00, 0x00);
-
-        assertThat(value.toText()).isEqualTo("0");
-    }
-
-    @Test
-    @DisplayName("#(DPT8.PERCENT, double) with: -327.68")
-    void testInt_Negative_Percent() {
-        final var value = new DPT8Value(DPT8.PERCENT, -327.68);
-        assertThat(value.getValueAsInt()).isEqualTo(-327);
-        assertThat(value.getValueAsDouble()).isEqualTo(-327.68);
-        assertThat(value.toByteArray()).containsExactly(0x80, 0x00);
-
-        assertThat(value.toText()).isEqualTo("-327.68");
-    }
-
-    @Test
-    @DisplayName("#(DPT8.PERCENT, double) with: 327.67%")
-    void testInt_Positive_Percent() {
-        final var value = new DPT8Value(DPT8.PERCENT, 327.67);
-        assertThat(value.getValueAsInt()).isEqualTo(327);
-        assertThat(value.getValueAsDouble()).isEqualTo(327.67);
-        assertThat(value.toByteArray()).containsExactly(0x7F, 0xFF);
-
-        assertThat(value.toText()).isEqualTo("327.67");
     }
 
     @Test
@@ -203,34 +129,23 @@ class DPT8ValueTest {
     void testValueOutOfRange() {
         assertThatThrownBy(() -> new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, -32769))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '-32769.0' for argument 'value' is out of range '-32768.0'..'32767.0'.");
+                .hasMessage("Value '-32769' for argument 'value' is out of range '-32768'..'32767'.");
         assertThatThrownBy(() -> new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, 32768))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '32768.0' for argument 'value' is out of range '-32768.0'..'32767.0'.");
-    }
-
-    @Test
-    @DisplayName("#(DPT8.PERCENT, double) with numbers out of range")
-    void testPercentRange() {
-        assertThatThrownBy(() -> new DPT8Value(DPT8.PERCENT, -327.681))
-                .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '-327.681' for argument 'value' is out of range '-327.68'..'327.67'.");
-        assertThatThrownBy(() -> new DPT8Value(DPT8.PERCENT, 327.671))
-                .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '327.671' for argument 'value' is out of range '-327.68'..'327.67'.");
+                .hasMessage("Value '32768' for argument 'value' is out of range '-32768'..'32767'.");
     }
 
     @Test
     @DisplayName("#toString()")
     void testToString() {
+        final var valueBytes = new DPT8Value(DPT8.LENGTH_IN_METER, new byte[]{(byte) 0xEF, 0x43});
+        assertThat(valueBytes).hasToString(
+                "DPT8Value{dpt=8.012, value=-4285, byteArray=0xEF 43}"
+        );
+
         final var valueSigned = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, -8382);
         assertThat(valueSigned).hasToString(
                 "DPT8Value{dpt=8.001, value=-8382, byteArray=0xDF 42}"
-        );
-
-        final var valuePercent = new DPT8Value(DPT8.PERCENT, 134.23);
-        assertThat(valuePercent).hasToString(
-                "DPT8Value{dpt=8.010, value=134.23, byteArray=0x34 6F}"
         );
 
         final var valueDeltaTime = new DPT8Value(DPT8.DELTA_TIME_100MS, 2733200);
@@ -242,18 +157,6 @@ class DPT8ValueTest {
     @Test
     @DisplayName("#equals() and #hashCode()")
     void testEqualsAndHashCode() {
-        final var value = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, 4711);
-        final var valueBytes = new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, new byte[]{0x12, 0x67});
-
-        // equals & same hash code
-        assertThat(value).isEqualTo(value);
-        assertThat(valueBytes).isEqualTo(value);
-        assertThat(valueBytes).hasSameHashCodeAs(value);
-
-        // not equals
-        assertThat(value).isNotEqualTo(null);
-        assertThat(value).isNotEqualTo(new Object());
-        assertThat(value).isNotEqualTo(new DPT8Value(DPT8.PERCENT, 47.11));
-        assertThat(value).isNotEqualTo(new DPT8Value(DPT8.VALUE_2_OCTET_COUNT, 1147));
+        EqualsVerifier.forClass(DPT8Value.class).verify();
     }
 }

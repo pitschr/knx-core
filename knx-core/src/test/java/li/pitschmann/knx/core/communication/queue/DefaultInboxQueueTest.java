@@ -60,7 +60,7 @@ public class DefaultInboxQueueTest {
         final var channelMock = mock(DatagramChannel.class);
         when(channelMock.read(any(ByteBuffer.class))).thenAnswer(invocation -> {
             final var byteBuffer = invocation.<ByteBuffer>getArgument(0);
-            byteBuffer.put(body.getRawData(true));
+            byteBuffer.put(body.toByteArray(true));
             return 0;
         });
 
@@ -101,7 +101,7 @@ public class DefaultInboxQueueTest {
         final var queue = new DefaultInboxQueue(clientMock, localChannel);
 
         // write body data to remote channel
-        remoteChannel.send(ByteBuffer.wrap(body.getRawData(true)), localChannel.getLocalAddress());
+        remoteChannel.send(ByteBuffer.wrap(body.toByteArray(true)), localChannel.getLocalAddress());
 
         // execute (this will pick up the body from outbox queue and write to channel)
         final var selectionKeyMock = mock(SelectionKey.class);

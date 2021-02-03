@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@ package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.datapoint.value.DPT10Value;
+import li.pitschmann.knx.core.utils.Preconditions;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -101,9 +103,11 @@ public final class DPT10 extends BaseDataPointType<DPT10Value> {
 
     @Override
     protected DPT10Value parse(final String[] args) {
-        final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
-        final var time = this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
+        final var dayOfWeek = findByEnumConstant(args, DayOfWeek.class);
+        final var time = findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
 
+        Preconditions.checkArgument(time != null,
+                "Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: {}", Arrays.toString(args));
         return of(dayOfWeek, time);
     }
 

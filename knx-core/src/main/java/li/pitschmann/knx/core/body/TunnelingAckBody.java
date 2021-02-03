@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
 import li.pitschmann.knx.core.ChannelIdAware;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Body for Tunneling Acknowledge / Response
@@ -42,7 +42,7 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class TunnelingAckBody extends AbstractMultiRawData implements ResponseBody, ChannelIdAware, DataChannelRelated {
+public final class TunnelingAckBody implements ResponseBody, ChannelIdAware, DataChannelRelated {
     /**
      * Structure Length for {@link TunnelingAckBody}
      * <p>
@@ -58,12 +58,31 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     private final Status status;
 
     private TunnelingAckBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // byte[0] => length
+                Byte.toUnsignedInt(bytes[0]),
+                // byte[1] => channel id
+                Byte.toUnsignedInt(bytes[1]),
+                // byte[2] => sequence
+                Byte.toUnsignedInt(bytes[2]),
+                // byte[3] => status
+                Status.valueOf(Byte.toUnsignedInt(bytes[3]))
+        );
+    }
 
-        this.length = Byte.toUnsignedInt(bytes[0]);
-        this.channelId = Byte.toUnsignedInt(bytes[1]);
-        this.sequence = Byte.toUnsignedInt(bytes[2]);
-        this.status = Status.valueOf(Byte.toUnsignedInt(bytes[3]));
+    private TunnelingAckBody(final int length, final int channelId, final int sequence, final Status status) {
+        Preconditions.checkArgument(length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, length);
+        Preconditions.checkArgument(channelId >= 0x00 && channelId <= 0xFF,
+                "Incompatible channel id. Expected [0..255] but was: {}", channelId);
+        Preconditions.checkArgument(sequence >= 0x00 && sequence <= 0xFF,
+                "Incompatible sequence. Expected [0..255] but was: {}", sequence);
+        Preconditions.checkNonNull(status, "Status is required.");
+
+        this.length = length;
+        this.channelId = channelId;
+        this.sequence = sequence;
+        this.status = status;
     }
 
     /**
@@ -73,6 +92,8 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
      * @return a new immutable {@link TunnelingAckBody}
      */
     public static TunnelingAckBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new TunnelingAckBody(bytes);
     }
 
@@ -85,32 +106,7 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
      * @return a new immutable {@link TunnelingAckBody}
      */
     public static TunnelingAckBody of(final int channelId, final int sequence, final Status status) {
-        // validate
-        if (status == null) {
-            throw new KnxNullPointerException("status");
-        } else if (channelId < 0 || channelId > 0xFF) {
-            throw new KnxNumberOutOfRangeException("channelId", 0, 0xFF, channelId);
-        } else if (sequence < 0 || sequence > 0xFF) {
-            throw new KnxNumberOutOfRangeException("sequence", 0, 0xFF, sequence);
-        }
-
-        // create bytes
-        final var bytes = new byte[STRUCTURE_LENGTH];
-        bytes[0] = STRUCTURE_LENGTH;
-        bytes[1] = (byte) channelId;
-        bytes[2] = (byte) sequence;
-        bytes[3] = status.getCodeAsByte();
-
-        return of(bytes);
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length != STRUCTURE_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_LENGTH, STRUCTURE_LENGTH, rawData.length, rawData);
-        }
+        return new TunnelingAckBody(STRUCTURE_LENGTH, channelId, sequence, status);
     }
 
     @Override
@@ -119,34 +115,58 @@ public final class TunnelingAckBody extends AbstractMultiRawData implements Resp
     }
 
     public int getLength() {
-        return this.length;
+        return length;
     }
 
     @Override
     public int getChannelId() {
-        return this.channelId;
+        return channelId;
     }
 
     public int getSequence() {
-        return this.sequence;
+        return sequence;
     }
 
     public Status getStatus() {
-        return this.status;
+        return status;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("channelId", this.channelId + " (" + ByteFormatter.formatHex(this.channelId) + ")")
-                .add("sequence", this.sequence + " (" + ByteFormatter.formatHex(this.sequence) + ")")
-                .add("status", this.status);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        final var bytes = new byte[STRUCTURE_LENGTH];
+        bytes[0] = STRUCTURE_LENGTH;
+        bytes[1] = (byte) channelId;
+        bytes[2] = (byte) sequence;
+        bytes[3] = status.getCodeAsByte();
+        return bytes;
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("length", length)
+                .add("channelId", channelId)
+                .add("sequence", sequence)
+                .add("status", status)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof TunnelingAckBody) {
+            final var other = (TunnelingAckBody) obj;
+            return Objects.equals(this.length, other.length)
+                    && Objects.equals(this.channelId, other.channelId)
+                    && Objects.equals(this.sequence, other.sequence)
+                    && Objects.equals(this.status, other.status);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(length, channelId, sequence, status);
     }
 }

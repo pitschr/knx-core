@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,52 @@
 
 package li.pitschmann.knx.core.net;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link HostProtocol} enum class
  *
  * @author PITSCHR
  */
-public final class HostProtocolTest extends AbstractKnxByteEnumTest<HostProtocol> {
-    @Override
-    protected int numberOfElements() {
-        return 2;
+final class HostProtocolTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(HostProtocol.values()).hasSize(2);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(HostProtocol.valueOf(0x01)).isEqualTo(HostProtocol.IPV4_UDP);
         assertThat(HostProtocol.valueOf(0x02)).isEqualTo(HostProtocol.IPV4_TCP);
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> HostProtocol.valueOf(0x00)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> HostProtocol.valueOf(0xFF)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(HostProtocol.IPV4_UDP.getFriendlyName()).isEqualTo("IP v4 UDP communication");
         assertThat(HostProtocol.IPV4_TCP.getFriendlyName()).isEqualTo("IP v4 TCP communication");
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(HostProtocol.IPV4_UDP).hasToString("HostProtocol{name=IPV4_UDP, friendlyName=IP v4 UDP communication, code=1 (0x01)}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(HostProtocol.IPV4_UDP).hasToString(
+                "HostProtocol{name=IPV4_UDP, friendlyName=IP v4 UDP communication, code=1}"
+        );
     }
 }

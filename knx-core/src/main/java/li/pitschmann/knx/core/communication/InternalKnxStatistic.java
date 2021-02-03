@@ -105,7 +105,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     public void onIncomingBody(final Body body) {
         this.numberOfBodyReceived.incrementAndGet();
         this.numberOfBodyReceivedMap.computeIfAbsent(body.getClass(), s -> new AtomicLong()).incrementAndGet();
-        this.numberOfBytesReceived.addAndGet(body.getRawData().length + KNX_PACKET_SIZE);
+        this.numberOfBytesReceived.addAndGet(body.toByteArray().length + KNX_PACKET_SIZE);
     }
 
     /**
@@ -116,7 +116,7 @@ public final class InternalKnxStatistic implements KnxStatistic {
     public void onOutgoingBody(final Body body) {
         this.numberOfBodySent.incrementAndGet();
         this.numberOfBodySentMap.computeIfAbsent(body.getClass(), s -> new AtomicLong()).incrementAndGet();
-        this.numberOfBytesSent.addAndGet(body.getRawData().length + KNX_PACKET_SIZE);
+        this.numberOfBytesSent.addAndGet(body.toByteArray().length + KNX_PACKET_SIZE);
     }
 
     /**

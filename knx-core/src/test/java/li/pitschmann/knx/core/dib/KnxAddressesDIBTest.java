@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,10 @@
 package li.pitschmann.knx.core.dib;
 
 import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,66 +32,81 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class KnxAddressesDIBTest {
-    private static final byte[] BYTES = new byte[]{ //
-            0x0A, // Structure Length
-            0x05, // Description Type Code
-            0x00, 0x00, // KNX Individual Address (0.0.0)
-            0x12, 0x03, // Additional Individual Address 1 (1.2.3)
-            0x78, 0x7F, // Additional Individual Address 2 (7.8.127)
-            (byte) 0xFF, (byte) 0xFF, // Additional Individual Address 3 (15.15.255)
-    };
+final class KnxAddressesDIBTest {
 
-    /**
-     * Tests {@link KnxAddressesDIB#of(byte[])}
-     */
     @Test
-    public void validCases() {
-        // create by bytes
-        final var dib = KnxAddressesDIB.of(BYTES);
+    @DisplayName("Test #of(byte[])")
+    void testOf_Bytes() {
+        final var bytes = new byte[]{ //
+                0x0A,                       // Structure Length
+                0x05,                       // Description Type Code
+                0x00, 0x00,                 // KNX Individual Address (0.0.0)
+                0x12, 0x03,                 // Additional Individual Address 1 (1.2.3)
+                0x78, 0x7F,                 // Additional Individual Address 2 (7.8.127)
+                (byte) 0xFF, (byte) 0xFF,   // Additional Individual Address 3 (15.15.255)
+        };
+        final var dibByBytes = KnxAddressesDIB.of(bytes);
 
         // compare
-        assertThat(dib.getLength()).isEqualTo(10);
-        assertThat(dib.getDescriptionType()).isEqualTo(DescriptionType.KNX_ADDRESSES);
-        assertThat(dib.getKnxAddress()).isNotNull();
-        assertThat(dib.getKnxAddress().getAddress()).isEqualTo("0.0.0");
+        assertThat(dibByBytes.getAddress()).isEqualTo(IndividualAddress.of(0, 0, 0));
+        assertThat(dibByBytes.toByteArray()).containsExactly(bytes);
 
-        final var additionalAddresses = dib.getAdditionalAddresses();
+        final var additionalAddresses = dibByBytes.getAdditionalAddresses();
         assertThat(additionalAddresses).hasSize(3);
         assertThat(additionalAddresses.get(0).getAddress()).isEqualTo("1.2.3");
         assertThat(additionalAddresses.get(1).getAddress()).isEqualTo("7.8.127");
         assertThat(additionalAddresses.get(2).getAddress()).isEqualTo("15.15.255");
+
+        assertThat(dibByBytes).hasToString(
+                "KnxAddressesDIB{address=0.0.0, additionalAddresses=[1.2.3, 7.8.127, 15.15.255]}"
+        );
     }
 
-    /**
-     * Tests {@link KnxAddressesDIB} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
+    @DisplayName("Test #of(byte[]) without additional addresses")
+    void testOf_Bytes_Without_AdditionalAddresses() {
+        final var bytes = new byte[]{ //
+                0x04,        // Structure Length
+                0x05,        // Description Type Code
+                0x38, 0x5C   // KNX Individual Address (3.8.92)
+        };
+        final var dibByBytes = KnxAddressesDIB.of(bytes);
+
+        // compare
+        assertThat(dibByBytes.getAddress()).isEqualTo(IndividualAddress.of(3, 8, 92));
+        assertThat(dibByBytes.getAdditionalAddresses()).isEmpty();
+        assertThat(dibByBytes.toByteArray()).containsExactly(bytes);
+
+        assertThat(dibByBytes).hasToString(
+                "KnxAddressesDIB{address=3.8.92, additionalAddresses=[]}"
+        );
+    }
+
+    @Test
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
+        // null
+        assertThatThrownBy(() -> KnxAddressesDIB.of(null))
+                .isInstanceOf(NullPointerException.class);
+
         // specific for KNX addresses DIB
-        assertThatThrownBy(() -> KnxAddressesDIB.of(new byte[]{0x05, 0x00, 0x00, 0x00, 0x00})).isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessageContaining("divisible by two");
+        assertThatThrownBy(() -> KnxAddressesDIB.of(new byte[]{0x05, 0x00, 0x00, 0x00, 0x00}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Length must be divisible by 2, but was: 5");
 
         // incorrect size of bytes
-        assertThatThrownBy(() -> KnxAddressesDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> KnxAddressesDIB.of(new byte[]{0x03, 0x02, 0x01}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [4..254] but was: 3");
         assertThatThrownBy(() -> KnxAddressesDIB.of(Bytes.padRight(new byte[]{(byte) 0xFF}, (byte) 0x00, 255)))
-                .isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("rawData");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [4..254] but was: 255");
     }
 
-    /**
-     * Test {@link KnxAddressesDIB#toString()}
-     */
     @Test
-    public void testToString() {
-        final var knxAddress = IndividualAddress.of(new byte[]{0x00, 0x00});
-        final var additionalAddresses = Arrays.asList(//
-                IndividualAddress.of(1, 2, 3), //
-                IndividualAddress.of(7, 8, 127), //
-                IndividualAddress.of(15, 15, 255));
-
-        assertThat(KnxAddressesDIB.of(BYTES)).hasToString(
-                String.format("KnxAddressesDIB{length=10 (0x0A), descriptionType=%s, knxAddress=%s, additionalAddresses=%s, rawData=%s}",
-                        DescriptionType.KNX_ADDRESSES, knxAddress, additionalAddresses, ByteFormatter.formatHexAsString(BYTES)));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(KnxAddressesDIB.class).verify();
     }
+
 }

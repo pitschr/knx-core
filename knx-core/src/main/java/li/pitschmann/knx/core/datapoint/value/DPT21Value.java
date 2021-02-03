@@ -521,17 +521,78 @@ public final class DPT21Value {
          */
         @Override
         public String toText() {
-            // return list of channels (e.g. "channel 1" if only channel is
-            final var sb = new StringBuilder(24);
-            for (var i = 0; i < 8; i++) {
-                if (this.isSet(i)) {
-                    if (sb.length() != 0) {
-                        sb.append(", ");
-                    }
-                    sb.append((i + 1));
-                }
-            }
-            return sb.length() == 0 ? "no channels active" : sb.toString();
+            return toText("No channel active");
+        }
+    }
+
+    /**
+     * <strong>21.1200</strong> Virtual Contact Status
+     *
+     * @see DPT21#VIRTUAL_CONTACT_STATUS
+     */
+    public static final class VirtualContactStatus extends AbstractDataPointFlag<DPT21.VirtualContactStatus> {
+        public VirtualContactStatus(final byte b) {
+            super(DPT21.VIRTUAL_CONTACT_STATUS, b);
+        }
+
+        public VirtualContactStatus(final boolean contact1, final boolean contact2, final boolean contact3, final boolean contact4,
+                                    final boolean contact5, final boolean contact6, final boolean contact7, final boolean contact8) {
+            this(Bytes.toByte(contact8, contact7, contact6, contact5, contact4, contact3, contact2, contact1));
+        }
+
+        public boolean isClosed(final int contact) {
+            Preconditions.checkArgument(contact >= 1 && contact <= 8,
+                    "Contact must be between 1 and 8 (actual: {})", contact);
+            return this.isSet(contact - 1);
+        }
+
+        /**
+         * Returns human-friendly representation of closed virtual contacts.
+         * <p>
+         * If only contact 1 is closed, then "1" is returned.<br>
+         * If contact 1, 3 and 8 are closed, then "1, 3, 8" is returned.<br>
+         *
+         * @return human-friendly representation of closed virtual contacts
+         */
+        @Override
+        public String toText() {
+            return toText("No contact closed");
+        }
+    }
+
+    /**
+     * <strong>21.1201</strong> Phase Status
+     *
+     * @see DPT21#PHASE_STATUS
+     */
+    public static final class PhaseStatus extends AbstractDataPointFlag<DPT21.PhaseStatus> {
+        public PhaseStatus(final byte b) {
+            super(DPT21.PHASE_STATUS, b);
+        }
+
+        public PhaseStatus(final boolean phase1,
+                           final boolean phase2,
+                           final boolean phase3) {
+            this(Bytes.toByte(false, false, false, false, false, phase3, phase2, phase1));
+        }
+
+        public boolean isPresent(final int phase) {
+            Preconditions.checkArgument(phase >= 1 && phase <= 3,
+                    "Phase must be between 1 and 3 (actual: {})", phase);
+            return this.isSet(phase - 1);
+        }
+
+        /**
+         * Returns human-friendly representation of phase presence.
+         * <p>
+         * If only phase 1 is present, then "1" is returned.<br>
+         * If phase 1 and 3 are present, then "1, 3" is returned.<br>
+         *
+         * @return human-friendly representation of phases presence
+         */
+        @Override
+        public String toText() {
+            return toText("No phase present");
         }
     }
 }

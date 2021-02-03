@@ -148,10 +148,10 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 now.getNano(), // #2
                 format.escape(type), // #3
                 format.escape(header.getTotalLength()), // #4
-                format.escape(header.getRawDataAsHexString()), // #5
+                format.escape(ByteFormatter.formatHexAsString(header.toByteArray())), // #5
                 format.escape(ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes())), // #6
                 format.escape(body.getServiceType().name()), // #7
-                format.escape(body.getRawDataAsHexString()) // #8
+                format.escape(ByteFormatter.formatHexAsString(body.toByteArray())) // #8
         ));
     }
 

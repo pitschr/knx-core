@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Body for Description Request
@@ -45,14 +46,26 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class DescriptionRequestBody extends AbstractMultiRawData implements RequestBody, DescriptionChannelRelated {
+public final class DescriptionRequestBody implements RequestBody, DescriptionChannelRelated {
+    /**
+     * Structure Length for {@link DescriptionRequestBody}
+     * <p>
+     * 8 bytes for HPAI<br>
+     */
+    private static final int STRUCTURE_LENGTH = HPAI.STRUCTURE_LENGTH;
     private static final DescriptionRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI controlEndpoint;
 
     private DescriptionRequestBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // bytes[0..7] => control endpoint
+                HPAI.of(bytes)
+        );
+    }
 
-        this.controlEndpoint = HPAI.of(bytes);
+    private DescriptionRequestBody(final HPAI controlEndpoint) {
+        Preconditions.checkNonNull(controlEndpoint, "Control Endpoint is required.");
+        this.controlEndpoint = controlEndpoint;
     }
 
     /**
@@ -73,6 +86,8 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      * @return a new immutable {@link DescriptionRequestBody}
      */
     public static DescriptionRequestBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new DescriptionRequestBody(bytes);
     }
 
@@ -83,22 +98,7 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
      * @return a new immutable {@link DescriptionRequestBody}
      */
     public static DescriptionRequestBody of(final HPAI controlEndpoint) {
-        // validate
-        if (controlEndpoint == null) {
-            throw new KnxNullPointerException("controlEndpoint");
-        }
-
-        return of(controlEndpoint.getRawData());
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length != 8) {
-            // 8 bytes for HPAI
-            throw new KnxNumberOutOfRangeException("rawData", 8, 8, rawData.length, rawData);
-        }
+        return new DescriptionRequestBody(controlEndpoint);
     }
 
     @Override
@@ -107,18 +107,34 @@ public final class DescriptionRequestBody extends AbstractMultiRawData implement
     }
 
     public HPAI getControlEndpoint() {
-        return this.controlEndpoint;
+        return controlEndpoint;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("controlEndpoint", this.controlEndpoint.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        return controlEndpoint.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("controlEndpoint", controlEndpoint)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof DescriptionRequestBody) {
+            final var other = (DescriptionRequestBody) obj;
+            return Objects.equals(this.controlEndpoint, other.controlEndpoint);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(controlEndpoint);
     }
 }

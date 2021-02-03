@@ -49,8 +49,8 @@ import java.util.Objects;
  *             | 0   0   (Minutes)             | 0   0   (Seconds)             |
  *             | r   r   U   U   U   U   U   U | r   r   U   U   U   U   U   U |
  *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ 0   0   0   0   0   0   0 |
- *             | B   B   B   B   B   B   B   B |  B  r   r   r   r   r   r   r |
+ *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ SRC 0   0   0   0   0   0 |
+ *             | B   B   B   B   B   B   B   B | B   B   r   r   r   r   r   r |
  *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * Format:     8 octets (U<sub>8</sub> [r<sub>4</sub>U<sub>4</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>2</sub>U<sub>6</sub>] [r<sub>2</sub>U<sub>6</sub>] B<sub>16</sub>)
  * Encoding:   Day   = [1 .. 31]
@@ -276,15 +276,16 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
      */
     public static final class Flags {
         public static final Flags NO_FLAGS = new Flags(new byte[2]);
-        private boolean fault;
-        private boolean workingDay;
-        private boolean workingDayValid;
-        private boolean yearValid;
-        private boolean dateValid;
-        private boolean dayOfWeekValid;
-        private boolean timeValid;
-        private boolean summerTime;
-        private boolean clockWithExternalSyncSignal;
+        private final boolean fault;
+        private final boolean workingDay;
+        private final boolean workingDayValid;
+        private final boolean yearValid;
+        private final boolean dateValid;
+        private final boolean dayOfWeekValid;
+        private final boolean timeValid;
+        private final boolean summerTime;
+        private final boolean clockWithExternalSyncSignal;
+        private final boolean syncSourceReliable;
 
         /**
          * Create {@link Flags} given two bytes
@@ -307,6 +308,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
 
             // byte 7
             this.clockWithExternalSyncSignal = (bytes[1] & 0x80) != 0x00;
+            this.syncSourceReliable = (bytes[1] & 0x40) != 0x00;
         }
 
         /**
@@ -321,6 +323,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          * @param timeValid                   if time is valid
          * @param summerTime                  if it is a summer time (or standard time)
          * @param clockWithExternalSyncSignal if clock is externally synchronized
+         * @param syncSourceReliable          if sync source is reliable
          */
         public Flags(final boolean fault,
                      final boolean workingDay,
@@ -330,7 +333,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                      final boolean dayOfWeekValid,
                      final boolean timeValid,
                      final boolean summerTime,
-                     final boolean clockWithExternalSyncSignal) {
+                     final boolean clockWithExternalSyncSignal,
+                     final boolean syncSourceReliable) {
             this.fault = fault;
             this.workingDay = workingDay;
             this.workingDayValid = workingDayValid;
@@ -340,6 +344,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
             this.timeValid = timeValid;
             this.summerTime = summerTime;
             this.clockWithExternalSyncSignal = clockWithExternalSyncSignal;
+            this.syncSourceReliable = syncSourceReliable;
         }
 
         public boolean isFault() {
@@ -376,6 +381,10 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
 
         public boolean isClockWithExternalSyncSignal() {
             return this.clockWithExternalSyncSignal;
+        }
+
+        public boolean isSyncSourceReliable() {
+            return syncSourceReliable;
         }
 
         /**
@@ -418,7 +427,14 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
          * @return byte
          */
         private byte getByte7() {
-            return this.clockWithExternalSyncSignal ? (byte) 0x80 : 0x00;
+            byte byte7 = 0x00;
+            if (this.clockWithExternalSyncSignal) {
+                byte7 |= 0x80;
+            }
+            if (this.syncSourceReliable) {
+                byte7 |= 0x40;
+            }
+            return byte7;
         }
 
         /**
@@ -454,6 +470,7 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                     .add("summerTime", this.summerTime)
                     // byte 7
                     .add("clockWithExternalSyncSignal", this.clockWithExternalSyncSignal)
+                    .add("syncSourceReliable", this.syncSourceReliable)
                     .toString();
             // @formatter:on
         }
@@ -472,7 +489,8 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                         && Objects.equals(this.dayOfWeekValid, other.dayOfWeekValid) //
                         && Objects.equals(this.timeValid, other.timeValid) //
                         && Objects.equals(this.summerTime, other.summerTime) //
-                        && Objects.equals(this.clockWithExternalSyncSignal, other.clockWithExternalSyncSignal);
+                        && Objects.equals(this.clockWithExternalSyncSignal, other.clockWithExternalSyncSignal)
+                        && Objects.equals(this.syncSourceReliable, other.syncSourceReliable);
             }
             return false;
         }
@@ -487,7 +505,9 @@ public final class DPT19Value extends AbstractDataPointValue<DPT19> {
                     dayOfWeekValid, //
                     timeValid, //
                     summerTime, //
-                    clockWithExternalSyncSignal);
+                    clockWithExternalSyncSignal, //
+                    syncSourceReliable //
+            );
         }
     }
 }

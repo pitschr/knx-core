@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 package li.pitschmann.knx.core.test.strategy.impl;
 
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.body.SearchResponseBody;
-import li.pitschmann.knx.core.dib.DeviceHardwareInformationDIB;
-import li.pitschmann.knx.core.dib.SupportedDeviceFamiliesDIB;
+import li.pitschmann.knx.core.dib.DeviceInformationDIB;
+import li.pitschmann.knx.core.dib.SupportedServiceFamiliesDIB;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.net.HostProtocol;
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.strategy.DiscoveryStrategy;
 import li.pitschmann.knx.core.utils.Networker;
@@ -35,11 +35,11 @@ import li.pitschmann.knx.core.utils.Networker;
  * {@inheritDoc}
  */
 public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
-    private static DeviceHardwareInformationDIB DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
-    private static SupportedDeviceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
+    private static DeviceInformationDIB DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
+    private static SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
 
     static {
-        DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB = DeviceHardwareInformationDIB.of(new byte[]{ //
+        DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB = DeviceInformationDIB.of(new byte[]{ //
                 0x36, // Structure Length
                 0x01, // Description Type Code
                 0x02, // KNX medium
@@ -54,7 +54,7 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
         });
-        DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedDeviceFamiliesDIB.of(new byte[]{ //
+        DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedServiceFamiliesDIB.of(new byte[]{ //
                 0x0a, // Structure Length
                 0x02, // Description Type Code
                 0x02, 0x01, // Service Family ID (Core) + Version #1
@@ -65,33 +65,33 @@ public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
     }
 
     /**
-     * Returns the device hardware information DIB. This method can be overridden.
+     * Returns the device information DIB. This method can be overridden.
      *
      * @param mockServer the mock server
-     * @return DIB about device hardware information
+     * @return DIB about device information
      */
-    protected DeviceHardwareInformationDIB getDeviceHardwareInformation(final MockServer mockServer) {
+    protected DeviceInformationDIB getDeviceInformation(final MockServer mockServer) {
         return DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
     }
 
     /**
-     * Returns the supported device families (e.g. TUNNELING, ROUTING, ...).
+     * Returns the supported service families (e.g. TUNNELING, ROUTING, ...).
      * This method can be overridden.
      *
      * @param mockServer the mock server
-     * @return DIB supported device families
+     * @return DIB supported service families
      */
-    protected SupportedDeviceFamiliesDIB getSupportedDeviceFamilies(final MockServer mockServer) {
+    protected SupportedServiceFamiliesDIB getSupportedDeviceFamilies(final MockServer mockServer) {
         return DEFAULT_SUPPORTED_DEVICE_FAMILIES;
     }
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody unused) {
         // use 'localhost' instead of channel as the address would be 0.0.0.0 otherwise
         final var hpai = HPAI.of(HostProtocol.IPV4_UDP, Networker.getLocalHost(), mockServer.getHPAI().getPort());
-        final var deviceHardwareInformation = getDeviceHardwareInformation(mockServer);
-        final var supportedDeviceFamilies = getSupportedDeviceFamilies(mockServer);
+        final var deviceInformation = getDeviceInformation(mockServer);
+        final var supportedServiceFamilies = getSupportedDeviceFamilies(mockServer);
 
-        return new MockResponse(SearchResponseBody.of(hpai, deviceHardwareInformation, supportedDeviceFamilies));
+        return SearchResponseBody.of(hpai, deviceInformation, supportedServiceFamilies);
     }
 }

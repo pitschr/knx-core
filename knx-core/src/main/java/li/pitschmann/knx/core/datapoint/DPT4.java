@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import li.pitschmann.knx.core.datapoint.value.DPT4Value;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -70,6 +71,7 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
 
     private final Charset charset;
     private final CharsetDecoder charsetDecoder;
+    private final CharsetEncoder charsetEncoder;
 
     /**
      * Constructor for {@link DPT4}
@@ -87,14 +89,19 @@ public final class DPT4 extends BaseRangeDataPointType<DPT4Value, Integer> {
 
         this.charset = charset;
         this.charsetDecoder = charset.newDecoder();
+        this.charsetEncoder = charset.newEncoder();
     }
 
     public Charset getCharset() {
-        return this.charset;
+        return charset;
     }
 
     public CharsetDecoder getCharsetDecoder() {
-        return this.charsetDecoder;
+        return charsetDecoder;
+    }
+
+    public CharsetEncoder getCharsetEncoder() {
+        return charsetEncoder;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import li.pitschmann.knx.core.utils.Preconditions;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -43,8 +44,8 @@ import java.util.regex.Pattern;
  *             | 0   0   (Minutes)             | 0   0   (Seconds)             |
  *             | r   r   U   U   U   U   U   U | r   r   U   U   U   U   U   U |
  *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ 0   0   0   0   0   0   0 |
- *             | B   B   B   B   B   B   B   B |  B  r   r   r   r   r   r   r |
+ *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ SRC 0   0   0   0   0   0 |
+ *             | B   B   B   B   B   B   B   B | B   B   r   r   r   r   r   r |
  *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
  * Format:     8 octets (U<sub>8</sub> [r<sub>4</sub>U<sub>4</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>2</sub>U<sub>6</sub>] [r<sub>2</sub>U<sub>6</sub>] B<sub>16</sub>)
  * </pre>
@@ -66,8 +67,8 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
      *             | 0   0   (Minutes)             | 0   0   (Seconds)             |
      *             | r   r   U   U   U   U   U   U | r   r   U   U   U   U   U   U |
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
-     *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ 0   0   0   0   0   0   0 |
-     *             | B   B   B   B   B   B   B   B |  B  r   r   r   r   r   r   r |
+     *             | F  WD  NWD NY  ND  NDoW NT SST| CLQ SRC 0   0   0   0   0   0 |
+     *             | B   B   B   B   B   B   B   B | B   B   r   r   r   r   r   r |
      *             +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * Format:     8 octets (U<sub>8</sub> [r<sub>4</sub>U<sub>4</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>3</sub>U<sub>5</sub>] [r<sub>2</sub>U<sub>6</sub>] [r<sub>2</sub>U<sub>6</sub>] B<sub>16</sub>)
      * Encoding:
@@ -108,6 +109,9 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
      *             (CLQ)  QualityOfClock = {0, 1}
      *                        0 = Clock without external synchronization signal
      *                        1 = Clock with external synchronization signal (DCF 77, VideoText, ...)
+     *             (SRC)  SynchronisationSourceReliability = {0, 1}
+     *                        0 = Unreliable Synchronisation (mains, local quartz)
+     *                        1 = Reliable Synchronisation (radio, internet)
      * </pre>
      * <p>
      * The encoding of the hour is within the range [0 .. 24] instead of [0 .. 23]. When the hour is set to "24", the
@@ -145,19 +149,23 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
 
     @Override
     protected boolean isCompatible(final String[] args) {
-        return args.length >= 1 && args.length <= 4;
+        return args.length >= 2 && args.length <= 4;
     }
 
     @Override
     protected DPT19Value parse(final String[] args) {
-        final var dayOfWeek = this.findByEnumConstant(args, DayOfWeek.class);
-        final var date = Preconditions.checkNonNull(this.findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse),
-                "Date must be present in format: 0000-00-00");
-        final var time = Preconditions.checkNonNull(this.findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse),
-                "Time must be present in format: 00:00:00 or 00:00");
-        final var flags = this.findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), null);
+        final var dayOfWeek = findByEnumConstant(args, DayOfWeek.class);
+        final var date = findByPattern(args, Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), LocalDate::parse);
+        final var time = findByPattern(args, Pattern.compile("^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$"), LocalTime::parse);
+        final var flags = findByPattern(args, Pattern.compile("^(0x)?([0-9a-fA-F]{2}\\s?){2}$"), v -> new Flags(Bytes.toByteArray(v)), Flags.NO_FLAGS);
 
-        return new DPT19Value(dayOfWeek, date, time, flags);
+        // minimum are date and time
+        Preconditions.checkArgument(date != null,
+                "Date missing (supported format: 'yyyy-mm-dd'). Provided: {}", Arrays.toString(args));
+        Preconditions.checkArgument(time != null,
+                "Time missing (supported format: 'hh:mm', 'hh:mm:ss'). Provided: {}", Arrays.toString(args));
+
+        return of(dayOfWeek, date, time, flags);
     }
 
     public DPT19Value of(final @Nullable DayOfWeek dayOfWeek, final LocalDate date, final LocalTime time) {

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,73 +30,79 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class ManufacturerDataDIBTest {
-    private static final byte[] BYTES_WITH_DATA = new byte[]{ //
-            0x13, // Structure Length
-            (byte) 0xFE, // Description Type Code
-            0x21, 0x22, // KNX Manufacturer ID
-            0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, // Data
-            0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47 // Data (continued)
-    };
-    private static final byte[] BYTES_WITHOUT_DATA = new byte[]{ //
-            0x04, // Structure Length
-            (byte) 0xFE, // Description Type Code
-            0x51, 0x52 // KNX Manufacturer ID
-    };
+final class ManufacturerDataDIBTest {
 
-    /**
-     * Tests {@link ManufacturerDataDIB#of(byte[])} with data
-     */
     @Test
-    public void valueOfWithData() {
-        // create by bytes
-        final var dib = ManufacturerDataDIB.of(BYTES_WITH_DATA);
+    @DisplayName("Test #of(byte[]) with data")
+    void testOf_Bytes_With_Data() {
+        final var bytes = new byte[]{ //
+                0x13,                                           // Structure Length
+                (byte) 0xFE,                                    // Description Type Code
+                0x21, 0x22,                                     // KNX Manufacturer ID
+                0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, // Data
+                0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47        // Data (continued)
+        };
+        final var dib = ManufacturerDataDIB.of(bytes);
 
         // compare
-        assertThat(dib.getLength()).isEqualTo(19);
-        assertThat(dib.getDescriptionType()).isEqualTo(DescriptionType.MANUFACTURER_DATA);
-        assertThat(dib.getManufacturerId()).isEqualTo(8482);
-        assertThat(dib.getManufacturerSpecificData()).hasSize(15);
-        assertThat(dib.getManufacturerSpecificData()).containsExactly( //
+        assertThat(dib.getId()).isEqualTo(8482);
+        assertThat(dib.getData()).containsExactly( //
                 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, //
                 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47);
-
+        assertThat(dib.toByteArray()).containsExactly(bytes);
+        assertThat(dib).hasToString(
+                "ManufacturerDataDIB{id=8482, data=0x31 32 33 34 35 36 37 38 41 42 43 44 45 46 47}"
+        );
     }
 
-    /**
-     * Tests {@link ManufacturerDataDIB#of(byte[])} without data
-     */
     @Test
-    public void valueOfWithoutData() {
-        // create by bytes
-        final var dib = ManufacturerDataDIB.of(BYTES_WITHOUT_DATA);
+    @DisplayName("Test #of(byte[]) without data")
+    void testOf_Bytes_Without_Data() {
+        final var bytes = new byte[]{ //
+                0x04,        // Structure Length
+                (byte) 0xFE, // Description Type Code
+                0x51, 0x52   // KNX Manufacturer ID
+        };
+
+        final var dib = ManufacturerDataDIB.of(bytes);
 
         // compare
-        assertThat(dib.getLength()).isEqualTo(4);
-        assertThat(dib.getDescriptionType()).isEqualTo(DescriptionType.MANUFACTURER_DATA);
-        assertThat(dib.getManufacturerId()).isEqualTo(20818);
-        assertThat(dib.getManufacturerSpecificData()).isEmpty();
+        assertThat(dib.getId()).isEqualTo(20818);
+        assertThat(dib.getData()).isEmpty();
+        assertThat(dib.toByteArray()).containsExactly(bytes);
+        assertThat(dib).hasToString(
+                "ManufacturerDataDIB{id=20818, data=}"
+        );
     }
 
-    /**
-     * Tests {@link ManufacturerDataDIB} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
+        // null
+        assertThatThrownBy(() -> ManufacturerDataDIB.of(null))
+                .isInstanceOf(NullPointerException.class);
+
         // incorrect size of bytes
-        assertThatThrownBy(() -> ManufacturerDataDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
-        assertThatThrownBy(() -> ManufacturerDataDIB.of(new byte[256])).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> ManufacturerDataDIB.of(new byte[]{0x03, 0x02, 0x01}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [4..255] but was: 3");
+        assertThatThrownBy(() -> ManufacturerDataDIB.of(new byte[256]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected [4..255] but was: 256");
+
+        // incorrect description type on index 1
+        final var bytesInvalidDescriptionType = new byte[4];
+        bytesInvalidDescriptionType[0] = 0x04; // correct
+        bytesInvalidDescriptionType[1] = DescriptionType.UNKNOWN.getCodeAsByte(); // not correct
+        assertThatThrownBy(() -> ManufacturerDataDIB.of(bytesInvalidDescriptionType))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible value for bytes[1]. Expected '-2' but was: -1");
     }
 
-    /**
-     * Test {@link ManufacturerDataDIB#toString()}
-     */
     @Test
-    public void testToString() {
-        assertThat(ManufacturerDataDIB.of(BYTES_WITH_DATA))
-                .hasToString(String.format("ManufacturerDataDIB{length=19 (0x13), descriptionType=%s, rawData=%s}",
-                        DescriptionType.MANUFACTURER_DATA, ByteFormatter.formatHexAsString(BYTES_WITH_DATA)));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(ManufacturerDataDIB.class).verify();
     }
+
 }

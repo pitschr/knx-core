@@ -28,13 +28,6 @@ import li.pitschmann.knx.core.utils.ByteFormatter;
  */
 public interface DataPointValue {
     /**
-     * Returns the current Data Point Type instance
-     *
-     * @return {@link DataPointType}
-     */
-    DataPointType getDPT();
-
-    /**
      * Returns the current Data Point Value as a byte array.
      *
      * @return byte array

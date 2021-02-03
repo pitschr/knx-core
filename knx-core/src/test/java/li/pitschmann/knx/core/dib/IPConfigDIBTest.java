@@ -18,8 +18,9 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.utils.ByteFormatter;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,47 +31,47 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public final class IPConfigDIBTest {
-    private static final byte[] BYTES = new byte[]{ //
-            0x10, // Structure Length
-            0x03, // Description Type Code
-            0x11, 0x22, 0x33, 0x44, // IP Address
-            0x55, 0x66, 0x77, (byte) 0x88, // Subnet Mask
-            (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, // Default Gateway
-            (byte) 0xDD, // IP Capabilities
-            (byte) 0xEE // IP assignment method
-    };
+final class IPConfigDIBTest {
 
-    /**
-     * Tests {@link IPConfigDIB#of(byte[])}
-     */
     @Test
-    public void validCases() {
-        // create by bytes
-        final var dib = IPConfigDIB.of(BYTES);
+    @DisplayName("Test #of(byte[])")
+    void testOf_Bytes() {
+        final var bytes = new byte[]{ //
+                0x10,                                               // Structure Length
+                0x03,                                               // Description Type Code
+                0x11, 0x22, 0x33, 0x44,                             // IP Address
+                0x55, 0x66, 0x77, (byte) 0x88,                      // Subnet Mask
+                (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, // Default Gateway
+                (byte) 0xDD,                                        // IP Capabilities
+                (byte) 0xEE                                         // IP assignment method
+        };
+        final var dib = IPConfigDIB.of(bytes);
 
         // compare
-        assertThat(dib.getLength()).isEqualTo(16);
-        assertThat(dib.getDescriptionType()).isEqualTo(DescriptionType.IP_CONFIG);
+        assertThat(dib.toByteArray()).containsExactly(bytes);
+        assertThat(dib).hasToString(
+                String.format("IPConfigDIB{bytes=%s}", ByteFormatter.formatHexAsString(bytes))
+        );
     }
 
-    /**
-     * Tests {@link IPConfigDIB} with invalid arguments
-     */
     @Test
-    public void invalidCases() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
+        // null
+        assertThatThrownBy(() -> IPConfigDIB.of(null))
+                .isInstanceOf(NullPointerException.class);
+
         // incorrect size of bytes
-        assertThatThrownBy(() -> IPConfigDIB.of(new byte[]{0x03, 0x02, 0x01})).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("rawData");
+        assertThatThrownBy(() -> IPConfigDIB.of(new byte[]{0x03, 0x02, 0x01}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '16' but was: 3");
 
     }
 
-    /**
-     * Test {@link IPConfigDIB#toString()}
-     */
     @Test
-    public void testToString() {
-        assertThat(IPConfigDIB.of(BYTES)).hasToString(String.format("IPConfigDIB{length=16 (0x10), descriptionType=%s, rawData=%s}",
-                DescriptionType.IP_CONFIG, ByteFormatter.formatHexAsString(BYTES)));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(IPConfigDIB.class).verify();
     }
+
 }

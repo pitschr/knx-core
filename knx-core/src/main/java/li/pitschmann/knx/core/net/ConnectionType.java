@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ package li.pitschmann.knx.core.net;
 import li.pitschmann.knx.core.KnxByteEnum;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.header.ServiceType;
-import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInfo;
+import li.pitschmann.knx.core.net.tunnel.ConnectionResponseData;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -34,8 +34,8 @@ import java.util.Arrays;
  * communication the KNXnet/IP body shall begin with the return
  * address information of the KNXnet/IP Client’s control endpoint.
  * <p>
- * Inside the {@link ConnectionRequestInformation}, a variable
- * data structure that shall include all additional information
+ * Inside the {@link ConnectionRequestInfo} and {@link ConnectionResponseData},
+ * a variable data structure that shall include all additional information
  * that is specific to the requested connection type (and to the
  * underlying host protocol). The exact definition of this structure
  * can be found in the description of the specific connection type.
@@ -86,28 +86,28 @@ public enum ConnectionType implements KnxByteEnum {
      * for given {@code code} exists
      */
     public static ConnectionType valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
+        return Arrays.stream(values())
+                .filter(x -> x.getCode() == code)
+                .findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ConnectionType.class, code));
     }
 
     @Override
     public int getCode() {
-        return this.code;
+        return code;
     }
 
     @Override
     public String getFriendlyName() {
-        return this.friendlyName;
+        return friendlyName;
     }
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
-                .add("name", this.name())
-                .add("friendlyName", this.friendlyName)
-                .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")
+                .add("name", name())
+                .add("friendlyName", friendlyName)
+                .add("code", code)
                 .toString();
-        // @formatter:on
     }
 }

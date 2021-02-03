@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
 package li.pitschmann.knx.core.datapoint;
 
 import li.pitschmann.knx.core.datapoint.value.DPT17Value;
+import li.pitschmann.knx.core.utils.Preconditions;
+
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Data Point Type 17 for 'Scene Number' (1 Octet)
@@ -75,7 +79,15 @@ public final class DPT17 extends BaseRangeDataPointType<DPT17Value, Integer> {
 
     @Override
     protected DPT17Value parse(final String[] args) {
-        return of(Integer.parseInt(args[0]));
+        final var intValue = findByPattern(args, Pattern.compile("^[\\d]+$"), Integer::valueOf);
+        Preconditions.checkArgument(intValue != null,
+                "Scene Number missing (digit between {} and {}). Provided: {}",
+                getLowerValue(),
+                getUpperValue(),
+                Arrays.toString(args)
+        );
+
+        return of(intValue);
     }
 
     public DPT17Value of(final int sceneNumber) {

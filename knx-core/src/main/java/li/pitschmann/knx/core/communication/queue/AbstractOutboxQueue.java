@@ -77,7 +77,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
         final var body = next();
 
         // packet: header + body
-        final var packetToSend = body.getRawData(true);
+        final var packetToSend = body.toByteArray(true);
 
         // write to channel
         final var channel = getChannel(key);

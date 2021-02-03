@@ -26,6 +26,7 @@ import li.pitschmann.knx.core.utils.Strings;
 
 import java.math.BigInteger;
 import java.util.Objects;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * Data Point Value for {@link DPT8} (8.xxx)
@@ -42,23 +43,16 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT8Value extends AbstractDataPointValue<DPT8> {
-    private final double value;
+    private final int value;
 
     public DPT8Value(final DPT8 dpt, final byte[] bytes) {
         this(
                 dpt, //
-                toDouble(dpt, bytes) //
+                toInt(dpt, bytes) //
         );
     }
 
     public DPT8Value(final DPT8 dpt, final int value) {
-        this(
-                dpt, //
-                (double) value //
-        );
-    }
-
-    public DPT8Value(final DPT8 dpt, final double value) {
         super(dpt);
         if (!getDPT().isRangeClosed(value)) {
             throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
@@ -68,26 +62,25 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
 
     /**
      * <p>
-     * Converts from {@code bytes[]} to a {@code double} according
+     * Converts from {@code bytes[]} to a {@code int} according
      * to the {@link DPT8} specification.
      * </p>
      * <p>
      * <u>Examples:</u><br>
      * For {@link DPT8#VALUE_2_OCTET_COUNT} it is: 0x00 00 = -32768, 0xFF FF = 32767<br>
-     * For {@link DPT8#PERCENT} it is: 0x00 00 = -327,68, 0xFF FF = 327,67<br>
      * For {@link DPT8#DELTA_TIME_100MS} it is: 0x00 00 = -3276800, 0xFF FF = 3276700<br>
      * </p>
      * @param dpt the data point type that
      * @param bytes the bytes array to be converted to signed int
      * @return the signed integer
      */
-    private static double toDouble(final DPT8 dpt, final byte[] bytes) {
+    private static int toInt(final DPT8 dpt, final byte[] bytes) {
         final var calcFunction = dpt.getCalculationFunction();
         final int signedInt = new BigInteger(bytes).intValue();
         if (calcFunction == null) {
             return signedInt;
         } else {
-            return (100d / calcFunction.applyAsDouble(100)) * signedInt;
+            return (100 / calcFunction.applyAsInt(100)) * signedInt;
         }
     }
 
@@ -96,29 +89,18 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
      *
      * @return int
      */
-    public int getValueAsInt() {
-        // fixes IEEE floating precision issue
-        if (value > 0) {
-            return (int) (value + 0.001d);
-        } else {
-            return (int) (value - 0.001d);
-        }
+    public int getValue() {
+        return value;
     }
-
-    /**
-     * Returns the value as double
-     * @return double
-     */
-    public double getValueAsDouble() { return value; }
 
     @Override
     public byte[] toByteArray() {
         final var calcFunction = this.getDPT().getCalculationFunction();
         final int newValue;
         if (calcFunction == null) {
-            newValue = (int) value;
+            newValue = value;
         } else {
-            newValue = (int) Math.round(calcFunction.applyAsDouble(value));
+            newValue = calcFunction.applyAsInt(value);
         }
 
         return new byte[]{
@@ -158,5 +140,84 @@ public final class DPT8Value extends AbstractDataPointValue<DPT8> {
     @Override
     public int hashCode() {
         return Objects.hash(getDPT(), value);
+    }
+
+    /**
+     * Special Class for {@link DPT8Value} as it is not an Integer
+     */
+    public static final class Percent extends AbstractDataPointValue<DPT8.Percent> {
+        private static final DoubleUnaryOperator calcFunction = v -> v * 100d;
+        private final double value;
+
+        public Percent(final byte[] bytes) {
+            this(
+                    toDouble(bytes) //
+            );
+        }
+
+        public Percent(final double value) {
+            super(DPT8.PERCENT);
+            if (!getDPT().isRangeClosed(value)) {
+                throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
+            }
+            this.value = value;
+        }
+
+        /**
+         * Converts from {@code bytes[]} to a {@code double} according.
+         */
+        private static double toDouble(final byte[] bytes) {
+            final int signedInt = new BigInteger(bytes).intValue();
+            return (100d / calcFunction.applyAsDouble(100)) * signedInt;
+        }
+
+        /**
+         * Returns the value as double
+         * @return double
+         */
+        public double getValue() { return value; }
+
+        @Override
+        public byte[] toByteArray() {
+            final int newValue = (int) Math.round(calcFunction.applyAsDouble(value));
+
+            return new byte[]{
+                    (byte) (newValue >>> 8), //
+                    (byte) newValue //
+            };
+        }
+
+        @Override
+        public String toText() {
+            return getValueAsText(value);
+        }
+
+        @Override
+        public String toString() {
+            // @formatter:off
+            return Strings.toStringHelper(this)
+                    .add("dpt", this.getDPT().getId())
+                    .add("value", getValueAsText(value))
+                    .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
+                    .toString();
+            // @formatter:on
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            if (obj == this) {
+                return true;
+            } else if (obj instanceof DPT8Value.Percent) {
+                final var other = (DPT8Value.Percent) obj;
+                return Objects.equals(this.getDPT(), other.getDPT()) //
+                        && Objects.equals(this.value, other.value);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getDPT(), value);
+        }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
+import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.annotations.Nullable;
+import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Arrays;
 
 /**
  * Additional info container for CEMI
  *
  * @author PITSCHR
  */
-public final class AdditionalInfo extends AbstractMultiRawData {
-    private static final AdditionalInfo EMPTY = new AdditionalInfo(new byte[]{0x00});
-    private final int length;
-    private final int totalLength;
+public final class AdditionalInfo implements MultiRawDataAware {
+    private static final AdditionalInfo EMPTY = new AdditionalInfo(new byte[0]);
+    private final byte[] bytes;
 
-    private AdditionalInfo(final byte[] addInfoRawData) {
-        super(addInfoRawData);
-
-        this.length = Byte.toUnsignedInt(addInfoRawData[0]);
-        this.totalLength = addInfoRawData.length;
+    private AdditionalInfo(final byte[] bytes) {
+        this.bytes = bytes.clone();
     }
 
     /**
@@ -46,6 +46,7 @@ public final class AdditionalInfo extends AbstractMultiRawData {
      * @return a new immutable {@link AdditionalInfo}
      */
     public static AdditionalInfo of(final byte[] bytes) {
+        Preconditions.checkNonNull(bytes, "Bytes is required.");
         return new AdditionalInfo(bytes);
     }
 
@@ -59,35 +60,30 @@ public final class AdditionalInfo extends AbstractMultiRawData {
     }
 
     @Override
-    protected void validate(final byte[] addInfoRawData) {
-        if (addInfoRawData == null) {
-            throw new KnxNullPointerException("addInfoRawData");
-        }
-
-        // validate length
-        if (Byte.toUnsignedInt(addInfoRawData[0]) > 0) {
-            throw new UnsupportedOperationException("Not implemented yet!");
-        }
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    public int getTotalLength() {
-        return this.totalLength;
+    public byte[] toByteArray() {
+        return bytes.clone();
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length)
-                .add("totalLength", this.totalLength);
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("bytes", ByteFormatter.formatHexAsString(bytes))
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof AdditionalInfo) {
+            final var other = (AdditionalInfo) obj;
+            return Arrays.equals(this.bytes, other.bytes);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(bytes);
     }
 }

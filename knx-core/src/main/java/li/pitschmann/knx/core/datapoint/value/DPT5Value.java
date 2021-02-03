@@ -41,7 +41,7 @@ import java.util.Objects;
  * @author PITSCHR
  */
 public final class DPT5Value extends AbstractDataPointValue<DPT5> {
-    private int value;
+    private final int value;
 
     public DPT5Value(final DPT5 dpt, final byte b) {
         this(

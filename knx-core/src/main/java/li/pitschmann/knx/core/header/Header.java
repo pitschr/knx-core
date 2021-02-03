@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,15 @@
 
 package li.pitschmann.knx.core.header;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.MultiRawDataAware;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.body.Body;
-import li.pitschmann.knx.core.exceptions.KnxException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * This class represents the header of KNX/IP and is immutable.
@@ -71,73 +70,75 @@ import java.util.Arrays;
  *
  * @author PITSCHR
  */
-public final class Header extends AbstractMultiRawData {
+public final class Header implements MultiRawDataAware {
     /**
      * Constant size of KNX/IP header as defined in protocol version 1.0
      */
-    public static final int KNXNET_HEADER_LENGTH = 0x06;
+    public static final int STRUCTURE_LENGTH = 0x06;
     /**
      * Identifier for KNX/IP protocol version 1.0
      */
-    public static final int KNXNET_PROTOCOL_VERSION = 0x10;
-
+    public static final int PROTOCOL_VERSION_V1 = 0x10;
+    /**
+     * Minimum Total Length (Header Length + Body Length)
+     */
+    private static final int TOTAL_LENGTH_MIN = STRUCTURE_LENGTH;
+    /**
+     * Maximum Total Length (Header Length + Body Length)
+     */
+    private static final int TOTAL_LENGTH_MAX = 0xFFFF;
     private final int length;
     private final int protocolVersion;
     private final ServiceType serviceType;
     private final int totalLength;
 
-    private Header(final byte[] headerRawData) {
-        super(headerRawData);
-
-        this.length = Byte.toUnsignedInt(headerRawData[0]);
-        this.protocolVersion = Byte.toUnsignedInt(headerRawData[1]);
-        this.serviceType = ServiceType.valueOf(Bytes.toUnsignedInt(headerRawData[2], headerRawData[3]));
-        this.totalLength = Bytes.toUnsignedInt(headerRawData[4], headerRawData[5]);
+    private Header(final byte[] bytes) {
+        this(
+                // bytes[0] => Header Length
+                Byte.toUnsignedInt(bytes[0]),
+                // bytes[1] => Protocol Version
+                Byte.toUnsignedInt(bytes[1]),
+                // bytes[2,3] => Service Type
+                ServiceType.valueOf(Bytes.toUnsignedInt(bytes[2], bytes[3])),
+                // bytes[4,5] => Total Length (Header Length + Body Length)
+                Bytes.toUnsignedInt(bytes[4], bytes[5])
+        );
     }
 
-    /**
-     * Builds a new {@link Header} instance
-     *
-     * @param bytes the given parameter can be either bytes for header only, but also the complete byte array stream. In
-     *              case of complete byte array stream the header will be cut at given {@link #KNXNET_HEADER_LENGTH}
-     * @return a new immutable {@link Header}
-     */
-    public static Header of(final byte[] bytes) {
-        if (bytes == null) {
-            throw new KnxNullPointerException("bytes");
-        } else if (bytes.length < KNXNET_HEADER_LENGTH) {
-            throw new KnxNumberOutOfRangeException("bytes", KNXNET_HEADER_LENGTH, Integer.MAX_VALUE, bytes.length, bytes);
-        }
+    private Header(final int length,
+                   final int protocolVersion,
+                   final ServiceType serviceType,
+                   final int totalLength) {
+        Preconditions.checkArgument(length == STRUCTURE_LENGTH,
+                "Incompatible header length. Expected [{}] but was: {}", STRUCTURE_LENGTH, length);
+        Preconditions.checkArgument(protocolVersion == PROTOCOL_VERSION_V1,
+                "Incompatible protocol version. Expected [{}] but was: {}", PROTOCOL_VERSION_V1, protocolVersion);
+        Preconditions.checkNonNull(serviceType, "Service Type is required.");
+        Preconditions.checkArgument(totalLength >= TOTAL_LENGTH_MIN && totalLength <= TOTAL_LENGTH_MAX,
+                "Incompatible total length. Expected [{}..{}] but was: {}", TOTAL_LENGTH_MIN, TOTAL_LENGTH_MAX, totalLength);
 
-        if (bytes.length == KNXNET_HEADER_LENGTH) {
-            return new Header(bytes);
-        } else {
-            return new Header(Arrays.copyOf(bytes, KNXNET_HEADER_LENGTH));
-        }
+        this.length = length;
+        this.protocolVersion = protocolVersion;
+        this.serviceType = serviceType;
+        this.totalLength = totalLength;
     }
 
     /**
      * Creates a new {@link Header} instance
      *
-     * @param serviceType service type
-     * @param totalLength total length of header
+     * @param bytes the given parameter can be either bytes for header only, but also the complete byte array stream. In
+     *              case of complete byte array stream the header will be cut at given {@link #STRUCTURE_LENGTH}
      * @return a new immutable {@link Header}
      */
-    public static Header of(final ServiceType serviceType, final int totalLength) {
-        if (serviceType == null) {
-            throw new KnxNullPointerException("serviceType");
-        } else if (totalLength < KNXNET_HEADER_LENGTH || totalLength > 0xFFFF) {
-            throw new KnxNumberOutOfRangeException("totalLength", KNXNET_HEADER_LENGTH, 0xFFFF, totalLength);
+    public static Header of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_LENGTH,
+                "Incompatible header structure length. Expected [{}..]' but was: {}", STRUCTURE_LENGTH, bytes.length);
+
+        if (bytes.length == STRUCTURE_LENGTH) {
+            return new Header(bytes);
+        } else {
+            return new Header(Arrays.copyOf(bytes, STRUCTURE_LENGTH));
         }
-
-        final var serviceTypeIdentifierAsBytes = serviceType.getCodeAsBytes();
-        final var lengthAsBytes = new byte[]{(byte) (totalLength >>> 8), (byte) totalLength};
-
-        // create bytes
-        final var bytes = new byte[]{Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, serviceTypeIdentifierAsBytes[0],
-                serviceTypeIdentifierAsBytes[1], lengthAsBytes[0], lengthAsBytes[1]};
-
-        return of(bytes);
     }
 
     /**
@@ -147,29 +148,26 @@ public final class Header extends AbstractMultiRawData {
      * @return a new immutable {@link Header} calculated based on {@link Body}
      */
     public static Header of(final Body body) {
-        if (body == null) {
-            throw new KnxNullPointerException("body");
-        }
-
-        return of(body.getServiceType(), Header.KNXNET_HEADER_LENGTH + body.getRawData().length);
+        Preconditions.checkNonNull(body, "Body is required.");
+        return new Header(STRUCTURE_LENGTH, PROTOCOL_VERSION_V1, body.getServiceType(), Header.STRUCTURE_LENGTH + body.toByteArray().length);
     }
 
     /**
-     * Header length (actually header length is always {@link #KNXNET_HEADER_LENGTH})
+     * Header length (actually header length is always {@link #STRUCTURE_LENGTH})
      *
      * @return header length
      */
     public int getLength() {
-        return this.length;
+        return length;
     }
 
     /**
-     * Protocol Version (actually only {@link #KNXNET_PROTOCOL_VERSION} is supported)
+     * Protocol Version (actually only {@link #PROTOCOL_VERSION_V1} is supported)
      *
      * @return the protocol version
      */
     public int getProtocolVersion() {
-        return this.protocolVersion;
+        return protocolVersion;
     }
 
     /**
@@ -178,7 +176,7 @@ public final class Header extends AbstractMultiRawData {
      * @return the total length, including header length
      */
     public int getTotalLength() {
-        return this.totalLength;
+        return totalLength;
     }
 
     /**
@@ -187,37 +185,48 @@ public final class Header extends AbstractMultiRawData {
      * @return {@link ServiceType}
      */
     public ServiceType getServiceType() {
-        return this.serviceType;
-    }
-
-    /**
-     * Validates the given {@code rawData} if it qualifies to for KNX NET/IP header. In case the validation fails then a
-     * {@link KnxException} will be thrown.
-     *
-     * @param headerRawData raw data for header to be validated
-     */
-    @Override
-    protected void validate(final byte[] headerRawData) {
-        if (headerRawData[0] != KNXNET_HEADER_LENGTH) {
-            throw new KnxNumberOutOfRangeException("headerRawData[0]", KNXNET_HEADER_LENGTH, KNXNET_HEADER_LENGTH, headerRawData[0], headerRawData);
-        } else if (headerRawData[1] != KNXNET_PROTOCOL_VERSION) {
-            throw new KnxNumberOutOfRangeException("headerRawData[1]", KNXNET_PROTOCOL_VERSION, KNXNET_PROTOCOL_VERSION, headerRawData[1],
-                    headerRawData);
-        }
+        return serviceType;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("protocolVersion", this.protocolVersion + " (" + ByteFormatter.formatHex(this.protocolVersion) + ")")
-                .add("serviceType", this.serviceType)
-                .add("totalLength", this.totalLength + " (" + ByteFormatter.formatHex(this.totalLength) + ")");
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        final var serviceTypeAsBytes = serviceType.getCodeAsBytes();
+        final var totalLengthAsBytes = new byte[]{(byte) (totalLength >>> 8), (byte) totalLength};
+
+        return new byte[]{
+                Header.STRUCTURE_LENGTH,
+                Header.PROTOCOL_VERSION_V1,
+                serviceTypeAsBytes[0], serviceTypeAsBytes[1],
+                totalLengthAsBytes[0], totalLengthAsBytes[1]
+        };
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("length", length)
+                .add("protocolVersion", protocolVersion)
+                .add("serviceType", serviceType.name())
+                .add("totalLength", totalLength)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof Header) {
+            final var other = (Header) obj;
+            return this.length == other.length
+                    && this.protocolVersion == other.protocolVersion
+                    && Objects.equals(this.serviceType, other.serviceType)
+                    && this.totalLength == other.totalLength;
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(length, protocolVersion, serviceType, totalLength);
     }
 }

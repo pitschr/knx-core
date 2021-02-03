@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,14 @@ import li.pitschmann.knx.core.datapoint.value.DPT21Value.ForcingSignalCooling;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.FuelTypeSet;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.GeneralStatus;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.LightingActuatorErrorInfo;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.PhaseStatus;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.RadioFrequencyCommunicationModeInfo;
-import li.pitschmann.knx.core.datapoint.value.DPT21Value.SecurityReport;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.RoomCoolingControllerStatus;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.RoomHeatingControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.SecurityReport;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.SolarDHWControllerStatus;
 import li.pitschmann.knx.core.datapoint.value.DPT21Value.VentilationControllerStatus;
+import li.pitschmann.knx.core.datapoint.value.DPT21Value.VirtualContactStatus;
 import li.pitschmann.knx.core.test.TestHelpers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,10 +47,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author PITSCHR
  */
 public final class DPT21ValueTest {
-    /**
-     * Test {@link GeneralStatus}
-     */
+
     @Test
+    @DisplayName("Test GeneralStatus")
     public void testGeneralStatus() {
         this.assertGeneralStatus((byte) 0x00, new boolean[]{false, false, false, false, false});
         this.assertGeneralStatus((byte) 0x01, new boolean[]{true, false, false, false, false});
@@ -69,10 +70,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isAlarmNotAcknowledged()).isEqualTo(bool[4]);
     }
 
-    /**
-     * Test {@link DeviceControl}
-     */
     @Test
+    @DisplayName("Test DeviceControl")
     public void testDeviceControl() {
         this.assertDeviceControl((byte) 0x00, new boolean[]{false, false, false});
         this.assertDeviceControl((byte) 0x01, new boolean[]{true, false, false});
@@ -89,10 +88,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isVerifyModeOn()).isEqualTo(bool[2]);
     }
 
-    /**
-     * Test {@link ForcingSignal}
-     */
     @Test
+    @DisplayName("Test ForcingSignal")
     public void testForcingSignal() {
         this.assertForcingSignal((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false});
         this.assertForcingSignal((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false});
@@ -119,10 +116,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isRoomHeatingMaxFlowTemperature()).isEqualTo(bool[7]);
     }
 
-    /**
-     * Test {@link ForcingSignalCooling}
-     */
     @Test
+    @DisplayName("Test ForcingSignalCooling")
     public void testForcingSignalCooling() {
         this.assertForcingSignalCooling((byte) 0x00, false, "not forced");
         this.assertForcingSignalCooling((byte) 0x01, true, "forced");
@@ -136,10 +131,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.toText()).isEqualTo(text);
     }
 
-    /**
-     * Test {@link RoomHeatingControllerStatus}
-     */
     @Test
+    @DisplayName("Test RoomHeatingControllerStatus")
     public void testStatusRoomHeatingController() {
         this.assertStatusRoomHeatingController((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false});
         this.assertStatusRoomHeatingController((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false});
@@ -166,10 +159,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isSummerMode()).isEqualTo(bool[7]);
     }
 
-    /**
-     * Test {@link SolarDHWControllerStatus}
-     */
     @Test
+    @DisplayName("Test SolarDHWControllerStatus")
     public void testStatusSolarDHWController() {
         this.assertStatusSolarDHWController((byte) 0x00, new boolean[]{false, false, false});
         this.assertStatusSolarDHWController((byte) 0x01, new boolean[]{true, false, false});
@@ -186,10 +177,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isSolarLoadSufficient()).isEqualTo(bool[2]);
     }
 
-    /**
-     * Test {@link FuelTypeSet}
-     */
     @Test
+    @DisplayName("Test FuelTypeSet")
     public void testFuelTypeSet() {
         this.assertFuelTypeSet((byte) 0x00, new boolean[]{false, false, false});
         this.assertFuelTypeSet((byte) 0x01, new boolean[]{true, false, false});
@@ -206,10 +195,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isSolidStateFuelSupported()).isEqualTo(bool[2]);
     }
 
-    /**
-     * Test {@link RoomCoolingControllerStatus}
-     */
     @Test
+    @DisplayName("Test RoomCoolingControllerStatus")
     public void testStatusRoomCoolingController() {
         this.assertStatusRoomCoolingController((byte) 0x00, false, "no fault");
         this.assertStatusRoomCoolingController((byte) 0x01, true, "fault");
@@ -223,10 +210,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.toText()).isEqualTo(text);
     }
 
-    /**
-     * Test {@link VentilationControllerStatus}
-     */
     @Test
+    @DisplayName("Test VentilationControllerStatus")
     public void testStatusVentilationController() {
         this.assertStatusVentilationController((byte) 0x00, new boolean[]{false, false, false, false});
         this.assertStatusVentilationController((byte) 0x01, new boolean[]{true, false, false, false});
@@ -245,10 +230,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isCoolingModeActive()).isEqualTo(bool[3]);
     }
 
-    /**
-     * Test {@link LightingActuatorErrorInfo}
-     */
     @Test
+    @DisplayName("Test LightingActuatorErrorInfo")
     public void testLightingActuatorErrorInfo() {
         this.assertLightingActuatorErrorInfo((byte) 0x00, new boolean[]{false, false, false, false, false, false, false});
         this.assertLightingActuatorErrorInfo((byte) 0x01, new boolean[]{true, false, false, false, false, false, false});
@@ -273,10 +256,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isOverheat()).isEqualTo(bool[6]);
     }
 
-    /**
-     * Test {@link RadioFrequencyCommunicationModeInfo}
-     */
     @Test
+    @DisplayName("Test RadioFrequencyCommunicationModeInfo")
     public void testRadioFrequencyCommunicationModeInfo() {
         this.assertRadioFrequencyCommunicationModeInfo((byte) 0x00, new boolean[]{false, false, false});
         this.assertRadioFrequencyCommunicationModeInfo((byte) 0x01, new boolean[]{true, false, false});
@@ -293,10 +274,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isSlave()).isEqualTo(bool[2]);
     }
 
-    /**
-     * Test {@link CEMIServerSupportedFilteringMode}
-     */
     @Test
+    @DisplayName("Test CEMIServerSupportedFilteringMode")
     public void testCEMIServerSupportedFilteringMode() {
         this.assertCEMIServerSupportedFilteringMode((byte) 0x00, new boolean[]{false, false, false});
         this.assertCEMIServerSupportedFilteringMode((byte) 0x01, new boolean[]{true, false, false});
@@ -313,10 +292,8 @@ public final class DPT21ValueTest {
         assertThat(dptValue.isFilteredByDomainAddressAndSerialNumber()).isEqualTo(bool[2]);
     }
 
-    /**
-     * Test {@link SecurityReport}
-     */
     @Test
+    @DisplayName("Test SecurityReport")
     public void testSecurityReport() {
         this.assertSecurityReport((byte) 0x00, false, "no failure");
         this.assertSecurityReport((byte) 0x01, true, "failure");
@@ -330,12 +307,10 @@ public final class DPT21ValueTest {
         assertThat(dptValue.toText()).isEqualTo(text);
     }
 
-    /**
-     * Test {@link ChannelActivation8}
-     */
     @Test
+    @DisplayName("Test ChannelActivation8")
     public void testChannelActivation8() {
-        this.assertChannelActivation8((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false}, "no channels active");
+        this.assertChannelActivation8((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false}, "No channel active");
         this.assertChannelActivation8((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false}, "1");
         this.assertChannelActivation8((byte) 0x02, new boolean[]{false, true, false, false, false, false, false, false}, "2");
         this.assertChannelActivation8((byte) 0x04, new boolean[]{false, false, true, false, false, false, false, false}, "3");
@@ -363,6 +338,59 @@ public final class DPT21ValueTest {
                 .hasMessageContaining("Channel must be between 1 and 8");
         assertThatThrownBy(() -> dptValue.isChannelActive(9)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Channel must be between 1 and 8");
+    }
+
+    @Test
+    @DisplayName("Test VirtualContactStatus")
+    public void testVirtualContactStatus() {
+        this.assertVirtualContactStatus((byte) 0x00, new boolean[]{false, false, false, false, false, false, false, false}, "No contact closed");
+        this.assertVirtualContactStatus((byte) 0x01, new boolean[]{true, false, false, false, false, false, false, false}, "1");
+        this.assertVirtualContactStatus((byte) 0x02, new boolean[]{false, true, false, false, false, false, false, false}, "2");
+        this.assertVirtualContactStatus((byte) 0x04, new boolean[]{false, false, true, false, false, false, false, false}, "3");
+        this.assertVirtualContactStatus((byte) 0x08, new boolean[]{false, false, false, true, false, false, false, false}, "4");
+        this.assertVirtualContactStatus((byte) 0x10, new boolean[]{false, false, false, false, true, false, false, false}, "5");
+        this.assertVirtualContactStatus((byte) 0x20, new boolean[]{false, false, false, false, false, true, false, false}, "6");
+        this.assertVirtualContactStatus((byte) 0x40, new boolean[]{false, false, false, false, false, false, true, false}, "7");
+        this.assertVirtualContactStatus((byte) 0x80, new boolean[]{false, false, false, false, false, false, false, true}, "8");
+    }
+
+    private void assertVirtualContactStatus(final byte b, final boolean[] bool, final String text) {
+        final var dptValue = new VirtualContactStatus(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5], bool[6], bool[7]);
+        assertThat(new VirtualContactStatus(b)).isEqualTo(dptValue);
+
+        for (var i = 0; i < 8; i++) {
+            assertThat(dptValue.isClosed(i + 1)).isEqualTo(bool[i]);
+        }
+        assertThat(dptValue.toText()).isEqualTo(text);
+
+        assertThatThrownBy(() -> dptValue.isClosed(0)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Contact must be between 1 and 8");
+        assertThatThrownBy(() -> dptValue.isClosed(9)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Contact must be between 1 and 8");
+    }
+
+    @Test
+    @DisplayName("Test PhaseStatus")
+    public void testPhaseStatus() {
+        this.assertPhaseStatus((byte) 0x00, new boolean[]{false, false, false}, "No phase present");
+        this.assertPhaseStatus((byte) 0x01, new boolean[]{true, false, false}, "1");
+        this.assertPhaseStatus((byte) 0x02, new boolean[]{false, true, false}, "2");
+        this.assertPhaseStatus((byte) 0x04, new boolean[]{false, false, true}, "3");
+    }
+
+    private void assertPhaseStatus(final byte b, final boolean[] bool, final String text) {
+        final var dptValue = new PhaseStatus(bool[0], bool[1], bool[2]);
+        assertThat(new PhaseStatus(b)).isEqualTo(dptValue);
+
+        for (var i = 0; i < 3; i++) {
+            assertThat(dptValue.isPresent(i + 1)).isEqualTo(bool[i]);
+        }
+        assertThat(dptValue.toText()).isEqualTo(text);
+
+        assertThatThrownBy(() -> dptValue.isPresent(0)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Phase must be between 1 and 3");
+        assertThatThrownBy(() -> dptValue.isPresent(4)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Phase must be between 1 and 3");
     }
 
     /**

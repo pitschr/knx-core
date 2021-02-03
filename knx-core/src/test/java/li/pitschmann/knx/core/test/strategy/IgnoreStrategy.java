@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 package li.pitschmann.knx.core.test.strategy;
 
-import li.pitschmann.knx.core.test.MockRequest;
-import li.pitschmann.knx.core.test.MockResponse;
+import li.pitschmann.knx.core.body.RequestBody;
+import li.pitschmann.knx.core.body.ResponseBody;
 import li.pitschmann.knx.core.test.MockServer;
 
 /**
@@ -33,7 +33,7 @@ public final class IgnoreStrategy implements ResponseStrategy {
     public static final IgnoreStrategy DEFAULT = new IgnoreStrategy();
 
     @Override
-    public MockResponse createResponse(final MockServer mockServer, final MockRequest request) {
+    public ResponseBody createResponse(final MockServer mockServer, final RequestBody request) {
         // do nothing ...
         return null;
     }

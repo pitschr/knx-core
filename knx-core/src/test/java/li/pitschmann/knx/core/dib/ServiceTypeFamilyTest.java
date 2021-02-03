@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,29 @@
 
 package li.pitschmann.knx.core.dib;
 
-import li.pitschmann.knx.core.AbstractKnxByteEnumTest;
+import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies {@link ServiceTypeFamily} enum class
  *
  * @author PITSCHR
  */
-public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<ServiceTypeFamily> {
-    @Override
-    protected int numberOfElements() {
-        return 7;
+public final class ServiceTypeFamilyTest {
+
+    @Test
+    @DisplayName("Test number of enum elements")
+    void numberOfElements() {
+        assertThat(ServiceTypeFamily.values()).hasSize(7);
     }
 
     @Test
-    @Override
-    public void validValueOf() {
+    @DisplayName("Valid cases for #valueOf()")
+    void validValueOf() {
         assertThat(ServiceTypeFamily.valueOf(0x02)).isEqualTo(ServiceTypeFamily.CORE);
         assertThat(ServiceTypeFamily.valueOf(0x03)).isEqualTo(ServiceTypeFamily.DEVICE_MANAGEMENT);
         assertThat(ServiceTypeFamily.valueOf(0x04)).isEqualTo(ServiceTypeFamily.TUNNELING);
@@ -47,8 +51,15 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
     }
 
     @Test
-    @Override
-    public void friendlyName() {
+    @DisplayName("Invalid cases for #valueOf()")
+    void invalidValueOf() {
+        assertThatThrownBy(() -> ServiceTypeFamily.valueOf(0x00)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> ServiceTypeFamily.valueOf(0xFF)).isInstanceOf(KnxEnumNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Test #getFriendlyName()")
+    void testGetFriendlyName() {
         assertThat(ServiceTypeFamily.CORE.getFriendlyName()).isEqualTo("KNX/IP Core");
         assertThat(ServiceTypeFamily.DEVICE_MANAGEMENT.getFriendlyName()).isEqualTo("KNX device Management");
         assertThat(ServiceTypeFamily.TUNNELING.getFriendlyName()).isEqualTo("KNX/IP Tunneling");
@@ -59,9 +70,14 @@ public final class ServiceTypeFamilyTest extends AbstractKnxByteEnumTest<Service
     }
 
     @Test
-    @Override
-    public void testToString() {
-        assertThat(ServiceTypeFamily.CORE).hasToString("ServiceTypeFamily{name=CORE, friendlyName=KNX/IP Core, code=2 (0x02)}");
-        assertThat(ServiceTypeFamily.TUNNELING).hasToString("ServiceTypeFamily{name=TUNNELING, friendlyName=KNX/IP Tunneling, code=4 (0x04)}");
+    @DisplayName("Test #toString()")
+    void testToString() {
+        assertThat(ServiceTypeFamily.CORE).hasToString(
+                "ServiceTypeFamily{name=CORE, friendlyName=KNX/IP Core, code=2}"
+        );
+
+        assertThat(ServiceTypeFamily.TUNNELING).hasToString(
+                "ServiceTypeFamily{name=TUNNELING, friendlyName=KNX/IP Tunneling, code=4}"
+        );
     }
 }

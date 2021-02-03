@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 package li.pitschmann.knx.core.datapoint;
 
-import li.pitschmann.knx.core.datapoint.value.DPT1Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT1}
@@ -62,18 +62,63 @@ class DPT1Test {
     @DisplayName("Test #parse(byte[])")
     void testByteParse() {
         final var dpt = DPT1.SWITCH;
-        assertThat(dpt.parse(new byte[]{0x00})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.parse(new byte[]{0x01})).isInstanceOf(DPT1Value.class);
+
+        // 0x01 = 1 => true
+        final var trueByte = dpt.parse(new byte[]{0x01});
+        assertThat(trueByte.getValue()).isTrue();
+
+        // all others are "false" per default
+
+        // 0x00 = 0 => false
+        final var falseByte = dpt.parse(new byte[]{0x00});
+        assertThat(falseByte.getValue()).isFalse();
+        // 0x02 = 0 => false
+        final var invalidByte = dpt.parse(new byte[]{0x02});
+        assertThat(invalidByte.getValue()).isFalse();
     }
 
     @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT1.SWITCH;
-        assertThat(dpt.parse(new String[]{"false"})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.parse(new String[]{"true"})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT1Value.class);
-        assertThat(dpt.parse(new String[]{"1"})).isInstanceOf(DPT1Value.class);
+
+        // TruE => true
+        final var trueString = dpt.parse(new String[]{"TruE"});
+        assertThat(trueString.getValue()).isTrue();
+        // 1 => true
+        final var trueInt = dpt.parse(new String[]{"1"});
+        assertThat(trueInt.getValue()).isTrue();
+        // On => true
+        final var trueValueText = dpt.parse(new String[]{"ON"});
+        assertThat(trueValueText.getValue()).isTrue();
+
+        // all others are as "false" per default
+
+        // FaLsE => false
+        final var falseString = dpt.parse(new String[]{"FaLsE"});
+        assertThat(falseString.getValue()).isFalse();
+        // 0 => false
+        final var falseInt = dpt.parse(new String[]{"0"});
+        assertThat(falseInt.getValue()).isFalse();
+        // Off => false
+        final var falseValueText = dpt.parse(new String[]{"OFF"});
+        assertThat(falseValueText.getValue()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        // no value provided
+        // false = Off, true = On
+        assertThatThrownBy(() -> DPT1.SWITCH.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Please provide a value (supported: 'false', 'true', '0', '1', 'Off' and 'On'). Provided: [foobar]");
+
+        // no value provided (2nd case)
+        // false = No Alarm, true = Alarm
+        assertThatThrownBy(() -> DPT1.ALARM.parse(new String[]{"baz"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Please provide a value (supported: 'false', 'true', '0', '1', 'No Alarm' and 'Alarm'). Provided: [baz]");
     }
 
     @Test
@@ -82,7 +127,7 @@ class DPT1Test {
         // Switch
         assertThat(DPT1.SWITCH.getTextFor(true)).isEqualTo("On");
         assertThat(DPT1.SWITCH.getTextFor(false)).isEqualTo("Off");
-        // Alaram
+        // Alarm
         assertThat(DPT1.ALARM.getTextFor(true)).isEqualTo("Alarm");
         assertThat(DPT1.ALARM.getTextFor(false)).isEqualTo("No Alarm");
     }
@@ -104,11 +149,11 @@ class DPT1Test {
     @Test
     @DisplayName("Test #of(boolean)")
     void testOf() {
-        // false
-        assertThat(DPT1.SWITCH.of(false)).isInstanceOf(DPT1Value.class);
-        assertThat(DPT1.UP_DOWN.of(false)).isInstanceOf(DPT1Value.class);
-        // true
-        assertThat(DPT1.SWITCH.of(true)).isInstanceOf(DPT1Value.class);
-        assertThat(DPT1.UP_DOWN.of(true)).isInstanceOf(DPT1Value.class);
+        // not-controlled, false
+        final var falseValue = DPT1.SWITCH.of(false);
+        assertThat(falseValue.getValue()).isFalse();
+        // not-controlled, true
+        final var trueValue = DPT1.SWITCH.of(true);
+        assertThat(trueValue.getValue()).isTrue();
     }
 }

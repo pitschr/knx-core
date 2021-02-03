@@ -55,7 +55,7 @@ public final class DisconnectRequestTask implements Subscriber<Body> {
             final var requestBody = (DisconnectRequestBody) body;
 
             // create body
-            final var responseBody = DisconnectResponseBody.of(this.client.getChannelId(), Status.E_NO_ERROR);
+            final var responseBody = DisconnectResponseBody.of(this.client.getChannelId(), Status.NO_ERROR);
             this.client.getEventPool().disconnectEvent().setRequest(requestBody);
             log.trace("Disconnect Request saved.");
             this.client.getEventPool().disconnectEvent().setResponse(responseBody);

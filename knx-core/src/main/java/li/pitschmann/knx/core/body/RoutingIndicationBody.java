@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.CEMIAware;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.cemi.CEMI;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
 import li.pitschmann.knx.core.header.ServiceType;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Body for Routing Indication
@@ -38,7 +40,7 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class RoutingIndicationBody extends AbstractMultiRawData implements RequestBody, ResponseBody, MulticastChannelRelated {
+public final class RoutingIndicationBody implements RequestBody, ResponseBody, CEMIAware, MulticastChannelRelated {
     /**
      * Minimum Structure Length for {@link RoutingIndicationBody} including {@link CEMI}
      * <p>
@@ -48,12 +50,19 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
     /**
      * Maximum Structure Length for {@link RoutingIndicationBody} including {@link CEMI}
      */
-    private static final int STRUCTURE_WITH_CEMI_MAX_LENGTH = 0xFF;
+    private static final int STRUCTURE_WITH_CEMI_MAX_LENGTH = 255;
     private final CEMI cemi;
 
     private RoutingIndicationBody(final byte[] bytes) {
-        super(bytes);
-        this.cemi = CEMI.of(bytes);
+        this(
+                // byte[0..255] => CEMI
+                CEMI.of(bytes)
+        );
+    }
+
+    private RoutingIndicationBody(final CEMI cemi) {
+        Preconditions.checkNonNull(cemi, "CEMI is required.");
+        this.cemi = cemi;
     }
 
     /**
@@ -63,6 +72,8 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      * @return a new immutable {@link RoutingIndicationBody}
      */
     public static RoutingIndicationBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length >= STRUCTURE_WITH_CEMI_MIN_LENGTH && bytes.length <= STRUCTURE_WITH_CEMI_MAX_LENGTH,
+                "Incompatible structure length. Expected [{}..{}] but was: {}", STRUCTURE_WITH_CEMI_MIN_LENGTH, STRUCTURE_WITH_CEMI_MAX_LENGTH, bytes.length);
         return new RoutingIndicationBody(bytes);
     }
 
@@ -73,21 +84,7 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
      * @return a new immutable {@link RoutingIndicationBody}
      */
     public static RoutingIndicationBody of(final CEMI cemi) {
-        // validate
-        if (cemi == null) {
-            throw new KnxNullPointerException("cemi");
-        }
-        return of(cemi.getRawData());
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length < STRUCTURE_WITH_CEMI_MIN_LENGTH || rawData.length > STRUCTURE_WITH_CEMI_MAX_LENGTH) {
-            throw new KnxNumberOutOfRangeException("rawData", STRUCTURE_WITH_CEMI_MIN_LENGTH, STRUCTURE_WITH_CEMI_MAX_LENGTH, rawData.length,
-                    rawData);
-        }
+        return new RoutingIndicationBody(cemi);
     }
 
     @Override
@@ -95,19 +92,36 @@ public final class RoutingIndicationBody extends AbstractMultiRawData implements
         return ServiceType.ROUTING_INDICATION;
     }
 
+    @Override
     public CEMI getCEMI() {
-        return this.cemi;
+        return cemi;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("cemi", this.cemi.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        return this.cemi.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("cemi", cemi)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof RoutingIndicationBody) {
+            final var other = (RoutingIndicationBody) obj;
+            return Objects.equals(this.cemi, other.cemi);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cemi);
     }
 }

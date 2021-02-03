@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT18}
@@ -73,10 +74,34 @@ class DPT18Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT18.SCENE_CONTROL;
-        assertThat(dpt.parse(new String[]{"0"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.parse(new String[]{"63"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "0"})).isInstanceOf(DPT18Value.class);
-        assertThat(dpt.parse(new String[]{"controlled", "63"})).isInstanceOf(DPT18Value.class);
+
+        // not controlled, scene number: 0
+        final var scene0NotControlled = dpt.parse(new String[]{"0"});
+        assertThat(scene0NotControlled.isControlled()).isFalse();
+        assertThat(scene0NotControlled.getSceneNumber()).isZero();
+        // not controlled, scene number: 63
+        final var scene63NotControlled = dpt.parse(new String[]{"63"});
+        assertThat(scene63NotControlled.isControlled()).isFalse();
+        assertThat(scene63NotControlled.getSceneNumber()).isEqualTo(63);
+        // controlled, scene number: 0
+        final var scene0Controlled = dpt.parse(new String[]{"0", "controlled"});
+        assertThat(scene0Controlled.isControlled()).isTrue();
+        assertThat(scene0Controlled.getSceneNumber()).isZero();
+        // controlled, scene number: 63
+        final var scene63Controlled = dpt.parse(new String[]{"controlled", "63"});
+        assertThat(scene63Controlled.isControlled()).isTrue();
+        assertThat(scene63Controlled.getSceneNumber()).isEqualTo(63);
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT18.SCENE_CONTROL;
+
+        // no scene number format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Scene Number missing (digit between 0 and 63). Provided: [foobar]");
     }
 
     @Test

@@ -54,7 +54,7 @@ public final class BodyFactory {
      */
     public static <T extends Body> T of(final byte[] headerAndBodyBytes) {
         final var header = Header.of(headerAndBodyBytes);
-        return of(header, Arrays.copyOfRange(headerAndBodyBytes, Header.KNXNET_HEADER_LENGTH, header.getTotalLength()));
+        return of(header, Arrays.copyOfRange(headerAndBodyBytes, Header.STRUCTURE_LENGTH, header.getTotalLength()));
     }
 
     /**

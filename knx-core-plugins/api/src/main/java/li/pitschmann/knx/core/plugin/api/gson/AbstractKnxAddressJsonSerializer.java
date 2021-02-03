@@ -26,7 +26,7 @@ public abstract class AbstractKnxAddressJsonSerializer<T extends KnxAddress> imp
 
         // raw data
         final var jsonArray = new JsonArray();
-        for (final byte b : address.getRawData()) {
+        for (final byte b : address.toByteArray()) {
             jsonArray.add(new JsonPrimitive(b));
         }
         jsonObject.add("raw", jsonArray);

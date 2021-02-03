@@ -33,7 +33,7 @@ public class StringsTest {
 
     @Test
     @DisplayName("Test if string is null or empty")
-    public void testIsNullOrEmpty() {
+    void testIsNullOrEmpty() {
         assertThat(Strings.isNullOrEmpty(null)).isTrue();
         assertThat(Strings.isNullOrEmpty("")).isTrue();
 
@@ -42,30 +42,48 @@ public class StringsTest {
     }
 
     @Test
-    @DisplayName("Test ToStringHelper")
-    public void testToStringHelper() {
-        final var testObject = new TestObject();
+    @DisplayName("Test ToStringHelper with fields")
+    void testToStringHelper() {
+        final var obj = new Object();
 
         // with no field
-        assertThat(Strings.toStringHelper(testObject)).isInstanceOf(Strings.ToStringHelper.class);
-        assertThat(Strings.toStringHelper(testObject).toString()).isEqualTo("TestObject{}");
+        assertThat(Strings.toStringHelper(obj)).isInstanceOf(Strings.ToStringHelper.class);
+        assertThat(Strings.toStringHelper(obj).toString()).isEqualTo("Object{}");
 
         // with single field
-        final var helper1 = Strings.toStringHelper(testObject);
+        final var helper1 = Strings.toStringHelper(obj);
         helper1.add("name", "Chris");
-        assertThat(helper1.toString()).isEqualTo("TestObject{name=Chris}");
+        assertThat(helper1.toString()).isEqualTo("Object{name=Chris}");
 
         // with many fields
-        final var helper2 = Strings.toStringHelper(testObject);
+        final var helper2 = Strings.toStringHelper(obj);
         helper2.add("key1", "value1")
                 .add("key2", "value2")
                 .add("key3", "value3");
-        assertThat(helper2.toString()).isEqualTo("TestObject{key1=value1, key2=value2, key3=value3}");
+        assertThat(helper2.toString()).isEqualTo("Object{key1=value1, key2=value2, key3=value3}");
+    }
+
+    @Test
+    @DisplayName("Test ToStringHelper with an Inner Class")
+    void testToStringHelperInnerClass() {
+        final var obj = new TestObject();
+
+        assertThat(Strings.toStringHelper(obj)).isInstanceOf(Strings.ToStringHelper.class);
+        assertThat(Strings.toStringHelper(obj).toString()).isEqualTo("StringsTest$TestObject{}");
+    }
+
+    @Test
+    @DisplayName("Test ToStringHelper with an Inner Class (2nd level)")
+    void testToStringHelperInnerClass2ndLevel() {
+        final var obj = new TestObject.TestInnerClass();
+
+        assertThat(Strings.toStringHelper(obj)).isInstanceOf(Strings.ToStringHelper.class);
+        assertThat(Strings.toStringHelper(obj).toString()).isEqualTo("StringsTest$TestObject$TestInnerClass{}");
     }
 
     @Test
     @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
+    void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(Strings.class);
     }
 
@@ -73,6 +91,8 @@ public class StringsTest {
      * Dummy class as we cannot mock 'Class.class'
      */
     private static class TestObject {
-        // empty
+        private static class TestInnerClass {
+            // empty
+        }
     }
 }

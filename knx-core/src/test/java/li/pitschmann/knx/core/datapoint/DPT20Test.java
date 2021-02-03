@@ -38,13 +38,14 @@ class DPT20Test {
 
     @Test
     @DisplayName("ActuatorConnectType.SENSOR")
-    void testActuatorConnectType_Sensor(){
+    void testActuatorConnectType_Sensor() {
         final var valueSensor = DPT20.ActuatorConnectType.SENSOR;
 
         // short access (via of())
         assertThat(valueSensor.ordinal()).isEqualTo(0);
         assertThat(valueSensor.getId()).isEqualTo("20.020 - SENSOR");
-        assertThat(valueSensor.getDescription()).isEqualTo("Actuator Connect Type - Sensor Connection");
+        assertThat(valueSensor.getDescription()).isEqualTo("Sensor Connection");
+        assertThat(valueSensor.getFullDescription()).isEqualTo("Actuator Connect Type - Sensor Connection");
         assertThat(valueSensor.getValue()).isEqualTo(1);
         assertThat(valueSensor.toByteArray()).containsExactly(0x01);
         assertThat(valueSensor.toText()).isEqualTo("Sensor Connection");
@@ -59,16 +60,17 @@ class DPT20Test {
 
     @Test
     @DisplayName("ActuatorConnectType.CONTROLLER")
-    void testActuatorConnectType_Controller(){
+    void testActuatorConnectType_Controller() {
         final var valueSensor = DPT20.ActuatorConnectType.CONTROLLER;
 
         // short access (via of())
         assertThat(valueSensor.ordinal()).isEqualTo(1);
         assertThat(valueSensor.getId()).isEqualTo("20.020 - CONTROLLER");
-        assertThat(valueSensor.getDescription()).isEqualTo("Actuator Connect Type - Controller Connection");
+        assertThat(valueSensor.getDescription()).isEqualTo("Controller Connection");
+        assertThat(valueSensor.getFullDescription()).isEqualTo("Actuator Connect Type - Controller Connection");
+        assertThat(valueSensor.getValue()).isEqualTo(2);
         assertThat(valueSensor.toByteArray()).containsExactly(0x02);
         assertThat(valueSensor.toText()).isEqualTo("Controller Connection");
-
 
         // access vial DPTEnumValue
         assertThat(valueSensor.of().getValue()).isEqualTo(2);

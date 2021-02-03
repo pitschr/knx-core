@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.examples.lamp_inverse;
+package li.pitschmann.knx.examples.lamp_toggle;
 
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.communication.DefaultKnxClient;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author PITSCHR
  */
-public final class LampInverseExample {
+public final class LampToggleExample {
     // disable logging as we only want to print System.out.println(..)
     static {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(ch.qos.logback.classic.Level.OFF);

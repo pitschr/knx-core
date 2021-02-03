@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT11}
@@ -75,8 +76,29 @@ class DPT11Test {
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
         final var dpt = DPT11.DATE;
-        assertThat(dpt.parse(new String[]{"1990-01-01"})).isInstanceOf(DPT11Value.class);
-        assertThat(dpt.parse(new String[]{"2089-12-31"})).isInstanceOf(DPT11Value.class);
+
+        // date: 1990-01-01
+        final var dateMin = dpt.parse(new String[]{"1990-01-01"});
+        assertThat(dateMin.getDate()).isEqualTo(LocalDate.of(1990, 1, 1));
+
+        // date: 2089-12-31
+        final var dateMax = dpt.parse(new String[]{"2089-12-31"});
+        assertThat(dateMax.getDate()).isEqualTo(LocalDate.of(2089, 12, 31));
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT11.DATE;
+
+        // no date provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"foobar"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Date missing (supported format: 'yyyy-mm-dd'). Provided: [foobar]");
+        // wrong date format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"01.02.2020"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Date missing (supported format: 'yyyy-mm-dd'). Provided: [01.02.2020]");
     }
 
     @Test

@@ -61,8 +61,44 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
         this.byteArray = new byte[]{(byte) (value & 0xFF)};
     }
 
-    @Override
-    public final DPTEnum<T> getDPT() {
+    /**
+     * Returns the complete id like:
+     * {@code 20.004 - High}
+     *
+     * @return complete id
+     */
+    public String getId() {
+        return dpt.getId() + " - " + enumField.name();
+    }
+
+    /**
+     * Returns the human-friendly full description of enum value
+     * <p>
+     * Example: {@code High}
+     *
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns the human-friendly full description of enum field and value
+     * <p>
+     * Example: {@code Priority - High}
+     *
+     * @return full description
+     */
+    public String getFullDescription() {
+        return dpt.getDescription() + " - " + description;
+    }
+
+    /**
+     * Returns the {@link DPTEnum} of current value
+     *
+     * @return the actual {@link DPTEnum}
+     */
+    public DPTEnum<T> getDPT() {
         return dpt;
     }
 
@@ -82,15 +118,6 @@ public final class DPTEnumValue<T extends Enum<T> & DataPointEnum<T>> implements
      */
     public int getValue() {
         return value;
-    }
-
-    /**
-     * Returns the human-friendly description of enum value
-     *
-     * @return description
-     */
-    public String getDescription() {
-        return description;
     }
 
     @Override

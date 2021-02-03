@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import li.pitschmann.knx.core.KnxBytesEnum;
 import li.pitschmann.knx.core.dib.ServiceTypeFamily;
 import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
 import li.pitschmann.knx.core.exceptions.KnxServiceTypeHasNoResponseIdentifier;
-import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -207,13 +206,15 @@ public enum ServiceType implements KnxBytesEnum {
      * if given {@code code} is not known
      */
     public static ServiceType valueOf(final int code) {
-        return Arrays.stream(values()).filter(x -> x.getCode() == code).findFirst()
+        return Arrays.stream(values())
+                .filter(x -> x.getCode() == code)
+                .findFirst()
                 .orElseThrow(() -> new KnxEnumNotFoundException(ServiceType.class, code));
     }
 
     @Override
     public int getCode() {
-        return this.code;
+        return code;
     }
 
     /**
@@ -223,16 +224,16 @@ public enum ServiceType implements KnxBytesEnum {
      */
     @Override
     public byte[] getCodeAsBytes() {
-        return new byte[]{(byte) (this.code >>> 8), (byte) this.code};
+        return new byte[]{(byte) (code >>> 8), (byte) code};
     }
 
     @Override
     public String getFriendlyName() {
-        return this.friendlyName;
+        return friendlyName;
     }
 
     public ServiceTypeFamily getFamily() {
-        return this.family;
+        return family;
     }
 
     /**
@@ -241,7 +242,7 @@ public enum ServiceType implements KnxBytesEnum {
      * @return {@code true} if current service type is response/acknowledge, otherwise {@code false}
      */
     public boolean hasResponseIdentifier() {
-        return this.responseIdentifier != null;
+        return responseIdentifier != null;
     }
 
     /**
@@ -251,21 +252,21 @@ public enum ServiceType implements KnxBytesEnum {
      * @throws KnxServiceTypeHasNoResponseIdentifier when no response identifier is defined.
      */
     public ServiceType getResponseIdentifier() {
-        if (!this.hasResponseIdentifier()) {
+        if (!hasResponseIdentifier()) {
             throw new KnxServiceTypeHasNoResponseIdentifier(this);
         }
-        return this.responseIdentifier;
+        return responseIdentifier;
     }
 
     @Override
     public String toString() {
         // @formatter:off
         return Strings.toStringHelper(this)
-                .add("name", this.name())
-                .add("friendlyName", this.friendlyName)
-                .add("code", this.code + " (" + ByteFormatter.formatHex(this.code) + ")")
-                .add("family", this.family)
-                .add("responseIdentifier", this.responseIdentifier == null ? "" : this.responseIdentifier.name())
+                .add("name", name())
+                .add("friendlyName", friendlyName)
+                .add("code", code)
+                .add("family", family.name())
+                .add("responseIdentifier", responseIdentifier == null ? "" : responseIdentifier.name())
                 .toString();
         // @formatter:on
     }

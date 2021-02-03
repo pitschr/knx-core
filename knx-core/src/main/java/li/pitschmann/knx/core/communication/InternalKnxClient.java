@@ -45,7 +45,7 @@ import li.pitschmann.knx.core.exceptions.KnxDiscoveryNotReceivedException;
 import li.pitschmann.knx.core.exceptions.KnxNoTunnelingException;
 import li.pitschmann.knx.core.exceptions.KnxWrongChannelIdException;
 import li.pitschmann.knx.core.net.HPAI;
-import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInformation;
+import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInfo;
 import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.PluginManager;
 import li.pitschmann.knx.core.utils.Closeables;
@@ -191,9 +191,9 @@ public final class InternalKnxClient implements AutoCloseable {
         log.trace("Call 'verifyTunnelingSupport()' method.");
         final var descriptionResponseBody = this.fetchDescriptionFromKNX();
 
-        // get supported device families
+        // get supported service families
         final var serviceFamilies = descriptionResponseBody.getSupportedDeviceFamilies().getServiceFamilies();
-        log.debug("Supported device families: {}", serviceFamilies);
+        log.debug("Supported Service Families: {}", serviceFamilies);
 
         // check if the remote device accepts TUNNELING
         return serviceFamilies.stream().anyMatch(f -> f.getFamily() == ServiceTypeFamily.TUNNELING);
@@ -473,8 +473,8 @@ public final class InternalKnxClient implements AutoCloseable {
     }
 
     /**
-     * Returns the description response body from KNX Net/IP device containing device information, supported device
-     * capabilities.
+     * Returns the description response body from KNX Net/IP device
+     * containing device information, supported service capabilities.
      *
      * @return {@link DescriptionResponseBody}, otherwise {@link KnxDescriptionNotReceivedException} will be thrown
      */
@@ -508,7 +508,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
     /**
      * Returns the discovery response body containing available KNX Net/IP devices including device information,
-     * supported device capabilities.
+     * supported service family capabilities.
      *
      * @return First {@link SearchResponseBody} (subsequent should be requested by {@link InternalKnxEventPool}),
      * otherwise {@link KnxDiscoveryNotReceivedException} will be thrown
@@ -552,7 +552,7 @@ public final class InternalKnxClient implements AutoCloseable {
         log.trace("Method 'fetchChannelIdFromKNX()' called.");
 
         // create connect request and send it
-        final var cri = ConnectionRequestInformation.useDefault();
+        final var cri = ConnectionRequestInfo.useDefault();
         final var requestBody = ConnectRequestBody.of(this.controlHPAI, this.dataHPAI, cri);
         log.debug("Request for connect: {}", requestBody);
 
@@ -561,7 +561,7 @@ public final class InternalKnxClient implements AutoCloseable {
             responseBody = this.<ConnectResponseBody>send(requestBody, getConfig(CoreConfigs.Connect.REQUEST_TIMEOUT)).get();
             // check status if we got response with NO_ERROR status
             Preconditions.checkNonNull(responseBody, "No connect response received for request: {}", requestBody);
-            Preconditions.checkState(responseBody.getStatus() == Status.E_NO_ERROR,
+            Preconditions.checkState(responseBody.getStatus() == Status.NO_ERROR,
                     "Connect Response with error state received: {}", responseBody);
             return responseBody.getChannelId();
         } catch (final Exception ex) {

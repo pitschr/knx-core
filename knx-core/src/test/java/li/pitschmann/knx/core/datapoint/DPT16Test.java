@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT16}
@@ -56,9 +57,14 @@ class DPT16Test {
     void testStringCompatibility() {
         final var dpt = DPT16.ASCII;
         // String is supported for length == 1
+        // and if the length of text is below 14 characters
         assertThat(dpt.isCompatible(new String[0])).isFalse();
-        assertThat(dpt.isCompatible(new String[1])).isTrue();
+        assertThat(dpt.isCompatible(new String[1])).isFalse();
         assertThat(dpt.isCompatible(new String[2])).isFalse();
+
+        assertThat(dpt.isCompatible(new String[]{""})).isTrue();
+        assertThat(dpt.isCompatible(new String[]{"12345678901234"})).isTrue();
+        assertThat(dpt.isCompatible(new String[]{"123456789012345"})).isFalse();
     }
 
     @Test
@@ -75,16 +81,29 @@ class DPT16Test {
     }
 
     @Test
-    @DisplayName("Test #parse(String[])")
-    void testStringParse() {
-        // ASCII characters only
-        assertThat(DPT16.ASCII.parse(new String[]{"Hallo"})).isInstanceOf(DPT16Value.class);
-        assertThat(DPT16.ASCII.parse(new String[]{"Hello World!!!"})).isInstanceOf(DPT16Value.class);
-        assertThat(DPT16.ASCII.parse(new String[]{"0x48" /*H*/, "0x61" /*a*/, "0x6C" /*l*/, "0x6C" /*l*/, "0x6F" /*o*/})).isInstanceOf(DPT16Value.class);
+    @DisplayName("Test #parse(String[]) with ASCII")
+    void testStringParseASCII() {
+        final var text = DPT16.ASCII.parse(new String[]{"Hello World!"});
+        assertThat(text.getCharacters()).isEqualTo("Hello World!");
+    }
 
-        // ISO-8859-1 characters (umlauts)
-        assertThat(DPT16.ISO_8859_1.parse(new String[]{"Hällö"})).isInstanceOf(DPT16Value.class);
-        assertThat(DPT16.ISO_8859_1.parse(new String[]{"0x48" /*H*/, "0xE4" /*ä*/, "0x6C" /*l*/, "0x6C" /*l*/, "0xF6" /*ö*/})).isInstanceOf(DPT16Value.class);
+    @Test
+    @DisplayName("Test #parse(String[]) with ISO-8859-1")
+    void testStringParseISO() {
+        // value by string
+        final var text = DPT16.ISO_8859_1.parse(new String[]{"Grüass di"});
+        assertThat(text.getCharacters()).isEqualTo("Grüass di");
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
+        final var dpt = DPT16.ASCII;
+
+        // no supported character for ASCII format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"äöü"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The given characters cannot be encoded by DPT '16.000': äöü");
     }
 
     @Test

@@ -67,6 +67,11 @@ public interface KnxEvent<REQUEST extends RequestBody, RESPONSE extends Response
     void setResponse(RESPONSE response);
 
     /**
+     * Clears <strong>all</strong> responses
+     */
+    void clearResponse();
+
+    /**
      * Returns the {@link Instant} time of KNX response event
      *
      * @return instant time for response

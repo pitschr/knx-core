@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -102,9 +103,7 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
         // Runnable for Requests
         // --------------------------------
         requests = new ArrayList<>(mockServerAnnotation.requests().length + 1);
-        for (final var command : mockServerAnnotation.requests()) {
-            requests.add(command);
-        }
+        requests.addAll(Arrays.asList(mockServerAnnotation.requests()));
         // Send disconnect request after trigger if specified in MockServerTest#disconnectTrigger()
         if (shouldDisconnectAfterTrigger) {
             requests.add(MockServerCommandParser.DISCONNECT_REQUEST_COMMAND);
@@ -157,15 +156,17 @@ public class MockServerCommunicator implements Flow.Subscriber<Body> {
             } else {
                 log.debug("Request processed by '{}': {}", responseStrategy.getClass().getName(), requestBody);
                 // get response body
-                final var mockResponse = responseStrategy.createResponse(this.mockServer, new MockRequest(requestBody));
+                final var mockResponse = responseStrategy.createResponse(this.mockServer, requestBody);
 
                 // add to outbox
-                this.mockServer.addToOutbox(mockResponse.getBody());
+                this.mockServer.addToOutbox(mockResponse);
 
                 // checks if the disconnect should be done by KNX mock server
                 if (shouldDisconnectTrigger()) {
                     log.debug("KNX mock server disconnect triggered");
-                    this.mockServer.addToOutbox(new DefaultDisconnectStrategy().createRequest(this.mockServer, null).getBody());
+                    this.mockServer.addToOutbox(
+                            new DefaultDisconnectStrategy().createRequest(this.mockServer, null)
+                    );
                 }
                 // if the request body was a connect state request then internal runnable services may start
                 else if (!requestRunnableStarted && requestBody instanceof ConnectionStateRequestBody) {

@@ -194,8 +194,8 @@ public class XmlProjectTest {
         assertThatThrownBy(() -> xmlProject.getGroupRange(11)).isInstanceOf(IllegalArgumentException.class);
 
         // invalid main groups (because group number is outside of KNX specification)
-        assertThatThrownBy(() -> xmlProject.getGroupRange(-1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> xmlProject.getGroupRange(100)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(100)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class XmlProjectTest {
         assertThatThrownBy(() -> xmlProject.getGroupRange(11, 0)).isInstanceOf(IllegalArgumentException.class);
 
         // invalid main groups (because group number is outside of KNX specification)
-        assertThatThrownBy(() -> xmlProject.getGroupRange(0, -1)).isInstanceOf(KnxNumberOutOfRangeException.class);
-        assertThatThrownBy(() -> xmlProject.getGroupRange(0, 100)).isInstanceOf(KnxNumberOutOfRangeException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(0, -1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> xmlProject.getGroupRange(0, 100)).isInstanceOf(IllegalArgumentException.class);
     }
 }

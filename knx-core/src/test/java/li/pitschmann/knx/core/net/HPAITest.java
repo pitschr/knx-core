@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 
 package li.pitschmann.knx.core.net;
 
-import li.pitschmann.knx.core.exceptions.KnxIllegalArgumentException;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.body.ConnectionStateRequestBody;
 import li.pitschmann.knx.core.utils.Networker;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.DatagramSocket;
@@ -42,148 +42,166 @@ import static org.mockito.Mockito.when;
  *
  * @author PITSCHR
  */
-public final class HPAITest {
-    private static final InetAddress LOCALHOST = Networker.getByAddress(127, 0, 0, 1);
-    private static final InetAddress TCP_ADDRESS = Networker.getByAddress(126, 0, 0, 1);
-    private static final InetAddress UNBOUND = Networker.getAddressUnbound();
-    private static final DatagramChannel udpChannelMock;
-    private static final SocketChannel tcpChannelMock;
+final class HPAITest {
 
-    static {
-        // mock UDP (DatagramChannel)
-        udpChannelMock = mock(DatagramChannel.class);
+    @Test
+    @DisplayName("Test #useDefault()")
+    void testUseDefault() {
+        final var hpai = HPAI.useDefault();
+        assertThat(hpai.getLength()).isEqualTo(HPAI.STRUCTURE_LENGTH);
+        assertThat(hpai.getProtocol()).isSameAs(HostProtocol.IPV4_UDP);
+        assertThat(hpai.getAddress()).isEqualTo(Networker.getAddressUnbound());
+        assertThat(hpai.getPort()).isZero();
+
+        assertThat(hpai.toByteArray()).containsExactly(
+                HPAI.STRUCTURE_LENGTH,  // Structure Length
+                0x01,                   // Host Protocol
+                0x00, 0x00, 0x00, 0x00, // Address
+                0x00, 0x00              // Port
+        );
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[])")
+    void testOf_Bytes() {
+        final var bytes = new byte[]{
+                HPAI.STRUCTURE_LENGTH,  // Structure Length
+                0x02,                   // Host Protocol
+                0x7E, 0x04, 0x05, 0x06, // Address (126.4.5.6)
+                (byte) 0xB2, 0x6E       // Port (45678)
+        };
+
+        final var hpai = HPAI.of(bytes);
+        assertThat(hpai.getLength()).isEqualTo(HPAI.STRUCTURE_LENGTH);
+        assertThat(hpai.getProtocol()).isSameAs(HostProtocol.IPV4_TCP);
+        assertThat(hpai.getAddress()).isEqualTo(Networker.getByAddress(126, 4, 5, 6));
+        assertThat(hpai.getPort()).isEqualTo(45678);
+        assertThat(hpai.toByteArray()).containsExactly(bytes);
+    }
+
+    @Test
+    @DisplayName("Test #of(HostProtocol, InetAddress, int)")
+    void testOf_HostProtocol_Address_Port() {
+        final var address = Networker.getByAddress(10, 37, 83, 30);
+        final var hpai = HPAI.of(HostProtocol.IPV4_UDP, address, 32373);
+
+        assertThat(hpai.getLength()).isEqualTo(HPAI.STRUCTURE_LENGTH);
+        assertThat(hpai.getProtocol()).isSameAs(HostProtocol.IPV4_UDP);
+        assertThat(hpai.getAddress()).isEqualTo(address);
+        assertThat(hpai.getPort()).isEqualTo(32373);
+        assertThat(hpai.toByteArray()).containsExactly(
+                HPAI.STRUCTURE_LENGTH,  // Structure Length
+                0x01,                   // Host Protocol
+                0x0A, 0x25, 0x53, 0x1E, // Address (10.37.83.30)
+                0x7E, 0x75              // Port (32373)
+        );
+    }
+
+    @Test
+    @DisplayName("Test #of(Channel) with UDP")
+    void testOf_Channel_UDP() {
+        final var address = Networker.getByAddress(81, 124, 233, 7);
+        final var udpChannelMock = mock(DatagramChannel.class);
         final var socketMock = mock(DatagramSocket.class);
         when(udpChannelMock.socket()).thenReturn(socketMock);
-        when(socketMock.getLocalAddress()).thenReturn(LOCALHOST);
+        when(socketMock.getLocalAddress()).thenReturn(address);
         when(socketMock.getLocalPort()).thenReturn(12345);
 
-        tcpChannelMock = mock(SocketChannel.class);
+        final var hpai = HPAI.of(udpChannelMock);
+        assertThat(hpai.toByteArray()).containsExactly(
+                HPAI.STRUCTURE_LENGTH,         // Structure Length
+                0x01,                          // Host Protocol
+                0x51, 0x7C, (byte) 0xE9, 0x07, // Address (81.124.233.7)
+                0x30, 0x39                     // Port (12345)
+        );
+    }
+
+    @Test
+    @DisplayName("Test #of(Channel) with TCP")
+    void testOf_Channel_TCP() {
+        final var address = Networker.getByAddress(243, 28, 92, 41);
+        final var tcpChannelMock = mock(SocketChannel.class);
         final var tcpSocketMock = mock(Socket.class);
         when(tcpChannelMock.socket()).thenReturn(tcpSocketMock);
-        when(tcpSocketMock.getLocalAddress()).thenReturn(TCP_ADDRESS);
-        when(tcpSocketMock.getLocalPort()).thenReturn(45678);
+        when(tcpSocketMock.getLocalAddress()).thenReturn(address);
+        when(tcpSocketMock.getLocalPort()).thenReturn(7333);
+
+        final var hpai = HPAI.of(tcpChannelMock);
+        assertThat(hpai.toByteArray()).containsExactly(
+                HPAI.STRUCTURE_LENGTH,         // Structure Length
+                0x02,                          // Host Protocol
+                (byte) 0xF3, 0x1C, 0x5C, 0x29, // Address (243.28.92.41)
+                0x1C, (byte) 0xA5              // Port (7333)
+        );
     }
 
-    /**
-     * Tests the {@link HPAI#useDefault()}
-     */
     @Test
-    public void useDefault() {
-        final var hpaiDefault = HPAI.useDefault();
-        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_UDP, UNBOUND, 0);
-
-        // assert
-        assertThat(hpaiDefault.getRawData()).containsExactly(hpaiCreateBy.getRawData());
-    }
-
-    /**
-     * Tests the {@link HPAI#of(Channel)}
-     */
-    @Test
-    public void createByUdpChannel() {
-        final var hpaiCreateByChannel = HPAI.of(udpChannelMock);
-        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 12345);
-
-        // assert
-        assertThat(hpaiCreateByChannel.getRawData()).containsExactly(hpaiCreateBy.getRawData());
-    }
-
-    /**
-     * Tests the {@link HPAI#of(Channel)}
-     */
-    @Test
-    public void createByTcpChannel() {
-        final var hpaiCreateByChannel = HPAI.of(tcpChannelMock);
-        final var hpaiCreateBy = HPAI.of(HostProtocol.IPV4_TCP, TCP_ADDRESS, 45678);
-
-        // assert
-        assertThat(hpaiCreateByChannel.getRawData()).containsExactly(hpaiCreateBy.getRawData());
-    }
-
-    /**
-     * Tests the {@link HPAI} with no length
-     */
-    @Test
-    public void emptyAdditionalInfo() {
-        // create
-        final var hpaiByCreate = HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 80);
-        final var hpaiByCreateRawData = HPAI.of(hpaiByCreate.getRawData());
-        assertThat(hpaiByCreateRawData.getLength()).isEqualTo(HPAI.KNXNET_HPAI_LENGTH);
-        assertThat(hpaiByCreateRawData.getProtocol()).isEqualTo(HostProtocol.IPV4_UDP);
-        assertThat(hpaiByCreateRawData.getAddress().getAddress()).containsExactly(0x7f, 0x00, 0x00, 0x01);
-        assertThat(hpaiByCreateRawData.getPort()).isEqualTo(80);
-
-        // create by bytes
-        final var hpaiByValueOf = HPAI.of(new byte[]{0x08, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x00, 0x50});
-        assertThat(hpaiByValueOf.getLength()).isEqualTo(HPAI.KNXNET_HPAI_LENGTH);
-        assertThat(hpaiByValueOf.getProtocol()).isEqualTo(HostProtocol.IPV4_UDP);
-        assertThat(hpaiByValueOf.getAddress().getAddress()).containsExactly(0x7f, 0x00, 0x00, 0x01);
-        assertThat(hpaiByValueOf.getPort()).isEqualTo(80);
-
-        // compare raw data of 'create' and 'create by bytes'
-        assertThat(hpaiByCreate.getRawData()).isEqualTo(hpaiByCreateRawData.getRawData());
-        assertThat(hpaiByCreate.getRawData()).isEqualTo(hpaiByValueOf.getRawData());
-    }
-
-    /**
-     * Tests <strong>invalid</strong> control byte parameters
-     */
-    @Test
-    public void invalidCases() {
+    @DisplayName("Invalid cases for #of(byte[])")
+    void invalidCases_of_Bytes() {
         // null
-        assertThatThrownBy(() -> HPAI.of((Channel) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("channel");
-        assertThatThrownBy(() -> HPAI.of((byte[]) null)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("hpaiRawData");
-        assertThatThrownBy(() -> HPAI.of(new byte[3])).isInstanceOf(KnxNumberOutOfRangeException.class).hasMessageContaining("hpaiRawData");
+        assertThatThrownBy(() -> HPAI.of((byte[]) null))
+                .isInstanceOf(NullPointerException.class);
 
-        assertThatThrownBy(() -> HPAI.of(null, LOCALHOST, 80)).isInstanceOf(KnxNullPointerException.class).hasMessageContaining("protocol");
-        assertThatThrownBy(() -> HPAI.of(HostProtocol.IPV4_UDP, null, 80)).isInstanceOf(KnxNullPointerException.class)
-                .hasMessageContaining("address");
+        // invalid structure length
+        assertThatThrownBy(() -> HPAI.of(new byte[3]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Incompatible structure length. Expected '8' but was: 3");
+    }
+
+    @Test
+    @DisplayName("Invalid cases for #of(HostProtocol, InetAddress, port)")
+    void invalidCases_of_HostProtocol_InetAddress_Port() {
+        // null
+        assertThatThrownBy(() -> HPAI.of(null, mock(InetAddress.class), 80))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Host Protocol is required.");
+        assertThatThrownBy(() -> HPAI.of(mock(HostProtocol.class), null, 80))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Address is required.");
 
         // length out of range
-        assertThatThrownBy(() -> HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, -1)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("port");
-        assertThatThrownBy(() -> HPAI.of(HostProtocol.IPV4_UDP, LOCALHOST, 0xFFFF + 1)).isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessageContaining("port");
+        assertThatThrownBy(() -> HPAI.of(mock(HostProtocol.class), mock(InetAddress.class), -1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Port is out of range. Expected [0..65535] but was: -1");
+        assertThatThrownBy(() -> HPAI.of(mock(HostProtocol.class), mock(InetAddress.class), 0xFFFF + 1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Port is out of range. Expected [0..65535] but was: 65536");
+    }
 
-        // test unsupported channel
+    @Test
+    @DisplayName("Invalid cases for #of(Channel)")
+    void invalidCases_of_Channel() {
+        // null
+        assertThatThrownBy(() -> HPAI.of((Channel) null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Channel is required.");
+
+        // unsupported channel
         assertThatThrownBy(() -> HPAI.of(mock(SelectableChannel.class))) //
-                .isInstanceOf(KnxIllegalArgumentException.class) //
-                .hasMessageStartingWith("Channel type is not supported:");
+                .isInstanceOf(IllegalArgumentException.class) //
+                .hasMessageStartingWith("HPAI is not supported for channel class: ");
     }
 
-    /**
-     * Test {@link HPAI#toString()}
-     */
     @Test
-    public void testToString() {
-        assertThat(HPAI.of(udpChannelMock)).hasToString(String.format(
-                "HPAI{length=8 (0x08), protocol=%s, address=127.0.0.1 (0x7F 00 00 01), port=12345 (0x30 39), rawData=0x08 01 7F 00 00 01 30 39}",
-                HostProtocol.IPV4_UDP));
+    @DisplayName("Test #toString()")
+    void testToString() {
+        final var udpAddress = Networker.getByAddress(125, 1, 2, 3);
+        final var udpHpai = HPAI.of(HostProtocol.IPV4_UDP, udpAddress, 12345);
+        assertThat(udpHpai).hasToString(
+                "HPAI{length=8, protocol=IPV4_UDP, address=125.1.2.3, port=12345}"
+        );
 
-        assertThat(HPAI.of(tcpChannelMock)).hasToString(String.format(
-                "HPAI{length=8 (0x08), protocol=%s, address=126.0.0.1 (0x7E 00 00 01), port=45678 (0xB2 6E), rawData=0x08 02 7E 00 00 01 B2 6E}",
-                HostProtocol.IPV4_TCP));
+        final var tcpAddress = Networker.getByAddress(126, 4, 5, 6);
+        final var tcpHpai = HPAI.of(HostProtocol.IPV4_TCP, tcpAddress, 56789);
+        assertThat(tcpHpai).hasToString(
+                "HPAI{length=8, protocol=IPV4_TCP, address=126.4.5.6, port=56789}"
+        );
     }
 
-    /**
-     * Test {@link HPAI#equals(Object)} and {@link HPAI#hashCode()}
-     */
     @Test
-    public void testEqualsAndHashcode() {
-        final var hpaiA = HPAI.of(new byte[]{0x08, 0x02, 0x03, 0x04, 0x05, 0x06, 0x00, 0x07});
-        final var hpaiB = HPAI.of(HostProtocol.IPV4_TCP, Networker.getByAddress(3, 4, 5, 6), 7);
-
-        // equals
-        assertThat(hpaiA).isEqualTo(hpaiA);
-        assertThat(hpaiB).isEqualTo(hpaiA);
-        assertThat(hpaiA).hasSameHashCodeAs(hpaiA);
-        assertThat(hpaiA).hasSameHashCodeAs(hpaiB);
-
-        // not equals
-        assertThat(hpaiA).isNotEqualTo(new Object());
-        assertThat(hpaiA).isNotEqualTo(HPAI.of(new byte[]{0x07, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}));
-        assertThat(hpaiA).isNotEqualTo(HPAI.of(HostProtocol.IPV4_UDP, Networker.getByAddress(3, 4, 5, 6), 7));
-        assertThat(hpaiA).isNotEqualTo(HPAI.of(HostProtocol.IPV4_TCP, Networker.getByAddress(2, 4, 5, 6), 7));
-        assertThat(hpaiA).isNotEqualTo(HPAI.of(HostProtocol.IPV4_TCP, Networker.getByAddress(3, 4, 5, 6), 8));
+    @DisplayName("#equals() and #hashCode()")
+    void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(ConnectionStateRequestBody.class).verify();
     }
+
 }

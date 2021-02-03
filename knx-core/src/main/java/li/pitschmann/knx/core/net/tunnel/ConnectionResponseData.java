@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,15 @@
 
 package li.pitschmann.knx.core.net.tunnel;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
+import li.pitschmann.knx.core.MultiRawDataAware;
 import li.pitschmann.knx.core.address.IndividualAddress;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.ConnectionType;
-import li.pitschmann.knx.core.utils.ByteFormatter;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Tunneling Connection Response Data (CRD)
@@ -52,17 +53,37 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class ConnectionResponseData extends AbstractMultiRawData {
+public final class ConnectionResponseData implements MultiRawDataAware {
+    /**
+     * Fixed length for {@link ConnectionResponseData}
+     */
+    public static final int STRUCTURE_LENGTH = 0x04;
+
     private final int length;
     private final ConnectionType connectionType;
     private final IndividualAddress address;
 
-    private ConnectionResponseData(final byte[] crdRawData) {
-        super(crdRawData);
+    private ConnectionResponseData(final byte[] bytes) {
+        this(
+                // bytes[0] => Structure Length
+                Byte.toUnsignedInt(bytes[0]),
+                // bytes[1] => Connection Type
+                ConnectionType.valueOf(Byte.toUnsignedInt(bytes[1])),
+                // bytes[2+3] => Individual Address
+                IndividualAddress.of(new byte[]{bytes[2], bytes[3]})
+        );
+    }
 
-        this.length = Byte.toUnsignedInt(crdRawData[0]);
-        this.connectionType = ConnectionType.valueOf(Byte.toUnsignedInt(crdRawData[1]));
-        this.address = IndividualAddress.of(new byte[]{crdRawData[2], crdRawData[3]});
+    private ConnectionResponseData(final int length,
+                                   final ConnectionType connectionType,
+                                   final IndividualAddress address) {
+        Preconditions.checkArgument(length == STRUCTURE_LENGTH);
+        Preconditions.checkNonNull(connectionType, "Connection Type is required.");
+        Preconditions.checkNonNull(address, "Individual Address is required.");
+
+        this.length = length;
+        this.connectionType = connectionType;
+        this.address = address;
     }
 
     /**
@@ -72,6 +93,8 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * @return a new immutable {@link ConnectionResponseData}
      */
     public static ConnectionResponseData of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new ConnectionResponseData(bytes);
     }
 
@@ -81,61 +104,57 @@ public final class ConnectionResponseData extends AbstractMultiRawData {
      * @param address the individual address
      * @return a new immutable {@link ConnectionResponseData}
      */
-    public static ConnectionResponseData of(final IndividualAddress address) {
-        // validate
-        if (address == null) {
-            throw new KnxNullPointerException("address");
-        }
-
-        final var addressAsBytes = address.getRawData();
-
-        // hardcoded
-        // 2 bytes (1 byte for length, 1 byte for connection type) + 2 bytes for individual address
-        final var length = 2 + addressAsBytes.length;
-
-        // create bytes
-        final var bytes = new byte[length];
-        bytes[0] = (byte) length;
-        bytes[1] = ConnectionType.TUNNEL_CONNECTION.getCodeAsByte();
-        System.arraycopy(addressAsBytes, 0, bytes, 2, addressAsBytes.length);
-
-        return of(bytes);
+    public static ConnectionResponseData of(final ConnectionType connectionType, final IndividualAddress address) {
+        return new ConnectionResponseData(STRUCTURE_LENGTH, connectionType, address);
     }
 
     @Override
-    protected void validate(final byte[] crdRawData) {
-        if (crdRawData == null) {
-            throw new KnxNullPointerException("crdRawData");
-        } else if (crdRawData.length != 4) {
-            throw new KnxNumberOutOfRangeException("crdRawData", 4, 4, crdRawData.length, crdRawData);
-        } else if (Byte.toUnsignedInt(crdRawData[0]) != 4) {
-            throw new KnxNumberOutOfRangeException("crdRawData[0]", 4, 4, Byte.toUnsignedInt(crdRawData[0]), crdRawData);
-        }
+    public byte[] toByteArray() {
+        final var addressAsBytes = address.toByteArray();
+
+        return new byte[]{
+                STRUCTURE_LENGTH,                       // Structure Length
+                connectionType.getCodeAsByte(),         // Connection Type
+                addressAsBytes[0], addressAsBytes[1]    // Individual Address (2 bytes)
+        };
     }
 
     public int getLength() {
-        return this.length;
+        return length;
     }
 
     public ConnectionType getConnectionType() {
-        return this.connectionType;
+        return connectionType;
     }
 
     public IndividualAddress getAddress() {
-        return this.address;
+        return address;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("length", this.length + " (" + ByteFormatter.formatHex(this.length) + ")")
-                .add("connectionType", this.connectionType)
-                .add("address", this.address.toString(false));
-        // @formatter:off
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("length", length)
+                .add("connectionType", connectionType.name())
+                .add("address", address)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof ConnectionResponseData) {
+            final var other = (ConnectionResponseData) obj;
+            return this.length == other.length //
+                    && Objects.equals(this.connectionType, other.connectionType) //
+                    && Objects.equals(this.address, other.address); //
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(length, connectionType, address);
     }
 }

@@ -119,7 +119,7 @@ public final class DPT6Value extends AbstractDataPointValue<DPT6> {
      * Resolution: N/A
      * </pre>
      */
-    public static class StatusMode extends AbstractDataPointValue<DPT6.StatusMode> {
+    public static final class StatusMode extends AbstractDataPointValue<DPT6.StatusMode> {
         private final boolean a;
         private final boolean b;
         private final boolean c;

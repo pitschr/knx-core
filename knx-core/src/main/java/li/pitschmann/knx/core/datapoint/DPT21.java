@@ -291,13 +291,51 @@ public final class DPT21 {
      * Encoding    | B   B   B   B   B   B   B   B |
      *             +---+---+---+---+---+---+---+---+
      * Format:     8 bits (B<sub>8</sub>)
-     * Range:      N = [0 .. 255]
+     * Range:      N = [0 .. 7]
      *                 bN = Channel N+1 is active {0 = false, 1 = true}
      *                     e.g. b0 = Channel 1, b3 = Channel 4
      * </pre>
      */
     @DataPoint({"21.1010", "dpst-21-1010"})
     public static final ChannelActivation8 CHANNEL_ACTIVATION_8 = new ChannelActivation8();
+
+    /**
+     * <strong>21.1200</strong> Virtual Contact Status
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | b   b   b   b   b   b   b   b |
+     * Encoding    | B   B   B   B   B   B   B   B |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bits (B<sub>8</sub>)
+     * Range:      N = [0 .. 7]
+     *                 0 = Virtual Contact Open
+     *                 1 = Virtual Contact Closed
+     * </pre>
+     */
+    @DataPoint({"21.1200", "dpst-21-1200"})
+    public static final VirtualContactStatus VIRTUAL_CONTACT_STATUS = new VirtualContactStatus();
+
+    /**
+     * <strong>21.1201</strong> Phase Status
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | b   b   b   b   b   b   b   b |
+     * Encoding    | r   r   r   r   r   B   B   B |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bits (r<sub>5</sub> B<sub>3</sub>)
+     * Range:      N = [0 .. 3]
+     *                 0 = Phase absent
+     *                 1 = Phase present
+     *                 bN = Phase N+1 {0 = absent, 1 = present}
+     *                     e.g. b0 = Phase 1, b1 = Phase 2, b2 = Phase 3
+     *
+     * </pre>
+     */
+    @DataPoint({"21.1201", "dpst-21-1201"})
+    public static final PhaseStatus PHASE_STATUS = new PhaseStatus();
+
 
     private DPT21() {
         throw new AssertionError("Do not touch me!");
@@ -329,7 +367,10 @@ public final class DPT21 {
             return new DPT21Value.GeneralStatus(bytes[0]);
         }
 
-        public DPT21Value.GeneralStatus of(final boolean outOfService, final boolean fault, final boolean overridden, final boolean inAlarm,
+        public DPT21Value.GeneralStatus of(final boolean outOfService,
+                                           final boolean fault,
+                                           final boolean overridden,
+                                           final boolean inAlarm,
                                            final boolean alarmNotAcknowledged) {
             return new DPT21Value.GeneralStatus(outOfService, fault, overridden, inAlarm, alarmNotAcknowledged);
         }
@@ -345,7 +386,8 @@ public final class DPT21 {
             return new DPT21Value.DeviceControl(bytes[0]);
         }
 
-        public DPT21Value.DeviceControl of(final boolean userApplicationStopped, final boolean ownIndividualAddress,
+        public DPT21Value.DeviceControl of(final boolean userApplicationStopped,
+                                           final boolean ownIndividualAddress,
                                            final boolean verifyModeOn) {
             return new DPT21Value.DeviceControl(userApplicationStopped, ownIndividualAddress, verifyModeOn);
         }
@@ -361,8 +403,13 @@ public final class DPT21 {
             return new DPT21Value.ForcingSignal(bytes[0]);
         }
 
-        public DPT21Value.ForcingSignal of(final boolean forceRequest, final boolean protection, final boolean oversupply, final boolean overrun,
-                                           final boolean dhwNormal, final boolean dhwLegionellaProtection, final boolean roomHeatingComfort,
+        public DPT21Value.ForcingSignal of(final boolean forceRequest,
+                                           final boolean protection,
+                                           final boolean oversupply,
+                                           final boolean overrun,
+                                           final boolean dhwNormal,
+                                           final boolean dhwLegionellaProtection,
+                                           final boolean roomHeatingComfort,
                                            final boolean roomHeatingMaxFlowTemperature) {
             return new DPT21Value.ForcingSignal(forceRequest, protection, oversupply, overrun, dhwNormal, dhwLegionellaProtection, roomHeatingComfort,
                     roomHeatingMaxFlowTemperature);
@@ -394,9 +441,14 @@ public final class DPT21 {
             return new DPT21Value.RoomHeatingControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.RoomHeatingControllerStatus of(final boolean fault, final boolean statusEco, final boolean temperatureFlowLimit,
-                                                         final boolean temperatureReturnLimit, final boolean statusMorningBoost, final boolean statusStartOptimizationActive,
-                                                         final boolean statusStopOptimizationActive, final boolean summerMode) {
+        public DPT21Value.RoomHeatingControllerStatus of(final boolean fault,
+                                                         final boolean statusEco,
+                                                         final boolean temperatureFlowLimit,
+                                                         final boolean temperatureReturnLimit,
+                                                         final boolean statusMorningBoost,
+                                                         final boolean statusStartOptimizationActive,
+                                                         final boolean statusStopOptimizationActive,
+                                                         final boolean summerMode) {
             return new DPT21Value.RoomHeatingControllerStatus(fault, statusEco, temperatureFlowLimit, temperatureReturnLimit, statusMorningBoost,
                     statusStartOptimizationActive, statusStopOptimizationActive, summerMode);
         }
@@ -412,7 +464,8 @@ public final class DPT21 {
             return new DPT21Value.SolarDHWControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.SolarDHWControllerStatus of(final boolean fault, final boolean statusDHWLoadActive,
+        public DPT21Value.SolarDHWControllerStatus of(final boolean fault,
+                                                      final boolean statusDHWLoadActive,
                                                       final boolean solarLoadSufficient) {
             return new DPT21Value.SolarDHWControllerStatus(fault, statusDHWLoadActive, solarLoadSufficient);
         }
@@ -428,7 +481,9 @@ public final class DPT21 {
             return new DPT21Value.FuelTypeSet(bytes[0]);
         }
 
-        public DPT21Value.FuelTypeSet of(final boolean oilFuelSupported, final boolean gasFuelSupported, final boolean solidStateFuelSupported) {
+        public DPT21Value.FuelTypeSet of(final boolean oilFuelSupported,
+                                         final boolean gasFuelSupported,
+                                         final boolean solidStateFuelSupported) {
             return new DPT21Value.FuelTypeSet(oilFuelSupported, gasFuelSupported, solidStateFuelSupported);
         }
     }
@@ -458,7 +513,9 @@ public final class DPT21 {
             return new DPT21Value.VentilationControllerStatus(bytes[0]);
         }
 
-        public DPT21Value.VentilationControllerStatus of(final boolean fault, final boolean fanActive, final boolean heatingModeActive,
+        public DPT21Value.VentilationControllerStatus of(final boolean fault,
+                                                         final boolean fanActive,
+                                                         final boolean heatingModeActive,
                                                          final boolean coolingModeActive) {
             return new DPT21Value.VentilationControllerStatus(fault, fanActive, heatingModeActive, coolingModeActive);
         }
@@ -474,8 +531,13 @@ public final class DPT21 {
             return new DPT21Value.LightingActuatorErrorInfo(bytes[0]);
         }
 
-        public DPT21Value.LightingActuatorErrorInfo of(final boolean errorLoad, final boolean undervoltage, final boolean overcurrent,
-                                                       final boolean underload, final boolean defectiveLoad, final boolean lampFailure, final boolean overheat) {
+        public DPT21Value.LightingActuatorErrorInfo of(final boolean errorLoad,
+                                                       final boolean undervoltage,
+                                                       final boolean overcurrent,
+                                                       final boolean underload,
+                                                       final boolean defectiveLoad,
+                                                       final boolean lampFailure,
+                                                       final boolean overheat) {
             return new DPT21Value.LightingActuatorErrorInfo(errorLoad, undervoltage, overcurrent, underload, defectiveLoad, lampFailure, overheat);
         }
     }
@@ -490,7 +552,9 @@ public final class DPT21 {
             return new DPT21Value.RadioFrequencyCommunicationModeInfo(bytes[0]);
         }
 
-        public DPT21Value.RadioFrequencyCommunicationModeInfo of(final boolean asynchronous, final boolean master, final boolean slave) {
+        public DPT21Value.RadioFrequencyCommunicationModeInfo of(final boolean asynchronous,
+                                                                 final boolean master,
+                                                                 final boolean slave) {
             return new DPT21Value.RadioFrequencyCommunicationModeInfo(asynchronous, master, slave);
         }
     }
@@ -510,7 +574,8 @@ public final class DPT21 {
             return new DPT21Value.CEMIServerSupportedFilteringMode(bytes[0]);
         }
 
-        public DPT21Value.CEMIServerSupportedFilteringMode of(final boolean domainAddress, final boolean serialNumber,
+        public DPT21Value.CEMIServerSupportedFilteringMode of(final boolean domainAddress,
+                                                              final boolean serialNumber,
                                                               final boolean domainAddressAndSerialNumber) {
             return new DPT21Value.CEMIServerSupportedFilteringMode(domainAddress, serialNumber, domainAddressAndSerialNumber);
         }
@@ -541,9 +606,54 @@ public final class DPT21 {
             return new DPT21Value.ChannelActivation8(bytes[0]);
         }
 
-        public DPT21Value.ChannelActivation8 of(final boolean channel1, final boolean channel2, final boolean channel3, final boolean channel4,
-                                                final boolean channel5, final boolean channel6, final boolean channel7, final boolean channel8) {
+        public DPT21Value.ChannelActivation8 of(final boolean channel1,
+                                                final boolean channel2,
+                                                final boolean channel3,
+                                                final boolean channel4,
+                                                final boolean channel5,
+                                                final boolean channel6,
+                                                final boolean channel7,
+                                                final boolean channel8) {
             return new DPT21Value.ChannelActivation8(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8);
+        }
+    }
+
+    public static final class VirtualContactStatus extends InternalDataPointType<DPT21Value.VirtualContactStatus> {
+        private VirtualContactStatus() {
+            super("Virtual Contact Status");
+        }
+
+        @Override
+        protected DPT21Value.VirtualContactStatus parse(final byte[] bytes) {
+            return new DPT21Value.VirtualContactStatus(bytes[0]);
+        }
+
+        public DPT21Value.VirtualContactStatus of(final boolean contact1,
+                                                  final boolean contact2,
+                                                  final boolean contact3,
+                                                  final boolean contact4,
+                                                  final boolean contact5,
+                                                  final boolean contact6,
+                                                  final boolean contact7,
+                                                  final boolean contact8) {
+            return new DPT21Value.VirtualContactStatus(contact1, contact2, contact3, contact4, contact5, contact6, contact7, contact8);
+        }
+    }
+
+    public static final class PhaseStatus extends InternalDataPointType<DPT21Value.PhaseStatus> {
+        private PhaseStatus() {
+            super("Phase Status");
+        }
+
+        @Override
+        protected DPT21Value.PhaseStatus parse(final byte[] bytes) {
+            return new DPT21Value.PhaseStatus(bytes[0]);
+        }
+
+        public DPT21Value.PhaseStatus of(final boolean phase1,
+                                         final boolean phase2,
+                                         final boolean phase3) {
+            return new DPT21Value.PhaseStatus(phase1, phase2, phase3);
         }
     }
 }

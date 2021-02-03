@@ -50,8 +50,7 @@ public class FileAuditPluginTest {
 
         final var body = mock(Body.class);
         when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
-        when(body.getRawData()).thenReturn(new byte[]{0x11, 0x22, 0x33});
-        when(body.getRawDataAsHexString()).thenCallRealMethod();
+        when(body.toByteArray()).thenReturn(new byte[]{0x11, 0x22, 0x33});
 
         plugin.onInitialization(mockKnxClient(path, FileAuditFormat.JSON));
         plugin.onStart();
@@ -120,8 +119,7 @@ public class FileAuditPluginTest {
 
         final var body = mock(Body.class);
         when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
-        when(body.getRawData()).thenReturn(new byte[]{0x22, 0x33});
-        when(body.getRawDataAsHexString()).thenCallRealMethod();
+        when(body.toByteArray()).thenReturn(new byte[]{0x22, 0x33});
 
         plugin.onInitialization(mockKnxClient(path, FileAuditFormat.JSON));
         plugin.onStart();
@@ -192,8 +190,7 @@ public class FileAuditPluginTest {
 
         final var body = mock(Body.class);
         when(body.getServiceType()).thenReturn(ServiceType.CONNECT_REQUEST);
-        when(body.getRawData()).thenReturn(new byte[]{0x33, 0x44, 0x55});
-        when(body.getRawDataAsHexString()).thenCallRealMethod();
+        when(body.toByteArray()).thenReturn(new byte[]{0x33, 0x44, 0x55});
 
         plugin.onInitialization(mockKnxClient(path, FileAuditFormat.TSV));
         plugin.onStart();
@@ -240,8 +237,7 @@ public class FileAuditPluginTest {
 
         final var body = mock(Body.class);
         when(body.getServiceType()).thenReturn(ServiceType.TUNNELING_ACK);
-        when(body.getRawData()).thenReturn(new byte[]{0x44, 0x55});
-        when(body.getRawDataAsHexString()).thenCallRealMethod();
+        when(body.toByteArray()).thenReturn(new byte[]{0x44, 0x55});
 
         plugin.onInitialization(mockKnxClient(path, FileAuditFormat.TSV));
         plugin.onStart();

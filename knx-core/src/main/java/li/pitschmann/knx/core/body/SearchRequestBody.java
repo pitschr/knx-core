@@ -18,12 +18,13 @@
 
 package li.pitschmann.knx.core.body;
 
-import li.pitschmann.knx.core.AbstractMultiRawData;
-import li.pitschmann.knx.core.exceptions.KnxNullPointerException;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
+import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
+
+import java.util.Objects;
 
 /**
  * Body for Search Request
@@ -45,14 +46,26 @@ import li.pitschmann.knx.core.utils.Strings;
  *
  * @author PITSCHR
  */
-public final class SearchRequestBody extends AbstractMultiRawData implements RequestBody, MulticastChannelRelated {
+public final class SearchRequestBody implements RequestBody, MulticastChannelRelated {
+    /**
+     * Structure Length for {@link SearchRequestBody}
+     * <p>
+     * 8 bytes for HPAI<br>
+     */
+    private static final int STRUCTURE_LENGTH = HPAI.STRUCTURE_LENGTH;
     private static final SearchRequestBody DEFAULT = of(HPAI.useDefault());
     private final HPAI discoveryEndpoint;
 
     private SearchRequestBody(final byte[] bytes) {
-        super(bytes);
+        this(
+                // bytes[0..7] => discovery endpoint
+                HPAI.of(bytes)
+        );
+    }
 
-        this.discoveryEndpoint = HPAI.of(bytes);
+    private SearchRequestBody(final HPAI discoveryEndpoint) {
+        Preconditions.checkNonNull(discoveryEndpoint, "Discovery Endpoint is required.");
+        this.discoveryEndpoint = discoveryEndpoint;
     }
 
     /**
@@ -62,6 +75,8 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * @return a new immutable {@link SearchRequestBody}
      */
     public static SearchRequestBody of(final byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == STRUCTURE_LENGTH,
+                "Incompatible structure length. Expected '{}' but was: {}", STRUCTURE_LENGTH, bytes.length);
         return new SearchRequestBody(bytes);
     }
 
@@ -83,21 +98,7 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
      * @return a new immutable {@link SearchRequestBody}
      */
     public static SearchRequestBody of(final HPAI discoveryEndpoint) {
-        // validate
-        if (discoveryEndpoint == null) {
-            throw new KnxNullPointerException("discoveryEndpoint");
-        }
-        return of(discoveryEndpoint.getRawData());
-    }
-
-    @Override
-    protected void validate(final byte[] rawData) {
-        if (rawData == null) {
-            throw new KnxNullPointerException("rawData");
-        } else if (rawData.length != 8) {
-            // 8 bytes for HPAI
-            throw new KnxNumberOutOfRangeException("rawData", 8, 8, rawData.length, rawData);
-        }
+        return new SearchRequestBody(discoveryEndpoint);
     }
 
     @Override
@@ -106,18 +107,34 @@ public final class SearchRequestBody extends AbstractMultiRawData implements Req
     }
 
     public HPAI getDiscoveryEndpoint() {
-        return this.discoveryEndpoint;
+        return discoveryEndpoint;
     }
 
     @Override
-    public String toString(final boolean inclRawData) {
-        // @formatter:off
-        final var h = Strings.toStringHelper(this)
-                .add("discoveryEndpoint", this.discoveryEndpoint.toString(false));
-        // @formatter:on
-        if (inclRawData) {
-            h.add("rawData", this.getRawDataAsHexString());
+    public byte[] toByteArray() {
+        return discoveryEndpoint.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringHelper(this)
+                .add("discoveryEndpoint", discoveryEndpoint)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof SearchRequestBody) {
+            final var other = (SearchRequestBody) obj;
+            return Objects.equals(this.discoveryEndpoint, other.discoveryEndpoint);
         }
-        return h.toString();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(discoveryEndpoint);
     }
 }

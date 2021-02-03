@@ -573,34 +573,74 @@ public final class DPT20 {
     }
 
     /**
+     * <strong>20.021</strong> Cloud Coverage
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   N   N   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (r<sub>4</sub> N<sub>4</sub>)
+     * Range:      N = [0 .. 9]
+     *                  0 = Cloudless
+     *                  1 = Sunny
+     *                  2 = Sunshiny
+     *                  3 = Lightly Cloudy
+     *                  4 = Scattered Clouds
+     *                  5 = Cloudy
+     *                  6 = Very Cloudy
+     *                  7 = Slightly Overcast
+     *                  8 = Overcast
+     *                  9 = Unknown (Sky not recognizable)
+     * </pre>
+     */
+    @DataPoint(value = {"20.021", "dpst-20-21"}, description = "Cloud Coverage")
+    public enum CloudCoverage implements DataPointEnum<CloudCoverage> {
+        @DataPointEnumValue(value = 0, description = "Cloudless")
+        CLOUDLESS, //
+        @DataPointEnumValue(value = 1, description = "Sunny")
+        SUNNY, //
+        @DataPointEnumValue(value = 2, description = "Sunshiny")
+        SUNSHINY, //
+        @DataPointEnumValue(value = 3, description = "Lightly Cloudy")
+        LIGHT_CLOUDY, //
+        @DataPointEnumValue(value = 4, description = "Scattered Clouds")
+        SCATTERED_CLOUDS, //
+        @DataPointEnumValue(value = 5, description = "Cloudy")
+        CLOUDY, //
+        @DataPointEnumValue(value = 6, description = "Very Cloudy")
+        VERY_CLOUDY, //
+        @DataPointEnumValue(value = 7, description = "Slightly Overcast")
+        SLIGHTLY_OVERCAST, //
+        @DataPointEnumValue(value = 8, description = "Overcast")
+        OVERCAST, //
+        @DataPointEnumValue(value = 9, description = "Unknown")
+        UNKNOWN //
+    }
+
+    /**
      * <strong>20.022</strong> Power Return Mode
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
      * Field Names | (Field 1)                     |
-     * Encoding    | 0   0   0   0   0   N   N   N |
+     * Encoding    | 0   0   0   0   0   0   N   N |
      *             +---+---+---+---+---+---+---+---+
-     * Format:     8 bit (r<sub>5</sub> N<sub>3</sub>)
-     * Range:      N = [0 .. 4]
-     *                  0 = inactive
-     *                  1 = digital input not inverted
-     *                  2 = digital input inverted
-     *                  3 = analog input -> 0 % to 100%
-     *                  4 = temperature sensor input
+     * Format:     8 bit (r<sub>6</sub> N<sub>2</sub>)
+     * Range:      N = [0 .. 2]
+     *                  0 = Do Not Send
+     *                  1 = Send Always
+     *                  2 = Send On Change
      * </pre>
      */
     @DataPoint(value = {"20.022", "dpst-20-22"}, description = "Power Return Mode")
     public enum PowerReturnMode implements DataPointEnum<PowerReturnMode> {
-        @DataPointEnumValue(value = 0, description = "inactive")
-        INACTIVE, //
-        @DataPointEnumValue(value = 1, description = "digital input not inverted")
-        DIGITAL_INPUT_NOT_INVERTED, //
-        @DataPointEnumValue(value = 2, description = "digital input inverted")
-        DIGITAL_INPUT_INVERTED, //
-        @DataPointEnumValue(value = 3, description = "analog input -> 0 % to 100%")
-        ANALOG_INPUT_0_TO_100, //
-        @DataPointEnumValue(value = 4, description = "temperature sensor input")
-        TEMPERATURE_SENSOR_INPUT
+        @DataPointEnumValue(value = 0, description = "Do Not Send")
+        DO_NOT_SEND, //
+        @DataPointEnumValue(value = 1, description = "Send Always")
+        SEND_ALWAYS, //
+        @DataPointEnumValue(value = 2, description = "Send On Change")
+        SEND_ON_CHANGE //
     }
 
     /**
@@ -2180,7 +2220,7 @@ public final class DPT20 {
      * Field Names | (Field 1)                     |
      * Encoding    | 0   0   0   0   0   0   N   N |
      *             +---+---+---+---+---+---+---+---+
-     * Format:     8 bit (r<sub>6</sub> N<sub>2</sub>)
+     * Format:     8 bit (N<sub>8</sub>)
      * Range:      N = [0 .. 3]
      *                  0 = Unknown
      *                  1 = Temperature converted
@@ -2198,5 +2238,202 @@ public final class DPT20 {
         AT_BASE_CONDITION, //
         @DataPointEnumValue(value = 3, description = "At measurement condition")
         AT_MEASUREMENT_CONDITION
+    }
+
+    /**
+     * <strong>20.1203</strong> Breaker Status
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 6]
+     *                  0 = Closed
+     *                  1 = Open on Overload
+     *                  2 = Open on Overvoltage
+     *                  3 = Open on Load Shedding
+     *                  4 = Open on PLC
+     *                  5 = Open on Overheat (over maximum)
+     *                  6 = Open on Overheat (under maximum)
+     * </pre>
+     */
+    @DataPoint(value = {"20.1203", "dpst-20-1203"}, description = "Breaker Status")
+    public enum BreakerStatus implements DataPointEnum<BreakerStatus> {
+        @DataPointEnumValue(value = 0, description = "Closed")
+        CLOSED, //
+        @DataPointEnumValue(value = 1, description = "Open on Overload")
+        OPEN_ON_OVERLOAD, //
+        @DataPointEnumValue(value = 2, description = "Open on Overvoltage")
+        OPEN_ON_OVERVOLTAGE, //
+        @DataPointEnumValue(value = 3, description = "Open on Load Shedding")
+        OPEN_ON_LOAD_SHEDDING, //
+        @DataPointEnumValue(value = 4, description = "Open on PLC")
+        OPEN_ON_PLC, //
+        @DataPointEnumValue(value = 5, description = "Open on Overheat (over maximum)")
+        OPEN_ON_OVERHEAT_OVER_MAXIMUM, //
+        @DataPointEnumValue(value = 6, description = "Open on Overheat (under maximum)")
+        OPEN_ON_OVERHEAT_UNDER_MAXIMUM //
+    }
+
+    /**
+     * <strong>20.1204</strong> Euridis Communication Interface Status
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 2]
+     *                  0 = Deactivated
+     *                  1 = Activated without security
+     *                  2 = Activated with security
+     * </pre>
+     */
+    @DataPoint(value = {"20.1204", "dpst-20-1204"}, description = "Euridis Communication Interface Status")
+    public enum EuridisCommunicationInterfaceStatus implements DataPointEnum<EuridisCommunicationInterfaceStatus> {
+        @DataPointEnumValue(value = 0, description = "Deactivated")
+        DEACTIVATED, //
+        @DataPointEnumValue(value = 1, description = "Activated without security")
+        ACTIVATED_WITHOUT_SECURITY, //
+        @DataPointEnumValue(value = 2, description = "Activated with security")
+        ACTIVATED_WITH_SECURITY //
+    }
+
+    /**
+     * <strong>20.1205</strong> PLC Status
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 2]
+     *                  0 = New / Unlock
+     *                  1 = New / Lock
+     *                  2 = Registered
+     * </pre>
+     */
+    @DataPoint(value = {"20.1205", "dpst-20-1205"}, description = "PLC Status")
+    public enum PLCStatus implements DataPointEnum<PLCStatus> {
+        @DataPointEnumValue(value = 0, description = "New / Unlock")
+        NEW_UNLOCK, //
+        @DataPointEnumValue(value = 1, description = "New / Lock")
+        NEW_LOCK, //
+        @DataPointEnumValue(value = 2, description = "Registered")
+        REGISTERED //
+    }
+
+    /**
+     * <strong>20.1206</strong> Peak Event Notice
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 3]
+     *                  0 = No Notice Peak Event
+     *                  1 = Notice Peak Event 1
+     *                  2 = Notice Peak Event 2
+     *                  3 = Notice Peak Event 3
+     * </pre>
+     */
+    @DataPoint(value = {"20.1206", "dpst-20-1206"}, description = "Peak Event Notice")
+    public enum PeakEventNotice implements DataPointEnum<PeakEventNotice> {
+        @DataPointEnumValue(value = 0, description = "No Notice Peak Event")
+        NO_NOTICE_PEAK_EVENT, //
+        @DataPointEnumValue(value = 1, description = "Notice Peak Event 1")
+        NOTICE_PEAK_EVENT_1, //
+        @DataPointEnumValue(value = 2, description = "Notice Peak Event 2")
+        NOTICE_PEAK_EVENT_2, //
+        @DataPointEnumValue(value = 3, description = "Notice Peak Event 3")
+        NOTICE_PEAK_EVENT_3 //
+    }
+
+    /**
+     * <strong>20.1207</strong> Peak Event
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 3]
+     *                  0 = No Peak Event
+     *                  1 = Peak Event 1
+     *                  2 = Peak Event 2
+     *                  3 = Peak Event 3
+     * </pre>
+     */
+    @DataPoint(value = {"20.1207", "dpst-20-1207"}, description = "Peak Event")
+    public enum PeakEvent implements DataPointEnum<PeakEvent> {
+        @DataPointEnumValue(value = 0, description = "No Peak Event")
+        NO_PEAK_EVENT, //
+        @DataPointEnumValue(value = 1, description = "Peak Event 1")
+        PEAK_EVENT_1, //
+        @DataPointEnumValue(value = 2, description = "Peak Event 2")
+        PEAK_EVENT_2, //
+        @DataPointEnumValue(value = 3, description = "Peak Event 3")
+        PEAK_EVENT_3 //
+    }
+
+    /**
+     * <strong>20.1208</strong> TIC Type
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 1]
+     *                  0 = Historical
+     *                  1 = Standard
+     * </pre>
+     */
+    @DataPoint(value = {"20.1208", "dpst-20-1208"}, description = "TIC Type")
+    public enum TICType implements DataPointEnum<TICType> {
+        @DataPointEnumValue(value = 0, description = "Historical")
+        HISTORICAL, //
+        @DataPointEnumValue(value = 1, description = "Standard")
+        STANDARD //
+    }
+
+
+    /**
+     * <strong>20.1209</strong> TIC Channel Type
+     *
+     * <pre>
+     *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * Field Names | (Field 1)                     |
+     * Encoding    | 0   0   0   0   0   0   N   N |
+     *             +---+---+---+---+---+---+---+---+
+     * Format:     8 bit (N<sub>8</sub>)
+     * Range:      N = [0 .. 4]
+     *                  0 = None
+     *                  1 = Historical Single-Phase
+     *                  2 = Historical Three-Phase
+     *                  3 = Standard Single-Phase
+     *                  4 = Standard Three-Phase
+     * </pre>
+     */
+    @DataPoint(value = {"20.1209", "dpst-20-1209"}, description = "TIC Channel Type")
+    public enum TICChannelType implements DataPointEnum<TICChannelType> {
+        @DataPointEnumValue(value = 0, description = "None")
+        NONE, //
+        @DataPointEnumValue(value = 1, description = "Historical Single-Phase")
+        HISTORICAL_SINGLE_PHASE, //
+        @DataPointEnumValue(value = 2, description = "Historical Three-Phase")
+        HISTORICAL_THREE_PHASE, //
+        @DataPointEnumValue(value = 3, description = "Standard Single-Phase")
+        STANDARD_SINGLE_PHASE, //
+        @DataPointEnumValue(value = 4, description = "Standard Three-Phase")
+        STANDARD_THREE_PHASE, //
     }
 }

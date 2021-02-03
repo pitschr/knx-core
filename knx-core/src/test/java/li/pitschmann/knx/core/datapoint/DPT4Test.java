@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Class for {@link DPT4}
@@ -59,9 +60,9 @@ class DPT4Test {
         assertThat(dpt.isCompatible(new String[2])).isFalse();
 
         // String is supported only when content of 1st String is a single character
-        assertThat(dpt.isCompatible(new String[1])).isFalse();
+        assertThat(dpt.isCompatible(new String[1])).isFalse();       // not supported, because empty
         assertThat(dpt.isCompatible(new String[]{"a"})).isTrue();
-        assertThat(dpt.isCompatible(new String[]{"abc"})).isFalse();
+        assertThat(dpt.isCompatible(new String[]{"abc"})).isFalse(); // not supported, because more than 1 character
     }
 
     @Test
@@ -75,11 +76,30 @@ class DPT4Test {
     @Test
     @DisplayName("Test #parse(String[])")
     void testStringParse() {
+        // character: a (ASCII)
+        final var a = DPT4.ASCII.parse(new String[]{"a"});
+        assertThat(a.getCharacter()).isEqualTo('a');
+        // character: z (ASCII)
+        final var z = DPT4.ASCII.parse(new String[]{"z"});
+        assertThat(z.getCharacter()).isEqualTo('z');
+
+        // character: a (ISO_8859_1)
+        final var ae = DPT4.ISO_8859_1.parse(new String[]{"ä"});
+        assertThat(ae.getCharacter()).isEqualTo('ä');
+        // character: a (ISO_8859_1)
+        final var oe = DPT4.ISO_8859_1.parse(new String[]{"Ö"});
+        assertThat(oe.getCharacter()).isEqualTo('Ö');
+    }
+
+    @Test
+    @DisplayName("Test #parse(String[]) with invalid cases")
+    void testStringParseInvalidCases() {
         final var dpt = DPT4.ASCII;
-        assertThat(dpt.parse(new String[]{"a"})).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.parse(new String[]{"z"})).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.parse(new String[]{"ä"})).isInstanceOf(DPT4Value.class);
-        assertThat(dpt.parse(new String[]{"ö"})).isInstanceOf(DPT4Value.class);
+
+        // no supported character for ASCII format provided
+        assertThatThrownBy(() -> dpt.parse(new String[]{"ä"}))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The given character cannot be encoded by DPT '4.001': ä");
     }
 
     @Test

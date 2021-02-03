@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,89 +33,133 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author PITSCHR
  */
-public class BodyFactoryTest {
-    /**
-     * Test constructor of {@link BodyFactory}
-     */
+class BodyFactoryTest {
+
     @Test
     @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
+    void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(BodyFactory.class);
     }
 
-    /**
-     * Tests {@link BodyFactory#of(byte[])} with supported bodies
-     */
     @Test
-    public void testWithBytes() {
-        byte[] tunReqBytes = new byte[]{ //
+    @DisplayName("Test #of(byte[]) with body: TUNNELING_REQUEST")
+    void testOf_TunnelingRequest() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x04, 0x20, // Tunneling Request
                 0x00, 0x17, // Total Length Octets
                 // Body
                 0x04, 0x11, 0x5c, 0x00, 0x29, 0x00, (byte) 0xbc, (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f};
 
-        byte[] tunAckBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: TUNNELING_ACK")
+    void testOf_TunnelingAck() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x04, 0x21, // Tunneling Ack
                 0x00, 0x0A, // Total Length Octets
                 // Body
                 0x04, 0x11, (byte) 0x81, 0x29};
 
-        byte[] routIndBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: ROUTING_INDICATION")
+    void testOf_RoutingIndication() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x05, 0x30, // Routing Indication
                 0x00, 0x13, // Total Length Octets
                 // Body
                 0x29, 0x00, (byte) 0xbc, (byte) 0xe0, 0x10, (byte) 0xa0, 0x4c, 0x07, 0x03, 0x00, (byte) 0x80, 0x0c, 0x3f};
 
-        byte[] conStateReqBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: CONNECTION_STATE_REQUEST")
+    void testOf_ConnectionStateRequest() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x07, // Connection State Request
                 0x00, 0x10, // Total Length Octets
                 // Body
                 0x07, 0x00, 0x08, 0x01, 0x7F, 0x00, 0x00, 0x01, (byte) 0xF6, (byte) 0xB3
         };
 
-        byte[] conStateResBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: CONNECTION_STATE_RESPONSE")
+    void testOf_ConnectionStateResponse() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x08, // Connection State Response
                 0x00, 0x08, // Total Length Octets
                 // Body
                 0x07, 0x00};
 
-        byte[] disconnectReqBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: DISCONNECT_REQUEST")
+    void testOf_DisconnectRequest() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x09, // Disconnect Request
                 0x00, 0x10, // Total Length Octets
                 // Body
                 0x07, 0x00, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        byte[] disconnectResBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: DISCONNECT_RESPONSE")
+    void testOf_DisconnectResponse() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x0A, // Disconnect Response
                 0x00, 0x08, // Total Length Octets
                 // Body
                 0x07, 0x00};
 
-        byte[] descriptionReqBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: DESCRIPTION_REQUEST")
+    void testOf_DescriptionRequest() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x03, // Description Request
                 0x00, 0x0E, // Total Length Octets
                 // Body
                 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        byte[] descriptionResBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: DESCRIPTION_RESPONSE")
+    void testOf_DescriptionResponse() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x04, // Description Response
                 0x00, 0x46, // Total Length Octets
                 // Body
@@ -124,34 +168,58 @@ public class BodyFactoryTest {
                 0x52, 0x6F, 0x75, 0x74, 0x65, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x02, 0x02,
                 0x01, 0x03, 0x01, 0x04, 0x01, 0x05, 0x01};
 
-        byte[] connectReqBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: CONNECT_REQUEST")
+    void testOf_ConnectRequest() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x05, // Connect Request
                 0x00, 0x1A, // Total Length Octets
                 // Body
                 0x08, 0x01, 0x7F, 0x00, 0x00, 0x01, (byte) 0xF6, (byte) 0xB3, 0x08, 0x01, 0x7F, 0x00, 0x00, 0x01, (byte) 0xF6, (byte) 0xB4, 0x04,
                 0x04, 0x02, 0x00};
 
-        byte[] connectResBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: CONNECT_RESPONSE")
+    void testOf_ConnectResponse() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x06, // Connect Response
                 0x00, 0x14, // Total Length Octets
                 // Body
                 0x07, 0x00, 0x08, 0x01, (byte) 0xC0, (byte) 0xA8, 0x01, 0x10, 0x0E, 0x57, 0x04, 0x04, (byte) 0xFF, (byte) 0xF2};
 
-        byte[] searchReqBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: SEARCH_REQUEST")
+    void testOf_SearchRequest() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x01, // Search Request
                 0x00, 0x0E, // Total Length Octets
                 // Body
                 0x08, 0x01, (byte) 0xc0, (byte) 0xa8, 0x01, 0x18, (byte) 0xf8, (byte) 0xeb};
 
-        byte[] searchResBytes = new byte[]{ //
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Test #of(byte[]) with body: SEARCH_RESPONSE")
+    void testOf_SearchResponse() {
+        final var bytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x02, 0x02, // Search Response
                 0x00, 0x4a, // Total Length Octets
                 // Body
@@ -161,41 +229,20 @@ public class BodyFactoryTest {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x02,
                 0x02, 0x01, 0x04, 0x01};
 
-        // bodies
-        assertThat(BodyFactory.of(tunReqBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_REQUEST);
-        assertThat(BodyFactory.of(tunAckBytes).getServiceType()).isEqualTo(ServiceType.TUNNELING_ACK);
-
-        assertThat(BodyFactory.of(routIndBytes).getServiceType()).isEqualTo(ServiceType.ROUTING_INDICATION);
-
-        assertThat(BodyFactory.of(conStateReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_REQUEST);
-        assertThat(BodyFactory.of(conStateResBytes).getServiceType()).isEqualTo(ServiceType.CONNECTION_STATE_RESPONSE);
-
-        assertThat(BodyFactory.of(disconnectReqBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_REQUEST);
-        assertThat(BodyFactory.of(disconnectResBytes).getServiceType()).isEqualTo(ServiceType.DISCONNECT_RESPONSE);
-
-        assertThat(BodyFactory.of(descriptionReqBytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_REQUEST);
-        assertThat(BodyFactory.of(descriptionResBytes).getServiceType()).isEqualTo(ServiceType.DESCRIPTION_RESPONSE);
-
-        assertThat(BodyFactory.of(connectReqBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_REQUEST);
-        assertThat(BodyFactory.of(connectResBytes).getServiceType()).isEqualTo(ServiceType.CONNECT_RESPONSE);
-
-        assertThat(BodyFactory.of(searchReqBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_REQUEST);
-        assertThat(BodyFactory.of(searchResBytes).getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
+        assertThat(BodyFactory.of(bytes).getServiceType()).isEqualTo(ServiceType.SEARCH_RESPONSE);
     }
 
-    /**
-     * Tests {@link BodyFactory#of(byte[])} with unsupported bodies
-     */
     @Test
-    public void testWithUnsupportedBytes() {
-        byte[] unsupportedBytes = new byte[]{ //
+    @DisplayName("Test #of(byte[]) with unsupported body type")
+    void testWithUnsupportedBytes() {
+        final var unsupportedBytes = new byte[]{ //
                 // Header
-                Header.KNXNET_HEADER_LENGTH, Header.KNXNET_PROTOCOL_VERSION, // KNX Header + Protocol
+                Header.STRUCTURE_LENGTH, Header.PROTOCOL_VERSION_V1, // KNX Header + Protocol
                 0x03, 0x10, // Device Configuration Request (not supported)
                 0x00, 0x06 // Total Length Octets
         };
 
         // unknown body
-        assertThatThrownBy(() -> BodyFactory.of(unsupportedBytes).getServiceType()).isInstanceOf(KnxUnknownBodyException.class);
+        assertThatThrownBy(() -> BodyFactory.of(unsupportedBytes)).isInstanceOf(KnxUnknownBodyException.class);
     }
 }

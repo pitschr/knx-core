@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,8 @@
 
 package li.pitschmann.knx.core;
 
-import li.pitschmann.knx.core.utils.ByteFormatter;
-
 /**
- * Raw Data Aware interface.
+ * Multi Byte Raw Data Aware interface.
  * <p>
  * Classes which implements this interface are aware of the raw data in byte array format.
  *
@@ -33,14 +31,5 @@ public interface MultiRawDataAware {
      *
      * @return byte array, defensively copied
      */
-    byte[] getRawData();
-
-    /**
-     * Returns the raw data in hex-decimal string format
-     *
-     * @return raw data
-     */
-    default String getRawDataAsHexString() {
-        return ByteFormatter.formatHexAsString(getRawData());
-    }
+    byte[] toByteArray();
 }

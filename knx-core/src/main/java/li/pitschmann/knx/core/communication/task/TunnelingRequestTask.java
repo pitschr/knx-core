@@ -55,7 +55,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
 
             // acknowledge frame to be sent back
             final var reqBody = (TunnelingRequestBody) body;
-            final var ackBody = TunnelingAckBody.of(this.client.getChannelId(), reqBody.getSequence(), Status.E_NO_ERROR);
+            final var ackBody = TunnelingAckBody.of(this.client.getChannelId(), reqBody.getSequence(), Status.NO_ERROR);
 
             // send acknowledge frame
             this.client.send(ackBody);
