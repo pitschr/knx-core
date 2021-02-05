@@ -54,11 +54,11 @@ public final class DPT25Value extends AbstractDataPointValue<DPT25> {
 
     public DPT25Value(final int busy, final int nak) {
         super(DPT25.BUSY_NAK_REPETITIONS);
-        if (busy < 0 || busy > 3) {
-            throw new KnxNumberOutOfRangeException("busy", 0, 3, busy);
+        if (busy < 0 || busy > 15) {
+            throw new KnxNumberOutOfRangeException("busy", 0, 15, busy);
         }
-        if (nak < 0 || nak > 3) {
-            throw new KnxNumberOutOfRangeException("nak", 0, 3, nak);
+        if (nak < 0 || nak > 15) {
+            throw new KnxNumberOutOfRangeException("nak", 0, 15, nak);
         }
 
         this.busy = busy;
@@ -68,7 +68,7 @@ public final class DPT25Value extends AbstractDataPointValue<DPT25> {
     /**
      * Returns the BUSY value
      *
-     * @return int value, between 0 and 3
+     * @return int value, between 0 and 15
      */
     public int getBusy() {
         return busy;
@@ -77,7 +77,7 @@ public final class DPT25Value extends AbstractDataPointValue<DPT25> {
     /**
      * Returns the NAK value
      *
-     * @return int value, between 0 and 3
+     * @return int value, between 0 and 15
      */
     public int getNak() {
         return nak;

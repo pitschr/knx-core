@@ -43,8 +43,8 @@ public final class DPT25 extends BaseDataPointType<DPT25Value> {
      * Encoding    | U   U   U   U   U   U   U   U |
      *             +---+---+---+---+---+---+---+---+
      * Format:     8 bit (U<sub>4</sub>U<sub>4</sub>)
-     * Range:      Busy = [0 .. 3]
-     *             Nak  = [0 .. 3]
+     * Range:      Busy = [0 .. 15]
+     *             Nak  = [0 .. 15]
      * </pre>
      */
     @DataPoint({"25.1000", "dpt-25", "dpst-25-1"})
