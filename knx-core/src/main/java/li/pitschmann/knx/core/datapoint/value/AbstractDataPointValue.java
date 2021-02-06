@@ -37,28 +37,91 @@ abstract class AbstractDataPointValue<T extends DataPointType> implements DataPo
         this.dpt = Objects.requireNonNull(dpt);
     }
 
+    /**
+     * Returns {@code double} value into a string representation
+     *
+     * @param value the double value to be converted to string
+     * @return string representation of {@code double} value
+     */
     protected static String getValueAsText(final double value) {
         return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
-    protected static String getValueAsText(final float value) {
-        return BigDecimal.valueOf(value).setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
-    }
-
+    /**
+     * Returns {@code int} value into a string representation
+     * @param value the int value to be converted to string
+     * @return string representation of {@code int} value
+     */
     protected static String getValueAsText(final int value) {
         return Integer.toString(value);
     }
+
+    /**
+     * Returns {@code long} value into a string representation
+     * @param value the long value to be converted to string
+     * @return string representation of {@code long} value
+     */
 
     protected static String getValueAsText(final long value) {
         return Long.toString(value);
     }
 
+    /**
+     * Returns {@link Object} value into a string representation. This
+     * method is null-safe. If value is null, the {@code "null"}
+     * will be printed.
+     *
+     * @param value the {@link Object} value to be converted to string
+     * @return string representation of {@link Object}
+     */
     protected static String getValueAsText(final @Nullable Object value) {
         return String.valueOf(value);
     }
 
     /**
-     * Returns the Data Point Type for the Value
+     * Returns if the bit {@code position} at {@code byte} is set.
+     * As a single byte has only 8 bits, this the {@code position}
+     * must be between 0 and 7.
+     *
+     * <pre>
+     * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * | B   B   B   B   B   B   B   B |
+     * +---+---+---+---+---+---+---+---+
+     * </pre>
+     *
+     * @param b the byte
+     * @param position the bit position of byte
+     * @return {@code true} if bit is set, otherwise {@code false}
+     */
+    protected static boolean isBitSet(final byte b, final int position) {
+        return ((b & 0xFF) & (0x01 << position)) != 0x00;
+    }
+
+    /**
+     * Returns if the bit {@code position} at {@code bytes} is set.
+     * This method supports byte array which allows to look up for
+     * bit position from 0 until {@code numberOfBytes * 8 - 1}.
+     * <p>
+     * For example, 3 bytes, the bit position must be between 0 and 23.
+     *
+     * <pre>
+     * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     * | B   B   B   B   B   B   B   B   B   B   B   B   B   B   B   B |
+     * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+     * </pre>
+     *
+     * @param bytes the byte array
+     * @param position the bit position of byte array
+     * @return {@code true} if bit is set, otherwise {@code false}
+     */
+    protected static boolean isBitSet(final byte[] bytes, final int position) {
+        var index = bytes.length - 1 - (position / 8);
+        var bitPosition = position % 8;
+        return isBitSet(bytes[index], bitPosition);
+    }
+
+    /**
+     * Returns the Data Point Type for the current value
      *
      * @return data point type
      */

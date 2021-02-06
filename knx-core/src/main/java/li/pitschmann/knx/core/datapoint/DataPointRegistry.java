@@ -74,6 +74,7 @@ public final class DataPointRegistry {
         registerDataPointType(DPT23.class);
         registerDataPointType(DPT25.class);
         registerDataPointType(DPT26.class);
+        registerDataPointType(DPT27.class);
 
         if (log.isDebugEnabled()) {
             log.debug("{} data point types registered: {}", dataPointTypeMap.size(),

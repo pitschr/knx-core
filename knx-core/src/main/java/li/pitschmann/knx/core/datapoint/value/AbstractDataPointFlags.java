@@ -41,6 +41,12 @@ abstract class AbstractDataPointFlags<T extends BaseDataPointType<?>> extends Ab
         this.bytes = Objects.requireNonNull(bytes);
     }
 
+    public final boolean isSet(final int bit) {
+        Preconditions.checkArgument(bit >= 0 && bit < this.bytes.length * 8,
+                "Bit must be between 0 and {} (actual: {})", ((this.bytes.length * 8) - 1), bit);
+        return isBitSet(bytes, bit);
+    }
+
     @Override
     public byte[] toByteArray() {
         return this.bytes.clone();
@@ -54,17 +60,6 @@ abstract class AbstractDataPointFlags<T extends BaseDataPointType<?>> extends Ab
                 .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
                 .toString();
         // @formatter:on
-    }
-
-    public final boolean isSet(final int bit) {
-        Preconditions.checkArgument(bit >= 0 && bit < this.bytes.length * 8,
-                "Bit must be between 0 and {} (actual: {})", ((this.bytes.length * 8) - 1), bit);
-        // e.g. 2-bytes:
-        // b15 ... b8 = byte0
-        // b7 ... b0 = byte1
-        // bit 0 = bytes[1], bit shift = 0
-        // bit 10 = bytes[0], bit shift = 2
-        return (this.bytes[this.bytes.length - (1 + (bit / 8))] & (0x01 << bit % 8)) != 0;
     }
 
     @Override
