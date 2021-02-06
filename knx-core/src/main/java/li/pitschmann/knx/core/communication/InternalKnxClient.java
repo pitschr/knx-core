@@ -244,10 +244,10 @@ public final class InternalKnxClient implements AutoCloseable {
 
         // get channel for further communications
         if (this.config.isRoutingEnabled()) {
-            log.debug("No channel ID required because of routing");
+            log.info("Channel ID (Routing)             : Not Available");
         } else {
             this.channelId = this.fetchChannelIdFromKNX();
-            log.debug("Channel ID received: {}", this.channelId);
+            log.info("Channel ID (Tunneling)           : {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
             this.channelExecutor.submit(CommunicatorFactory.newConnectionStateCommunicator(this));
