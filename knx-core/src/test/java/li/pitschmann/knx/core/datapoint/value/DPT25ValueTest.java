@@ -56,14 +56,14 @@ class DPT25ValueTest {
     }
 
     @Test
-    @DisplayName("#(byte) with: 0x23")
-    void testByte_0x23() {
-        final var value = new DPT25Value((byte) 0b0010_0011);
-        assertThat(value.getBusy()).isEqualTo(2);
-        assertThat(value.getNak()).isEqualTo(3);
-        assertThat(value.toByteArray()).containsExactly(0x23);
+    @DisplayName("#(byte) with: 0xFF")
+    void testByte_0xFF() {
+        final var value = new DPT25Value((byte) 0b1111_1111);
+        assertThat(value.getBusy()).isEqualTo(15);
+        assertThat(value.getNak()).isEqualTo(15);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
 
-        assertThat(value.toText()).isEqualTo("Busy: 2, Nak: 3");
+        assertThat(value.toText()).isEqualTo("Busy: 15, Nak: 15");
     }
 
     @Test
@@ -89,14 +89,14 @@ class DPT25ValueTest {
     }
 
     @Test
-    @DisplayName("#(int, int) with: Busy=3, Nak=3")
-    void testInt_Busy3_Nak3() {
-        final var value = new DPT25Value(3, 3);
-        assertThat(value.getBusy()).isEqualTo(3);
-        assertThat(value.getNak()).isEqualTo(3);
-        assertThat(value.toByteArray()).containsExactly(0x33);
+    @DisplayName("#(int, int) with: Busy=15, Nak=15")
+    void testInt_Busy15_Nak15() {
+        final var value = new DPT25Value(15, 15);
+        assertThat(value.getBusy()).isEqualTo(15);
+        assertThat(value.getNak()).isEqualTo(15);
+        assertThat(value.toByteArray()).containsExactly(0xFF);
 
-        assertThat(value.toText()).isEqualTo("Busy: 3, Nak: 3");
+        assertThat(value.toText()).isEqualTo("Busy: 15, Nak: 15");
     }
 
     @Test
@@ -104,10 +104,10 @@ class DPT25ValueTest {
     void testBusyOutOfRange() {
         assertThatThrownBy(() -> new DPT25Value(-1, 0))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '-1' for argument 'busy' is out of range '0'..'3'.");
-        assertThatThrownBy(() -> new DPT25Value(4, 0))
+                .hasMessage("Value '-1' for argument 'busy' is out of range '0'..'15'.");
+        assertThatThrownBy(() -> new DPT25Value(16, 0))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '4' for argument 'busy' is out of range '0'..'3'.");
+                .hasMessage("Value '16' for argument 'busy' is out of range '0'..'15'.");
     }
 
     @Test
@@ -115,10 +115,10 @@ class DPT25ValueTest {
     void testNakOutOfRange() {
         assertThatThrownBy(() -> new DPT25Value(0, -1))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '-1' for argument 'nak' is out of range '0'..'3'.");
-        assertThatThrownBy(() -> new DPT25Value(0, 4))
+                .hasMessage("Value '-1' for argument 'nak' is out of range '0'..'15'.");
+        assertThatThrownBy(() -> new DPT25Value(0, 16))
                 .isInstanceOf(KnxNumberOutOfRangeException.class)
-                .hasMessage("Value '4' for argument 'nak' is out of range '0'..'3'.");
+                .hasMessage("Value '16' for argument 'nak' is out of range '0'..'15'.");
     }
 
 
@@ -130,9 +130,9 @@ class DPT25ValueTest {
                 "DPT25Value{dpt=25.1000, busy=3, nak=1, byteArray=0x31}"
         );
 
-        final var valueInt = new DPT25Value(2, 3);
+        final var valueInt = new DPT25Value(11, 9);
         assertThat(valueInt).hasToString(
-                "DPT25Value{dpt=25.1000, busy=2, nak=3, byteArray=0x23}"
+                "DPT25Value{dpt=25.1000, busy=11, nak=9, byteArray=0xB9}"
         );
     }
 

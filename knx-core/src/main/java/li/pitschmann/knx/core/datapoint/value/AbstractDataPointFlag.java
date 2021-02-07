@@ -83,7 +83,7 @@ abstract class AbstractDataPointFlag<T extends BaseDataPointType<?>> extends Abs
 
     public final boolean isSet(final int bit) {
         Preconditions.checkArgument(bit >= 0 && bit < 8, "Bit must be between 0 and 7 (actual: {})", bit);
-        return ((this.b & 0xFF) & (0x01 << bit)) != 0;
+        return isBitSet(b, bit);
     }
 
     @Override

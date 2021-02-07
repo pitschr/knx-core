@@ -49,6 +49,7 @@ public final class DataPointRegistry {
 
     static {
         // add DPT fields
+        registerDataPointType(DPTRaw.class);
         registerDataPointType(DPT1.class);
         registerDataPointType(DPT2.class);
         registerDataPointType(DPT3.class);
@@ -72,8 +73,12 @@ public final class DataPointRegistry {
         registerDataPointType(DPT21.class);
         registerDataPointType(DPT22.class);
         registerDataPointType(DPT23.class);
+        registerDataPointType(DPT24.class);
         registerDataPointType(DPT25.class);
         registerDataPointType(DPT26.class);
+        registerDataPointType(DPT27.class);
+        registerDataPointType(DPT28.class);
+        registerDataPointType(DPT29.class);
 
         if (log.isDebugEnabled()) {
             log.debug("{} data point types registered: {}", dataPointTypeMap.size(),
@@ -158,7 +163,6 @@ public final class DataPointRegistry {
      * @param clazz the class that contains data point type
      */
     private static void registerDataPointTypes(final Class<?> clazz) {
-        var first = true;
         // iterate for all public/static/final fields
         for (final var field : Stream
                 .of(clazz.getFields()).filter(f -> Modifier.isFinal(f.getModifiers()) //
@@ -169,14 +173,17 @@ public final class DataPointRegistry {
             try {
                 final var fieldInstance = (DataPointType) field.get(null);
                 for (final var id : fieldAnnotation.value()) {
-                    Preconditions.checkArgument(!dataPointTypeMap.containsKey(id), String.format(
-                            "Data Point Type key '{}' is already registered. Please check your DPT implementation!", id));
+                    Preconditions.checkState(!dataPointTypeMap.containsKey(id),
+                            "Data Point Type key '{}' is already registered. Please check the DPT implementation!", id);
                     dataPointTypeMap.put(id, fieldInstance);
                 }
                 dataPointIdentifierMap.put(fieldInstance, fieldAnnotation.value().clone());
-                log.debug("Field: {}->{} [{}]", clazz, field.getName(), Arrays.toString(fieldAnnotation.value()));
+                if (log.isDebugEnabled()) {
+                    log.debug("Field: {}->{} [{}]", clazz, field.getName(), Arrays.toString(fieldAnnotation.value()));
+                }
             } catch (final Exception ex) {
-                throw new KnxException(String.format("Exception for field '{}'", field.getName(), ex));
+                ex.printStackTrace();
+                throw new KnxException(String.format("Exception for field '%s'", field.getName()), ex);
             }
         }
     }
@@ -213,11 +220,11 @@ public final class DataPointRegistry {
 
     public static String[] getDataPointIdentifiers(final DPTEnum<?> e) {
         final String[] identifiers = dataPointIdentifierMap.get(e);
-        return Preconditions.checkNonNull(identifiers, "Could not find Data Point Enum '{}' in identifier map.", e);
+        return Preconditions.checkNonNull(identifiers, "Could not find Data Point Enum in identifier map: {}", e.getClass());
     }
 
     public static String[] getDataPointIdentifiers(final DataPointType dpt) {
         final String[] identifiers = dataPointIdentifierMap.get(dpt);
-        return Preconditions.checkNonNull(identifiers, "Could not find Data Point Type '{}' in identifier map.", dpt);
+        return Preconditions.checkNonNull(identifiers, "Could not find Data Point Type in identifier map: {}", dpt.getClass());
     }
 }

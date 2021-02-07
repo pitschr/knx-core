@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +19,36 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.BaseDataPointType;
+import li.pitschmann.knx.core.datapoint.DPTRaw;
 import li.pitschmann.knx.core.utils.ByteFormatter;
-import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
- * Abstract class for data point flags (2 or more bytes)
+ * Data Point Value for {@link DPTRaw}
  *
- * @param <T>
+ * <pre>
+ *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ * Field Names  | (Byte Array)                                                  |
+ * Encoding     | B   B   B   B   B   B   B   B   B   B   B   B   B   B   B   B |
+ *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ *              |                           . . . . .                           |
+ *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ *              | B   B   B   B   B   B   B   B   B   B   B   B   B   B   B   B |
+ *              +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ * Format:      Byte Array
+ * </pre>
+ *
  * @author PITSCHR
  */
-abstract class AbstractDataPointFlags<T extends BaseDataPointType<?>> extends AbstractDataPointValue<T> {
+public final class DPTRawValue extends AbstractDataPointValue<DPTRaw> {
     private final byte[] bytes;
 
-    protected AbstractDataPointFlags(final T dpt, final byte[] bytes) {
-        super(dpt);
-        this.bytes = Objects.requireNonNull(bytes);
-    }
+    public DPTRawValue(final byte[] bytes) {
+        super(DPTRaw.VALUE);
 
-    public final boolean isSet(final int bit) {
-        Preconditions.checkArgument(bit >= 0 && bit < this.bytes.length * 8,
-                "Bit must be between 0 and {} (actual: {})", ((this.bytes.length * 8) - 1), bit);
-        return isBitSet(bytes, bit);
+        this.bytes = bytes.clone();
     }
 
     @Override
@@ -54,27 +58,25 @@ abstract class AbstractDataPointFlags<T extends BaseDataPointType<?>> extends Ab
 
     @Override
     public String toString() {
-        // @formatter:off
         return Strings.toStringHelper(this)
-                .add("dpt", this.getDPT())
-                .add("byteArray", ByteFormatter.formatHexAsString(this.toByteArray()))
+                .add("dpt", getDPT().getId())
+                .add("byteArray", ByteFormatter.formatHexAsString(toByteArray()))
                 .toString();
-        // @formatter:on
     }
 
     @Override
     public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj != null && this.getClass().equals(obj.getClass())) {
-            final var other = this.getClass().cast(obj);
-            return Objects.equals(this.getDPT(), other.getDPT()) && Arrays.compare(this.bytes, other.bytes) == 0;
+        } else if (obj instanceof DPTRawValue) {
+            final var other = (DPTRawValue) obj;
+            return Arrays.equals(this.bytes, other.bytes);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDPT(), Arrays.hashCode(this.bytes));
+        return Arrays.hashCode(bytes);
     }
 }

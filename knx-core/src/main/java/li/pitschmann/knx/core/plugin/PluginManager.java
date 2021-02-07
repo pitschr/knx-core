@@ -75,7 +75,7 @@ public final class PluginManager implements AutoCloseable {
     public PluginManager(final Config config) {
         final var pluginExecutorPoolSize = config.getValue(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE);
         pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
-        log.info("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
+        log.debug("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
     }
 
     /**

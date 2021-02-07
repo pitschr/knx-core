@@ -72,24 +72,24 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         this.client = Objects.requireNonNull(client);
 
         this.channel = Objects.requireNonNull(newChannel(this.client));
-        log.info("Channel registered: {} (open: {}, registered: {}, blocking: {})", channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
+        log.debug("Channel registered: {} (open: {}, registered: {}, blocking: {})", channel, channel.isOpen(), channel.isRegistered(), channel.isBlocking());
 
         // creates inbox and outbox queues
         this.inboxQueue = createInboxQueue(this.client, this.channel);
         this.outboxQueue = createOutboxQueue(this.client, this.channel);
-        log.trace("Inbox and Outbox Queues created: InboxQueue={}, OutboxQueue={}.", this.inboxQueue, this.outboxQueue);
+        log.debug("Inbox and Outbox Queues created: InboxQueue={}, OutboxQueue={}.", this.inboxQueue, this.outboxQueue);
 
         // creates queue executor
         this.queueExecutor = Executors.newFixedThreadPool(2, true);
         this.queueExecutor.submit(inboxQueue);
         this.queueExecutor.submit(outboxQueue);
         this.queueExecutor.shutdown();
-        log.info("Queue Executor created: {}", this.queueExecutor);
+        log.debug("Queue Executor created: {}", this.queueExecutor);
 
         // creates executor for communication
         final var poolSize = this.client.getConfig(CoreConfigs.Communication.EXECUTOR_POOL_SIZE);
         this.communicationExecutor = Executors.newFixedThreadPool(poolSize, true);
-        log.info("Communication Executor created with size of {}: {}", poolSize, this.communicationExecutor);
+        log.debug("Communication Executor created with size of {}: {}", poolSize, this.communicationExecutor);
     }
 
     /**

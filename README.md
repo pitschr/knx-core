@@ -85,12 +85,19 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 | 2.xxx  | Controlled Binary        | 12.xxx | 4-Octet Unsigned Value           | 22.xxx | 16-Bit Flagged Messages |
 | 3.xxx  | Controlled Step/Interval | 13.xxx | 4-Octet Signed Value             | 23.xxx | 2-Bit Enumeration       |
 | 4.xxx  | Character                | 14.xxx | 4-Octet Float Value              | 25.xxx | 2-Nibble Set            |
-| 5.xxx  | 8-Bit Unsigned Value     | 15.xxx | Access Data                      | 26.xxx | Scene Information       |
-| 6.xxx  | 8-Bit Signed Value       | 16.xxx | 14-Octet Characters              |
-| 7.xxx  | 2-Octet Unsigned Value   | 17.xxx | Scene Number                     |
-| 8.xxx  | 2-Octet Signed Value     | 18.xxx | Controlled Scene Number          |
-| 9.xxx  | 2-Octet Float Value      | 19.xxx | Date and Time (Year: 1900..2155) |
+| 5.xxx  | 8-Bit Unsigned Value     | 15.xxx | Access Data                      | 24.xxx | ISO-8859-1 Characters<br>(variable length) |
+| 6.xxx  | 8-Bit Signed Value       | 16.xxx | 14-Octet Characters              | 26.xxx | Scene Information       |
+| 7.xxx  | 2-Octet Unsigned Value   | 17.xxx | Scene Number                     | 27.xxx | Combined Info On/Off    |
+| 8.xxx  | 2-Octet Signed Value     | 18.xxx | Controlled Scene Number          | 28.xxx | UTF-8 Characters<br>(variable length) |
+| 9.xxx  | 2-Octet Float Value      | 19.xxx | Date and Time (Year: 1900..2155) | 29.xxx | 8-Octet Signed Value<br>Electrical Energy |
 | 10.xxx | Time                     | 20.xxx | 8-Bit Enumeration                |
+
+Based on [article](https://support.knx.org/hc/en-us/articles/115001133744-Datapoint-Type) from KNX Association 
+the DPT1 until DPT20 are most often used data point types.
+
+For other DPTs which are not on the list yet, you can either implement the Data Point Type by yourself 
+by extending the `DataPointType`. Alternatively use the built-in `DPTRaw` whereas the raw value is in 
+byte array format.
 
 ## Quick Start Guides
 

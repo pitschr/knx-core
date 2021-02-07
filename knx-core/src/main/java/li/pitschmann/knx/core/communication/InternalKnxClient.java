@@ -171,7 +171,7 @@ public final class InternalKnxClient implements AutoCloseable {
         }
 
         if (this.verifyTunnelingSupport()) {
-            log.info("Tunneling is used. Verification passed. Starting KNX services.");
+            log.debug("Tunneling is used. Verification passed. Starting KNX services.");
             this.startServices();
         } else {
             throw new KnxNoTunnelingException(
@@ -244,10 +244,10 @@ public final class InternalKnxClient implements AutoCloseable {
 
         // get channel for further communications
         if (this.config.isRoutingEnabled()) {
-            log.info("No channel ID required because of routing");
+            log.info("Channel ID (Routing)             : Not Available");
         } else {
             this.channelId = this.fetchChannelIdFromKNX();
-            log.info("Channel ID received: {}", this.channelId);
+            log.info("Channel ID (Tunneling)           : {}", this.channelId);
 
             // after obtaining channel id - start monitor as well
             this.channelExecutor.submit(CommunicatorFactory.newConnectionStateCommunicator(this));
@@ -255,7 +255,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
         // do not accept more services anymore!
         this.channelExecutor.shutdown();
-        log.info("Channel Executor created: {}", this.channelExecutor);
+        log.debug("Channel Executor created: {}", this.channelExecutor);
     }
 
     @Override
@@ -324,11 +324,11 @@ public final class InternalKnxClient implements AutoCloseable {
             for (final var channelCommunicator : this.channelCommunicators) {
                 isOk &= Closeables.closeQuietly(channelCommunicator);
             }
-            log.info("Channel Communicator stopped gracefully?: {}", isOk);
+            log.debug("Channel Communicator stopped gracefully?: {}", isOk);
 
             // shutdown executor now
             isOk &= Closeables.shutdownQuietly(this.channelExecutor, 0, TimeUnit.SECONDS);
-            log.info("KNX Services stopped gracefully?: {}", isOk);
+            log.debug("KNX Services stopped gracefully?: {}", isOk);
 
             // some time buffer for OS to close the underlying network bindings to avoid
             // "Address already in use" when restarting the client immediately.

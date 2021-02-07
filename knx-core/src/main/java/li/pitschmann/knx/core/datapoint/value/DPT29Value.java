@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,7 @@
 package li.pitschmann.knx.core.datapoint.value;
 
 import li.pitschmann.knx.core.annotations.Nullable;
-import li.pitschmann.knx.core.datapoint.DPT13;
-import li.pitschmann.knx.core.exceptions.KnxNumberOutOfRangeException;
+import li.pitschmann.knx.core.datapoint.DPT29;
 import li.pitschmann.knx.core.utils.ByteFormatter;
 import li.pitschmann.knx.core.utils.Strings;
 
@@ -28,44 +27,49 @@ import java.math.BigInteger;
 import java.util.Objects;
 
 /**
- * Data Point Value for {@link DPT13} (13.xxx)
+ * Data Point Value for {@link DPT29} (29.xxx)
  *
  * <pre>
  *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
  * Field Names  | (Signed Value)                                                |
  * Encoding     | V   V   V   V   V   V   V   V   V   V   V   V   V   V   V   V |
  *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
- *              | (Signed Value)                                                |
+ *              | V   V   V   V   V   V   V   V   V   V   V   V   V   V   V   V |
+ *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+ *              | V   V   V   V   V   V   V   V   V   V   V   V   V   V   V   V |
+ *              +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
  *              | V   V   V   V   V   V   V   V   V   V   V   V   V   V   V   V |
  *              +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
- * Format:     4 octets (V<sub>32</sub>)
- * Range:      V = [-2147483648 .. 2147483647]
+ * Format:     8 octets (V<sub>64</sub>)
+ * Range:      U = [-9 223 372 036 854 775 808 .. 9 223 372 036 854 775 807]
  * </pre>
  *
  * @author PITSCHR
  */
-public final class DPT13Value extends AbstractDataPointValue<DPT13> {
-    private final int value;
+public final class DPT29Value extends AbstractDataPointValue<DPT29> {
+    private final long value;
 
-    public DPT13Value(final DPT13 dpt, final byte[] bytes) {
-        this(dpt, new BigInteger(bytes).intValue());
+    public DPT29Value(final DPT29 dpt, final byte[] bytes) {
+        this(dpt, new BigInteger(bytes).longValue());
     }
 
-    public DPT13Value(final DPT13 dpt, final int value) {
+    public DPT29Value(final DPT29 dpt, final long value) {
         super(dpt);
-        if (!getDPT().isRangeClosed(value)) {
-            throw new KnxNumberOutOfRangeException("value", getDPT().getLowerValue(), getDPT().getUpperValue(), value);
-        }
+
         this.value = value;
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
     @Override
     public byte[] toByteArray() {
         return new byte[]{ //
+                (byte) (value >>> 56), //
+                (byte) (value >>> 48), //
+                (byte) (value >>> 40), //
+                (byte) (value >>> 32), //
                 (byte) (value >>> 24), //
                 (byte) (value >>> 16), //
                 (byte) (value >>> 8), //
@@ -93,8 +97,8 @@ public final class DPT13Value extends AbstractDataPointValue<DPT13> {
     public boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj instanceof DPT13Value) {
-            final var other = (DPT13Value) obj;
+        } else if (obj instanceof DPT29Value) {
+            final var other = (DPT29Value) obj;
             return Objects.equals(this.getDPT(), other.getDPT()) //
                     && Objects.equals(this.value, other.value);
         }

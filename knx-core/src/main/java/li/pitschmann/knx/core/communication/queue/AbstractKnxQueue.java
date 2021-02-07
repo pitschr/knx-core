@@ -62,7 +62,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
      */
     @Override
     public final void run() {
-        log.info("*** START ***");
+        log.debug("*** START ***");
 
         try (final var selector = openSelector()) {
             // iterate until current thread is interrupted
@@ -101,7 +101,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
             throw new KnxException(String.format("IOException in '%s'.", getClass()), ioe);
             // throw to channel communicator
         } finally {
-            log.info("*** END ***");
+            log.debug("*** END ***");
         }
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
 
         // prepare channel for non-blocking and register to selector
         channel.register(selector, interestOps());
-        log.trace("Channel {} registered to selector: {}", channel, selector);
+        log.debug("Channel {} registered to selector: {}", channel, selector);
 
         return selector;
     }
