@@ -73,9 +73,11 @@ public final class DataPointRegistry {
         registerDataPointType(DPT21.class);
         registerDataPointType(DPT22.class);
         registerDataPointType(DPT23.class);
+        registerDataPointType(DPT24.class);
         registerDataPointType(DPT25.class);
         registerDataPointType(DPT26.class);
         registerDataPointType(DPT27.class);
+        registerDataPointType(DPT28.class);
         registerDataPointType(DPT29.class);
 
         if (log.isDebugEnabled()) {
