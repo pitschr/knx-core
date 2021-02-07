@@ -92,6 +92,13 @@ translate data point types in a fluent way into a KNX byte-array compatible form
 | 9.xxx  | 2-Octet Float Value      | 19.xxx | Date and Time (Year: 1900..2155) |
 | 10.xxx | Time                     | 20.xxx | 8-Bit Enumeration                |
 
+Based on [article](https://support.knx.org/hc/en-us/articles/115001133744-Datapoint-Type) from KNX Association 
+the DPT1 until DPT20 are most often used data point types.
+
+For other DPTs which are not on the list yet, you can either implement the Data Point Type by yourself 
+by extending the `DataPointType`. Alternatively use the built-in `DPTRaw` whereas the raw value is in 
+byte array format.
+
 ## Quick Start Guides
 
 ### Send a WRITE request frame to KNX

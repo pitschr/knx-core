@@ -49,6 +49,7 @@ public final class DataPointRegistry {
 
     static {
         // add DPT fields
+        registerDataPointType(DPTRaw.class);
         registerDataPointType(DPT1.class);
         registerDataPointType(DPT2.class);
         registerDataPointType(DPT3.class);
