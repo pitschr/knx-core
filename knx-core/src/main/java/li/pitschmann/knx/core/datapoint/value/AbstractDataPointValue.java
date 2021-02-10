@@ -84,9 +84,10 @@ abstract class AbstractDataPointValue<T extends DataPointType> implements DataPo
      * must be between 0 and 7.
      *
      * <pre>
-     * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
-     * | B   B   B   B   B   B   B   B |
-     * +---+---+---+---+---+---+---+---+
+     * Position:  7   6   5   4   3   2   1   0
+     *          +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     *          | B   B   B   B   B   B   B   B |
+     *          +---+---+---+---+---+---+---+---+
      * </pre>
      *
      * @param b the byte
@@ -102,12 +103,13 @@ abstract class AbstractDataPointValue<T extends DataPointType> implements DataPo
      * This method supports byte array which allows to look up for
      * bit position from 0 until {@code numberOfBytes * 8 - 1}.
      * <p>
-     * For example, 3 bytes, the bit position must be between 0 and 23.
+     * For example, 2 bytes, the bit position must be between 0 and 15.
      *
      * <pre>
-     * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
-     * | B   B   B   B   B   B   B   B   B   B   B   B   B   B   B   B |
-     * +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+     * Position: 15  14  13  12  11  10   9   8   7   6   5   4   3   2   1   0
+     *          +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
+     *          | B   B   B   B   B   B   B   B   B   B   B   B   B   B   B   B |
+     *          +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
      * </pre>
      *
      * @param bytes the byte array

@@ -77,12 +77,14 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
         try {
             log.trace("Receiving packet.");
             receive(channel, buff);
-            receivedBytes = buff.array();
+            buff.flip();
+            receivedBytes = new byte[buff.limit()];
+            buff.get(receivedBytes);
             if (log.isTraceEnabled()) {
                 log.trace("Receiving packet: {}", ByteFormatter.formatHexAsString(receivedBytes));
             }
         } finally {
-            buff.rewind();
+            buff.clear();
         }
 
         final var body = BodyFactory.of(receivedBytes);
