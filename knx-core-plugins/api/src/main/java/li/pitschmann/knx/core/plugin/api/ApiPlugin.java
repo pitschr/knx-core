@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Plugin for RESTful API (web server)
@@ -128,10 +127,20 @@ public final class ApiPlugin implements ExtensionPlugin {
          */
         final var statusController = new StatusController(client);
         javalin.get("/api/v1/status", statusController::statusAll);
-        javalin.get("/api/v1/status/:ga", ctx -> {
-            // supports: 1, 1/2, 1/2/3
-            final var groupAddress = GroupAddress.of(ctx.pathParam("ga"));
-            statusController.statusOne(ctx, groupAddress);
+        javalin.get("/api/v1/status/:address", ctx -> {
+            final var address = Integer.valueOf(ctx.pathParam("address"));
+            statusController.statusOne(ctx, GroupAddress.of(address));
+        });
+        javalin.get("/api/v1/status/:main/:sub", ctx -> {
+            final var main = Integer.valueOf(ctx.pathParam("main"));
+            final var sub = Integer.valueOf(ctx.pathParam("sub"));
+            statusController.statusOne(ctx, GroupAddress.of(main, sub));
+        });
+        javalin.get("/api/v1/status/:main/:middle/:sub", ctx -> {
+            final var main = Integer.valueOf(ctx.pathParam("main"));
+            final var middle = Integer.valueOf(ctx.pathParam("middle"));
+            final var sub = Integer.valueOf(ctx.pathParam("sub"));
+            statusController.statusOne(ctx, GroupAddress.of(main, middle, sub));
         });
 
         final var writeRequestController = new WriteRequestController(client);

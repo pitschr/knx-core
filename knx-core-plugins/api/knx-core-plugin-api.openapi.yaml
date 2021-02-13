@@ -378,21 +378,17 @@ paths:
             application/json:
               example: [{"status":"OK","timestamp":{"seconds":123,"nanos":456000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"258","two_level":"0/258","three_level":"0/1/2"},"raw":[1,2]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[1]},{"status":"OK","timestamp":{"seconds":234,"nanos":567000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_WRITE","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"2563","two_level":"1/515","three_level":"1/2/3"},"raw":[10,3]},"name":"DPT5.1-Octet Unsigned Name","description":"DPT5.1-Octet Unsigned Description","dataPointType":"5.010","raw":[35]},{"status":"OK","timestamp":{"seconds":345,"nanos":678000000},"sourceAddress":{"type":0,"format":"15.15.255","raw":[-1,-1]},"apci":"GROUP_VALUE_RESPONSE","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"4868","two_level":"2/772","three_level":"2/3/4"},"raw":[19,4]},"name":"DPT7.2-Octet Unsigned Name","description":"DPT7.2-Octet Unsigned Description","dataPointType":"7.001","raw":[86,126]},{"status":"ERROR","groupAddress":{"type":1,"format":{"free_level":"7173","two_level":"3/1029","three_level":"3/4/5"},"raw":[28,5]}}]
 
-  /v1/status/{groupAddress}:
+  /v1/status/{address}:
     parameters:
       - in: path
-        name: groupAddress
+        name: address
         required: true
-        description: Group Address
+        description: Free-Level Group Address
         schema:
-          type: string
+          type: integer
         examples:
           Group Address (Free-Level):
             value: 2660
-          Group Address (Two-Level):
-            value: 1/612
-          Group Address (Three-Level):
-            value: 1/2/100
     get:
       description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns <strong>ONE status</strong> for given address. A nummercial group address - which is typically used for free-level project - can be also applied for two-level/three-level project structures.<p>Example:<br><code>2660 (= Free-Level: 2660, Two-Level: 1/612, Three-Level: 1/2/100)</code><p>Following URLs have same effect:<ul><li><code>/v1/status/2660</code></li><li><code>/v1/status/1/612</code></li><li><code>/v1/status/1/2/100</code></li></ul>This is because in KNX a group address is represented by two-bytes array.'
       responses:
@@ -407,7 +403,83 @@ paths:
                   value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
         404:
           description: 'No status found for given group address'
-
+  /v1/status/{main}/{sub}:
+    parameters:
+      - in: path
+        name: main
+        required: true
+        description: Main Group Address
+        schema:
+          type: integer
+        examples:
+          'Main Group Address (Two-Level: 1/612)':
+            value: 1
+      - in: path
+        name: sub
+        required: true
+        description: Sub Group Address
+        schema:
+          type: integer
+        examples:
+          'Sub Group Address (Two-Level: 1/612)':
+            value: 612
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns <strong>ONE status</strong> for given address. A nummercial group address - which is typically used for free-level project - can be also applied for two-level/three-level project structures.<p>Example:<br><code>2660 (= Free-Level: 2660, Two-Level: 1/612, Three-Level: 1/2/100)</code><p>Following URLs have same effect:<ul><li><code>/v1/status/2660</code></li><li><code>/v1/status/1/612</code></li><li><code>/v1/status/1/2/100</code></li></ul>This is because in KNX a group address is represented by two-bytes array.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"status":"OK","timestamp":{"seconds":9876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.13","raw":[-2,13]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"16206","two_level":"7/1870","three_level":"7/7/78"},"raw":[63,78]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[119,67,33]}
+                Partial Response:
+                  value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
+        404:
+          description: 'No status found for given group address'
+  /v1/status/{main}/{middle}/{sub}:
+    parameters:
+      - in: path
+        name: main
+        required: true
+        description: Main Group Address
+        schema:
+          type: integer
+        examples:
+          'Main Group Address (Three-Level: 1/2/100)':
+            value: 1
+      - in: path
+        name: middle
+        required: true
+        description: Middle Group Address
+        schema:
+          type: integer
+        examples:
+          'Middle Group Address (Three-Level: 1/2/100)':
+            value: 2
+      - in: path
+        name: sub
+        required: true
+        description: Sub Group Address
+        schema:
+          type: integer
+        examples:
+          'Sub Group Address (Three-Level: 1/2/100)':
+            value: 100
+    get:
+      description: '<strong>Valid for all project (free-level, two-level and three-level) structures</strong><p/>Returns <strong>ONE status</strong> for given address. A nummercial group address - which is typically used for free-level project - can be also applied for two-level/three-level project structures.<p>Example:<br><code>2660 (= Free-Level: 2660, Two-Level: 1/612, Three-Level: 1/2/100)</code><p>Following URLs have same effect:<ul><li><code>/v1/status/2660</code></li><li><code>/v1/status/1/612</code></li><li><code>/v1/status/1/2/100</code></li></ul>This is because in KNX a group address is represented by two-bytes array.'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              examples:
+                Full Response (Group Address is present in KNX Project File):
+                  value: {"status":"OK","timestamp":{"seconds":9876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.13","raw":[-2,13]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"16206","two_level":"7/1870","three_level":"7/7/78"},"raw":[63,78]},"name":"DPT1.Switch Name","description":"DPT1.Switch Description","dataPointType":"1.001","raw":[119,67,33]}
+                Partial Response:
+                  value: {"status":"OK","timestamp":{"seconds":19876,"nanos":543000000},"sourceAddress":{"type":0,"format":"15.14.12","raw":[-2,12]},"apci":"GROUP_VALUE_READ","dirty":false,"groupAddress":{"type":1,"format":{"free_level":"18255","two_level":"8/1871","three_level":"8/7/79"},"raw":[71,79]},"raw":[56,85]}
+        404:
+          description: 'No status found for given group address'
 components:
   schemas:
 
