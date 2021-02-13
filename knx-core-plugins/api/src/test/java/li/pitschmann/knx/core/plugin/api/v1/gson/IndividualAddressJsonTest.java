@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.gson;
+package li.pitschmann.knx.core.plugin.api.v1.gson;
 
 import com.google.gson.JsonParser;
 import li.pitschmann.knx.core.address.IndividualAddress;
@@ -28,14 +28,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Test {@link IndividualAddressJsonSerializer} and {@link IndividualAddressJsonDeserializer}
  */
-public class IndividualAddressJsonTest {
+class IndividualAddressJsonTest {
 
     /**
      * Test serialization of {@link IndividualAddress} to a string representation
      */
     @Test
     @DisplayName("Serialize IndividualAddress")
-    public void testSerialize() {
+    void testSerialize() {
         final var address = IndividualAddress.of(13, 4, 56);
 
         // serialize to JSON String
@@ -56,7 +56,7 @@ public class IndividualAddressJsonTest {
      */
     @Test
     @DisplayName("De-Serialize IndividualAddress")
-    public void testDeserialize() {
+    void testDeserialize() {
         final var expectedAddress = IndividualAddress.of(12, 3, 45);
 
         // given JSON strings
@@ -81,9 +81,10 @@ public class IndividualAddressJsonTest {
         };
 
         // verify
-        final var jsonParser = new JsonParser();
         for (final var json : jsons) {
-            final var actualAddress = IndividualAddressJsonDeserializer.INSTANCE.deserialize(jsonParser.parse(json), null, null);
+            final var actualAddress = IndividualAddressJsonDeserializer.INSTANCE.deserialize(
+                    JsonParser.parseString(json), null, null
+            );
             assertThat(actualAddress).isEqualTo(expectedAddress);
         }
     }

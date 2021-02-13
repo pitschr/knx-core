@@ -1,4 +1,22 @@
-package li.pitschmann.knx.core.plugin.api.gson;
+/*
+ * KNX Link - A library for KNX Net/IP communication
+ * Copyright (C) 2021 Pitschmann Christoph
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package li.pitschmann.knx.core.plugin.api.v1.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,19 +27,19 @@ import li.pitschmann.knx.core.communication.KnxStatistic;
 import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.knxproj.XmlGroupRange;
-import ro.pippo.gson.GsonEngine;
 
 import java.time.Instant;
 
 /**
- * A customized {@link GsonEngine} with that adds needs for web server
+ * A customized {@link Gson} with that adds needs for web server
  */
-public final class ApiGsonEngine extends GsonEngine {
+public final class ApiGsonEngine {
     public static final ApiGsonEngine INSTANCE = new ApiGsonEngine();
     private final Gson gson;
 
     private ApiGsonEngine() {
         gson = new GsonBuilder()
+                .disableHtmlEscaping()
                 // serializers
                 .registerTypeAdapter(Instant.class, InstantJsonSerializer.INSTANCE)
                 .registerTypeAdapter(DataPointType.class, DataPointTypeJsonSerializer.INSTANCE)
@@ -38,13 +56,7 @@ public final class ApiGsonEngine extends GsonEngine {
                 .create();
     }
 
-    @Override
-    public String toString(Object object) {
-        return gson.toJson(object);
-    }
-
-    @Override
-    public <T> T fromString(String content, Class<T> classOfT) {
-        return gson.fromJson(content, classOfT);
+    public Gson getGson() {
+        return gson;
     }
 }

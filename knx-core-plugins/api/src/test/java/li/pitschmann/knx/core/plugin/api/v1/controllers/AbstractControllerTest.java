@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,123 +18,125 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import io.javalin.http.util.ContextUtil;
 import li.pitschmann.knx.core.communication.KnxClient;
-import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
-import ro.pippo.controller.Controller;
-import ro.pippo.core.ParameterValue;
+import org.junit.jupiter.api.Test;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link AbstractController}
  */
-public class AbstractControllerTest {
+class AbstractControllerTest {
 
-    /**
-     * Test the 'start' parameter for {@link AbstractController#limitAndGetAsList(Collection)} method
-     */
-    @ControllerTest(value = TestController.class)
+    @Test
     @DisplayName("Test the limitation of result using 'start' request parameter")
-    public void testStart(final Controller controller) {
-        final var testController = (TestController) controller;
+    void testStart() {
+        final var testController = new TestController(mock(KnxClient.class));
 
         final var testList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         //
         // Verification
         //
+        final var requestMock = mock(HttpServletRequest.class);
+        final var context = ContextUtil.init(requestMock, mock(HttpServletResponse.class));
+
+        // no "start" parameter -> defaults back to "0"
+        final var startDefault = testController.limitAndGetAsList(context, testList);
+        assertThat(startDefault).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         // return all elements
-        final var listAll = testController.limitAndGetAsList(testList);
-        assertThat(listAll).hasSize(10);
-
-        when(controller.getRequest().getParameter("start")).thenReturn(new ParameterValue("0"));
-        final var listAll2 = testController.limitAndGetAsList(testList);
-        assertThat(listAll2).hasSize(10);
+        when(requestMock.getQueryString()).thenReturn("start=0");
+        final var startZero = testController.limitAndGetAsList(context, testList);
+        assertThat(startZero).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         // return elements after 7th index
-        when(controller.getRequest().getParameter("start")).thenReturn(new ParameterValue("7"));
-        final var listStart = testController.limitAndGetAsList(testList);
-        assertThat(listStart).containsExactly(7, 8, 9);
+        when(requestMock.getQueryString()).thenReturn("start=7");
+        final var startNonZero = testController.limitAndGetAsList(context, testList);
+        assertThat(startNonZero).containsExactly(7, 8, 9);
 
         // return elements after 11th index (overflow)
-        when(controller.getRequest().getParameter("start")).thenReturn(new ParameterValue("11"));
-        final var listStartOverflow = testController.limitAndGetAsList(testList);
-        assertThat(listStartOverflow).isEmpty();
+        when(requestMock.getQueryString()).thenReturn("start=11");
+        final var startOverflow = testController.limitAndGetAsList(context, testList);
+        assertThat(startOverflow).isEmpty();
 
         // fail test with negative start
-        when(controller.getRequest().getParameter("start")).thenReturn(new ParameterValue("-1"));
-        assertThatThrownBy(() -> testController.limitAndGetAsList(testList)).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Start should be 0 or greater: -1");
+        when(requestMock.getQueryString()).thenReturn("start=-3");
+        assertThatThrownBy(() -> testController.limitAndGetAsList(context, testList))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Start should be 0 or greater: -3");
     }
 
-    /**
-     * Test the 'limit' parameter for {@link AbstractController#limitAndGetAsList(Collection)} method
-     */
-    @ControllerTest(value = TestController.class)
+    @Test
     @DisplayName("Test the limitation of result using 'limit' request parameter")
-    public void testLimit(final Controller controller) {
-        final var testController = (TestController) controller;
+    void testLimit() {
+        final var testController = new TestController(mock(KnxClient.class));
 
         final var testList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         //
         // Verification
         //
+        final var requestMock = mock(HttpServletRequest.class);
+        final var context = ContextUtil.init(requestMock, mock(HttpServletResponse.class));
+
+        // no "limit" parameter
+        final var limitDefault = testController.limitAndGetAsList(context, testList);
+        assertThat(limitDefault).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         // limit to 0 elements
-        when(controller.getRequest().getParameter("limit")).thenReturn(new ParameterValue("0"));
-        final var listAll2 = testController.limitAndGetAsList(testList);
-        assertThat(listAll2).isEmpty();
+        when(requestMock.getQueryString()).thenReturn("limit=0");
+        final var limitZero = testController.limitAndGetAsList(context, testList);
+        assertThat(limitZero).isEmpty();
 
         // limit to 6 elements
-        when(controller.getRequest().getParameter("limit")).thenReturn(new ParameterValue("6"));
-        final var listLimit = testController.limitAndGetAsList(testList);
-        assertThat(listLimit).containsExactly(0, 1, 2, 3, 4, 5);
+        when(requestMock.getQueryString()).thenReturn("limit=6");
+        final var limitNonZero = testController.limitAndGetAsList(context, testList);
+        assertThat(limitNonZero).containsExactly(0, 1, 2, 3, 4, 5);
 
         // limit to 11 elements (overflow)
-        when(controller.getRequest().getParameter("limit")).thenReturn(new ParameterValue("11"));
-        final var listLimitOverflow = testController.limitAndGetAsList(testList);
-        assertThat(listLimitOverflow).hasSize(10);
+        when(requestMock.getQueryString()).thenReturn("limit=11");
+        final var limitOverflow = testController.limitAndGetAsList(context, testList);
+        assertThat(limitOverflow).hasSize(10);
 
         // fail test with negative limit
-        when(controller.getRequest().getParameter("limit")).thenReturn(new ParameterValue("-1"));
-        assertThatThrownBy(() -> testController.limitAndGetAsList(testList)).isInstanceOf(IllegalArgumentException.class)
+        when(requestMock.getQueryString()).thenReturn("limit=-1");
+        assertThatThrownBy(() -> testController.limitAndGetAsList(context, testList))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Limit should be 0 or greater: -1");
-
     }
 
-    /**
-     * Test the 'start' and 'limit' parameter for {@link AbstractController#limitAndGetAsList(Collection)} method
-     */
-    @ControllerTest(value = TestController.class)
+    @Test
     @DisplayName("Test the limitation of result using 'start' and 'limit' request parameters")
-    public void testStartAndLimit(final Controller controller) {
-        final var testController = (TestController) controller;
+    void testStartAndLimit() {
+        final var testController = new TestController(mock(KnxClient.class));
 
         final var testList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         //
         // Verification
         //
+        final var requestMock = mock(HttpServletRequest.class);
+        final var context = ContextUtil.init(requestMock, mock(HttpServletResponse.class));
 
         // start with 3rd index and limit to 2 elements
-        when(controller.getRequest().getParameter("start")).thenReturn(new ParameterValue("3"));
-        when(controller.getRequest().getParameter("limit")).thenReturn(new ParameterValue("2"));
-        final var listLimit = testController.limitAndGetAsList(testList);
+        when(requestMock.getQueryString()).thenReturn("start=3&limit=2");
+        final var listLimit = testController.limitAndGetAsList(context, testList);
         assertThat(listLimit).containsExactly(3, 4);
 
         // start with 7th index and limit to 4 elements
-        when(controller.getRequest().getParameter("start")).thenReturn(new ParameterValue("7"));
-        when(controller.getRequest().getParameter("limit")).thenReturn(new ParameterValue("4"));
-        final var listLimit2 = testController.limitAndGetAsList(testList);
-        assertThat(listLimit2).containsExactly(7, 8, 9); // only 3 elements
+        when(requestMock.getQueryString()).thenReturn("start=7&limit=4");
+        final var listLimit2 = testController.limitAndGetAsList(context, testList);
+        assertThat(listLimit2).containsExactly(7, 8, 9); // only 3 elements as list ends at 9
     }
 
     /**

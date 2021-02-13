@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,23 +40,12 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.mockito.Mockito;
-import ro.pippo.controller.Controller;
-import ro.pippo.controller.ControllerApplication;
-import ro.pippo.core.Messages;
-import ro.pippo.core.ParameterValue;
-import ro.pippo.core.PippoSettings;
-import ro.pippo.core.Request;
-import ro.pippo.core.Response;
-import ro.pippo.core.route.DefaultRouter;
-import ro.pippo.core.route.RouteContext;
 
-import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -70,14 +59,14 @@ import static org.mockito.Mockito.when;
 public final class ControllerTestExtension
         implements ParameterResolver {
     @Override
-    public Controller resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
+    public AbstractController resolveParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
         final var annotation = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ControllerTest.class).get();
         return newController(annotation);
     }
 
     @Override
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext context) throws ParameterResolutionException {
-        return paramContext.getParameter().getType().isAssignableFrom(Controller.class);
+        return AbstractController.class.isAssignableFrom(paramContext.getParameter().getType());
     }
 
     /**
@@ -107,13 +96,7 @@ public final class ControllerTestExtension
                     .getDeclaredConstructor(KnxClient.class)
                     .newInstance(knxClientMock);
 
-            // apply the route context to the controller instance as RouteContext won't
-            // be injected by Pippo Framework
-            final var routeContextInternal = getRouteContextMock();
-            final var spyObject = spy(obj);
-            when(spyObject.getRouteContext()).thenReturn(routeContextInternal);
-
-            return spyObject;
+            return spy(obj);
         } catch (final Exception e) {
             throw new AssertionError(e);
         }
@@ -202,33 +185,5 @@ public final class ControllerTestExtension
         when(xmlProject.getGroupRanges()).thenReturn(xmlGroupRangesMock);
 
         return xmlProject;
-    }
-
-    /**
-     * Returns a mocked {@link RouteContext}
-     *
-     * @return mocked {@link RouteContext}
-     */
-    private RouteContext getRouteContextMock() {
-        final var routeContext = mock(RouteContext.class);
-        final var application = mock(ControllerApplication.class);
-        final var messages = mock(Messages.class);
-        final var settings = mock(PippoSettings.class);
-        final var httpServletResponse = mock(HttpServletResponse.class);
-        final var request = mock(Request.class);
-
-        when(application.getRouter()).thenReturn(new DefaultRouter());
-
-        final var response = spy(new Response(httpServletResponse, application));
-
-        when(routeContext.getRequest()).thenReturn(request);
-        when(routeContext.getResponse()).thenReturn(response);
-        when(routeContext.getApplication()).thenReturn(application);
-        when(routeContext.getMessages()).thenReturn(messages);
-        when(routeContext.getSettings()).thenReturn(settings);
-
-        when(request.getParameter(anyString())).thenReturn(new ParameterValue());
-
-        return routeContext;
     }
 }

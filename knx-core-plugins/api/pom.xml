@@ -35,7 +35,8 @@
     <!-- Properties -->
     <properties>
         <!-- Dependency Versions and Licenses -->
-        <version.pippo>1.12.0</version.pippo> <!-- Apache 2.0 -->
+        <version.javalin>3.13.3</version.javalin> <!-- Apache 2.0 -->
+        <version.gson>2.8.6</version.gson> <!-- Apache 2.0 -->
         <version.json-unit>2.11.1</version.json-unit> <!-- Apache 2.0 -->
     </properties>
 
@@ -50,27 +51,14 @@
 
         <!-- HTTP server -->
         <dependency>
-            <groupId>ro.pippo</groupId>
-            <artifactId>pippo-undertow</artifactId>
-            <version>${version.pippo}</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${version.gson}</version>
         </dependency>
         <dependency>
-            <groupId>ro.pippo</groupId>
-            <artifactId>pippo-gson</artifactId>
-            <version>${version.pippo}</version>
-        </dependency>
-        <dependency>
-            <groupId>ro.pippo</groupId>
-            <artifactId>pippo-controller</artifactId>
-            <version>${version.pippo}</version>
-        </dependency>
-
-        <!-- Test -->
-        <dependency>
-            <groupId>net.javacrumbs.json-unit</groupId>
-            <artifactId>json-unit-assertj</artifactId>
-            <version>${version.json-unit}</version>
-            <scope>test</scope>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <version>${version.javalin}</version>
         </dependency>
     </dependencies>
 

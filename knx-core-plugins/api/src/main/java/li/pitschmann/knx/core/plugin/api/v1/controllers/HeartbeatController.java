@@ -20,32 +20,24 @@ package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
 import io.javalin.http.Context;
 import li.pitschmann.knx.core.communication.KnxClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Controller for requesting the statistic from KNX client
+ * Controller for heartbeat check if the API is accessible / responsive
  */
-public final class StatisticController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(StatisticController.class);
-
-    public StatisticController(final KnxClient knxClient) {
+public class HeartbeatController extends AbstractController {
+    public HeartbeatController(final KnxClient knxClient) {
         super(knxClient);
     }
 
     /**
-     * Endpoint for status request to return the current statistic of KNX client
+     * The ping check, responds with {@code OK} only
      *
      * @param ctx the Javalin context
      */
-    public void getStatistic(final Context ctx) {
-        log.trace("Http Statistic Request received");
-
-        final var statistic = getKnxClient().getStatistic();
-
+    public void ping(final Context ctx) {
         ctx.status(HttpServletResponse.SC_OK);
-        ctx.json(statistic);
+        ctx.result("OK");
     }
 }

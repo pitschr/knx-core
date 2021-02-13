@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import io.javalin.plugin.json.JavalinJson;
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.address.IndividualAddress;
 import li.pitschmann.knx.core.address.KnxAddress;
@@ -26,20 +27,19 @@ import li.pitschmann.knx.core.communication.KnxStatusData;
 import li.pitschmann.knx.core.knxproj.XmlGroupAddress;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import li.pitschmann.knx.core.plugin.api.TestUtils;
-import li.pitschmann.knx.core.plugin.api.v1.json.Status;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import ro.pippo.controller.Controller;
-import ro.pippo.core.HttpConstants;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 
-import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
 import static li.pitschmann.knx.core.plugin.api.TestUtils.readJsonFile;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -47,24 +47,28 @@ import static org.mockito.Mockito.when;
  */
 public class StatusControllerTest {
 
+    @BeforeAll
+    static void setUp() {
+        final var gson = ApiGsonEngine.INSTANCE.getGson();
+        JavalinJson.setFromJsonMapper(gson::fromJson);
+        JavalinJson.setToJsonMapper(gson::toJson);
+    }
+
     /**
      * Tests the status endpoint for a list of status. Here we are testing the
      * case when KNX client doesn't have any status map (empty)
      */
     @ControllerTest(StatusController.class)
     @DisplayName("OK: Get list of status (empty)")
-    public void testMultiStatusEmpty(final Controller controller) {
-        final var statusController = (StatusController) controller;
+    public void testMultiStatusEmpty(final StatusController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
-        //
+        // Execution
+        controller.statusAll(contextSpy);
+
         // Verification
-        //
-
-        final var response = statusController.statusAll();
-        assertThat(controller.getResponse().getStatus()).isEqualTo(207); // http code 207 = Multi Status
-
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("[]");
+        verify(contextSpy).status(207); // 'Multi Status' HTTP Code
+        verify(contextSpy).result("[]");
     }
 
     /**
@@ -73,13 +77,9 @@ public class StatusControllerTest {
      */
     @ControllerTest(StatusController.class)
     @DisplayName("OK: Get list of status (non-empty)")
-    public void testMultiStatus(final Controller controller) {
-        final var statusController = (StatusController) controller;
-        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
-
-        //
-        // Mocking
-        //
+    public void testMultiStatus(final StatusController controller) {
+        final var contextSpy = TestUtils.contextSpy();
+        final var xmlProject = controller.getKnxClient().getConfig().getProject();
 
         // mock status map with some entries
         // - three with known group addresses in the XML project file
@@ -119,7 +119,7 @@ public class StatusControllerTest {
         when(knxStatusData3.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
         when(knxStatusData3.getData()).thenReturn(new byte[]{0x69, 0x0A, 0x4E});
         statusMap.put(knxAddress3, knxStatusData3);
-        when(statusController.getKnxClient().getStatusPool().copyStatusMap()).thenReturn(statusMap);
+        when(controller.getKnxClient().getStatusPool().copyStatusMap()).thenReturn(statusMap);
 
         final var xmlGroupAddress0 = new XmlGroupAddress();
         xmlGroupAddress0.setDataPointType("1.001");
@@ -142,39 +142,30 @@ public class StatusControllerTest {
         // simulate an unknown group address in XML project
         when(xmlProject.getGroupAddress(knxAddress3)).thenReturn(null);
 
-        //
+        // Execution
+        controller.statusAll(contextSpy);
+
         // Verification
-        //
-
-        final var response = statusController.statusAll();
-        assertThat(controller.getResponse().getStatus()).isEqualTo(207); // http code 207 = Multi Status
-        assertThat(response).hasSize(4);
-        assertThat(response.get(0).getSourceAddress()).isEqualTo(sourceGroupAddress);
-        assertThat(response.get(1).getApci()).isEqualTo(APCI.GROUP_VALUE_WRITE);
-        assertThat(response.get(2).getDescription()).isEqualTo("DPT7.2-Octet Unsigned Description");
-        assertThat(response.get(3).getStatus()).isEqualTo(Status.ERROR);
-
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
+        verify(contextSpy).status(207); // 'Multi Status' HTTP Code
+        verify(contextSpy).result(readJsonFile("/json/StatusControllerTest-testMultiStatus.json"));
     }
 
     @ControllerTest(StatusController.class)
     @DisplayName("OK: Status Request for a known group address and is registered in KNX Project File")
-    public void testFullSingleStatus(final Controller controller) {
-        final var statusController = (StatusController) controller;
+    public void testFullSingleStatus(final StatusController controller) {
+        final var contextSpy = TestUtils.contextSpy();
         final var groupAddress = GroupAddress.of(7, 7, 78);
         final var sourceAddress = IndividualAddress.of(15, 14, 13);
 
         //
         // Mocking
         //
-
         final var xmlGroupAddress = new XmlGroupAddress();
         xmlGroupAddress.setDataPointType("1.001");
         xmlGroupAddress.setName("DPT1.Switch Name");
         xmlGroupAddress.setDescription("DPT1.Switch Description");
 
-        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
+        final var xmlProject = controller.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddress(groupAddress)).thenReturn(xmlGroupAddress);
 
         // mock an existing KNX status data in status pool
@@ -183,37 +174,28 @@ public class StatusControllerTest {
         when(knxStatusData.getSourceAddress()).thenReturn(sourceAddress);
         when(knxStatusData.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
         when(knxStatusData.getData()).thenReturn(new byte[]{0x77, 0x43, 0x21});
-        when(statusController.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
+        when(controller.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
 
-        //
+        // Execution
+        controller.statusOne(contextSpy, groupAddress);
+
         // Verification
-        //
-
-        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
-        assertThat(statusController.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(response.getStatus()).isEqualTo(Status.OK);
-        assertThat(response.getTimestamp()).isNotNull();
-        assertThat(response.getSourceAddress()).isEqualTo(sourceAddress);
-        assertThat(response.getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
-        assertThat(response.isDirty()).isFalse();
-
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testFullSingleStatus.json"));
+        verify(contextSpy).status(HttpServletResponse.SC_OK);
+        verify(contextSpy).result(readJsonFile("/json/StatusControllerTest-testFullSingleStatus.json"));
     }
 
     @ControllerTest(StatusController.class)
     @DisplayName("OK: Status Request for a known group address but not registered in XML Project File")
-    public void testPartialSingleStatus(final Controller controller) {
-        final var statusController = (StatusController) controller;
+    public void testPartialSingleStatus(final StatusController controller) {
+        final var contextSpy = TestUtils.contextSpy();
         final var groupAddress = GroupAddress.of(8, 7, 79);
         final var sourceAddress = IndividualAddress.of(15, 14, 12);
 
         //
         // Mocking
         //
-
-        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
-        when(xmlProject.getGroupAddress(groupAddress)).thenReturn(null);
+        final var xmlProject = controller.getKnxClient().getConfig().getProject();
+        when(xmlProject.getGroupAddress(eq(groupAddress))).thenReturn(null);
 
         // mock an existing KNX status data in status pool
         final var knxStatusData = mock(KnxStatusData.class);
@@ -221,75 +203,47 @@ public class StatusControllerTest {
         when(knxStatusData.getSourceAddress()).thenReturn(sourceAddress);
         when(knxStatusData.getAPCI()).thenReturn(APCI.GROUP_VALUE_READ);
         when(knxStatusData.getData()).thenReturn(new byte[]{0x38, 0x55});
-        when(statusController.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
+        when(controller.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(knxStatusData);
 
-        //
+        // Execution
+        controller.statusOne(contextSpy, groupAddress);
+
         // Verification
-        //
-
-        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
-        assertThat(statusController.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.OK);
-        assertThat(response.getStatus()).isEqualTo(Status.OK);
-        assertThat(response.getTimestamp()).isNotNull();
-        assertThat(response.getSourceAddress()).isEqualTo(sourceAddress);
-        assertThat(response.getApci()).isEqualTo(APCI.GROUP_VALUE_READ);
-        assertThat(response.isDirty()).isFalse();
-
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo(readJsonFile("/json/StatusControllerTest-testPartialSingleStatus.json"));
+        verify(contextSpy).status(HttpServletResponse.SC_OK);
+        verify(contextSpy).result(readJsonFile("/json/StatusControllerTest-testPartialSingleStatus.json"));
     }
 
     @ControllerTest(StatusController.class)
     @DisplayName("ERROR: Status Request for a known group address but unknown to status pool yet")
-    public void testSingleStatusNoStatus(final Controller controller) {
-        final var statusController = (StatusController) controller;
-        final var groupAddress = GroupAddress.of(7, 7, 88);
-
-        //
-        // Mocking
-        //
+    public void testSingleStatusNoStatus(final StatusController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
         // mock a non-existing KNX status data in status pool
-        when(statusController.getKnxClient().getStatusPool().getStatusFor(any(KnxAddress.class))).thenReturn(null);
+        when(controller.getKnxClient().getStatusPool().getStatusFor(any(GroupAddress.class))).thenReturn(null);
 
-        //
+        // Execution
+        controller.statusOne(contextSpy, TestUtils.randomGroupAddress());
+
         // Verification
-        //
-
-        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
+        verify(contextSpy).status(HttpServletResponse.SC_NOT_FOUND);
+        verify(contextSpy).result("{}");
     }
 
     @ControllerTest(StatusController.class)
     @DisplayName("ERROR: Status Request an unknown group address")
-    public void testStatusUnknownGroupAddress(final Controller controller) {
-        final var statusController = (StatusController) controller;
-        final var groupAddress = TestUtils.randomGroupAddress();
-
-        //
-        // Mocking
-        //
+    public void testStatusUnknownGroupAddress(final StatusController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
         // mock an non-existing xml group address
-        final var xmlProject = statusController.getKnxClient().getConfig().getProject();
+        final var xmlProject = controller.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(null);
 
-        //
+        // Execution
+        controller.statusOne(contextSpy, TestUtils.randomGroupAddress());
+
         // Verification
-        //
+        verify(contextSpy).status(HttpServletResponse.SC_NOT_FOUND);
+        verify(contextSpy).result("{}");
 
-        final var response = statusController.statusOne(groupAddress.getAddressLevel3());
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.NOT_FOUND);
-        assertThat(response.getStatus()).isNull();
-        assertThat(response.getTimestamp()).isNull();
-        assertThat(response.getSourceAddress()).isNull();
-        assertThat(response.getApci()).isNull();
-        assertThat(response.isDirty()).isNull();
-
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
     }
 }
