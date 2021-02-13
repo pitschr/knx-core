@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,22 @@
 
 package li.pitschmann.knx.core.plugin.api.v1.controllers;
 
+import io.javalin.plugin.json.JavalinJson;
 import li.pitschmann.knx.core.address.GroupAddress;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.plugin.api.ControllerTest;
 import li.pitschmann.knx.core.plugin.api.TestUtils;
+import li.pitschmann.knx.core.plugin.api.v1.gson.ApiGsonEngine;
 import li.pitschmann.knx.core.plugin.api.v1.json.WriteRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import ro.pippo.controller.Controller;
-import ro.pippo.core.HttpConstants;
 
-import static li.pitschmann.knx.core.plugin.api.TestUtils.asJson;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.servlet.http.HttpServletResponse;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -40,140 +41,134 @@ import static org.mockito.Mockito.when;
  */
 public class WriteRequestControllerTest {
 
+    @BeforeAll
+    static void setUp() {
+        final var gson = ApiGsonEngine.INSTANCE.getGson();
+        JavalinJson.setFromJsonMapper(gson::fromJson);
+        JavalinJson.setToJsonMapper(gson::toJson);
+    }
+
     @ControllerTest(WriteRequestController.class)
     @DisplayName("OK: Write Request endpoint using raw data")
-    public void testWriteUsingRawData(final Controller controller) {
-        final var writeRequestController = (WriteRequestController) controller;
-        final var groupAddress = GroupAddress.of(0, 0, 23);
-
-        //
-        // Verification
-        //
+    public void testWriteUsingRawData(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
         final var request = new WriteRequest();
-        request.setGroupAddress(groupAddress);
+        request.setGroupAddress(GroupAddress.of(0, 0, 23));
         request.setDataPointType(DPT1.SWITCH);
         request.setRaw(new byte[]{0x01});
 
-        final var response = writeRequestController.writeRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
+        // Execution
+        controller.writeRequest(contextSpy, request);
 
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
+        // Verification
+        verify(contextSpy).status(HttpServletResponse.SC_ACCEPTED);
+        verify(contextSpy).result("{}");
     }
 
     @ControllerTest(WriteRequestController.class)
     @DisplayName("OK: Write Request endpoint using DPT information")
-    public void testWriteUsingDpt(final Controller controller) {
-        final var writeRequestController = (WriteRequestController) controller;
-        final var groupAddress = GroupAddress.of(0, 0, 23);
-
-        //
-        // Verification
-        //
+    public void testWriteUsingDpt(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
         final var request = new WriteRequest();
-        request.setGroupAddress(groupAddress);
+        request.setGroupAddress(GroupAddress.of(0, 0, 23));
         request.setDataPointType(DPT1.SWITCH);
         request.setValues("on");
 
-        final var response = writeRequestController.writeRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.ACCEPTED);
+        // Execution
+        controller.writeRequest(contextSpy, request);
 
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
-
+        // Verification
+        verify(contextSpy).status(HttpServletResponse.SC_ACCEPTED);
+        verify(contextSpy).result("{}");
     }
 
     @ControllerTest(WriteRequestController.class)
     @DisplayName("ERROR: Write Request endpoint without DPT and raw data")
-    public void testWriteMissingDptAndRawData(final Controller controller) {
-        final var writeRequestController = (WriteRequestController) controller;
-        final var groupAddress = GroupAddress.of(4, 7, 28);
-
-        //
-        // Verification
-        //
+    public void testWriteMissingDptAndRawData(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
         final var request = new WriteRequest();
-        request.setGroupAddress(groupAddress);
+        request.setGroupAddress(GroupAddress.of(4, 7, 28));
 
-        final var response = writeRequestController.writeRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        // Execution
+        controller.writeRequest(contextSpy, request);
 
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
+        // Verification
+        verify(contextSpy).status(HttpServletResponse.SC_BAD_REQUEST);
+        verify(contextSpy).result("{}");
     }
 
     @ControllerTest(WriteRequestController.class)
     @DisplayName("ERROR: Write Request without ack body from KNX client")
-    public void testWriteException(final Controller controller) {
-        final var writeRequestController = (WriteRequestController) controller;
+    public void testWriteException(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
         final var groupAddress = TestUtils.randomGroupAddress();
 
-        //
-        // Mocking
-        //
-
         // mock no ack body was found
-        when(writeRequestController.getKnxClient().writeRequest(eq(groupAddress), any(DataPointValue.class))).thenReturn(false);
-
-        //
-        // Verification
-        //
+        when(controller.getKnxClient().writeRequest(eq(groupAddress), any(DataPointValue.class))).thenReturn(false);
 
         final var request = new WriteRequest();
         request.setGroupAddress(groupAddress);
         request.setDataPointType(DPT1.SWITCH);
         request.setValues("true");
 
-        final var response = writeRequestController.writeRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.INTERNAL_ERROR);
+        // Execution
+        controller.writeRequest(contextSpy, request);
 
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
+        // Verification
+        verify(contextSpy).status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        verify(contextSpy).result("{}");
     }
 
     @ControllerTest(WriteRequestController.class)
     @DisplayName("ERROR: Write Request for an unknown group address")
-    public void testWriteUnknownGroupAddress(final Controller controller) {
-        final var writeRequestController = (WriteRequestController) controller;
-
-        //
-        // Mocking
-        //
+    public void testWriteUnknownGroupAddress(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
         // mock an non-existing xml group address
-        final var xmlProject = writeRequestController.getKnxClient().getConfig().getProject();
+        final var xmlProject = controller.getKnxClient().getConfig().getProject();
         when(xmlProject.getGroupAddress(any(GroupAddress.class))).thenReturn(null);
-
-        //
-        // Verification
-        //
 
         final var request = new WriteRequest();
         request.setGroupAddress(TestUtils.randomGroupAddress());
 
-        final var response = writeRequestController.writeRequest(request);
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+        // Execution
+        controller.writeRequest(contextSpy, request);
 
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
+        // Verification
+        verify(contextSpy).status(HttpServletResponse.SC_BAD_REQUEST);
+        verify(contextSpy).result("{}");
     }
 
     @ControllerTest(WriteRequestController.class)
     @DisplayName("ERROR: Write Request without group address")
-    public void testReadNoGroupAddress(final Controller controller) {
-        final var writeRequestController = (WriteRequestController) controller;
+    public void testWriteNoGroupAddress(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
-        //
+        // Execution
+        controller.writeRequest(contextSpy, new WriteRequest());
+
         // Verification
-        //
+        verify(contextSpy).status(HttpServletResponse.SC_BAD_REQUEST);
+        verify(contextSpy).result("{}");
+    }
 
-        final var response = writeRequestController.writeRequest(new WriteRequest());
-        assertThat(controller.getResponse().getStatus()).isEqualTo(HttpConstants.StatusCode.BAD_REQUEST);
+    @ControllerTest(WriteRequestController.class)
+    @DisplayName("ERROR: Write Request without DPT id and with values")
+    void testWriteNoDPT(final WriteRequestController controller) {
+        final var contextSpy = TestUtils.contextSpy();
 
-        final var responseJson = asJson(response);
-        assertThatJson(responseJson).isEqualTo("{}");
+        final var request = new WriteRequest();
+        request.setDataPointType(DPT1.SWITCH);
+        request.setGroupAddress(TestUtils.randomGroupAddress());
+
+        // Execution
+        controller.writeRequest(contextSpy, request);
+
+        // Verification
+        verify(contextSpy).status(HttpServletResponse.SC_BAD_REQUEST);
+        verify(contextSpy).result("{}");
     }
 }

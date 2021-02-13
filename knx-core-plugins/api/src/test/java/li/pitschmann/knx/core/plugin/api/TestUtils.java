@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,14 @@
 package li.pitschmann.knx.core.plugin.api;
 
 import com.google.gson.JsonParser;
+import io.javalin.http.Context;
+import io.javalin.http.util.ContextUtil;
 import li.pitschmann.knx.core.address.GroupAddress;
-import li.pitschmann.knx.core.plugin.api.gson.ApiGsonEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -31,6 +34,8 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 /**
  * Test Utility
@@ -40,16 +45,6 @@ public final class TestUtils {
 
     private TestUtils() {
         throw new AssertionError("Do not touch me!");
-    }
-
-    /**
-     * Returns the given object as JSON
-     *
-     * @param object object to be converted
-     * @return json string representation from object
-     */
-    public static String asJson(final Object object) {
-        return ApiGsonEngine.INSTANCE.toString(object);
     }
 
     /**
@@ -67,7 +62,7 @@ public final class TestUtils {
                 final var content = Files.readString(path);
                 log.debug("Content of file '{}': {}", filePath, content);
                 // minify json
-                return new JsonParser().parse(content).toString();
+                return JsonParser.parseString(content).toString();
             }
             throw new AssertionError("File not found or cannot be read: " + filePath);
         } catch (final URISyntaxException | IOException ex) {
@@ -88,5 +83,15 @@ public final class TestUtils {
         // a range between between 1 and 65535
         int randomInt = new Random().nextInt(65534) + 1;
         return GroupAddress.of(randomInt);
+    }
+
+    /**
+     * Returns a new Javalin {@link Context} incl. wrapped
+     * spy-functionality from Mockito
+     *
+     * @return wrapped {@link Context} with {@link org.mockito.Spy}
+     */
+    public static Context contextSpy() {
+        return spy(ContextUtil.init(mock(HttpServletRequest.class), mock(HttpServletResponse.class)));
     }
 }

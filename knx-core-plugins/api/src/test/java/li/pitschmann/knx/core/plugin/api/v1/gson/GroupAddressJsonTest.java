@@ -1,6 +1,6 @@
 /*
  * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package li.pitschmann.knx.core.plugin.api.gson;
+package li.pitschmann.knx.core.plugin.api.v1.gson;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -30,14 +30,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Test {@link GroupAddressJsonSerializer} and {@link GroupAddressJsonDeserializer}
  */
-public class GroupAddressJsonTest {
+class GroupAddressJsonTest {
 
     /**
      * Test serialization of {@link GroupAddress} to a string representation
      */
     @Test
     @DisplayName("Serialize GroupAddress")
-    public void testSerialize() {
+    void testSerialize() {
         final var address = GroupAddress.of(1, 7, 59);
 
         // serialize to JSON String
@@ -62,7 +62,7 @@ public class GroupAddressJsonTest {
      */
     @Test
     @DisplayName("De-Serialize GroupAddress")
-    public void testDeserialize() {
+    void testDeserialize() {
         final var expectedAddress = GroupAddress.of(1, 7, 59);
 
         // given JSON strings
@@ -97,9 +97,10 @@ public class GroupAddressJsonTest {
         };
 
         // verify
-        final var jsonParser = new JsonParser();
         for (final var json : jsons) {
-            final var actualAddress = GroupAddressJsonDeserializer.INSTANCE.deserialize(jsonParser.parse(json), null, null);
+            final var actualAddress = GroupAddressJsonDeserializer.INSTANCE.deserialize(
+                    JsonParser.parseString(json), null, null
+            );
             assertThat(actualAddress).isEqualTo(expectedAddress);
         }
     }
@@ -109,12 +110,11 @@ public class GroupAddressJsonTest {
      */
     @Test
     @DisplayName("De-Serialize GroupAddress with unsupported format")
-    public void testInvalidDeserialize() {
+    void testInvalidDeserialize() {
         // given JSON boolean primitive
         final var booleanJson = new JsonPrimitive(true);
 
         // verify
-        final var jsonParser = new JsonParser();
         assertThatThrownBy(() -> GroupAddressJsonDeserializer.INSTANCE.deserialize(booleanJson, null, null))
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage("Given JSON format is not supported: true");

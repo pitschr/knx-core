@@ -6,9 +6,9 @@ info:
 servers:
   - url: http://localhost:8338/api
 paths:
-  /ping:
+  /v1/ping:
     get:
-      description: 'Check if the web service is accessible (ping/heartbeat). It is not about health check!'
+      description: 'Check if the web service is accessible. It is not about health check!'
       responses:
         200:
           description: 'Success.'
