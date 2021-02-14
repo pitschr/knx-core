@@ -1,3 +1,0 @@
-# KNX Logic Engine
-
-... planned ...
