@@ -24,7 +24,7 @@
     <artifactId>knx-core</artifactId>
     <version>0.3.1-SNAPSHOT</version>
     <name>KNX Core</name>
-    <description>KNX Core (Client, DPTs, ...)</description>
+    <description>KNX Core - A Java library for KNX Net/IP communication</description>
 
     <!-- Licenses -->
     <licenses>
@@ -40,8 +40,6 @@
         <developer>
             <name>Christoph Pitschmann</name>
             <email>github@pitschmann.li</email>
-            <organization>Pitschmann</organization>
-            <organizationUrl>https://github.com/pitschr</organizationUrl>
         </developer>
     </developers>
 
