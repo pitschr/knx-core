@@ -13,12 +13,12 @@ interface) and it supports _tunneling_ and _routing_ modes.
 
 For a demo application see [knx-demo-tty-monitor](https://github.com/pitschr/knx-demo-tty-monitor).
 
-#### Known limitations
+### Known limitations
 
 * No KNX Secure which are offered by newest generation of KNX Net/IP devices 
 (because I do not have a KNX router that supports KNX secure)
 
-#### Prerequisites
+### Prerequisites
 
 * **Java 11+**
   * Make sure that you have Java 11+ installed and running as Java 11+
@@ -218,7 +218,7 @@ DefaultKnxClient.createStarted("address:port").use { client ->
 }
 ```
 
-Below are some practical first-to-use examples. For more examples, see the [examples package](src/main/java/li/pitschmann/knx/examples) 
+Below are some practical first-to-use examples. For more examples, see the [examples package](knx-examples/src/main/java/li/pitschmann/knx/examples) 
 
 
 
