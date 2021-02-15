@@ -125,8 +125,9 @@ public final class DataPointRegistry {
         final var mainDptId = classAnnotation.value()[0];
         // inner class is enum class and has data point type annotation
         log.debug("Inner Class: {} [dptId={}]", enumInnerClass, mainDptId);
-        Preconditions.checkArgument(!dataPointTypeMap.containsKey(mainDptId),
-                String.format("Data point type key '%s' is already registered. Please check your DPT implementation!", mainDptId));
+        if (dataPointTypeMap.containsKey(mainDptId)) {
+            throw new AssertionError("Please check the DPT implementation! Data Point Enum key is already registered: " + mainDptId);
+        }
         final var dptEnum = new DPTEnum<T>(mainDptId, classAnnotation.description());
 
         // iterate for all enum constant fields which have the desired annotation
@@ -145,8 +146,7 @@ public final class DataPointRegistry {
                 dataPointEnumMap.put(dptEnumValue.getEnum(), dptEnumValue);
                 log.debug("Enum Value registered: {}", dptEnumValue);
             } catch (final Exception ex) {
-                log.error("Exception for field '{}'", field.getName(), ex);
-                throw new KnxException(String.format("Could not register enum field '%s'.", field.getName()));
+                throw new KnxException("Could not register enum field: " + field.getName(), ex);
             }
         }
 
@@ -169,21 +169,32 @@ public final class DataPointRegistry {
                         && Modifier.isStatic(f.getModifiers()) //
                         && f.isAnnotationPresent(DataPoint.class))
                 .toArray(Field[]::new)) {
-            final var fieldAnnotation = field.getAnnotation(DataPoint.class);
+
+            final Object obj;
             try {
-                final var fieldInstance = (DataPointType) field.get(null);
-                for (final var id : fieldAnnotation.value()) {
-                    Preconditions.checkState(!dataPointTypeMap.containsKey(id),
-                            "Data Point Type key '{}' is already registered. Please check the DPT implementation!", id);
-                    dataPointTypeMap.put(id, fieldInstance);
+                obj = field.get(null);
+            } catch (final ReflectiveOperationException ex) {
+                throw new KnxException("Reflection issue for field: " + field.getName(), ex);
+            }
+
+            if (!(obj instanceof DataPointType)) {
+                throw new AssertionError(
+                        String.format("Field is not an instance of DataPointType: %s#%s", clazz.getName(), field.getName())
+                );
+            }
+
+            // object is a DataPointType
+            final var dpt = (DataPointType) obj;
+            final var fieldAnnotation = field.getAnnotation(DataPoint.class);
+            for (final var id : fieldAnnotation.value()) {
+                if (dataPointTypeMap.containsKey(id)) {
+                    throw new AssertionError("Please check the DPT implementation! Data Point Type key is already registered: " + id);
                 }
-                dataPointIdentifierMap.put(fieldInstance, fieldAnnotation.value().clone());
-                if (log.isDebugEnabled()) {
-                    log.debug("Field: {}->{} [{}]", clazz, field.getName(), Arrays.toString(fieldAnnotation.value()));
-                }
-            } catch (final Exception ex) {
-                ex.printStackTrace();
-                throw new KnxException(String.format("Exception for field '%s'", field.getName()), ex);
+                dataPointTypeMap.put(id, dpt);
+            }
+            dataPointIdentifierMap.put(dpt, fieldAnnotation.value().clone());
+            if (log.isDebugEnabled()) {
+                log.debug("Field: {}->{} [{}]", clazz, field.getName(), Arrays.toString(fieldAnnotation.value()));
             }
         }
     }

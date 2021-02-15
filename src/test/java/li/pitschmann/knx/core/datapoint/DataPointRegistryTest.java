@@ -1,6 +1,5 @@
 /*
- * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,19 +29,20 @@ import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for {@link DataPointRegistry}
  *
  * @author PITSCHR
  */
-public class DataPointRegistryTest {
+class DataPointRegistryTest {
 
     /**
      * Test {@link DataPointRegistry#getDataPointType(String)} for normal/static data point types
      */
     @Test
-    public void testGetDataPointType() {
+    void testGetDataPointType() {
         final DPT1 dpt1 = DataPointRegistry.getDataPointType("1.001");
         assertThat(dpt1).isEqualTo(DPT1.SWITCH);
         assertThat(DataPointRegistry.<DPT1>getDataPointType("1.001")).isEqualTo(DPT1.SWITCH);
@@ -65,7 +65,7 @@ public class DataPointRegistryTest {
      * therefore it will share same hash code and {@link #equals(Object)} will match.
      */
     @Test
-    public void testGetDataPointTypeEnum() {
+    void testGetDataPointTypeEnum() {
         // check by assignment
         final DPTEnum<DPT20.LightApplicationMode> dpt20 = DataPointRegistry.getDataPointType("20.005");
         assertThat(dpt20.getId()).isEqualTo("20.005");
@@ -91,7 +91,7 @@ public class DataPointRegistryTest {
      * Tests the non-existing data point type using {@link DataPointRegistry#getDataPointType(String)}
      */
     @Test
-    public void testGetDataPointTypeFailure() {
+    void testGetDataPointTypeFailure() {
         assertThatThrownBy(() -> DataPointRegistry.getDataPointType(TestEnum.UNKNOWN)).isInstanceOf(KnxEnumNotFoundException.class)
                 .hasMessage("Could not find enum data point type for: UNKNOWN");
 
@@ -103,11 +103,20 @@ public class DataPointRegistryTest {
      * Tries to register bad / not well-configured DPT classes
      */
     @Test
-    public void registerBadClasses() {
+    void registerBadClasses() {
         // exception thrown because of clearly a wrong configuration
-        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTEnumWithDuplicateId.class)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTEnumWithTwoSameValues.class)).isInstanceOf(KnxException.class);
-        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTWithWithDuplicatedId.class)).isInstanceOf(KnxException.class);
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTWithDuplicatedId.class))
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Please check the DPT implementation! Data Point Type key is already registered: 1.001");
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTWithWrongFieldType.class))
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Field is not an instance of DataPointType: li.pitschmann.knx.core.datapoint.DataPointRegistryTest$DPTWithWrongFieldType#WRONG_TYPE");
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTEnumWithDuplicatedId.class))
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Please check the DPT implementation! Data Point Enum key is already registered: 20.001");
+        assertThatThrownBy(() -> DataPointRegistry.registerDataPointType(DPTEnumWithTwoSameValues.class))
+                .isInstanceOf(KnxException.class)
+                .hasMessage("Could not register enum field: BAR");
 
         // no exception thrown (data point type simply ignored)
         DataPointRegistry.registerDataPointType(DPTEnumWithoutValue.class);
@@ -122,7 +131,7 @@ public class DataPointRegistryTest {
      */
     @Test
     @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
+    void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(DataPointRegistry.class);
     }
 
@@ -137,32 +146,35 @@ public class DataPointRegistryTest {
      * DATA POINT TYPE TEST CLASSES
      */
 
-    /**
+    /*
      * Failing because '20.001' is already registered in DPT20 class
-     *
-     * @author PITSCHR
      */
-    private static final class DPTEnumWithDuplicateId {
-        @DataPoint(value = "20.001", description = "DPT with alraedy existing id.")
+    private static final class DPTEnumWithDuplicatedId {
+        @DataPoint(value = "20.001", description = "DPT with already existing id.")
         public enum Empty implements DataPointEnum<Empty> {
             EMPTY
         }
     }
 
-    /**
+    /*
      * Failing because '1.001' is already registered in DPT1 class
-     *
-     * @author PITSCHR
      */
-    private static final class DPTWithWithDuplicatedId {
+    private static final class DPTWithDuplicatedId {
         @DataPoint(value = "1.001", description = "")
-        public static final String STRING1 = "";
+        public static final DataPointType DATA_POINT_TYPE = mock(DataPointType.class);
     }
 
-    /**
+    /*
+     * Failing because field should be a DataPointType, but is an
+     * instance of String
+     */
+    private static final class DPTWithWrongFieldType {
+        @DataPoint(value = "9999.003", description = "")
+        public static final String WRONG_TYPE = "";
+    }
+
+    /*
      * Failing because we define value '0' twice times
-     *
-     * @author PITSCHR
      */
     private static final class DPTEnumWithTwoSameValues {
         @DataPoint(value = "", description = "DPT with two same values")
@@ -174,10 +186,8 @@ public class DataPointRegistryTest {
         }
     }
 
-    /**
+    /*
      * Ignored because we do not have a value annotation defined
-     *
-     * @author PITSCHR
      */
     private static final class DPTEnumWithoutValue {
         @DataPoint(value = "9999.000", description = "DPT without value")
@@ -186,10 +196,8 @@ public class DataPointRegistryTest {
         }
     }
 
-    /**
+    /*
      * Ignored because we have no data point type enum interface defined (no interface)
-     *
-     * @author PITSCHR
      */
     private static final class DPTEnumWithoutInterface {
         @DataPoint(value = "9999.001", description = "DPT without interface")
@@ -198,10 +206,8 @@ public class DataPointRegistryTest {
         }
     }
 
-    /**
+    /*
      * Ignored because we have no data point type enum interface defined (wrong interface)
-     *
-     * @author PITSCHR
      */
     private static final class DPTEnumWithWrongInterface {
         @DataPoint(value = "9999.002", description = "DPT with wrong interface")
@@ -210,10 +216,8 @@ public class DataPointRegistryTest {
         }
     }
 
-    /**
+    /*
      * Ignored because we have no data point type enum annotation defined
-     *
-     * @author PITSCHR
      */
     private static final class DPTEnumWithoutAnnotation {
         @SuppressWarnings("unused")
@@ -222,11 +226,9 @@ public class DataPointRegistryTest {
         }
     }
 
-    /**
-     * Ignored because fields which haves all criteria are subject to be recognized as data point types: public, static,
-     * final and {@link DataPoint} annotation
-     *
-     * @author PITSCHR
+    /*
+     * Ignored because fields which haves all criteria are subject to be recognized
+     * as data point types: public, static, final and {@link DataPoint} annotation
      */
     private static final class DPTWithUnsupportedFields {
         public static final Object NO_ANNOTATION = null; // no annotation
