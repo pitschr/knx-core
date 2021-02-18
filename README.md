@@ -1,15 +1,15 @@
 [![Build Status](https://github.com/pitschr/knx-core/workflows/build/badge.svg?branch=main)](https://github.com/pitschr/knx-core/actions)
 [![Coverage Status](https://coveralls.io/repos/github/pitschr/knx-core/badge.svg?branch=main)](https://coveralls.io/github/pitschr/knx-core?branch=main)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Maven Central](https://img.shields.io/maven-central/v/li.pitschmann/knx-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22li.pitschmann%22)
+[![Maven Central](https://img.shields.io/maven-central/v/li.pitschmann/knx-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22li.pitschmann%22%20a:%22knx-core%22)
 
 # KNX Core
 
 A reactive, non-blocking Java library for KNX Net/IP communication.
 
 The purpose of this library is designed for developers to allow their applications 
-to communicate with KNX world via KNX Net/IP device (either a KNX router or a KNX 
-interface) and it supports _tunneling_ and _routing_ modes.
+to communicate with KNX world via their KNX Net/IP device (either a KNX router or a 
+KNX interface). _Tunneling_ and _routing_ modes are supported.
 
 For a demo application see [knx-demo-tty-monitor](https://github.com/pitschr/knx-demo-tty-monitor).
 
@@ -62,35 +62,23 @@ Using `ConfigBuilder` we can configure the KNX Client with same settings like ab
 
 ```
 var config = ConfigBuilder.tunneling().build();     
-DefaultKnxClient.createStarted(config);
-
-var ipAddress = Networker.getByAddress(192, 168, 0, 3);
-var config = ConfigBuilder.tunneling(ipAddress).build();     
-DefaultKnxClient.createStarted(config);
-
-var ipAddress = Networker.getByAddress(192, 168, 0, 3);
-var ipPort = 1234;
-var config = ConfigBuilder.tunneling(ipAddress, ipPort).build();     
+var config = ConfigBuilder.tunneling(address).build();     
+var config = ConfigBuilder.tunneling(address, port).build();
+     
 DefaultKnxClient.createStarted(config);
 ```
 
 #### Tunneling with NAT
 
-Sometimes using _tunneling_ mode we need Network Address Translation (NAT). One practical example, where
-we would benefit from NAT would be a dockerized image. NAT is suitable for _tunneling_ mode only and to
-use the NAT we need to enable it explicitly using following examples while `true` means NAT enabled:
+Network Address Translation (NAT) is available for _tunneling_ mode only; for _routing_
+NAT is not required. Sometimes we need NAT, one example would be in dockerized image.
+To use the NAT we need to enable it explicitly by `true`:
 
 ```
 var config = ConfigBuilder.tunneling(true).build(); 
-DefaultKnxClient.createStarted(config);
+var config = ConfigBuilder.tunneling(address, true).build();     
+var config = ConfigBuilder.tunneling(address, port, true).build();     
 
-var ipAddress = Networker.getByAddress(192, 168, 0, 3);
-var config = ConfigBuilder.tunneling(ipAddress, true).build();     
-DefaultKnxClient.createStarted(config);
-
-var ipAddress = Networker.getByAddress(192, 168, 0, 3);
-var ipPort = 1234;
-var config = ConfigBuilder.tunneling(ipAddress, ipPort, true).build();     
 DefaultKnxClient.createStarted(config);
 ```
 
@@ -103,6 +91,16 @@ communication will be used automatically. The standardized IP multicast address 
 ```
 DefaultKnxClient.createStarted("224.0.23.12");       // IP Multicast Address (KNX Specification)
 DefaultKnxClient.createStarted("224.1.2.3");         // IP Multicast Address (Custom)
+```
+
+You can also use the `ConfigBuilder` to define the communication mode:
+
+```
+var config = ConfigBuilder.routing().build();     
+var config = ConfigBuilder.routing(address).build();  
+var config = ConfigBuilder.routing(address, port).build();   
+
+DefaultKnxClient.createStarted(config);  
 ```
 
 ## Data Point
@@ -119,12 +117,12 @@ a fluent way into a KNX byte-array compatible format. Following are supported:
 | 1.xxx  | Binary                                     | 21.xxx | 8-Bit Flagged Messages                     |        
 | 2.xxx  | Controlled Binary                          | 22.xxx | 16-Bit Flagged Messages                    |
 | 3.xxx  | Controlled Step/Interval                   | 23.xxx | 2-Bit Enumeration                          |
-| 4.xxx  | Character                                  | 25.xxx | 2-Nibble Set                               |
-| 5.xxx  | 8-Bit Unsigned Value                       | 24.xxx | ISO-8859-1 Characters<br>(variable length) |
+| 4.xxx  | Character                                  | 24.xxx | ISO-8859-1 Characters (variable length)    |
+| 5.xxx  | 8-Bit Unsigned Value                       | 25.xxx | 2-Nibble Set                               |
 | 6.xxx  | 8-Bit Signed Value                         | 26.xxx | Scene Information                          |
 | 7.xxx  | 2-Octet Unsigned Value                     | 27.xxx | Combined Info On/Off                       |
-| 8.xxx  | 2-Octet Signed Value                       | 28.xxx | UTF-8 Characters<br>(variable length)      |
-| 9.xxx  | 2-Octet Float Value                        | 29.xxx | 8-Octet Signed Value<br>Electrical Energy  |
+| 8.xxx  | 2-Octet Signed Value                       | 28.xxx | UTF-8 Characters (variable length)         |
+| 9.xxx  | 2-Octet Float Value                        | 29.xxx | 8-Octet Signed Value Electrical Energy     |
 | 10.xxx | Time                                       |
 | 11.xxx | Date (Year: 1990..2089)                    |         
 | 12.xxx | 4-Octet Unsigned Value                     |
@@ -157,9 +155,9 @@ DPT19.DATE_TIME.of(dayOfWeek, date, time);
 
 The KNX Client was also designed to provide a less barrier using human-friendly text:
 ```
-DPT19.DATE_TIME.of("Saturday", "04:10:45", "2013-08-17");       // All information
-DPT19.DATE_TIME.of("2013-08-17", "04:10:45");                   // Only date and time
-DPT19.DATE_TIME.of("04:10:45", "2013-08-17");                   // Order doesn't matter, auto-detecting
+DPT19.DATE_TIME.of("Saturday", "04:10:45", "2013-08-17"); // All information
+DPT19.DATE_TIME.of("2013-08-17", "04:10:45");             // Only date and time
+DPT19.DATE_TIME.of("04:10:45", "2013-08-17");             // Order doesn't matter, auto-detecting
 ```
 
 ## Group Address
@@ -178,10 +176,10 @@ From KNX topology point of view `1/2/100`, (Three-Level) `1/612` (Two-Level) and
 represents the same group address.
 
 ```
-GroupAddress.of(int, int, int);         // Three-Level Structure
-GroupAddress.of(int, int);              // Two-Level Structure
-GroupAddress.of(int);                   // Free-Level Structure
-GroupAddress.of(String);                // Auto-detecting and parsing (Three-Level, Two-Level or Free-Level)
+GroupAddress.of(int, int, int); // Three-Level Structure
+GroupAddress.of(int, int);      // Two-Level Structure
+GroupAddress.of(int);           // Free-Level Structure
+GroupAddress.of(String);        // Auto-detecting and parsing based on format
 ```
 
 ## Individual Address
@@ -193,8 +191,8 @@ and in a range from `0.0.1` - `15.15.255`. First is the _Area_, middle is the _L
 the _Device Address_. The Individual Address `0.0.0` is not allowed, and represents the `undefined` state.
 
 ```
-IndividualAddress.of(int, int, int);    // Area, Line and Device Address
-IndividualAddress.of(String);           // <Area>.<Line>.<Device Address>
+IndividualAddress.of(int, int, int); // Area, Line and Device Address
+IndividualAddress.of(String);        // Format: "<Area>.<Line>.<Device Address>" (e.g. "1.2.3")
 ```
 
 ## KNX Core Development
@@ -206,7 +204,7 @@ the KNX client then:
 
 ##### Java
 ```
-try (final var client = DefaultKnxClient.createStarted("address:port")) {
+try (var client = DefaultKnxClient.createStarted("address:port")) {
     // do something...
 }
 ```
@@ -288,13 +286,13 @@ public final class LampInverseExample {
 
             // wait a bit (usually few milliseconds, but up to 1 second maximum)
             // KNX actuator will send a response to the KNX client with actual lamp status
-            final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getValue();
+            final var status = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getValue();
 
             // lamp status will be inverted (on -> off / off -> on)
-            final var lampStatusInverted = !lampStatus;
+            final var statusInverted = !status;
 
             // send a 'write' request to KNX
-            client.writeRequest(writeGroupAddress, DPT1.SWITCH.of(lampStatusInverted));
+            client.writeRequest(writeGroupAddress, DPT1.SWITCH.of(statusInverted));
         }
 
         // auto-closed and disconnected by KNX client
@@ -306,7 +304,7 @@ public final class LampInverseExample {
 
 The default configuration settings used by KNX Client are as per KNX Specification 
 but gives you some freedom to adjust some configurations; e.g. change to use another
-KNX port which differs from the officially registered KNX port `3671` (at IANA).
+KNX port which differs from the officially registered KNX port `3671` at IANA.
 
 All KNX Core configurations can be found in: [CoreConfigs.java](src/main/java/li/pitschmann/knx/core/config/CoreConfigs.java) 
 
