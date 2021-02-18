@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -63,7 +62,7 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
-    public boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue) {
+    public CompletableFuture<Boolean> writeRequest(final GroupAddress address, final DataPointValue dataPointValue) {
         Preconditions.checkNonNull(address);
         Preconditions.checkNonNull(dataPointValue);
         Preconditions.checkState(isRunning());
@@ -72,43 +71,35 @@ public class BaseKnxClient implements KnxClient {
             // routing request
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
             getInternalClient().send(RoutingIndicationBody.of(cemi));
-            return true; // unconfirmed
+            return CompletableFuture.completedFuture(true);
         } else {
             // tunneling request
-            try {
-                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
-                final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)).get();
-                return ackBody.getStatus() == Status.NO_ERROR;
-            } catch (final ExecutionException ex) {
-                log.warn("Exception during write request for tunneling", ex);
-            } catch (final InterruptedException ie) {
-                Thread.currentThread().interrupt();
-            }
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_WRITE, dataPointValue);
+            return getInternalClient().<TunnelingAckBody>send(
+                    TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi),
+                    getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)
+            ).thenApply(body -> body.getStatus() == Status.NO_ERROR);
         }
-        return false;
     }
 
     @Override
-    public boolean readRequest(final GroupAddress address) {
+    public CompletableFuture<Boolean> readRequest(final GroupAddress address) {
         Preconditions.checkNonNull(address);
         Preconditions.checkState(isRunning());
 
         if (getConfig().isRoutingEnabled()) {
+            // routing request
             final var cemi = CEMI.useDefault(MessageCode.L_DATA_IND, address, APCI.GROUP_VALUE_READ, null);
             getInternalClient().send(RoutingIndicationBody.of(cemi));
-            return true; // unconfirmed
+            return CompletableFuture.completedFuture(true);
         } else {
-            try {
-                final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, null);
-                final var ackBody = getInternalClient().<TunnelingAckBody>send(TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi), getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)).get();
-                return ackBody.getStatus() == Status.NO_ERROR;
-            } catch (final ExecutionException ex) {
-                log.warn("Exception during read response for tunneling", ex);
-            } catch (final InterruptedException ie) {
-                Thread.currentThread().interrupt();
-            }
+            // tunneling request
+            final var cemi = CEMI.useDefault(MessageCode.L_DATA_REQ, address, APCI.GROUP_VALUE_READ, null);
+            return getInternalClient().<TunnelingAckBody>send(
+                    TunnelingRequestBody.of(getInternalClient().getChannelId(), this.getNextSequence(), cemi),
+                    getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)
+            ).thenApply(body -> body.getStatus() == Status.NO_ERROR);
         }
-        return false;
     }
 
     /**

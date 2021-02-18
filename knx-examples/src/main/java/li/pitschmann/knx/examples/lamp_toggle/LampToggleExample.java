@@ -53,7 +53,6 @@ public final class LampToggleExample {
             // send a 'read' request to KNX
             client.readRequest(readGroupAddress);
 
-            // wait a bit (usually few milliseconds, but up to 1 second maximum)
             // KNX actuator will send a response to the KNX client with actual lamp status
             final var lampStatus = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getValue();
 

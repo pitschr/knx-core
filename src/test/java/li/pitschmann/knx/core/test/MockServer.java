@@ -393,7 +393,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return string of received bodies, comma-separated
      */
     public String getReceivedBodiesAsString() {
-        return this.receivedBodies.stream().map(b -> b.getClass().getSimpleName()).collect(Collectors.joining(System.lineSeparator()));
+        return new ArrayList<>(this.receivedBodies).stream().map(b -> b.getClass().getSimpleName()).collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
@@ -411,7 +411,7 @@ public final class MockServer implements Runnable, Closeable {
      * @return string of sent bodies, comma-separated
      */
     public String getSentBodiesAsString() {
-        return this.sentBodies.stream().map(b -> b.getClass().getSimpleName()).collect(Collectors.joining(System.lineSeparator()));
+        return new ArrayList<>(this.sentBodies).stream().map(b -> b.getClass().getSimpleName()).collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
