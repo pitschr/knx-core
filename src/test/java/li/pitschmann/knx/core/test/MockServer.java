@@ -265,12 +265,12 @@ public final class MockServer implements Runnable, Closeable {
     }
 
     /**
-     * Waits for completion of KNX mock server and client (up to 30 seconds)
+     * Waits for completion of KNX mock server and client (up to 60 seconds)
      *
      * @return {@code true} if mock server was completed gracefully, otherwise {@code false}
      */
     public boolean waitDone() {
-        final var notInterrupted = Sleeper.milliseconds(100, executorService::isTerminated, 30000);
+        final var notInterrupted = Sleeper.milliseconds(100, executorService::isTerminated, 60000);
 
         if (!notInterrupted) {
             log.error("It took too long for waitDone(), here are bodies which were received/sent:\n" +
