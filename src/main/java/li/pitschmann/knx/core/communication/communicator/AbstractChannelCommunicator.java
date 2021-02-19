@@ -186,7 +186,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     public final void send(final Body body) {
         this.outboxQueue.send(Objects.requireNonNull(body));
-        System.out.println("PITSCHR: sentbyknxclient: " + sentByKnxClient.incrementAndGet());
+        System.out.println("PITSCHR: sentbyknxclient: " + sentByKnxClient.incrementAndGet() + ", time: " + System.currentTimeMillis());
         log.debug("Body added to outbox queue: {}", body);
     }
 
@@ -315,6 +315,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     @Override
     public final void close() {
+        System.out.println("AbstractChanneLCommunicator close() invoked.");
         log.trace("Method 'close()' invoked.");
         if (!closed.getAndSet(true)) {
             super.close();

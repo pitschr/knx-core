@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Observes the {@link TunnelingRequestBody} which is received from KNX Net/IP device on data channel.
@@ -41,6 +42,7 @@ import java.util.concurrent.Flow.Subscription;
 public final class TunnelingRequestTask implements Subscriber<Body> {
     private static final Logger log = LoggerFactory.getLogger(TunnelingRequestTask.class);
     private final InternalKnxClient client;
+    private static final AtomicInteger received = new AtomicInteger(0);
 
     public TunnelingRequestTask(final InternalKnxClient client) {
         this.client = Objects.requireNonNull(client);
@@ -50,6 +52,7 @@ public final class TunnelingRequestTask implements Subscriber<Body> {
     public void onNext(final @Nullable Body body) {
         // we are interested in tunneling request only
         if (body instanceof TunnelingRequestBody) {
+            System.out.println("PITSCHR: TunnelingRequestTask received: " + received.incrementAndGet());
             log.debug("Tunneling Request received: {}", body);
 
             // acknowledge frame to be sent back
