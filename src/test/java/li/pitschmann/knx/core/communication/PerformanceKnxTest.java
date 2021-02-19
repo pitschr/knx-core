@@ -30,6 +30,7 @@ import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.MockServerTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 
 import java.time.Duration;
@@ -120,6 +121,7 @@ class PerformanceKnxTest {
      */
     @MockServerTest
     @DisplayName("KNX Client sending " + TIMES + "x Tunneling requests")
+    @Disabled
     void testSendByClient(final MockServer mockServer) {
 
         // Adjust JUnit specific configuration

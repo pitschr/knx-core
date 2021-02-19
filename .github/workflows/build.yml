@@ -40,9 +40,9 @@ jobs:
 
       # Compile & Test & Calculate Coverage
       - name: Compile & Test
-        run: mvn clean test jacoco:report -B -P github-actions
+        run: mvn clean test jacoco:report -B -P github-actions -Dtest=PerformanceKnxTest
 
       # Submit the code coverage to coveralls.io
-      - name: Submit Code Coverage
-        if: github.event_name != 'pull_request'
-        run: mvn coveralls:report -B -P github-actions -D repoToken=${{ secrets.COVERALLS_TOKEN }}
+ #     - name: Submit Code Coverage
+#        if: github.event_name != 'pull_request'
+        # run: mvn coveralls:report -B -P github-actions -D repoToken=${{ secrets.COVERALLS_TOKEN }}
