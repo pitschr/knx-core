@@ -30,6 +30,7 @@ class MockServerHeartbeatMonitor implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(MockServerHeartbeatMonitor.class);
     private final MockServer mockServer;
     private final AtomicLong lastHeartbeat = new AtomicLong(System.currentTimeMillis());
+    private final long beginning = System.currentTimeMillis();
 
     MockServerHeartbeatMonitor(final MockServer mockServer) {
         this.mockServer = mockServer;
@@ -44,7 +45,8 @@ class MockServerHeartbeatMonitor implements Runnable {
             Sleeper.seconds(1);
         }
 
-        System.out.println("PITSCHR: diff: " + (System.currentTimeMillis() - lastHeartbeat.get()) + ", isCancelled: " + this.mockServer.isCancelled() +
+        System.out.println("PITSCHR: beginning: " + beginning + ", last: " + lastHeartbeat.get() +
+                ", diff: " + (System.currentTimeMillis() - lastHeartbeat.get()) + ", isCancelled: " + this.mockServer.isCancelled() +
                 ", receivedBodies: " + this.mockServer.getReceivedBodies().size() + ", sentBodies: " + this.mockServer.getSentBodies().size());
         log.info("*** KNX Mock Server [heartbeat] END *** ({})", System.currentTimeMillis() - lastHeartbeat.get());
         this.mockServer.cancel();
