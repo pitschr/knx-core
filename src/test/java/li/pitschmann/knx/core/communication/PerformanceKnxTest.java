@@ -82,7 +82,7 @@ class PerformanceKnxTest {
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
-
+        System.out.println("PITSCHR: " + mockServer.getReceivedBodies().size() + ", " + mockServer.isCancelled());
         // wait until all packets are sent/received
         mockServer.waitDone();
 
