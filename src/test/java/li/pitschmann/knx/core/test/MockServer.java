@@ -261,7 +261,6 @@ public final class MockServer implements Runnable, Closeable {
      * @return {@code true} if cancelled/interrupted, otherwise {@code false}
      */
     public boolean isCancelled() {
-        System.out.println("PITSCHR cancel: " + cancel + ", interrupted: " + Thread.currentThread().isInterrupted());
         return cancel || Thread.currentThread().isInterrupted();
     }
 
@@ -304,7 +303,7 @@ public final class MockServer implements Runnable, Closeable {
     public boolean waitForReceivedServiceType(final ServiceType serviceType, final int occurrence) {
         final var notInterrupted = Sleeper.milliseconds(100, () -> !isCancelled() && this.contains(new ArrayList<>(this.receivedBodies), serviceType, occurrence), 30000);
 
-        System.out.println("PITSCHR: notInterrupted: " + notInterrupted);
+        System.out.println("PITSCHR: notInterrupted: " + notInterrupted + ", cancel: " + cancel + ", interrupted: " + Thread.currentThread().isInterrupted());
         if (!notInterrupted) {
             log.error("It took too long for 'waitForReceivedServiceType', here are bodies which were received/sent:\n" +
                     "Received bodies:\n" +
