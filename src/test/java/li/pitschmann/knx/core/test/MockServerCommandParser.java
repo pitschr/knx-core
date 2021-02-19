@@ -68,11 +68,11 @@ public class MockServerCommandParser {
             final var requestBody = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2900bce010c84c0f0300800c23")));
             return Collections.singletonList(new RequestMockAction(this.mockServer, requestBody));
         }
-        // 100-times tunnelling request with CEMI bytes
+        // 1000-times tunnelling request with CEMI bytes
         // (used in PerformanceKnxTest)
-        else if ("cemi(260)={2E00BCE010FF0A96010081}".equals(command)) {
-            final var actions = new ArrayList<MockAction>(260);
-            for (int i = 0; i < 260; i++) {
+        else if ("cemi(1000)={2E00BCE010FF0A96010081}".equals(command)) {
+            final var actions = new ArrayList<MockAction>(1000);
+            for (int i = 0; i < 1000; i++) {
                 final var requestBody = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2E00BCE010FF0A96010081")));
                 actions.add(new RequestMockAction(this.mockServer, requestBody));
             }

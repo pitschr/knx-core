@@ -50,15 +50,15 @@ According to the KNX specification the communication is defaulted to _tunneling_
 Network Address Translation (NAT). The knx-core also offers the communication using _routing_
 instead of tunneling.
 
-#### Tunneling without NAT (default)
+#### Tunneling without NAT (default, recommended)
 
 ```
 DefaultKnxClient.createStarted();                   // IP Address resolved using discovery service
-DefaultKnxClient.createStarted("192.168.0.3");      // Defined IP Address with default KNX Port (3671)
+DefaultKnxClient.createStarted("192.168.0.3");      // Defined IP Address with default KNX Port
 DefaultKnxClient.createStarted("192.168.0.3:1234"); // Defined IP Address with custom KNX Port
 ```
 
-Using `ConfigBuilder` we can configure the KNX Client with same settings like above:
+Using `ConfigBuilder` we can configure the KNX Client like above:
 
 ```
 var config = ConfigBuilder.tunneling().build();     
@@ -71,8 +71,8 @@ DefaultKnxClient.createStarted(config);
 #### Tunneling with NAT
 
 Network Address Translation (NAT) is available for _tunneling_ mode only; for _routing_
-NAT is not required. Sometimes we need NAT, one example would be in dockerized image.
-To use the NAT we need to enable it explicitly by `true`:
+NAT is not required. Sometimes we need NAT, eg. in dockerized image. To use the NAT we 
+need to enable it explicitly by `true`:
 
 ```
 var config = ConfigBuilder.tunneling(true).build(); 
@@ -89,11 +89,11 @@ If you specific an IP Address that is in a Class D address (i.e. four first bits
 communication will be used automatically. The standardized IP multicast address for KNX is `224.0.23.12`.
 
 ```
-DefaultKnxClient.createStarted("224.0.23.12");       // IP Multicast Address (KNX Specification)
-DefaultKnxClient.createStarted("224.1.2.3");         // IP Multicast Address (Custom)
+DefaultKnxClient.createStarted("224.0.23.12"); // IP Multicast Address (KNX Specification)
+DefaultKnxClient.createStarted("224.1.2.3");   // IP Multicast Address (Custom)
 ```
 
-You can also use the `ConfigBuilder` to define the communication mode:
+You can use the `ConfigBuilder` to define the _routing_ mode:
 
 ```
 var config = ConfigBuilder.routing().build();     
@@ -284,7 +284,6 @@ public final class LampInverseExample {
             // send a 'read' request to KNX
             client.readRequest(readGroupAddress);
 
-            // wait a bit (usually few milliseconds, but up to 1 second maximum)
             // KNX actuator will send a response to the KNX client with actual lamp status
             final var status = client.getStatusPool().getValue(readGroupAddress, DPT1.SWITCH).getValue();
 

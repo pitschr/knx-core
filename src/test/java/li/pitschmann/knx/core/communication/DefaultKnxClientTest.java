@@ -237,8 +237,11 @@ public class DefaultKnxClientTest {
     @DisplayName("Success: Test KNX client instantiation using routing service (via multicast)")
     public void testRouting(final MockServer mockServer) {
         try (final var client = mockServer.createTestClient()) {
-            client.readRequest(GroupAddress.of(11, 4, 67));
-            client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.of(true));
+            // for routing, read and write should be immediately completed with 'true'
+            assertThat(client.readRequest(GroupAddress.of(11, 4, 67)))
+                    .isCompletedWithValue(true);
+            assertThat(client.writeRequest(GroupAddress.of(11, 4, 67), DPT1.SWITCH.of(true)))
+                    .isCompletedWithValue(true);
             mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION, 2);
         } catch (final Throwable t) {
             fail("Unexpected test state", t);

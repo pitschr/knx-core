@@ -30,6 +30,7 @@ import li.pitschmann.knx.core.test.body.MockResponseBody;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Networker;
+import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,6 +145,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
         }
 
         this.channel.send(byteBuffer, address);
+        Sleeper.milliseconds(1); // add give some time to breathe (KnxPerformanceTest)!
     }
 
     @Override

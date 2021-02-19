@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.MockServerTest;
 import org.junit.jupiter.api.DisplayName;
 
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -44,24 +45,27 @@ import static org.assertj.core.api.Assertions.fail;
  *
  * @author PITSCHR
  */
-public class PerformanceKnxTest {
+class PerformanceKnxTest {
     /**
      * How many times the TUNNELING_REQUEST and TUNNELING_ACK packets should be
      * sent between KNX Net/IP device and clients.
      * <p>
-     * When doing a high number (100000 times) - then ensure that you set
+     * When doing a high number (10000 times) - then ensure that you set
      * the minimum log level at 'INFO'. Logging with DEBUG or lower will slow down
      * the system due I/O writing. Alter the log level in /test/resources/logback.xml
      * by setting the root level from to 'INFO'. Or start JUnit class with "-Droot-level=INFO"
+     *
+     * Update the value in MockServerCommandParser manually.
+     * CoreConfigs.Event#CHECK_INTERVAL needs to be set to "0L" to remove the delay
      */
-    private static final int TIMES = 260;
+    private static final int TIMES = 1000;
 
     /**
      * Perform a happy path between {@link KnxClient} and the KNX Net/IP device with N packets.
      */
     @MockServerTest(requests = "cemi(" + TIMES + ")={2E00BCE010FF0A96010081}")
     @DisplayName("KNX Mock Server sending " + TIMES + "x Tunneling requests")
-    public void testSendByMockServer(final MockServer mockServer) {
+    void testSendByMockServer(final MockServer mockServer) {
 
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
@@ -72,7 +76,7 @@ public class PerformanceKnxTest {
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
-            assertThat(client.isRunning());
+            assertThat(client.isRunning()).isTrue();
             // after N-times tunneling acknowledge sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK, TIMES);
         } catch (final Throwable t) {
@@ -115,7 +119,7 @@ public class PerformanceKnxTest {
      */
     @MockServerTest
     @DisplayName("KNX Client sending " + TIMES + "x Tunneling requests")
-    public void testSendByClient(final MockServer mockServer) {
+    void testSendByClient(final MockServer mockServer) {
 
         // Adjust JUnit specific configuration
         final var config = mockServer.newConfigBuilder() //
@@ -126,9 +130,11 @@ public class PerformanceKnxTest {
                 .build();
 
         try (final var client = DefaultKnxClient.createStarted(config)) {
+            assertThat(client.isRunning()).isTrue();
             final var groupAddress = GroupAddress.of(1, 2, 3);
             for (int i = 0; i < TIMES; i++) {
-                client.readRequest(groupAddress);
+                assertThat(client.readRequest(groupAddress))
+                        .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
             }
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, TIMES);
         } catch (final Throwable t) {

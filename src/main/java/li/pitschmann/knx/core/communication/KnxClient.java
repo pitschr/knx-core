@@ -105,29 +105,19 @@ public interface KnxClient extends AutoCloseable {
     <T extends ResponseBody> CompletableFuture<T> send(final RequestBody requestBody, final long msTimeout);
 
     /**
-     * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue}
-     * <p>
-     * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.
-     * If you want to use a non-blocking operation, use {@link #send(Body)} or {@link #send(RequestBody, long)}
-     * instead.
-     * </p>
+     * Sends a WRITE request to {@link GroupAddress} with value of {@link DataPointValue} asynchronously.
      *
      * @param address        the recipient which is an KNX group address
      * @param dataPointValue value to be sent to KNX group address
-     * @return {@code true} if the write request was successful, otherwise {@code false}
+     * @return a {@link CompletableFuture}, if the write request was successful it will contain a {@code true}, otherwise {@code false}
      */
-    boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue);
+    CompletableFuture<Boolean> writeRequest(final GroupAddress address, final DataPointValue dataPointValue);
 
     /**
-     * Sends a READ request to {@link GroupAddress}
-     * <p>
-     * For tunneling, this method is a blocking-operation, due awaiting for acknowledge packet.
-     * If you want to use a non-blocking operation, use {@link #send(Body)} or {@link #send(RequestBody, long)}
-     * instead.
-     * </p>
+     * Sends a READ request to {@link GroupAddress} asynchronously.
      *
      * @param address this is the KNX group address we want to send the read request to obtain the current value
-     * @return {@code true} if the write request was successful, otherwise {@code false}
+     * @return a {@link CompletableFuture}, if the read request was successful it will contain a {@code true}, otherwise {@code false}
      */
-    boolean readRequest(final GroupAddress address);
+    CompletableFuture<Boolean> readRequest(final GroupAddress address);
 }

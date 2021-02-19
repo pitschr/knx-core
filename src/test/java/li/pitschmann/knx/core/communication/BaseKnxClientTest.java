@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
 package li.pitschmann.knx.core.communication;
 
 import li.pitschmann.knx.core.address.GroupAddress;
-import li.pitschmann.knx.core.body.RequestBody;
-import li.pitschmann.knx.core.body.ResponseBody;
+import li.pitschmann.knx.core.body.RoutingIndicationBody;
 import li.pitschmann.knx.core.body.TunnelingRequestBody;
 import li.pitschmann.knx.core.config.Config;
-import li.pitschmann.knx.core.config.ConfigBuilder;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT5;
@@ -31,26 +29,16 @@ import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.test.KnxBody;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.MockServerTest;
-import li.pitschmann.knx.core.test.TestHelpers;
 import li.pitschmann.knx.core.test.data.TestExtensionPlugin;
 import li.pitschmann.knx.core.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
+import java.time.Duration;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link BaseKnxClient}
@@ -102,37 +90,6 @@ public class BaseKnxClientTest {
         }
     }
 
-    @Test
-    @DisplayName("ERROR: Test read and write request throwing exceptions")
-    @SuppressWarnings("unchecked")
-    public void testReadAndWriteRequestsWithExceptions() throws ExecutionException, InterruptedException {
-        final var groupAddress = GroupAddress.of(1, 2, 3);
-
-        final var config = ConfigBuilder.tunneling().build();
-        final var baseKnxClient = spy(new BaseKnxClient(config));
-        final var internalKnxClientMock = TestHelpers.mockInternalKnxClient();
-        final var completableFutureMock = (CompletableFuture<ResponseBody>) mock(CompletableFuture.class);
-
-        when(baseKnxClient.isRunning()).thenReturn(true);
-        when(baseKnxClient.getInternalClient()).thenReturn(internalKnxClientMock);
-        when(internalKnxClientMock.send(any(RequestBody.class), anyLong())).thenReturn(completableFutureMock);
-
-        // throwing ExecutionException
-        doThrow(new ExecutionException(new Throwable())).when(completableFutureMock).get();
-        assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
-        assertThat(baseKnxClient.writeRequest(groupAddress, DPT1.SWITCH.of(true))).isFalse();
-
-        // throwing InterruptedException
-        // run this test in a sub-thread because it may interrupt parallel JUnit test cases otherwise
-        doThrow(new InterruptedException()).when(completableFutureMock).get();
-        final var executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            assertThat(baseKnxClient.readRequest(groupAddress)).isFalse();
-            assertThat(baseKnxClient.writeRequest(groupAddress, DPT1.SWITCH.of(true))).isFalse();
-        });
-        executor.shutdown();
-    }
-
     /**
      * Tests read and write requests methods for {@link BaseKnxClient} using
      * default behavior (NAT = not enabled)
@@ -140,9 +97,9 @@ public class BaseKnxClientTest {
      * @param mockServer the mock server
      */
     @MockServerTest
-    @DisplayName("OK: Test read and write requests (incl. async)")
-    public void testReadAndWriteRequests(final MockServer mockServer) {
-        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().build());
+    @DisplayName("OK: Tunneling: Test read and write requests asynchronously")
+    public void testReadAndWriteRequestsTunneling(final MockServer mockServer) {
+        readAndWriteTunnelingRequests(mockServer, (m) -> m.newConfigBuilder().build());
     }
 
     /**
@@ -152,9 +109,40 @@ public class BaseKnxClientTest {
      * @param mockServer the mock server
      */
     @MockServerTest
-    @DisplayName("OK: Test read and write requests (incl. async) over NAT")
-    public void testReadAndWriteRequestsOverNAT(final MockServer mockServer) {
-        testReadAndWriteRequests(mockServer, (m) -> m.newConfigBuilder().setting(CoreConfigs.NAT, true).build());
+    @DisplayName("OK: Tunneling + NAT: Test read and write requests asynchronously")
+    public void testReadAndWriteRequestsTunnelingAndNAT(final MockServer mockServer) {
+        readAndWriteTunnelingRequests(mockServer, (m) -> m.newConfigBuilder().setting(CoreConfigs.NAT, true).build());
+    }
+
+    @MockServerTest(useRouting = true)
+    @DisplayName("OK: Routing: Test read and write requests asynchronously")
+    public void testReadAndWriteRequestsRouting(final MockServer mockServer) {
+        final var groupAddress = GroupAddress.of(1, 2, 3);
+
+        try (final var client = mockServer.createTestClient()) {
+            // read request
+            assertThat(client.readRequest(groupAddress))
+                    .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
+            // write request
+            assertThat(client.writeRequest(groupAddress, DPT1.SWITCH.of(false)))
+                    .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
+            // 2nd write request
+            assertThat(client.writeRequest(groupAddress, DPT5.SCALING.of(100)))
+                    .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
+
+            mockServer.waitForReceivedServiceType(ServiceType.ROUTING_INDICATION, 3);
+        }
+
+        // assert if mock server got right sequences
+        final var routingIndications = mockServer.getReceivedBodies()
+                .stream()
+                .filter(RoutingIndicationBody.class::isInstance)
+                .map(RoutingIndicationBody.class::cast)
+                .collect(Collectors.toList());
+        assertThat(routingIndications).hasSize(3);
+        assertThat(routingIndications.get(0).getCEMI().getData()).isEmpty(); // empty because of read request
+        assertThat(routingIndications.get(1).getCEMI().getData()).containsExactly(0x00); // 0x00 = Switch(false)
+        assertThat(routingIndications.get(2).getCEMI().getData()).containsExactly(0xFF); // 0xFF = Scaling(100%)
     }
 
     /**
@@ -164,29 +152,35 @@ public class BaseKnxClientTest {
      * @param mockServer     the mock server
      * @param configFunction defines which configuration should be used
      */
-    private void testReadAndWriteRequests(final MockServer mockServer, final Function<MockServer, Config> configFunction) {
+    private void readAndWriteTunnelingRequests(final MockServer mockServer, final Function<MockServer, Config> configFunction) {
         final var groupAddress = GroupAddress.of(1, 2, 3);
 
         final var config = configFunction.apply(mockServer);
         try (final var client = DefaultKnxClient.createStarted(config)) {
             // read request
-            client.readRequest(groupAddress);
+            assertThat(client.readRequest(groupAddress))
+                    .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
             // write request
-            client.writeRequest(groupAddress, DPT1.SWITCH.of(false));
+            assertThat(client.writeRequest(groupAddress, DPT1.SWITCH.of(false)))
+                    .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
             // 2nd write request
-            client.writeRequest(groupAddress, DPT5.SCALING.of(100));
+            assertThat(client.writeRequest(groupAddress, DPT5.SCALING.of(100)))
+                    .succeedsWithin(Duration.ofSeconds(1)).isEqualTo(Boolean.TRUE);
             // send via body
             client.send(KnxBody.TUNNELING_REQUEST_BODY);
             // send via body and timeout
-            client.send(KnxBody.TUNNELING_REQUEST_BODY_2, 1000);
+            assertThat(client.send(KnxBody.TUNNELING_REQUEST_BODY_2, 1000))
+                    .succeedsWithin(Duration.ofSeconds(1)).matches(response -> response.getServiceType() == ServiceType.TUNNELING_ACK);
 
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_REQUEST, 5);
-        } catch (final Throwable t) {
-            fail("Unexpected test state", t);
         }
 
         // assert if mock server got right sequences
-        final var tunnelingRequestBodies = mockServer.getReceivedBodies().stream().filter(TunnelingRequestBody.class::isInstance).map(TunnelingRequestBody.class::cast).collect(Collectors.toList());
+        final var tunnelingRequestBodies = mockServer.getReceivedBodies()
+                .stream()
+                .filter(TunnelingRequestBody.class::isInstance)
+                .map(TunnelingRequestBody.class::cast)
+                .collect(Collectors.toList());
         assertThat(tunnelingRequestBodies).hasSize(5);
         // first two requests are sequences (incremental)
         assertThat(tunnelingRequestBodies.get(0).getSequence()).isEqualTo(0);
