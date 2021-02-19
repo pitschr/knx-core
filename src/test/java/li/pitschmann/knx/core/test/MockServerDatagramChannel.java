@@ -30,6 +30,7 @@ import li.pitschmann.knx.core.test.body.MockResponseBody;
 import li.pitschmann.knx.core.utils.Bytes;
 import li.pitschmann.knx.core.utils.Closeables;
 import li.pitschmann.knx.core.utils.Networker;
+import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,6 +147,7 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
 
         this.channel.send(byteBuffer, address);
         System.out.println("PITSCHR (" + System.currentTimeMillis() + "): Mock Server sent: " + sent.incrementAndGet());
+        Sleeper.milliseconds(1);
     }
 
     private static final AtomicInteger sent = new AtomicInteger(0);
