@@ -42,6 +42,8 @@ class MockServerHeartbeatMonitor implements Runnable {
                 && !this.mockServer.isCancelled()) {
             Sleeper.seconds(1);
         }
+
+        System.out.println("PITSCHR: diff: " + (System.currentTimeMillis() - lastHeartbeat.get()) + ", isCancelled: " + this.mockServer.isCancelled());
         log.info("*** KNX Mock Server [heartbeat] END *** ({})", System.currentTimeMillis() - lastHeartbeat.get());
         this.mockServer.cancel();
     }
