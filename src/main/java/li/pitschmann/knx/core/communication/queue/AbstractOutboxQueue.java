@@ -31,6 +31,7 @@ import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Abstract Outbox Queue for KNX packets to be sent to KNX Net/IP device
@@ -40,6 +41,7 @@ import java.util.Collection;
  */
 public abstract class AbstractOutboxQueue<T extends ByteChannel> extends AbstractKnxQueue<T> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    public static final AtomicInteger sentByKnxClient = new AtomicInteger(0);
 
     /**
      * Constructor for KNX Outbox Queue
@@ -86,6 +88,8 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
             return;
         }
         send(channel, ByteBuffer.wrap(packetToSend));
+        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): SentByClient: " + sentByKnxClient.incrementAndGet());
+
         log.trace("Packet sent.");
         this.getInternalClient().notifyOutgoingBody(body);
 

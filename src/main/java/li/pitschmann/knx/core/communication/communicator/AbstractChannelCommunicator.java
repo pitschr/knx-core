@@ -186,11 +186,8 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     public final void send(final Body body) {
         this.outboxQueue.send(Objects.requireNonNull(body));
-        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): sentbyknxclient: " + sentByKnxClient.incrementAndGet() + ", time: " + System.currentTimeMillis());
         log.debug("Body added to outbox queue: {}", body);
     }
-
-    public static final AtomicInteger sentByKnxClient = new AtomicInteger(0);
 
     /**
      * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.
