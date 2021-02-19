@@ -62,7 +62,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
     @Override
     public final void run() {
         log.debug("*** START ***");
-
+        int i=0;
         try (final var selector = openSelector()) {
             // iterate until current thread is interrupted
             while (!Thread.currentThread().isInterrupted()) {
@@ -75,6 +75,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
 
                         // qualified?
                         if (valid(key)) {
+                            i++;
                             action(key);
                         }
                     }
@@ -101,6 +102,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
             // throw to channel communicator
         } finally {
             log.debug("*** END ***");
+            System.out.println("PITSCHR (" + System.currentTimeMillis() + "): " + getClass() + ": " + i);
         }
     }
 

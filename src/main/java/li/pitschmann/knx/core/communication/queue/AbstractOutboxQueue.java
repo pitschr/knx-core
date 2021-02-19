@@ -88,7 +88,7 @@ public abstract class AbstractOutboxQueue<T extends ByteChannel> extends Abstrac
             return;
         }
         send(channel, ByteBuffer.wrap(packetToSend));
-        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): SentByClient: " + sentByKnxClient.incrementAndGet());
+        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): SentByClient: " + sentByKnxClient.incrementAndGet() + ", Body: " + body.getServiceType().name());
 
         log.trace("Packet sent.");
         this.getInternalClient().notifyOutgoingBody(body);
