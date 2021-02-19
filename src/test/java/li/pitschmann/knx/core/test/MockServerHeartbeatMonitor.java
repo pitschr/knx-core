@@ -37,18 +37,21 @@ class MockServerHeartbeatMonitor implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("PITSCHR: " + lastHeartbeat.get());
         log.info("*** KNX Mock Server [heartbeat] START ***");
         while (System.currentTimeMillis() - lastHeartbeat.get() < 10000
                 && !this.mockServer.isCancelled()) {
             Sleeper.seconds(1);
         }
 
-        System.out.println("PITSCHR: diff: " + (System.currentTimeMillis() - lastHeartbeat.get()) + ", isCancelled: " + this.mockServer.isCancelled());
+        System.out.println("PITSCHR: diff: " + (System.currentTimeMillis() - lastHeartbeat.get()) + ", isCancelled: " + this.mockServer.isCancelled() +
+                ", receivedBodies: " + this.mockServer.getReceivedBodies().size() + ", sentBodies: " + this.mockServer.getSentBodies().size());
         log.info("*** KNX Mock Server [heartbeat] END *** ({})", System.currentTimeMillis() - lastHeartbeat.get());
         this.mockServer.cancel();
     }
 
     public void ping() {
         lastHeartbeat.set(System.currentTimeMillis());
+        System.out.println("PITSCHR: ping " + lastHeartbeat.get());
     }
 }
