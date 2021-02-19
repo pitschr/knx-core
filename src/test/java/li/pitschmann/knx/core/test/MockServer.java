@@ -191,7 +191,7 @@ public final class MockServer implements Runnable, Closeable {
                 }
             }
 
-            System.out.println("PITSCHR: received: " + received.get() + ", sent: " + sent.get());
+            System.out.println("PITSCHR (" + System.currentTimeMillis() + "): received: " + received.get() + ", sent: " + sent.get());
         } catch (final Throwable t) {
             log.error("Throwable during KNX mock server", t);
             throwable = t;

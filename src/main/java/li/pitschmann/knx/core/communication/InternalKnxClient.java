@@ -259,7 +259,7 @@ public final class InternalKnxClient implements AutoCloseable {
 
     @Override
     public void close() {
-        System.out.println("InternalKnxClient close() invoked.");
+        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): " + getClass() + " close() invoked.");
         log.trace("Method 'close()' called.");
 
         // already closed?

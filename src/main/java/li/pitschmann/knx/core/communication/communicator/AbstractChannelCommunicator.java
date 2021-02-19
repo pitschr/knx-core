@@ -315,7 +315,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     @Override
     public final void close() {
-        System.out.println("AbstractChanneLCommunicator close() invoked.");
+        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): " + getClass() + " close() invoked.");
         log.trace("Method 'close()' invoked.");
         if (!closed.getAndSet(true)) {
             super.close();

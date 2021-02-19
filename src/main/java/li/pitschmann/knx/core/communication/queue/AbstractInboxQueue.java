@@ -82,6 +82,7 @@ public abstract class AbstractInboxQueue<T extends ByteChannel> extends Abstract
             if (log.isTraceEnabled()) {
                 log.trace("Receiving packet: {}", ByteFormatter.formatHexAsString(receivedBytes));
             }
+            System.out.println("PITSCHR (" + System.currentTimeMillis() + "): Received Bytes: " + receivedBytes.length);
         } finally {
             buff.clear();
         }
