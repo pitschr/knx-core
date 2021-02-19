@@ -44,6 +44,7 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.Future;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 /**
@@ -185,8 +186,11 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
      */
     public final void send(final Body body) {
         this.outboxQueue.send(Objects.requireNonNull(body));
+        System.out.println("PITSCHR: sentbyknxclient: " + sentByKnxClient.incrementAndGet());
         log.debug("Body added to outbox queue: {}", body);
     }
+
+    public static final AtomicInteger sentByKnxClient = new AtomicInteger(0);
 
     /**
      * Send {@link RequestBody} packet <strong>asynchronously</strong> to the appropriate channel.

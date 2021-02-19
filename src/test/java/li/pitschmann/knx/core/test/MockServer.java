@@ -80,6 +80,8 @@ public final class MockServer implements Runnable, Closeable {
     private Throwable throwable;
     private DefaultKnxClient client;
     private List<MembershipKey> membershipKeys;
+    private static final AtomicInteger received = new AtomicInteger(0);
+    private static final AtomicInteger sent = new AtomicInteger(0);
 
     private MockServer(final MockServerTest mockServerAnnotation) {
         this.mockServerAnnotation = mockServerAnnotation;
@@ -150,6 +152,7 @@ public final class MockServer implements Runnable, Closeable {
 
                     // receive
                     if (key.isValid() && key.isReadable()) {
+                        received.incrementAndGet();
                         final var body = serverChannel.read(key);
                         heartbeatMonitor.ping();
                         this.receivedBodies.add(body);
@@ -160,6 +163,7 @@ public final class MockServer implements Runnable, Closeable {
                     }
                     // send
                     if (key.isValid() && key.isWritable() && !this.outbox.isEmpty()) {
+                        sent.incrementAndGet();
                         final var body = this.outbox.take();
                         serverChannel.send(key, body);
                         heartbeatMonitor.ping();
@@ -186,6 +190,8 @@ public final class MockServer implements Runnable, Closeable {
 
                 }
             }
+
+            System.out.println("PITSCHR: received: " + received.get() + ", sent: " + sent.get());
         } catch (final Throwable t) {
             log.error("Throwable during KNX mock server", t);
             throwable = t;

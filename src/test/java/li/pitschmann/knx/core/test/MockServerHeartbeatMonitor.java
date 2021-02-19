@@ -38,7 +38,6 @@ class MockServerHeartbeatMonitor implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("PITSCHR: " + lastHeartbeat.get());
         log.info("*** KNX Mock Server [heartbeat] START ***");
         while (System.currentTimeMillis() - lastHeartbeat.get() < 10000
                 && !this.mockServer.isCancelled()) {
@@ -64,6 +63,5 @@ class MockServerHeartbeatMonitor implements Runnable {
 
     public void ping() {
         lastHeartbeat.set(System.currentTimeMillis());
-        System.out.println("PITSCHR: ping " + lastHeartbeat.get());
     }
 }
