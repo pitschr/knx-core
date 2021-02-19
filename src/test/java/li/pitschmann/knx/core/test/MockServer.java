@@ -251,6 +251,7 @@ public final class MockServer implements Runnable, Closeable {
      * are subject to be stopped immediately.
      */
     public void cancel() {
+        new Throwable().printStackTrace();
         this.cancel = true;
     }
 
