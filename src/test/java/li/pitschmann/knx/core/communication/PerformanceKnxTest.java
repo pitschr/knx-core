@@ -79,10 +79,11 @@ class PerformanceKnxTest {
             assertThat(client.isRunning()).isTrue();
             // after N-times tunneling acknowledge sent by client a disconnect will be initiated
             mockServer.waitForReceivedServiceType(ServiceType.TUNNELING_ACK, TIMES);
+            System.out.println("PITSCHR: " + mockServer.getReceivedBodies().size() + ", " + mockServer.isCancelled());
         } catch (final Throwable t) {
             fail("Unexpected test state", t);
         }
-        System.out.println("PITSCHR: " + mockServer.getReceivedBodies().size() + ", " + mockServer.isCancelled());
+
         // wait until all packets are sent/received
         mockServer.waitDone();
 
