@@ -28,6 +28,7 @@ import li.pitschmann.knx.core.test.body.MockResponseControlChannelBody;
 import li.pitschmann.knx.core.test.strategy.impl.DefaultDisconnectStrategy;
 import li.pitschmann.knx.core.test.strategy.impl.DefaultTunnelingStrategy;
 import li.pitschmann.knx.core.utils.Bytes;
+import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,7 @@ public class MockServerCommandParser {
         // 1000-times tunnelling request with CEMI bytes
         // (used in PerformanceKnxTest)
         else if ("cemi(1000)={2E00BCE010FF0A96010081}".equals(command)) {
+            Sleeper.seconds(3);
             final var actions = new ArrayList<MockAction>(1000);
             for (int i = 0; i < 1000; i++) {
                 final var requestBody = new DefaultTunnelingStrategy().createRequest(this.mockServer, CEMI.of(Bytes.toByteArray("2E00BCE010FF0A96010081")));
