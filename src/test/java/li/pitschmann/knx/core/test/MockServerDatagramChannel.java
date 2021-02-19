@@ -41,6 +41,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Mock Server Channel for UDP ({@link DatagramChannel}) communication
@@ -144,7 +145,10 @@ public final class MockServerDatagramChannel implements MockServerChannel<Datagr
         }
 
         this.channel.send(byteBuffer, address);
+        System.out.println("PITSCHR (" + System.currentTimeMillis() + "): Mock Server sent: " + sent.incrementAndGet());
     }
+
+    private static final AtomicInteger sent = new AtomicInteger(0);
 
     @Override
     public void close() {
