@@ -26,6 +26,8 @@ import java.util.Arrays;
 /**
  * Application Layer Protocol Control Information
  *
+ * See: KNX Specification, Application Layer (APDU)
+ *
  * @author PITSCHR
  */
 public enum APCI implements KnxBytesEnum {
