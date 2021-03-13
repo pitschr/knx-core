@@ -18,7 +18,7 @@
 package li.pitschmann.knx.core.cemi;
 
 import li.pitschmann.knx.core.KnxBytesEnum;
-import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.core.exceptions.KnxUnsupportedAPCICodeException;
 import li.pitschmann.knx.core.utils.Strings;
 
 import java.util.Arrays;
@@ -104,14 +104,14 @@ public enum APCI implements KnxBytesEnum {
      * A matching {@link APCI} for the given {@code code}
      *
      * @param code value to find the associated {@link APCI}
-     * @return existing {@link APCI}, or {@link KnxEnumNotFoundException} if no {@link APCI}
-     * for given {@code code} exists
+     * @return existing {@link APCI}
+     * @throws KnxUnsupportedAPCICodeException if given {@code code} is not suitable for KNX Net/IP traffic
      */
     public static APCI valueOf(final int code) {
         return Arrays.stream(values())
                 .filter(x -> code >= x.codeRangeStart && code <= x.codeRangeEnd)
                 .findFirst()
-                .orElseThrow(() -> new KnxEnumNotFoundException(APCI.class, code));
+                .orElseThrow(() -> new KnxUnsupportedAPCICodeException(code));
     }
 
     @Override
