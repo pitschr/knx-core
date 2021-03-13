@@ -180,7 +180,7 @@ public class AbstractKnxQueueTest {
     @DisplayName("ERROR: Test queue with an unexpected exception")
     public void testInboxCorrupted() throws Exception {
         final var selectorMock = mock(Selector.class);
-        when(selectorMock.select()).thenThrow(RuntimeException.class).thenReturn(0);
+        when(selectorMock.select()).thenThrow(new RuntimeException("error-message")).thenReturn(0);
 
         final var clientMock = mock(InternalKnxClient.class);
         final var queueSpy = spy(new TestKnxQueue(clientMock)); // must inject clientMock for 'verify' invocation
@@ -197,7 +197,7 @@ public class AbstractKnxQueueTest {
             // verifies if the notify plugins about error has been called
             final var captor = ArgumentCaptor.forClass(Throwable.class);
             verify(clientMock).notifyError(captor.capture());
-            assertThat(captor.getValue()).hasMessage("Error while processing KNX packets.");
+            assertThat(captor.getValue()).hasMessage("error-message");
         } finally {
             Closeables.shutdownQuietly(executor);
         }
