@@ -30,7 +30,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.m2
-          key: m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       # Uses JDK 11 for compilation
       - name: Set up JDK 11
