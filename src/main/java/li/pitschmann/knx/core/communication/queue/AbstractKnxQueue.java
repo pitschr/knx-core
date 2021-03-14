@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
                         }
                     }
                 } catch (final KnxWrongChannelIdException wrongChannelIdException) {
-                    log.warn("KNX packet with wrong channel retrieved: {}", wrongChannelIdException.getMessage());
+                    log.warn("KNX packet with wrong channel and will be ignored", wrongChannelIdException);
                     this.client.notifyError(wrongChannelIdException);
                     // ignore and proceed with next packet
                 } catch (final InterruptedException ie) {
@@ -90,13 +90,12 @@ public abstract class AbstractKnxQueue<T extends ByteChannel> implements Runnabl
                     throw ioe;
                     // break loop due exception
                 } catch (final Throwable e) {
-                    log.error("Error while processing KNX packets.", e);
-                    this.client.notifyError(new Throwable("Error while processing KNX packets.", e));
+                    log.warn("Error while processing KNX packet and will be ignored", e);
+                    this.client.notifyError(e);
                     // proceed with next packet
                 }
             }
         } catch (final IOException ioe) {
-            log.error("IOException for channel: {}", channel, ioe);
             throw new KnxException(String.format("IOException in '%s'.", getClass()), ioe);
             // throw to channel communicator
         } finally {

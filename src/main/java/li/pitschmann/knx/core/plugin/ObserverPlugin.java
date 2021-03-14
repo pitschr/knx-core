@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,21 +29,30 @@ public interface ObserverPlugin extends Plugin {
     /**
      * Notifies the plug-in about incoming successful {@link Body} message
      *
-     * @param item the incoming body
+     * @param item the incoming body; is never null
      */
     void onIncomingBody(Body item);
 
     /**
      * Notifies the plug-in about outgoing successful {@link Body} message
      *
-     * @param item the outgoing body
+     * @param item the outgoing body; is never null
      */
     void onOutgoingBody(Body item);
 
     /**
-     * Notifies the plug-in about a {@link Throwable}.
+     * Notifies the plug-in about a {@link Throwable}. This method is designed
+     * to inform the plugin about an unexpected / malformed packet and is rather
+     * designed for auditing or logging similar purposes. In most cases you
+     * are not interested in implementing this method.
+     * <p>
+     * You shall <strong>not close or control</strong> the KnxClient as the
+     * communication by KnxClient shall continue without any further issues.
+     * All unexpected / malformed packets are subject to be ignored by the KnxClient.
      *
-     * @param throwable the cause
+     * @param throwable the cause; is never null
      */
-    void onError(Throwable throwable);
+    default void onError(Throwable throwable) {
+        // NO-OP
+    }
 }

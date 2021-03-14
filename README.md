@@ -11,7 +11,8 @@ The purpose of this library is designed for developers to allow their applicatio
 to communicate with KNX world via their KNX Net/IP device (either a KNX router or a 
 KNX interface). _Tunneling_ and _routing_ modes are supported.
 
-For a demo application see [knx-demo-tty-monitor](https://github.com/pitschr/knx-demo-tty-monitor).
+For a demo application see [knx-demo-tty-monitor](https://github.com/pitschr/knx-demo-tty-monitor)
+and for first examples see [knx-examples](https://github.com/pitschr/knx-examples).
 
 ### Known limitations
 
@@ -216,9 +217,8 @@ DefaultKnxClient.createStarted("address:port").use { client ->
 }
 ```
 
-Below are some practical first-to-use examples. For more examples, see the [examples package](knx-examples/src/main/java/li/pitschmann/knx/examples) 
-
-
+Below are some practical first-to-use examples. For more examples, see 
+[knx-examples](https://github.com/pitschr/knx-examples) repository. 
 
 ### Example: Switch on/off lamp with boolean values
 

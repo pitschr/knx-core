@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,15 @@ public interface ExtensionPlugin extends Plugin {
      * Notifies the plug-in when KNX communication is established.
      * <p>
      * The start of KNX communication is done when description & connect frames
-     * have been exchanged between this client and the KNX Net/IP device.
+     * have been exchanged between the KNX client and the KNX Net/IP device.
      */
     void onStart();
 
     /**
      * Notifies the plug-in after KNX communication stop.
+     * <p>
+     * The stop of KNX communication is done when disconnect frames have been
+     * exchanged between the KNX client and the KNX Net/IP device.
      */
     void onShutdown();
 }

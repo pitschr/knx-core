@@ -17,7 +17,7 @@
 
 package li.pitschmann.knx.core.cemi;
 
-import li.pitschmann.knx.core.exceptions.KnxEnumNotFoundException;
+import li.pitschmann.knx.core.exceptions.KnxUnsupportedAPCICodeException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -51,8 +51,15 @@ final class APCITest {
     @Test
     @DisplayName("Invalid cases for #valueOf()")
     void invalidValueOf() {
-        assertThatThrownBy(() -> APCI.valueOf(0xFF)).isInstanceOf(KnxEnumNotFoundException.class);
-        assertThatThrownBy(() -> APCI.valueOf(0xFFFF)).isInstanceOf(KnxEnumNotFoundException.class);
+        assertThatThrownBy(() -> APCI.valueOf(1))
+                .isInstanceOf(KnxUnsupportedAPCICodeException.class)
+                .hasMessage("Unsupported APCI code and is not suitable for KNX Net/IP communication: 1 (0000 | 000001)");
+        assertThatThrownBy(() -> APCI.valueOf(960))
+                .isInstanceOf(KnxUnsupportedAPCICodeException.class)
+                .hasMessage("Unsupported APCI code and is not suitable for KNX Net/IP communication: 960 (1111 | 000000)");
+        assertThatThrownBy(() -> APCI.valueOf(0xFFFF))
+                .isInstanceOf(KnxUnsupportedAPCICodeException.class)
+                .hasMessage("Unsupported APCI code and is not suitable for KNX Net/IP communication: 65535 (1111 | 111111)");
     }
 
     @Test
