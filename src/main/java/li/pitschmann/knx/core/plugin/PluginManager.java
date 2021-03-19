@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.exceptions.KnxPluginException;
 import li.pitschmann.knx.core.utils.Closeables;
-import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Stopwatch;
 import org.slf4j.Logger;
@@ -40,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -73,7 +73,7 @@ public final class PluginManager implements AutoCloseable {
 
     public PluginManager(final Config config) {
         final var pluginExecutorPoolSize = config.getValue(CoreConfigs.Plugin.EXECUTOR_POOL_SIZE);
-        pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize, true);
+        pluginExecutor = Executors.newFixedThreadPool(pluginExecutorPoolSize);
         log.debug("Plugin Executor created with size of {}: {}", pluginExecutorPoolSize, pluginExecutor);
     }
 

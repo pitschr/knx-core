@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +33,7 @@ import li.pitschmann.knx.core.utils.Networker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.Flow;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -45,102 +42,84 @@ import static org.mockito.Mockito.when;
  *
  * @author PITSCHR
  */
-public class CommunicatorFactoryTest {
-    /**
-     * Test constructor of {@link CommunicatorFactory}
-     */
+class CommunicatorFactoryTest {
+
     @Test
     @DisplayName("Constructor not instantiable")
-    public void testConstructorNonInstantiable() {
+    void testConstructorNonInstantiable() {
         TestHelpers.assertThatNotInstantiable(CommunicatorFactory.class);
     }
 
-    /**
-     * Test {@link CommunicatorFactory#newDiscoveryChannelCommunicator(InternalKnxClient)}
-     */
     @Test
     @DisplayName("Test creating new discovery channel communicator")
-    public void testNewDiscoveryCommunicator() {
+    void testNewDiscoveryCommunicator() {
         final var communicator = CommunicatorFactory.newDiscoveryChannelCommunicator(mockInternalKnxClient());
 
         assertThat(communicator).isNotNull();
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(1);
-        assertSubscriberClass(communicator.getSubscribers().get(0), SearchResponseTask.class);
+        assertThat(communicator.getSubscribers().get(0)).isInstanceOf(SearchResponseTask.class);
     }
 
-    /**
-     * Test {@link CommunicatorFactory#newDescriptionChannelCommunicator(InternalKnxClient)}
-     */
     @Test
     @DisplayName("Test creating new description channel communicator")
-    public void testNewDescriptionCommunicator() {
+    void testNewDescriptionCommunicator() {
         final var communicator = CommunicatorFactory.newDescriptionChannelCommunicator(mockInternalKnxClient());
 
         assertThat(communicator).isNotNull();
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(1);
-        assertSubscriberClass(communicator.getSubscribers().get(0), DescriptionResponseTask.class);
+        assertThat(communicator.getSubscribers().get(0)).isInstanceOf(DescriptionResponseTask.class);
     }
 
-    /**
-     * Test {@link CommunicatorFactory#newControlChannelCommunicator(InternalKnxClient)}
-     */
     @Test
     @DisplayName("Test creating new control channel communicator (no NAT)")
-    public void testNewControlCommunicator() {
+    void testNewControlCommunicator() {
         final var communicator = CommunicatorFactory.newControlChannelCommunicator(mockInternalKnxClient());
 
         assertThat(communicator).isNotNull();
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(4);
-        assertSubscriberClass(communicator.getSubscribers().get(0), ConnectResponseTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(1), ConnectionStateResponseTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(2), DisconnectRequestTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(3), DisconnectResponseTask.class);
+        assertThat(communicator.getSubscribers().stream().map(Object::getClass).toArray()).containsExactly(
+                ConnectResponseTask.class,
+            ConnectionStateResponseTask.class,
+            DisconnectRequestTask.class,
+            DisconnectResponseTask.class
+        );
     }
 
-    /**
-     * Test {@link CommunicatorFactory#newDataChannelCommunicator(InternalKnxClient)}
-     */
     @Test
     @DisplayName("Test creating new data channel communicator (no NAT)")
-    public void testNewDataCommunicator() {
+    void testNewDataCommunicator() {
         final var communicator = CommunicatorFactory.newDataChannelCommunicator(mockInternalKnxClient());
 
-        assertThat(communicator).isNotNull();
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(2);
-        assertSubscriberClass(communicator.getSubscribers().get(0), TunnelingRequestTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(1), TunnelingAckTask.class);
+        assertThat(communicator.getSubscribers().stream().map(Object::getClass).toArray()).containsExactly(
+                TunnelingRequestTask.class,
+                TunnelingAckTask.class
+        );
     }
 
-    /**
-     * Test {@link CommunicatorFactory#newControlAndDataChannelCommunicator(InternalKnxClient)}
-     */
     @Test
     @DisplayName("Test creating new control and data channel communicator (with NAT)")
-    public void testNewControlAndDataCommunicator() {
+    void testNewControlAndDataCommunicator() {
         final var communicator = CommunicatorFactory.newControlAndDataChannelCommunicator(mockInternalKnxClient());
 
-        assertThat(communicator).isNotNull();
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(6);
-        assertSubscriberClass(communicator.getSubscribers().get(0), TunnelingRequestTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(1), TunnelingAckTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(2), ConnectResponseTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(3), ConnectionStateResponseTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(4), DisconnectRequestTask.class);
-        assertSubscriberClass(communicator.getSubscribers().get(5), DisconnectResponseTask.class);
-
+        assertThat(communicator.getSubscribers().stream().map(Object::getClass).toArray()).containsExactly(
+                TunnelingRequestTask.class,
+                TunnelingAckTask.class,
+                ConnectResponseTask.class,
+                ConnectionStateResponseTask.class,
+                DisconnectRequestTask.class,
+                DisconnectResponseTask.class
+        );
     }
 
-    /**
-     * Test {@link CommunicatorFactory#newRoutingChannelCommunicator(InternalKnxClient)}
-     */
     @Test
     @DisplayName("Test creating new routing channel communicator")
-    public void testNewRoutingCommunicator() {
+    void testNewRoutingCommunicator() {
         final var communicator = CommunicatorFactory.newRoutingChannelCommunicator(mockInternalKnxClient());
 
-        assertThat(communicator).isNotNull();
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(1);
-        assertSubscriberClass(communicator.getSubscribers().get(0), RoutingIndicationTask.class);
+        assertThat(communicator.getSubscribers().get(0)).isInstanceOf(RoutingIndicationTask.class);
     }
 
     /**
@@ -157,19 +136,5 @@ public class CommunicatorFactoryTest {
                 clientMock -> {
                 }
         );
-    }
-
-    /**
-     * Assert the class of subscriber against class {@code type}
-     */
-    private void assertSubscriberClass(final Flow.Subscriber<?> subscriber, final Class<?> type) {
-        try {
-            final var field = subscriber.getClass().getDeclaredField("subscriber");
-            field.trySetAccessible();
-            assertThat(field.get(subscriber)).isInstanceOf(type);
-        } catch (ReflectiveOperationException e) {
-            fail(e);
-            throw new AssertionError(e);
-        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.net.HPAI;
 import li.pitschmann.knx.core.utils.Closeables;
-import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Networker;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Sleeper;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.net.InetAddress;
 import java.nio.channels.MembershipKey;
-import java.nio.channels.MulticastChannel;
 import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +46,7 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -86,7 +85,7 @@ public final class MockServer implements Runnable, Closeable {
 
         this.serverChannel = new MockServerDatagramChannel(mockServerAnnotation);
 
-        this.executorService = Executors.newSingleThreadExecutor(true);
+        this.executorService = Executors.newSingleThreadExecutor();
         this.executorService.execute(this);
         this.executorService.shutdown();
     }
@@ -119,13 +118,13 @@ public final class MockServer implements Runnable, Closeable {
         log.debug("Membership Keys: {}", membershipKeys);
 
         // Start executor service heartbeat monitor
-        final var executorService = Executors.newSingleThreadExecutor(true);
+        final var executorService = Executors.newSingleThreadExecutor();
         final var heartbeatMonitor = new MockServerHeartbeatMonitor(this);
         executorService.submit(heartbeatMonitor);
         executorService.shutdown();
 
         final var publisher = new SubmissionPublisher<Body>();
-        publisher.subscribe(Executors.wrapSubscriberWithMDC(new MockServerCommunicator(this, mockServerAnnotation)));
+        publisher.subscribe(new MockServerCommunicator(this, mockServerAnnotation));
 
         try (final var selector = Selector.open();
              this.serverChannel) {
