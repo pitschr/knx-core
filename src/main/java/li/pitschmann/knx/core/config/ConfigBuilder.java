@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,12 +298,13 @@ public final class ConfigBuilder {
      */
     public <T> ConfigBuilder setting(final ConfigValue<T> key, final @Nullable T value) {
         Preconditions.checkNonNull(key);
+        Preconditions.checkArgument(!(key instanceof InternalConfigValue),
+                "Internal Config Value cannot be used here: {}", key.getKey());
+
         if (value == null) {
             final var oldValue = this.settings.remove(key);
             log.debug("Customized setting removed for key '{}'. Old Value: {}", key.getKey(), oldValue);
         } else {
-            Preconditions.checkArgument(!(key instanceof InternalConfigValue),
-                    "Internal Config Value cannot be used here: {}", key.getKey());
             Preconditions.checkArgument(key.isValid(value),
                     "The value seems not be applicable for config '{}': {}", key.getKey(), value);
             this.settings.put(key, value);

@@ -30,7 +30,6 @@ import li.pitschmann.knx.core.communication.queue.DefaultInboxQueue;
 import li.pitschmann.knx.core.communication.queue.DefaultOutboxQueue;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.utils.Closeables;
-import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ import java.nio.channels.SelectableChannel;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Flow;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,7 +78,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         log.debug("Inbox and Outbox Queues created: InboxQueue={}, OutboxQueue={}.", this.inboxQueue, this.outboxQueue);
 
         // creates queue executor
-        this.queueExecutor = Executors.newFixedThreadPool(2, true);
+        this.queueExecutor = Executors.newFixedThreadPool(2);
         this.queueExecutor.submit(inboxQueue);
         this.queueExecutor.submit(outboxQueue);
         this.queueExecutor.shutdown();
@@ -87,7 +86,7 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
 
         // creates executor for communication
         final var poolSize = this.client.getConfig(CoreConfigs.Communication.EXECUTOR_POOL_SIZE);
-        this.communicationExecutor = Executors.newFixedThreadPool(poolSize, true);
+        this.communicationExecutor = Executors.newFixedThreadPool(poolSize);
         log.debug("Communication Executor created with size of {}: {}", poolSize, this.communicationExecutor);
     }
 
@@ -162,12 +161,6 @@ public abstract class AbstractChannelCommunicator extends SubmissionPublisher<Bo
         }
 
         log.trace("*** END ***");
-    }
-
-    @Override
-    public void subscribe(Flow.Subscriber<? super Body> subscriber) {
-        log.debug("Subscriber added with MDC: {}", subscriber);
-        super.subscribe(Executors.wrapSubscriberWithMDC(subscriber));
     }
 
     /**

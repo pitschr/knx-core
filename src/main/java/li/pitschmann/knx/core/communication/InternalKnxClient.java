@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ import li.pitschmann.knx.core.net.tunnel.ConnectionRequestInfo;
 import li.pitschmann.knx.core.plugin.ObserverPlugin;
 import li.pitschmann.knx.core.plugin.PluginManager;
 import li.pitschmann.knx.core.utils.Closeables;
-import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Networker;
 import li.pitschmann.knx.core.utils.Preconditions;
 import li.pitschmann.knx.core.utils.Sleeper;
@@ -62,6 +61,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -238,7 +238,7 @@ public final class InternalKnxClient implements AutoCloseable {
         log.info("NAT Enabled                      : {}", this.config.isNatEnabled());
 
         // channel executors
-        this.channelExecutor = Executors.newFixedThreadPool(3, true);
+        this.channelExecutor = Executors.newFixedThreadPool(3);
         this.channelCommunicators.forEach(channelExecutor::execute);
 
         // get channel for further communications
@@ -484,7 +484,7 @@ public final class InternalKnxClient implements AutoCloseable {
         final var communicator = CommunicatorFactory.newDescriptionChannelCommunicator(this);
 
         // Create executor service for description communication
-        final var es = Executors.newSingleThreadExecutor(true);
+        final var es = Executors.newSingleThreadExecutor();
         es.execute(communicator);
         es.shutdown();
 
@@ -519,7 +519,7 @@ public final class InternalKnxClient implements AutoCloseable {
         final var communicator = CommunicatorFactory.newDiscoveryChannelCommunicator(this);
 
         // Create executor service for discovery communication
-        final var es = Executors.newSingleThreadExecutor(true);
+        final var es = Executors.newSingleThreadExecutor();
         es.execute(communicator);
         es.shutdown();
 
