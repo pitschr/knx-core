@@ -79,9 +79,9 @@ class CommunicatorFactoryTest {
         assertThat(communicator.getNumberOfSubscribers()).isEqualTo(4);
         assertThat(communicator.getSubscribers().stream().map(Object::getClass).toArray()).containsExactly(
                 ConnectResponseTask.class,
-            ConnectionStateResponseTask.class,
-            DisconnectRequestTask.class,
-            DisconnectResponseTask.class
+                ConnectionStateResponseTask.class,
+                DisconnectRequestTask.class,
+                DisconnectResponseTask.class
         );
     }
 
@@ -130,8 +130,10 @@ class CommunicatorFactoryTest {
     private InternalKnxClient mockInternalKnxClient() {
         return TestHelpers.mockInternalKnxClient(
                 configMock -> {
-                    when(configMock.getValue(eq(CoreConfigs.Multicast.PORT))).thenReturn(0);
-                    when(configMock.getValue(eq(CoreConfigs.Multicast.ADDRESS))).thenReturn(Networker.getByAddress(224, 0, 1, 0));
+                    when(configMock.getValue(CoreConfigs.Multicast.PORT)).thenReturn(0);
+                    when(configMock.getValue(CoreConfigs.Multicast.ADDRESS)).thenReturn(
+                            Networker.getByAddress(224, 0, 1, 0)
+                    );
                 },
                 clientMock -> {
                 }
