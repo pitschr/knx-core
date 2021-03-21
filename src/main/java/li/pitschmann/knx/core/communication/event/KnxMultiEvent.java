@@ -38,7 +38,7 @@ import java.util.function.Predicate;
  */
 public final class KnxMultiEvent<REQUEST extends RequestBody, RESPONSE extends ResponseBody> implements KnxEvent<REQUEST, RESPONSE> {
     private RequestEvent<REQUEST> requestEvent;
-    private List<ResponseEvent<RESPONSE>> responseEvents = new LinkedList<>();
+    private final List<ResponseEvent<RESPONSE>> responseEvents = new LinkedList<>();
 
     @Nullable
     @Override

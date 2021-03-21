@@ -43,9 +43,9 @@ public final class ConfigBuilder {
     private static final Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
     private final List<Plugin> plugins = new LinkedList<>();
     private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
-    private InetAddress remoteControlAddress;
-    private int remoteControlPort;
-    private boolean routingEnabled;
+    private final InetAddress remoteControlAddress;
+    private final int remoteControlPort;
+    private final boolean routingEnabled;
 
     /**
      * Creates a builder instance that is subject to end up with {@link ConfigBuilder} instance using

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import li.pitschmann.knx.core.test.strategy.DescriptionStrategy;
  * No Tunneling Service Family for {@link DescriptionStrategy}
  */
 public class DescriptionNoTunnelingStrategy extends DefaultDescriptionStrategy {
-    private static SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
+    private static final SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
 
     static {
         DEFAULT_SUPPORTED_DEVICE_FAMILIES = SupportedServiceFamiliesDIB.of(new byte[]{ //

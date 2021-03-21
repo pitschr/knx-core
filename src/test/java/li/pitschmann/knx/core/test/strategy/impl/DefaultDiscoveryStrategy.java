@@ -34,8 +34,8 @@ import li.pitschmann.knx.core.utils.Networker;
  * {@inheritDoc}
  */
 public class DefaultDiscoveryStrategy implements DiscoveryStrategy {
-    private static DeviceInformationDIB DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
-    private static SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
+    private static final DeviceInformationDIB DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
+    private static final SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
 
     static {
         DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB = DeviceInformationDIB.of(new byte[]{ //

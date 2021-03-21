@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ import java.time.Instant;
  * @author PITSCHR
  */
 public class RequestEvent<T extends RequestBody> {
-    private Instant requestTime;
-    private T request;
+    private final Instant requestTime;
+    private final T request;
 
     /**
      * Creates a new request event (package-protected)

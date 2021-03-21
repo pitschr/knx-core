@@ -31,8 +31,8 @@ import li.pitschmann.knx.core.test.strategy.DescriptionStrategy;
  * {@inheritDoc}
  */
 public class DefaultDescriptionStrategy implements DescriptionStrategy {
-    private static DeviceInformationDIB DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
-    private static SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
+    private static final DeviceInformationDIB DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB;
+    private static final SupportedServiceFamiliesDIB DEFAULT_SUPPORTED_DEVICE_FAMILIES;
 
     static {
         DEFAULT_DEVICE_HARDWARE_INFORMATION_DIB = DeviceInformationDIB.of(new byte[]{ //

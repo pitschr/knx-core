@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,12 @@ import static org.mockito.Mockito.mock;
  * @author PITSCHR
  */
 class SearchResponseBodyTest {
-    private HPAI controlEndpoint = HPAI.of(
+    private final HPAI controlEndpoint = HPAI.of(
             HostProtocol.IPV4_UDP,
             Networker.getByAddress(6, 2, 77, 4),
             8332
     );
-    private DeviceInformationDIB deviceInformation = DeviceInformationDIB.of(new byte[]{ //
+    private final DeviceInformationDIB deviceInformation = DeviceInformationDIB.of(new byte[]{ //
             0x36, // Structure Length
             0x01, // Description Type Code
             0x02, // KNX medium
@@ -58,7 +58,7 @@ class SearchResponseBodyTest {
             0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
     });
-    private SupportedServiceFamiliesDIB supportedServiceFamilies = SupportedServiceFamiliesDIB.of(new byte[]{ //
+    private final SupportedServiceFamiliesDIB supportedServiceFamilies = SupportedServiceFamiliesDIB.of(new byte[]{ //
             0x0a, // Structure Length
             0x02, // Description Type Code
             0x02, 0x01, // Service Family ID + Version #1
