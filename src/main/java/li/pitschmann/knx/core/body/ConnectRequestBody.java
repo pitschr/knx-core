@@ -31,9 +31,9 @@ import java.util.Objects;
  * Body for Connect Request
  * <p>
  * The {@link ServiceType#CONNECT_REQUEST} frame shall be sent by the
- * KNXnet/IP Client to the control endpoint of the KNXnet/IP Server.
- * As for every request using control communication the KNXnet/IP body
- * shall begin with the return address information of the KNXnet/IP
+ * KNX Net/IP Client to the control endpoint of the KNX Net/IP Server.
+ * As for every request using control communication the KNX Net/IP body
+ * shall begin with the return address information of the KNX Net/IP
  * Client’s control endpoint.
  * <p>
  * Next follows the {@link ConnectionRequestInfo}, a variable

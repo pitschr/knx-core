@@ -29,11 +29,11 @@ import java.util.Objects;
  * Body for Description Request
  * <p>
  * The {@link ServiceType#DESCRIPTION_REQUEST} frame shall be sent
- * by the KNXnet/IP Client to the control endpoint of the KNXnet/IP Server
- * to obtain a self-description of the KNXnet/IP Server device.
+ * by the KNX Net/IP Client to the control endpoint of the KNX Net/IP Server
+ * to obtain a self-description of the KNX Net/IP Server device.
  * <p>
- * The KNXnet/IP body shall contain the return address information
- * of the KNXnet/IP Client’s control endpoint.
+ * The KNX Net/IP body shall contain the return address information
+ * of the KNX Net/IP Client’s control endpoint.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+

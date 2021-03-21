@@ -93,9 +93,9 @@ final class IndividualAddressTest {
     @Test
     @DisplayName("Test #useDefault()")
     void testUseDefault() {
-        final var addr = IndividualAddress.useDefault();
-        assertThat(addr.getAddress()).isEqualTo("0.0.0");
-        assertThat(addr.toByteArray()).containsExactly(new byte[2]);
+        final var address = IndividualAddress.useDefault();
+        assertThat(address.getAddress()).isEqualTo("0.0.0");
+        assertThat(address.toByteArray()).containsExactly(new byte[2]);
     }
 
     @Test

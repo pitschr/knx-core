@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ public final class DPT22Value {
      *
      * @see DPT22#ROOM_HEATING_COOLING_CONTROLLER_STATUS
      */
-    public static final class RoomHeatingCoolingControllerStatus extends AbstractDataPointFlags<DPT22.RoomHeatinCoolingControllerStatus> {
+    public static final class RoomHeatingCoolingControllerStatus extends AbstractDataPointFlags<DPT22.RoomHeatingCoolingControllerStatus> {
         public RoomHeatingCoolingControllerStatus(final byte[] bytes) {
             super(DPT22.ROOM_HEATING_COOLING_CONTROLLER_STATUS, bytes);
         }
@@ -203,8 +203,8 @@ public final class DPT22Value {
         public Media(final boolean tp1Supported,
                      final boolean pl110Supported,
                      final boolean rfSupported,
-                     final boolean knxipSupported) {
-            this(new byte[]{0, Bytes.toByte(false, false, knxipSupported, rfSupported, false, pl110Supported, tp1Supported, false)});
+                     final boolean knxIpSupported) {
+            this(new byte[]{0, Bytes.toByte(false, false, knxIpSupported, rfSupported, false, pl110Supported, tp1Supported, false)});
         }
 
         public boolean isTP1Supported() {

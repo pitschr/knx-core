@@ -121,10 +121,10 @@ public final class CEMI implements MultiRawDataAware {
         // 2 bytes for destination address
         // Total: 4 bytes
         // ------------------------------------------
-        final var addrIndex = controlIndex + 2;
-        sourceAddress = IndividualAddress.of(new byte[]{bytes[addrIndex], bytes[addrIndex + 1]});
+        final var addressIndex = controlIndex + 2;
+        sourceAddress = IndividualAddress.of(new byte[]{bytes[addressIndex], bytes[addressIndex + 1]});
         // destination address is either individual or group (depends on address type on control 2 bit)
-        final var destinationAddressBytes = new byte[]{bytes[addrIndex + 2], bytes[addrIndex + 3]};
+        final var destinationAddressBytes = new byte[]{bytes[addressIndex + 2], bytes[addressIndex + 3]};
         if (controlByte2.getAddressType() == AddressType.INDIVIDUAL) {
             destinationAddress = IndividualAddress.of(destinationAddressBytes);
         } else {
@@ -137,11 +137,11 @@ public final class CEMI implements MultiRawDataAware {
         // * APCI Application Layer Protocol Control Information
         // 1 byte for NPDU length
         // 2 bytes for TCPI/APCI data
-        // N bytes for data (optional, depends on APCI and NDPU length)
+        // N bytes for data (optional, depends on APCI and NPDU length)
         // Total: min. 3 bytes
         // ------------------------------------------
-        final var npduIndex = addrIndex + 4;
-        // data bytes without TCPI/APCI bits
+        final var npduIndex = addressIndex + 4;
+        // data bytes without TPCI/APCI bits
         npduLength = Byte.toUnsignedInt(bytes[npduIndex]);
 
         // 00.. .... UDT unnumbered package
@@ -173,7 +173,7 @@ public final class CEMI implements MultiRawDataAware {
             final var npduIndexEnd = npduIndexStart + npduLength - 1;
             if (npduIndexEnd != bytes.length) {
                 // should never happen, assuming NPDU length is correct!
-                throw new KnxIllegalArgumentException("There seems be a conflict with NDPU length ({}), " +
+                throw new KnxIllegalArgumentException("There seems be a conflict with NPDU length ({}), " +
                         "NPDU Start Index ({}), NPDU End Index ({}) and CEMI raw (length={}): {}",
                         npduLength,
                         npduIndexStart,
@@ -216,7 +216,7 @@ public final class CEMI implements MultiRawDataAware {
         // when TPCI is unnumbered, the packet number should be always 0
         if (tpci == TPCI.UNNUMBERED_PACKAGE || tpci == TPCI.UNNUMBERED_CONTROL_DATA) {
             Preconditions.checkArgument(packetNumber == 0,
-                    "TPCI packet number should not be set when TCPI is unnumbered: tpci={}, packetNumber={}", tpci.name(), packetNumber);
+                    "TPCI packet number should not be set when TPCI is unnumbered: tpci={}, packetNumber={}", tpci.name(), packetNumber);
         }
 
         // Destination Address should be same address type like in Control Byte 2
@@ -238,7 +238,7 @@ public final class CEMI implements MultiRawDataAware {
     }
 
     /*
-     * Calculates the NDPU length based on {@link APCI} and {@link DataPointValue}
+     * Calculates the NPDU length based on {@link APCI} and {@link DataPointValue}
      */
     private static int calculateNpduLength(final APCI apci, final DataPointValue dataPointValue) {
         if (apci == APCI.GROUP_VALUE_READ) {
@@ -319,8 +319,8 @@ public final class CEMI implements MultiRawDataAware {
      * @param controlByte2       control byte #2
      * @param sourceAddress      source address (physical address of KNX device)
      * @param destinationAddress destination address
-     * @param tpci               TCPI for transport information
-     * @param packetNumber       packet number for TCPI (optional)
+     * @param tpci               TPCI for transport information
+     * @param packetNumber       packet number for TPCI (optional)
      * @param apci               APCI for application layer control information
      * @param dataPointValue     the data point type value that contains value to be sent to KNX Net/IP device,
      *                           may be {@code null} if request for read only.
@@ -388,7 +388,7 @@ public final class CEMI implements MultiRawDataAware {
         final var sourceAddressAsBytes = sourceAddress.toByteArray();
         final var destinationAddressAsBytes = destinationAddress.toByteArray();
 
-        // xx.. .... TCPI code
+        // xx.. .... TPCI code
         // 00.. .... UDT unnumbered package
         // 01.. .... NDT numbered package
         // 10.. .... UCD unnumbered control data
@@ -451,7 +451,7 @@ public final class CEMI implements MultiRawDataAware {
         // destination address
         System.arraycopy(destinationAddressAsBytes, 0, bytes, byteCount, destinationAddressAsBytes.length);
         byteCount += destinationAddressAsBytes.length;
-        // NDPU (incl. TCPI and APCI and its data)
+        // NPDU (incl. TPCI and APCI and its data)
         bytes[byteCount++] = (byte) npduLength;
         bytes[byteCount++] = (byte) (tpciPaketTypeAsByte | tpciPacketNumberAsByte | acpiCodeAsByte[0]);
         bytes[byteCount++] = (byte) (acpiCodeAsByte[1] | apciDataAsByte);

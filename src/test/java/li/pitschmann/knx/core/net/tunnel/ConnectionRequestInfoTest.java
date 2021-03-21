@@ -38,7 +38,7 @@ final class ConnectionRequestInfoTest {
         final var criDefault = ConnectionRequestInfo.useDefault();
         assertThat(criDefault.getLength()).isEqualTo(ConnectionRequestInfo.STRUCTURE_LENGTH);
         assertThat(criDefault.getConnectionType()).isSameAs(ConnectionType.TUNNEL_CONNECTION);
-        assertThat(criDefault.getLayerType()).isSameAs(LayerType.TUNNEL_LINKLAYER);
+        assertThat(criDefault.getLayerType()).isSameAs(LayerType.TUNNEL_LINK_LAYER);
 
         assertThat(criDefault.toByteArray()).containsExactly(
                 ConnectionRequestInfo.STRUCTURE_LENGTH,  // Structure Length
@@ -61,17 +61,17 @@ final class ConnectionRequestInfoTest {
         final var cri = ConnectionRequestInfo.of(bytes);
         assertThat(cri.getLength()).isEqualTo(ConnectionRequestInfo.STRUCTURE_LENGTH);
         assertThat(cri.getConnectionType()).isSameAs(ConnectionType.REMOTE_CONFIG_CONNECTION);
-        assertThat(cri.getLayerType()).isSameAs(LayerType.TUNNEL_BUSMONITOR);
+        assertThat(cri.getLayerType()).isSameAs(LayerType.TUNNEL_BUS_MONITOR);
         assertThat(cri.toByteArray()).containsExactly(bytes);
     }
 
     @Test
     @DisplayName("Test #of(ConnectionType, LayerType)")
     void testOf_ConnectionType_LayerType() {
-        final var cri = ConnectionRequestInfo.of(ConnectionType.OBJECT_SERVER_CONNECTION, LayerType.TUNNEL_LINKLAYER);
+        final var cri = ConnectionRequestInfo.of(ConnectionType.OBJECT_SERVER_CONNECTION, LayerType.TUNNEL_LINK_LAYER);
         assertThat(cri.getLength()).isEqualTo(ConnectionRequestInfo.STRUCTURE_LENGTH);
         assertThat(cri.getConnectionType()).isSameAs(ConnectionType.OBJECT_SERVER_CONNECTION);
-        assertThat(cri.getLayerType()).isSameAs(LayerType.TUNNEL_LINKLAYER);
+        assertThat(cri.getLayerType()).isSameAs(LayerType.TUNNEL_LINK_LAYER);
 
         assertThat(cri.toByteArray()).containsExactly(
                 ConnectionRequestInfo.STRUCTURE_LENGTH,  // Structure Length
@@ -99,7 +99,7 @@ final class ConnectionRequestInfoTest {
     void testToString() {
         final var criDefault = ConnectionRequestInfo.useDefault();
         assertThat(criDefault).hasToString(
-                "ConnectionRequestInfo{length=4, connectionType=TUNNEL_CONNECTION, layerType=TUNNEL_LINKLAYER}"
+                "ConnectionRequestInfo{length=4, connectionType=TUNNEL_CONNECTION, layerType=TUNNEL_LINK_LAYER}"
         );
 
         final var cri = ConnectionRequestInfo.of(ConnectionType.DEVICE_MANAGEMENT_CONNECTION, LayerType.TUNNEL_RAW);

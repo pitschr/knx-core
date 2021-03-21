@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ package li.pitschmann.knx.core;
 /**
  * Interface for KNX packet bodies which are aware of channel id.
  * <p>
- * The KNXnet/IP Server shall assign a Communication Channel ID
+ * The KNX Net/IP Server shall assign a Communication Channel ID
  * to each established communication channel and is initially
  * set in the CONNECT_REQUEST for unique identification.
  * <p>

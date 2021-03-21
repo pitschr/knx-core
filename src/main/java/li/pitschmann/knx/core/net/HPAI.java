@@ -37,7 +37,7 @@ import java.util.Objects;
  * address information required to uniquely identify a communication
  * channel on the host protocol. Its size shall vary between different
  * host protocols. For the specific definition of the HPAI consult the
- * host protocol dependent addendums of the KNXnet/IP specification.
+ * host protocol dependent addendums of the KNX Net/IP specification.
  * <p>
  * Both, IP address and port number, shall be stored binary in
  * network octet order.

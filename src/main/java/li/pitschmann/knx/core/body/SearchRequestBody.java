@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@ import java.util.Objects;
  * Body for Search Request
  * <p>
  * The {@link ServiceType#SEARCH_REQUEST} frame shall be sent by a
- * KNXnet/IP Client via multicast to the discovery endpoints of any
- * listening KNXnet/IP Server. As communication with the discovery
- * endpoint shall be connectionless and stateless, the KNXnet/IP
+ * KNX Net/IP Client via multicast to the discovery endpoints of any
+ * listening KNX Net/IP Server. As communication with the discovery
+ * endpoint shall be connectionless and stateless, the KNX Net/IP
  * Client’s discovery endpoint address information shall be included
- * in the KNXnet/IP body.
+ * in the KNX Net/IP body.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+

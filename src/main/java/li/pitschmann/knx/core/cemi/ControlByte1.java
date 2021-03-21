@@ -33,7 +33,7 @@ import java.util.Objects;
  *     <li><strong>Repetition (R):</strong> This shall specify whether repetitions shall
  *     be sent on the medium. This flag is relevant only on media with possibility of
  *     Data Link Layer controlled frame repetitions (TP1, PL110). Not relevant for
- *     KNXnet/IP frames.</li>
+ *     KNX Net/IP frames.</li>
  *     <li><strong>Broadcast Type (SB):</strong> This flag shall only be applicable on open media.</li>
  *     <li><strong>Priority (P):</strong> (bit 3 and 2) This shall specify that Priority that shall be used for
  *     transmission or reception of the frame.</li>

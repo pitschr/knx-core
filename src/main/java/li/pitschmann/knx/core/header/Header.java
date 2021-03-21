@@ -30,28 +30,28 @@ import java.util.Objects;
 /**
  * This class represents the header of KNX/IP and is immutable.
  * <p>
- * Every KNXnet/IP frame, without any exception, shall consist of at
- * least the common KNXnet/IP header that shall contain information
+ * Every KNX Net/IP frame, without any exception, shall consist of at
+ * least the common KNX Net/IP header that shall contain information
  * about the protocol version, the header and total packet length
- * and the KNXnet/IP service type identifier.
+ * and the KNX Net/IP service type identifier.
  * <p>
- * The KNXnet/IP header may be followed by a KNXnet/IP body, depending
- * on the KNXnet/IP service. Although the length of the header is always
+ * The KNX Net/IP header may be followed by a KNX Net/IP body, depending
+ * on the KNX Net/IP service. Although the length of the header is always
  * fixed, it is possible that the size of the header changes with a
  * new version of the protocol.
  * <p>
- * The protocol version information states the revision of the KNXnet/IP
- * protocol that the following KNXnet/IP frame is subject to. The only
+ * The protocol version information states the revision of the KNX Net/IP
+ * protocol that the following KNX Net/IP frame is subject to. The only
  * valid protocol version at this time is 1.0.
  * <p>
- * The KNXnet/IP service type identifier defines the kind of action to be
- * performed and the type of the data payload contained in the KNXnet/IP
+ * The KNX Net/IP service type identifier defines the kind of action to be
+ * performed and the type of the data payload contained in the KNX Net/IP
  * body if applicable.
  * <p>
- * The total length shall express the total KNXnet/IP frame length in
- * octets. The length shall include the complete KNXnet/IP frame, starting
- * with the header length of the KNXnet/IP header and including the whole
- * KNXnet/IP body.
+ * The total length shall express the total KNX Net/IP frame length in
+ * octets. The length shall include the complete KNX Net/IP frame, starting
+ * with the header length of the KNX Net/IP header and including the whole
+ * KNX Net/IP body.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+

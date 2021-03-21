@@ -29,10 +29,10 @@ import java.util.Arrays;
  * Service Type Identifier used in KNX/IP headers to identify
  * the message frames.
  * <p>
- * The KNXnet/IP service type identifier defines the kind of
+ * The KNX Net/IP service type identifier defines the kind of
  * action to be performed and the type of the data payload
- * contained in the KNXnet/IP body if applicable. The high octet
- * of the KNXnet/IP service type identifier denotes the
+ * contained in the KNX Net/IP body if applicable. The high octet
+ * of the KNX Net/IP service type identifier denotes the
  * service type family and the low octet the actual service type
  * in that family. For a detailed description of the services,
  * see below.
@@ -151,7 +151,7 @@ public enum ServiceType implements KnxBytesEnum {
      */
     DEVICE_CONFIGURATION_REQUEST(0x0310, "Device Configuration Request", DEVICE_CONFIGURATION_ACK),
     /**
-     * Service type sent by KNX device to cofirm the reception of the  {@link #TUNNELING_REQUEST}.
+     * Service type sent by KNX device to confirm the reception of the  {@link #TUNNELING_REQUEST}.
      */
     TUNNELING_ACK(0x0421, "Tunneling Acknowledgement"),
     /**

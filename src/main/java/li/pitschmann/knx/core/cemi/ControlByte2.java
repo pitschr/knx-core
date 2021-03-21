@@ -63,7 +63,7 @@ public final class ControlByte2 implements SingleRawDataAware {
                 // .... xxxx extended frame format
                 // .... 0000 for standard frame
                 // .... 01xx for LTE frames
-                // .... 1111 for Escape (reserved by KNX Assocation)
+                // .... 1111 for Escape (reserved by KNX Association)
                 ctrlRawData & 0xF
         );
     }
@@ -144,7 +144,7 @@ public final class ControlByte2 implements SingleRawDataAware {
         // .... xxxx extended frame format
         // .... 0000 for standard frame
         // .... 01xx for LTE frames
-        // .... 1111 for Escape (reserved by KNX Assocation)
+        // .... 1111 for Escape (reserved by KNX Association)
         final var frameFormatAsByte = (byte) (frameFormat & 0x0F);
 
         // create byte

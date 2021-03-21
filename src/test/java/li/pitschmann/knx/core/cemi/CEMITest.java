@@ -59,7 +59,7 @@ final class CEMITest {
                 0x60, // ControlByte2
                 0x00, 0x00, // source address
                 0x59, 0x0F, // destination address
-                0x03, // NDPU length
+                0x03, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x80, // APCI (8bits)
                 0xCC, 0xEE // APCI data
@@ -93,7 +93,7 @@ final class CEMITest {
                 0xE0, // ControlByte2
                 0x00, 0x00, // source address
                 0x14, (byte) 0xE6, // destination address
-                0x03, // NDPU length
+                0x03, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x80, // APCI (8bits)
                 0xEE, 0xFF // APCI data
@@ -145,7 +145,7 @@ final class CEMITest {
                 0xE0, // ControlByte2
                 0x10, 0xFF, // source address
                 0x0A, 0x96, // destination address
-                0x01, // NDPU length
+                0x01, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x00 // APCI (8bits), no APCI data
         );
@@ -201,7 +201,7 @@ final class CEMITest {
                 0xBC, // ControlByte2
                 0x10, 0x15, // source address
                 0x0B, 0xCB, // destination address
-                0x01, // NDPU length
+                0x01, // NPDU length
                 0x44, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x81 // APCI (8bits), APCI data (optimized)
         );
@@ -256,7 +256,7 @@ final class CEMITest {
                 0xE0, // ControlByte2
                 0x10, 0x15, // source address
                 0x0B, 0xCC, // destination address
-                0x02, // NDPU length
+                0x02, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x80, // APCI (8bits)
                 0x5d  // APCI data
@@ -312,7 +312,7 @@ final class CEMITest {
                 0x60, // ControlByte2
                 0x10, 0x82, // source address
                 0x63, 0x43, // destination address
-                0x03, // NDPU length
+                0x03, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x80, // APCI (8bits)
                 0x0C, 0x09 // APCI data
@@ -368,7 +368,7 @@ final class CEMITest {
                 0x60, // ControlByte2
                 0x10, 0x82, // source address
                 0x63, 0x43, // destination address
-                0x03, // NDPU length
+                0x03, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x40, // APCI (8bits)
                 0xFC, 0x46 // APCI data
@@ -391,7 +391,7 @@ final class CEMITest {
                 0x60, // ControlByte2
                 0x10, (byte) 0x82, // source address
                 0x63, 0x43, // destination address
-                0x03, // NDPU length
+                0x03, // NPDU length
                 0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                 0x40, // APCI (8bits)
                 (byte) 0xFC, 0x46 // APCI data
@@ -588,7 +588,7 @@ final class CEMITest {
                 mock(APCI.class),
                 mock(DataPointValue.class))
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("TPCI packet number should not be set when TCPI is unnumbered: tpci=UNNUMBERED_PACKAGE, packetNumber=1");
+                .hasMessage("TPCI packet number should not be set when TPCI is unnumbered: tpci=UNNUMBERED_PACKAGE, packetNumber=1");
 
         assertThatThrownBy(() -> CEMI.of(
                 mock(MessageCode.class),
@@ -602,7 +602,7 @@ final class CEMITest {
                 mock(APCI.class),
                 mock(DataPointValue.class))
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("TPCI packet number should not be set when TCPI is unnumbered: tpci=UNNUMBERED_CONTROL_DATA, packetNumber=1");
+                .hasMessage("TPCI packet number should not be set when TPCI is unnumbered: tpci=UNNUMBERED_CONTROL_DATA, packetNumber=1");
 
         assertThatThrownBy(() -> CEMI.useDefault(
                 MessageCode.L_DATA_CON,
@@ -636,7 +636,7 @@ final class CEMITest {
 
     @Test
     @DisplayName("Test conflict between ControlByte2 and Address Type of destination")
-    void testAddressTypeIncompatbility() {
+    void testAddressTypeIncompatibility() {
         // ControlByte2#addressType = GROUP, destination = INDIVIDUAL
         assertThatThrownBy(() -> CEMI.of(
                 MessageCode.L_DATA_CON,
@@ -669,12 +669,12 @@ final class CEMITest {
     }
 
     @Test
-    @DisplayName("Test #of(byte[]) with wrong NDPU length")
+    @DisplayName("Test #of(byte[]) with wrong NPDU length")
     void testWithWrongNDPULength() {
-        // the APCI data is 2-byte array, therefore the NDPU length should
+        // the APCI data is 2-byte array, therefore the NPDU length should
         // be 3-bytes (=1 byte for APCI Type, 2 bytes for APCI data)
 
-        // here we just tell that NDPU length is 4 bytes which is incorrect!
+        // here we just tell that NPDU length is 4 bytes which is incorrect!
         assertThatThrownBy(() -> CEMI.of(new byte[]{
                         0x2E, // Message Code
                         0x00, // Additional Info Length
@@ -682,15 +682,15 @@ final class CEMITest {
                         (byte) 0xE0, // ControlByte2
                         0x10, (byte) 0xFF, // source address
                         0x0A, (byte) 0x96, // destination address
-                        0x04, // NDPU length <-- ISSUE
+                        0x04, // NPDU length <-- ISSUE
                         0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                         (byte) 0x80, // APCI (8bits)
                         0x00, 0x00 // APCI data
                 })
         ).isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessageStartingWith("There seems be a conflict with NDPU length (4), NPDU Start Index (11), NPDU End Index (14) and CEMI raw (length=13):");
+                .hasMessageStartingWith("There seems be a conflict with NPDU length (4), NPDU Start Index (11), NPDU End Index (14) and CEMI raw (length=13):");
 
-        // here we just tell that NDPU length is 2 bytes which is incorrect!
+        // here we just tell that NPDU length is 2 bytes which is incorrect!
         assertThatThrownBy(() -> CEMI.of(new byte[]{
                         0x2E, // Message Code
                         0x00, // Additional Info Length
@@ -698,13 +698,13 @@ final class CEMITest {
                         (byte) 0xE0, // ControlByte2
                         0x10, (byte) 0xFF, // source address
                         0x0A, (byte) 0x96, // destination address
-                        0x02, // NDPU length <-- ISSUE
+                        0x02, // NPDU length <-- ISSUE
                         0x00, // TPCI (first 2 bits) + TPCI packet number (4 bits) + APCI (2 bits)
                         (byte) 0x80, // APCI (8bits)
                         0x00, 0x00 // APCI data
                 })
         ).isInstanceOf(KnxIllegalArgumentException.class)
-                .hasMessageStartingWith("There seems be a conflict with NDPU length (2), NPDU Start Index (11), NPDU End Index (12) and CEMI raw (length=13):");
+                .hasMessageStartingWith("There seems be a conflict with NPDU length (2), NPDU Start Index (11), NPDU End Index (12) and CEMI raw (length=13):");
     }
 
     @Test
@@ -781,7 +781,7 @@ final class CEMITest {
      * @param controlByte2       expected second control byte
      * @param sourceAddress      expected source individual address
      * @param destinationAddress expected destination KNX address
-     * @param ndpuLength         expected NDPU length
+     * @param npduLength         expected NPDU length
      * @param tpci               expected TPCI
      * @param packetNumber       expected TPCI packet number
      * @param apci               expected APCI
@@ -794,7 +794,7 @@ final class CEMITest {
                             final ControlByte2 controlByte2,
                             final IndividualAddress sourceAddress,
                             final KnxAddress destinationAddress,
-                            final int ndpuLength,
+                            final int npduLength,
                             final TPCI tpci,
                             final int packetNumber,
                             final APCI apci,
@@ -805,7 +805,7 @@ final class CEMITest {
         assertThat(cemi.getControlByte2()).isEqualTo(controlByte2);
         assertThat(cemi.getSourceAddress()).isEqualTo(sourceAddress);
         assertThat(cemi.getDestinationAddress()).isEqualTo(destinationAddress);
-        assertThat(cemi.getLength()).isEqualTo(ndpuLength);
+        assertThat(cemi.getLength()).isEqualTo(npduLength);
         assertThat(cemi.getTPCI()).isSameAs(tpci);
         assertThat(cemi.getPacketNumber()).isEqualTo(packetNumber);
         assertThat(cemi.getAPCI()).isSameAs(apci);

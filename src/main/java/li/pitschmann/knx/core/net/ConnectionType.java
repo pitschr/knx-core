@@ -30,8 +30,8 @@ import java.util.Arrays;
  * Connection Management Types how the connection is established
  * <p>
  * As for every {@link ServiceType#CONNECT_REQUEST} using control
- * communication the KNXnet/IP body shall begin with the return
- * address information of the KNXnet/IP Client’s control endpoint.
+ * communication the KNX Net/IP body shall begin with the return
+ * address information of the KNX Net/IP Client’s control endpoint.
  * <p>
  * Inside the {@link ConnectionRequestInfo} and {@link ConnectionResponseData},
  * a variable data structure that shall include all additional information

@@ -987,7 +987,7 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
     public static final DPT14 LUMINOUS_FLUX = new DPT14("Luminous Flux", "lm");
 
     /**
-     * <strong>14.043</strong> Lumnious Intensity (cd)
+     * <strong>14.043</strong> Luminous Intensity (cd)
      *
      * <pre>
      *             +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -1006,7 +1006,7 @@ public final class DPT14 extends BaseRangeDataPointType<DPT14Value, Double> {
      * </pre>
      */
     @DataPoint({"14.043", "dpst-14-43"})
-    public static final DPT14 LUMINOUS_INTENSITY = new DPT14("Lumnious Intensity", "cd");
+    public static final DPT14 LUMINOUS_INTENSITY = new DPT14("Luminous Intensity", "cd");
 
     /**
      * <strong>14.044</strong> Magnetic Field Strength (A/m)

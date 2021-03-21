@@ -70,30 +70,30 @@ public final class DPT22ValueTest {
      * Test {@link RoomHeatingCoolingControllerStatus}
      */
     @Test
-    public void testStatusRoomHeatinCoolingController() {
+    public void testStatusRoomHeatingCoolingController() {
         // @formatter:off
-        this.assertStatusRoomHeatinCoolingController(new byte[2], new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x01}, new boolean[]{true, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x02}, new boolean[]{false, true, false, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x04}, new boolean[]{false, false, true, false, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x08}, new boolean[]{false, false, false, true, false, false, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x10}, new boolean[]{false, false, false, false, true, false, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x20}, new boolean[]{false, false, false, false, false, true, false, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, 0x40}, new boolean[]{false, false, false, false, false, false, true, false, false, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x00, (byte) 0x80}, new boolean[]{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[2], new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x01}, new boolean[]{true, false, false, false, false, false, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x02}, new boolean[]{false, true, false, false, false, false, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x04}, new boolean[]{false, false, true, false, false, false, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x08}, new boolean[]{false, false, false, true, false, false, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x10}, new boolean[]{false, false, false, false, true, false, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x20}, new boolean[]{false, false, false, false, false, true, false, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, 0x40}, new boolean[]{false, false, false, false, false, false, true, false, false, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x00, (byte) 0x80}, new boolean[]{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false});
 
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x01, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, true, false, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x02, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, true, false, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x04, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, true, false, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x08, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, true, false, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x10, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, true, false, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x20, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, true, false});
-        this.assertStatusRoomHeatinCoolingController(new byte[]{0x40, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, true});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x01, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, true, false, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x02, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, true, false, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x04, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, true, false, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x08, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, true, false, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x10, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, true, false, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x20, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, true, false});
+        this.assertStatusRoomHeatingCoolingController(new byte[]{0x40, 0x00}, new boolean[]{false, false, false, false, false, false, false, false, false, false, false, false, false, false, true});
 
         // @formatter:on
     }
 
-    private void assertStatusRoomHeatinCoolingController(final byte[] bytes, final boolean[] bool) {
+    private void assertStatusRoomHeatingCoolingController(final byte[] bytes, final boolean[] bool) {
         final var dptValue = new RoomHeatingCoolingControllerStatus(bool[0], bool[1], bool[2], bool[3], bool[4], bool[5],
                 bool[6], bool[7], bool[8], bool[9], bool[10], bool[11], bool[12], bool[13], bool[14]);
         assertThat(new RoomHeatingCoolingControllerStatus(bytes)).isEqualTo(dptValue);

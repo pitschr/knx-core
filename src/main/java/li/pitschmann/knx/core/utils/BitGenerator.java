@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ public final class BitGenerator {
      * @param bits          number of expected matrix size
      * @param skipOnlyFalse if {@code true} it will skip boolean array with {@code false} values only
      * @param skipOnlyTrue  if {@code true} it will skip boolean array with {@code true} values only
-     * @return a matrix with customized combiantions
+     * @return a matrix with customized combinations
      */
     public static boolean[][] matrix(final int bits, final boolean skipOnlyFalse, final boolean skipOnlyTrue) {
         final var bitsCombo = 1 << bits;

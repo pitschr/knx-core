@@ -36,7 +36,7 @@ import java.util.Objects;
  * protocol independent data as well as host protocol dependent information,
  * the specific definition of the CRI can be found in the description of
  * the connection type with consultancy of the host protocol dependent
- * parts of the KNXnet/IP specification.
+ * parts of the KNX Net/IP specification.
  *
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
@@ -56,7 +56,7 @@ public final class ConnectionRequestInfo implements MultiRawDataAware {
      * Fixed length for {@link ConnectionRequestInfo}
      */
     public static final int STRUCTURE_LENGTH = 0x04;
-    private static final ConnectionRequestInfo DEFAULT = of(ConnectionType.TUNNEL_CONNECTION, LayerType.TUNNEL_LINKLAYER);
+    private static final ConnectionRequestInfo DEFAULT = of(ConnectionType.TUNNEL_CONNECTION, LayerType.TUNNEL_LINK_LAYER);
 
     private final int length;
     private final ConnectionType connectionType;
@@ -100,7 +100,7 @@ public final class ConnectionRequestInfo implements MultiRawDataAware {
 
     /**
      * Uses the default {@link ConnectionRequestInfo} instance with {@link ConnectionType#TUNNEL_CONNECTION}
-     * and {@link LayerType#TUNNEL_LINKLAYER} pre-defined
+     * and {@link LayerType#TUNNEL_LINK_LAYER} pre-defined
      *
      * @return re-usable immutable default {@link ConnectionRequestInfo}
      */

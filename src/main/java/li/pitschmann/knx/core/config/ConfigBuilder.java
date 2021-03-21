@@ -87,19 +87,19 @@ public final class ConfigBuilder {
         }
         // address format is: '<host>:'
         else if (address.endsWith(":")) {
-            final var addressSplitted = address.split(":");
-            Preconditions.checkArgument(addressSplitted.length == 1,
+            final var hostPort = address.split(":");
+            Preconditions.checkArgument(hostPort.length == 1,
                     "Unsupported Address format provided (expected: '<host>:'): {}", address);
-            return create(Networker.getByAddress(addressSplitted[0]));
+            return create(Networker.getByAddress(hostPort[0]));
         }
         // address contains ':' character -> assuming it is <host>:<port>
         else if (address.contains(":")) {
-            final var addressSplitted = address.split(":");
-            Preconditions.checkArgument(addressSplitted.length == 2,
+            final var hostPort = address.split(":");
+            Preconditions.checkArgument(hostPort.length == 2,
                     "Unsupported Address format provided (expected: '<host>:<port>'): {}", address);
 
-            final var host = Strings.isNullOrEmpty(addressSplitted[0]) ? Networker.getAddressUnbound() : Networker.getByAddress(addressSplitted[0]);
-            final var port = Integer.valueOf(addressSplitted[1]);
+            final var host = Strings.isNullOrEmpty(hostPort[0]) ? Networker.getAddressUnbound() : Networker.getByAddress(hostPort[0]);
+            final var port = Integer.valueOf(hostPort[1]);
 
             return create(host, port);
         }
