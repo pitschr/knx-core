@@ -34,15 +34,15 @@ public enum LayerType implements KnxByteEnum {
     /**
      * Establish a Data Link Layer tunnel to the KNX network.
      */
-    TUNNEL_LINKLAYER(0x02, "Tunneling Link Layer"),
+    TUNNEL_LINK_LAYER(0x02, "Tunneling Link Layer"),
     /**
      * Establish a cEMI Raw Tunnel to the KNX network.
      */
     TUNNEL_RAW(0x04, "Tunneling Raw Layer"),
     /**
-     * Establish a Busmonitor tunnel to the KNX network.
+     * Establish a Bus Monitor tunnel to the KNX network.
      */
-    TUNNEL_BUSMONITOR(0x80, "Tunneling Busmonitor Layer");
+    TUNNEL_BUS_MONITOR(0x80, "Tunneling Bus Monitor Layer");
 
     private final int code;
     private final String friendlyName;

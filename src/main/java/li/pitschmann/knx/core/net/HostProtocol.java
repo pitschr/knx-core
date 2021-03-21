@@ -26,11 +26,11 @@ import java.util.Arrays;
 /**
  * Host Protocols for IP network
  * <p>
- * The KNXnet/IP core specification defines the integration
+ * The KNX Net/IP core specification defines the integration
  * of KNX protocol implementations on top of the Internet
  * Protocol (IP). It describes the general and host protocol
  * independent as well as the host protocol specific parts
- * of the KNXnet/IP communication.
+ * of the KNX Net/IP communication.
  * <p>
  * See: KNX Specification, Core, 3.1
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,7 +457,7 @@ public final class DPT9 extends BaseRangeDataPointType<DPT9Value, Double> {
      * </pre>
      */
     @DataPoint({"9.029", "dpst-9-29"})
-    public static final DPT9 ABSOLUTE_HUMIDITY = new DPT9("Absloute Humidity", 0f, 670760.96, "g/m³");
+    public static final DPT9 ABSOLUTE_HUMIDITY = new DPT9("Absolute Humidity", 0f, 670760.96, "g/m³");
 
     /**
      * <strong>9.030</strong> Concentration (µg/m<sup>3</sup>)

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
  * @author PITSCHR
  */
 class DescriptionResponseBodyTest {
-    private DeviceInformationDIB deviceInformation = DeviceInformationDIB.of(new byte[]{ //
+    private final DeviceInformationDIB deviceInformation = DeviceInformationDIB.of(new byte[]{ //
             0x36, // Structure Length
             0x01, // Description Type Code
             0x02, // KNX medium
@@ -55,7 +55,7 @@ class DescriptionResponseBodyTest {
             0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Device Friendly Name (continued)
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Device Friendly Name (continued)
     });
-    private SupportedServiceFamiliesDIB supportedServiceFamilies = SupportedServiceFamiliesDIB.of(new byte[]{ //
+    private final SupportedServiceFamiliesDIB supportedServiceFamilies = SupportedServiceFamiliesDIB.of(new byte[]{ //
             0x0a, // Structure Length
             0x02, // Description Type Code
             0x02, 0x01, // Service Family ID + Version #1
@@ -63,7 +63,7 @@ class DescriptionResponseBodyTest {
             0x04, 0x01, // Service Family ID + Version #3
             0x05, 0x03 // Service Family ID + Version #4
     });
-    private IPConfigDIB ipConfig = IPConfigDIB.of(new byte[]{ //
+    private final IPConfigDIB ipConfig = IPConfigDIB.of(new byte[]{ //
             0x10, // Structure Length
             0x03, // Description Type Code
             0x11, 0x22, 0x33, 0x44, // IP Address
@@ -72,7 +72,7 @@ class DescriptionResponseBodyTest {
             (byte) 0xDD, // IP Capabilities
             (byte) 0xEE // IP assignment method
     });
-    private IPCurrentConfigDIB ipCurrentConfig = IPCurrentConfigDIB.of(new byte[]{ //
+    private final IPCurrentConfigDIB ipCurrentConfig = IPCurrentConfigDIB.of(new byte[]{ //
             0x14, // Structure Length
             0x04, // Description Type Code
             0x11, 0x22, 0x33, 0x44, // Current IP Address
@@ -82,7 +82,7 @@ class DescriptionResponseBodyTest {
             (byte) 0xDD, // IP Capabilities
             (byte) 0x00 // (reserved)
     });
-    private KnxAddressesDIB knxAddresses = KnxAddressesDIB.of(new byte[]{ //
+    private final KnxAddressesDIB knxAddresses = KnxAddressesDIB.of(new byte[]{ //
             0x0A, // Structure Length
             0x05, // Description Type Code
             0x00, 0x00, // KNX Individual Address (0.0.0)
@@ -90,7 +90,7 @@ class DescriptionResponseBodyTest {
             0x78, 0x7F, // Additional Individual Address 2 (7.8.127)
             (byte) 0xFF, (byte) 0xFF, // Additional Individual Address 3 (15.15.255)
     });
-    private ManufacturerDataDIB manufacturerData = ManufacturerDataDIB.of(new byte[]{ //
+    private final ManufacturerDataDIB manufacturerData = ManufacturerDataDIB.of(new byte[]{ //
             0x13, // Structure Length
             (byte) 0xFE, // Description Type Code
             0x21, 0x22, // KNX Manufacturer ID

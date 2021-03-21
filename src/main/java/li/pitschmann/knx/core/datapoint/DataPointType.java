@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ import li.pitschmann.knx.core.exceptions.DataPointTypeIncompatibleSyntaxExceptio
  * - sub number (on right) which stands for range and unit
  * <p>
  * Data Point Types with the same main number thus have the same format and encoding. Data Point Types with the same main
- * number have the same data type. A different subnumber indicates a different dimension (different range and/or
+ * number have the same data type. A different sub number indicates a different dimension (different range and/or
  * different unit).
  * <p>
  * (Description taken from KNX Specifications v2.1)

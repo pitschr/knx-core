@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,10 @@ import java.util.Arrays;
  * @author PITSCHR
  */
 public final class KnxStatusData {
-    private Instant timestamp;
-    private KnxAddress sourceAddress;
-    private APCI apci;
-    private byte[] data;
+    private final Instant timestamp;
+    private final KnxAddress sourceAddress;
+    private final APCI apci;
+    private final byte[] data;
     private boolean dirty;
 
     /**

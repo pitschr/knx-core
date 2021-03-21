@@ -46,7 +46,7 @@ public final class ConnectionStateCommunicator implements Runnable {
     /**
      * 500ms additional time buffer for response to minimize chance for an unnecessary loop
      */
-    private static final int CONNECTIONSTATE_REQUEST_SLEEP_TIME = 500;
+    private static final int CONNECTION_STATE_REQUEST_SLEEP_TIME = 500;
     /**
      * 100ms time for looping in case we are waiting for response (request time > response) time for faster checking
      */
@@ -153,6 +153,6 @@ public final class ConnectionStateCommunicator implements Runnable {
         this.client.send(requestBody);
 
         // wait bit
-        Sleeper.milliseconds(CONNECTIONSTATE_REQUEST_SLEEP_TIME);
+        Sleeper.milliseconds(CONNECTION_STATE_REQUEST_SLEEP_TIME);
     }
 }

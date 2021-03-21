@@ -117,7 +117,7 @@ public final class DPT19 extends BaseDataPointType<DPT19Value> {
      * values of octet 3 (Minutes) and 2 (Seconds) have to be set to zero.
      * <p>
      * "Fault" is set if one ore more supported fields of the Date & Time information are corrupted. "Fault" is set e.g.
-     * power-down if battery backup was not sufficient, after 1st start up of device (clock unconfigured) or radio-clock
+     * power-down if battery backup was not sufficient, after 1st start up of device (clock un-configured) or radio-clock
      * (DCF 77) had no reception for a very long time. "Fault" is usually cleared automatically by the device if the
      * local clock is set or clock data is refreshed
      * <p>

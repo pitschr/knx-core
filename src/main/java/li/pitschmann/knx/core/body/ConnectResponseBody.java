@@ -32,18 +32,18 @@ import java.util.Objects;
  * Body for Connect Response
  * <p>
  * The {@link ServiceType#CONNECT_RESPONSE} frame shall be sent by
- * the KNXnet/IP Server as an answer to a received {@link ServiceType#CONNECT_REQUEST}
- * frame. It shall be addressed to the KNXnet/IP Client’s control
+ * the KNX Net/IP Server as an answer to a received {@link ServiceType#CONNECT_REQUEST}
+ * frame. It shall be addressed to the KNX Net/IP Client’s control
  * endpoint using the HPAI included in the received {@link ServiceType#CONNECT_REQUEST}
  * frame.
  * <p>
- * The size of the KNXnet/IP body varies according to the success
- * or failure of the KNXnet/IP Client’s {@link ServiceType#CONNECT_REQUEST}.
+ * The size of the KNX Net/IP body varies according to the success
+ * or failure of the KNX Net/IP Client’s {@link ServiceType#CONNECT_REQUEST}.
  * <p>
  * If the connection request is successfully fulfilled with all the
  * requested options, the body of the {@link ServiceType#CONNECT_REQUEST}
  * frame shall contain a communication channel ID that shall uniquely
- * identify this connection with the KNXnet/IP Server. The communication
+ * identify this connection with the KNX Net/IP Server. The communication
  * channel ID shall be the first octet of the body.
  * <p>
  * The second octet of the body shall contain the status information

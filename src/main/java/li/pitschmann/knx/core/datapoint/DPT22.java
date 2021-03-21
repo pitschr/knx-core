@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ public final class DPT22 {
      * </pre>
      */
     @DataPoint({"22.101", "dpst-22-101"})
-    public static final RoomHeatinCoolingControllerStatus ROOM_HEATING_COOLING_CONTROLLER_STATUS = new RoomHeatinCoolingControllerStatus();
+    public static final RoomHeatingCoolingControllerStatus ROOM_HEATING_COOLING_CONTROLLER_STATUS = new RoomHeatingCoolingControllerStatus();
 
     // TODO: ETS 22.102 Combined Status HVA?
     // TODO: ETS 22.103 Combined Status RTC?
@@ -184,8 +184,8 @@ public final class DPT22 {
         }
     }
 
-    public static final class RoomHeatinCoolingControllerStatus extends InternalDataPointType<DPT22Value.RoomHeatingCoolingControllerStatus> {
-        private RoomHeatinCoolingControllerStatus() {
+    public static final class RoomHeatingCoolingControllerStatus extends InternalDataPointType<DPT22Value.RoomHeatingCoolingControllerStatus> {
+        private RoomHeatingCoolingControllerStatus() {
             super("Room Heating / Cooling Controller Status");
         }
 
@@ -228,8 +228,8 @@ public final class DPT22 {
         public DPT22Value.Media of(final boolean tp1Supported,
                                    final boolean pl110Supported,
                                    final boolean rfSupported,
-                                   final boolean knxipSupported) {
-            return new DPT22Value.Media(tp1Supported, pl110Supported, rfSupported, knxipSupported);
+                                   final boolean knxIpSupported) {
+            return new DPT22Value.Media(tp1Supported, pl110Supported, rfSupported, knxIpSupported);
         }
     }
 

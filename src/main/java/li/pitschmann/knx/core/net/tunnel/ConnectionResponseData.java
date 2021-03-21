@@ -38,7 +38,7 @@ import java.util.Objects;
  * protocol independent data as well as host protocol dependent
  * information, the specific definition of the CRD can be found in
  * the description of the connection type with consultancy of the
- * host protocol dependent parts of the KNXnet/IP specification.
+ * host protocol dependent parts of the KNX Net/IP specification.
  * <pre>
  * +-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+-7-+-6-+-5-+-4-+-3-+-2-+-1-+-0-+
  * | Structure Length              | TUNNEL_CONNECTION             |

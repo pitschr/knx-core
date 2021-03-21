@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +32,16 @@ import java.util.Objects;
  * Body for Search Response
  * <p>
  * The {@link ServiceType#SEARCH_RESPONSE} frame shall be sent by
- * the KNXnet/IP Server as an answer to a received {@link ServiceType#SEARCH_REQUEST}
- * frame. It shall be addressed to the KNXnet/IP Client’s discovery
+ * the KNX Net/IP Server as an answer to a received {@link ServiceType#SEARCH_REQUEST}
+ * frame. It shall be addressed to the KNX Net/IP Client’s discovery
  * endpoint using the HPAI included in the received {@link ServiceType#SEARCH_REQUEST}
  * frame.
  * <p>
- * The HPAI of the KNXnet/IP Server’s own control endpoint shall be
- * carried in the KNXnet/IP body of the {@link ServiceType#SEARCH_RESPONSE}
+ * The HPAI of the KNX Net/IP Server’s own control endpoint shall be
+ * carried in the KNX Net/IP body of the {@link ServiceType#SEARCH_RESPONSE}
  * frame along with the description of the device hardware and the
- * supported service families. If the KNXnet/IP Server supports more
- * than one KNX connection, the KNXnet/IP Server shall announce each
+ * supported service families. If the KNX Net/IP Server supports more
+ * than one KNX connection, the KNX Net/IP Server shall announce each
  * of its own control endpoints in a single {@link ServiceType#SEARCH_RESPONSE}
  * frame.
  * <p>

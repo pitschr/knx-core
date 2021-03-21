@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,9 @@ final class LayerTypeTest {
     @Test
     @DisplayName("Valid cases for #valueOf()")
     void validValueOf() {
-        assertThat(LayerType.valueOf(0x02)).isEqualTo(LayerType.TUNNEL_LINKLAYER);
+        assertThat(LayerType.valueOf(0x02)).isEqualTo(LayerType.TUNNEL_LINK_LAYER);
         assertThat(LayerType.valueOf(0x04)).isEqualTo(LayerType.TUNNEL_RAW);
-        assertThat(LayerType.valueOf(0x80)).isEqualTo(LayerType.TUNNEL_BUSMONITOR);
+        assertThat(LayerType.valueOf(0x80)).isEqualTo(LayerType.TUNNEL_BUS_MONITOR);
     }
 
     @Test
@@ -55,16 +55,16 @@ final class LayerTypeTest {
     @Test
     @DisplayName("Test #getFriendlyName()")
     void testGetFriendlyName() {
-        assertThat(LayerType.TUNNEL_LINKLAYER.getFriendlyName()).isEqualTo("Tunneling Link Layer");
+        assertThat(LayerType.TUNNEL_LINK_LAYER.getFriendlyName()).isEqualTo("Tunneling Link Layer");
         assertThat(LayerType.TUNNEL_RAW.getFriendlyName()).isEqualTo("Tunneling Raw Layer");
-        assertThat(LayerType.TUNNEL_BUSMONITOR.getFriendlyName()).isEqualTo("Tunneling Busmonitor Layer");
+        assertThat(LayerType.TUNNEL_BUS_MONITOR.getFriendlyName()).isEqualTo("Tunneling Bus Monitor Layer");
     }
 
     @Test
     @DisplayName("Test #toString()")
     void testToString() {
-        assertThat(LayerType.TUNNEL_LINKLAYER).hasToString(
-                "LayerType{name=TUNNEL_LINKLAYER, friendlyName=Tunneling Link Layer, code=2}"
+        assertThat(LayerType.TUNNEL_LINK_LAYER).hasToString(
+                "LayerType{name=TUNNEL_LINK_LAYER, friendlyName=Tunneling Link Layer, code=2}"
         );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,9 +74,9 @@ public class NetworkerTest {
      */
     @Test
     public void testByAddressUnbound() {
-        final var addr = Networker.getAddressUnbound();
-        assertThat(addr.getHostAddress()).isEqualTo("0.0.0.0");
-        assertThat(addr.getAddress()).containsExactly(new byte[4]);
+        final var address = Networker.getAddressUnbound();
+        assertThat(address.getHostAddress()).isEqualTo("0.0.0.0");
+        assertThat(address.getAddress()).containsExactly(new byte[4]);
     }
 
     /**
@@ -85,8 +85,8 @@ public class NetworkerTest {
      */
     @Test
     public void testByAddress() {
-        final var addr = Networker.getByAddress("1.2.3.4");
-        assertThat(addr.getHostAddress()).isEqualTo("1.2.3.4");
+        final var address = Networker.getByAddress("1.2.3.4");
+        assertThat(address.getHostAddress()).isEqualTo("1.2.3.4");
 
         // OK
         assertThat(Networker.getByAddress(0, 0, 0, 0)).isInstanceOf(InetAddress.class);

@@ -29,17 +29,17 @@ import java.util.Objects;
  * Body for Connection State Response
  * <p>
  * The {@link ServiceType#CONNECTION_STATE_RESPONSE} frame shall be
- * sent by the KNXnet/IP Server as an answer to a received
+ * sent by the KNX Net/IP Server as an answer to a received
  * {@link ServiceType#CONNECTION_STATE_REQUEST} frame. It shall be
- * addressed to the KNXnet/IP Client’s control endpoint using the
+ * addressed to the KNX Net/IP Client’s control endpoint using the
  * HPAI included in the received {@link ServiceType#CONNECTION_STATE_REQUEST}
  * frame.
  * <p>
- * The first octet of the KNXnet/IP body shall contain the communication
- * channel ID that the KNXnet/IP Client has passed to the KNXnet/IP Server
+ * The first octet of the KNX Net/IP body shall contain the communication
+ * channel ID that the KNX Net/IP Client has passed to the KNX Net/IP Server
  * with the {@link ServiceType#CONNECTION_STATE_REQUEST} frame.
  * <p>
- * The second octet of the KNXnet/IP body shall contain the status
+ * The second octet of the KNX Net/IP body shall contain the status
  * information of the connection state request.
  *
  * <pre>

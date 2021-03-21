@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,9 +59,9 @@ public final class TestHelpers {
      */
     public static void assertThatNotInstantiable(final Class<?> classToTest) {
         assertThatThrownBy(() -> {
-            final var ctor = classToTest.getDeclaredConstructor();
-            ctor.trySetAccessible();
-            ctor.newInstance();
+            final var constructor = classToTest.getDeclaredConstructor();
+            constructor.trySetAccessible();
+            constructor.newInstance();
         }).hasCauseInstanceOf(AssertionError.class);
     }
 

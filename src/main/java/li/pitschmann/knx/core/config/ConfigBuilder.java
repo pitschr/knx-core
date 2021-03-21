@@ -43,9 +43,9 @@ public final class ConfigBuilder {
     private static final Logger log = LoggerFactory.getLogger(ConfigBuilder.class);
     private final List<Plugin> plugins = new LinkedList<>();
     private final Map<ConfigValue<?>, Object> settings = Maps.newHashMap(100);
-    private InetAddress remoteControlAddress;
-    private int remoteControlPort;
-    private boolean routingEnabled;
+    private final InetAddress remoteControlAddress;
+    private final int remoteControlPort;
+    private final boolean routingEnabled;
 
     /**
      * Creates a builder instance that is subject to end up with {@link ConfigBuilder} instance using
@@ -87,19 +87,19 @@ public final class ConfigBuilder {
         }
         // address format is: '<host>:'
         else if (address.endsWith(":")) {
-            final var addressSplitted = address.split(":");
-            Preconditions.checkArgument(addressSplitted.length == 1,
+            final var hostPort = address.split(":");
+            Preconditions.checkArgument(hostPort.length == 1,
                     "Unsupported Address format provided (expected: '<host>:'): {}", address);
-            return create(Networker.getByAddress(addressSplitted[0]));
+            return create(Networker.getByAddress(hostPort[0]));
         }
         // address contains ':' character -> assuming it is <host>:<port>
         else if (address.contains(":")) {
-            final var addressSplitted = address.split(":");
-            Preconditions.checkArgument(addressSplitted.length == 2,
+            final var hostPort = address.split(":");
+            Preconditions.checkArgument(hostPort.length == 2,
                     "Unsupported Address format provided (expected: '<host>:<port>'): {}", address);
 
-            final var host = Strings.isNullOrEmpty(addressSplitted[0]) ? Networker.getAddressUnbound() : Networker.getByAddress(addressSplitted[0]);
-            final var port = Integer.valueOf(addressSplitted[1]);
+            final var host = Strings.isNullOrEmpty(hostPort[0]) ? Networker.getAddressUnbound() : Networker.getByAddress(hostPort[0]);
+            final var port = Integer.valueOf(hostPort[1]);
 
             return create(host, port);
         }
