@@ -217,11 +217,10 @@ public final class DataPointRegistry {
      * Returns the data point type by given {@code id}
      *
      * @param id  the DPT identifier that should be looked up in the map
-     * @param <T> the type of DPT
-     * @return {@link DataPointType}
+     * @return an instance of {@link DataPointType}
      */
-    public static <T extends DataPointType> T getDataPointType(final String id) {
-        @SuppressWarnings("unchecked") final T dpt = (T) dataPointTypeMap.get(id.toLowerCase());
+    public static DataPointType getDataPointType(final String id) {
+        final var dpt = dataPointTypeMap.get(id.toLowerCase());
         if (dpt == null) {
             throw new KnxDataPointTypeNotFoundException(id);
         }
