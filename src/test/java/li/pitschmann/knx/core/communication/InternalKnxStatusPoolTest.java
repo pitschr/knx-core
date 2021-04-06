@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT7;
 import li.pitschmann.knx.core.datapoint.DPT9;
+import li.pitschmann.knx.core.datapoint.DataPointRegistry;
 import li.pitschmann.knx.core.datapoint.value.DPT1Value;
 import li.pitschmann.knx.core.datapoint.value.DPT9Value;
 import li.pitschmann.knx.core.test.KnxBody;
@@ -134,8 +135,10 @@ public final class InternalKnxStatusPoolTest {
         pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(false)));
 
         // Scenario 1: Init (false)
-        final var boolValue = pool.<DPT1Value>getValue(ADDRESS, DPT1.SWITCH.getId());
+        final var boolValue = (DPT1Value) pool.getValue(ADDRESS, "1.001");
         assertThat(boolValue.getValue()).isFalse();
+        final var boolValue1 = (DPT1Value) pool.getValue(ADDRESS, DataPointRegistry.getDataPointType("1.001"));
+        assertThat(boolValue1.getValue()).isFalse();
         final var boolValue2 = pool.getValue(ADDRESS, DPT1.SWITCH);
         assertThat(boolValue2.getValue()).isFalse();
 
@@ -146,19 +149,26 @@ public final class InternalKnxStatusPoolTest {
         // 1) pre-verify (before adding to status pool)
         // 2) update status pool
         // 3) post-verify (after adding to status pool)
-        assertThat(pool.<DPT1Value>getValue(ADDRESS_2, DPT1.SWITCH.getId()).getValue()).isFalse();
+        assertThat(((DPT1Value)pool.getValue(ADDRESS_2, "1.001")).getValue()).isFalse();
+        assertThat(((DPT1Value)pool.getValue(ADDRESS_2, DataPointRegistry.getDataPointType("1.001"))).getValue()).isFalse();
         assertThat(pool.getValue(ADDRESS_2, DPT1.SWITCH).getValue()).isFalse();
         pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, DPT1.SWITCH.of(true)));
-        assertThat(pool.<DPT1Value>getValue(ADDRESS_2, DPT1.SWITCH.getId()).getValue()).isTrue();
+        assertThat(((DPT1Value)pool.getValue(ADDRESS_2, "1.001")).getValue()).isTrue();
+        assertThat(((DPT1Value)pool.getValue(ADDRESS_2, DataPointRegistry.getDataPointType("1.001"))).getValue()).isTrue();
         assertThat(pool.getValue(ADDRESS_2, DPT1.SWITCH).getValue()).isTrue();
 
         // Scenario 3: unknown address
-        assertThat(pool.<DPT1Value>getValue(ADDRESS_UNKNOWN, DPT1.SWITCH.getId())).isNull();
+        assertThat(pool.getValue(ADDRESS_UNKNOWN, "1.001")).isNull();
+        assertThat(pool.getValue(ADDRESS_UNKNOWN, DataPointRegistry.getDataPointType("1.001"))).isNull();
         assertThat(pool.getValue(ADDRESS_UNKNOWN, DPT1.SWITCH)).isNull();
 
         // Scenario 4: illegal parameter
-        assertThatThrownBy(() -> pool.<DPT1Value>getValue(null, DPT1.SWITCH.getId())).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> pool.getValue(null, DPT1.SWITCH)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> pool.getValue(null, "1.001"))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> pool.getValue(null, DataPointRegistry.getDataPointType("1.001")))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> pool.getValue(null, DPT1.SWITCH))
+                .isInstanceOf(NullPointerException.class);
     }
 
     /**
@@ -172,21 +182,21 @@ public final class InternalKnxStatusPoolTest {
         pool.updateStatus(CEMI.useDefault(MessageCode.L_DATA_REQ, ADDRESS_2, APCI.GROUP_VALUE_WRITE, DPT9.TEMPERATURE.of(20.78d)));
 
         // Scenario 1: Init (19.52 °C)
-        final var tempValue = pool.<DPT9Value>getValue(ADDRESS, DPT9.TEMPERATURE.getId());
+        final var tempValue = (DPT9Value) pool.getValue(ADDRESS, DPT9.TEMPERATURE.getId());
         assertThat(tempValue.getValue()).isEqualTo(19.52d);
         final var tempValue2 = pool.getValue(ADDRESS, DPT9.TEMPERATURE);
         assertThat(tempValue2.getValue()).isEqualTo(19.52d);
 
         // Scenario 2: Update (20.78 °C)
-        assertThat(pool.<DPT9Value>getValue(ADDRESS_2, DPT9.TEMPERATURE.getId()).getValue()).isEqualTo(20.78d);
+        assertThat(((DPT9Value) pool.getValue(ADDRESS_2, DPT9.TEMPERATURE.getId())).getValue()).isEqualTo(20.78d);
         assertThat(pool.getValue(ADDRESS_2, DPT9.TEMPERATURE).getValue()).isEqualTo(20.78d);
 
         // Scenario 3: unknown address
-        assertThat(pool.<DPT9Value>getValue(ADDRESS_UNKNOWN, DPT9.TEMPERATURE.getId())).isNull();
+        assertThat(pool.getValue(ADDRESS_UNKNOWN, DPT9.TEMPERATURE.getId())).isNull();
         assertThat(pool.getValue(ADDRESS_UNKNOWN, DPT9.TEMPERATURE)).isNull();
 
         // Scenario 4: illegal parameter
-        assertThatThrownBy(() -> pool.<DPT9Value>getValue(null, DPT9.TEMPERATURE.getId())).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> pool.getValue(null, DPT9.TEMPERATURE.getId())).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> pool.getValue(null, DPT9.TEMPERATURE)).isInstanceOf(NullPointerException.class);
 
     }

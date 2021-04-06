@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,15 @@ import li.pitschmann.knx.core.cemi.MessageCode;
 import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
+import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.core.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -83,6 +87,20 @@ public class BaseKnxClient implements KnxClient {
     }
 
     @Override
+    public boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue, final long timeout) {
+        try {
+            return writeRequest(address, dataPointValue).get(timeout, TimeUnit.MILLISECONDS);
+        } catch (final TimeoutException ex) {
+            throw new KnxCommunicationException("Time ({} ms) exceeded for write request to group address: {}", timeout, address);
+        } catch (final ExecutionException ex) {
+            throw new KnxCommunicationException("Write request and wait for acknowledge failed for group address: {}", address);
+        } catch (final InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
+    }
+
+    @Override
     public CompletableFuture<Boolean> readRequest(final GroupAddress address) {
         Preconditions.checkNonNull(address);
         Preconditions.checkState(isRunning());
@@ -100,6 +118,20 @@ public class BaseKnxClient implements KnxClient {
                     getConfig(CoreConfigs.Tunneling.REQUEST_TIMEOUT)
             ).thenApply(body -> body.getStatus() == Status.NO_ERROR);
         }
+    }
+
+    @Override
+    public boolean readRequest(final GroupAddress address, final long timeout) {
+        try {
+            return readRequest(address).get(timeout, TimeUnit.MILLISECONDS);
+        } catch (final TimeoutException ex) {
+            throw new KnxCommunicationException("Time ({} ms) exceeded for read request to group address: {}", timeout, address);
+        } catch (final ExecutionException ex) {
+            throw new KnxCommunicationException("Read request and wait for acknowledge failed for group address: {}", address);
+        } catch (final InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,10 +114,35 @@ public interface KnxClient extends AutoCloseable {
     CompletableFuture<Boolean> writeRequest(final GroupAddress address, final DataPointValue dataPointValue);
 
     /**
+     * Sends a WRITE request to {@link GroupAddress} with a value of {@link DataPointValue} and wait
+     * for acknowledge packet from KNX Net/IP device. This method is <strong>blocking</strong>, for
+     * non-blocking operation use {@link #writeRequest(GroupAddress, DataPointValue)}. Using {@code timeout}
+     * we can define the maximum time we want to wait for.
+     *
+     * @param address        the recipient which is an KNX group address
+     * @param dataPointValue value to be sent to KNX group address
+     * @param timeout        timeout in milliseconds
+     * @return {@code true} if the acknowledge for write request was successful within expected time frame, otherwise {@code false}
+     */
+    boolean writeRequest(final GroupAddress address, final DataPointValue dataPointValue, final long timeout);
+
+    /**
      * Sends a READ request to {@link GroupAddress} asynchronously.
      *
-     * @param address this is the KNX group address we want to send the read request to obtain the current value
+     * @param address this is the KNX group address we want to send the read request
      * @return a {@link CompletableFuture}, if the read request was successful it will contain a {@code true}, otherwise {@code false}
      */
     CompletableFuture<Boolean> readRequest(final GroupAddress address);
+
+    /**
+     * Sends a READ request to {@link GroupAddress} and wait for acknowledge frame.
+     * This method is <strong>blocking</strong>, for non-blocking operation use
+     * {@link #readRequest(GroupAddress)}. Using {@code timeout} we can define the
+     * maximum time we want to wait for.
+     *
+     * @param address this is the KNX group address we want to send the read request
+     * @param timeout timeout in milliseconds
+     * @return {@code true} if the acknowledge for read request was successful within expected time frame, otherwise {@code false}
+     */
+    boolean readRequest(final GroupAddress address, final long timeout);
 }

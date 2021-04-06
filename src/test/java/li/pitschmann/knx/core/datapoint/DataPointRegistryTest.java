@@ -43,17 +43,17 @@ class DataPointRegistryTest {
      */
     @Test
     void testGetDataPointType() {
-        final DPT1 dpt1 = DataPointRegistry.getDataPointType("1.001");
+        final var dpt1 = DataPointRegistry.getDataPointType("1.001");
         assertThat(dpt1).isEqualTo(DPT1.SWITCH);
-        assertThat(DataPointRegistry.<DPT1>getDataPointType("1.001")).isEqualTo(DPT1.SWITCH);
+        assertThat(DataPointRegistry.getDataPointType("1.001")).isEqualTo(DPT1.SWITCH);
 
-        final DPT8 dpt8 = DataPointRegistry.getDataPointType("8.003");
+        final var dpt8 = (DPT8) DataPointRegistry.getDataPointType("8.003");
         assertThat(dpt8).isEqualTo(DPT8.DELTA_TIME_10MS);
-        assertThat(DataPointRegistry.<DPT8>getDataPointType("8.003")).isEqualTo(DPT8.DELTA_TIME_10MS);
+        assertThat(DataPointRegistry.getDataPointType("8.003")).isEqualTo(DPT8.DELTA_TIME_10MS);
 
-        final DPT14 dpt14 = DataPointRegistry.getDataPointType("14.000");
+        final var dpt14 = DataPointRegistry.getDataPointType("14.000");
         assertThat(dpt14).isEqualTo(DPT14.ACCELERATION);
-        assertThat(DataPointRegistry.<DPT14>getDataPointType("14.000")).isEqualTo(DPT14.ACCELERATION);
+        assertThat(DataPointRegistry.getDataPointType("14.000")).isEqualTo(DPT14.ACCELERATION);
     }
 
     /**
@@ -65,9 +65,10 @@ class DataPointRegistryTest {
      * therefore it will share same hash code and {@link #equals(Object)} will match.
      */
     @Test
+    @SuppressWarnings("unchecked")
     void testGetDataPointTypeEnum() {
         // check by assignment
-        final DPTEnum<DPT20.LightApplicationMode> dpt20 = DataPointRegistry.getDataPointType("20.005");
+        final var dpt20 = (DPTEnum<DPT20.LightApplicationMode>) DataPointRegistry.getDataPointType("20.005");
         assertThat(dpt20.getId()).isEqualTo("20.005");
         assertThat(dpt20.getDescription()).isEqualTo("Light Application Mode");
         assertThat(dpt20.of(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
@@ -76,13 +77,13 @@ class DataPointRegistryTest {
         // direct check
         assertThat(DataPointRegistry.getDataPointType("20.005").getId()).isEqualTo("20.005");
         assertThat(DataPointRegistry.getDataPointType("20.005").getDescription()).isEqualTo("Light Application Mode");
-        assertThat(DataPointRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").of(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
-        assertThat(DataPointRegistry.<DPTEnum<DPT20.LightApplicationMode>>getDataPointType("20.005").of(2).getValue()).isEqualTo(2);
+        assertThat(((DPTEnum<DPT20.LightApplicationMode>) DataPointRegistry.getDataPointType("20.005")).of(2).getEnum()).isEqualTo(DPT20.LightApplicationMode.NIGHT_ROUND);
+        assertThat(((DPTEnum<DPT20.LightApplicationMode>) DataPointRegistry.getDataPointType("20.005")).of(2).getValue()).isEqualTo(2);
         assertThat(DataPointRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getEnum()).isEqualTo(DPT20.LightApplicationMode.PRESENCE_SIMULATION);
         assertThat(DataPointRegistry.getDataPointType(DPT20.LightApplicationMode.PRESENCE_SIMULATION).getValue()).isEqualTo(1);
 
         // should match
-        final DPTEnum<DPT20.LightApplicationMode> dpt20Created = new DPTEnum<>("20.005", "Light Application Mode");
+        final var dpt20Created = new DPTEnum<DPT20.LightApplicationMode>("20.005", "Light Application Mode");
         assertThat(dpt20).isEqualTo(dpt20Created);
         assertThat(dpt20).hasSameHashCodeAs(dpt20Created);
     }

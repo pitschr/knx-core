@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import li.pitschmann.knx.core.cemi.CEMI;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.BaseDataPointType;
 import li.pitschmann.knx.core.datapoint.DataPointRegistry;
+import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 import li.pitschmann.knx.core.utils.Maps;
 import li.pitschmann.knx.core.utils.Preconditions;
@@ -161,17 +162,29 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Nullable
     @Override
-    public <V extends DataPointValue> V getValue(final KnxAddress address, final String dptId) {
+    public DataPointValue getValue(final KnxAddress address, final String dptId) {
         return getValue(address, dptId, true);
     }
 
     @Nullable
     @Override
-    public <V extends DataPointValue> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
+    public DataPointValue getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate) {
+        final var dpt = DataPointRegistry.getDataPointType(dptId);
+        return getValue(address, dpt, mustUpToDate);
+    }
+
+    @Nullable
+    @Override
+    public DataPointValue getValue(final KnxAddress address, final DataPointType dpt) {
+        return getValue(address, dpt, true);
+    }
+
+    @Nullable
+    @Override
+    public DataPointValue getValue(KnxAddress address, DataPointType dpt, boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
-            @SuppressWarnings("unchecked") final V dataPointValue = (V) DataPointRegistry.getDataPointType(dptId).of(statusData.getData());
-            return dataPointValue;
+            return dpt.of(statusData.getData());
         }
         return null;
     }

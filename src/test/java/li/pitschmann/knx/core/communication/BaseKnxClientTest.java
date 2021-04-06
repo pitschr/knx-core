@@ -24,21 +24,37 @@ import li.pitschmann.knx.core.config.Config;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.DPT1;
 import li.pitschmann.knx.core.datapoint.DPT5;
+import li.pitschmann.knx.core.datapoint.value.DataPointValue;
+import li.pitschmann.knx.core.exceptions.KnxCommunicationException;
 import li.pitschmann.knx.core.header.ServiceType;
 import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.test.KnxBody;
 import li.pitschmann.knx.core.test.MockServer;
 import li.pitschmann.knx.core.test.MockServerTest;
+import li.pitschmann.knx.core.test.TestHelpers;
 import li.pitschmann.knx.core.test.data.TestExtensionPlugin;
 import li.pitschmann.knx.core.utils.Sleeper;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 /**
  * Test for {@link BaseKnxClient}
@@ -143,6 +159,71 @@ public class BaseKnxClientTest {
         assertThat(routingIndications.get(0).getCEMI().getData()).isEmpty(); // empty because of read request
         assertThat(routingIndications.get(1).getCEMI().getData()).containsExactly(0x00); // 0x00 = Switch(false)
         assertThat(routingIndications.get(2).getCEMI().getData()).containsExactly(0xFF); // 0xFF = Scaling(100%)
+    }
+
+    @Test
+    @DisplayName("ERROR: Test read request throwing exceptions")
+    void testReadRequestsWithExceptions() throws ExecutionException, InterruptedException, TimeoutException {
+        final var groupAddress = GroupAddress.of(1, 2, 3);
+
+        final var config = TestHelpers.mockConfig();
+        final var baseKnxClient = spy(new BaseKnxClient(config));
+        final var completableFutureMock = mock(CompletableFuture.class);
+        doReturn(completableFutureMock).when(baseKnxClient).readRequest(any(GroupAddress.class));
+
+        // throwing TimeoutException
+        doThrow(new TimeoutException()).when(completableFutureMock).get(anyLong(), any(TimeUnit.class));
+        assertThatThrownBy(() -> baseKnxClient.readRequest(groupAddress, 1000))
+                .isInstanceOf(KnxCommunicationException.class)
+                .hasMessage("Time (1000 ms) exceeded for read request to group address: " + groupAddress);
+
+        // throwing ExecutionException
+        doThrow(new ExecutionException(null)).when(completableFutureMock).get(anyLong(), any(TimeUnit.class));
+        assertThatThrownBy(() -> baseKnxClient.readRequest(groupAddress, 1000))
+                .isInstanceOf(KnxCommunicationException.class)
+                .hasMessage("Read request and wait for acknowledge failed for group address: " + groupAddress);
+
+        // throwing InterruptedException
+        // run this test in a sub-thread because it may interrupt parallel JUnit test cases otherwise
+        doThrow(new InterruptedException()).when(completableFutureMock).get(anyLong(), any(TimeUnit.class));
+        final var executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            assertThat(baseKnxClient.readRequest(groupAddress, 1000)).isFalse();
+        });
+        executor.shutdown();
+    }
+
+    @Test
+    @DisplayName("ERROR: Test write request throwing exceptions")
+    void testWriteRequestsWithExceptions() throws ExecutionException, InterruptedException, TimeoutException {
+        final var groupAddress = GroupAddress.of(1, 2, 3);
+        final var dataPointValue = DPT1.SWITCH.of(true);
+
+        final var config = TestHelpers.mockConfig();
+        final var baseKnxClient = spy(new BaseKnxClient(config));
+        final var completableFutureMock = mock(CompletableFuture.class);
+        doReturn(completableFutureMock).when(baseKnxClient).writeRequest(any(GroupAddress.class), any(DataPointValue.class));
+
+        // throwing TimeoutException
+        doThrow(new TimeoutException()).when(completableFutureMock).get(anyLong(), any(TimeUnit.class));
+        assertThatThrownBy(() -> baseKnxClient.writeRequest(groupAddress, dataPointValue, 1000))
+                .isInstanceOf(KnxCommunicationException.class)
+                .hasMessage("Time (1000 ms) exceeded for write request to group address: " + groupAddress);
+
+        // throwing ExecutionException
+        doThrow(new ExecutionException(null)).when(completableFutureMock).get(anyLong(), any(TimeUnit.class));
+        assertThatThrownBy(() -> baseKnxClient.writeRequest(groupAddress, dataPointValue, 1000))
+                .isInstanceOf(KnxCommunicationException.class)
+                .hasMessage("Write request and wait for acknowledge failed for group address: " + groupAddress);
+
+        // throwing InterruptedException
+        // run this test in a sub-thread because it may interrupt parallel JUnit test cases otherwise
+        doThrow(new InterruptedException()).when(completableFutureMock).get(anyLong(), any(TimeUnit.class));
+        final var executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            assertThat(baseKnxClient.writeRequest(groupAddress, dataPointValue, 1000)).isFalse();
+        });
+        executor.shutdown();
     }
 
     /**

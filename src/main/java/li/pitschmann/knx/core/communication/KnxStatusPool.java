@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import li.pitschmann.knx.core.address.KnxAddress;
 import li.pitschmann.knx.core.annotations.Nullable;
 import li.pitschmann.knx.core.config.CoreConfigs;
 import li.pitschmann.knx.core.datapoint.BaseDataPointType;
+import li.pitschmann.knx.core.datapoint.DataPointType;
 import li.pitschmann.knx.core.datapoint.value.DataPointValue;
 
 import java.util.Map;
@@ -74,11 +75,10 @@ public interface KnxStatusPool {
      *
      * @param address {@link KnxAddress} for which the {@link DataPointValue} should be returned
      * @param dptId   the DPT id we are looking for to get the {@link DataPointValue}
-     * @param <V>     an instance of {@link DataPointValue}
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found or was not up-to-date for default time
      */
     @Nullable
-    <V extends DataPointValue> V getValue(final KnxAddress address, final String dptId);
+    DataPointValue getValue(final KnxAddress address, final String dptId);
 
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type will be looked up using {@code dptId}
@@ -88,11 +88,33 @@ public interface KnxStatusPool {
      * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
      *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
      *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
-     * @param <V>          an instance of {@link DataPointValue}
      * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
      */
     @Nullable
-    <V extends DataPointValue> V getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate);
+    DataPointValue getValue(final KnxAddress address, final String dptId, final boolean mustUpToDate);
+
+    /**
+     * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
+     *
+     * @param address {@link KnxAddress} for which the {@link DataPointValue} should be returned
+     * @param dpt     the data point type instance we are using to get the {@link DataPointValue}
+     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found or was not up-to-date for default time
+     */
+    @Nullable
+    DataPointValue getValue(final KnxAddress address, final DataPointType dpt);
+
+    /**
+     * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
+     *
+     * @param address      {@link KnxAddress} for which the {@link DataPointValue} should be returned
+     * @param dpt          the data point type instance we are using to get the {@link DataPointValue}
+     * @param mustUpToDate defines the knx status data must be up-to-date (non-dirty):
+     *                     if it is {@code true} then status data must be up-to-date (non-dirty) to be accepted,
+     *                     if it is {@code false} then status data may be returned regardless if the status data is up-to-date or not
+     * @return an instance of {@link DataPointValue} or {@code null} if no value could be found.
+     */
+    @Nullable
+    DataPointValue getValue(final KnxAddress address, final DataPointType dpt, final boolean mustUpToDate);
 
     /**
      * Returns the DPT value for given {@link KnxAddress}. The data point type is given {@code dpt}.
