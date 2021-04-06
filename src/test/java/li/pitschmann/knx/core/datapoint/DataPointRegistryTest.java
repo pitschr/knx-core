@@ -65,6 +65,7 @@ class DataPointRegistryTest {
      * therefore it will share same hash code and {@link #equals(Object)} will match.
      */
     @Test
+    @SuppressWarnings("unchecked")
     void testGetDataPointTypeEnum() {
         // check by assignment
         final var dpt20 = (DPTEnum<DPT20.LightApplicationMode>) DataPointRegistry.getDataPointType("20.005");
