@@ -22,7 +22,7 @@
     <packaging>jar</packaging>
     <groupId>li.pitschmann</groupId>
     <artifactId>knx-core</artifactId>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.5.1-SNAPSHOT</version>
     <name>KNX Core</name>
     <description>KNX Core - A Java library for KNX Net/IP communication</description>
     <url>https://github.com/pitschr/knx-core</url>
