@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests {@link XmlGroupAddress} that contains data from '*.knxproj' file
  */
-public class XmlGroupAddressTest {
+class XmlGroupAddressTest {
 
     @Test
     @DisplayName("Tests XmlGroupAddress#toString()")
-    public void testToString() {
+    void testToString() {
         final var xmlGroupAddress = new XmlGroupAddress();
         xmlGroupAddress.setId("ID");
         xmlGroupAddress.setParentId("PARENT_ID");
@@ -37,11 +37,6 @@ public class XmlGroupAddressTest {
         xmlGroupAddress.setAddress("ADDRESS");
         xmlGroupAddress.setDescription("DESCRIPTION");
         xmlGroupAddress.setDataPointType("DPT");
-        xmlGroupAddress.setCommunicationFlag("C");
-        xmlGroupAddress.setReadFlag("R");
-        xmlGroupAddress.setWriteFlag("W");
-        xmlGroupAddress.setTransmitFlag("T");
-        xmlGroupAddress.setUpdateFlag("U");
 
         // check if setter/getter are working
         assertThat(xmlGroupAddress.getId()).isEqualTo("ID");
@@ -50,14 +45,8 @@ public class XmlGroupAddressTest {
         assertThat(xmlGroupAddress.getAddress()).isEqualTo("ADDRESS");
         assertThat(xmlGroupAddress.getDescription()).isEqualTo("DESCRIPTION");
         assertThat(xmlGroupAddress.getDataPointType()).isEqualTo("DPT");
-        assertThat(xmlGroupAddress.getCommunicationFlag()).isEqualTo("C");
-        assertThat(xmlGroupAddress.getReadFlag()).isEqualTo("R");
-        assertThat(xmlGroupAddress.getWriteFlag()).isEqualTo("W");
-        assertThat(xmlGroupAddress.getTransmitFlag()).isEqualTo("T");
-        assertThat(xmlGroupAddress.getUpdateFlag()).isEqualTo("U");
 
         // @formatter:off
-        // test toString()
         assertThat(xmlGroupAddress).hasToString("XmlGroupAddress" +
                 "{" +
                     "id=ID, " +
@@ -65,12 +54,7 @@ public class XmlGroupAddressTest {
                     "address=ADDRESS, " +
                     "name=NAME, " +
                     "description=DESCRIPTION, " +
-                    "dataPointType=DPT, " +
-                    "communicationFlag=C, " +
-                    "readFlag=R, " +
-                    "writeFlag=W, " +
-                    "transmitFlag=T, " +
-                    "updateFlag=U" +
+                    "dataPointType=DPT" +
                 "}");
         // @formatter:on
     }

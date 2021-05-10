@@ -181,7 +181,7 @@ public final class InternalKnxStatusPool implements KnxStatusPool {
 
     @Nullable
     @Override
-    public DataPointValue getValue(KnxAddress address, DataPointType dpt, boolean mustUpToDate) {
+    public DataPointValue getValue(final KnxAddress address, final DataPointType dpt, final boolean mustUpToDate) {
         final var statusData = this.getStatusFor(address, mustUpToDate);
         if (statusData != null) {
             return dpt.of(statusData.getData());
