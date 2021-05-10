@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,6 @@ public final class XmlGroupAddress {
     private String name;
     private String description;
     private String dataPointType;
-    private String communicationFlag;
-    private String readFlag;
-    private String writeFlag;
-    private String transmitFlag;
-    private String updateFlag;
 
     public String getId() {
         return id;
@@ -89,46 +84,6 @@ public final class XmlGroupAddress {
         this.dataPointType = dataPointType;
     }
 
-    public String getCommunicationFlag() {
-        return communicationFlag;
-    }
-
-    public void setCommunicationFlag(String communicationFlag) {
-        this.communicationFlag = communicationFlag;
-    }
-
-    public String getReadFlag() {
-        return readFlag;
-    }
-
-    public void setReadFlag(String readFlag) {
-        this.readFlag = readFlag;
-    }
-
-    public String getWriteFlag() {
-        return writeFlag;
-    }
-
-    public void setWriteFlag(String writeFlag) {
-        this.writeFlag = writeFlag;
-    }
-
-    public String getTransmitFlag() {
-        return transmitFlag;
-    }
-
-    public void setTransmitFlag(String transmitFlag) {
-        this.transmitFlag = transmitFlag;
-    }
-
-    public String getUpdateFlag() {
-        return updateFlag;
-    }
-
-    public void setUpdateFlag(String updateFlag) {
-        this.updateFlag = updateFlag;
-    }
-
     @Override
     public String toString() {
         // @formatter:off
@@ -139,11 +94,6 @@ public final class XmlGroupAddress {
                 .add("name", name)
                 .add("description", description)
                 .add("dataPointType", dataPointType)
-                .add("communicationFlag", this.communicationFlag)
-                .add("readFlag", this.readFlag)
-                .add("writeFlag", this.writeFlag)
-                .add("transmitFlag", this.transmitFlag)
-                .add("updateFlag", this.updateFlag)
                 .toString();
         // @formatter:on
     }
