@@ -8,7 +8,7 @@
 A reactive, non-blocking Java library for KNX Net/IP communication.
 
 The purpose of this library is designed for developers to allow their applications 
-to communicate with KNX world via their KNX Net/IP device (either a KNX router or a 
+to communicate with KNX world via their KNX Net/IP device (by using either a KNX router or a 
 KNX interface). _Tunneling_ and _routing_ modes are supported.
 
 For a demo application see [knx-demo-tty-monitor](https://github.com/pitschr/knx-demo-tty-monitor)
@@ -31,7 +31,6 @@ and for first examples see [knx-examples](https://github.com/pitschr/knx-example
   be forwarded
   * IP Multicast Address that is used by your KNX router (optional, if not provided, the 
   default 224.0.23.12 multicast address will be used)
-  
 
 ## Architecture
 
@@ -158,7 +157,7 @@ The KNX Client was also designed to provide a less barrier using human-friendly 
 ```
 DPT19.DATE_TIME.of("Saturday", "04:10:45", "2013-08-17"); // All information
 DPT19.DATE_TIME.of("2013-08-17", "04:10:45");             // Only date and time
-DPT19.DATE_TIME.of("04:10:45", "2013-08-17");             // Order doesn't matter, auto-detecting
+DPT19.DATE_TIME.of("04:10:45", "2013-08-17");             // Order doesn't matter, auto-detected
 ```
 
 ## Group Address
@@ -250,8 +249,9 @@ public final class LampOnExample {
 fun main() {
     // this is the group address where the KNX actuator listens to switch on/off a lamp
     val groupAddress = GroupAddress.of(1, 2, 110);
+    
+    // create KNX client and connect to KNX Net/IP device using auto-discovery
     DefaultKnxClient.createStarted().use { client ->
-
         // switch on the lamp (boolean: true) --> translated to '0x01' and sent to KNX Net/IP device
         client.writeRequest(groupAddress, DPT1.SWITCH.of(true));  // or DPT1.SWITCH.of((byte)0x01)
                                                                   // or DPT1.SWITCH.of("on")
