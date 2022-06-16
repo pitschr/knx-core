@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (C) 2021 Pitschmann Christoph
+  ~ Copyright (C) 2022 Pitschmann Christoph
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with this program.  If not, see <https://www.gnu.org/licenses />.
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -85,7 +85,7 @@
         <version.logback-classic>1.2.3</version.logback-classic> <!-- EPL 1.0, LGPL 2.1 -->
         <version.mockito-inline>3.5.15</version.mockito-inline> <!-- MIT -->
         <version.slf4j>1.7.30</version.slf4j> <!-- MIT -->
-        <version.equals-verifier>3.5.2</version.equals-verifier>
+        <version.equals-verifier>3.5.2</version.equals-verifier> <!-- Apache 2.0 -->
         <!-- Default Argument Line for Surefire for test stability -->
         <setting.surefire.default.argLine>
             -Duser.timezone=UTC

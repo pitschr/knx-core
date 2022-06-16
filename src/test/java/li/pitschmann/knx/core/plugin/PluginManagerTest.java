@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2022 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,11 +48,11 @@ import static org.mockito.Mockito.when;
 /**
  * Test class for {@link PluginManager}
  */
-public final class PluginManagerTest {
+final class PluginManagerTest {
 
     @Test
     @DisplayName("Instantiation of PluginManager")
-    public void testInstantiation() {
+    void testInstantiation() {
         // create plugin manager and close afterwards (no exception expected)
         new PluginManager(TestHelpers.mockConfig()).close();
 
@@ -62,7 +62,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("Test initial initialization of plugins through configuration instance")
-    public void testOnInitialization() {
+    void testOnInitialization() {
         final var knxClientMock = newKnxClientMockWithPlugins(new TestObserverPlugin(), new TestExtensionPlugin());
 
         // 2) initialization (two plugins registered)
@@ -79,7 +79,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("Test lazy initialization of plugins")
-    public void testLazyOnInitialization() {
+    void testLazyOnInitialization() {
         // 1) initialization (no plugin registered yet)
         final var pluginManager = newPluginManager();
 
@@ -101,7 +101,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("Test notification methods AFTER close")
-    public void testNotificationAfterClose() {
+    void testNotificationAfterClose() {
         final var knxClientMock = newKnxClientMockWithPlugins(new TestObserverPlugin(), new TestExtensionPlugin());
         final var pluginManager = new PluginManager(knxClientMock.getConfig());
 
@@ -118,7 +118,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("ERROR: Test registration by a path that doesn't end with *.jar extension")
-    public void testWithoutJarExtension() {
+    void testWithoutJarExtension() {
         final var pluginManager = newPluginManager();
 
         // wrong JAR file path
@@ -129,28 +129,11 @@ public final class PluginManagerTest {
                 .hasMessage("File doesn't end with '.jar' extension: file-with-wrong.extension");
     }
 
-    @Test
-    @DisplayName("ERROR: Test registration by a wrong JAR path")
-    public void testNonexistentJarPath() {
-        final var pluginManager = newPluginManager();
-
-        // wrong JAR file path
-        final var pathToJAR = Paths.get("non-existent-file.jar");
-        final var className = "my.plugin.MyTestPlugin";
-        assertThatThrownBy(() -> pluginManager.addPlugin(pathToJAR, className))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("File doesn't exists or is not readable: non-existent-file.jar");
-    }
 
     @Test
     @DisplayName("ERROR: Test registration by a non-existent plugin")
-    public void testNonexistentPlugin() {
+    void testNonexistentPlugin() {
         final var pluginManager = newPluginManager();
-
-        // wrong JAR file path
-        final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
-        final var className = "my.test.HelloWorldPluginV1_THATDOESNOTEXISTS";
-        assertThatThrownBy(() -> pluginManager.addPlugin(pathToJAR, className)).isInstanceOf(KnxException.class);
 
         // wrong class type
         final var plugin2 = pluginManager.getPlugin(Plugin.class);
@@ -159,7 +142,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("Test registration of plugin by JAR file")
-    public void testJARPlugin() {
+    void testJARPlugin() {
         final var pluginManager = newPluginManager();
 
         final var pathToJAR = Paths.get("src/test/resources/plugin/my-test-plugin.jar");
@@ -183,7 +166,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("Register and register of plugin")
-    public void testRegisterAndDeregister() {
+    void testRegisterAndDeregister() {
         final var pluginManager = newPluginManager();
 
         // 1) check if plugin doesn't exists
@@ -224,7 +207,7 @@ public final class PluginManagerTest {
 
     @Test
     @DisplayName("ERROR: Exception in Plugin onInit() method")
-    public void testExceptionInPluginMethod() {
+    void testExceptionInPluginMethod() {
         final var pluginManager = newPluginManager();
 
         // we should be able to create a plugin
