@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Pitschmann Christoph
+ * Copyright (C) 2022 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,63 +143,15 @@ public final class PluginManager implements AutoCloseable {
      * Example: {@code ~/plugin/my-jar-file-0.0.1.jar} as {@code filePath} and
      * {@code com.mycompany.MyPlugin} as {@code className}.
      *
-     * @param filePath  path to the JAR file
-     * @param className fully qualified class name
-     * @return a new {@link Plugin} instance
+     * @param filePath the JAR file that contains the plugin; may not be null
+     * @param className fully qualified class name; may not be null
+     * @return a new instance of plugin
+     * @throws KnxPluginException if a new instance of plugin could not be read or loaded
      */
     public Plugin addPlugin(final Path filePath, final String className) {
-        Preconditions.checkArgument(filePath.getFileName().toString().endsWith(".jar"),
-                "File doesn't end with '.jar' extension: {}", filePath);
-        Preconditions.checkNonNull(className);
-        Preconditions.checkArgument(Files.isReadable(filePath),
-                "File doesn't exists or is not readable: {}", filePath);
-
-        log.debug("Try to load plugin '{}' from path: {}", className, filePath);
-        final Plugin plugin;
-        try (var classLoader = new URLClassLoader(new URL[]{filePath.toUri().toURL()})) {
-            plugin = newPluginInstance(classLoader.loadClass(className));
-            log.debug("Plugin '{}' loaded from url '{}': {}", className, filePath, plugin);
-        } catch (final Exception e) {
-            throw new KnxPluginException("Could not load plugin '" + className + "' at: " + filePath, e);
-        }
-
-        // all OK here, add plugin to the manager and return the new instance
-        return addPlugin(plugin);
-    }
-
-    /**
-     * Creates and registers the plugin based on {@code pluginClass}.
-     * Precondition for that is that the class implements:
-     * <ul>
-     *     <li>the {@link Plugin} interface</li>
-     *     <li>has a public null-arg constructor</li>
-     * </ul>
-     * <p>
-     * It will give plugin 10 seconds time for create. Otherwise, the plugin won't be added nor registered.
-     *
-     * @param pluginClass the plugin class to create a new instance
-     * @return new instance of plugin
-     * @throws KnxPluginException if the plugin could not be loaded
-     */
-    private Plugin newPluginInstance(final Class<?> pluginClass) {
-        // validation if the class implements the Plugin interface
-        if (!Plugin.class.isAssignableFrom(pluginClass)) {
-            throw new KnxPluginException("Seems the given class is not an instance of {}: {}", Plugin.class, pluginClass);
-        }
-
-        // validation if the class has a public null-arg constructor
-        if (Stream.of(pluginClass.getConstructors()).noneMatch(c -> c.getParameterCount() == 0)) {
-            throw new KnxPluginException("There seems be no public null-arg constructor available for: {}", pluginClass);
-        }
-
-        // now try to load the plugin
-        try {
-            final var plugin = (Plugin)pluginClass.getDeclaredConstructor().newInstance();
-            log.debug("Created a new Plugin instance: {}", plugin);
-            return plugin;
-        } catch (final ReflectiveOperationException e) {
-            throw new KnxPluginException("Could not load plugin: {}", pluginClass.getName(), e);
-        }
+        return addPlugin(
+                PluginHelper.load(filePath, className)
+        );
     }
 
     /**
@@ -210,6 +162,7 @@ public final class PluginManager implements AutoCloseable {
      * See: {@link CoreConfigs.Plugin#INITIALIZATION_TIMEOUT}
      *
      * @param plugin the plugin to be added
+     * @throws KnxPluginException if the plugin could not be initialized within given time
      */
     public <T extends Plugin> T addPlugin(final T plugin) {
         final var pluginClass = plugin.getClass();
